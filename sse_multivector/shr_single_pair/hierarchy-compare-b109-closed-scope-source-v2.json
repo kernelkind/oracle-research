@@ -1,0 +1,1680 @@
+{
+  "schema_version": 2,
+  "corpus": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-asv6.100-regression-refresh-v1/collected/subjects.json",
+  "canonical_states": {
+    "endpoint-000": [
+      {
+        "id": "C000",
+        "subject": "Cooking",
+        "meaning_from": {
+          "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+          "case": "bootstrap-ea315c583ccad78ebf827ad75843b8f74f0a2b0f6d260c8f5a0b479038fd2454"
+        },
+        "entries": [
+          {
+            "note_id": "99e6a5148b40b59013d8a391f6f593cb8791c167eb445cf1f49c1565cefdbb92",
+            "number": "1"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "endpoint-001": [
+      {
+        "id": "C001",
+        "subject": "Firing up the author's rocket stove, a charcoal grill with an added J-tube, to cook potatoes",
+        "meaning_from": {
+          "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+          "case": "bootstrap-af535aaa16bf3cde3e8b0a7a2adeede7e668e50f605b014cdaae44caf3793cc2"
+        },
+        "entries": [
+          {
+            "note_id": "99e6a5148b40b59013d8a391f6f593cb8791c167eb445cf1f49c1565cefdbb92",
+            "number": "1.1"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "endpoint-002": [
+      {
+        "id": "C002",
+        "subject": "Firing up the author's rocket stove, a charcoal grill with an added J-tube, to cook potatoes, cabbage, green beans and eggs",
+        "meaning_from": {
+          "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+          "case": "bootstrap-d92d9d967a82617e6f6475a8970f190550a7e28a0fd1306a112e68c16ed6e7a5"
+        },
+        "entries": [
+          {
+            "note_id": "99e6a5148b40b59013d8a391f6f593cb8791c167eb445cf1f49c1565cefdbb92",
+            "number": "1.1.1"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "endpoint-004": [
+      {
+        "id": "C004",
+        "subject": "Firing up the author's rocket stove, a charcoal grill with an added J-tube, to cook potatoes, cabbage, green beans and eggs",
+        "meaning_from": {
+          "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+          "case": "bootstrap-49ddd3d256f432202369980112c0f66fae8c916318dada93b227dd55b21c205a"
+        },
+        "entries": [
+          {
+            "note_id": "99e6a5148b40b59013d8a391f6f593cb8791c167eb445cf1f49c1565cefdbb92",
+            "number": "1.2.1"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "endpoint-026": [
+      {
+        "id": "C026",
+        "subject": "Preparing sourdough bread",
+        "meaning_from": {
+          "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+          "case": "bootstrap-b3c126a2f54bc362dc4288323cc0579476ccfd35d7c2f23bc7835dd5b1428998"
+        },
+        "entries": [
+          {
+            "note_id": "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+            "number": "1.1.1"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "endpoint-027": [
+      {
+        "id": "C027",
+        "subject": "Preparing sourdough bread as a way to spend some moments",
+        "meaning_from": {
+          "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+          "case": "bootstrap-fc13f461c249201ac092e36532a840f351cad1ef088bbd319ff60f76b16e55fe"
+        },
+        "entries": [
+          {
+            "note_id": "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+            "number": "1.1.1.1"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "endpoint-028": [
+      {
+        "id": "C028",
+        "subject": "Food preparation",
+        "meaning_from": {
+          "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+          "case": "bootstrap-40c6a17566393b4f58a57621dcf9f5067c0c7d19fbcdcb9ed1ed85fb09ae134b"
+        },
+        "entries": [
+          {
+            "note_id": "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+            "number": "2"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "endpoint-029": [
+      {
+        "id": "C029",
+        "subject": "Preparing sourdough bread",
+        "meaning_from": {
+          "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+          "case": "bootstrap-bb29dd5ee83305a148d73e8ce515ff365e5e1ae295b177853acddf5569e61d93"
+        },
+        "entries": [
+          {
+            "note_id": "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+            "number": "2.1"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "endpoint-030": [
+      {
+        "id": "C030",
+        "subject": "Preparing sourdough bread as a way to spend some moments",
+        "meaning_from": {
+          "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+          "case": "bootstrap-609a696fc6c3351168d83d1fa76f38e6eff319b90090aa02e086759ebdb24b18"
+        },
+        "entries": [
+          {
+            "note_id": "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+            "number": "2.1.1"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "endpoint-031": [
+      {
+        "id": "C031",
+        "subject": "Rosemary",
+        "meaning_from": {
+          "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+          "case": "bootstrap-f6d7ecb82c7323b5030fcf83cf62f5444b03ce2afa30f49fc79adad1688db47c"
+        },
+        "entries": [
+          {
+            "note_id": "03313183e42615c765021814b8c6b3de61c7ff95f89e75f5cebe588c1bcb0f4a",
+            "number": "2"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "endpoint-034": [
+      {
+        "id": "C034",
+        "subject": "Mental states",
+        "meaning_from": {
+          "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+          "case": "bootstrap-1b7df1412832aa92a643682c9d1f98902a08edf839b21b55751af0748bd0df1e"
+        },
+        "entries": [
+          {
+            "note_id": "821011b60ccabb942d2540b722ea5d88f15484c407bfb77c9b6318c851eedb9f",
+            "number": "5"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "endpoint-035": [
+      {
+        "id": "C035",
+        "subject": "Author being mentally distracted",
+        "meaning_from": {
+          "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+          "case": "bootstrap-381362e9dae8a2c98fc4cf78463347b3f87a67f27b4c19542789b3b9aa08d9bb"
+        },
+        "entries": [
+          {
+            "note_id": "821011b60ccabb942d2540b722ea5d88f15484c407bfb77c9b6318c851eedb9f",
+            "number": "5.1"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "endpoint-036": [
+      {
+        "id": "C036",
+        "subject": "Author's mind not functioning normally",
+        "meaning_from": {
+          "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+          "case": "bootstrap-ef64532fee2be4368c019c95d193da574ae307f22a7a41b53c18b84d1f9075bf"
+        },
+        "entries": [
+          {
+            "note_id": "821011b60ccabb942d2540b722ea5d88f15484c407bfb77c9b6318c851eedb9f",
+            "number": "5.2"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "endpoint-058": [
+      {
+        "id": "C058",
+        "subject": "Metal handles",
+        "meaning_from": {
+          "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+          "case": "bootstrap-00a0c16c50868b89372b401e609957cf25963f72eede71ac5e03566ddcd9abdd"
+        },
+        "entries": [
+          {
+            "note_id": "4db3cf2df042910312e44810434a5c5da5d659f981b57f14eb9a8eec4a9631f4",
+            "number": "4"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "endpoint-059": [
+      {
+        "id": "C059",
+        "subject": "Buster + Punch's signature metal handles",
+        "meaning_from": {
+          "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+          "case": "bootstrap-c4224eeeda7077afe55006af7538cc89b07f2eb0bc8dae2b394b89941d54980a"
+        },
+        "entries": [
+          {
+            "note_id": "4db3cf2df042910312e44810434a5c5da5d659f981b57f14eb9a8eec4a9631f4",
+            "number": "4.1"
+          }
+        ],
+        "parents": []
+      }
+    ],
+    "endpoint-066": [
+      {
+        "id": "C066",
+        "subject": "Steel or brass handles",
+        "meaning_from": {
+          "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+          "case": "bootstrap-565746d591a13f18c21b12cf9ef961ec172330e1caf49e30700e7febf402b82a"
+        },
+        "entries": [
+          {
+            "note_id": "4db3cf2df042910312e44810434a5c5da5d659f981b57f14eb9a8eec4a9631f4",
+            "number": "4.2"
+          }
+        ],
+        "parents": []
+      }
+    ]
+  },
+  "pairs": [
+    {
+      "id": "rocket-root-potatoes-forward",
+      "local": {
+        "note_id": "99e6a5148b40b59013d8a391f6f593cb8791c167eb445cf1f49c1565cefdbb92",
+        "number": "1"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-ea315c583ccad78ebf827ad75843b8f74f0a2b0f6d260c8f5a0b479038fd2454"
+      },
+      "canonical": {
+        "state": "endpoint-001",
+        "id": "C001"
+      },
+      "review": {
+        "pair_id": "rocket-root-potatoes",
+        "orientation": "forward",
+        "classification": "boundary-probe",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "The root requires preparing food for eating; the child requires cooking potatoes but does not explicitly state an eating purpose. No positive label is certified.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expectation_status": "Unresolved semantic label; assess reversal and complete-chain consistency without prescribing the old positive or negative.",
+        "expected_relation": null
+      }
+    },
+    {
+      "id": "rocket-root-potatoes-reverse",
+      "local": {
+        "note_id": "99e6a5148b40b59013d8a391f6f593cb8791c167eb445cf1f49c1565cefdbb92",
+        "number": "1.1"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-af535aaa16bf3cde3e8b0a7a2adeede7e668e50f605b014cdaae44caf3793cc2"
+      },
+      "canonical": {
+        "state": "endpoint-000",
+        "id": "C000"
+      },
+      "review": {
+        "pair_id": "rocket-root-potatoes",
+        "orientation": "reverse",
+        "classification": "boundary-probe",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "The root requires preparing food for eating; the child requires cooking potatoes but does not explicitly state an eating purpose. No positive label is certified.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expectation_status": "Unresolved semantic label; assess reversal and complete-chain consistency without prescribing the old positive or negative.",
+        "expected_relation": null
+      }
+    },
+    {
+      "id": "rocket-potatoes-four-foods-forward",
+      "local": {
+        "note_id": "99e6a5148b40b59013d8a391f6f593cb8791c167eb445cf1f49c1565cefdbb92",
+        "number": "1.1"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-af535aaa16bf3cde3e8b0a7a2adeede7e668e50f605b014cdaae44caf3793cc2"
+      },
+      "canonical": {
+        "state": "endpoint-002",
+        "id": "C002"
+      },
+      "review": {
+        "pair_id": "rocket-potatoes-four-foods",
+        "orientation": "forward",
+        "classification": "boundary-probe",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "Both strings leave the author and stove identities dependent on unresolved references. Hidden producer identity does not supply an A/B input fact. Conditional same-entity coverage is not unconditional semantic gold.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": null,
+        "expectation_status": "Preflight demotion: no semantic gold; report interpretation consistency and unresolved scope separately."
+      }
+    },
+    {
+      "id": "rocket-potatoes-four-foods-reverse",
+      "local": {
+        "note_id": "99e6a5148b40b59013d8a391f6f593cb8791c167eb445cf1f49c1565cefdbb92",
+        "number": "1.1.1"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-d92d9d967a82617e6f6475a8970f190550a7e28a0fd1306a112e68c16ed6e7a5"
+      },
+      "canonical": {
+        "state": "endpoint-001",
+        "id": "C001"
+      },
+      "review": {
+        "pair_id": "rocket-potatoes-four-foods",
+        "orientation": "reverse",
+        "classification": "boundary-probe",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "Both strings leave the author and stove identities dependent on unresolved references. Hidden producer identity does not supply an A/B input fact. Conditional same-entity coverage is not unconditional semantic gold.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": null,
+        "expectation_status": "Preflight demotion: no semantic gold; report interpretation consistency and unresolved scope separately."
+      }
+    },
+    {
+      "id": "rocket-root-four-foods-forward",
+      "local": {
+        "note_id": "99e6a5148b40b59013d8a391f6f593cb8791c167eb445cf1f49c1565cefdbb92",
+        "number": "1"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-ea315c583ccad78ebf827ad75843b8f74f0a2b0f6d260c8f5a0b479038fd2454"
+      },
+      "canonical": {
+        "state": "endpoint-002",
+        "id": "C002"
+      },
+      "review": {
+        "pair_id": "rocket-root-four-foods",
+        "orientation": "forward",
+        "classification": "boundary-probe",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "Retain the complete chain without assuming the root consumption-purpose condition follows from the child wording.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expectation_status": "Unresolved semantic label; assess reversal and complete-chain consistency without prescribing the old positive or negative.",
+        "expected_relation": null
+      }
+    },
+    {
+      "id": "rocket-root-four-foods-reverse",
+      "local": {
+        "note_id": "99e6a5148b40b59013d8a391f6f593cb8791c167eb445cf1f49c1565cefdbb92",
+        "number": "1.1.1"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-d92d9d967a82617e6f6475a8970f190550a7e28a0fd1306a112e68c16ed6e7a5"
+      },
+      "canonical": {
+        "state": "endpoint-000",
+        "id": "C000"
+      },
+      "review": {
+        "pair_id": "rocket-root-four-foods",
+        "orientation": "reverse",
+        "classification": "boundary-probe",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "Retain the complete chain without assuming the root consumption-purpose condition follows from the child wording.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expectation_status": "Unresolved semantic label; assess reversal and complete-chain consistency without prescribing the old positive or negative.",
+        "expected_relation": null
+      }
+    },
+    {
+      "id": "rocket-four-foods-performer-forward",
+      "local": {
+        "note_id": "99e6a5148b40b59013d8a391f6f593cb8791c167eb445cf1f49c1565cefdbb92",
+        "number": "1.1.1"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-d92d9d967a82617e6f6475a8970f190550a7e28a0fd1306a112e68c16ed6e7a5"
+      },
+      "canonical": {
+        "state": "endpoint-004",
+        "id": "C004"
+      },
+      "review": {
+        "pair_id": "rocket-four-foods-performer",
+        "orientation": "forward",
+        "classification": "boundary-probe",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "One meaning requires the author to start the fire; the other leaves the performer unspecified. Shared author and stove references are also unresolved in isolated input. Equivalence is not prescribed.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": null,
+        "expectation_status": "Preflight demotion: no semantic gold; report interpretation consistency and unresolved scope separately."
+      }
+    },
+    {
+      "id": "rocket-four-foods-performer-reverse",
+      "local": {
+        "note_id": "99e6a5148b40b59013d8a391f6f593cb8791c167eb445cf1f49c1565cefdbb92",
+        "number": "1.2.1"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-49ddd3d256f432202369980112c0f66fae8c916318dada93b227dd55b21c205a"
+      },
+      "canonical": {
+        "state": "endpoint-002",
+        "id": "C002"
+      },
+      "review": {
+        "pair_id": "rocket-four-foods-performer",
+        "orientation": "reverse",
+        "classification": "boundary-probe",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "One meaning requires the author to start the fire; the other leaves the performer unspecified. Shared author and stove references are also unresolved in isolated input. Equivalence is not prescribed.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": null,
+        "expectation_status": "Preflight demotion: no semantic gold; report interpretation consistency and unresolved scope separately."
+      }
+    },
+    {
+      "id": "rocket-potatoes-substitution-forward",
+      "local": {
+        "note_id": "99e6a5148b40b59013d8a391f6f593cb8791c167eb445cf1f49c1565cefdbb92",
+        "number": "1.1"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-af535aaa16bf3cde3e8b0a7a2adeede7e668e50f605b014cdaae44caf3793cc2"
+      },
+      "canonical": {
+        "state": "endpoint-004",
+        "id": "C004"
+      },
+      "review": {
+        "pair_id": "rocket-potatoes-substitution",
+        "orientation": "forward",
+        "classification": "boundary-probe",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "Shared author and stove identity is not explicitly resolved in the isolated meanings; do not certify an equivalence substitution from hidden source ancestry.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": null,
+        "expectation_status": "Preflight demotion: no semantic gold; report interpretation consistency and unresolved scope separately."
+      }
+    },
+    {
+      "id": "rocket-potatoes-substitution-reverse",
+      "local": {
+        "note_id": "99e6a5148b40b59013d8a391f6f593cb8791c167eb445cf1f49c1565cefdbb92",
+        "number": "1.2.1"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-49ddd3d256f432202369980112c0f66fae8c916318dada93b227dd55b21c205a"
+      },
+      "canonical": {
+        "state": "endpoint-001",
+        "id": "C001"
+      },
+      "review": {
+        "pair_id": "rocket-potatoes-substitution",
+        "orientation": "reverse",
+        "classification": "boundary-probe",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "Shared author and stove identity is not explicitly resolved in the isolated meanings; do not certify an equivalence substitution from hidden source ancestry.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": null,
+        "expectation_status": "Preflight demotion: no semantic gold; report interpretation consistency and unresolved scope separately."
+      }
+    },
+    {
+      "id": "rocket-root-substitution-forward",
+      "local": {
+        "note_id": "99e6a5148b40b59013d8a391f6f593cb8791c167eb445cf1f49c1565cefdbb92",
+        "number": "1"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-ea315c583ccad78ebf827ad75843b8f74f0a2b0f6d260c8f5a0b479038fd2454"
+      },
+      "canonical": {
+        "state": "endpoint-004",
+        "id": "C004"
+      },
+      "review": {
+        "pair_id": "rocket-root-substitution",
+        "orientation": "forward",
+        "classification": "boundary-probe",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "Repeat the unresolved root purpose boundary with the independently defined equivalent four-food endpoint.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expectation_status": "Unresolved semantic label; assess reversal and complete-chain consistency without prescribing the old positive or negative.",
+        "expected_relation": null
+      }
+    },
+    {
+      "id": "rocket-root-substitution-reverse",
+      "local": {
+        "note_id": "99e6a5148b40b59013d8a391f6f593cb8791c167eb445cf1f49c1565cefdbb92",
+        "number": "1.2.1"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-49ddd3d256f432202369980112c0f66fae8c916318dada93b227dd55b21c205a"
+      },
+      "canonical": {
+        "state": "endpoint-000",
+        "id": "C000"
+      },
+      "review": {
+        "pair_id": "rocket-root-substitution",
+        "orientation": "reverse",
+        "classification": "boundary-probe",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "Repeat the unresolved root purpose boundary with the independently defined equivalent four-food endpoint.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expectation_status": "Unresolved semantic label; assess reversal and complete-chain consistency without prescribing the old positive or negative.",
+        "expected_relation": null
+      }
+    },
+    {
+      "id": "sourdough-food-preparation-forward",
+      "local": {
+        "note_id": "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+        "number": "2"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-40c6a17566393b4f58a57621dcf9f5067c0c7d19fbcdcb9ed1ed85fb09ae134b"
+      },
+      "canonical": {
+        "state": "endpoint-029",
+        "id": "C029"
+      },
+      "review": {
+        "pair_id": "sourdough-food-preparation",
+        "orientation": "forward",
+        "classification": "boundary-probe",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "Food preparation requires steps toward making food ready to eat. The sourdough-making endpoint does not explicitly require that eating-purpose boundary. Preserve both fixed meanings and assess the common information-connection contract without importing the original AS edge.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": null,
+        "expectation_status": "Unresolved semantic label; assess reversal and complete-chain consistency without prescribing the old positive or negative."
+      }
+    },
+    {
+      "id": "sourdough-food-preparation-reverse",
+      "local": {
+        "note_id": "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+        "number": "2.1"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-bb29dd5ee83305a148d73e8ce515ff365e5e1ae295b177853acddf5569e61d93"
+      },
+      "canonical": {
+        "state": "endpoint-028",
+        "id": "C028"
+      },
+      "review": {
+        "pair_id": "sourdough-food-preparation",
+        "orientation": "reverse",
+        "classification": "boundary-probe",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "Food preparation requires steps toward making food ready to eat. The sourdough-making endpoint does not explicitly require that eating-purpose boundary. Preserve both fixed meanings and assess the common information-connection contract without importing the original AS edge.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": null,
+        "expectation_status": "Unresolved semantic label; assess reversal and complete-chain consistency without prescribing the old positive or negative."
+      }
+    },
+    {
+      "id": "sourdough-time-purpose-forward",
+      "local": {
+        "note_id": "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+        "number": "2.1"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-bb29dd5ee83305a148d73e8ce515ff365e5e1ae295b177853acddf5569e61d93"
+      },
+      "canonical": {
+        "state": "endpoint-030",
+        "id": "C030"
+      },
+      "review": {
+        "pair_id": "sourdough-time-purpose",
+        "orientation": "forward",
+        "classification": "provisional-semantic-control",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "The time-occupying activity retains making sourdough and adds its presentation as a way to occupy time.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": "A_contains_B",
+        "expectation_status": "Provisional agent control requiring independent semantic review; not human gold."
+      }
+    },
+    {
+      "id": "sourdough-time-purpose-reverse",
+      "local": {
+        "note_id": "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+        "number": "2.1.1"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-609a696fc6c3351168d83d1fa76f38e6eff319b90090aa02e086759ebdb24b18"
+      },
+      "canonical": {
+        "state": "endpoint-029",
+        "id": "C029"
+      },
+      "review": {
+        "pair_id": "sourdough-time-purpose",
+        "orientation": "reverse",
+        "classification": "provisional-semantic-control",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "The time-occupying activity retains making sourdough and adds its presentation as a way to occupy time.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": "B_contains_A",
+        "expectation_status": "Provisional agent control requiring independent semantic review; not human gold."
+      }
+    },
+    {
+      "id": "sourdough-food-preparation-shortcut-forward",
+      "local": {
+        "note_id": "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+        "number": "2"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-40c6a17566393b4f58a57621dcf9f5067c0c7d19fbcdcb9ed1ed85fb09ae134b"
+      },
+      "canonical": {
+        "state": "endpoint-030",
+        "id": "C030"
+      },
+      "review": {
+        "pair_id": "sourdough-food-preparation-shortcut",
+        "orientation": "forward",
+        "classification": "boundary-probe",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "Food preparation requires steps toward making food ready to eat. The sourdough-making endpoint does not explicitly require that eating-purpose boundary. Preserve both fixed meanings and assess the common information-connection contract without importing the original AS edge.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": null,
+        "expectation_status": "Unresolved semantic label; assess reversal and complete-chain consistency without prescribing the old positive or negative."
+      }
+    },
+    {
+      "id": "sourdough-food-preparation-shortcut-reverse",
+      "local": {
+        "note_id": "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+        "number": "2.1.1"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-609a696fc6c3351168d83d1fa76f38e6eff319b90090aa02e086759ebdb24b18"
+      },
+      "canonical": {
+        "state": "endpoint-028",
+        "id": "C028"
+      },
+      "review": {
+        "pair_id": "sourdough-food-preparation-shortcut",
+        "orientation": "reverse",
+        "classification": "boundary-probe",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "Food preparation requires steps toward making food ready to eat. The sourdough-making endpoint does not explicitly require that eating-purpose boundary. Preserve both fixed meanings and assess the common information-connection contract without importing the original AS edge.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": null,
+        "expectation_status": "Unresolved semantic label; assess reversal and complete-chain consistency without prescribing the old positive or negative."
+      }
+    },
+    {
+      "id": "sourdough-preparation-equivalence-forward",
+      "local": {
+        "note_id": "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+        "number": "1.1.1"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-b3c126a2f54bc362dc4288323cc0579476ccfd35d7c2f23bc7835dd5b1428998"
+      },
+      "canonical": {
+        "state": "endpoint-029",
+        "id": "C029"
+      },
+      "review": {
+        "pair_id": "sourdough-preparation-equivalence",
+        "orientation": "forward",
+        "classification": "provisional-equivalence-control",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "Both definitions cover carrying out one or more bread-making stages on ingredients or dough to produce sourdough bread.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": "equivalent",
+        "expectation_status": "Provisional agent control requiring independent semantic review; not human gold."
+      }
+    },
+    {
+      "id": "sourdough-preparation-equivalence-reverse",
+      "local": {
+        "note_id": "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+        "number": "2.1"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-bb29dd5ee83305a148d73e8ce515ff365e5e1ae295b177853acddf5569e61d93"
+      },
+      "canonical": {
+        "state": "endpoint-026",
+        "id": "C026"
+      },
+      "review": {
+        "pair_id": "sourdough-preparation-equivalence",
+        "orientation": "reverse",
+        "classification": "provisional-equivalence-control",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "Both definitions cover carrying out one or more bread-making stages on ingredients or dough to produce sourdough bread.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": "equivalent",
+        "expectation_status": "Provisional agent control requiring independent semantic review; not human gold."
+      }
+    },
+    {
+      "id": "sourdough-preparation-substitution-forward",
+      "local": {
+        "note_id": "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+        "number": "1.1.1"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-b3c126a2f54bc362dc4288323cc0579476ccfd35d7c2f23bc7835dd5b1428998"
+      },
+      "canonical": {
+        "state": "endpoint-030",
+        "id": "C030"
+      },
+      "review": {
+        "pair_id": "sourdough-preparation-substitution",
+        "orientation": "forward",
+        "classification": "provisional-semantic-control",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "Substitute the independently defined equivalent general sourdough-making endpoint in the time-purpose comparison.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": "A_contains_B",
+        "expectation_status": "Provisional agent control requiring independent semantic review; not human gold."
+      }
+    },
+    {
+      "id": "sourdough-preparation-substitution-reverse",
+      "local": {
+        "note_id": "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+        "number": "2.1.1"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-609a696fc6c3351168d83d1fa76f38e6eff319b90090aa02e086759ebdb24b18"
+      },
+      "canonical": {
+        "state": "endpoint-026",
+        "id": "C026"
+      },
+      "review": {
+        "pair_id": "sourdough-preparation-substitution",
+        "orientation": "reverse",
+        "classification": "provisional-semantic-control",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "Substitute the independently defined equivalent general sourdough-making endpoint in the time-purpose comparison.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": "B_contains_A",
+        "expectation_status": "Provisional agent control requiring independent semantic review; not human gold."
+      }
+    },
+    {
+      "id": "sourdough-general-substitution-forward",
+      "local": {
+        "note_id": "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+        "number": "2"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-40c6a17566393b4f58a57621dcf9f5067c0c7d19fbcdcb9ed1ed85fb09ae134b"
+      },
+      "canonical": {
+        "state": "endpoint-026",
+        "id": "C026"
+      },
+      "review": {
+        "pair_id": "sourdough-general-substitution",
+        "orientation": "forward",
+        "classification": "boundary-probe",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "Food preparation requires steps toward making food ready to eat. The sourdough-making endpoint does not explicitly require that eating-purpose boundary. Preserve both fixed meanings and assess the common information-connection contract without importing the original AS edge.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": null,
+        "expectation_status": "Unresolved semantic label; assess reversal and complete-chain consistency without prescribing the old positive or negative."
+      }
+    },
+    {
+      "id": "sourdough-general-substitution-reverse",
+      "local": {
+        "note_id": "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+        "number": "1.1.1"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-b3c126a2f54bc362dc4288323cc0579476ccfd35d7c2f23bc7835dd5b1428998"
+      },
+      "canonical": {
+        "state": "endpoint-028",
+        "id": "C028"
+      },
+      "review": {
+        "pair_id": "sourdough-general-substitution",
+        "orientation": "reverse",
+        "classification": "boundary-probe",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "Food preparation requires steps toward making food ready to eat. The sourdough-making endpoint does not explicitly require that eating-purpose boundary. Preserve both fixed meanings and assess the common information-connection contract without importing the original AS edge.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": null,
+        "expectation_status": "Unresolved semantic label; assess reversal and complete-chain consistency without prescribing the old positive or negative."
+      }
+    },
+    {
+      "id": "sourdough-time-purpose-original-forward",
+      "local": {
+        "note_id": "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+        "number": "1.1.1"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-b3c126a2f54bc362dc4288323cc0579476ccfd35d7c2f23bc7835dd5b1428998"
+      },
+      "canonical": {
+        "state": "endpoint-027",
+        "id": "C027"
+      },
+      "review": {
+        "pair_id": "sourdough-time-purpose-original",
+        "orientation": "forward",
+        "classification": "provisional-semantic-control",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "The time-occupying activity retains carrying out steps toward making sourdough and requires that purpose or presentation.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": "A_contains_B",
+        "expectation_status": "Provisional agent control requiring independent semantic review; not human gold."
+      }
+    },
+    {
+      "id": "sourdough-time-purpose-original-reverse",
+      "local": {
+        "note_id": "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+        "number": "1.1.1.1"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-fc13f461c249201ac092e36532a840f351cad1ef088bbd319ff60f76b16e55fe"
+      },
+      "canonical": {
+        "state": "endpoint-026",
+        "id": "C026"
+      },
+      "review": {
+        "pair_id": "sourdough-time-purpose-original",
+        "orientation": "reverse",
+        "classification": "provisional-semantic-control",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "The time-occupying activity retains carrying out steps toward making sourdough and requires that purpose or presentation.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": "B_contains_A",
+        "expectation_status": "Provisional agent control requiring independent semantic review; not human gold."
+      }
+    },
+    {
+      "id": "sourdough-time-equivalence-forward",
+      "local": {
+        "note_id": "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+        "number": "1.1.1.1"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-fc13f461c249201ac092e36532a840f351cad1ef088bbd319ff60f76b16e55fe"
+      },
+      "canonical": {
+        "state": "endpoint-030",
+        "id": "C030"
+      },
+      "review": {
+        "pair_id": "sourdough-time-equivalence",
+        "orientation": "forward",
+        "classification": "boundary-probe",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "The first endpoint permits sourdough-making presented OR undertaken as a way to occupy time; the second requires it to be presented as such. They must not be presumed equivalent. Assess whether the different presentation condition narrows scope, keeping their exact fixed definitions.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": null,
+        "expectation_status": "Unresolved semantic label; assess reversal and complete-chain consistency without prescribing the old positive or negative."
+      }
+    },
+    {
+      "id": "sourdough-time-equivalence-reverse",
+      "local": {
+        "note_id": "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+        "number": "2.1.1"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-609a696fc6c3351168d83d1fa76f38e6eff319b90090aa02e086759ebdb24b18"
+      },
+      "canonical": {
+        "state": "endpoint-027",
+        "id": "C027"
+      },
+      "review": {
+        "pair_id": "sourdough-time-equivalence",
+        "orientation": "reverse",
+        "classification": "boundary-probe",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "The first endpoint permits sourdough-making presented OR undertaken as a way to occupy time; the second requires it to be presented as such. They must not be presumed equivalent. Assess whether the different presentation condition narrows scope, keeping their exact fixed definitions.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": null,
+        "expectation_status": "Unresolved semantic label; assess reversal and complete-chain consistency without prescribing the old positive or negative."
+      }
+    },
+    {
+      "id": "sourdough-time-general-substitution-forward",
+      "local": {
+        "note_id": "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+        "number": "2"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-40c6a17566393b4f58a57621dcf9f5067c0c7d19fbcdcb9ed1ed85fb09ae134b"
+      },
+      "canonical": {
+        "state": "endpoint-027",
+        "id": "C027"
+      },
+      "review": {
+        "pair_id": "sourdough-time-general-substitution",
+        "orientation": "forward",
+        "classification": "boundary-probe",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "Food preparation requires steps toward making food ready to eat. The sourdough-making endpoint does not explicitly require that eating-purpose boundary. Preserve both fixed meanings and assess the common information-connection contract without importing the original AS edge.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": null,
+        "expectation_status": "Unresolved semantic label; assess reversal and complete-chain consistency without prescribing the old positive or negative."
+      }
+    },
+    {
+      "id": "sourdough-time-general-substitution-reverse",
+      "local": {
+        "note_id": "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+        "number": "1.1.1.1"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-fc13f461c249201ac092e36532a840f351cad1ef088bbd319ff60f76b16e55fe"
+      },
+      "canonical": {
+        "state": "endpoint-028",
+        "id": "C028"
+      },
+      "review": {
+        "pair_id": "sourdough-time-general-substitution",
+        "orientation": "reverse",
+        "classification": "boundary-probe",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "Food preparation requires steps toward making food ready to eat. The sourdough-making endpoint does not explicitly require that eating-purpose boundary. Preserve both fixed meanings and assess the common information-connection contract without importing the original AS edge.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": null,
+        "expectation_status": "Unresolved semantic label; assess reversal and complete-chain consistency without prescribing the old positive or negative."
+      }
+    },
+    {
+      "id": "mental-states-attention-forward",
+      "local": {
+        "note_id": "821011b60ccabb942d2540b722ea5d88f15484c407bfb77c9b6318c851eedb9f",
+        "number": "5"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-1b7df1412832aa92a643682c9d1f98902a08edf839b21b55751af0748bd0df1e"
+      },
+      "canonical": {
+        "state": "endpoint-035",
+        "id": "C035"
+      },
+      "review": {
+        "pair_id": "mental-states-attention",
+        "orientation": "forward",
+        "classification": "boundary-probe",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "The parent requires a person; the particular author is not explicitly identified as a person in the child string. Do not invent nonhuman identity as a counterexample or import a hidden human-identity fact.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": null,
+        "expectation_status": "Preflight demotion: no semantic gold; report interpretation consistency and unresolved scope separately."
+      }
+    },
+    {
+      "id": "mental-states-attention-reverse",
+      "local": {
+        "note_id": "821011b60ccabb942d2540b722ea5d88f15484c407bfb77c9b6318c851eedb9f",
+        "number": "5.1"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-381362e9dae8a2c98fc4cf78463347b3f87a67f27b4c19542789b3b9aa08d9bb"
+      },
+      "canonical": {
+        "state": "endpoint-034",
+        "id": "C034"
+      },
+      "review": {
+        "pair_id": "mental-states-attention",
+        "orientation": "reverse",
+        "classification": "boundary-probe",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "The parent requires a person; the particular author is not explicitly identified as a person in the child string. Do not invent nonhuman identity as a counterexample or import a hidden human-identity fact.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": null,
+        "expectation_status": "Preflight demotion: no semantic gold; report interpretation consistency and unresolved scope separately."
+      }
+    },
+    {
+      "id": "mental-states-thinking-forward",
+      "local": {
+        "note_id": "821011b60ccabb942d2540b722ea5d88f15484c407bfb77c9b6318c851eedb9f",
+        "number": "5"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-1b7df1412832aa92a643682c9d1f98902a08edf839b21b55751af0748bd0df1e"
+      },
+      "canonical": {
+        "state": "endpoint-036",
+        "id": "C036"
+      },
+      "review": {
+        "pair_id": "mental-states-thinking",
+        "orientation": "forward",
+        "classification": "boundary-probe",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "The parent requires a person; the particular author is not explicitly identified as a person in the child string. Preserve this boundary qualification without imposing either positive or negative gold.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": null,
+        "expectation_status": "Preflight demotion: no semantic gold; report interpretation consistency and unresolved scope separately."
+      }
+    },
+    {
+      "id": "mental-states-thinking-reverse",
+      "local": {
+        "note_id": "821011b60ccabb942d2540b722ea5d88f15484c407bfb77c9b6318c851eedb9f",
+        "number": "5.2"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-ef64532fee2be4368c019c95d193da574ae307f22a7a41b53c18b84d1f9075bf"
+      },
+      "canonical": {
+        "state": "endpoint-034",
+        "id": "C034"
+      },
+      "review": {
+        "pair_id": "mental-states-thinking",
+        "orientation": "reverse",
+        "classification": "boundary-probe",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "The parent requires a person; the particular author is not explicitly identified as a person in the child string. Preserve this boundary qualification without imposing either positive or negative gold.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": null,
+        "expectation_status": "Preflight demotion: no semantic gold; report interpretation consistency and unresolved scope separately."
+      }
+    },
+    {
+      "id": "mental-state-partial-overlap-forward",
+      "local": {
+        "note_id": "821011b60ccabb942d2540b722ea5d88f15484c407bfb77c9b6318c851eedb9f",
+        "number": "5.1"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-381362e9dae8a2c98fc4cf78463347b3f87a67f27b4c19542789b3b9aa08d9bb"
+      },
+      "canonical": {
+        "state": "endpoint-036",
+        "id": "C036"
+      },
+      "review": {
+        "pair_id": "mental-state-partial-overlap",
+        "orientation": "forward",
+        "classification": "boundary-probe",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "The two meanings distinguish diverted attention and self-described abnormal thinking. Preserve uncertainty about particular-episode identity rather than inventing unknown properties of the author.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expectation_status": "Unresolved semantic label; assess reversal and complete-chain consistency without prescribing the old positive or negative.",
+        "expected_relation": null
+      }
+    },
+    {
+      "id": "mental-state-partial-overlap-reverse",
+      "local": {
+        "note_id": "821011b60ccabb942d2540b722ea5d88f15484c407bfb77c9b6318c851eedb9f",
+        "number": "5.2"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-ef64532fee2be4368c019c95d193da574ae307f22a7a41b53c18b84d1f9075bf"
+      },
+      "canonical": {
+        "state": "endpoint-035",
+        "id": "C035"
+      },
+      "review": {
+        "pair_id": "mental-state-partial-overlap",
+        "orientation": "reverse",
+        "classification": "boundary-probe",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "The two meanings distinguish diverted attention and self-described abnormal thinking. Preserve uncertainty about particular-episode identity rather than inventing unknown properties of the author.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expectation_status": "Unresolved semantic label; assess reversal and complete-chain consistency without prescribing the old positive or negative.",
+        "expected_relation": null
+      }
+    },
+    {
+      "id": "metal-handles-signature-forward",
+      "local": {
+        "note_id": "4db3cf2df042910312e44810434a5c5da5d659f981b57f14eb9a8eec4a9631f4",
+        "number": "4"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-00a0c16c50868b89372b401e609957cf25963f72eede71ac5e03566ddcd9abdd"
+      },
+      "canonical": {
+        "state": "endpoint-059",
+        "id": "C059"
+      },
+      "review": {
+        "pair_id": "metal-handles-signature",
+        "orientation": "forward",
+        "classification": "provisional-semantic-control",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "The signature handles are expressly handles made of metal; the broad metal-handle kind does not require the brand design.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": "A_contains_B",
+        "expectation_status": "Provisional agent control requiring independent semantic review; not human gold."
+      }
+    },
+    {
+      "id": "metal-handles-signature-reverse",
+      "local": {
+        "note_id": "4db3cf2df042910312e44810434a5c5da5d659f981b57f14eb9a8eec4a9631f4",
+        "number": "4.1"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-c4224eeeda7077afe55006af7538cc89b07f2eb0bc8dae2b394b89941d54980a"
+      },
+      "canonical": {
+        "state": "endpoint-058",
+        "id": "C058"
+      },
+      "review": {
+        "pair_id": "metal-handles-signature",
+        "orientation": "reverse",
+        "classification": "provisional-semantic-control",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "The signature handles are expressly handles made of metal; the broad metal-handle kind does not require the brand design.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": "B_contains_A",
+        "expectation_status": "Provisional agent control requiring independent semantic review; not human gold."
+      }
+    },
+    {
+      "id": "metal-handles-alternatives-forward",
+      "local": {
+        "note_id": "4db3cf2df042910312e44810434a5c5da5d659f981b57f14eb9a8eec4a9631f4",
+        "number": "4"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-00a0c16c50868b89372b401e609957cf25963f72eede71ac5e03566ddcd9abdd"
+      },
+      "canonical": {
+        "state": "endpoint-066",
+        "id": "C066"
+      },
+      "review": {
+        "pair_id": "metal-handles-alternatives",
+        "orientation": "forward",
+        "classification": "provisional-semantic-control",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "Both steel and brass are metals, and both alternatives require a gripping handle role. Metal handles also admit other metals.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": "A_contains_B",
+        "expectation_status": "Provisional agent control requiring independent semantic review; not human gold."
+      }
+    },
+    {
+      "id": "metal-handles-alternatives-reverse",
+      "local": {
+        "note_id": "4db3cf2df042910312e44810434a5c5da5d659f981b57f14eb9a8eec4a9631f4",
+        "number": "4.2"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-565746d591a13f18c21b12cf9ef961ec172330e1caf49e30700e7febf402b82a"
+      },
+      "canonical": {
+        "state": "endpoint-058",
+        "id": "C058"
+      },
+      "review": {
+        "pair_id": "metal-handles-alternatives",
+        "orientation": "reverse",
+        "classification": "provisional-semantic-control",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "Both steel and brass are metals, and both alternatives require a gripping handle role. Metal handles also admit other metals.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": "B_contains_A",
+        "expectation_status": "Provisional agent control requiring independent semantic review; not human gold."
+      }
+    },
+    {
+      "id": "metal-handles-overlap-forward",
+      "local": {
+        "note_id": "4db3cf2df042910312e44810434a5c5da5d659f981b57f14eb9a8eec4a9631f4",
+        "number": "4.1"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-c4224eeeda7077afe55006af7538cc89b07f2eb0bc8dae2b394b89941d54980a"
+      },
+      "canonical": {
+        "state": "endpoint-066",
+        "id": "C066"
+      },
+      "review": {
+        "pair_id": "metal-handles-overlap",
+        "orientation": "forward",
+        "classification": "provisional-semantic-control",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "The brand-signature definition is not restricted to steel or brass; the steel-or-brass definition is not restricted to the brand-signature design.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": "neither",
+        "expectation_status": "Provisional agent control requiring independent semantic review; not human gold."
+      }
+    },
+    {
+      "id": "metal-handles-overlap-reverse",
+      "local": {
+        "note_id": "4db3cf2df042910312e44810434a5c5da5d659f981b57f14eb9a8eec4a9631f4",
+        "number": "4.2"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-565746d591a13f18c21b12cf9ef961ec172330e1caf49e30700e7febf402b82a"
+      },
+      "canonical": {
+        "state": "endpoint-059",
+        "id": "C059"
+      },
+      "review": {
+        "pair_id": "metal-handles-overlap",
+        "orientation": "reverse",
+        "classification": "provisional-semantic-control",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "The brand-signature definition is not restricted to steel or brass; the steel-or-brass definition is not restricted to the brand-signature design.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": "neither",
+        "expectation_status": "Provisional agent control requiring independent semantic review; not human gold."
+      }
+    },
+    {
+      "id": "negative-cooking-mental-states-forward",
+      "local": {
+        "note_id": "99e6a5148b40b59013d8a391f6f593cb8791c167eb445cf1f49c1565cefdbb92",
+        "number": "1"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-ea315c583ccad78ebf827ad75843b8f74f0a2b0f6d260c8f5a0b479038fd2454"
+      },
+      "canonical": {
+        "state": "endpoint-034",
+        "id": "C034"
+      },
+      "review": {
+        "pair_id": "negative-cooking-mental-states",
+        "orientation": "forward",
+        "classification": "provisional-negative-control",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "Heat-based food preparation and purpose-directed preparatory actions do not define psychological conditions of a mind; independent mental states do not establish a cooking role.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": "neither",
+        "expectation_status": "Provisional agent control requiring independent semantic review; not human gold."
+      }
+    },
+    {
+      "id": "negative-cooking-mental-states-reverse",
+      "local": {
+        "note_id": "821011b60ccabb942d2540b722ea5d88f15484c407bfb77c9b6318c851eedb9f",
+        "number": "5"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-1b7df1412832aa92a643682c9d1f98902a08edf839b21b55751af0748bd0df1e"
+      },
+      "canonical": {
+        "state": "endpoint-000",
+        "id": "C000"
+      },
+      "review": {
+        "pair_id": "negative-cooking-mental-states",
+        "orientation": "reverse",
+        "classification": "provisional-negative-control",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "Heat-based food preparation and purpose-directed preparatory actions do not define psychological conditions of a mind; independent mental states do not establish a cooking role.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": "neither",
+        "expectation_status": "Provisional agent control requiring independent semantic review; not human gold."
+      }
+    },
+    {
+      "id": "negative-food-preparation-mental-states-forward",
+      "local": {
+        "note_id": "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+        "number": "2"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-40c6a17566393b4f58a57621dcf9f5067c0c7d19fbcdcb9ed1ed85fb09ae134b"
+      },
+      "canonical": {
+        "state": "endpoint-034",
+        "id": "C034"
+      },
+      "review": {
+        "pair_id": "negative-food-preparation-mental-states",
+        "orientation": "forward",
+        "classification": "provisional-negative-control",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "Working on food toward readiness to eat and psychological conditions of a mind are independently defined topics; association does not establish either required topic connection.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": "neither",
+        "expectation_status": "Provisional agent control requiring independent semantic review; not human gold."
+      }
+    },
+    {
+      "id": "negative-food-preparation-mental-states-reverse",
+      "local": {
+        "note_id": "821011b60ccabb942d2540b722ea5d88f15484c407bfb77c9b6318c851eedb9f",
+        "number": "5"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-1b7df1412832aa92a643682c9d1f98902a08edf839b21b55751af0748bd0df1e"
+      },
+      "canonical": {
+        "state": "endpoint-028",
+        "id": "C028"
+      },
+      "review": {
+        "pair_id": "negative-food-preparation-mental-states",
+        "orientation": "reverse",
+        "classification": "provisional-negative-control",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "Working on food toward readiness to eat and psychological conditions of a mind are independently defined topics; association does not establish either required topic connection.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": "neither",
+        "expectation_status": "Provisional agent control requiring independent semantic review; not human gold."
+      }
+    },
+    {
+      "id": "negative-metal-handles-attention-forward",
+      "local": {
+        "note_id": "4db3cf2df042910312e44810434a5c5da5d659f981b57f14eb9a8eec4a9631f4",
+        "number": "4"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-00a0c16c50868b89372b401e609957cf25963f72eede71ac5e03566ddcd9abdd"
+      },
+      "canonical": {
+        "state": "endpoint-035",
+        "id": "C035"
+      },
+      "review": {
+        "pair_id": "negative-metal-handles-attention",
+        "orientation": "forward",
+        "classification": "provisional-negative-control",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "A physical metal handhold and the author attention state retain distinct topics; neither meaning establishes a qualifying connection to the other.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": "neither",
+        "expectation_status": "Provisional agent control requiring independent semantic review; not human gold."
+      }
+    },
+    {
+      "id": "negative-metal-handles-attention-reverse",
+      "local": {
+        "note_id": "821011b60ccabb942d2540b722ea5d88f15484c407bfb77c9b6318c851eedb9f",
+        "number": "5.1"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-381362e9dae8a2c98fc4cf78463347b3f87a67f27b4c19542789b3b9aa08d9bb"
+      },
+      "canonical": {
+        "state": "endpoint-058",
+        "id": "C058"
+      },
+      "review": {
+        "pair_id": "negative-metal-handles-attention",
+        "orientation": "reverse",
+        "classification": "provisional-negative-control",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "A physical metal handhold and the author attention state retain distinct topics; neither meaning establishes a qualifying connection to the other.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": "neither",
+        "expectation_status": "Provisional agent control requiring independent semantic review; not human gold."
+      }
+    },
+    {
+      "id": "negative-rosemary-mental-states-forward",
+      "local": {
+        "note_id": "03313183e42615c765021814b8c6b3de61c7ff95f89e75f5cebe588c1bcb0f4a",
+        "number": "2"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-f6d7ecb82c7323b5030fcf83cf62f5444b03ce2afa30f49fc79adad1688db47c"
+      },
+      "canonical": {
+        "state": "endpoint-034",
+        "id": "C034"
+      },
+      "review": {
+        "pair_id": "negative-rosemary-mental-states",
+        "orientation": "forward",
+        "classification": "provisional-negative-control",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "An aromatic plant or seasoning leaves and psychological conditions of a mind retain distinct topics; neither meaning establishes a qualifying connection to the other.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": "neither",
+        "expectation_status": "Provisional agent control requiring independent semantic review; not human gold."
+      }
+    },
+    {
+      "id": "negative-rosemary-mental-states-reverse",
+      "local": {
+        "note_id": "821011b60ccabb942d2540b722ea5d88f15484c407bfb77c9b6318c851eedb9f",
+        "number": "5"
+      },
+      "local_meaning_from": {
+        "experiment": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-1b7df1412832aa92a643682c9d1f98902a08edf839b21b55751af0748bd0df1e"
+      },
+      "canonical": {
+        "state": "endpoint-031",
+        "id": "C031"
+      },
+      "review": {
+        "pair_id": "negative-rosemary-mental-states",
+        "orientation": "reverse",
+        "classification": "provisional-negative-control",
+        "expectation_authority": "provisional-agent-assessment",
+        "user_gold": false,
+        "historical_AS_relationship_is_gold": false,
+        "expected_relation_input_view": "symmetric_fixed_meanings",
+        "expectation_basis": "An aromatic plant or seasoning leaves and psychological conditions of a mind retain distinct topics; neither meaning establishes a qualifying connection to the other.",
+        "qualification": "Selected from one frozen Bootstrap-v109 producer cohort. Independent producer acceptance is not pair-label certification. Review exact meanings before scoring; the original post, contexts, trees, receipts and assessments remain outside Compare input.",
+        "expected_relation": "neither",
+        "expectation_status": "Provisional agent control requiring independent semantic review; not human gold."
+      }
+    }
+  ]
+}

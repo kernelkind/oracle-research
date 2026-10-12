@@ -584,6 +584,75 @@ def create_source(source, *, base, read, local_only=False, load_report=None):
     return cases, {'version': version, 'cases': len(cases), 'application_allowed': False}
 
 
+def create_saved_comparisons(source, *, base, read, load_report):
+    """Retain exact receipt-bound A/B inputs; old answers remain audit evidence."""
+    _fields(source, 'saved comparisons', {'schema_version', 'saved_comparisons'})
+    selections = source['saved_comparisons']
+    if (type(source['schema_version']) is not int or source['schema_version'] != 1
+            or not isinstance(selections, list) or not 1 <= len(selections) <= 128):
+        raise ValueError('expected schema 1 and 1 through 128 saved comparisons')
+    if load_report is None:
+        raise ValueError('saved comparisons require validated experiment reports')
+    cases, identifiers = [], set()
+    for selection in selections:
+        fields = {'id', 'experiment', 'case_id', 'reverse'}
+        if isinstance(selection, dict):
+            fields.update(key for key in ('review', 'record_sha256') if key in selection)
+        _fields(selection, 'saved comparison selection', fields)
+        identifier = engine._expect_identifier(selection['id'], 'comparison id')
+        if identifier in identifiers:
+            raise ValueError('duplicate saved comparison id')
+        identifiers.add(identifier)
+        if type(selection['reverse']) is not bool:
+            raise ValueError('saved comparison reverse must be boolean')
+        review = selection.get('review', {})
+        if not isinstance(review, dict):
+            raise ValueError('saved comparison review must be an object')
+        reference = selection['experiment']
+        _fields(reference, 'saved comparison reference', {'path', 'sha256'})
+        directory = engine._resolve_path(reference['path'], 'saved comparison', Path(base))
+        expected = engine._expect_sha256(reference['sha256'], 'saved comparison sha256')
+        envelope_path = directory / 'experiment.json'
+        if engine._sha256_file(envelope_path) != expected:
+            raise ValueError('saved comparison reference hash differs')
+        read(envelope_path)
+        report = load_report(directory)
+        if report['adapter'] not in {'generic', 'hierarchy_node_pairs'}:
+            raise ValueError('saved comparison requires a generic or hierarchy_node_pairs experiment')
+        case_id = engine._expect_identifier(selection['case_id'], 'saved comparison case_id')
+        matching = [case for case in report['cases'] if case['id'] == case_id]
+        if (len(matching) != 1 or matching[0]['status'] != 'valid'
+                or not matching[0].get('receipt')):
+            raise ValueError('saved comparison requires a valid receipt-bound case')
+        saved = matching[0]
+        if 'record_sha256' in selection:
+            expected_receipt = engine._expect_sha256(
+                selection['record_sha256'], 'saved comparison record_sha256')
+            if saved['receipt']['record_sha256'] != expected_receipt:
+                raise ValueError('saved comparison receipt hash differs')
+        _fields(saved['inputs'], 'saved comparison inputs', {'INPUT_JSON'})
+        original = json.loads(saved['inputs']['INPUT_JSON'],
+                              object_pairs_hook=engine._position_decoder().unique_object)
+        _fields(original, 'saved comparison input', {'A', 'B'})
+        for role in ('A', 'B'):
+            _fields(original[role], 'saved comparison ' + role, {'subject', 'meaning'})
+            for key in ('subject', 'meaning'):
+                text = engine._expect_string(original[role][key], 'saved comparison ' + key)
+                if not text.strip():
+                    raise ValueError('saved comparison ' + key + ' must be nonempty text')
+        validate(saved['output'], diagnostics=True, symmetric=True)
+        raw = saved['inputs']['INPUT_JSON']
+        if selection['reverse']:
+            raw = json.dumps({'A': original['B'], 'B': original['A']}, ensure_ascii=False)
+        cases.append(dict(id=identifier, inputs={'INPUT_JSON': raw}, evidence=dict(
+            saved_comparison=dict(selection=selection, experiment=str(directory),
+                prompt_id=report['prompt_id'], input_sha256=saved['input_sha256'],
+                receipt=saved['receipt'], parsed=saved['parsed'], original_input=original,
+                original_evidence=saved.get('evidence', {})),
+            review=review, application_allowed=False)))
+    return cases, dict(input_view='saved_comparisons', cases=len(cases), application_allowed=False)
+
+
 def create_counterexample_checks(source, *, base, read, load_report):
     """Bind exact saved proposals to their unchanged meanings without old labels."""
     engine._expect_fields(source, 'saved counterexample checks',

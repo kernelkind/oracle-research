@@ -6868,3 +6868,114 @@ for that admission. The ceremonial-gold witness, whole pair relation, other
 Food definitions and general comparison reliability remain open. No prompt,
 frozen input, native output, comparison schema or hierarchy is changed, and
 this review is not transferred to fresh producer definitions.
+
+## Independently frozen Bootstrap-v109 scope screen
+
+This panel tests unchanged Compare-v179 against exact meanings from one completed
+Bootstrap-v109 producer experiment, `bootstrap-v109-scope-preservation-v1/candidate`,
+whose original subjects derive from ASv6.100. It does not regenerate meanings or
+turn original AS ancestry into containment gold. The native canonical
+`meaning_from` resolver binds each endpoint to its original selected entry,
+full post/tree, valid producer output and receipt, using the same validation as
+`local_meaning_from`. Both producer references remain outside model input.
+
+The [v1 source](hierarchy-compare-b109-closed-scope-source-v1.json) is an unrun
+preliminary preparation. Independent preflight withdraws five provisional
+labels before the [v2 screen](hierarchy-compare-v179-b109-closed-scope-v2.spec.json).
+After response review, the grips versus handholds pair also loses its provisional
+positive expectation. The final
+[v3 source](hierarchy-compare-b109-closed-scope-source-v3.json) therefore has
+**ten provisionally labeled pairs and fifteen unresolved probes**, all in both
+A/B orientations. None of these labels is new human gold. Earlier source
+versions retain their pre-call judgments rather than rewriting the record to
+match responses.
+
+All fifty first-draw answers validate. The twenty responses for the final ten
+controls match their provisional labels and pass independent directional-proof
+review. Among the fifteen probes, five pairs have conflicting reversals:
+`rocket-root-potatoes`, `rocket-root-substitution`,
+`sourdough-food-preparation`, `mental-states-attention`, and
+`metal-handles-alternatives`. A reverse-orientation equivalence-substitution
+witness also remains qualified. These establish inconsistency of fixed endpoints,
+not which individual interpretation is right.
+
+The original v2 metadata omitted the native checker's isolated-pair tags, so its
+empty consistency result did not check these reversals. A new v3 preparation
+adds only the required outside-input `comparison_role` and `reversal_pair`
+metadata and collects **fifty exact receipt reuses, zero new attempts**. Its
+native checker covers all twenty-five pairs. Model-facing inputs and original
+outputs remain unchanged. Artifacts are under
+`target/compare-v179-b109-closed-scope-v{2,3}`; the v3 completed receipt collection
+is `draw1-receipts`.
+
+The Mental states/author probe compares a person-mind condition with the
+particular author's unfocused attention. V179's first forward answer substitutes
+a nonperson animal author, while its reverse assumes a person. A fresh exact
+two-case repeat again invents an elephant author in one direction and assumes
+the author is a person in the other. The particular referent and unknown-property
+treatment need qualification; the complete pair label remains unresolved.
+The metal-handles probe separately contrasts required handholds with grips:
+a machine-only grip explicitly lacking a handhold is a candidate separating
+case. Its former positive expectation is not retained as negative gold for the
+newer response.
+
+The fifty-case first draw uses 51 attempts including one warmup, with no failures,
+retries or missing usage, and $0.2582132 native API-equivalent cost. The two-case
+author repeat adds three attempts including its warmup. Exact receipt collection
+is not an additional draw. All use Sol 6.1 medium/SSE, automatic prefix caching,
+the shared runner and the persistent sprint counter.
+
+### Experimental Compare-v186: particular-entity rule
+
+[Compare-v186](Hierarchy-compare-v186.md) replaces only V179's unqualified
+permission for unstated conditions to vary. General kinds retain that permission;
+unknown properties of a particular entity or event may not be chosen either
+to construct a counterexample or to prove coverage. The examples, four-field
+schema, A/B-only inputs and other rules stay identical. The native
+[edit source](hierarchy-compare-v186-fixed-entity.edits.json) and revision receipt
+preserve the baseline hash and exact change.
+
+The first fresh targeted draw uses the twenty unchanged control inputs plus
+the author probe in both orientations. All twenty-two answers validate;
+all twenty control labels survive, and all eleven reversal pairs agree. Both
+author answers are now positive and no longer invent an animal. Nevertheless,
+their proofs assert that the particular author is a person without separately
+closing the disputed class-membership inference. Independent review preserves
+both the ordinary person-author reading and the broader-originator qualification;
+the positives are not established semantic failures or accepted human gold.
+**V186 is not adopted and receives no broader confirmation run on the strength
+of consistent labels alone.**
+
+Native artifacts are `target/compare-v186-fixed-entity-v1/draw1`; the run uses
+23 fresh attempts including one warmup, zero answer reuse, retries, failures or
+missing usage, and $0.1426876 native API-equivalent cost. The persistent counter
+reaches 19,454/20,000. This small screen does not address general-kind purpose
+or non-food proof gaps, and supplies no broad comparison qualification.
+
+## Separate HR05 fixed-input qualification
+
+HR05's exact original comparison inputs remain a separate panel, with their own
+Bootstrap-v109 and Consolidation-v4 provenance. They are not spliced into the
+independently frozen producer screen above. Food/Bread and Equipment/Lunch boxes
+raise universal-proof questions: a food-kind assertion must establish the
+specific nourishment purpose where required; an intended food container must
+establish Equipment's non-food and designed-task conditions. These are review
+questions, not predetermined negative labels. Named-brand unknown properties,
+general restaurant hypotheses and intended versus suitable nourishment supply
+contrasting controls. Historical HR05 labels alone are not semantic gold.
+
+### User-reviewed C035/MrBeast classification
+
+The user settles the exact `batch-00092/experiment`, case `C025`, comparison:
+
+> ok ig compare was fine here. it was the expl meaning that was wrong for c035.
+
+C035's supplied Material resources meaning admits organisms suitable as means
+for practical tasks. The saved positive proof covers Jimmy Donaldson's specified
+video-creation role under that definition. The user classifies the problem as
+the **C035 explicit meaning**, not a Compare rejection requirement. C035 was
+produced by Consolidation-v4, not Bootstrap. Preserve the exact positive comparison
+receipt `38f00000af359ee910711db1ec415b9b3ee93c3099152c4b45eb197fe322fc38`
+as a reviewed control; this is not approval of the parent meaning, hierarchy
+placement, or a general resource/person relationship. No historical meaning
+or graph is repaired here.

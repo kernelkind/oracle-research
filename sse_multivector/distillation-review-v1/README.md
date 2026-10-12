@@ -6317,9 +6317,158 @@ Low is the lowest passing effort tested on this small panel. Its small
 additional saving versus medium does not establish equivalent reliability
 on harder cases. Matching premises still use xhigh/mechanical results;
 matching, post support and broader relationship/search qualification remain
-open. Prompts, schemas and production defaults stay unchanged. The next
-useful test expands low to four complete saved answers with more positive
-placement and missing-restriction cases before returning to larger panels.
+open. Prompts, schemas and production defaults stay unchanged. The following
+four-note diagnostic expands the selected placement and restriction checks.
+
+### Four-note expansion and step back to medium
+
+The user approves a four-note trial with harder positive and negative cases.
+To keep iteration bounded, native preparation reuses existing audited xhigh
+DCSv1/DSLv10 inputs and source judgments from four complete saved answers;
+this is a **targeted 20-judgment regression**, not a complete evaluation of
+every subject in those answers. The original sixty are development-exposed,
+and no new selection or reserved-test content is introduced.
+
+| Saved answer | Selected coverage searches | Additional DSL checks |
+| --- | --- | --- |
+| `M01-checkpoint-200-N0054` | Five ETF meanings with a valid Markets witness. | Five exact witness pairs. |
+| `M02-checkpoint-200-N0015` | Sisters beneath Girls and women. | Its witness pair and actual Body parts → The body edge, expected false because the child omits the part-of restriction. |
+| `M01-checkpoint-600-N0017` | Two negatives and Peacock streaming service beneath Television. | Exact Peacock/Television witness pair. |
+| `M01-baseline-N0076` | Three NFT-related negative searches. | None. |
+
+Exact source case IDs, inputs, prompt bytes, schemas and model retain parity.
+The twelve searches have **seven established positive and five negative
+judgments**; seven DSL witnesses are true and the actual whole-body edge is
+false. Peacock's corrected positive interpretation was established before
+this trial. Older false/null expectation metadata and provisional uncertainty
+remain preserved; automatic agreement with that metadata is not the semantic
+score. Existing native matching/self-guard snapshots remain frozen at xhigh
+or mechanical results. Matching and post support are not retested here.
+
+Low passes **19/20** full-output audits: **11/12 searches** and **8/8 DSL
+checks**. It incorrectly returns null for Peacock streaming service despite
+the valid Television candidate. Its explanation adds a requirement for
+specific television content or activities and uses film offerings to exclude
+the fixed TV-distribution service. The simultaneous low DSL correctly accepts
+that pair; that agreement does not itself settle truth. The already-established
+source interpretation supplies the error judgment. One weak non-review-post
+illustration in another otherwise-sound rejection is caveated in native review,
+with its valid missing-review-subject restriction retained as the basis.
+
+The **five-percentage-point loss** exceeds the user's approved two-point
+allowance, so further low expansion stops. Under the standing step-up policy,
+the exact same twenty cases run at medium immediately. Independent complete
+output audit accepts **20/20**, including the corrected Television witness;
+the weak illustration remains caveated. This is the lowest passing effort on
+this expanded panel, not a general reliability or deployment qualification.
+
+| Native accounting | Low | Medium |
+| --- | ---: | ---: |
+| Fresh attempts, including three warmups | 23 | 23 |
+| Input tokens | 35,442 | 35,442 |
+| Cached input tokens | 4,096 | 4,096 |
+| Output tokens, including reasoning | 4,948 | 5,738 |
+| Reasoning tokens, already in output | 819 | 1,790 |
+| API-equivalent cost | $0.1207736 | $0.1286736 |
+| Concurrent run span, including warming | 27.871 s | 26.054 s |
+
+Eight independent groups run together at each level. Both runs have no
+retries, failures, reuse or missing usage. Four of twenty comparison requests
+receive cache hits; warmup overhead still yields negative net savings of
+$0.0011036 at low and $0.0021636 at medium. Single-case groups prioritize the
+comparison and skip warming. Both levels' outputs, current native reviews,
+scheduling and usage summaries remain ignored under `fresh-dcs/low-four/`,
+`fresh-dcs/medium-four/` and their parent in the retained worktree. All protected
+source hashes pass. Prompts, schemas, review precedence and production defaults
+stay unchanged. The following trial tests matching and post support at medium
+on these same four answers before increasing note count.
+
+### Medium matching and support on the same four answers
+
+The user approves DSMv3 matching and DSSv2 post support at medium on the same
+ETF, family, television and NFT answers. Native preparation preserves all
+244 occurrences, exact inputs, prompt bytes, schemas, model and cache settings.
+Without `--repeat`, **58 trusted mechanical decisions** require no inference;
+the other 186 occurrences use **90 distinct semantic calls** and **96 duplicate
+reuses**. Independent groups run concurrently through the shared queue.
+
+Frozen source audits supply expectations, including the established corrections
+for financial Speculation and digital Posting. Original expectation metadata
+remains unchanged: raw agreement with its obsolete null labels is not the
+correctness score. Five distinct matching interpretations remain unresolved:
+family Girls and women/Girls, two television review-scope inputs, and NFT
+Digital. They are excluded from the resolved-decision denominator at every
+effort. YouTube matching has a resolved null decision but retains a separate
+platform/media explanation uncertainty.
+
+| Medium check | Resolved semantic decisions correct | Unresolved interpretations |
+| --- | ---: | ---: |
+| Matching | 39/40 | 5 |
+| Post support | 45/45 | 0 |
+
+Medium incorrectly returns null for television **Posting**, reasoning that
+Post sharing adds a narrower restriction. The frozen source interpretation
+already establishes their same general digital activity in this context;
+DSMv3 permits using the post to interpret the supplied wording. Matching's
+**2.5-percentage-point loss** exceeds the approved two-point allowance. Under
+the standing step-up policy, expansion at medium stops for matching and the
+same five matching groups run at high. Support retains its passing medium
+evidence. No prompt or source-label change is introduced.
+
+Native medium reviews cover all ninety distinct semantic outputs: **83 accept,
+one reject and six uncertain**. Five uncertainties concern interpretations;
+the sixth concerns the correct YouTube null explanation. All mechanical
+proofs, duplicate output identities and protected source bindings pass.
+The nine groups finish in **24.625 seconds**, with **91 fresh attempts**
+including one eligible family-matching warmup and no retries, failures or
+missing usage. Native accounting records 70,061 input tokens, 13,824 cached
+input tokens and 5,221 output tokens including 1,106 reasoning tokens.
+API-equivalent cost is **$0.1937144**; twelve comparison requests receive
+cache hits. Net savings including warming are **$0.0230096 (10.62%)**.
+Support has no eligible warmed prefix and receives no cached tokens.
+
+Artifacts and exact-output-bound reviews remain ignored beneath
+`fresh-dcs/medium-matching-support/`, with native usage reports in its parent.
+This is a development regression on four exposed answers, not unseen-data
+accuracy or a complete coverage/relationship rerun. Production defaults stay
+unchanged; frozen references require retaining the task worktree.
+
+### High matching step-up on the same four answers
+
+Only matching steps up. Native `--from` preparations retain the same 122
+occurrences, DSMv3, exact inputs, mechanical proofs and cache policy. All
+**40 resolved semantic matching decisions are correct** at high; the five
+pre-existing interpretation uncertainties remain unscored. Posting now matches
+T11 Post sharing, with a sound general-activity explanation and no added
+content or destination restriction. Financial Speculation retains its accepted
+T10 match. No source labels or original audit records are rewritten.
+
+Full-output reviews are **37 accept and eight uncertain, with no rejects**.
+Besides the five interpretation uncertainties, three correct NFT null
+decisions retain explanation-only caveats: YouTube/platform versus media,
+YouTube URLs/links versus media, and an unestablished video-presence premise
+for YouTube video links. The latter two were accepted at medium; high is not
+uniformly better on explanations. These caveats remain visible and are not
+converted into passing full-record audits or false decision errors.
+
+All five groups complete concurrently in **25.040 seconds**. The 29 mechanical
+occurrences use no inference, and 48 duplicate occurrences reuse exact fresh
+outputs. Native accounting records **46 attempts**, including one eligible
+warmup, with no retries, failures or missing usage: 38,798 input tokens,
+8,064 cached input tokens, and 4,076 output tokens including 1,865 reasoning
+tokens. API-equivalent cost is **$0.1191624**; seven comparison requests have
+cache hits. Net savings including warming are **$0.0118556 (9.05%)**.
+Protected source bindings and exact input/output review hashes pass.
+
+Ignored experiments, reviews and native usage summaries remain under
+`fresh-dcs/high-matching/` and its parent. Together these trials leave **high
+matching and medium post support** as candidates for expansion, alongside
+the earlier targeted medium DCSv1/DSLv10 evidence. They do not establish a
+global minimum effort or unseen-data accuracy. The next useful test runs the
+complete review process on these four answers at those candidate efforts
+before increasing note count; coverage and relationships have so far been
+retested only on selected judgments. Prompts, schemas and production defaults
+remain unchanged.
 
 ## Actual distilled wording: offline preview (October 8)
 

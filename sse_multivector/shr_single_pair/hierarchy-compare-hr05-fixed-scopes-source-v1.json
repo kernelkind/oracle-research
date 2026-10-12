@@ -1,0 +1,473 @@
+{
+  "schema_version": 1,
+  "saved_comparisons": [
+    {
+      "id": "hr05-food-bread-nourishment-forward",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hierarchy-hr05-twenty-four-note-v1/trial/batch-00049/experiment",
+        "sha256": "0629a7322d35bf4931f00e3412eab46c4b1509abd4d2acf525c9bea82bb7b2ea"
+      },
+      "case_id": "C015",
+      "reverse": false,
+      "review": {
+        "panel": "HR05 frozen comparison evidence",
+        "pair_id": "food-bread-nourishment",
+        "orientation": "forward",
+        "classification": "unresolved-scope-probe",
+        "expected_relation": null,
+        "expectation_authority": "unresolved",
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "purpose": "Scope probe: does the exact general Bread kind necessarily preserve the parent's nourishment intention? Preserve the food kind and making process; do not import another Food definition.",
+        "source_cohort": {
+          "hierarchy": "HR05",
+          "subject_prompt": "ASv6.100",
+          "meaning_prompts": [
+            "Hierarchy-bootstrap-v109",
+            "Hierarchy-consolidation-v4"
+          ],
+          "comparison_prompt": "Hierarchy-compare-v179",
+          "qualification": "All supplied scopes are the exact saved endpoints from one HR05 construction. Consolidation-generated scopes are deliberately retained alongside Bootstrap-generated scopes; this is not the independent Bootstrap-only 115-entry panel."
+        },
+        "original_compare_receipt": {
+          "results_path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hierarchy-hr05-twenty-four-note-v1/trial/batch-00049/experiment/run/results.jsonl",
+          "record_sha256": "2d1014137d8e677470ce0f45324ed3e95cae0ab81ae18af10010b3a60d26bb22"
+        },
+        "original_input_sha256": "5fde109a2694d1112c353eac1397a985b2f3e2baf41acf0c551da02e2431e1b2",
+        "application_allowed": false,
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "food-bread-nourishment"
+      },
+      "record_sha256": "2d1014137d8e677470ce0f45324ed3e95cae0ab81ae18af10010b3a60d26bb22"
+    },
+    {
+      "id": "hr05-food-bread-nourishment-reverse",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hierarchy-hr05-twenty-four-note-v1/trial/batch-00049/experiment",
+        "sha256": "0629a7322d35bf4931f00e3412eab46c4b1509abd4d2acf525c9bea82bb7b2ea"
+      },
+      "case_id": "C015",
+      "reverse": true,
+      "review": {
+        "panel": "HR05 frozen comparison evidence",
+        "pair_id": "food-bread-nourishment",
+        "orientation": "reverse",
+        "classification": "unresolved-scope-probe",
+        "expected_relation": null,
+        "expectation_authority": "unresolved",
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "purpose": "Scope probe: does the exact general Bread kind necessarily preserve the parent's nourishment intention? Preserve the food kind and making process; do not import another Food definition.",
+        "source_cohort": {
+          "hierarchy": "HR05",
+          "subject_prompt": "ASv6.100",
+          "meaning_prompts": [
+            "Hierarchy-bootstrap-v109",
+            "Hierarchy-consolidation-v4"
+          ],
+          "comparison_prompt": "Hierarchy-compare-v179",
+          "qualification": "All supplied scopes are the exact saved endpoints from one HR05 construction. Consolidation-generated scopes are deliberately retained alongside Bootstrap-generated scopes; this is not the independent Bootstrap-only 115-entry panel."
+        },
+        "original_compare_receipt": {
+          "results_path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hierarchy-hr05-twenty-four-note-v1/trial/batch-00049/experiment/run/results.jsonl",
+          "record_sha256": "2d1014137d8e677470ce0f45324ed3e95cae0ab81ae18af10010b3a60d26bb22"
+        },
+        "original_input_sha256": "5fde109a2694d1112c353eac1397a985b2f3e2baf41acf0c551da02e2431e1b2",
+        "application_allowed": false,
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "food-bread-nourishment"
+      },
+      "record_sha256": "2d1014137d8e677470ce0f45324ed3e95cae0ab81ae18af10010b3a60d26bb22"
+    },
+    {
+      "id": "hr05-equipment-lunchboxes-forward",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hierarchy-hr05-twenty-four-note-v1/trial/batch-00075/experiment",
+        "sha256": "57c1160433dde85aed3ccee0bb53da620cd1d30f319a6aeccc0cb990ccd13a5f"
+      },
+      "case_id": "C019",
+      "reverse": false,
+      "review": {
+        "panel": "HR05 frozen comparison evidence",
+        "pair_id": "equipment-lunchboxes",
+        "orientation": "forward",
+        "classification": "unresolved-scope-probe",
+        "expected_relation": null,
+        "expectation_authority": "unresolved",
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "purpose": "Scope probe: whether the portable lunch-food-container meaning necessarily supplies the parent's non-food and designed-practical-task requirements. The old universal positive is not gold.",
+        "source_cohort": {
+          "hierarchy": "HR05",
+          "subject_prompt": "ASv6.100",
+          "meaning_prompts": [
+            "Hierarchy-bootstrap-v109",
+            "Hierarchy-consolidation-v4"
+          ],
+          "comparison_prompt": "Hierarchy-compare-v179",
+          "qualification": "All supplied scopes are the exact saved endpoints from one HR05 construction. Consolidation-generated scopes are deliberately retained alongside Bootstrap-generated scopes; this is not the independent Bootstrap-only 115-entry panel."
+        },
+        "original_compare_receipt": {
+          "results_path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hierarchy-hr05-twenty-four-note-v1/trial/batch-00075/experiment/run/results.jsonl",
+          "record_sha256": "ae8be6073a52f4b79eabf1ff019f1f579a68c3f4408d6c2b0444f5087af120c9"
+        },
+        "original_input_sha256": "34a11112115cded650447177b7064ebc31efd2cd58a6e3545c0caa8f9f721bd0",
+        "application_allowed": false,
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "equipment-lunchboxes"
+      },
+      "record_sha256": "ae8be6073a52f4b79eabf1ff019f1f579a68c3f4408d6c2b0444f5087af120c9"
+    },
+    {
+      "id": "hr05-equipment-lunchboxes-reverse",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hierarchy-hr05-twenty-four-note-v1/trial/batch-00075/experiment",
+        "sha256": "57c1160433dde85aed3ccee0bb53da620cd1d30f319a6aeccc0cb990ccd13a5f"
+      },
+      "case_id": "C019",
+      "reverse": true,
+      "review": {
+        "panel": "HR05 frozen comparison evidence",
+        "pair_id": "equipment-lunchboxes",
+        "orientation": "reverse",
+        "classification": "unresolved-scope-probe",
+        "expected_relation": null,
+        "expectation_authority": "unresolved",
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "purpose": "Scope probe: whether the portable lunch-food-container meaning necessarily supplies the parent's non-food and designed-practical-task requirements. The old universal positive is not gold.",
+        "source_cohort": {
+          "hierarchy": "HR05",
+          "subject_prompt": "ASv6.100",
+          "meaning_prompts": [
+            "Hierarchy-bootstrap-v109",
+            "Hierarchy-consolidation-v4"
+          ],
+          "comparison_prompt": "Hierarchy-compare-v179",
+          "qualification": "All supplied scopes are the exact saved endpoints from one HR05 construction. Consolidation-generated scopes are deliberately retained alongside Bootstrap-generated scopes; this is not the independent Bootstrap-only 115-entry panel."
+        },
+        "original_compare_receipt": {
+          "results_path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hierarchy-hr05-twenty-four-note-v1/trial/batch-00075/experiment/run/results.jsonl",
+          "record_sha256": "ae8be6073a52f4b79eabf1ff019f1f579a68c3f4408d6c2b0444f5087af120c9"
+        },
+        "original_input_sha256": "34a11112115cded650447177b7064ebc31efd2cd58a6e3545c0caa8f9f721bd0",
+        "application_allowed": false,
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "equipment-lunchboxes"
+      },
+      "record_sha256": "ae8be6073a52f4b79eabf1ff019f1f579a68c3f4408d6c2b0444f5087af120c9"
+    },
+    {
+      "id": "hr05-particular-brand-commercial-status-forward",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hierarchy-hr05-twenty-four-note-v1/trial/batch-00077/experiment",
+        "sha256": "5bbb75a2abedb2bea9d612b0c493b30d0e505c2f5110a0265623d455087d0f1c"
+      },
+      "case_id": "C005",
+      "reverse": false,
+      "review": {
+        "panel": "HR05 frozen comparison evidence",
+        "pair_id": "particular-brand-commercial-status",
+        "orientation": "forward",
+        "classification": "unresolved-scope-probe",
+        "expected_relation": null,
+        "expectation_authority": "unresolved",
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "purpose": "Particular-entity preservation probe: retain the same Buster + Punch. Do not assign unknown commercial or noncommercial status to construct a case; determine coverage or unresolved qualification from the supplied meaning and necessary implications.",
+        "source_cohort": {
+          "hierarchy": "HR05",
+          "subject_prompt": "ASv6.100",
+          "meaning_prompts": [
+            "Hierarchy-bootstrap-v109",
+            "Hierarchy-consolidation-v4"
+          ],
+          "comparison_prompt": "Hierarchy-compare-v179",
+          "qualification": "All supplied scopes are the exact saved endpoints from one HR05 construction. Consolidation-generated scopes are deliberately retained alongside Bootstrap-generated scopes; this is not the independent Bootstrap-only 115-entry panel."
+        },
+        "original_compare_receipt": {
+          "results_path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hierarchy-hr05-twenty-four-note-v1/trial/batch-00077/experiment/run/results.jsonl",
+          "record_sha256": "94693e4a6ef02a14d0196f2ccc07f3acb2a62e9eeeec291293bf77c8ab1d7b34"
+        },
+        "original_input_sha256": "e98740e1ff570fdf871757bd60c96e76d9f4c1ea16df493754823021eeecbd73",
+        "application_allowed": false,
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "particular-brand-commercial-status"
+      },
+      "record_sha256": "94693e4a6ef02a14d0196f2ccc07f3acb2a62e9eeeec291293bf77c8ab1d7b34"
+    },
+    {
+      "id": "hr05-particular-brand-commercial-status-reverse",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hierarchy-hr05-twenty-four-note-v1/trial/batch-00077/experiment",
+        "sha256": "5bbb75a2abedb2bea9d612b0c493b30d0e505c2f5110a0265623d455087d0f1c"
+      },
+      "case_id": "C005",
+      "reverse": true,
+      "review": {
+        "panel": "HR05 frozen comparison evidence",
+        "pair_id": "particular-brand-commercial-status",
+        "orientation": "reverse",
+        "classification": "unresolved-scope-probe",
+        "expected_relation": null,
+        "expectation_authority": "unresolved",
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "purpose": "Particular-entity preservation probe: retain the same Buster + Punch. Do not assign unknown commercial or noncommercial status to construct a case; determine coverage or unresolved qualification from the supplied meaning and necessary implications.",
+        "source_cohort": {
+          "hierarchy": "HR05",
+          "subject_prompt": "ASv6.100",
+          "meaning_prompts": [
+            "Hierarchy-bootstrap-v109",
+            "Hierarchy-consolidation-v4"
+          ],
+          "comparison_prompt": "Hierarchy-compare-v179",
+          "qualification": "All supplied scopes are the exact saved endpoints from one HR05 construction. Consolidation-generated scopes are deliberately retained alongside Bootstrap-generated scopes; this is not the independent Bootstrap-only 115-entry panel."
+        },
+        "original_compare_receipt": {
+          "results_path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hierarchy-hr05-twenty-four-note-v1/trial/batch-00077/experiment/run/results.jsonl",
+          "record_sha256": "94693e4a6ef02a14d0196f2ccc07f3acb2a62e9eeeec291293bf77c8ab1d7b34"
+        },
+        "original_input_sha256": "e98740e1ff570fdf871757bd60c96e76d9f4c1ea16df493754823021eeecbd73",
+        "application_allowed": false,
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "particular-brand-commercial-status"
+      },
+      "record_sha256": "94693e4a6ef02a14d0196f2ccc07f3acb2a62e9eeeec291293bf77c8ab1d7b34"
+    },
+    {
+      "id": "hr05-generic-restaurants-commercial-status-forward",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hierarchy-hr05-twenty-four-note-v1/trial/batch-00089/experiment",
+        "sha256": "9fb10baa048e765420de8f2ab46749ab786d8382c8d5f9b9f0e54a47f61b7100"
+      },
+      "case_id": "C031",
+      "reverse": false,
+      "review": {
+        "panel": "HR05 frozen comparison evidence",
+        "pair_id": "generic-restaurants-commercial-status",
+        "orientation": "forward",
+        "classification": "unresolved-scope-probe",
+        "expected_relation": null,
+        "expectation_authority": "unresolved",
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "purpose": "General-category variation probe: assess whether a noncommercial charitable Chinese takeaway is admitted by the whole restaurant meaning and excluded by the Commercial entities meaning. Historical neither is not gold.",
+        "source_cohort": {
+          "hierarchy": "HR05",
+          "subject_prompt": "ASv6.100",
+          "meaning_prompts": [
+            "Hierarchy-bootstrap-v109",
+            "Hierarchy-consolidation-v4"
+          ],
+          "comparison_prompt": "Hierarchy-compare-v179",
+          "qualification": "All supplied scopes are the exact saved endpoints from one HR05 construction. Consolidation-generated scopes are deliberately retained alongside Bootstrap-generated scopes; this is not the independent Bootstrap-only 115-entry panel."
+        },
+        "original_compare_receipt": {
+          "results_path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hierarchy-hr05-twenty-four-note-v1/trial/batch-00089/experiment/run/results.jsonl",
+          "record_sha256": "a5ffc994900ea2ab8559b7942fd9ec94517dcad462faabe29884613a33a95f94"
+        },
+        "original_input_sha256": "26ad4aab6c08b38f25f7d42f72003bff1c520bd71b34c3481d3be45a03e2ae7e",
+        "application_allowed": false,
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "generic-restaurants-commercial-status"
+      },
+      "record_sha256": "a5ffc994900ea2ab8559b7942fd9ec94517dcad462faabe29884613a33a95f94"
+    },
+    {
+      "id": "hr05-generic-restaurants-commercial-status-reverse",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hierarchy-hr05-twenty-four-note-v1/trial/batch-00089/experiment",
+        "sha256": "9fb10baa048e765420de8f2ab46749ab786d8382c8d5f9b9f0e54a47f61b7100"
+      },
+      "case_id": "C031",
+      "reverse": true,
+      "review": {
+        "panel": "HR05 frozen comparison evidence",
+        "pair_id": "generic-restaurants-commercial-status",
+        "orientation": "reverse",
+        "classification": "unresolved-scope-probe",
+        "expected_relation": null,
+        "expectation_authority": "unresolved",
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "purpose": "General-category variation probe: assess whether a noncommercial charitable Chinese takeaway is admitted by the whole restaurant meaning and excluded by the Commercial entities meaning. Historical neither is not gold.",
+        "source_cohort": {
+          "hierarchy": "HR05",
+          "subject_prompt": "ASv6.100",
+          "meaning_prompts": [
+            "Hierarchy-bootstrap-v109",
+            "Hierarchy-consolidation-v4"
+          ],
+          "comparison_prompt": "Hierarchy-compare-v179",
+          "qualification": "All supplied scopes are the exact saved endpoints from one HR05 construction. Consolidation-generated scopes are deliberately retained alongside Bootstrap-generated scopes; this is not the independent Bootstrap-only 115-entry panel."
+        },
+        "original_compare_receipt": {
+          "results_path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hierarchy-hr05-twenty-four-note-v1/trial/batch-00089/experiment/run/results.jsonl",
+          "record_sha256": "a5ffc994900ea2ab8559b7942fd9ec94517dcad462faabe29884613a33a95f94"
+        },
+        "original_input_sha256": "26ad4aab6c08b38f25f7d42f72003bff1c520bd71b34c3481d3be45a03e2ae7e",
+        "application_allowed": false,
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "generic-restaurants-commercial-status"
+      },
+      "record_sha256": "a5ffc994900ea2ab8559b7942fd9ec94517dcad462faabe29884613a33a95f94"
+    },
+    {
+      "id": "hr05-food-intention-suitability-forward",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hierarchy-hr05-twenty-four-note-v1/trial/batch-00049/experiment",
+        "sha256": "0629a7322d35bf4931f00e3412eab46c4b1509abd4d2acf525c9bea82bb7b2ea"
+      },
+      "case_id": "C016",
+      "reverse": false,
+      "review": {
+        "panel": "HR05 frozen comparison evidence",
+        "pair_id": "food-intention-suitability",
+        "orientation": "forward",
+        "classification": "unresolved-scope-probe",
+        "expected_relation": null,
+        "expectation_authority": "unresolved",
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "purpose": "General-category variation probe: distinguish intended nourishment from suitability for nourishment, retaining edibility and each supplied alternative. Historical wild-berry and inert-gel cases require semantic assessment rather than automatic approval.",
+        "source_cohort": {
+          "hierarchy": "HR05",
+          "subject_prompt": "ASv6.100",
+          "meaning_prompts": [
+            "Hierarchy-bootstrap-v109",
+            "Hierarchy-consolidation-v4"
+          ],
+          "comparison_prompt": "Hierarchy-compare-v179",
+          "qualification": "All supplied scopes are the exact saved endpoints from one HR05 construction. Consolidation-generated scopes are deliberately retained alongside Bootstrap-generated scopes; this is not the independent Bootstrap-only 115-entry panel."
+        },
+        "original_compare_receipt": {
+          "results_path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hierarchy-hr05-twenty-four-note-v1/trial/batch-00049/experiment/run/results.jsonl",
+          "record_sha256": "cb3d5cae8ab573b70ca8c6e3e7d4e55a1f03227738c965227a361e3759d2e847"
+        },
+        "original_input_sha256": "4ad57901b83fb8852f9d1d8d7e5857a7e8173bc8e8ac0eb160c7d7a8bb2cb294",
+        "application_allowed": false,
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "food-intention-suitability"
+      },
+      "record_sha256": "cb3d5cae8ab573b70ca8c6e3e7d4e55a1f03227738c965227a361e3759d2e847"
+    },
+    {
+      "id": "hr05-food-intention-suitability-reverse",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hierarchy-hr05-twenty-four-note-v1/trial/batch-00049/experiment",
+        "sha256": "0629a7322d35bf4931f00e3412eab46c4b1509abd4d2acf525c9bea82bb7b2ea"
+      },
+      "case_id": "C016",
+      "reverse": true,
+      "review": {
+        "panel": "HR05 frozen comparison evidence",
+        "pair_id": "food-intention-suitability",
+        "orientation": "reverse",
+        "classification": "unresolved-scope-probe",
+        "expected_relation": null,
+        "expectation_authority": "unresolved",
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "purpose": "General-category variation probe: distinguish intended nourishment from suitability for nourishment, retaining edibility and each supplied alternative. Historical wild-berry and inert-gel cases require semantic assessment rather than automatic approval.",
+        "source_cohort": {
+          "hierarchy": "HR05",
+          "subject_prompt": "ASv6.100",
+          "meaning_prompts": [
+            "Hierarchy-bootstrap-v109",
+            "Hierarchy-consolidation-v4"
+          ],
+          "comparison_prompt": "Hierarchy-compare-v179",
+          "qualification": "All supplied scopes are the exact saved endpoints from one HR05 construction. Consolidation-generated scopes are deliberately retained alongside Bootstrap-generated scopes; this is not the independent Bootstrap-only 115-entry panel."
+        },
+        "original_compare_receipt": {
+          "results_path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hierarchy-hr05-twenty-four-note-v1/trial/batch-00049/experiment/run/results.jsonl",
+          "record_sha256": "cb3d5cae8ab573b70ca8c6e3e7d4e55a1f03227738c965227a361e3759d2e847"
+        },
+        "original_input_sha256": "4ad57901b83fb8852f9d1d8d7e5857a7e8173bc8e8ac0eb160c7d7a8bb2cb294",
+        "application_allowed": false,
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "food-intention-suitability"
+      },
+      "record_sha256": "cb3d5cae8ab573b70ca8c6e3e7d4e55a1f03227738c965227a361e3759d2e847"
+    },
+    {
+      "id": "hr05-material-resources-mrbeast-preservation-forward",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hierarchy-hr05-twenty-four-note-v1/trial/batch-00092/experiment",
+        "sha256": "1a4d6f5668882bd0feace09cc41b0bae29723f34669a06bc345210e044a01421"
+      },
+      "case_id": "C025",
+      "reverse": false,
+      "review": {
+        "panel": "HR05 frozen comparison evidence",
+        "pair_id": "material-resources-mrbeast-preservation",
+        "orientation": "forward",
+        "classification": "user-approved-preservation-control",
+        "expected_relation": "A_contains_B",
+        "expectation_authority": "user",
+        "user_gold": true,
+        "historical_relation_is_gold": false,
+        "purpose": "Exact user-approved Compare preservation control. The user accepted this relationship under these two fixed meanings and classified the unsuitable C035 meaning as a meaning-generation/consolidation problem. This does not approve C035 as a useful browsing topic, a different Material resources definition, or other person relationships.",
+        "source_cohort": {
+          "hierarchy": "HR05",
+          "subject_prompt": "ASv6.100",
+          "meaning_prompts": [
+            "Hierarchy-bootstrap-v109",
+            "Hierarchy-consolidation-v4"
+          ],
+          "comparison_prompt": "Hierarchy-compare-v179",
+          "qualification": "All supplied scopes are the exact saved endpoints from one HR05 construction. Consolidation-generated scopes are deliberately retained alongside Bootstrap-generated scopes; this is not the independent Bootstrap-only 115-entry panel."
+        },
+        "original_compare_receipt": {
+          "results_path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hierarchy-hr05-twenty-four-note-v1/trial/batch-00092/experiment/run/results.jsonl",
+          "record_sha256": "38f00000af359ee910711db1ec415b9b3ee93c3099152c4b45eb197fe322fc38"
+        },
+        "original_input_sha256": "9d807dbd4d5c2e5db92262cd0aca94356e11038e6e3b33ad9dd3a87337c2fbd2",
+        "application_allowed": false,
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "material-resources-mrbeast-preservation"
+      },
+      "record_sha256": "38f00000af359ee910711db1ec415b9b3ee93c3099152c4b45eb197fe322fc38"
+    },
+    {
+      "id": "hr05-material-resources-mrbeast-preservation-reverse",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hierarchy-hr05-twenty-four-note-v1/trial/batch-00092/experiment",
+        "sha256": "1a4d6f5668882bd0feace09cc41b0bae29723f34669a06bc345210e044a01421"
+      },
+      "case_id": "C025",
+      "reverse": true,
+      "review": {
+        "panel": "HR05 frozen comparison evidence",
+        "pair_id": "material-resources-mrbeast-preservation",
+        "orientation": "reverse",
+        "classification": "user-approved-preservation-control",
+        "expected_relation": "B_contains_A",
+        "expectation_authority": "user",
+        "user_gold": true,
+        "historical_relation_is_gold": false,
+        "purpose": "Exact user-approved Compare preservation control. The user accepted this relationship under these two fixed meanings and classified the unsuitable C035 meaning as a meaning-generation/consolidation problem. This does not approve C035 as a useful browsing topic, a different Material resources definition, or other person relationships.",
+        "source_cohort": {
+          "hierarchy": "HR05",
+          "subject_prompt": "ASv6.100",
+          "meaning_prompts": [
+            "Hierarchy-bootstrap-v109",
+            "Hierarchy-consolidation-v4"
+          ],
+          "comparison_prompt": "Hierarchy-compare-v179",
+          "qualification": "All supplied scopes are the exact saved endpoints from one HR05 construction. Consolidation-generated scopes are deliberately retained alongside Bootstrap-generated scopes; this is not the independent Bootstrap-only 115-entry panel."
+        },
+        "original_compare_receipt": {
+          "results_path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hierarchy-hr05-twenty-four-note-v1/trial/batch-00092/experiment/run/results.jsonl",
+          "record_sha256": "38f00000af359ee910711db1ec415b9b3ee93c3099152c4b45eb197fe322fc38"
+        },
+        "original_input_sha256": "9d807dbd4d5c2e5db92262cd0aca94356e11038e6e3b33ad9dd3a87337c2fbd2",
+        "application_allowed": false,
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "material-resources-mrbeast-preservation"
+      },
+      "record_sha256": "38f00000af359ee910711db1ec415b9b3ee93c3099152c4b45eb197fe322fc38"
+    }
+  ]
+}

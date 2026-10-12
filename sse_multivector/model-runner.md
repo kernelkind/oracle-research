@@ -309,6 +309,27 @@ Frozen source files, producer receipts and complete original diagnostics remain
 bound for review. This diagnostic cannot apply hierarchy changes and uses the
 new spec's ordinary response schema, rather than the production Compare schema.
 
+For exact saved A/B comparison panels, a `generic` or `hierarchy_node_pairs`
+dataset may declare schema 1 with `saved_comparisons`. Each selector has `id`,
+an envelope-hash-bound `experiment` reference (`path`, `sha256`), `case_id`,
+boolean `reverse`, and optional outside-input `review`. Preparation requires a
+valid native Compare receipt and strict A/B subject/meaning inputs. Optional
+`record_sha256` pins the exact saved result; the HR05 panel supplies it for every
+selection so an appended source result cannot silently replace that receipt.
+Without that selector, preparation uses the currently validated saved result.
+Forward
+inputs retain their exact original bytes; reversals exchange the complete two
+nodes. Original outputs, evidence and receipts remain audit evidence outside
+model input and never become expected semantic labels automatically. The
+existing protected-source reader binds source envelopes, manifests and receipts.
+These panels cannot apply hierarchy changes or regenerate endpoint meanings.
+With `review.comparison_role` (`isolated-forward` or `isolated-reverse`) and
+`review.reversal_pair`, the native consistency report checks copied/swapped
+endpoints against the same original receipt and original A/B role. It does not
+join coincident wording from unrelated original cases into complete chains or
+fabricate Bootstrap producer references. Existing producer-bound chain checks
+retain their own validation and identity rules.
+
 For controlled Bootstrap input ablations, a schema-2 `hierarchy_local_nodes`
 collection with `local_schema_version: 4` may declare `input_view: "subjects_only"`.
 Preparation validates and deduplicates the original source-bound inputs before
@@ -1937,9 +1958,40 @@ Three concurrent groups finish in 18.087 seconds; ten fresh attempts cost
 $0.054944, 46.07% below matched xhigh and only 1.31% below medium. Inputs and
 cache policy remain identical; cached tokens, retries, failures, reuse and
 missing usage remain zero. Low is the lowest passing level tested on this
-limited panel. The next test expands to four complete answers with more
-positive placements and missing restrictions; broader qualification and
-production defaults remain unchanged.
+limited panel. The subsequent [four-note diagnostic](distillation-review-v1/README.md#four-note-expansion-and-step-back-to-medium)
+reuses twenty established source judgments on four saved answers: twelve
+coverage searches, seven DSL witnesses and one actual missing-restriction edge.
+Low passes 19/20 but falsely rejects Peacock beneath Television, adding a
+television-content/activity requirement absent from the broad parent. Its five
+percentage-point loss exceeds the approved two-point allowance. Under the
+standing policy, the same cases immediately run at medium and pass 20/20 full
+output audits. A weak illustration in one otherwise-supported negative is
+explicitly caveated. Each level sends 23 fresh attempts including three warmups,
+with no retries/failures/reuse/missing usage. Concurrent spans are 27.871/26.054
+seconds and API-equivalent costs $0.1207736/$0.1286736 for low/medium. Both have
+4,096 cached input tokens; warming outweighs the observed cache savings.
+Source snapshots and original expectation metadata stay frozen; interpretation
+judgments use the documented corrected source labels. This targeted regression
+does not evaluate every subject or retest matching/post support. The following
+[matching/support comparison](distillation-review-v1/README.md#medium-matching-and-support-on-the-same-four-answers)
+does test every occurrence of those two checks on the same four saved answers.
+Native routing handles 58 decisions mechanically and 96 through duplicate
+reuse, leaving ninety fresh semantic calls plus one eligible warmup. Medium
+support passes 45/45 resolved decisions; matching passes 39/40, excluding five
+pre-existing ambiguous interpretations. Posting falsely returns null despite
+its established Post sharing interpretation. Matching's 2.5-point loss exceeds
+the approved two-point allowance and triggers the standing high step-up.
+Medium runs complete in 24.625 seconds, with no retries/failures/missing usage
+and $0.1937144 API-equivalent cost; warming-inclusive cache savings are 10.62%.
+The [high matching repeat](distillation-review-v1/README.md#high-matching-step-up-on-the-same-four-answers)
+fixes Posting and retains all 40/40 resolved decisions in 25.040 seconds,
+using forty-five calls plus one warmup and $0.1191624 API-equivalent cost.
+There are no retries/failures/missing usage; net cache savings are 9.05%.
+Five interpretation uncertainties and three correct-null explanation caveats
+remain visible in native reviews. High matching and medium support are
+expansion candidates, not a globally qualified minimum. Complete coverage and
+relationship reruns at the candidate efforts remain open before note-count
+expansion. Prompts, schemas and production defaults remain unchanged.
 
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,
@@ -7538,3 +7590,32 @@ unknown; $0.610562 API-equivalent is a known subtotal only. No answer reuse,
 warmups, terminal failure, Bootstrap work or hierarchy generation occurs.
 The persistent counter reaches 19,368. See [frozen design and completed
 qualification](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#fixed-v179-meal-design-boundary-diagnostic).
+
+The subsequent [independently frozen v109 scope screen](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#independently-frozen-bootstrap-v109-scope-screen)
+collects twenty-five exact pairs in both directions. Final preflight/review
+retains ten provisionally labeled controls and fifteen unresolved probes;
+historical labels and original AS ancestry are not gold. All twenty control
+responses pass independent proof review. Five probe reversal conflicts remain.
+The v3 metadata correction uses fifty exact receipt reuses and zero calls to
+enable the native reversal checker; its preceding empty result had skipped all
+cases. A fresh two-case author repeat retains identity substitution in V179.
+
+Experimental [Compare-v186](shr_single_pair/Hierarchy-compare-v186.md) changes
+only the permission for unspecified conditions to vary, distinguishing general
+kinds from particular entities' unknown properties. Its twenty-two-case first
+draw preserves all twenty control labels and removes the author reversal, but
+the positive personhood inference remains qualified. The candidate is not
+adopted or broadly confirmed. It uses 23 attempts including one warmup, no
+reuse/retry/failure/missing usage, and $0.1426876 API-equivalent cost; the shared
+counter reaches 19,454/20,000. Automatic caching splits the fixed developer
+prefix from variable user input; audit confirms distinct responses and no
+conversation linkage.
+
+The [separate HR05 panel](shr_single_pair/hierarchy-compare-hr05-fixed-scopes-source-v1.json)
+selects six exact saved pairs, both orientations, using `saved_comparisons`.
+Five are unresolved proof/scope probes. The user accepts the exact C035/MrBeast
+Compare positive and classifies its problem as the Consolidation-v4 explicit
+meaning. That control is retained separately from approval of the parent topic.
+HR05's mixed Bootstrap-v109/Consolidation-v4 endpoints remain honestly labeled
+and separate from the independently generated Bootstrap-only scope screen.
+No Bootstrap prompt, historical endpoint or hierarchy is changed.
