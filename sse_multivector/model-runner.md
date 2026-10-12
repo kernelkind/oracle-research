@@ -249,6 +249,16 @@ the 4,712-token prefix is cache-eligible and both cases are unrun. No inference
 or adoption occurred. V114 remains the matched control for
 the example change.
 
+[Bootstrap-v116](shr_single_pair/Hierarchy-bootstrap-v116.md) corrects only the
+Feedback anonymity answer: the anonymity decision comes first, followed by
+the shared content condition. Nine revision tests and exact example/schema/
+quotation checks pass. The [official-guidance audit](shr_single_pair/bootstrap-current-as-qualification.md#bootstrap-v116-direct-answer-and-official-guidance-audit)
+records two untested clarity risks: the method-detail prohibition and repeated
+scope rules. Offline preparation preserves both HR04 inputs and medium settings
+with a 4,719-token cache-eligible prefix; both cases remain unrun. Broader edits
+and model qualification remain open; no calls or
+adoption occurred.
+
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at
 `~/src/notedeck_worktrees/algos/experiment-runner`. All migrated project worktrees
