@@ -17,35 +17,271 @@ class HierarchyNodePairsTests(unittest.TestCase):
     show = fixtures.ExperimentTests.show
     calls = fixtures.ExperimentTests.calls
 
-    def counterexample_source(self, run=True, name='producer'):
+    def counterexample_source(self, run=True, name='producer', symmetric=False,
+                              input_json=None, answer_override=None):
         self.prompt.write_text('GENERIC PROMPT DIAGNOSTIC {INPUT_JSON}')
         payload = {'local': {'subject': 'Devices', 'meaning': 'Devices with lamps.'},
                    'canonical': {'id': 'C1', 'subject': 'Red devices',
                                  'meaning': 'Devices with red lamps.',
                                  'parents': [], 'ancestors': [], 'descendants': []}}
+        direction = 'canonical_contains_local'
+        answer = {
+            'answers': [{'question_id': direction,
+                'answer': 'A device with a blue lamp.',
+                'justification': 'An ordinary device. A device with a red lamp. OLD LABEL.'}],
+            'relation': 'neither'}
+        if symmetric:
+            payload = {role: {key: payload[old][key] for key in ('subject', 'meaning')}
+                       for role, old in (('A', 'local'), ('B', 'canonical'))}
+            direction = 'B_contains_A'
+            answer = {'questions': [
+                {'id': 'A_contains_B', 'question': 'Does A cover every B device?'},
+                {'id': 'B_contains_A', 'question': 'Can a blue-lamp A device escape B?'}],
+                'answers': [
+                    {'question_id': 'A_contains_B', 'answer': 'A covers all B devices.',
+                     'justification': 'A device with a red lamp. OLD LABEL.'},
+                    {**answer['answers'][0], 'question_id': direction}],
+                'relation': 'A_contains_B', 'reason': 'OLD VERDICT EXCLUDED'}
+        if input_json is None:
+            input_json = json.dumps(payload)
+        if answer_override is not None:
+            answer = answer_override
         self.write(name + '-cases.json', {'cases': [{'id': 'pair',
-            'inputs': {'INPUT_JSON': json.dumps(payload)},
+            'inputs': {'INPUT_JSON': input_json},
             'evidence': {'private': 'OLD TARGET EXCLUDED'}}]})
         spec = json.loads(self.spec.read_text())
         spec['dataset'] = {'adapter': 'generic', 'path': name + '-cases.json'}
         spec['runner']['output_schema'] = {'type': 'object'}
         self.write(name + '-spec.json', spec)
-        self.cli('prepare', name, '--spec', name + '-spec.json')
+        self.cli('prepare', name, '--spec', name + '-spec.json',
+                 *(['--repeat'] if symmetric else []))
         if run:
-            self.cli('run', name, env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps({
-                'answers': [{'question_id': 'canonical_contains_local',
-                    'answer': 'A device with a blue lamp.',
-                    'justification': 'An ordinary device. A device with a red lamp. OLD LABEL.'}],
-                'relation': 'neither'})})
+            self.cli('run', name, env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(answer)})
         envelope = self.root / name / 'experiment.json'
         selected = dict(id='blue', experiment={'path': name,
             'sha256': hashlib.sha256(envelope.read_bytes()).hexdigest()}, case_id='pair',
-            direction='canonical_contains_local', field='answer', excerpt=None, reverse=False)
+            direction=direction, field='answer', excerpt=None, reverse=False)
         source = dict(schema_version=1, saved_counterexamples=[selected])
         self.write('checks.json', source)
         spec['dataset']['path'] = 'checks.json'
         self.write('spec.json', spec)
         return source
+
+    def test_saved_symmetric_counterexamples_prepare_blind_cases_and_reverse_nodes(self):
+        source = self.counterexample_source(symmetric=True)
+        source['saved_counterexamples'].append(dict(source['saved_counterexamples'][0],
+            id='red', direction='A_contains_B', field='justification',
+            excerpt='A device with a red lamp.', reverse=True))
+        self.write('checks.json', source)
+        self.prepare('checks')
+        cases = self.show('checks')['cases']
+        blue, red = [json.loads(case['inputs']['INPUT_JSON']) for case in cases]
+        self.assertEqual(blue, {
+            'A': {'subject': 'Devices', 'meaning': 'Devices with lamps.'},
+            'B': {'subject': 'Red devices', 'meaning': 'Devices with red lamps.'},
+            'case': 'A device with a blue lamp.'})
+        self.assertEqual(red, {'A': blue['B'], 'B': blue['A'],
+                              'case': 'A device with a red lamp.'})
+        producer = self.show('producer')['cases'][0]
+        for case in cases:
+            for excluded in ('OLD TARGET', 'OLD LABEL', 'OLD VERDICT',
+                             'A_contains_B', 'B_contains_A', 'justification'):
+                self.assertNotIn(excluded, case['prompt'])
+            self.assertEqual(case['evidence']['saved_counterexample']['receipt'],
+                             producer['receipt'])
+            self.assertEqual(case['evidence']['saved_counterexample']['parsed'],
+                             producer['parsed'])
+        plan = json.loads((self.root / 'checks/experiment.json').read_text())['plan']
+        self.assertIn(str(self.root / 'producer/run/results.jsonl'), plan['sources'])
+        self.assertFalse(plan['preparation']['application_allowed'])
+        self.assertEqual(len(self.calls()), 1)
+
+    def test_saved_counterexamples_reject_direction_and_input_family_mismatches(self):
+        for symmetric, direction in ((True, 'canonical_contains_local'),
+                                     (False, 'A_contains_B')):
+            with self.subTest(symmetric=symmetric):
+                source = self.counterexample_source(
+                    symmetric=symmetric, name='producer-' + str(symmetric))
+                source['saved_counterexamples'][0]['direction'] = direction
+                self.write('checks.json', source)
+                destination = 'mismatched-' + str(symmetric)
+                failure = self.cli('prepare', destination, '--spec', self.spec, ok=False)
+                self.assertIn('direction does not match saved input', failure.stderr)
+                self.assertFalse((self.root / destination).exists())
+
+    def test_saved_counterexamples_nodes_from_preserves_case_and_both_receipts(self):
+        source = self.counterexample_source(symmetric=True)
+        producer = self.show('producer')['cases'][0]
+        target = {
+            'A': {'subject': 'Equipment', 'meaning': 'Equipment for carrying cases.'},
+            'B': {'subject': 'Portable equipment', 'meaning': 'Portable case equipment.'}}
+        answer = json.loads(json.dumps(producer['parsed']))
+        answer['answers'][1]['answer'] = 'TARGET CASE EXCLUDED'
+        target_source = self.counterexample_source(symmetric=True, name='nodes',
+            input_json=json.dumps(target), answer_override=answer)
+        selected = source['saved_counterexamples'][0]
+        selected['nodes_from'] = {
+            'experiment': target_source['saved_counterexamples'][0]['experiment'],
+            'case_id': 'pair'}
+        source['saved_counterexamples'].append(dict(selected, id='reverse',
+            field='justification', excerpt='A device with a red lamp.', reverse=True))
+        self.write('checks.json', source)
+        self.prepare('checks')
+        cases = self.show('checks')['cases']
+        self.assertEqual(json.loads(cases[0]['inputs']['INPUT_JSON']),
+                         {**target, 'case': 'A device with a blue lamp.'})
+        self.assertEqual(json.loads(cases[1]['inputs']['INPUT_JSON']), {
+            'A': target['B'], 'B': target['A'], 'case': 'A device with a red lamp.'})
+        target_case = self.show('nodes')['cases'][0]
+        for case in cases:
+            evidence = case['evidence']
+            self.assertEqual(evidence['saved_counterexample']['receipt'], producer['receipt'])
+            self.assertEqual(evidence['saved_counterexample']['original_input'],
+                             json.loads(producer['inputs']['INPUT_JSON']))
+            self.assertEqual(evidence['nodes_from']['receipt'], target_case['receipt'])
+            self.assertEqual(evidence['nodes_from']['original_input'], target)
+            for excluded in ('OLD LABEL', 'OLD VERDICT', 'TARGET CASE', 'nodes_from'):
+                self.assertNotIn(excluded, case['prompt'])
+        plan = json.loads((self.root / 'checks/experiment.json').read_text())['plan']
+        for name in ('producer', 'nodes'):
+            self.assertIn(str(self.root / name / 'experiment.json'), plan['sources'])
+            self.assertIn(str(self.root / name / 'run/results.jsonl'), plan['sources'])
+        for saved in (producer, target_case):
+            self.assertIn(saved['receipt']['results_path'], plan['sources'])
+            path = Path(saved['receipt']['results_path'])
+            self.assertEqual(plan['sources'][str(path)],
+                             hashlib.sha256(path.read_bytes()).hexdigest())
+        self.assertEqual(len(self.calls()), 2)
+
+    def test_saved_counterexamples_nodes_from_rejects_invalid_selectors_and_sources(self):
+        source = self.counterexample_source(symmetric=True)
+        target = self.counterexample_source(symmetric=True, name='nodes')
+        reference = {'experiment': target['saved_counterexamples'][0]['experiment'],
+                     'case_id': 'pair'}
+        invalid = [
+            (None, 'nodes_from must be an object'),
+            ({'experiment': reference['experiment']}, 'case_id'),
+            ({**reference, 'reverse': True}, 'not supported'),
+            ({**reference, 'case_id': 'missing'}, 'valid receipt-bound case'),
+            ({**reference, 'experiment': {
+                **reference['experiment'], 'sha256': '0' * 64}}, 'reference hash differs'),
+        ]
+        for index, (override, error) in enumerate(invalid):
+            with self.subTest(index=index):
+                source['saved_counterexamples'][0]['nodes_from'] = override
+                self.write('checks.json', source)
+                failure = self.cli('prepare', 'invalid-nodes-' + str(index),
+                                   '--spec', self.spec, ok=False)
+                self.assertIn(error, failure.stderr)
+        unrun = self.counterexample_source(symmetric=True, name='unrun-nodes', run=False)
+        source['saved_counterexamples'][0]['nodes_from'] = {
+            'experiment': unrun['saved_counterexamples'][0]['experiment'], 'case_id': 'pair'}
+        self.write('checks.json', source)
+        failure = self.cli('prepare', 'unrun-nodes-check', '--spec', self.spec, ok=False)
+        self.assertIn('valid receipt-bound case', failure.stderr)
+        legacy = self.counterexample_source(name='legacy-source')
+        legacy['saved_counterexamples'][0]['nodes_from'] = reference
+        self.write('checks.json', legacy)
+        failure = self.cli('prepare', 'legacy-nodes-check', '--spec', self.spec, ok=False)
+        self.assertIn('requires a symmetric saved counterexample', failure.stderr)
+        envelope = self.root / 'nodes/experiment.json'
+        envelope.write_text(envelope.read_text() + '\n')
+        source['saved_counterexamples'][0]['nodes_from'] = reference
+        self.write('checks.json', source)
+        failure = self.cli('prepare', 'changed-nodes-check', '--spec', self.spec, ok=False)
+        self.assertIn('saved comparison reference hash differs', failure.stderr)
+
+    def test_saved_counterexamples_nodes_from_rejects_mixed_or_malformed_targets(self):
+        source = self.counterexample_source(symmetric=True)
+        valid_answer = self.show('producer')['cases'][0]['parsed']
+        a = {'subject': 'Devices', 'meaning': 'Devices with lamps.'}
+        b = {'subject': 'Red devices', 'meaning': 'Devices with red lamps.'}
+        mixed_answer = json.loads(json.dumps(valid_answer))
+        mixed_answer['answers'][0]['question_id'] = 'local_contains_canonical'
+        invalid = [
+            ({'symmetric': False}, 'saved comparison input'),
+            ({'input_json': json.dumps({'A': a, 'B': b, 'local': a})},
+             'saved comparison input'),
+            ({'input_json': json.dumps({'A': a})}, 'saved comparison input'),
+            ({'input_json': json.dumps({'A': a, 'B': {**b, 'context': 'EXTRA'}})},
+             'saved comparison B'),
+            ({'input_json': json.dumps({'A': a, 'B': {**b, 'meaning': ' '}})},
+             'nonempty text'),
+            ({'input_json': json.dumps({'A': a, 'B': []})}, 'must be an object'),
+            ({'input_json': '{"A":' + json.dumps(a) + ',"A":' + json.dumps(a)
+                + ',"B":' + json.dumps(b) + '}'}, 'duplicate'),
+            ({'answer_override': mixed_answer}, 'each containment direction'),
+        ]
+        for index, (options, error) in enumerate(invalid):
+            with self.subTest(index=index):
+                target = self.counterexample_source(name='bad-nodes-' + str(index),
+                    **{'symmetric': True, **options})
+                source['saved_counterexamples'][0]['nodes_from'] = {
+                    'experiment': target['saved_counterexamples'][0]['experiment'],
+                    'case_id': 'pair'}
+                self.write('checks.json', source)
+                destination = 'bad-nodes-check-' + str(index)
+                failure = self.cli('prepare', destination, '--spec', self.spec, ok=False)
+                self.assertIn(error, failure.stderr)
+                self.assertFalse((self.root / destination).exists())
+
+    def test_saved_symmetric_counterexamples_reject_malformed_inputs(self):
+        a = {'subject': 'Devices', 'meaning': 'Devices with lamps.'}
+        b = {'subject': 'Red devices', 'meaning': 'Devices with red lamps.'}
+        malformed = [
+            (json.dumps({'A': a, 'B': b, 'local': a}), 'direction does not match'),
+            (json.dumps({'A': a}), 'direction does not match'),
+            (json.dumps({'A': {**a, 'context': 'EXTRA'}, 'B': b}), 'fixed A'),
+            (json.dumps({'A': a, 'B': {**b, 'meaning': ' '}}), 'nonempty text'),
+            (json.dumps({'A': a, 'B': {**b, 'subject': None}}), 'fixed subject'),
+            (json.dumps({'A': a, 'B': []}), 'fixed B'),
+            ('{"A":' + json.dumps(a) + ',"A":' + json.dumps(a)
+             + ',"B":' + json.dumps(b) + '}', 'duplicate'),
+        ]
+        for index, (raw, error) in enumerate(malformed):
+            with self.subTest(index=index):
+                self.counterexample_source(symmetric=True, name='producer-' + str(index),
+                                           input_json=raw)
+                destination = 'malformed-' + str(index)
+                failure = self.cli('prepare', destination, '--spec', self.spec, ok=False)
+                self.assertIn(error, failure.stderr)
+                self.assertFalse((self.root / destination).exists())
+
+    def test_saved_counterexamples_reject_mixed_directional_answers(self):
+        self.counterexample_source(symmetric=True)
+        valid = self.show('producer')['cases'][0]['parsed']
+        invalid = []
+        for field, identifier in (('questions', 'id'), ('answers', 'question_id')):
+            changed = json.loads(json.dumps(valid))
+            changed[field][0][identifier] = 'local_contains_canonical'
+            invalid.append((changed, 'each containment direction'))
+        changed = json.loads(json.dumps(valid))
+        changed['relation'] = 'canonical_contains_local'
+        invalid.append((changed, 'unknown hierarchy comparison relation'))
+        for index, (answer, error) in enumerate(invalid):
+            with self.subTest(index=index):
+                self.counterexample_source(symmetric=True, name='mixed-' + str(index),
+                                           answer_override=answer)
+                destination = 'invalid-mixed-' + str(index)
+                failure = self.cli('prepare', destination, '--spec', self.spec, ok=False)
+                self.assertIn(error, failure.stderr)
+                self.assertFalse((self.root / destination).exists())
+        legacy = {'answers': [
+            {'question_id': 'canonical_contains_local', 'answer': 'A blue-lamp device.',
+             'justification': 'A blue-lamp device.'},
+            {'question_id': 'A_contains_B', 'answer': 'A red-lamp device.',
+             'justification': 'A red-lamp device.'}], 'relation': 'neither'}
+        self.counterexample_source(name='mixed-legacy', answer_override=legacy)
+        failure = self.cli('prepare', 'invalid-mixed-legacy', '--spec', self.spec, ok=False)
+        self.assertIn('saved containment directions do not match input', failure.stderr)
+        self.assertFalse((self.root / 'invalid-mixed-legacy').exists())
+        legacy['answers'].pop()
+        legacy['questions'] = [{'id': 'A_contains_B', 'question': 'An incompatible direction.'}]
+        self.counterexample_source(name='mixed-legacy-question', answer_override=legacy)
+        failure = self.cli('prepare', 'invalid-mixed-legacy-question',
+                           '--spec', self.spec, ok=False)
+        self.assertIn('saved containment directions do not match input', failure.stderr)
+        self.assertFalse((self.root / 'invalid-mixed-legacy-question').exists())
 
     def test_saved_counterexamples_prepare_blind_cases_with_exact_receipts(self):
         source = self.counterexample_source()
@@ -79,6 +315,7 @@ class HierarchyNodePairsTests(unittest.TestCase):
         for field, value, error in (
                 ('case_id', 'missing', 'valid saved comparison'),
                 ('direction', 'wrong', 'containment direction'),
+                ('direction', ['A_contains_B'], 'containment direction'),
                 ('field', 'relation', 'answer or justification'),
                 ('excerpt', 'not in saved answer', 'exact unique excerpt'),
                 ('reverse', 'yes', 'reverse must be boolean')):

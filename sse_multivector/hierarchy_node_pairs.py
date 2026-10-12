@@ -654,7 +654,7 @@ def create_saved_comparisons(source, *, base, read, load_report):
 
 
 def create_counterexample_checks(source, *, base, read, load_report):
-    """Bind exact saved proposals to their unchanged meanings without old labels."""
+    """Bind exact saved proposals to receipt-bound meanings without old labels."""
     engine._expect_fields(source, 'saved counterexample checks',
                           {'schema_version', 'saved_counterexamples'})
     selections = source['saved_counterexamples']
@@ -663,8 +663,10 @@ def create_counterexample_checks(source, *, base, read, load_report):
         raise ValueError('expected schema 1 and 1 through 128 saved counterexamples')
     cases, identifiers = [], set()
     for selection in selections:
-        engine._expect_fields(selection, 'saved counterexample selection',
-            {'id', 'experiment', 'case_id', 'direction', 'field', 'excerpt', 'reverse'})
+        fields = {'id', 'experiment', 'case_id', 'direction', 'field', 'excerpt', 'reverse'}
+        if isinstance(selection, dict) and 'nodes_from' in selection:
+            fields.add('nodes_from')
+        engine._expect_fields(selection, 'saved counterexample selection', fields)
         identifier = engine._expect_identifier(selection['id'], 'counterexample id')
         if identifier in identifiers:
             raise ValueError('duplicate counterexample id')
@@ -682,11 +684,30 @@ def create_counterexample_checks(source, *, base, read, load_report):
                 or not matching[0].get('receipt')):
             raise ValueError('counterexample requires a valid saved comparison')
         saved = matching[0]
-        if selection['direction'] not in {'local_contains_canonical', 'canonical_contains_local'}:
+        legacy_directions = {'local_contains_canonical', 'canonical_contains_local'}
+        symmetric_directions = {'A_contains_B', 'B_contains_A'}
+        if (not isinstance(selection['direction'], str)
+                or selection['direction'] not in legacy_directions | symmetric_directions):
             raise ValueError('unknown counterexample containment direction')
         if selection['field'] not in {'answer', 'justification'}:
             raise ValueError('counterexample field must be answer or justification')
-        parsed = saved.get('parsed') or {}
+        original = json.loads(saved['inputs']['INPUT_JSON'],
+                              object_pairs_hook=engine._position_decoder().unique_object)
+        original = engine._expect_object(original, 'saved counterexample input')
+        symmetric = selection['direction'] in symmetric_directions
+        roles = ('A', 'B') if symmetric else ('local', 'canonical')
+        if set(original) != set(roles):
+            raise ValueError('counterexample direction does not match saved input')
+        parsed = (validate(saved['output'], diagnostics=True, symmetric=True)
+                  if symmetric else engine._expect_object(
+                      saved.get('parsed') or {}, 'saved comparison answer'))
+        directions = symmetric_directions if symmetric else legacy_directions
+        for key, direction_field in (('answers', 'question_id'), ('questions', 'id')):
+            rows = parsed.get(key, [])
+            if (not isinstance(rows, list) or any(not isinstance(row, dict)
+                    or not isinstance(row.get(direction_field), str)
+                    or row[direction_field] not in directions for row in rows)):
+                raise ValueError('saved containment directions do not match input')
         answers = [row for row in parsed.get('answers', [])
                    if row.get('question_id') == selection['direction']]
         if len(answers) != 1:
@@ -701,21 +722,39 @@ def create_counterexample_checks(source, *, base, read, load_report):
             proposal = excerpt
         if type(selection['reverse']) is not bool:
             raise ValueError('counterexample reverse must be boolean')
-        original = json.loads(saved['inputs']['INPUT_JSON'])
         nodes = {}
-        for role in ('local', 'canonical'):
-            value = original[role]
+        for role in roles:
+            value = engine._expect_object(original[role], 'fixed ' + role)
+            if symmetric:
+                _fields(value, 'fixed ' + role, {'subject', 'meaning'})
+            elif not {'subject', 'meaning'} <= set(value):
+                raise ValueError('fixed ' + role + ' requires subject and meaning')
             nodes[role] = {key: engine._expect_string(value[key], 'fixed ' + key)
                            for key in ('subject', 'meaning')}
+            if any(not text.strip() for text in nodes[role].values()):
+                raise ValueError('fixed subject and meaning must be nonempty text')
+        provenance = {}
+        if 'nodes_from' in selection:
+            if not symmetric:
+                raise ValueError('nodes_from requires a symmetric saved counterexample')
+            reference = selection['nodes_from']
+            _fields(reference, 'nodes_from', {'experiment', 'case_id'})
+            targets, _ = create_saved_comparisons(dict(schema_version=1,
+                saved_comparisons=[dict(id=identifier, **reference, reverse=False)]),
+                base=base, read=read, load_report=load_report)
+            nodes = json.loads(targets[0]['inputs']['INPUT_JSON'])
+            provenance['nodes_from'] = targets[0]['evidence']['saved_comparison']
         if selection['reverse']:
-            nodes['local'], nodes['canonical'] = nodes['canonical'], nodes['local']
+            first, second = roles
+            nodes[first], nodes[second] = nodes[second], nodes[first]
         payload = {**nodes, 'case': proposal}
         cases.append(dict(id=identifier,
             inputs={'INPUT_JSON': json.dumps(payload, ensure_ascii=False)},
             evidence=dict(saved_counterexample=dict(selection=selection,
                 experiment=str(directory), prompt_id=report['prompt_id'],
                 input_sha256=saved['input_sha256'], receipt=saved['receipt'],
-                parsed=saved['parsed'], original_input=original), application_allowed=False)))
+                parsed=saved['parsed'], original_input=original), **provenance,
+                application_allowed=False)))
     return cases, dict(input_view='saved_counterexamples', cases=len(cases),
                        application_allowed=False)
 

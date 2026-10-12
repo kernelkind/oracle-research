@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "saved_counterexamples": [
+    {
+      "id": "music-case-forward",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-compare-v75-qualification-v1/target/compare-v222-hr09-fixed-chains-v1/draw-01",
+        "sha256": "906d026fbc3c34877d0666b8322bf027059bf8ba06e5fced92462f5a2cc96f04"
+      },
+      "case_id": "raves-temporal-forward",
+      "direction": "B_contains_A",
+      "field": "answer",
+      "excerpt": "A musical-genre classification of the tracks played at a rave, concerning only their musical characteristics",
+      "reverse": false,
+      "nodes_from": {
+        "experiment": {
+          "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-compare-v75-qualification-v1/target/compare-v222-hr09-fixed-chains-v1/draw-01",
+          "sha256": "906d026fbc3c34877d0666b8322bf027059bf8ba06e5fced92462f5a2cc96f04"
+        },
+        "case_id": "participation-temporal-forward"
+      }
+    },
+    {
+      "id": "music-case-reverse",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-compare-v75-qualification-v1/target/compare-v222-hr09-fixed-chains-v1/draw-01",
+        "sha256": "906d026fbc3c34877d0666b8322bf027059bf8ba06e5fced92462f5a2cc96f04"
+      },
+      "case_id": "raves-temporal-forward",
+      "direction": "B_contains_A",
+      "field": "answer",
+      "excerpt": "A musical-genre classification of the tracks played at a rave, concerning only their musical characteristics",
+      "reverse": true,
+      "nodes_from": {
+        "experiment": {
+          "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-compare-v75-qualification-v1/target/compare-v222-hr09-fixed-chains-v1/draw-01",
+          "sha256": "906d026fbc3c34877d0666b8322bf027059bf8ba06e5fced92462f5a2cc96f04"
+        },
+        "case_id": "participation-temporal-forward"
+      }
+    }
+  ]
+}

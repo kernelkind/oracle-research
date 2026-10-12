@@ -1,0 +1,22 @@
+{
+  "type": "object",
+  "properties": {
+    "assessments": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "object",
+        "properties": {
+          "node": {"type": "string", "enum": ["A", "B"]},
+          "admission": {"type": "string", "enum": ["admitted", "excluded", "unresolved"]},
+          "reason": {"type": "string", "minLength": 1}
+        },
+        "required": ["node", "admission", "reason"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["assessments"],
+  "additionalProperties": false
+}

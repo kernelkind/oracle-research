@@ -373,14 +373,24 @@ specifies `id`, a hash-bound `experiment` reference, `case_id`, containment
 `direction`, `field` (`answer` or `justification`), an exact unique `excerpt`
 or null for the whole field, and boolean `reverse`. Native preparation requires
 a valid receipt-bound directional answer and fixed subject/meaning inputs.
-It emits only `local` and `canonical` subject/meaning objects plus the selected
-`case` text; `reverse` swaps the two nodes. Old labels, proof claims outside the
+It emits only `local` and `canonical` subject/meaning objects for legacy
+directions, or `A` and `B` for symmetric directions, plus the selected `case`
+text; `reverse` swaps the two nodes. Old labels, proof claims outside the
 selected text, source evidence and reviews remain outside model input.
 The selector must exclude any old verdict embedded in the chosen text;
 exact extraction does not certify that a proposal is semantically valid.
 Frozen source files, producer receipts and complete original diagnostics remain
 bound for review. This diagnostic cannot apply hierarchy changes and uses the
 new spec's ordinary response schema, rather than the production Compare schema.
+
+For symmetric saved cases, optional `nodes_from` selects a different fixed A/B
+pair with `experiment` (`path`, `sha256`) and `case_id`. Both the case source and
+target pair require valid native receipts and hashed protected sources. The
+case/excerpt stays exact; only the target subject/meaning objects are substituted,
+and reversal swaps those targets. Evidence retains both original inputs and
+receipts outside the model prompt. This supports assessing one neutral saved
+case against another independently fixed pair without manually assembling inputs.
+Legacy sources or non-symmetric target inputs cannot use this option.
 
 For exact saved A/B comparison panels, a `generic` or `hierarchy_node_pairs`
 dataset may declare schema 1 with `saved_comparisons`. Each selector has `id`,
