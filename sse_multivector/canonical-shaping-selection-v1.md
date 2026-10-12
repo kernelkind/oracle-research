@@ -23,7 +23,10 @@ The current user-authorized diagnostic is
 [Audit-v4](shr_single_pair/Hierarchy-consolidation-audit-v4.md), requesting one
 coverage decision and short decisive justification per sibling on the same
 nomination-free fixed proposals. Coverage instructions remain byte-identical
-to v3; only the output contract changes. See
+to v3; only the output contract changes. Two fresh answers provide all twelve
+sibling assessments but restore the rejected Food C009 inclusion and retain
+the Material omission. The justifications expose the stated interpretations;
+they do not establish a correction or the cause of the earlier answers. See
 [the justification diagnostic](#audit-v4-per-sibling-justifications).
 
 The preceding user-authorized tested candidate is
@@ -4932,13 +4935,12 @@ production-path assembly, revision, consolidation and source-protection checks
 pass. Main is synchronized again at `3c345eb5`; the task remains in its expressly
 requested isolated worktree.
 
-The next suggested diagnostic would omit prior nominations and request one
-short decisive justification for each sibling's coverage decision. Its purpose
-would be to identify which fixed parent requirement is being applied or missed
-before changing the main consolidation instructions. This is a proposed future
-test, not a request for private reasoning traces, an implemented prompt or an
-additional model-call authorization. The current screen does not establish that
-another generic scope reminder would address the remaining errors.
+This limitation motivates the subsequently authorized Audit-v4 diagnostic
+below: nomination-free inputs and a short decisive justification for each
+sibling's coverage decision, identifying which fixed parent requirement is
+being applied or missed before changing the main consolidation instructions.
+Audit-v3 alone does not establish that another generic scope reminder would
+address the remaining errors.
 
 ## Audit-v4 per-sibling justifications
 
@@ -4995,3 +4997,67 @@ this checkpoint. This is a bounded prompt-development diagnostic on two saved
 groups, not a proposed per-node production step or full-corpus scan. Main is
 already synchronized at `ebc61d21`. The expressly isolated task does not modify
 the main consolidation prompt, hierarchy, UI or another agent's worktree.
+
+### Completed Audit-v4 diagnostic
+
+Both native responses are valid and contain each of their six supplied sibling
+IDs exactly once, in input order, with a decision and short justification.
+
+| Fixed proposal | Included | Excluded | Uncertain |
+|---|---|---|---|
+| Food resources / proposal-1 | C003, C006, C007, C009 | C001, C005 | None |
+| Material resources / proposal-2 | C028, C034 | C023, C025, C030, C031 | None |
+
+The Food C009 inclusion returns despite the previous nomination remaining
+absent. Therefore Audit-v3's nomination-free correction is not stable across
+these different output contracts. This does not prove that asking for
+justifications worsens accuracy: there is only one draw per case/contract.
+Material membership is unchanged. Both answers receive native agent rejects
+under the preregistered bounded literal review criteria, not new human labels.
+
+The decisive saved justifications are reproduced verbatim:
+
+| Sibling | Model justification | Bounded assessment |
+|---|---|---|
+| Food C009 | "Substances and prepared items intended to be eaten, including dishes and edible ingredients, fall within the proposal's food materials." | The proposed material alternative requires human consumers; this justification omits that requirement. C009 does not restrict consumers to people. |
+| Beets C007 | "The proposal covers both edible beet roots and beet plants grown for those roots." | The proposed producer-organism alternative also requires a human food destination. Growing plants for edible roots does not establish that destination. |
+| Chicken stock C006 | "Chicken stock is a culinary liquid and ingredient intended for human consumption." | The supplied definition says culinary liquid, but does not explicitly state this purpose. Whether the kind necessarily entails it remains unsettled. |
+| MrBeast C025 | "Being an online video creator and media personality does not entail being intended for practical use or capable of providing nourishment." | This addresses the occupation, but not the fixed identity's human-organism implication under the preregistered literal capability reading. The competing information-topic reading remains a qualification; the exact newer meaning is not human gold. |
+
+These are public decision justifications, not evidence of the model's internal
+reasoning or proof that any particular instruction caused an error. The Food
+answer makes the missing consumer condition visible; the Material answer
+documents an interpretation disagreement. Neither demonstrates a general
+correction. All outputs and original receipts remain in the native experiment.
+
+Actual request inspection confirms that the paired v3/v4 bodies differ only in
+the output instructions and schema. Frozen proposal/sibling inputs, original
+producer receipts, body model/reasoning settings and opaque scope metadata
+match. Both new raw HTTP 200 receipts report GPT-6.1 Sol, with requested medium
+effort, one HTTP attempt each and distinct upstream response references.
+There are no answer reuses, warmups or provider retries. An initial local
+admission check stopped before inference because the new counter file was
+absent; exclusively creating that counter did not reset an existing allowance.
+
+The persistent counter and its two claims reconcile at **2/4 attempts**.
+Complete usage is **1,694 input tokens**, zero cached reads/writes, and **408
+output tokens**, with zero reported reasoning tokens. The API-equivalent catalog
+total is **$0.007468**, not a subscription charge. There are no failed provider
+attempts or missing usage. The native usage report is
+`target/canonical-shaping-selection-v1/consolidation-audit-v4-hr05-usage-v1.json`;
+the reviewed report is
+`target/canonical-shaping-selection-v1/consolidation-audit-v4-hr05-reviewed-v1.json`.
+All **73** relevant production-path assembly, revision, consolidation and
+source-protection tests pass. Sources are committed at `813ecce8`, retaining the
+expressly isolated task and unchanged main consolidation prompt.
+
+The next suggested main-prompt experiment replaces the coverage paragraph with
+a direct condition check: every kind or role admitted by a sibling must meet
+every required condition of a corresponding alternative in the proposed
+meaning. A required consumer, purpose or state cannot be supplied by an
+illustrative example or conventional association. Keep the shared meaning
+writing and synthetic example fixed, and test the same cases plus the saved
+heating positive control. This is a wording hypothesis within the existing
+whole-meaning containment contract, not a new semantic rule, a forced MrBeast
+label or an implemented revision. The Material interpretation qualification and
+Chicken stock uncertainty remain visible rather than being counted as resolved.
