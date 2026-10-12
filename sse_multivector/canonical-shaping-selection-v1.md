@@ -1,13 +1,17 @@
 # Selecting local entries to reduce overcrowding
 
-The newest user-authorized draft is
+The latest user-authorized tested candidate is
 [Hierarchy-consolidation-v14](shr_single_pair/Hierarchy-consolidation-v14.md).
 It separates identifying all covered siblings from checking the proposed
 meaning. Shared meaning-writing rules, the synthetic example and output schema
-remain unchanged. V14 has mechanical checks only; no model calls, measured
-improvement or activation. See [the coverage draft](#consolidation-v14-complete-sibling-coverage-draft).
+remain unchanged. Its eight-call screen has six qualified control accepts and
+two Food omitted-sibling rejects: both Meals definitions include composition
+but omit Food dishes C020. No correction of the target failure is observed.
+V14 remains experimental and unapplied. See
+[the coverage draft](#consolidation-v14-complete-sibling-coverage-draft) and
+[completed screen](#completed-v14-coverage-screen).
 
-The latest user-authorized tested candidate is
+The preceding tested candidate is
 [Hierarchy-consolidation-v13](shr_single_pair/Hierarchy-consolidation-v13.md).
 It clarifies that an activity topic includes information about plans to perform
 the activity unless its meaning explicitly requires that it happened. It adds
@@ -24,7 +28,7 @@ composition. V13 is experimental and has not been activated.
 See [the draft record](#consolidation-v13-activity-topic-draft) and
 [the registered screen](#consolidation-v13-activity-scope-screen).
 
-The preceding tested candidate is
+The earlier tested candidate is
 [Hierarchy-consolidation-v11](shr_single_pair/Hierarchy-consolidation-v11.md).
 It changes one checking paragraph to require an explicit relationship for
 associated activities, products or participants and apply the full meaning
@@ -4218,3 +4222,61 @@ binds all eight directories. No expected labels, source answers or reviews enter
 model input; baseline outputs remain evaluation evidence only. Proposals remain
 unapplied. The small screen can expose omissions or collateral regressions; it
 cannot establish broad accuracy or reliable improvement from two draws.
+
+### Completed v14 coverage screen
+
+All eight fresh attempts complete as valid outputs, with no reuses, warmups,
+retries, failures or missing usage. All four first/repeat pairs preserve exact
+complete inputs, prompts and actual HTTP request bodies. Each retained receipt
+has HTTP 200, reported GPT-6.1 Sol, requested medium reasoning, one HTTP attempt,
+one user `input_text` block and no previous-response/conversation link. Eight
+distinct response references share one request-producing code hash. Raw provider
+usage explicitly reports zero cached input and zero cache writes.
+
+| Control | First draw | Independent repeat | Agent assessment |
+|---|---|---|---|
+| Food | Meals: Breakfast C018 + Dinners C059 | Meals: same two children | Two rejects: composition covers Food dishes C020, but it is omitted |
+| Required online format | JSON null | JSON null | Two qualified accepts; unrestricted children are not forced inside the parent |
+| Activity with plans | Food processing: C010, C011, C012, C098 | Food transformation: same four children | Two qualified accepts; Grilling and its plans are retained |
+| Explicit completed work | Completed interior home painting: S001, S002 | Completed interior surface painting: S001, S002 | Two qualified accepts; completion retained and planned work excluded |
+
+The exact Food meanings are:
+
+> Meals are servings or combinations of food constituting a distinct eating
+> occasion, whether eaten or planned. The topic includes their composition,
+> consumption, expected effects and diners' preferences.
+
+> Meals are food eaten or intended to be eaten as a distinct eating occasion.
+> The topic includes their composition, planning and descriptions, diners'
+> preferences concerning them, and expectations about their effects.
+
+Both retain the reviewed composition scope. The offered Food dishes definition
+explicitly covers prepared foods served or eaten as a meal or part of a meal;
+its omission is therefore the same targeted complete-list failure. A new
+heading or prose arrangement does not establish progress while this omission
+survives. These two draws do not identify the internal cause or quantify a
+population failure rate.
+
+Native `review --role agent` appends **six qualified accepts and two rejects**.
+Pre-review and reviewed native snapshots remain separate and preserve all
+producer/input/output/receipt/usage fields. The control labels are development
+assessments, not eight new independently human-labeled judgments. No proposal is
+applied and no finished-hierarchy quality claim is made.
+
+The native usage selection reproduces ignored
+`consolidation-v14-coverage-usage-v1.json`. Complete totals are **11,806 input
+tokens**, **1,985 output tokens including 1,657 reasoning tokens**, and
+**$0.043462 API-equivalent catalog cost**. Reasoning is counted once and
+incremental subscription cash charge is zero. The fresh persistent counter is
+exhausted at **8/8**; earlier exhausted counters remain unchanged. The fresh
+post-review aggregate preserves the original totals and generation attribution.
+All 37 relevant production-path checks pass after synchronizing main at
+`65e5aa30`; the unrelated canonical release-decisions edit remains untouched.
+
+V14's instruction restructuring does not correct the target case in this
+screen; the three restriction/activity controls survive in both draws. The next
+useful authorized iteration is an example-only revision that teaches listing
+every covered sibling using unrelated synthetic topics, retaining v14's
+instructions for comparison. Repeating the same completeness instruction again
+has no demonstrated benefit. That revision and any new inference are proposed,
+not begun. The task remains isolated as requested.
