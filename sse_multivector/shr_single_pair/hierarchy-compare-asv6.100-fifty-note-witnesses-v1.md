@@ -8657,3 +8657,25 @@ all thirty-four comparisons in these ten experiments: forty-five fresh attempts
 including ten warmups and one recovered failure, zero reuse and one attempt
 without usage. $0.2288352 is a known API-equivalent subtotal, not complete cost.
 Reports retain the first screen and matched reference/candidate repeats separately.
+
+### V218: replace one example with general-category scope ambiguity
+
+V218 preserves V217's body, property gate, output contract, Hair example and input.
+Only the complete Watches example is replaced. The new fictional category is
+restricted to red cubes and spheres, with color and shape applying to the physical
+models themselves. Red can govern both shape kinds or only cubes. Coverage by
+the broader red-model category therefore depends on modifier scope; a blue sphere
+is admitted under only one supported reading. The reverse has an independent
+red-cone counterexample under both readings. Explicit restriction avoids turning
+the list into nonexhaustive illustrations, and self-coloring avoids representation
+of differently colored objects. Independent preflight accepts the admission and
+exclusion reasoning; no real post or producer output is used as teaching data.
+
+This is a complete-example intervention, not a claim that grammar and lexical
+role ambiguity are identical. Unlike V206/V207, it demonstrates unresolved scope
+in a general category rather than an unknown particular fact. Total examples
+remain two, and no new reminder or reasoning trace is added. Native provenance
+is against V179. Screen two fresh draws of the original Metal orientations in
+both physical input orders, a fresh V217 reference in both orders, and twelve
+explicit-human/physical controls. Require supported proofs and retained resolved
+outcomes; neither a convenient label nor indiscriminate uncertainty is success.
