@@ -49,6 +49,13 @@
       "artifact_path": "target/hierarchy-hr09-v2-24-note-v1/HR09/state.json",
       "sha256": "059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e",
       "family": "Canonical"
+    },
+    {
+      "version_id": "HR10",
+      "identity": "e179546b79a14c79e3b4f14ede1a0c5935caf0af4704ec2ef727fb9e2d30c3ee",
+      "artifact_path": "target/hierarchy-hr10-v2-50-note-v1/HR10-resumed-v1/state.json",
+      "sha256": "22b4669c2243dd08e2228835096714b6b6ffe17cafa6ead2b0a1707ed6a5731e",
+      "family": "Canonical"
     }
   ]
 }

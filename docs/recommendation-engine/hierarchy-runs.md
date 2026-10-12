@@ -9,8 +9,8 @@ Each run's raw build, browsing menu and export share its ID.
 selection was exhausted. **HR09** completed with all 24 notes. **HR10** was
 stopped by the user on October 12, 2026 at 20:16 UTC after its authorized resume.
 It retains a partial graph with 48 of 50 notes, 136 of 164 guaranteed entries
-settled and 4,088/10,000 attempts. Final catalogue, review UI and accounting
-for this stop are being prepared. Their fixed V2 parameters are
+settled and 4,088/10,000 attempts. Its current snapshot, checked review UI and
+native accounting are linked below. Their fixed V2 parameters are
 recorded below; native preparation pinned exact source
 commits, prompt hashes and input evidence before model requests.
 
@@ -101,7 +101,7 @@ attempt allowance preserves partial work and reports unfinished construction.
 
 Bootstrap-v122, Compare-v192 and Consolidation-v18 remain experimental.
 These official runs evaluate them without declaring the prompts qualified or
-changing their adoption status. Each output will receive its run ID, a review
+changing their adoption status. Each output has its run ID, a review
 view, a native usage report and API-equivalent cost accounting. Full generation
 commits and clean uncommitted-source status were recorded before execution;
 Final HR08/HR09 results, HR10's current user stop and its historical pre-resume
@@ -161,9 +161,9 @@ behind exact answer reuses, counted once. Separate subject extraction and vector
 encoding are excluded. HR06 includes its three-note base and the seven original
 producer calls behind reused answers.
 
-HR10's usage and cost values below describe its preserved pre-resume checkpoint
-at 2,635 attempts. Native accounting for the user stop at 4,088 attempts is being
-prepared; these historical subtotals do not cover the resumed work.
+HR10's usage and cost values below include its resumed work through the user
+stop at 4,088 attempts. Its earlier checkpoint totals are preserved in the
+historical subsection of the HR10 record.
 
 | Run | Uncached input | Cached input | Output | Reasoning within output | Known total tokens |
 | --- | ---: | ---: | ---: | ---: | ---: |
@@ -174,7 +174,7 @@ prepared; these historical subtotals do not cover the resumed work.
 | HR05 | 155,217 | 898,560 | 172,399 | 43,644 | 1,226,176 |
 | HR08 | 963,210 | 4,528,896 | 1,046,126 | 260,212 | 6,538,232 |
 | HR09 | 1,096,320 | 4,925,056 | 1,149,130 | 314,234 | 7,170,506 |
-| HR10, pre-resume checkpoint | 1,482,908 | 6,448,384 | 1,421,127 | 374,549 | 9,352,419 |
+| HR10 | 1,930,567 | 9,298,816 | 2,102,894 | 572,059 | 13,332,277 |
 
 Known total tokens = uncached input + cached input + output. Reasoning is already
 included in output and must not be added again. All listed reports record zero
@@ -190,7 +190,7 @@ known subtotals; their consumption is unknown.
 | HR05 | $2.124280 | 3 |
 | HR08 | $12.8405696 | 28 |
 | HR09 | $14.1764456 | 10 |
-| HR10, pre-resume checkpoint | $17.8219244 | 27 |
+| HR10 | $25.8199556 | 45 |
 
 Costs use the saved per-call API catalogue estimates, not subscription charges
 or current-price recalculation. HR06's complete saved generation estimate
@@ -200,17 +200,15 @@ incomplete because failed attempts lack usage and cost estimates. HR08 includes
 one exact prominence-answer reuse from HR09. Its newly dispatched subtotal is
 $12.8365336; the generation subtotal above includes that original producer.
 Do not sum per-run generation costs across HR08–HR10: shared producer calls
-would be counted more than once. HR09 has no reuses; HR10's pre-resume checkpoint
-has 709, with a newly
-dispatched cost subtotal of $13.3828492. The combined native report counts each
-original producer once. At HR10's historical pre-resume checkpoint, the
-[combined report](../../target/hierarchy-catalogue/usage/HR08-HR10-combined-v1.json)
-and [inventory](../../target/hierarchy-catalogue/usage/HR08-HR10-combined-source-v1.json)
-cover 1,275 experiments and 7,884 fresh attempts: **20,755,595 known tokens**
-and **$40.3958284 known API-equivalent cost**, with 65 failed attempts missing
-usage and cost. All reused producers occur in this combined inventory; no
-additional source calls are added. Fresh accounting for the resumed HR10 user
-stop is being prepared; these files preserve the earlier checkpoint.
+would be counted more than once. HR09 has no reuses; HR10 has 762, with a newly
+dispatched cost subtotal of $21.0438648. The current
+[combined report](../../target/hierarchy-catalogue/usage/HR08-HR10-combined-v2.json)
+and [inventory](../../target/hierarchy-catalogue/usage/HR08-HR10-combined-source-v2.json)
+count each original producer once across 1,516 experiments and 9,337 fresh
+attempts: **24,531,750 known tokens** and **$48.056844 known API-equivalent
+cost**, with 83 failed attempts missing usage and cost. Its 763 answer reuses
+all refer to producers in the combined inventory; no additional source calls
+are added. These are known subtotals, not complete costs or invoices.
 
 HR03's [original full report](../../../oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/usage-v2.json)
 also includes ASv6.100 extraction: another 549,380 known tokens and $1.005864,
@@ -282,21 +280,83 @@ completion message. The graph remains `constructing` in `guaranteed_l1`:
 The persistent counter remains 4,088/10,000. Execution status is `user_stopped`;
 this stop is not a new provider blockage or completed construction. The native
 `run-summary.json` was not rewritten by interruption and describes only the
-historical pre-resume provider blockage. Final catalogue binding, review UI,
-native audit and accounting for this stop are being prepared.
+historical pre-resume provider blockage. The saved snapshot, native audit,
+usage report and checked review UI below describe the current user stop.
 
 The user had authorized resume earlier on October 12, 2026. The native driver
 resumed the original `trial` from frozen continuation commit
 `542d5697ccee1b85b28f3ded0a9e093c36de0c1b` and runner
 `e19592f9a6b0b3a2b3ac0bc63220156d86a0f1a7`. Code, prompts and note selection
-remain fixed. The existing graph and answers are preserved; new work advances
+remain fixed. The existing graph and answers were preserved; resumed work used
 the same 10,000-attempt counter. It prepared a new
 native warmup child; the warmup and previously unrun comparison succeeded at
 2,637 attempts before construction advanced to the user stop. The
 [resume provenance](../../../oracle-mvp-hierarchy-hr10-v2/target/hierarchy-hr10-v2-50-note-v1/resume-20261012-v1-provenance.json)
 and [native resume log](../../../oracle-mvp-hierarchy-hr10-v2/target/hierarchy-hr10-v2-50-note-v1/resume-20261012-v1.log)
-retain this continuation. The prior checkpoint, cost reports and review UI
-below remain unchanged and describe the historical pre-resume outcome.
+retain this continuation. No source changes or counter reset occurred during
+resume or stop. The earlier checkpoint, cost reports and review UI remain
+unchanged in the historical subsection below.
+
+| Measurement | Current user-stopped result |
+| --- | --- |
+| Notes represented and individually accessible | 48 of 50 |
+| Selection phase | `guaranteed_l1`; construction unfinished |
+| Guaranteed original L1 entries settled | 136 of 164; 139 selections begun, three unfinished |
+| Settled local entries | 136: 103 additions, five equivalents, 28 held |
+| Consolidation | 37 parents placed, 42 proposals held |
+| Raw graph | 140 nodes, 190 edges |
+| Current browsing menu | 139 nodes, 189 strictly narrowing edges, five roots |
+| Maximum child choices | 11; six nodes exceed the soft target of six |
+| Multi-note leaves | One two-note leaf, C046 |
+| Unresolved original scoring | Two null Coffeechain meanings; both notes excluded from eligible selection |
+| Native attempts | 4,088 of 10,000; counter reconciled with delta zero |
+| Native experiments / exact answer reuses | 685 / 762 |
+| Model cases | 4,191 valid, two terminal comparison failures, seven unrun |
+| Failed / recovered / retry attempts | 45 / 39 / 43 |
+| Known newly dispatched construction tokens | 10,824,142; reasoning included in output |
+| Known API-equivalent fresh / generation cost | $21.0438648 / $25.8199556; 45 attempts have unknown usage and cost |
+| Additional subscription charge | $0; API catalogue estimates are not invoices |
+
+The two unresolved original meanings independently prevent V2 completion.
+Comparison failures `batch-00132/C057` and `batch-00455/C056` remain recorded
+as held construction work. The user stop left three searches unfinished and
+seven prepared cases unrun. Native usage includes fourteen persisted valid
+answers that the interrupted driver had not yet collected. No saved answer is
+manually retried or repaired, and no hierarchy-quality qualification is claimed.
+
+The [current immutable state](../../../oracle-mvp-hierarchy-hr10-v2/target/hierarchy-hr10-v2-50-note-v1/HR10-resumed-v1/state.json)
+has SHA-256 `22b4669c2243dd08e2228835096714b6b6ffe17cafa6ead2b0a1707ed6a5731e`.
+Its [code provenance](../../../oracle-mvp-hierarchy-hr10-v2/target/hierarchy-hr10-v2-50-note-v1/HR10-resumed-v1/code-provenance.json)
+has SHA-256 `278c8e29ceb581173a258a53ab870bca5022fb35b80404e9043e36de6d7aece6`
+and records initial Oracle `1a7f68a3b27b8ab19f30256a6c613ce28768e0d9`,
+continuation `542d5697ccee1b85b28f3ded0a9e093c36de0c1b`, runner
+`e19592f9a6b0b3a2b3ac0bc63220156d86a0f1a7`, the user-stop receipt and all
+685 native plans. All 14,957 original trial files are preserved; the original
+metadata sidecar is retained separately from the corrected final sidecar.
+The frozen source and receipt paths are retained.
+
+The [current native audit](../../../oracle-mvp-hierarchy-hr10-v2/target/hierarchy-hr10-v2-50-note-v1/HR10-resumed-v1/native-audit.json)
+reports strictly narrowing menu edges and fails the missing-note coverage
+constraint. The [current native usage report](../../../oracle-mvp-hierarchy-hr10-v2/target/hierarchy-hr10-v2-50-note-v1/HR10-resumed-v1/native-usage-summary.json)
+and [inventory](../../../oracle-mvp-hierarchy-hr10-v2/target/hierarchy-hr10-v2-50-note-v1/HR10-resumed-v1/usage-source.json)
+include all prepared native experiments. Both usage completion flags are false;
+the generation subtotal includes unique original producers behind reused
+answers and excludes subject extraction.
+
+Open the checked current user-stopped review UI:
+
+```bash
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr10-v2/target/hr10-resumed-review-ui-v1/launch.sh
+```
+
+It is labelled **HR10 · user-stopped** and includes all 50 original note bodies.
+Unrepresented notes **N018** and **N029** appear only on the display root,
+labelled unresolved, without canonical placements. The
+[current UI provenance](../../../oracle-mvp-hierarchy-hr10-v2/target/hr10-resumed-review-ui-v1/provenance.json)
+records the exact native exports, frozen exporter and copied HR05 viewer binary,
+and the successful viewer check from `/tmp`. The binary's original build commit
+remains unknown. Canonical menu edges, direct note support and fixed meanings
+are preserved.
 
 ### Historical pre-resume provider-blocked checkpoint
 
@@ -349,6 +409,15 @@ and [inventory](../../../oracle-mvp-hierarchy-hr10-v2/target/hierarchy-hr10-v2-5
 retain this historical pre-resume outcome. Both usage completion flags are false. Generation
 usage includes the exact original producer calls behind reused answers; subject
 extraction remains excluded.
+
+The checkpoint's known generation tokens are 1,482,908 uncached input,
+6,448,384 cached input and 1,421,127 output: **9,352,419** total. Its 374,549
+reasoning tokens are included in output. The historical
+[combined-v1 report](../../target/hierarchy-catalogue/usage/HR08-HR10-combined-v1.json)
+and [inventory](../../target/hierarchy-catalogue/usage/HR08-HR10-combined-source-v1.json)
+cover 1,275 experiments and 7,884 attempts: **20,755,595 known tokens** and
+**$40.3958284 known API-equivalent cost**, with 65 attempts missing usage and
+cost. These files remain unchanged and exclude later HR10 work.
 
 Open the checked historical pre-resume review UI:
 
