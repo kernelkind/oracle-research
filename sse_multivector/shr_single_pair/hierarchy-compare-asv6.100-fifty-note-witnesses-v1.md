@@ -8257,3 +8257,32 @@ node_pair_consistency reporting, with historical labels remaining diagnostic.
 The unchanged fifty-case B109 panel is now prepared for V209 execution after this
 controlled proof gate. V209 remains experimental, not a replacement for the
 approved V179 development reference or a hierarchy-generation adoption.
+
+### V209 B109 result: property repair is not broader qualification
+
+All fifty cases complete valid with original sixteen independently produced
+meanings and ASv6.100 provenance unchanged. Native dedicated consistency detects
+three settled reversal conflicts: rocket-root-potatoes, sourdough-time-general-
+substitution and metal-handles-alternatives. It also preserves three overlapping
+forward/reverse equivalence-substitution or transitivity witnesses in the bread
+family. These witnesses are not independent semantic-error counts. Two additional
+pairs mix settled and unresolved outcomes: rocket-root-four-foods and the
+metal-handles/attention negative control. Unresolved pairs are not counted as
+settled-consistency success, and complete remains false.
+
+V202 had four settled reversals on this same frozen collection; V209 introduces
+a rocket-stove purpose reversal while some earlier bread reversals disappear.
+One draw does not demonstrate broad improvement or determine which link is
+correct. The known property-qualification repair survives its controlled tests,
+but V209 is still unadopted. Original producer labels and AS edges remain
+non-gold; no parent guard is relaxed and no meanings are regenerated.
+
+The next diagnostic separates missing facts about particular instances from
+material reading differences in general activity or functional-kind terms.
+Rocket-stove positives and negatives disagree on an eating-purpose condition;
+bread alternatives disagree on readiness; grip/handhold alternatives disagree
+on required users. Independent reviews examine those exact inputs and proofs
+before another intervention. Retain the earlier laboratory-food-readiness
+qualification: non-consumption or later disposal alone does not establish
+failure to make food ready to eat. No Bootstrap request or external owner
+message follows this result.

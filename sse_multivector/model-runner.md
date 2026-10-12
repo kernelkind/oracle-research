@@ -7887,3 +7887,11 @@ reciprocal chains, fresh physical qualification and targeted uncertainty. Three
 independent reviews find no definite proof/ID defect. The original decorative
 source-reading qualification remains. The separately frozen fifty-case B109
 producer panel is prepared next; V209 is still experimental and unadopted.
+
+V209's frozen B109 producer panel completes all fifty cases but fails broader
+consistency: three settled reversals, overlapping bread equivalence/transitivity
+witnesses and two mixed unresolved pairs. One new rocket-stove purpose conflict
+prevents treating the reduced count versus V202 as clean progress. The property
+repair remains bounded; V209 is unadopted while particular-instance and general-
+meaning qualifications are diagnosed independently. Native reports preserve all
+receipts and source means without restoring retired caps or messaging Bootstrap.
