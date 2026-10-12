@@ -3,6 +3,14 @@
 **Approved direction:** qualify a
 [focused coverage search and per-check reasoning settings](#eight-hour-review-direction-approved-october-11)
 for the full 1,800-output evaluation within eight hours of model generation.
+The payment-specific example versions are **withdrawn**; unchanged DCSv1 and
+DSLv10 remain the experimental baselines. The [fresh development trial](#fresh-development-after-example-withdrawal-october-11)
+uses different validation posts. The original sixty-answer selection is
+retained as development/regression and workload evidence; its exposure during
+prompt development prevents a claim of unseen-note accuracy. Reserved pilot
+test data remains unopened. A separately reserved assessment is needed for
+independent final accuracy; no replacement final selection is drawn here.
+
 The approved **DCSv1** wording completes a
 [four-note positive-placement challenge](#dcsv1-four-note-positive-placement-challenge-october-11):
 38 searches generate in approximately 118 seconds, with **34 accepted complete
@@ -45,6 +53,10 @@ complete outputs pass independent audit, including the payment pair and
 positive/negative controls. Generation takes 49.47 seconds with one recovered
 provider retry. This focused pass does not establish broader accuracy or
 consistency; production defaults remain unchanged.
+The user subsequently withdraws these example-bearing versions: the unchanged
+baseline already passed the same six cases, so no benefit was demonstrated.
+The frozen trial is retained as regression evidence, not as the current prompt
+direction or an independent accuracy test.
 
 **Current development result:** xhigh generation finishes on
 [24 notes from the frozen sixty](#dslv10-twenty-four-note-regression-october-11),
@@ -5948,10 +5960,19 @@ through further unchanged votes.
 
 ## Trusted payment example prompt trial (October 11)
 
+**Withdrawn after this trial.** The user approves removing the payment-specific
+example and testing the general AS instructions on fresh development cases.
+The four withdrawn prompt/revision files are removed from the current checkout;
+their frozen generation worktree and receipts remain intact. Historical
+source links below point to that retained worktree. The prior unchanged six-case
+repeat and this six-case trial both passed, so the example has no demonstrated
+benefit. Training examples remain a legitimate development technique; this
+decision does not adopt a ban on examples.
+
 The user authorizes adding the trusted payment/price example to both prompts
 and repeating the same focused six judgments. Native `revise` creates
-[DCSv2](coverage-search-prompt-v2.md) and
-[DSLv11](relationship-prompt-v11.md) with pinned base hashes and revision
+[DCSv2](../../../oracle-mvp-review-payments-example/sse_multivector/distillation-review-v1/coverage-search-prompt-v2.md) and
+[DSLv11](../../../oracle-mvp-review-payments-example/sse_multivector/distillation-review-v1/relationship-prompt-v11.md) with pinned base hashes and revision
 receipts. Apart from version IDs, each adds the same short teacher-example
 block outside the verbatim AS quotation. No other wording, input placeholders,
 response schemas or cache boundaries change. The exact new block is presented
@@ -6020,6 +6041,51 @@ review precedence, minimum reasoning qualification and the final sixty-answer
 test remain unchanged. NGP/Investments is the remaining uncertain case from
 the prior four-note trial. Its source interpretation should be settled before
 using that case to score a broader regression.
+
+## Fresh development after example withdrawal (October 11)
+
+The user authorizes withdrawing the added example and testing unchanged general
+AS instructions on fresh development cases, then requests an independent audit
+against current prompt-engineering practices. The example-free experimental
+baselines remain [DCSv1](coverage-search-prompt-v1.md) and
+[DSLv10](relationship-prompt-v10.md), with their prior bytes unchanged. Deployed
+defaults, mechanical rules, schemas, reasoning settings and review precedence
+remain unchanged. The payment-example generation worktree stays frozen.
+
+The independent audit finds that relevant training examples are standard prompt
+development, while zero-shot instructions should be tested first. Here both
+variants passed the exposed six, so the extra example has no measured benefit.
+The decisive limitation is adaptive reuse of development data, rather than the
+training split label of the inserted example. References:
+[OpenAI reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices),
+[OpenAI graders guidance](https://developers.openai.com/api/docs/guides/graders),
+[evaluation guidance](https://developers.openai.com/api/docs/guides/evaluation-best-practices)
+and [primary adaptive-analysis research](https://arxiv.org/abs/1411.2664).
+
+The original sixty-answer selection contains **54 distinct validation posts**.
+All sixty have matching/support development results; relationship development
+and prompt revisions also used this panel. Neither the whole sixty nor a
+remaining answer subset is certified untouched by counting unrun DCS cases.
+Keep its frozen identities and receipts as regression/process evidence. A
+fresh reviewer-development sample and a later independent final assessment
+have different roles; this task does not resample or open reserved pilot tests.
+
+Read-only selection identifies **19 validation posts** outside the original
+panel's note IDs and all maintained saved-generation development definitions.
+Four varied posts supply eight initial actual student parent-child pairs and
+two additional negative pairs from other saved versions of the same posts,
+for **ten** requests. Selection is a purposive development diagnostic, not a
+representative accuracy sample. Pre-call labels are six true, two false and
+two unresolved; no output is used to choose or label them. Existing
+`distillation_verdict` schema-2 preparation verifies saved generation hashes,
+AS provenance, actual immediate edges, original posts and trusted context rows.
+Pre-call independent assessments are frozen separately from model answers;
+unresolved cases retain null expectations rather than forced labels. This
+bounded DSLv10 test probes the AS relationship rule shared with DCSv1. It does
+not exercise DCS candidate search or complete coverage preparation: no pristine
+matching/self-guard snapshots outside the old panel were found, and their
+prerequisites are not fabricated. No prompt wording is changed in response to
+these new cases.
 
 ## Actual distilled wording: offline preview (October 8)
 
