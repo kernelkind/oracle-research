@@ -8000,3 +8000,23 @@ the V203 reverse-brand proof, without fabricating user gold or changing source
 expectations. Original exports remain preserved. V204 uses twenty-four fresh
 attempts including four warmups, zero reuse/retry/failure/missing usage and
 $0.1448672 API-equivalent cost. It is not adopted.
+
+### V205: production-route attention diagnostic
+
+V205 is a separate native revision retaining V202, not accumulating V203/V204.
+It replaces only the two kind-production sentences, retaining the required
+production connection and making other permitted routes an independent check.
+An object's production role alone does not establish its other aspects as
+production information; those aspects must be assessed against the qualifying
+kind itself and its other permitted information connections. This does not
+assert a direct material connection or permit assigning unknown particular facts.
+
+The hypothesis is that the production-specific negative wording focuses the
+model on that route despite the wider all-parent exclusion rule. The recurring
+outputs establish not-production-to-not-Paper reasoning; they do not establish
+which sentence causes it. Run only the eight unchanged aspect comparisons first.
+Qualification requires all four decorative unknown-route checks plus all four
+functional positives, with correct diagnostic IDs and no invented material.
+A failed screen ends this candidate's expansion. A promising screen requires
+fresh confirmation and the triad/resolved/producer controls before adoption.
+Earlier alternative interventions and negative results remain preserved.
