@@ -9,6 +9,12 @@
     ],
     "v122_full": [
       "../../target/bootstrap-v122-branch-scope-v1/full-pinned-v1"
+    ],
+    "v122_hard_case_repeat": [
+      "../../target/bootstrap-v122-branch-scope-v1/hard-repeat-v1"
+    ],
+    "v122_branch_repeat": [
+      "../../target/bootstrap-v122-branch-scope-v1/branch-repeat-v1"
     ]
   }
 }

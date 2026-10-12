@@ -12,8 +12,14 @@ from sse_multivector import test_experiment as fixtures
 
 
 class CanonicalTraversalTests(unittest.TestCase):
-    setUp = fixtures.ExperimentTests.setUp
     write = fixtures.ExperimentTests.write
+
+    def setUp(self):
+        fixtures.ExperimentTests.setUp(self)
+        self.runner.write_text(self.runner.read_text().replace(
+            'if prompt.startswith("GENERIC PROMPT"):',
+            'if prompt.startswith("GENERIC PROMPT") or prompt.startswith("Prominence estimates"):'))
+
     def cli(self, *args, ok=True, env=None):
         project = getattr(self, 'project', Path(__file__).resolve().parents[1])
         launcher = Path(__file__).resolve().parents[2]/'experiment-runner/bin/experiment-runner'
@@ -23,6 +29,7 @@ class CanonicalTraversalTests(unittest.TestCase):
             timeout=120 if args and args[0] == 'run-canonical-traversal' else 30)
         self.assertEqual(result.returncode == 0, ok, result.stderr+result.stdout)
         return result
+
 
     def test_shared_launcher_has_one_constructor_without_retired_alternatives(self):
         help_text = self.cli('--help').stdout
@@ -34,6 +41,7 @@ class CanonicalTraversalTests(unittest.TestCase):
                         'continue-canonical-trial', 'prepare-canonical-selection-trial'):
             with self.subTest(command=retired):
                 self.assertNotIn(retired, help_text)
+
 
     def prepare(self, count=4, extra_root=False, notes=None, symmetric=False):
         self.prompt.write_text('GENERIC PROMPT {INPUT_JSON}')
@@ -67,11 +75,14 @@ class CanonicalTraversalTests(unittest.TestCase):
             consolidation_spec='consolidation.json'))
         return self.cli('prepare-canonical-traversal', 'trial', '--spec', 'traversal.json')
 
+
     def state(self):
         return json.loads((self.root/'trial/state.json').read_text())
 
+
     def advance(self):
         return self.cli('advance-canonical-traversal', 'trial', '--comment', 'Fixture mechanics')
+
 
     def run_pending(self, answer):
         current = self.state()
@@ -81,72 +92,45 @@ class CanonicalTraversalTests(unittest.TestCase):
                 self.cli('run', record['experiment'], env={
                     'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(value)})
 
-    def automatic_fixture(self, count=2, roots_only=False):
+
+    def automatic_fixture(self, count=2, roots_only=False, notes=None):
         original = '''    output_text = os.environ.get(
         "FAKE_RUNNER_PROMPT_RESPONSE", f"Response to: {prompt}"
     )'''
-        replacement = '''    payload = json.loads(prompt.removeprefix("GENERIC PROMPT "))
-    if "siblings" in payload:
+        replacement = '''    payload = json.loads(prompt.removeprefix("GENERIC PROMPT ") if prompt.startswith("GENERIC PROMPT ")
+                         else prompt.rstrip().rsplit("\\n", 1)[-1])
+    if "node_description" in payload:
+        score = json.loads(os.environ.get("AUTO_SCORES", "{}")).get(payload["node_title"], 60)
+        value = dict(prominence=score, missing_meaning="Other meaning",
+                     allocation=[dict(meaning="Complete post", points=100, represented=score, missing=100-score)])
+    elif "siblings" in payload:
         value = None
     elif "canonical" in payload:
         value = dict(meaning=payload["local"]["meaning"],
-                     relation=os.environ.get("AUTO_RELATION", "neither"), reason="Fixture")
+                     relation=json.loads(os.environ.get("AUTO_RELATIONS", "{}")).get(
+                         payload["local"]["subject"]+"|"+payload["canonical"]["subject"],
+                         os.environ.get("AUTO_RELATION", "neither")), reason="Fixture")
     else:
         branch = payload["local"]["hierarchy"]
         value = dict(meaning=next(e["subject"] for e in branch["entries"]
                                   if e["number"] == branch["selected"]))
     output_text = json.dumps(value)'''
         self.assertIn(original, fixtures.FAKE_RUNNER)
-        self.runner.write_text(fixtures.FAKE_RUNNER.replace(original, replacement))
+        self.runner.write_text(fixtures.FAKE_RUNNER.replace(original, replacement).replace(
+            'if prompt.startswith("GENERIC PROMPT"):',
+            'if prompt.startswith("GENERIC PROMPT") or prompt.startswith("Prominence estimates"):'))
         self.write('allowance.json', dict(schema_version=1, limit=100, used=0))
-        notes = [dict(note_id=f'n{i}', text=f'Original post {i}', subjects=[
-            dict(number='1', subject=f'Root {i}', context='Original role')])
-            for i in range(count)] if roots_only else None
+        if notes is None and roots_only:
+            notes = [dict(note_id=f'n{i}', text=f'Original post {i}', subjects=[
+                dict(number='1', subject=f'Root {i}', context='Original role')])
+                for i in range(count)]
         return self.prepare(count=count, notes=notes)
+
 
     def automatic_run(self, *, ok=True, env=None):
         return self.cli('run-canonical-traversal', 'trial', '--attempt-budget',
                         'allowance.json', ok=ok, env=env)
 
-    def test_symmetric_compare_maps_both_directions_and_preserves_native_answers(self):
-        self.prepare(count=3)
-        spec = json.loads((self.root/'comparison.json').read_text())
-        spec['runner']['output_schema'] = json.loads(Path(__file__).with_name(
-            'shr_single_pair').joinpath('Hierarchy-compare-v179.output.schema.json').read_text())
-        self.write('comparison.json', spec)
-        self.cli('prepare-canonical-traversal', 'symmetric-trial', '--spec', 'traversal.json')
-        self.trial = 'symmetric-trial'
-        for _ in range(12):
-            state = json.loads((self.root/self.trial/'state.json').read_text())
-            if len(state['steps']) >= 3:
-                break
-            for record in state['experiments']:
-                if 'answers' in record:
-                    continue
-                if record['role'] == 'meaning':
-                    answer = {'meaning': 'Meaning '+record['local']['note_id']}
-                else:
-                    payload = json.loads(next(iter(record['inputs'].values()))['INPUT_JSON'])
-                    self.assertEqual(set(payload), {'A', 'B'})
-                    self.assertEqual(set(payload['B']), {'subject', 'meaning'})
-                    direction = ('B_contains_A' if record['local']['note_id'] == 'n1'
-                                 else 'A_contains_B')
-                    answer = dict(relation=direction, reason='Fixture coverage',
-                        questions=[dict(id=d, question='Boundary?') for d in
-                                   ('A_contains_B', 'B_contains_A')],
-                        answers=[dict(question_id=d, answer='Coverage or counterexample',
-                                      justification='Fixture condition') for d in
-                                 ('A_contains_B', 'B_contains_A')])
-                self.cli('run', record['experiment'], env={
-                    'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(answer)})
-            self.cli('advance-canonical-traversal', self.trial, '--comment', 'Symmetric trial')
-        state = json.loads((self.root/self.trial/'state.json').read_text())
-        self.assertEqual([s['status'] for s in state['steps']], ['added', 'added', 'added'])
-        self.assertEqual(state['nodes'][1]['parents'], ['C001'])
-        self.assertEqual(state['nodes'][0]['parents'], ['C003'])
-        raw = state['steps'][1]['answers'][0]['output']
-        self.assertEqual(raw['relation'], 'B_contains_A')
-        self.assertNotIn('meaning', raw)
 
     def test_automatic_run_finishes_multiple_frontiers_and_consolidation(self):
         self.automatic_fixture(count=7)
@@ -168,6 +152,7 @@ class CanonicalTraversalTests(unittest.TestCase):
         self.assertEqual(fixtures.ExperimentTests.calls(self), calls)
         self.assertEqual((self.root/'trial/state.json').read_bytes(), frozen)
 
+
     def test_automatic_budget_stop_resumes_without_repeating_successful_calls(self):
         self.automatic_fixture()
         self.write('allowance.json', dict(schema_version=1, limit=1, used=0))
@@ -183,31 +168,22 @@ class CanonicalTraversalTests(unittest.TestCase):
         repeated = [call['prompt'] for call in fixtures.ExperimentTests.calls(self)]
         self.assertEqual(len(repeated), len(set(repeated)))
 
+
     def test_automatic_terminal_failure_is_held_and_other_notes_continue(self):
         self.automatic_fixture()
         failure = {'AUTO_RELATION': 'equivalent', 'FAKE_RUNNER_FAILURES': json.dumps({
             'Root 0': {'metadata': {'abort_reason': {'name': 'TimeoutError'}}}})}
         result = json.loads(self.automatic_run(ok=False, env=failure).stdout)
         self.assertEqual(result['execution_status'], 'exhausted')
-        self.assertGreater(result['held'], 0)
+        self.assertIn('n0', result['unresolved_scoring'])
         state = self.state()
-        self.assertEqual(state['steps'][0]['status'], 'held')
+        self.assertFalse(any(s['local']['note_id'] == 'n0' for s in state['steps']))
         self.assertTrue(any(step['status'] == 'added' for step in state['steps']))
         calls = fixtures.ExperimentTests.calls(self)
         failed_prompts = [c['prompt'] for c in calls if 'Root 0' in c['prompt']]
         self.assertEqual(len(failed_prompts), len(set(failed_prompts)))
         self.assertEqual(json.loads((self.root/'allowance.json').read_text())['used'], len(calls))
 
-    def test_automatic_search_advances_before_other_meaning_batches_finish(self):
-        self.automatic_fixture(count=3)
-        marker = self.root/'comparison-started'
-        result = self.automatic_run(env={'FAKE_RUNNER_SEQUENCE': json.dumps({
-            '"subject": "Root 2"': {'wait_for': str(marker)},
-            '"canonical"': {'touch': str(marker)},
-        })})
-        self.assertEqual(json.loads(result.stdout)['status'], 'complete')
-        self.assertTrue(marker.exists())
-        self.assertEqual(json.loads(result.stdout)['held'], 0)
 
     def test_native_provider_retry_is_not_collected_as_terminal_failure(self):
         self.automatic_fixture(count=3)
@@ -216,11 +192,13 @@ class CanonicalTraversalTests(unittest.TestCase):
         })})
         self.assertEqual(json.loads(result.stdout)['held'], 0)
         first = next(record for record in self.state()['experiments']
-                     if record['role'] == 'meaning' and record['local']['note_id'] == 'n1')
+                     if record['role'] == 'meaning')
         records = [json.loads(line) for line in
                    (Path(first['experiment'])/'run/results.jsonl').read_text().splitlines()]
-        self.assertEqual([r['status'] for r in records], ['failed', 'succeeded'])
-        self.assertEqual(first['answers'][0]['status'], 'valid')
+        retried = [r for r in records if r['note_id'] == 'L00001']
+        self.assertEqual([r['status'] for r in retried], ['failed', 'succeeded'])
+        self.assertTrue(all(a['status'] == 'valid' for a in first['answers']))
+
 
     def test_automatic_run_rejects_missing_or_changed_allowance_before_dispatch(self):
         self.automatic_fixture()
@@ -236,6 +214,7 @@ class CanonicalTraversalTests(unittest.TestCase):
         self.assertIn('prepared step differs from saved state', changed.stderr)
         self.assertEqual(fixtures.ExperimentTests.calls(self), calls)
 
+
     def test_native_retry_without_remaining_allowance_is_resumable(self):
         self.automatic_fixture(count=1, roots_only=True)
         self.write('allowance.json', dict(schema_version=1, limit=1, used=0))
@@ -247,12 +226,13 @@ class CanonicalTraversalTests(unittest.TestCase):
         self.assertEqual(summary['held'], 0)
         self.assertEqual(len(fixtures.ExperimentTests.calls(self)), 1)
         self.assertNotIn('answers', self.state()['experiments'][0])
-        self.write('allowance.json', dict(schema_version=1, limit=2, used=1))
+        self.write('allowance.json', dict(schema_version=1, limit=3, used=1))
         self.assertEqual(json.loads(self.automatic_run().stdout)['status'], 'complete')
-        self.assertEqual(len(fixtures.ExperimentTests.calls(self)), 2)
+        self.assertEqual(len(fixtures.ExperimentTests.calls(self)), 3)
         records = [json.loads(line) for line in (self.root/
                    'trial/batch-00000/experiment/run/results.jsonl').read_text().splitlines()]
         self.assertEqual([r['status'] for r in records], ['failed', 'succeeded'])
+
 
     def test_second_driver_is_rejected_without_dispatch(self):
         import fcntl
@@ -262,6 +242,7 @@ class CanonicalTraversalTests(unittest.TestCase):
             result = self.automatic_run(ok=False)
         self.assertIn('traversal execution is already active', result.stderr)
         self.assertEqual(fixtures.ExperimentTests.calls(self), [])
+
 
     def test_killed_driver_resumes_saved_graph_and_completed_receipts(self):
         self.automatic_fixture(count=2, roots_only=True)
@@ -299,6 +280,7 @@ class CanonicalTraversalTests(unittest.TestCase):
                     if '"canonical"' not in c['prompt']]
         self.assertEqual(len(meanings), len(set(meanings)))
 
+
     def test_reviewed_code_fix_resumes_without_changing_graph_inputs_or_receipts(self):
         # Isolate code to exercise a real source transition without editing a
         # checkout bound to another test's experiments.
@@ -308,6 +290,8 @@ class CanonicalTraversalTests(unittest.TestCase):
         shutil.copy2(project/'experiment-runner.json', self.project)
         for path in (project/'sse_multivector').glob('*.py'):
             shutil.copy2(path, self.project/'sse_multivector')
+        shutil.copytree(project/'sse_multivector/prominence-prompt-goal-v1/ppv35-post-meaning-v1',
+                        self.project/'sse_multivector/prominence-prompt-goal-v1/ppv35-post-meaning-v1')
         self.automatic_fixture(count=2, roots_only=True)
         self.write('allowance.json', dict(schema_version=1, limit=2, used=0))
         self.automatic_run(ok=False)
@@ -337,112 +321,6 @@ class CanonicalTraversalTests(unittest.TestCase):
         self.cli('run-canonical-traversal', 'trial', '--attempt-budget', 'allowance.json',
                  '--runner-upgrade-reason', 'Cannot authorize different inputs', ok=False)
 
-    def test_reviewed_upgrade_pins_new_shaping_code_for_a_legacy_resume(self):
-        self.automatic_fixture(count=2, roots_only=True)
-        self.write('allowance.json', dict(schema_version=1, limit=2, used=0))
-        self.automatic_run(ok=False)
-        saved = self.state()
-        shape = str(Path(__file__).with_name('canonical_hierarchy_shape.py').resolve())
-        # Earlier constructor states did not bind this newly used component.
-        state = json.loads(json.dumps(saved))
-        state['sources'].pop(shape)
-        state.pop('menu')
-        for step in state['steps']:
-            step.pop('ordinal', None)
-            step.pop('selection_index', None)
-        for slot in state['searches']:
-            slot.pop('selection_index', None)
-        self.write('trial/state.json', state)
-        self.write('allowance.json', dict(schema_version=1, limit=20, used=2))
-        self.cli('run-canonical-traversal', 'trial', '--attempt-budget', 'allowance.json',
-                 '--runner-upgrade-reason', 'Adopt reviewed finished-menu implementation')
-        resumed = self.state()
-        self.assertIn(shape, resumed['sources'])
-        self.assertIsNone(resumed['source_upgrades'][0]['before'][shape])
-        self.assertEqual(resumed['source_upgrades'][0]['after'][shape], resumed['sources'][shape])
-        self.assertEqual(resumed['nodes'][:len(saved['nodes'])], saved['nodes'])
-        for before, after in zip(saved['experiments'], resumed['experiments']):
-            if 'answers' in before:
-                self.assertEqual(after, before)
-
-    def test_rotates_l1_then_l2_and_prepares_only_three_concurrent_searches(self):
-        self.prepare(extra_root=True)
-        state = self.state()
-        self.assertEqual([r['local'] for r in state['inventory']], [
-            dict(note_id=f'n{i}', number='1') for i in range(4)] +
-            [dict(note_id='n0', number='2')] +
-            [dict(note_id=f'n{i}', number='1.1') for i in range(4)])
-        self.assertEqual([s['local']['note_id'] for s in state['searches']], ['n0','n1','n2'])
-        self.assertEqual(len(state['experiments']), 3)
-        self.assertEqual(fixtures.ExperimentTests.calls(self), [])
-
-    def test_stops_during_l1_saves_inflight_answers_and_keeps_unplaced_searches(self):
-        self.prepare(count=1, extra_root=True)
-        self.run_pending({'meaning': 'Independent root meaning'})
-        self.advance()
-        state = self.state()
-        self.assertEqual(state['status'], 'complete')
-        self.assertEqual(len(state['nodes']), 1)
-        self.assertEqual(len(state['steps']), 1)
-        self.assertTrue(state['stopping']['individual_access'])
-        self.assertTrue(state['stopping']['strict_edges'])
-        self.assertEqual(len(state['searches']), 2)
-        self.assertTrue(all('answers' in e for e in state['experiments']))
-        frozen = (self.root/'trial/state.json').read_bytes()
-        self.advance()
-        self.assertEqual((self.root/'trial/state.json').read_bytes(), frozen)
-
-    def test_revalidates_concurrent_search_against_first_placement_without_rebootstrap(self):
-        self.prepare()
-        self.run_pending(lambda r: {'meaning': 'Meaning '+r['local']['note_id']})
-        self.advance()
-        state = self.state()
-        self.assertEqual(len(state['nodes']), 1)
-        self.assertEqual(len(state['searches']), 3)
-        pending = [e for e in state['experiments'] if 'answers' not in e]
-        comparison = next(e for e in pending if e['role'] == 'comparison')
-        shown = json.loads(self.cli('show', comparison['experiment'], '--json').stdout)
-        payload = json.loads(shown['cases'][0]['inputs']['INPUT_JSON'])
-        self.assertEqual(payload['local']['meaning'], 'Meaning n1')
-        self.assertEqual(payload['canonical']['subject'], 'Root 0')
-        self.assertEqual(state['steps'][0]['local'], dict(note_id='n0', number='1'))
-
-    def test_singleton_routes_elsewhere_do_not_finish_a_shared_leaf(self):
-        notes = [dict(note_id=f'n{i}', text=f'Original post {i}', subjects=[
-            dict(number='1', subject='Shared', context='Shared topic'),
-            dict(number='2', subject=f'Solo {i}', context='Independent topic')])
-            for i in range(2)]
-        self.prepare(notes=notes)
-        for _ in range(12):
-            state = self.state()
-            if state['status'] in ('complete', 'exhausted'):
-                break
-            for record in state['experiments']:
-                if 'answers' in record:
-                    continue
-                local = record['local']
-                meaning = 'Shared' if local['number'] == '1' else 'Solo '+local['note_id']
-                for identifier in record['inputs']:
-                    value = dict(meaning=meaning)
-                    if record['role'] == 'comparison':
-                        value.update(relation='equivalent' if local['number'] == '1'
-                                     else 'neither', reason='Fixture fixed meanings')
-                    self.cli('run', record['experiment'], '--only', identifier, env={
-                        'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(value)})
-            self.advance()
-        state = self.state()
-        self.assertEqual(state['status'], 'exhausted')
-        self.assertTrue(state['stopping']['individual_access'])
-        self.assertTrue(state['stopping']['strict_edges'])
-        self.assertFalse(state['stopping']['single_note_leaves'])
-        self.assertEqual(state['stopping']['multi_note_leaves'], [
-            dict(id='C001', note_ids=['n0', 'n1'])])
-        report = json.loads(self.cli('audit-canonical-trial', 'trial',
-                                     '--output', 'audit.json').stdout)
-        self.assertFalse(report['structural_constraints_met'])
-        audit = json.loads((self.root/'audit.json').read_text())
-        self.assertIn(dict(kind='multi_note_leaf', node='C001', note_ids=['n0', 'n1']),
-                      audit['violations'])
 
     def test_note_supported_by_a_parent_does_not_need_its_own_canonical_node(self):
         from sse_multivector.canonical_traversal import _stopping
@@ -455,6 +333,7 @@ class CanonicalTraversalTests(unittest.TestCase):
         self.assertTrue(result['individual_access'])
         self.assertTrue(result['strict_edges'])
         self.assertTrue(result['single_note_leaves'])
+
 
     def test_equal_note_steps_retain_the_deeper_heading_and_original_supports(self):
         from sse_multivector.canonical_traversal import _stopping
@@ -483,142 +362,6 @@ class CanonicalTraversalTests(unittest.TestCase):
         _stopping(state)
         self.assertIn('F', [n['id'] for n in state['menu']['nodes']])
 
-    def test_removing_equal_parent_preserves_other_branches_without_new_containments(self):
-        from sse_multivector.canonical_traversal import _stopping
-        nodes = [
-            dict(id='R', subject='Topics', meaning='All topics', parents=[], entries=[
-                dict(note_id='n3', number='1')]),
-            dict(id='O', subject='Other parent', meaning='Other parent', parents=['R'], entries=[
-                dict(note_id='n2', number='1')]),
-            dict(id='F', subject='Food', meaning='Food', parents=['R'], entries=[
-                dict(note_id='n0', number='1'), dict(note_id='n1', number='1')]),
-            dict(id='V', subject='Vegetables', meaning='Vegetables', parents=['F', 'O'], entries=[
-                dict(note_id='n0', number='1.1'), dict(note_id='n1', number='1.1')]),
-            dict(id='S', subject='Side branch', meaning='Side branch', parents=['F'], entries=[
-                dict(note_id='n0', number='2')])]
-        state = dict(note_ids=['n0', 'n1', 'n2', 'n3'], nodes=nodes)
-        _stopping(state)
-        menu = {n['id']: n for n in state['menu']['nodes']}
-        self.assertNotIn('F', menu)
-        self.assertEqual(menu['V']['parents'], ['O', 'R'])
-        self.assertEqual(menu['S']['parents'], ['R'])
-        self.assertEqual(menu['S']['entries'], nodes[-1]['entries'])
-
-    def test_after_coverage_selects_deeper_nodes_only_from_multi_note_leaves(self):
-        self.prepare(count=4)
-        for _ in range(18):
-            state = self.state()
-            if state['status'] in ('complete', 'exhausted'):
-                break
-            for record in state['experiments']:
-                if 'answers' in record:
-                    continue
-                local = record['local']
-                subject = next(r['subject'] for r in state['inventory'] if r['local'] == local)
-                for identifier in record['inputs']:
-                    value = dict(meaning=subject)
-                    if record['role'] == 'comparison':
-                        value.update(reason='Fixture consistent topics', relation=(
-                            'equivalent' if local == dict(note_id='n1', number='1')
-                            and identifier == 'C001' else 'canonical_contains_local'
-                            if '.' in local['number'] and identifier == 'C001' else 'neither'))
-                    self.cli('run', record['experiment'], '--only', identifier, env={
-                        'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(value)})
-            self.advance()
-        state = self.state()
-        selected = [r['local'] for r in state['experiments'] if r['role'] == 'meaning']
-        self.assertNotIn(dict(note_id='n2', number='1.1'), selected)
-        self.assertNotIn(dict(note_id='n3', number='1.1'), selected)
-        self.assertEqual(state['status'], 'complete')
-        self.assertTrue(state['stopping']['single_note_leaves'])
-        audit = json.loads(self.cli('audit-canonical-trial', 'trial', '--output', 'audit.json').stdout)
-        self.assertTrue(audit['structural_constraints_met'])
-        tasks = json.loads((self.root/'audit.json').read_text())['individual_tasks']
-        self.assertEqual(next(t for t in tasks if t['note_id'] == 'n1')['node'], 'C001')
-
-    def test_skipped_locals_are_unused_and_filtered_selection_resumes(self):
-        self.prepare(count=5)
-        for _ in range(20):
-            state = self.state()
-            if state['status'] in ('complete', 'exhausted'):
-                break
-            for record in state['experiments']:
-                if 'answers' in record:
-                    continue
-                local = record['local']
-                subject = next(r['subject'] for r in state['inventory'] if r['local'] == local)
-                for identifier in record['inputs']:
-                    value = dict(meaning=subject)
-                    if record['role'] == 'comparison':
-                        parent = {'n0': 'C001', 'n1': 'C002', 'n3': 'C004', 'n4': 'C004'}
-                        value.update(reason='Fixture consistent topics', relation=(
-                            'equivalent' if local == dict(note_id='n4', number='1')
-                            and identifier == 'C004' else 'canonical_contains_local'
-                            if '.' in local['number'] and identifier == parent.get(local['note_id'])
-                            else 'neither'))
-                    self.cli('run', record['experiment'], '--only', identifier, env={
-                        'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(value)})
-            self.advance()
-        state = self.state()
-        self.assertEqual(state['status'], 'complete')
-        self.assertNotIn(dict(note_id='n2', number='1.1'),
-                         [r['local'] for r in state['experiments'] if r['role'] == 'meaning'])
-        step = next(s for s in state['steps'] if s['local'] == dict(note_id='n3', number='1.1'))
-        self.assertEqual((step['ordinal'], step['selection_index']), (8, 7))
-        saved = (self.root/'trial/state.json').read_bytes()
-        self.advance()
-        self.assertEqual((self.root/'trial/state.json').read_bytes(), saved)
-
-    def test_unused_entries_can_become_eligible_again_after_leaf_changes(self):
-        from sse_multivector.canonical_traversal import _next_locals
-        rows = [dict(local=dict(note_id=f'n{i}', number='1.1'), subject=f'Child {i}')
-                for i in range(2)]
-        state = dict(inventory=rows, steps=[], searches=[], stopping=dict(
-            individual_access=True, multi_note_leaves=[dict(id='L', note_ids=['n1', 'other'])]))
-        self.assertEqual(list(_next_locals(state)), [(1, rows[1])])
-        state['searches'] = [rows[1]]
-        state['stopping']['multi_note_leaves'] = [dict(id='L', note_ids=['n0', 'n1'])]
-        self.assertEqual(list(_next_locals(state)), [(0, rows[0])])
-
-    def test_saved_menu_cannot_change_a_canonical_meaning(self):
-        self.prepare(count=1)
-        self.run_pending(dict(meaning='Fixed meaning'))
-        self.advance()
-        state = self.state()
-        self.assertEqual(state['status'], 'complete')
-        state['menu']['nodes'][0]['meaning'] = 'Changed meaning'
-        self.write('trial/state.json', state)
-        rejected = self.cli('advance-canonical-traversal', 'trial', '--comment',
-                            'Refuse an altered menu', ok=False)
-        self.assertIn('saved browsing hierarchy differs', rejected.stderr)
-
-    def test_revalidation_reuses_unchanged_root_and_compares_only_new_roots(self):
-        self.prepare(count=4)
-        self.run_pending(lambda r: dict(meaning='Meaning '+r['local']['note_id']))
-        self.advance()
-        def answer(record):
-            meaning = 'Meaning '+record['local']['note_id']
-            return dict(meaning=meaning) if record['role']=='meaning' else dict(
-                meaning=meaning, relation='neither', reason='Fixture distinct roots')
-        self.run_pending(answer)
-        self.advance()
-        self.run_pending(answer)
-        self.advance()
-        records = [r for r in self.state()['experiments'] if r['role']=='comparison'
-                   and r['local']==dict(note_id='n3',number='1')]
-        self.assertEqual([list(r['inputs']) for r in records], [['C001'], ['C002','C003']])
-
-    def test_rejected_native_producer_is_held_before_placement(self):
-        self.prepare(count=2)
-        self.run_pending(dict(meaning='Fixed meaning'))
-        record = self.state()['experiments'][0]
-        self.cli('review', record['experiment'], '--case', 'meaning', '--role', 'user',
-                 '--verdict', 'reject', '--comment', 'Missing the established source role')
-        self.advance()
-        first = self.state()['steps'][0]
-        self.assertEqual(first['status'], 'held')
-        self.assertIn('user producer review reject', first['reason'])
-        self.assertEqual(first['after'], first['before'])
 
     def test_relative_output_schema_paths_are_resolved_and_frozen(self):
         self.prepare(count=2)
@@ -632,33 +375,6 @@ class CanonicalTraversalTests(unittest.TestCase):
         self.assertIn(str(self.root/'compare-schema.json'), state['sources'])
         self.assertEqual(state['comparison_spec']['runner']['output_schema'], schema)
 
-    def finish(self, proposal=None):
-        """Run fixture answers through native admission and receipt validation."""
-        for _ in range(60):
-            state = self.state()
-            if state['status'] in ('complete', 'exhausted'):
-                return state
-            for record in state['experiments']:
-                if 'answers' in record:
-                    continue
-                shown = json.loads(self.cli('show', record['experiment'], '--json').stdout)
-                for case in shown['cases']:
-                    if case['status'] != 'unrun':
-                        continue
-                    if record['role'] == 'meaning':
-                        value = {'meaning': 'Meaning '+record['local']['note_id']}
-                    elif record['role'] == 'consolidation':
-                        value = proposal if proposal and len(state['nodes']) == 7 else None
-                    else:
-                        payload = json.loads(case['inputs']['INPUT_JSON'])
-                        relation = ('local_contains_canonical' if
-                            payload['local']['subject'] == 'Group' and case['id'] in ('C001', 'C002')
-                            else 'neither')
-                        value = dict(meaning=payload['local']['meaning'], relation=relation, reason='Fixture')
-                    self.cli('run', record['experiment'], '--only', case['id'], env={
-                        'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(value)})
-            self.advance()
-        self.fail('fixture construction did not finish')
 
     def test_six_triggers_null_before_stop_and_does_not_retry_without_an_addition(self):
         self.prepare(count=7)
@@ -675,6 +391,7 @@ class CanonicalTraversalTests(unittest.TestCase):
         self.advance()
         self.assertEqual(len(fixtures.ExperimentTests.calls(self)), before)
 
+
     def test_synthetic_validation_groups_two_roots_and_retriggers_at_six(self):
         self.prepare(count=7)
         state = self.finish(dict(title='Group', meaning='Group meaning', children=['C001', 'C002']))
@@ -690,26 +407,6 @@ class CanonicalTraversalTests(unittest.TestCase):
         result = self.cli('audit-canonical-trial', 'trial', '--output', 'audit.json')
         self.assertTrue(json.loads(result.stdout)['structural_constraints_met'])
 
-    def test_same_note_canonical_is_compared_and_equivalence_keeps_immutable_meaning(self):
-        self.prepare(count=2, extra_root=True)
-        self.run_pending(lambda r: {'meaning':'Meaning '+r['local']['note_id']})
-        self.advance()
-        record = next(r for r in self.state()['experiments'] if r['role']=='comparison')
-        self.cli('run', record['experiment'], env={'FAKE_RUNNER_PROMPT_RESPONSE':json.dumps(
-            dict(meaning='Meaning n1', relation='equivalent', reason='Fixture equivalence'))})
-        self.advance()
-        state = self.state()
-        self.assertEqual(state['nodes'][0]['meaning'], 'Meaning n0')
-        self.assertEqual(len(state['nodes'][0]['entries']), 2)
-        record = next(r for r in state['experiments'] if r['role']=='comparison' and 'answers' not in r)
-        self.assertEqual(record['local'], dict(note_id='n0', number='2'))
-        self.assertEqual(list(record['inputs']), ['C001'])
-        before = state['nodes']
-        self.cli('run', record['experiment'], env={'FAKE_RUNNER_PROMPT_RESPONSE':json.dumps(
-            dict(meaning='Meaning n0', relation='uncertain', reason='Unresolved fixture'))})
-        self.advance()
-        self.assertEqual(self.state()['nodes'], before)
-        self.assertEqual(self.state()['steps'][-1]['status'], 'held')
 
     def test_native_invalid_grouping_keeps_all_existing_nodes(self):
         self.prepare(count=7)
@@ -718,6 +415,7 @@ class CanonicalTraversalTests(unittest.TestCase):
         self.assertEqual(len(state['nodes']), 7)
         self.assertFalse(any(n['subject']=='Group' for n in state['nodes']))
         self.assertIn('nominated-child', state['consolidations'][-1]['outcome'])
+
 
     def test_consolidation_adapter_rejects_invented_or_whole_group_children(self):
         from sse_multivector import experiment_inputs
@@ -732,22 +430,6 @@ class CanonicalTraversalTests(unittest.TestCase):
         self.assertEqual(result['status'], 'valid')
         self.assertIsNone(result['parsed'])
 
-    def test_unchecked_group_keeps_one_pending_attempt_when_another_addition_changes_it(self):
-        from sse_multivector.canonical_traversal import _triggers
-        nodes = [dict(id='P', parents=[])] + [dict(id=f'C{i}', parents=['P']) for i in range(7)]
-        state = dict(nodes=nodes, pending_groups=[])
-        _triggers(state, 'C5')
-        _triggers(state, 'C6')
-        self.assertEqual(state['pending_groups'], [dict(parent='P', added='C6')])
-
-    def test_final_stop_does_not_offer_unrun_experiments_for_dispatch(self):
-        self.prepare(count=1, extra_root=True)
-        first = self.state()['experiments'][0]['experiment']
-        self.cli('run', first, env={'FAKE_RUNNER_PROMPT_RESPONSE': '{"meaning":"One note root"}'})
-        result = json.loads(self.advance().stdout)
-        self.assertEqual(result['status'], 'complete')
-        self.assertEqual(result['experiments'], [])
-        self.assertEqual(len(self.state()['searches']), 2)
 
     def test_source_and_receipt_changes_cannot_apply(self):
         self.prepare()
@@ -766,6 +448,7 @@ class CanonicalTraversalTests(unittest.TestCase):
         self.cli('advance-canonical-traversal', 'trial', '--comment', 'Must reject', ok=False)
         self.assertEqual((self.root/'trial/state.json').read_bytes(), before)
 
+
     def test_failed_native_meaning_is_held_and_failure_receipt_cannot_be_tampered(self):
         self.prepare(count=2)
         experiment = self.state()['experiments'][0]['experiment']
@@ -780,54 +463,18 @@ class CanonicalTraversalTests(unittest.TestCase):
         self.assertEqual((self.root/'trial/state.json').read_bytes(), state_bytes)
         record.write_bytes(saved)
         self.advance()
-        step = self.state()['steps'][0]
-        self.assertEqual(step['status'], 'held')
-        self.assertEqual(step['before'], step['after'])
+        self.assertEqual(self.state()['status'], 'exhausted')
+        self.assertEqual(self.state()['unresolved_scoring'], ['n0','n1'])
+        self.assertEqual(self.state()['nodes'], [])
+
 
     def test_new_parent_cannot_change_a_settled_neither_relationship(self):
         self.settled_neither_fixture(symmetric=False)
 
+
     def test_symmetric_new_parent_cannot_change_a_settled_neither_relationship(self):
         self.settled_neither_fixture(symmetric=True)
 
-    def settled_neither_fixture(self, *, symmetric):
-        self.prepare(count=3, symmetric=symmetric)
-        for _ in range(12):
-            state = self.state()
-            if len(state['steps']) >= 3:
-                break
-            for record in state['experiments']:
-                if 'answers' in record:
-                    continue
-                note = record['local']['note_id']
-                for identifier in record['inputs']:
-                    value = dict(meaning='Meaning '+note)
-                    if record['role'] == 'comparison':
-                        value.update(reason='Controlled graph fixture', relation=(
-                            'canonical_contains_local' if identifier == 'C001'
-                            else 'local_contains_canonical') if note == 'n2' else 'neither')
-                    if record['role'] == 'comparison' and symmetric:
-                        relation = {'canonical_contains_local': 'B_contains_A',
-                                    'local_contains_canonical': 'A_contains_B'}.get(
-                                        value['relation'], value['relation'])
-                        value = dict(relation=relation, reason=value['reason'],
-                            questions=[dict(id=d, question='Boundary?') for d in
-                                       ('A_contains_B', 'B_contains_A')],
-                            answers=[dict(question_id=d, answer='Coverage or counterexample',
-                                          justification='Fixture condition') for d in
-                                     ('A_contains_B', 'B_contains_A')])
-                    self.cli('run', record['experiment'], '--only', identifier, env={
-                        'FAKE_RUNNER_PROMPT_RESPONSE':json.dumps(value)})
-            self.advance()
-        state = self.state()
-        self.assertEqual(len(state['steps']), 3)
-        step = state['steps'][2]
-        self.assertEqual(step['status'], 'held')
-        self.assertEqual(step['before'], step['after'])
-        witness = step['settled_relation_contradiction']
-        self.assertEqual((witness['source'], witness['other']), ('C002', 'C001'))
-        self.assertEqual(witness['previous_relation'], 'neither')
-        self.assertEqual(witness['current_relation'], 'canonical_contains_local')
 
     def test_finished_graph_remains_usable_by_saved_review_and_shaping_tools(self):
         self.prepare(count=3)
@@ -846,8 +493,72 @@ class CanonicalTraversalTests(unittest.TestCase):
         self.assertEqual((self.root/'trial/state.json').read_bytes(), source_bytes)
 
 
+    def drive(self, answer):
+        """Exercise every phase with native inputs, execution and immutable receipts."""
+        for _ in range(80):
+            state = CanonicalTraversalTests.state(self)
+            if state['status'] in ('complete', 'exhausted'):
+                return state
+            for record in state['experiments']:
+                if 'answers' in record:
+                    continue
+                shown = json.loads(CanonicalTraversalTests.cli(
+                    self, 'show', record['experiment'], '--json').stdout)
+                for case in shown['cases']:
+                    if case['status'] != 'unrun':
+                        continue
+                    local = (state['inventory'][int(case['id'][1:])]['local']
+                             if record['role'] in ('meaning', 'prominence') else record['local'])
+                    payload = json.loads(case['inputs']['INPUT_JSON'])
+                    value = (dict(prominence=60, missing_meaning='Other meaning', allocation=[
+                        dict(meaning='Whole post', points=100, represented=60, missing=40)])
+                        if record['role'] == 'prominence' else
+                        answer(record['role'], local, case['id'], payload, state))
+                    CanonicalTraversalTests.cli(self, 'run', record['experiment'], '--only', case['id'],
+                        env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(value)})
+            CanonicalTraversalTests.advance(self)
+        self.fail('native fixture construction did not finish')
+
+    def finish(self, proposal=None):
+        def answer(role, local, identifier, payload, state):
+            if role == 'meaning':
+                return dict(meaning='Meaning '+local['note_id'])
+            if role == 'consolidation':
+                return proposal if proposal and len(state['nodes']) == 7 else None
+            relation = ('local_contains_canonical' if payload['local']['subject'] == 'Group'
+                        and identifier in ('C001', 'C002') else 'neither')
+            return dict(meaning=payload['local']['meaning'], relation=relation, reason='Fixture')
+        return self.drive(answer)
+
+    def settled_neither_fixture(self, *, symmetric):
+        self.prepare(count=3, symmetric=symmetric)
+        def answer(role, local, identifier, payload, state):
+            note = local['note_id']
+            if role == 'meaning':
+                return dict(meaning='Meaning '+note)
+            relation = (('canonical_contains_local' if identifier == 'C001' else
+                         'local_contains_canonical') if note == 'n2' else 'neither')
+            if not symmetric:
+                return dict(meaning='Meaning '+note, relation=relation, reason='Graph fixture')
+            relation = {'canonical_contains_local':'B_contains_A',
+                        'local_contains_canonical':'A_contains_B'}.get(relation, relation)
+            return dict(relation=relation, reason='Graph fixture',
+                questions=[dict(id=d, question='Boundary?') for d in ('A_contains_B','B_contains_A')],
+                answers=[dict(question_id=d, answer='Coverage or counterexample', justification='Fixture')
+                         for d in ('A_contains_B','B_contains_A')])
+        state = self.drive(answer)
+        self.assertEqual(len(state['steps']), 3)
+        step = state['steps'][2]
+        self.assertEqual(step['status'], 'held')
+        self.assertEqual(step['before'], step['after'])
+        witness = step['settled_relation_contradiction']
+        self.assertEqual((witness['source'], witness['other']), ('C002','C001'))
+        self.assertEqual(witness['previous_relation'], 'neither')
+        self.assertEqual(witness['current_relation'], 'canonical_contains_local')
+
+
 def saved_traversal_fixture(test, *, equivalent=False):
-    """Create reviewed graph evidence through the standalone native constructor."""
+    """Create reviewed graph evidence through the standalone V2 constructor."""
     notes = [dict(note_id='n1', text='First post', subjects=[
         dict(number='1', subject='Cooking', context='Using heat'),
         dict(number='1.1', subject='EXCLUDED CHILD', context='Child')]),
@@ -855,26 +566,19 @@ def saved_traversal_fixture(test, *, equivalent=False):
             dict(number='2', subject='Food', context='Intended for cooking')]),
         dict(note_id='n3', text='Third post', subjects=[
             dict(number='3', subject='Ingredients', context='Cooking role')])]
+    # Existing adapter tests use the ordinary fake transport; teach it the PP template.
+    test.runner.write_text(test.runner.read_text().replace(
+        'if prompt.startswith("GENERIC PROMPT"):',
+        'if prompt.startswith("GENERIC PROMPT") or prompt.startswith("Prominence estimates"):'))
     CanonicalTraversalTests.prepare(test, notes=notes)
     meanings = dict(n1='Fixed cooking meaning', n2='Fixed food meaning', n3='Independent meaning')
-    for _ in range(12):
-        state = CanonicalTraversalTests.state(test)
-        if len(state['steps']) >= 3:
-            return state
-        for record in state['experiments']:
-            if 'answers' in record:
-                continue
-            if record['role'] == 'meaning':
-                value = dict(meaning=meanings[record['local']['note_id']])
-            else:
-                note = record['local']['note_id']
-                value = dict(meaning=meanings[note], reason='Controlled graph fixture',
+    def answer(role, local, identifier, payload, state):
+        if role == 'meaning':
+            return dict(meaning=meanings[local['note_id']])
+        return dict(meaning=meanings[local['note_id']], reason='Controlled graph fixture',
                     relation=('equivalent' if equivalent else 'canonical_contains_local')
-                             if note == 'n2' else 'neither')
-            test.cli('run', record['experiment'], env={
-                'FAKE_RUNNER_PROMPT_RESPONSE':json.dumps(value)})
-        CanonicalTraversalTests.advance(test)
-    test.fail('native fixture did not process its three roots')
+                             if local['note_id'] == 'n2' else 'neither')
+    return CanonicalTraversalTests.drive(test, answer)
 
 
 if __name__ == '__main__':

@@ -59,7 +59,8 @@ def _ancestors(nodes):
 def _note_sets(nodes):
     parents = {n['id']: n['parents'] for n in nodes}
     children = {n: [] for n in parents}
-    represented = {n['id']: {e['note_id'] for e in n['entries']} for n in nodes}
+    represented = {n['id']: {e['note_id'] for e in n['entries']} | set(n.get('note_ids', []))
+                   for n in nodes}
     for child, links in parents.items():
         for parent in links:
             children[parent].append(child)
