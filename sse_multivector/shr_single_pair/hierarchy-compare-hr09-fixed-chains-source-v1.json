@@ -1,0 +1,869 @@
+{
+  "schema_version": 1,
+  "saved_comparisons": [
+    {
+      "id": "smokers-food-forward",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00122/experiment",
+        "sha256": "dcd2d311f663542c8d09e73e226e75f27074774e023d792d75b4d8fabc4abce1"
+      },
+      "case_id": "C040",
+      "record_sha256": "4033ed8d07134c677785cf295bea7d6d5280070d5a119155a41ca422df516eaa",
+      "reverse": false,
+      "review": {
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "smokers-food",
+        "family": "smoking",
+        "expected_relation": null,
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "original_A_endpoint": "C060",
+        "original_B_endpoint": "C040",
+        "source_step": 59,
+        "source_state": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json",
+        "source_state_sha256": "059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e",
+        "qualification": "Exact HR09 fixed endpoints; old labels are audit evidence only. Native checks validate reversals. Complete chains require separate review of these identities against this frozen HR09 state; coincident wording is not sufficient."
+      }
+    },
+    {
+      "id": "smokers-food-reverse",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00122/experiment",
+        "sha256": "dcd2d311f663542c8d09e73e226e75f27074774e023d792d75b4d8fabc4abce1"
+      },
+      "case_id": "C040",
+      "record_sha256": "4033ed8d07134c677785cf295bea7d6d5280070d5a119155a41ca422df516eaa",
+      "reverse": true,
+      "review": {
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "smokers-food",
+        "family": "smoking",
+        "expected_relation": null,
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "original_A_endpoint": "C060",
+        "original_B_endpoint": "C040",
+        "source_step": 59,
+        "source_state": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json",
+        "source_state_sha256": "059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e",
+        "qualification": "Exact HR09 fixed endpoints; old labels are audit evidence only. Native checks validate reversals. Complete chains require separate review of these identities against this frozen HR09 state; coincident wording is not sufficient."
+      }
+    },
+    {
+      "id": "smoking-food-forward",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00216/experiment",
+        "sha256": "f3251f28571d21bb413543d2d0250737655f19b19c0202de62ea82c6747adeef"
+      },
+      "case_id": "C040",
+      "record_sha256": "ea73facbd56482d06d6fb1df7543ca6c84485c23edf4faa693098509fcb6f953",
+      "reverse": false,
+      "review": {
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "smoking-food",
+        "family": "smoking",
+        "expected_relation": null,
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "original_A_endpoint": "incoming-089",
+        "original_B_endpoint": "C040",
+        "source_step": 89,
+        "source_state": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json",
+        "source_state_sha256": "059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e",
+        "qualification": "Exact HR09 fixed endpoints; old labels are audit evidence only. Native checks validate reversals. Complete chains require separate review of these identities against this frozen HR09 state; coincident wording is not sufficient."
+      }
+    },
+    {
+      "id": "smoking-food-reverse",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00216/experiment",
+        "sha256": "f3251f28571d21bb413543d2d0250737655f19b19c0202de62ea82c6747adeef"
+      },
+      "case_id": "C040",
+      "record_sha256": "ea73facbd56482d06d6fb1df7543ca6c84485c23edf4faa693098509fcb6f953",
+      "reverse": true,
+      "review": {
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "smoking-food",
+        "family": "smoking",
+        "expected_relation": null,
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "original_A_endpoint": "incoming-089",
+        "original_B_endpoint": "C040",
+        "source_step": 89,
+        "source_state": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json",
+        "source_state_sha256": "059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e",
+        "qualification": "Exact HR09 fixed endpoints; old labels are audit evidence only. Native checks validate reversals. Complete chains require separate review of these identities against this frozen HR09 state; coincident wording is not sufficient."
+      }
+    },
+    {
+      "id": "smoking-smokers-forward",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00216/experiment",
+        "sha256": "f3251f28571d21bb413543d2d0250737655f19b19c0202de62ea82c6747adeef"
+      },
+      "case_id": "C060",
+      "record_sha256": "21bb2c3b7bb7b2cd3b769d934fefc15b6270902e232a4e9425470a34f9f3eb4f",
+      "reverse": false,
+      "review": {
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "smoking-smokers",
+        "family": "smoking",
+        "expected_relation": null,
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "original_A_endpoint": "incoming-089",
+        "original_B_endpoint": "C060",
+        "source_step": 89,
+        "source_state": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json",
+        "source_state_sha256": "059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e",
+        "qualification": "Exact HR09 fixed endpoints; old labels are audit evidence only. Native checks validate reversals. Complete chains require separate review of these identities against this frozen HR09 state; coincident wording is not sufficient."
+      }
+    },
+    {
+      "id": "smoking-smokers-reverse",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00216/experiment",
+        "sha256": "f3251f28571d21bb413543d2d0250737655f19b19c0202de62ea82c6747adeef"
+      },
+      "case_id": "C060",
+      "record_sha256": "21bb2c3b7bb7b2cd3b769d934fefc15b6270902e232a4e9425470a34f9f3eb4f",
+      "reverse": true,
+      "review": {
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "smoking-smokers",
+        "family": "smoking",
+        "expected_relation": null,
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "original_A_endpoint": "incoming-089",
+        "original_B_endpoint": "C060",
+        "source_step": 89,
+        "source_state": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json",
+        "source_state_sha256": "059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e",
+        "qualification": "Exact HR09 fixed endpoints; old labels are audit evidence only. Native checks validate reversals. Complete chains require separate review of these identities against this frozen HR09 state; coincident wording is not sufficient."
+      }
+    },
+    {
+      "id": "raves-temporal-forward",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00227/experiment",
+        "sha256": "10d930e8994150bf0a552251829ac2cc201a33daf1b30728280116c1e4186848"
+      },
+      "case_id": "C088",
+      "record_sha256": "c1b2240872db7e036c2892671438c0abbc9f6d6c5f1109dca13e4c2c306241ea",
+      "reverse": false,
+      "review": {
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "raves-temporal",
+        "family": "participation-raves",
+        "expected_relation": null,
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "original_A_endpoint": "C095",
+        "original_B_endpoint": "C088",
+        "source_step": 94,
+        "source_state": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json",
+        "source_state_sha256": "059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e",
+        "qualification": "Exact HR09 fixed endpoints; old labels are audit evidence only. Native checks validate reversals. Complete chains require separate review of these identities against this frozen HR09 state; coincident wording is not sufficient."
+      }
+    },
+    {
+      "id": "raves-temporal-reverse",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00227/experiment",
+        "sha256": "10d930e8994150bf0a552251829ac2cc201a33daf1b30728280116c1e4186848"
+      },
+      "case_id": "C088",
+      "record_sha256": "c1b2240872db7e036c2892671438c0abbc9f6d6c5f1109dca13e4c2c306241ea",
+      "reverse": true,
+      "review": {
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "raves-temporal",
+        "family": "participation-raves",
+        "expected_relation": null,
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "original_A_endpoint": "C095",
+        "original_B_endpoint": "C088",
+        "source_step": 94,
+        "source_state": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json",
+        "source_state_sha256": "059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e",
+        "qualification": "Exact HR09 fixed endpoints; old labels are audit evidence only. Native checks validate reversals. Complete chains require separate review of these identities against this frozen HR09 state; coincident wording is not sufficient."
+      }
+    },
+    {
+      "id": "participation-temporal-forward",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00242/experiment",
+        "sha256": "465af8f26c01364900f372a960e6f8bb8c67ff256ba08c889b58e02878b0a35c"
+      },
+      "case_id": "C088",
+      "record_sha256": "936b05fd74380a4161c5774b5e2320ad46e2a873eea2e3a903e5ccecd4ee8992",
+      "reverse": false,
+      "review": {
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "participation-temporal",
+        "family": "participation-raves",
+        "expected_relation": null,
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "original_A_endpoint": "incoming-095",
+        "original_B_endpoint": "C088",
+        "source_step": 95,
+        "source_state": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json",
+        "source_state_sha256": "059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e",
+        "qualification": "Exact HR09 fixed endpoints; old labels are audit evidence only. Native checks validate reversals. Complete chains require separate review of these identities against this frozen HR09 state; coincident wording is not sufficient."
+      }
+    },
+    {
+      "id": "participation-temporal-reverse",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00242/experiment",
+        "sha256": "465af8f26c01364900f372a960e6f8bb8c67ff256ba08c889b58e02878b0a35c"
+      },
+      "case_id": "C088",
+      "record_sha256": "936b05fd74380a4161c5774b5e2320ad46e2a873eea2e3a903e5ccecd4ee8992",
+      "reverse": true,
+      "review": {
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "participation-temporal",
+        "family": "participation-raves",
+        "expected_relation": null,
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "original_A_endpoint": "incoming-095",
+        "original_B_endpoint": "C088",
+        "source_step": 95,
+        "source_state": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json",
+        "source_state_sha256": "059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e",
+        "qualification": "Exact HR09 fixed endpoints; old labels are audit evidence only. Native checks validate reversals. Complete chains require separate review of these identities against this frozen HR09 state; coincident wording is not sufficient."
+      }
+    },
+    {
+      "id": "participation-raves-forward",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00242/experiment",
+        "sha256": "465af8f26c01364900f372a960e6f8bb8c67ff256ba08c889b58e02878b0a35c"
+      },
+      "case_id": "C095",
+      "record_sha256": "b30761f5c999cf84f3c8a67e7d079f5566ae9a68a6c624f6b20b8dccd7c59ba4",
+      "reverse": false,
+      "review": {
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "participation-raves",
+        "family": "participation-raves",
+        "expected_relation": null,
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "original_A_endpoint": "incoming-095",
+        "original_B_endpoint": "C095",
+        "source_step": 95,
+        "source_state": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json",
+        "source_state_sha256": "059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e",
+        "qualification": "Exact HR09 fixed endpoints; old labels are audit evidence only. Native checks validate reversals. Complete chains require separate review of these identities against this frozen HR09 state; coincident wording is not sufficient."
+      }
+    },
+    {
+      "id": "participation-raves-reverse",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00242/experiment",
+        "sha256": "465af8f26c01364900f372a960e6f8bb8c67ff256ba08c889b58e02878b0a35c"
+      },
+      "case_id": "C095",
+      "record_sha256": "b30761f5c999cf84f3c8a67e7d079f5566ae9a68a6c624f6b20b8dccd7c59ba4",
+      "reverse": true,
+      "review": {
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "participation-raves",
+        "family": "participation-raves",
+        "expected_relation": null,
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "original_A_endpoint": "incoming-095",
+        "original_B_endpoint": "C095",
+        "source_step": 95,
+        "source_state": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json",
+        "source_state_sha256": "059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e",
+        "qualification": "Exact HR09 fixed endpoints; old labels are audit evidence only. Native checks validate reversals. Complete chains require separate review of these identities against this frozen HR09 state; coincident wording is not sufficient."
+      }
+    },
+    {
+      "id": "carcasses-material-forward",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00089/experiment",
+        "sha256": "a0146664c2015a8d53a92797a2e0822818938d567e558720026753558c55a258"
+      },
+      "case_id": "C041",
+      "record_sha256": "99218466fdf9453fe5e0ccf1126b18dd342dd06c3e6a5092ec8795f71f9260ee",
+      "reverse": false,
+      "review": {
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "carcasses-material",
+        "family": "carcasses",
+        "expected_relation": null,
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "original_A_endpoint": "C049",
+        "original_B_endpoint": "C041",
+        "source_step": 48,
+        "source_state": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json",
+        "source_state_sha256": "059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e",
+        "qualification": "Exact HR09 fixed endpoints; old labels are audit evidence only. Native checks validate reversals. Complete chains require separate review of these identities against this frozen HR09 state; coincident wording is not sufficient."
+      }
+    },
+    {
+      "id": "carcasses-material-reverse",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00089/experiment",
+        "sha256": "a0146664c2015a8d53a92797a2e0822818938d567e558720026753558c55a258"
+      },
+      "case_id": "C041",
+      "record_sha256": "99218466fdf9453fe5e0ccf1126b18dd342dd06c3e6a5092ec8795f71f9260ee",
+      "reverse": true,
+      "review": {
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "carcasses-material",
+        "family": "carcasses",
+        "expected_relation": null,
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "original_A_endpoint": "C049",
+        "original_B_endpoint": "C041",
+        "source_step": 48,
+        "source_state": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json",
+        "source_state_sha256": "059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e",
+        "qualification": "Exact HR09 fixed endpoints; old labels are audit evidence only. Native checks validate reversals. Complete chains require separate review of these identities against this frozen HR09 state; coincident wording is not sufficient."
+      }
+    },
+    {
+      "id": "preparation-material-forward",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00273/experiment",
+        "sha256": "e4faef159ac8497b984307278ce2c745a3ee2298a76dee4f75247cec83ddf8a5"
+      },
+      "case_id": "C041",
+      "record_sha256": "0750ac98a75ed8aa3abdb3c83f076cbd0840215213334b5211bb085cb637ef27",
+      "reverse": false,
+      "review": {
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "preparation-material",
+        "family": "carcasses",
+        "expected_relation": null,
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "original_A_endpoint": "incoming-103",
+        "original_B_endpoint": "C041",
+        "source_step": 103,
+        "source_state": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json",
+        "source_state_sha256": "059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e",
+        "qualification": "Exact HR09 fixed endpoints; old labels are audit evidence only. Native checks validate reversals. Complete chains require separate review of these identities against this frozen HR09 state; coincident wording is not sufficient."
+      }
+    },
+    {
+      "id": "preparation-material-reverse",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00273/experiment",
+        "sha256": "e4faef159ac8497b984307278ce2c745a3ee2298a76dee4f75247cec83ddf8a5"
+      },
+      "case_id": "C041",
+      "record_sha256": "0750ac98a75ed8aa3abdb3c83f076cbd0840215213334b5211bb085cb637ef27",
+      "reverse": true,
+      "review": {
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "preparation-material",
+        "family": "carcasses",
+        "expected_relation": null,
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "original_A_endpoint": "incoming-103",
+        "original_B_endpoint": "C041",
+        "source_step": 103,
+        "source_state": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json",
+        "source_state_sha256": "059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e",
+        "qualification": "Exact HR09 fixed endpoints; old labels are audit evidence only. Native checks validate reversals. Complete chains require separate review of these identities against this frozen HR09 state; coincident wording is not sufficient."
+      }
+    },
+    {
+      "id": "preparation-carcasses-forward",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00273/experiment",
+        "sha256": "e4faef159ac8497b984307278ce2c745a3ee2298a76dee4f75247cec83ddf8a5"
+      },
+      "case_id": "C049",
+      "record_sha256": "ad5aeb5af1b8561295800b8bdd032c614d552b935f856581d61f9cd387f547d4",
+      "reverse": false,
+      "review": {
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "preparation-carcasses",
+        "family": "carcasses",
+        "expected_relation": null,
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "original_A_endpoint": "incoming-103",
+        "original_B_endpoint": "C049",
+        "source_step": 103,
+        "source_state": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json",
+        "source_state_sha256": "059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e",
+        "qualification": "Exact HR09 fixed endpoints; old labels are audit evidence only. Native checks validate reversals. Complete chains require separate review of these identities against this frozen HR09 state; coincident wording is not sufficient."
+      }
+    },
+    {
+      "id": "preparation-carcasses-reverse",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00273/experiment",
+        "sha256": "e4faef159ac8497b984307278ce2c745a3ee2298a76dee4f75247cec83ddf8a5"
+      },
+      "case_id": "C049",
+      "record_sha256": "ad5aeb5af1b8561295800b8bdd032c614d552b935f856581d61f9cd387f547d4",
+      "reverse": true,
+      "review": {
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "preparation-carcasses",
+        "family": "carcasses",
+        "expected_relation": null,
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "original_A_endpoint": "incoming-103",
+        "original_B_endpoint": "C049",
+        "source_step": 103,
+        "source_state": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json",
+        "source_state_sha256": "059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e",
+        "qualification": "Exact HR09 fixed endpoints; old labels are audit evidence only. Native checks validate reversals. Complete chains require separate review of these identities against this frozen HR09 state; coincident wording is not sufficient."
+      }
+    },
+    {
+      "id": "foods-material-forward",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00297/experiment",
+        "sha256": "595bc821770610452c156e8d366baa69deb9a2e93434718424d1791b69d6cc88"
+      },
+      "case_id": "C041",
+      "record_sha256": "a3cb841cddefe89981c31fad59e35dba5b0eb582e569c08eb356a57574e37d68",
+      "reverse": false,
+      "review": {
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "foods-material",
+        "family": "carcasses",
+        "expected_relation": null,
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "original_A_endpoint": "incoming-111",
+        "original_B_endpoint": "C041",
+        "source_step": 111,
+        "source_state": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json",
+        "source_state_sha256": "059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e",
+        "qualification": "Exact HR09 fixed endpoints; old labels are audit evidence only. Native checks validate reversals. Complete chains require separate review of these identities against this frozen HR09 state; coincident wording is not sufficient."
+      }
+    },
+    {
+      "id": "foods-material-reverse",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00297/experiment",
+        "sha256": "595bc821770610452c156e8d366baa69deb9a2e93434718424d1791b69d6cc88"
+      },
+      "case_id": "C041",
+      "record_sha256": "a3cb841cddefe89981c31fad59e35dba5b0eb582e569c08eb356a57574e37d68",
+      "reverse": true,
+      "review": {
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "foods-material",
+        "family": "carcasses",
+        "expected_relation": null,
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "original_A_endpoint": "incoming-111",
+        "original_B_endpoint": "C041",
+        "source_step": 111,
+        "source_state": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json",
+        "source_state_sha256": "059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e",
+        "qualification": "Exact HR09 fixed endpoints; old labels are audit evidence only. Native checks validate reversals. Complete chains require separate review of these identities against this frozen HR09 state; coincident wording is not sufficient."
+      }
+    },
+    {
+      "id": "foods-carcasses-forward",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00297/experiment",
+        "sha256": "595bc821770610452c156e8d366baa69deb9a2e93434718424d1791b69d6cc88"
+      },
+      "case_id": "C049",
+      "record_sha256": "dfe1f560da4a132a508ca8e983da03ddebc3890b94fd9b12247e66e224d4d987",
+      "reverse": false,
+      "review": {
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "foods-carcasses",
+        "family": "carcasses",
+        "expected_relation": null,
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "original_A_endpoint": "incoming-111",
+        "original_B_endpoint": "C049",
+        "source_step": 111,
+        "source_state": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json",
+        "source_state_sha256": "059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e",
+        "qualification": "Exact HR09 fixed endpoints; old labels are audit evidence only. Native checks validate reversals. Complete chains require separate review of these identities against this frozen HR09 state; coincident wording is not sufficient."
+      }
+    },
+    {
+      "id": "foods-carcasses-reverse",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00297/experiment",
+        "sha256": "595bc821770610452c156e8d366baa69deb9a2e93434718424d1791b69d6cc88"
+      },
+      "case_id": "C049",
+      "record_sha256": "dfe1f560da4a132a508ca8e983da03ddebc3890b94fd9b12247e66e224d4d987",
+      "reverse": true,
+      "review": {
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "foods-carcasses",
+        "family": "carcasses",
+        "expected_relation": null,
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "original_A_endpoint": "incoming-111",
+        "original_B_endpoint": "C049",
+        "source_step": 111,
+        "source_state": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json",
+        "source_state_sha256": "059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e",
+        "qualification": "Exact HR09 fixed endpoints; old labels are audit evidence only. Native checks validate reversals. Complete chains require separate review of these identities against this frozen HR09 state; coincident wording is not sufficient."
+      }
+    },
+    {
+      "id": "satisfaction-physical-forward",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00183/experiment",
+        "sha256": "0e0e250a4a6426c1a4b7eebe2ad01ecac4f746d9ff190dfa919c203f811c1636"
+      },
+      "case_id": "C050",
+      "record_sha256": "053aade9da18def3bed24b3bb02677e75ea11e49a891f01b860f91192618ee98",
+      "reverse": false,
+      "review": {
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "satisfaction-physical",
+        "family": "people-satisfaction",
+        "expected_relation": null,
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "original_A_endpoint": "C079",
+        "original_B_endpoint": "C050",
+        "source_step": 78,
+        "source_state": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json",
+        "source_state_sha256": "059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e",
+        "qualification": "Exact HR09 fixed endpoints; old labels are audit evidence only. Native checks validate reversals. Complete chains require separate review of these identities against this frozen HR09 state; coincident wording is not sufficient."
+      }
+    },
+    {
+      "id": "satisfaction-physical-reverse",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00183/experiment",
+        "sha256": "0e0e250a4a6426c1a4b7eebe2ad01ecac4f746d9ff190dfa919c203f811c1636"
+      },
+      "case_id": "C050",
+      "record_sha256": "053aade9da18def3bed24b3bb02677e75ea11e49a891f01b860f91192618ee98",
+      "reverse": true,
+      "review": {
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "satisfaction-physical",
+        "family": "people-satisfaction",
+        "expected_relation": null,
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "original_A_endpoint": "C079",
+        "original_B_endpoint": "C050",
+        "source_step": 78,
+        "source_state": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json",
+        "source_state_sha256": "059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e",
+        "qualification": "Exact HR09 fixed endpoints; old labels are audit evidence only. Native checks validate reversals. Complete chains require separate review of these identities against this frozen HR09 state; coincident wording is not sufficient."
+      }
+    },
+    {
+      "id": "wellbeing-satisfaction-forward",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00285/experiment",
+        "sha256": "b256984529b922aa65048e21469175a5bab7f413c842c97c481cac19ad730560"
+      },
+      "case_id": "C079",
+      "record_sha256": "5cb4d98877fb8be2d0a3f8e395259c869ec9604ed1b1a875d155b164257d8f07",
+      "reverse": false,
+      "review": {
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "wellbeing-satisfaction",
+        "family": "people-satisfaction",
+        "expected_relation": null,
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "original_A_endpoint": "C109",
+        "original_B_endpoint": "C079",
+        "source_step": 108,
+        "source_state": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json",
+        "source_state_sha256": "059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e",
+        "qualification": "Exact HR09 fixed endpoints; old labels are audit evidence only. Native checks validate reversals. Complete chains require separate review of these identities against this frozen HR09 state; coincident wording is not sufficient."
+      }
+    },
+    {
+      "id": "wellbeing-satisfaction-reverse",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00285/experiment",
+        "sha256": "b256984529b922aa65048e21469175a5bab7f413c842c97c481cac19ad730560"
+      },
+      "case_id": "C079",
+      "record_sha256": "5cb4d98877fb8be2d0a3f8e395259c869ec9604ed1b1a875d155b164257d8f07",
+      "reverse": true,
+      "review": {
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "wellbeing-satisfaction",
+        "family": "people-satisfaction",
+        "expected_relation": null,
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "original_A_endpoint": "C109",
+        "original_B_endpoint": "C079",
+        "source_step": 108,
+        "source_state": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json",
+        "source_state_sha256": "059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e",
+        "qualification": "Exact HR09 fixed endpoints; old labels are audit evidence only. Native checks validate reversals. Complete chains require separate review of these identities against this frozen HR09 state; coincident wording is not sufficient."
+      }
+    },
+    {
+      "id": "people-physical-forward",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00301/experiment",
+        "sha256": "767360641fe974ee6fb87430fd3d2af23aef78609e865a92e048b4c9a3a4471d"
+      },
+      "case_id": "C050",
+      "record_sha256": "46307a9c08987be88875d7afdf06b1d64da823a9cb9ab10512899bfc6a46d03e",
+      "reverse": false,
+      "review": {
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "people-physical",
+        "family": "people-satisfaction",
+        "expected_relation": null,
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "original_A_endpoint": "incoming-116",
+        "original_B_endpoint": "C050",
+        "source_step": 116,
+        "source_state": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json",
+        "source_state_sha256": "059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e",
+        "qualification": "Exact HR09 fixed endpoints; old labels are audit evidence only. Native checks validate reversals. Complete chains require separate review of these identities against this frozen HR09 state; coincident wording is not sufficient."
+      }
+    },
+    {
+      "id": "people-physical-reverse",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00301/experiment",
+        "sha256": "767360641fe974ee6fb87430fd3d2af23aef78609e865a92e048b4c9a3a4471d"
+      },
+      "case_id": "C050",
+      "record_sha256": "46307a9c08987be88875d7afdf06b1d64da823a9cb9ab10512899bfc6a46d03e",
+      "reverse": true,
+      "review": {
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "people-physical",
+        "family": "people-satisfaction",
+        "expected_relation": null,
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "original_A_endpoint": "incoming-116",
+        "original_B_endpoint": "C050",
+        "source_step": 116,
+        "source_state": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json",
+        "source_state_sha256": "059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e",
+        "qualification": "Exact HR09 fixed endpoints; old labels are audit evidence only. Native checks validate reversals. Complete chains require separate review of these identities against this frozen HR09 state; coincident wording is not sufficient."
+      }
+    },
+    {
+      "id": "people-wellbeing-forward",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00301/experiment",
+        "sha256": "767360641fe974ee6fb87430fd3d2af23aef78609e865a92e048b4c9a3a4471d"
+      },
+      "case_id": "C109",
+      "record_sha256": "2c49d5ca4376097dab321d29bfd5aedc3fdcfb44dd01a99b549516052266b513",
+      "reverse": false,
+      "review": {
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "people-wellbeing",
+        "family": "people-satisfaction",
+        "expected_relation": null,
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "original_A_endpoint": "incoming-116",
+        "original_B_endpoint": "C109",
+        "source_step": 116,
+        "source_state": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json",
+        "source_state_sha256": "059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e",
+        "qualification": "Exact HR09 fixed endpoints; old labels are audit evidence only. Native checks validate reversals. Complete chains require separate review of these identities against this frozen HR09 state; coincident wording is not sufficient."
+      }
+    },
+    {
+      "id": "people-wellbeing-reverse",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00301/experiment",
+        "sha256": "767360641fe974ee6fb87430fd3d2af23aef78609e865a92e048b4c9a3a4471d"
+      },
+      "case_id": "C109",
+      "record_sha256": "2c49d5ca4376097dab321d29bfd5aedc3fdcfb44dd01a99b549516052266b513",
+      "reverse": true,
+      "review": {
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "people-wellbeing",
+        "family": "people-satisfaction",
+        "expected_relation": null,
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "original_A_endpoint": "incoming-116",
+        "original_B_endpoint": "C109",
+        "source_step": 116,
+        "source_state": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json",
+        "source_state_sha256": "059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e",
+        "qualification": "Exact HR09 fixed endpoints; old labels are audit evidence only. Native checks validate reversals. Complete chains require separate review of these identities against this frozen HR09 state; coincident wording is not sufficient."
+      }
+    },
+    {
+      "id": "capitalism-participation-forward",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00390/experiment",
+        "sha256": "b9d0573b9775bd4cfbad2be3b411045ad2fcd1d736d6b593d5ebb18c65ad4fa4"
+      },
+      "case_id": "C142",
+      "record_sha256": "d2ca232de4b6f60356a22ff6f2381cbd48388dda1c988184c9255daed508a4e4",
+      "reverse": false,
+      "review": {
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "capitalism-participation",
+        "family": "social-capitalism",
+        "expected_relation": null,
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "original_A_endpoint": "C144",
+        "original_B_endpoint": "C142",
+        "source_step": 143,
+        "source_state": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json",
+        "source_state_sha256": "059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e",
+        "qualification": "Exact HR09 fixed endpoints; old labels are audit evidence only. Native checks validate reversals. Complete chains require separate review of these identities against this frozen HR09 state; coincident wording is not sufficient."
+      }
+    },
+    {
+      "id": "capitalism-participation-reverse",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00390/experiment",
+        "sha256": "b9d0573b9775bd4cfbad2be3b411045ad2fcd1d736d6b593d5ebb18c65ad4fa4"
+      },
+      "case_id": "C142",
+      "record_sha256": "d2ca232de4b6f60356a22ff6f2381cbd48388dda1c988184c9255daed508a4e4",
+      "reverse": true,
+      "review": {
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "capitalism-participation",
+        "family": "social-capitalism",
+        "expected_relation": null,
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "original_A_endpoint": "C144",
+        "original_B_endpoint": "C142",
+        "source_step": 143,
+        "source_state": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json",
+        "source_state_sha256": "059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e",
+        "qualification": "Exact HR09 fixed endpoints; old labels are audit evidence only. Native checks validate reversals. Complete chains require separate review of these identities against this frozen HR09 state; coincident wording is not sufficient."
+      }
+    },
+    {
+      "id": "social-participation-forward",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00397/experiment",
+        "sha256": "b48edc41e477d2a9cf60c87c994a22d1ea89c8b899946ce465a494420abe6e75"
+      },
+      "case_id": "C142",
+      "record_sha256": "dea17b031a750b68331f0517d19156928419c54d744d9023493d6bb74dfed438",
+      "reverse": false,
+      "review": {
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "social-participation",
+        "family": "social-capitalism",
+        "expected_relation": null,
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "original_A_endpoint": "incoming-145",
+        "original_B_endpoint": "C142",
+        "source_step": 145,
+        "source_state": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json",
+        "source_state_sha256": "059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e",
+        "qualification": "Exact HR09 fixed endpoints; old labels are audit evidence only. Native checks validate reversals. Complete chains require separate review of these identities against this frozen HR09 state; coincident wording is not sufficient."
+      }
+    },
+    {
+      "id": "social-participation-reverse",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00397/experiment",
+        "sha256": "b48edc41e477d2a9cf60c87c994a22d1ea89c8b899946ce465a494420abe6e75"
+      },
+      "case_id": "C142",
+      "record_sha256": "dea17b031a750b68331f0517d19156928419c54d744d9023493d6bb74dfed438",
+      "reverse": true,
+      "review": {
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "social-participation",
+        "family": "social-capitalism",
+        "expected_relation": null,
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "original_A_endpoint": "incoming-145",
+        "original_B_endpoint": "C142",
+        "source_step": 145,
+        "source_state": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json",
+        "source_state_sha256": "059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e",
+        "qualification": "Exact HR09 fixed endpoints; old labels are audit evidence only. Native checks validate reversals. Complete chains require separate review of these identities against this frozen HR09 state; coincident wording is not sufficient."
+      }
+    },
+    {
+      "id": "social-capitalism-forward",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00397/experiment",
+        "sha256": "b48edc41e477d2a9cf60c87c994a22d1ea89c8b899946ce465a494420abe6e75"
+      },
+      "case_id": "C144",
+      "record_sha256": "70584c8ead1bca35e4fa4f97d4cb1c82dc1cd6c6f2b867e2e4716df4e1241828",
+      "reverse": false,
+      "review": {
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "social-capitalism",
+        "family": "social-capitalism",
+        "expected_relation": null,
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "original_A_endpoint": "incoming-145",
+        "original_B_endpoint": "C144",
+        "source_step": 145,
+        "source_state": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json",
+        "source_state_sha256": "059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e",
+        "qualification": "Exact HR09 fixed endpoints; old labels are audit evidence only. Native checks validate reversals. Complete chains require separate review of these identities against this frozen HR09 state; coincident wording is not sufficient."
+      }
+    },
+    {
+      "id": "social-capitalism-reverse",
+      "experiment": {
+        "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/trial/batch-00397/experiment",
+        "sha256": "b48edc41e477d2a9cf60c87c994a22d1ea89c8b899946ce465a494420abe6e75"
+      },
+      "case_id": "C144",
+      "record_sha256": "70584c8ead1bca35e4fa4f97d4cb1c82dc1cd6c6f2b867e2e4716df4e1241828",
+      "reverse": true,
+      "review": {
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "social-capitalism",
+        "family": "social-capitalism",
+        "expected_relation": null,
+        "user_gold": false,
+        "historical_relation_is_gold": false,
+        "original_A_endpoint": "incoming-145",
+        "original_B_endpoint": "C144",
+        "source_step": 145,
+        "source_state": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/HR09/state.json",
+        "source_state_sha256": "059840fdf8a43794392990ea40c685eb54019ecbd49657c465ff8101068af44e",
+        "qualification": "Exact HR09 fixed endpoints; old labels are audit evidence only. Native checks validate reversals. Complete chains require separate review of these identities against this frozen HR09 state; coincident wording is not sufficient."
+      }
+    }
+  ]
+}
