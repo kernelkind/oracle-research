@@ -38,7 +38,20 @@ directions under `A_contains_B` and `B_contains_A`; the current readout returns
 only the relation. Native preparation preserves the original fit guards and
 rejects mixed versions, forged producer receipts and fitting exposure. The
 four-module CPU suite passes 57 tests with 39 explicit GPU cases skipped;
-the extended four-path GPU check remains pending.
+the extended four-path GPU check passes in 71.16 seconds. It verifies both
+legacy and A/B evaluation, reversed option order, direct-forward agreement,
+zero updates and unchanged fitting artifacts. The first staged check stopped
+before weights because its bundle omitted the C179 schema; the corrected
+immutable runtime is `hr05-matched-student-evaluation-v1/compare-evaluation-runtime-v2`.
+Its 527-file snapshot SHA-256 is
+`e7f10cfc572a5e1690231875560f073ae017aa524a84acba3be5c10ea093140d`.
+
+Exact cached-tokenizer preflight also passes all 200 Compare encodings without
+truncation or CUDA initialization. Maximum lengths are 2,171 for Ettin full
+state, 162 for Ettin input JSON, 2,234 for Qwen and 2,194 for Kev; their unchanged
+limits are 7,168/7,168/8,192/8,192 respectively. All four native prepared data
+files have SHA-256
+`a4d300956cd541ed0e9bc6a74dcec10b8e768c2f51a016e47f31a84fdbb9f605`.
 
 The HR05-aligned panel uses the same 40 disjoint Bootstrap cases. Compare reuses
 50 complete C179 judgments on B109-produced meanings: 20 directions are

@@ -2,7 +2,7 @@
 
 ## Bootstrap and Compare selection
 
-Updated October 11, 2026. The authorized goal is one student choice per prompt
+Updated October 12, 2026. The authorized goal is one student choice per prompt
 and verified training readiness before freeze, followed by one planned final
 fine-tune per prompt. The completed matched pilot and broader development
 evidence support recommending **Qwen3.8-27B starting weights for Bootstrap**
@@ -25,8 +25,9 @@ The new Compare evaluator keeps the old fitting instructions, targets and saved
 heads immutable while selecting exact C179 instructions and B109 producer
 receipts. It maps the trained directional indices to `A_contains_B` and
 `B_contains_A`, with no diagnostic generation or added branch fields. Its CPU
-regressions pass; the four-path GPU integration and actual model passes remain
-pending. The 50 existing C179 references contain five inconsistent reversal
+regressions and 71.16-second four-path GPU integration pass; actual Compare model
+passes remain pending. All 200 panel encodings pass exact tokenizer admission
+without truncation. The 50 existing C179 references contain five inconsistent reversal
 pairs, all unresolved probes; the 20 provisional control directions are
 consistent. Current model selection must therefore consider control agreement
 and student reversal consistency, rather than rank raw teacher matches alone.
