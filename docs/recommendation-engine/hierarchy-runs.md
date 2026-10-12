@@ -100,9 +100,10 @@ token, cost and structural results remain pending.
 
 ### Initial execution checkpoint
 
-All original L1 meanings are valid: 150 for HR08, 150 for HR09 and 326 for
-HR10. HR10 includes 150 exact native reuses from HR09. The drivers stopped
-before any prominence request or placement because V2 inherited Bootstrap's
+All original L1 Bootstrap answers are schema-valid: 150 for HR08, 150 for HR09
+and 326 for HR10. HR08 and HR09 have non-null meanings for every root; HR10 has
+two null meanings. HR10 includes 150 exact native reuses from HR09. The drivers
+stopped before any prominence request or placement because V2 inherited Bootstrap's
 cache flag for PPv35, whose fixed prefix has 829 estimated tokens, below the
 shared runner's 1,024-token minimum. Saved meanings, receipts and counters are
 preserved. A tested constructor fix now applies the native prefix eligibility
@@ -119,12 +120,33 @@ The cache fix is commit `90cfa66026a9167a314607a22f7a4b7ad1eceb56` on local
 meaning receipts remain unchanged. Native `source_upgrades` records all eight
 constructor bindings, old/new source hashes, PP caching true to false, and the
 archived unprepared batch. The original counters were 152/3,000, 151/3,000 and
-178/10,000 at continuation; none was reset. New prominence requests are running.
+178/10,000 at continuation; none was reset. Prominence preparation and scoring
+have finished, and hierarchy placements are running.
+
+### Scoring checkpoint
+
+| Measurement | HR08 | HR09 | HR10 |
+| --- | ---: | ---: | ---: |
+| Non-null original L1 meanings | 150 / 150 | 150 / 150 | 324 / 326 |
+| Valid original L1 prominence scores | 149 / 150 | 150 / 150 | 324 / 324 attempted |
+| Guaranteed entries established from valid scores | 75 | 90 | 164 |
+| Unresolved original L1 entries | 1 | 0 | 2 |
+
+HR08's prominence answer for **GrowNostr**, local entry `10` of note
+`25f5a4c…`, contains invalid JSON (`fifty` as an unquoted value). HR10's
+Bootstrap answers for local entry `4` of note `862486d8…` and local entry `7`
+of note `e0508834…`, both coffee-chain subjects, contain null meanings; no
+prominence requests are made for those entries. The saved answers remain
+unchanged and are not manually retried. A note with unresolved original L1
+scoring is not eligible for V2 selection. These unresolved entries prevent
+construction from being reported complete even if the remaining selection
+finishes; final results will retain the native status and coverage measurements.
 
 ## Token usage and API cost
 
-These totals cover hierarchy construction: Bootstrap, Compare and consolidation,
-including warmups, retries, unused charged producers and the original generation
+These totals cover hierarchy construction: Bootstrap, prominence where used,
+Compare and consolidation, including warmups, retries, unused charged producers
+and the original generation
 behind exact answer reuses, counted once. Separate subject extraction and vector
 encoding are excluded. HR06 includes its three-note base and the seven original
 producer calls behind reused answers.

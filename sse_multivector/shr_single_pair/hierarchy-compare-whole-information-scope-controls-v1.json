@@ -1,0 +1,281 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "food-kind-process-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"A\": {\"subject\": \"Food\", \"meaning\": \"Food is edible material intended for human consumption as nourishment or enjoyment.\"}, \"B\": {\"subject\": \"Food preparation\", \"meaning\": \"Food preparation is the activity of working on edible material intended for human consumption as nourishment or enjoyment to make it ready to eat.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "panel": "whole-information-scope",
+        "family": "food",
+        "pair_id": "food-kind-process",
+        "orientation": "forward",
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "food-kind-process",
+        "application_allowed": false,
+        "origin": "Independently specified synthetic material/activity/equipment diagnostic. No Bootstrap or AS output is asserted, no real post is used, and these inputs never become prompt examples.",
+        "review": {
+          "expected_relation": null,
+          "expectation_authority": "unresolved-agent-diagnostic",
+          "user_gold": false,
+          "qualification": "No individual relationship is predetermined. Assess exact reversal consistency and both complete chains: accepted kind-to-process and process-to-equipment entail kind-to-equipment under whole-scope containment. Consistency alone and denying every link do not certify quality. Review each admitted connection, not physical-instance identity alone."
+        }
+      }
+    },
+    {
+      "id": "food-kind-process-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"A\": {\"subject\": \"Food preparation\", \"meaning\": \"Food preparation is the activity of working on edible material intended for human consumption as nourishment or enjoyment to make it ready to eat.\"}, \"B\": {\"subject\": \"Food\", \"meaning\": \"Food is edible material intended for human consumption as nourishment or enjoyment.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "panel": "whole-information-scope",
+        "family": "food",
+        "pair_id": "food-kind-process",
+        "orientation": "reverse",
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "food-kind-process",
+        "application_allowed": false,
+        "origin": "Independently specified synthetic material/activity/equipment diagnostic. No Bootstrap or AS output is asserted, no real post is used, and these inputs never become prompt examples.",
+        "review": {
+          "expected_relation": null,
+          "expectation_authority": "unresolved-agent-diagnostic",
+          "user_gold": false,
+          "qualification": "No individual relationship is predetermined. Assess exact reversal consistency and both complete chains: accepted kind-to-process and process-to-equipment entail kind-to-equipment under whole-scope containment. Consistency alone and denying every link do not certify quality. Review each admitted connection, not physical-instance identity alone."
+        }
+      }
+    },
+    {
+      "id": "food-process-equipment-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"A\": {\"subject\": \"Food preparation\", \"meaning\": \"Food preparation is the activity of working on edible material intended for human consumption as nourishment or enjoyment to make it ready to eat.\"}, \"B\": {\"subject\": \"Cooking vessels\", \"meaning\": \"Cooking vessels are non-food containers designed and used to hold edible material intended for human consumption as nourishment or enjoyment while that material is heated as a step toward making it ready to eat.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "panel": "whole-information-scope",
+        "family": "food",
+        "pair_id": "food-process-equipment",
+        "orientation": "forward",
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "food-process-equipment",
+        "application_allowed": false,
+        "origin": "Independently specified synthetic material/activity/equipment diagnostic. No Bootstrap or AS output is asserted, no real post is used, and these inputs never become prompt examples.",
+        "review": {
+          "expected_relation": null,
+          "expectation_authority": "unresolved-agent-diagnostic",
+          "user_gold": false,
+          "qualification": "No individual relationship is predetermined. Assess exact reversal consistency and both complete chains: accepted kind-to-process and process-to-equipment entail kind-to-equipment under whole-scope containment. Consistency alone and denying every link do not certify quality. Review each admitted connection, not physical-instance identity alone."
+        }
+      }
+    },
+    {
+      "id": "food-process-equipment-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"A\": {\"subject\": \"Cooking vessels\", \"meaning\": \"Cooking vessels are non-food containers designed and used to hold edible material intended for human consumption as nourishment or enjoyment while that material is heated as a step toward making it ready to eat.\"}, \"B\": {\"subject\": \"Food preparation\", \"meaning\": \"Food preparation is the activity of working on edible material intended for human consumption as nourishment or enjoyment to make it ready to eat.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "panel": "whole-information-scope",
+        "family": "food",
+        "pair_id": "food-process-equipment",
+        "orientation": "reverse",
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "food-process-equipment",
+        "application_allowed": false,
+        "origin": "Independently specified synthetic material/activity/equipment diagnostic. No Bootstrap or AS output is asserted, no real post is used, and these inputs never become prompt examples.",
+        "review": {
+          "expected_relation": null,
+          "expectation_authority": "unresolved-agent-diagnostic",
+          "user_gold": false,
+          "qualification": "No individual relationship is predetermined. Assess exact reversal consistency and both complete chains: accepted kind-to-process and process-to-equipment entail kind-to-equipment under whole-scope containment. Consistency alone and denying every link do not certify quality. Review each admitted connection, not physical-instance identity alone."
+        }
+      }
+    },
+    {
+      "id": "food-kind-equipment-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"A\": {\"subject\": \"Food\", \"meaning\": \"Food is edible material intended for human consumption as nourishment or enjoyment.\"}, \"B\": {\"subject\": \"Cooking vessels\", \"meaning\": \"Cooking vessels are non-food containers designed and used to hold edible material intended for human consumption as nourishment or enjoyment while that material is heated as a step toward making it ready to eat.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "panel": "whole-information-scope",
+        "family": "food",
+        "pair_id": "food-kind-equipment",
+        "orientation": "forward",
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "food-kind-equipment",
+        "application_allowed": false,
+        "origin": "Independently specified synthetic material/activity/equipment diagnostic. No Bootstrap or AS output is asserted, no real post is used, and these inputs never become prompt examples.",
+        "review": {
+          "expected_relation": null,
+          "expectation_authority": "unresolved-agent-diagnostic",
+          "user_gold": false,
+          "qualification": "No individual relationship is predetermined. Assess exact reversal consistency and both complete chains: accepted kind-to-process and process-to-equipment entail kind-to-equipment under whole-scope containment. Consistency alone and denying every link do not certify quality. Review each admitted connection, not physical-instance identity alone."
+        }
+      }
+    },
+    {
+      "id": "food-kind-equipment-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"A\": {\"subject\": \"Cooking vessels\", \"meaning\": \"Cooking vessels are non-food containers designed and used to hold edible material intended for human consumption as nourishment or enjoyment while that material is heated as a step toward making it ready to eat.\"}, \"B\": {\"subject\": \"Food\", \"meaning\": \"Food is edible material intended for human consumption as nourishment or enjoyment.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "panel": "whole-information-scope",
+        "family": "food",
+        "pair_id": "food-kind-equipment",
+        "orientation": "reverse",
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "food-kind-equipment",
+        "application_allowed": false,
+        "origin": "Independently specified synthetic material/activity/equipment diagnostic. No Bootstrap or AS output is asserted, no real post is used, and these inputs never become prompt examples.",
+        "review": {
+          "expected_relation": null,
+          "expectation_authority": "unresolved-agent-diagnostic",
+          "user_gold": false,
+          "qualification": "No individual relationship is predetermined. Assess exact reversal consistency and both complete chains: accepted kind-to-process and process-to-equipment entail kind-to-equipment under whole-scope containment. Consistency alone and denying every link do not certify quality. Review each admitted connection, not physical-instance identity alone."
+        }
+      }
+    },
+    {
+      "id": "paper-kind-process-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"A\": {\"subject\": \"Paper\", \"meaning\": \"Paper is material in the form of thin sheets made from cellulose fibres.\"}, \"B\": {\"subject\": \"Paper making\", \"meaning\": \"Paper making is the activity of processing cellulose fibres with water into thin sheets of paper.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "panel": "whole-information-scope",
+        "family": "paper",
+        "pair_id": "paper-kind-process",
+        "orientation": "forward",
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "paper-kind-process",
+        "application_allowed": false,
+        "origin": "Independently specified synthetic material/activity/equipment diagnostic. No Bootstrap or AS output is asserted, no real post is used, and these inputs never become prompt examples.",
+        "review": {
+          "expected_relation": null,
+          "expectation_authority": "unresolved-agent-diagnostic",
+          "user_gold": false,
+          "qualification": "No individual relationship is predetermined. Assess exact reversal consistency and both complete chains: accepted kind-to-process and process-to-equipment entail kind-to-equipment under whole-scope containment. Consistency alone and denying every link do not certify quality. Review each admitted connection, not physical-instance identity alone."
+        }
+      }
+    },
+    {
+      "id": "paper-kind-process-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"A\": {\"subject\": \"Paper making\", \"meaning\": \"Paper making is the activity of processing cellulose fibres with water into thin sheets of paper.\"}, \"B\": {\"subject\": \"Paper\", \"meaning\": \"Paper is material in the form of thin sheets made from cellulose fibres.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "panel": "whole-information-scope",
+        "family": "paper",
+        "pair_id": "paper-kind-process",
+        "orientation": "reverse",
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "paper-kind-process",
+        "application_allowed": false,
+        "origin": "Independently specified synthetic material/activity/equipment diagnostic. No Bootstrap or AS output is asserted, no real post is used, and these inputs never become prompt examples.",
+        "review": {
+          "expected_relation": null,
+          "expectation_authority": "unresolved-agent-diagnostic",
+          "user_gold": false,
+          "qualification": "No individual relationship is predetermined. Assess exact reversal consistency and both complete chains: accepted kind-to-process and process-to-equipment entail kind-to-equipment under whole-scope containment. Consistency alone and denying every link do not certify quality. Review each admitted connection, not physical-instance identity alone."
+        }
+      }
+    },
+    {
+      "id": "paper-process-equipment-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"A\": {\"subject\": \"Paper making\", \"meaning\": \"Paper making is the activity of processing cellulose fibres with water into thin sheets of paper.\"}, \"B\": {\"subject\": \"Pulp presses\", \"meaning\": \"Pulp presses are metal machines designed and used to remove water from cellulose fibres as a step in processing those fibres into thin sheets of paper.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "panel": "whole-information-scope",
+        "family": "paper",
+        "pair_id": "paper-process-equipment",
+        "orientation": "forward",
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "paper-process-equipment",
+        "application_allowed": false,
+        "origin": "Independently specified synthetic material/activity/equipment diagnostic. No Bootstrap or AS output is asserted, no real post is used, and these inputs never become prompt examples.",
+        "review": {
+          "expected_relation": null,
+          "expectation_authority": "unresolved-agent-diagnostic",
+          "user_gold": false,
+          "qualification": "No individual relationship is predetermined. Assess exact reversal consistency and both complete chains: accepted kind-to-process and process-to-equipment entail kind-to-equipment under whole-scope containment. Consistency alone and denying every link do not certify quality. Review each admitted connection, not physical-instance identity alone."
+        }
+      }
+    },
+    {
+      "id": "paper-process-equipment-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"A\": {\"subject\": \"Pulp presses\", \"meaning\": \"Pulp presses are metal machines designed and used to remove water from cellulose fibres as a step in processing those fibres into thin sheets of paper.\"}, \"B\": {\"subject\": \"Paper making\", \"meaning\": \"Paper making is the activity of processing cellulose fibres with water into thin sheets of paper.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "panel": "whole-information-scope",
+        "family": "paper",
+        "pair_id": "paper-process-equipment",
+        "orientation": "reverse",
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "paper-process-equipment",
+        "application_allowed": false,
+        "origin": "Independently specified synthetic material/activity/equipment diagnostic. No Bootstrap or AS output is asserted, no real post is used, and these inputs never become prompt examples.",
+        "review": {
+          "expected_relation": null,
+          "expectation_authority": "unresolved-agent-diagnostic",
+          "user_gold": false,
+          "qualification": "No individual relationship is predetermined. Assess exact reversal consistency and both complete chains: accepted kind-to-process and process-to-equipment entail kind-to-equipment under whole-scope containment. Consistency alone and denying every link do not certify quality. Review each admitted connection, not physical-instance identity alone."
+        }
+      }
+    },
+    {
+      "id": "paper-kind-equipment-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"A\": {\"subject\": \"Paper\", \"meaning\": \"Paper is material in the form of thin sheets made from cellulose fibres.\"}, \"B\": {\"subject\": \"Pulp presses\", \"meaning\": \"Pulp presses are metal machines designed and used to remove water from cellulose fibres as a step in processing those fibres into thin sheets of paper.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "panel": "whole-information-scope",
+        "family": "paper",
+        "pair_id": "paper-kind-equipment",
+        "orientation": "forward",
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "paper-kind-equipment",
+        "application_allowed": false,
+        "origin": "Independently specified synthetic material/activity/equipment diagnostic. No Bootstrap or AS output is asserted, no real post is used, and these inputs never become prompt examples.",
+        "review": {
+          "expected_relation": null,
+          "expectation_authority": "unresolved-agent-diagnostic",
+          "user_gold": false,
+          "qualification": "No individual relationship is predetermined. Assess exact reversal consistency and both complete chains: accepted kind-to-process and process-to-equipment entail kind-to-equipment under whole-scope containment. Consistency alone and denying every link do not certify quality. Review each admitted connection, not physical-instance identity alone."
+        }
+      }
+    },
+    {
+      "id": "paper-kind-equipment-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"A\": {\"subject\": \"Pulp presses\", \"meaning\": \"Pulp presses are metal machines designed and used to remove water from cellulose fibres as a step in processing those fibres into thin sheets of paper.\"}, \"B\": {\"subject\": \"Paper\", \"meaning\": \"Paper is material in the form of thin sheets made from cellulose fibres.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "panel": "whole-information-scope",
+        "family": "paper",
+        "pair_id": "paper-kind-equipment",
+        "orientation": "reverse",
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "paper-kind-equipment",
+        "application_allowed": false,
+        "origin": "Independently specified synthetic material/activity/equipment diagnostic. No Bootstrap or AS output is asserted, no real post is used, and these inputs never become prompt examples.",
+        "review": {
+          "expected_relation": null,
+          "expectation_authority": "unresolved-agent-diagnostic",
+          "user_gold": false,
+          "qualification": "No individual relationship is predetermined. Assess exact reversal consistency and both complete chains: accepted kind-to-process and process-to-equipment entail kind-to-equipment under whole-scope containment. Consistency alone and denying every link do not certify quality. Review each admitted connection, not physical-instance identity alone."
+        }
+      }
+    }
+  ]
+}

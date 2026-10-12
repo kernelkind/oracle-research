@@ -7549,3 +7549,103 @@ candidate negates the whole condition. Missing particular identity facts cannot
 be assigned, and source ancestry supplies no proof. Original labels stay
 unresolved. Qualification tracks candidate admission/exclusion and necessary
 proofs, not just lower reversal counts or increased uncertainty.
+
+### V196 first draw and fresh confirmation
+
+The first thirty-two-case test and an unchanged fresh repeat both validate all
+responses and preserve all twelve synthetic controls plus both approved MrBeast
+positives. Each draw still has a settled metal-handholds/grips reversal. Its
+forward question now targets a missing handhold but supplies only a generic
+lifting-handle description; the answer treats every handle grip as a handhold.
+Reverse supplies an exclusively machine-gripped microscopic part and admits it.
+Thus the whole-condition wording improves some questions without consistently
+resolving candidate construction or term interpretation.
+
+Restaurant is uncertainty versus positive in draw one and reciprocal positives
+in draw two. The original sourdough-purpose pair is uncertainty in both directions
+in draw one, then positive versus uncertainty in the repeat. Neither uncertainty
+inflation nor disappearance of a settled reversal certifies consistent scope.
+The other selected sourdough shortcut and mental-thinking probes are reciprocal
+positives in both draws, with their semantic qualifications still retained.
+V196 remains experimental and unadopted. Native exports are
+`target/compare-v196-whole-condition{-repeat,}-v1/*-native.json`.
+
+Independent review accepts the clear synthetic controls but flags incomplete
+necessary proofs in the open probes. In particular, an ordinary mixing or kneading
+example does not close preliminary learning/planning, and the author's personhood
+cannot be supplied merely from an easy literal-malfunction question. The prior
+qualification of recipe reading is retained: a stated future-bake purpose already
+establishes more than bare association, and permitted activity connections require
+assessment. No source edge or old positive is restored as gold.
+
+The native two-draw source records seventy-two fresh attempts including eight
+warmups, sixty-four valid comparisons, zero reuse/retry/failure/missing usage and
+$0.4571976 API-equivalent cost. No cap is restored. The repeat uses the same
+executable bindings and frozen request inputs, explicit --repeat, independent
+response receipts and no conversation linkage.
+
+The [six explicit-handhold controls](hierarchy-compare-explicit-handhold-controls-v1.json)
+resolve the parent role as a grasping point usable directly by a human hand and
+separately define all-human-graspable, machine-only, and mixed child categories.
+They are synthetic diagnostic variants, not Bootstrap outputs or replacements
+for the unchanged original probe; no producer receipt is asserted. The provisional
+positive/neither/neither labels and rationale stay outside model input. This
+isolates honoring explicit conditions from interpreting the original implicit
+handhold/grip relationship. These definitions are never prompt examples or
+applied hierarchy changes.
+
+All six V196 explicit-handhold responses match the provisional labels and retain
+the complete condition in their proofs. The parent human-handhold boundary and
+the child's human/machine alternatives are explicitly honored in both orientations.
+This supports preservation of resolved conditions, not a repair or semantic label
+for the unchanged ambiguous original. Native result:
+`target/compare-v196-explicit-handhold-v1/native.json`.
+
+### Whole-information-scope contract diagnostic
+
+A read-only first-principles audit identifies a distinct possible contract gap.
+Let a node's defining cases differ from its complete permitted information scope.
+Covering its defining cases alone does not cover information admitted through its
+own connections. A material kind may accept a production activity as production
+information, and that activity may accept equipment as its means, without the
+first test checking the equipment information admitted by the activity. These
+two one-hop judgments do not establish transitive whole-scope containment.
+This is a logical risk, not certification of which particular link must change.
+
+The [two synthetic triads](hierarchy-compare-whole-information-scope-controls-v1.json)
+hold three independent fixed meanings each: a material kind, an activity processing
+that same material and equipment explicitly used for that activity. Food and
+paper provide separate domains. Every pair runs in both orientations (twelve
+responses). No per-pair gold is asserted; assess actual admitted scopes, both
+complete chains and reversal consistency. A consistent result that removes every
+useful relationship is not a success. Inputs are standalone synthetic definitions,
+not producer outputs, source hierarchies or future prompt examples.
+
+Test unchanged V196 first. Only an observed response/proof defect justifies a
+subsequent focused scope change. Existing original and resolved-boundary panels
+remain unchanged. No extra graph context or descendant evidence enters A/B.
+
+All twelve baseline responses validate and all six pairs reverse consistently.
+The Food triad nevertheless contradicts whole-scope containment in both
+orientations: Food contains Food preparation, Food preparation contains Cooking
+vessels, and Food versus Cooking vessels is neither. The shortcut's counterexample
+is information about a qualifying saucepan's steel construction. The accepted
+activity-to-vessel response explicitly admits that same kind of composition
+information through the vessel's preparation role. The kind-to-activity proof
+only establishes that its processed material satisfies Food's conditions; it
+does not check all information admitted by the activity's own scope. This is a
+demonstrated consistency failure with unchanged meanings, without proving which
+individual label must change.
+
+The Paper triad accepts all three links in both orientations. It describes the
+press as paper-production information rather than independently checking its
+entire machine scope. This draw is internally consistent but not a semantic
+certification. The different domain responses are diagnostic evidence, not proof
+that Food and Paper must receive identical labels. Native baseline export:
+`target/compare-v196-whole-information-scope-v1/native.json`.
+
+Native accounting for the six resolved-handhold and twelve whole-scope
+comparisons records twenty fresh attempts including two warmups, eighteen valid
+responses, zero reuse/retry/failure/missing usage and $0.109524 API-equivalent
+cost. This is catalog accounting, not a subscription charge. The retired attempt
+counter remains unchanged; no replacement attempt allowance is imposed.
