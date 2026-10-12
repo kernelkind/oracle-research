@@ -1,11 +1,14 @@
 # Selecting local entries to reduce overcrowding
 
-The newest user-authorized draft is
+The newest user-authorized tested candidate is
 [Hierarchy-consolidation-v16](shr_single_pair/Hierarchy-consolidation-v16.md).
 Its unrelated synthetic example covers two device topics and a third topic
 through a required component role, while excluding siblings missing the blue
 background requirement or requiring a red background. Instructions remain
-unchanged from v14/v15. V16 is untested by inference; see
+unchanged from v14/v15. Its six-draw HR05 screen has four clear agent rejects,
+one qualified agent accept and one unresolved assessment. The human-consumer
+restriction and omitted-organism failures recur; v16 remains experimental and
+unapplied. See [the completed HR05 screen](#completed-v16-hr05-screen) and
 [the component-role draft](#consolidation-v16-synthetic-component-role-draft).
 
 The simpler untested draft is
@@ -15,7 +18,7 @@ included, while both exclusions remain. Instructions, shared meaning-writing
 rules and output contract are unchanged from v14. No model calls or measured
 improvement are claimed. See [the example-only draft](#consolidation-v15-synthetic-complete-coverage-draft).
 
-The latest user-authorized tested candidate is
+The preceding user-authorized tested candidate is
 [Hierarchy-consolidation-v14](shr_single_pair/Hierarchy-consolidation-v14.md).
 It separates identifying all covered siblings from checking the proposed
 meaning. Shared meaning-writing rules, the synthetic example and output schema
@@ -4539,3 +4542,81 @@ creates the second draw. No Bootstrap/Compare inference, prompt edit, hierarchy
 construction, UI refresh or agent communication is included. The source and
 [usage selection](shr_single_pair/hierarchy-consolidation-v16-hr05-usage-v1.json)
 remain isolated in the user's requested task worktree.
+
+### Completed v16 HR05 screen
+
+All six consolidation draws and six automatic prefix warmups complete under
+the shared native 12/12 counter. Each ordinary answer is valid JSON with HTTP
+200, reported GPT-6.1 Sol and medium reasoning, one HTTP attempt, no reuse and a
+distinct upstream response reference. First/repeat complete request bodies are
+identical within each of the three inputs. Each contains two developer messages
+and one user message under the current shared runner, with no conversation or
+previous-response link. Original parent/sibling input bytes are unchanged and
+the first draw retains its original HR05 producer receipt as baseline evidence.
+The historical v4 baseline uses the older saved runner; this is a current-v16
+failure screen, not an isolated causal comparison of prompt versions.
+
+Agent reviews use the pre-call criteria and are saved with native `review`.
+They do not constitute new human semantic gold.
+
+| Exact HR05 input | First draw | Fresh repeat |
+|---|---|---|
+| Batch 26: food group | Reject: people-only material alternative selects unrestricted Food C009 | Uncertain: human-consumer mismatch removed; consumption-intention coverage remains unresolved |
+| Batch 91: material group | Reject: unrestricted task-suitable organisms cover MrBeast C025, omitted from `children` | Qualified accept: separately stated organisms must be raised or grown to produce food/drink, supporting his exclusion |
+| Batch 34: heating positive control | Reject: alternate food/preparation topic selects unrestricted Food C009 beneath a people-only material alternative | Reject: alternate Food topic repeats the same consumer mismatch |
+
+The food-first and both heating outputs admit human consumption materials and
+producer plants but select C009, whose full meaning admits animal food. A
+completed meat food intended only for an animal does not meet their human
+material condition, identify a producer plant, or establish a food-preparation
+process or equipment identity. These three nominated-child failures do not
+depend on the unsettled Chicken stock interpretation.
+
+The first material output admits organisms intended or suitable for practical
+tasks without a more specific resource role. Its child list omits the supplied
+human video creator, reproducing the broad-organism omission mechanism. The
+repeat changes the meaning: physical articles/substances remain covered, but
+the separately stated organism alternative requires food/drink production.
+That narrower role covers Nutritional resources' producer organisms without
+establishing the same role for MrBeast. This is a coherent alternative to the
+first meaning, not a reversal under unchanged scope.
+
+The food repeat removes the people restriction and selects all four food/plant
+siblings. However, its material alternative requires intention to eat or drink,
+while Chicken stock C006 fixes a culinary liquid and Beets C007 fixes cultivation
+for edible roots. Whether those kinds necessarily establish the proposal's
+consumption intention remains unresolved in this assessment. Illustrative
+culinary ingredients cannot alone override the condition. This draw is neither
+a certified success nor a rejection copied from a historical comparison.
+
+The heating input selects alternate food groupings in both draws. These are
+assessed on their actual meanings; neither exercises the available two-appliance
+positive grouping. The consumer errors establish failure of these outputs, not
+failure of the ungenerated appliance proposal.
+
+The native summary is complete: 12 fresh attempts, zero reuses, provider failures,
+retries or missing usages. Total input is **16,812 tokens**, including **11,008
+cached** and 5,804 uncached; cache writes are zero. Output is **2,726 tokens**,
+including 2,312 reasoning tokens already counted in output. Full API-equivalent
+catalogue cost is **$0.0399688**, including all warmups. This is not a subscription
+charge or an operational-policy savings claim. The same observed-output cache
+estimate reports 8.99% net savings after warmups; it is not a matched uncached
+trial. Preserved native reports beneath `target/canonical-shaping-selection-v1`
+are `consolidation-v16-hr05-summary-before-review-v1.json` and
+`consolidation-v16-hr05-summary-reviewed-v1.json`.
+
+All 68 current production-path assembly, prompt-revision and subject-prompt
+consolidation checks pass before dispatch. Main is synchronized at `3a41af3e`;
+the pre-call criteria and usage selection are committed as `c6df326b` before
+inference. V16's bytes and all old exhausted counters remain unchanged. No
+canonical graph, historical receipt, prompt, UI or another agent's worktree is
+modified. This task remains isolated under the user's earlier instruction.
+
+The next suggested prompt-development step is to tighten interpretation of
+supplied sibling meanings before another example change. The current check's
+phrase "or its topic identity" may permit a familiar title to supply an unstated
+restriction; the Food outputs are consistent with that mechanism but do not
+prove it. A revision should keep the distinction between freely proposing a
+new parent's scope and faithfully reading every supplied child's fixed scope,
+then test the same frozen inputs. No such revision or further inference is
+undertaken by this screen.
