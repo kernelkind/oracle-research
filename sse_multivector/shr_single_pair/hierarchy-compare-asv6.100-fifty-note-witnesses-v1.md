@@ -8831,3 +8831,55 @@ eighteen-case producer core and four preservation controls are prepared offline
 but dispatched only after a useful gate. Separate selection changes, lexical
 interpretation changes and assessment-to-conclusion consistency. Original Metal
 semantic gold remains unresolved; Bootstrap and hierarchy data remain untouched.
+
+### V220 gate result: joint output does not repair membership interpretation
+
+All twenty-eight dispatched comparisons complete valid. All twelve physical
+and explicit-human/machine/mixed controls retain their expected outcomes. V220
+has two settled original-pair reversal conflicts across its four matched checks,
+both A-first; both B-first draws are reciprocal positives. Fresh V217 has two
+conflicts too, one in each presentation order. This bounded result establishes
+no reduction in reversal failures or dependable interpretation repair.
+
+The requested A/B assessments are present, but they reproduce the inconsistency.
+Forward proofs select ordinary human carrying/drawer grips, then assert that
+every steel/brass grip necessarily provides a handhold. Reversed A-first proofs
+admit microscopic robotic handles from their steel/grip function and absence
+of an express human requirement. They do not establish the named handle-kind
+boundary identified by the auxiliary diagnostic. Explicit joint labels do not
+make those interpretations independently fixed or certify universal coverage.
+Do not call the original label wrong gold; unchanged-meaning reversal conflict
+remains the demonstrated failure. V220 is not adopted or broadened.
+
+The eighteen-case producer core and four preservation cases remain prepared
+unrun. Native usage accounts for thirty-eight fresh attempts, including ten
+warmups, zero reuse/failures/retries/missing usage and $0.2307448 API-equivalent
+catalog cost. Its completion flag correctly remains false because those
+twenty-two cases are unrun, not successes. The gate itself is complete.
+One hundred eleven relevant native tests pass on the combined main checkout.
+
+### V221: isolated general-variation instruction removal
+
+V221 removes only V217's sentence permitting variation of general-kind conditions
+that are neither required nor necessarily implied. Particular-fact unknowns,
+necessary implications under all supported readings, every information connection,
+the property gate, examples and output remain byte-identical to V217. It does
+not inherit V220's unsuccessful joint-output experiment. Native revision remains
+against approved V179. Historical audit finds related V186/V211/V212 mechanisms,
+but no recorded isolated deletion of this sentence.
+
+The causal hypothesis is that the sentence encourages treating an absent human
+word as permission for machine-only cases before resolving the named kind's
+necessary conditions. Its wording is logically conditional: the actual error
+could instead be the prerequisite implication judgment. Removing it therefore
+tests sensitivity, not a certified semantic repair or new original-pair gold.
+
+Prepare two fresh draws in each original Metal input order, twelve physical and
+explicit-human controls, all six intention/capability comparisons, and eight
+functional/decorative aspect checks. The latter original producer judgments stay
+qualified. The four already completed fresh V217 reference experiments from
+V220's gate are the unchanged behavioral comparison; their receipts and costs
+are not newly dispatched calls. Check that any improved consistency preserves
+general-kind variation when actually justified, does not invent restrictions,
+and is supported rather than achieved through blanket uncertainty. No Bootstrap
+or hierarchy changes follow from the test.

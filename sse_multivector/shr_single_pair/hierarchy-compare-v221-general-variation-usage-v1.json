@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "saved_fresh_v217_reference": [
+      "../../target/compare-v220-joint-admission-screen-v1/reference/a-first-1",
+      "../../target/compare-v220-joint-admission-screen-v1/reference/a-first-2",
+      "../../target/compare-v220-joint-admission-screen-v1/reference/b-first-1",
+      "../../target/compare-v220-joint-admission-screen-v1/reference/b-first-2"
+    ],
+    "v221_metal_pair": [
+      "../../target/compare-v221-general-variation-ablation-v1/a-first-1",
+      "../../target/compare-v221-general-variation-ablation-v1/a-first-2",
+      "../../target/compare-v221-general-variation-ablation-v1/b-first-1",
+      "../../target/compare-v221-general-variation-ablation-v1/b-first-2"
+    ],
+    "v221_closed_controls": [
+      "../../target/compare-v221-general-variation-ablation-v1/physical",
+      "../../target/compare-v221-general-variation-ablation-v1/handhold"
+    ],
+    "v221_intention_aspect": [
+      "../../target/compare-v221-general-variation-ablation-v1/intention",
+      "../../target/compare-v221-general-variation-ablation-v1/aspect"
+    ]
+  }
+}
