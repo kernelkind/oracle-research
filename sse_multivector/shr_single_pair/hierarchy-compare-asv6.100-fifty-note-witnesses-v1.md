@@ -8286,3 +8286,39 @@ before another intervention. Retain the earlier laboratory-food-readiness
 qualification: non-consumption or later disposal alone does not establish
 failure to make food ready to eat. No Bootstrap request or external owner
 message follows this result.
+
+### V210/V211: isolated illustration and occurrence-scope interventions
+
+Input-only review qualifies the rocket and attention witnesses: naming a
+particular stove or author does not alone establish one particular occurrence.
+The potatoes wording admits an activity-form reading constrained to that stove;
+the four-food and attention meanings more strongly suggest an event/state but do
+not independently close recurring-activity readings. Laboratory or conversation
+circumstances are invented under a particular reading and may be hypothetical
+under a general one; their admission still needs the defining cooking/distraction
+conditions. The input does explicitly state a cooking purpose, but its necessary
+relation to the parent's eating purpose remains disputed. No post context is
+restored and these assessments do not create new user gold.
+
+V210 retains V209 except its illustration sentence: a shared illustration name
+does not establish coverage of the independently supplied child; prove required
+conditions from that child's wording or necessary implications. This targets
+observed name-based readiness proofs without fixing Bread's consumer or purpose.
+V211 separately retains V209 except its general/particular classification text:
+a fixed participant or equipment identity alone does not select one occurrence,
+and materially different supported category/occurrence readings remain unresolved.
+It preserves unknown facts about a particular entity; general activity cases may
+not invent that entity's properties. Neither intervention stacks the other.
+Both retain the property qualification, V202 examples, A/B input and four fields.
+
+Matched first diagnostic: exact fresh V209 reference and V210/V211 on eighteen
+unchanged B109 cases: five complete bread/equivalence/time pairs, handle pair,
+two rocket pairs and attention pair, in both orientations. Native receipt-bound
+subset preparation preserves endpoint identity and original metadata. Each
+candidate also receives the unchanged physical six-case and goal eight-case
+panels. Require sound proof/reading qualifications, reversal and complete-chain
+consistency, and preserved known positive/negative controls. No fixed preferred
+label is assigned to disputed original meanings. Increased uncertainty alone is
+not success; do not count unsettled witnesses as resolved. A promising arm needs
+fresh confirmation, the full resolved gate and complete fifty-case panel before
+adoption. These mechanism hypotheses are not proved by their observed failures.
