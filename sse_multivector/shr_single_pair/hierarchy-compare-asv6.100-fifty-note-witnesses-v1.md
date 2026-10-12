@@ -8178,3 +8178,28 @@ and two unknown qualifications with sound diagnostics. If it passes, use a fresh
 repeat and the unchanged original aspect panel before broader resolved/chain/
 producer qualification. No schema, frozen meaning, source expectation or
 historical review changes; no Bootstrap or hierarchy work follows.
+
+### V208 first draw and V209 qualification precision
+
+V208 passes the six-case physical matrix in one draw: known paper and steel
+answers remain correct, and both omitted-material directions explicitly leave
+the particular surface's Paper-property qualification unresolved while retaining
+the inverse counterexample. This is a promising bounded result, not qualification
+or proof that the phrase alone caused the change. Native accounting records
+eight fresh attempts including one warmup and one recovered provider failure;
+one attempt lacks usage. $0.0427168 is a known API-equivalent subtotal only.
+
+Independent wording review identifies a precision issue in V208: "unstated
+qualification" could include qualification necessarily implied by supplied facts,
+conflicting with the existing implication rule. V209 increments the version to
+say "neither stated nor necessarily implied" and explicitly allows the described
+thing or component to qualify; the entire equipment need not instantiate the
+material of its surface. All other text and both V202 examples are unchanged.
+
+Preregister three independent executions with source meanings unchanged: a fresh
+six-case V208 repeat, V208's original eight-case aspect panel, and V209's six-case
+physical screen. Do not claim V209 is an exact V208 repeat. Retain unknown-source
+qualifications in the original aspect panel. Require known controls and sound
+unknown-direction diagnostics, then use fresh V209 confirmation and resolved,
+complete-chain and original producer cases before adoption. No new gold,
+Bootstrap data, hierarchy construction or owner messages follow.
