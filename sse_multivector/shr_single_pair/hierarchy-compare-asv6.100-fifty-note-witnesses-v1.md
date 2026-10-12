@@ -8740,3 +8740,29 @@ supplied definition and candidate: the generic schema alone does not enforce
 that cross-product. Retain any disagreement or missing assessment without
 turning the unresolved original pair into semantic gold. No attempt allowance
 is supplied; the retired counter remains historical and untouched.
+
+### Fixed-candidate v1 result: membership judgments remain presentation-sensitive
+
+All twelve requests complete valid, with no failed, reused or unrun cases.
+All forty assessments have the exact required node/candidate coverage, uniqueness
+and order. Every human-loop assessment is admitted. Every Steel or brass handles
+machine-loop assessment is uncertain: the loop satisfies steel/lifting-grip
+conditions, but the named handle kind may still require direct human grasp.
+This unresolved admission is not a certified negative or positive pair label.
+
+Metal handles admits the human loop throughout. The machine loop is uncertain
+in both standalone draws and both B-first forward draws, but excluded in both
+A-first orientations and both B-first reverse draws. Thus fixing the candidate
+does not eliminate presentation-sensitive membership interpretation. Original
+Compare's free counterexample selection is not the only mechanism implicated.
+The auxiliary instruction's explicit grip/handhold ambiguity cue also differs
+from Compare. Its results cannot certify that a generic admission task alone
+repairs the main prompt. Single/pair subject-presence and namespace confounds
+remain; neither result justifies making all general meanings uncertain.
+
+Next, delete only the targeted grip/handhold sentence in auxiliary v2, retaining
+the same candidate facts, generic whole-definition and uncertainty instructions,
+schema and all input bytes. Repeat the same twelve requests. This separates the
+targeted lexical cue from the admission-task format before proposing another
+main Compare instruction. V179 remains the approved reference; no main candidate
+is adopted and no Bootstrap meaning or hierarchy is changed.
