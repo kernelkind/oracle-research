@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "consolidation_v10_remaining_groups": [
+      "../../target/canonical-shaping-selection-v1/consolidation-v10-remaining-first-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v10-remaining-repeat-v1"
+    ]
+  }
+}

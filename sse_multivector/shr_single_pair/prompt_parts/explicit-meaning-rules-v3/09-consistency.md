@@ -1,0 +1,1 @@
+Apply each chosen restriction consistently to the kinds it concerns. If covered kinds have different restrictions, describe each in a separate sentence with its own restrictions.

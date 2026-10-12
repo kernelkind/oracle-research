@@ -7294,7 +7294,8 @@ answer reuses, and one recovered retry whose failed attempt lacks usage.
 $0.5447196 is only the known API-equivalent subtotal. Complete cost and aggregate
 completion remain unknown/incomplete; neither missing usage nor unrun cases
 are counted as free success. Shared allowance reads exactly 20,000/20,000.
-No further inference is authorized under that exhausted allowance.
+Inference stopped at this checkpoint; the subsequent user authorization below
+removes the model-call cap for continued Compare qualification.
 
 V179 remains the approved development baseline with its known failures. V187–V191
 are preserved experimental candidates; V191's remaining gate, unchanged fresh
@@ -7302,3 +7303,170 @@ repeat and broader frozen-input qualification are incomplete. No Bootstrap
 meaning, original producer output, hierarchy, UI or owner message is changed.
 The task worktree is retained because native receipts, pinned producer paths
 and frozen experiment source bindings require it.
+
+### User-authorized continuation without a model-call cap
+
+The user explicitly says "remove the allowance. proceed" after the proposed
+completion/repeat/broader-qualification process. The old persistent counter is
+preserved at 20,000/20,000 as historical evidence. Subsequent shared-runner calls
+omit that cap; native receipts still record every dispatch, failure, retry and
+warmup. The project monetary ceiling and Compare-only ownership remain intact.
+No Bootstrap/hierarchy work or outgoing owner message is added.
+
+The completed V191 panel has all eighteen valid outputs: six smoke-device controls
+and both approved MrBeast positives survive; five HR05 pairs have reciprocal settled
+labels and zero conflicts. Brand has a positive/unknown split: one answer treats
+"design brand" as necessarily commercial while the reverse treats commercial
+operation as customary and unstated. Neither answer imports actual product facts.
+This is a premise instability on an unresolved lexical boundary, not a settled
+negative reversal or new semantic gold.
+
+The unchanged fresh eighteen-case repeat preserves all six controls, both MrBeast
+positives and Equipment's reciprocal neither. Brand is unknown in both directions.
+Restaurant has one settled reversal: one answer treats restaurants serving
+customers as necessarily commercial, while the other admits a wholly charitable
+free-meal restaurant. Both questions name the commerce boundary; question specificity
+alone has not established reliability. Original restaurant expectations remain
+null. The small gate fails and the broader fifty-case panel is not dispatched.
+
+Independent reviews retain Equipment's coordinated modifier qualification,
+Bread's food-kind/intended-role qualification and the Food witnesses' consumer
+scope. In particular, real paraffin cannot simply be declared incapable of
+providing nourishment to every possible consumer; microbial uptake versus
+"eating/drinking" remains unresolved. This does not force a changed pair label.
+Hypothetical nonnutritive preparations and actual consumer-specific claims are
+distinct kinds of evidence.
+
+Native exports preserve the pre-cap snapshots and add
+`target/compare-v191-intention-capability-v1/{hr05,controls}-complete-native.json`
+and `target/compare-v191-intention-capability-repeat-v1/{hr05,controls}-native.json`.
+The [completed/repeat aggregate](hierarchy-compare-v191-complete-repeat-usage-v1.json)
+records forty total attempts including the two historical pre-cap Equipment
+responses, thirty-six valid comparisons, four warmups, zero reuse/retries/failures/
+missing usage and $0.2630756 API-equivalent cost. Of those attempts, thirty-eight
+are newly dispatched after removal of the cap. No subscription charge is inferred.
+
+The [six explicit-commerce controls](hierarchy-compare-explicit-commerce-controls-v1.json)
+are separate synthetic variants, not new Bootstrap outputs. They preserve the saved
+restaurant wording and explicitly choose commercial operation, exclusively
+noncommercial operation, or both. Each is tested against the unchanged commercial
+parent in both directions. Expectations are provisional agent assessments outside
+input; the original restaurant pair remains unchanged and unresolved. These controls
+test whether Compare respects a resolved boundary before another prompt change.
+
+### Explicit-commerce result and V192 matched question contrast
+
+All six explicit-commerce V191 responses match the provisional control labels,
+and two independent reviews accept the directional proofs. Commercial operation
+and meal sales are explicit in the positive variant. Noncommercial and mixed
+variants retain every restaurant/customer/takeaway requirement and exclude both
+commercial offerings and commercial-source brands; independent businesses establish
+the reverse negatives. This qualifies those resolved synthetic scopes, not the
+original restaurant pair. These controls are never inserted into prompt examples.
+
+Native results are `target/compare-v191-explicit-commerce-v2/native.json`: six
+valid comparisons and one warmup with no reuse, failure or retry. The first v1
+preparation was refused before dispatch after main synchronization changed code
+bindings; it remains unrun. V2 is freshly prepared against synchronized code,
+not an override of frozen code identity. No source was changed during inference.
+
+[Experimental V192](Hierarchy-compare-v192.md) retains V191 and replaces only
+the question instruction. A question searches for a concrete case satisfying
+every child requirement while escaping a parent boundary, rather than asking
+to confirm necessity or classify the child's kind. Positive answers still prove
+necessary full coverage under the unchanged rules. Input, schema, examples,
+meanings and particular-entity unknown-property guard remain unchanged.
+The native full revision records the composed changes against V179.
+
+The first screen compares fresh V191 and V192 on six exact saved cases: both
+Restaurant orientations, both Brand orientations and both approved MrBeast
+positives. Both are prepared against the same synchronized executable code.
+Two additional V192 explicit-commercial restaurant controls use their saved V191
+answers as baseline; they establish that explicit commerce still supports coverage.
+No fresh-baseline call is claimed for those two controls. Original Restaurant and
+Brand labels remain unresolved. A lexical-premise change or additional uncertainty
+is not automatically success; retained positive controls and proof validity matter.
+If promising, test all twenty-four HR05/smoke/commerce cases and an unchanged
+fresh confirmation before the separate fifty-case Bootstrap-only cohort.
+
+### V192 full-gate failure and V193 interpretation criterion
+
+The fresh matched six-case V191/V192 screen has the same labels and premises in
+both versions: Restaurant reciprocal positives, Brand uncertainty in both directions,
+and both approved MrBeast positives. V192 preserves the two explicit-commercial
+positive controls. There is no demonstrated causal improvement from the question
+change. All receipts and matched executable/input bindings pass independent audit.
+
+V192's complete twenty-four-case gate preserves all twelve synthetic controls and
+both approved MrBeast positives. It reuses eight exact screen answers and dispatches
+sixteen new comparisons plus three warmups. Food/Bread has a settled reversal:
+forward treats "food" as a nourishment-oriented identity supplying required intention;
+reverse admits display-only bread and says customary nutritional function does not
+supply intention. Producer strings, exact requests and reuses are verified; this is
+not output contamination. Original Bread semantic gold remains null. V192 fails and
+receives no fresh confirmation or broader fifty-case execution.
+
+Both independent reviewers diagnose an interpretation switch rather than a missing
+question boundary. The separate human-paraffin exclusion remains qualified because
+the parent supplies no explicit human-only consumer restriction. Closed-scope controls
+remain separate from these open kind/role boundaries.
+
+[Experimental V193](Hierarchy-compare-v193.md) retains V192 and replaces only its
+final ambiguity sentence. Necessary implications must hold across every supported
+reading compatible with the whole meaning; if coverage or a counterexample depends
+on choosing a reading, that direction is unresolved. The existing general-scope rule
+still says an omitted condition alone is not ambiguity. No preferred Bread/Restaurant
+label, consumer boundary or producer revision is imposed.
+
+The small screen preserves four original HR05 pairs in both orientations:
+Food/Bread, Restaurant/commerce, Brand/commerce and approved MrBeast positives.
+It additionally retains both explicit-commercial positives and both smoke-intention/
+intersection positives. All twelve comparisons use unchanged fixed inputs and
+existing native sources; no new Bootstrap generation is performed. Extra uncertainty
+on an ambiguous probe is useful only if its diagnostic identifies the material
+alternative readings. Loss of these six clear positives is a failure. No broader
+qualification is claimed from this screen.
+
+### V193 screen failure and V194 concrete-candidate hypothesis
+
+V193 preserves all six positive controls in the twelve-case screen, but Restaurant
+again reverses: child-first is contained by Commercial entities; parent-first is
+neither. Food/Bread is neither in both directions and Brand remains unresolved in
+both. The original semantic labels remain unresolved. V193 fails this screen and
+receives no broader qualification. Native exports are
+`target/compare-v193-reading-screen-v1/{hr05,commerce,smoke}-native.json`.
+
+[Experimental V194](Hierarchy-compare-v194.md) requires each diagnostic question
+to name a concrete candidate and the potentially failing parent condition. Its
+four existing fictional example questions are aligned with that contract. The
+positive example separately rejects its chemical-only candidate and proves the
+universal cutting implication; rejecting one candidate alone is not coverage.
+Example inputs, relation labels, fixed producer meanings, A/B schema and the
+other containment rules remain unchanged. This tests an aligned instruction and
+example revision, not the isolated causal effect of the instruction alone.
+
+Two independent read-only reviews find the draft coherent. Qualification must
+check that particular-entity questions do not invent unknown properties and that
+an easy rejected candidate does not replace a proof of every parent condition.
+The same twelve-case screen precedes any full gate or fresh confirmation. No
+preferred Restaurant/Bread answer or new Bootstrap scope is prescribed.
+
+V194's twelve comparisons validate and preserve all six positive controls.
+Food/Bread is neither in both directions and Brand remains unresolved in both.
+Restaurant still reverses: its forward diagnostic tests a complimentary meal
+at a commercial restaurant and infers every restaurant is commercial; its reverse
+admits an entirely free charitable restaurant without either commercial-parent
+alternative. The selected candidate differs in strength, but concrete-question
+formatting does not resolve the underlying interpretation switch. Both Brand
+answers retain the missing commerce fact rather than assigning it to the named
+entity. Native exports are `target/compare-v194-concrete-screen-v1/*-native.json`.
+V194 is not qualified or adopted; repeating formatting edits is not established
+as a productive remedy.
+
+The native V192-full/V193-screen/V194-screen usage source records forty-nine
+fresh attempts, eight exact answer reuses, forty-eight valid cases, zero failures,
+retries or missing usage and $0.3279068 newly dispatched API-equivalent cost.
+Accounting for the original generation behind reuse raises the catalog total to
+$0.3889256. These are subscription catalog equivalents, not provider charges.
+The removed shared cap is not passed to execution; historical counters and
+receipts remain preserved.

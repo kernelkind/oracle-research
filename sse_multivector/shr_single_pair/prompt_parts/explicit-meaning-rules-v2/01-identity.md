@@ -1,0 +1,1 @@
+Retain the selected name to preserve identity. Include defining features needed to make the chosen sense or scope explicit; do not add design, method or customary-use details as further membership conditions. Distinguish defining features from optional variations.

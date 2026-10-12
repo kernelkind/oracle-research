@@ -1,0 +1,22 @@
+{
+  "cases": [
+    {
+      "id": "online-children-under-online-parent",
+      "inputs": {
+        "INPUT_JSON": "{\"parent\":{\"id\":\"P001\",\"title\":\"Online courses\",\"meaning\":\"Online courses are courses in which all teaching and student participation take place online.\"},\"siblings\":[{\"id\":\"S001\",\"title\":\"Algebra courses\",\"meaning\":\"Algebra courses are courses that teach algebra, with all teaching and student participation taking place online.\"},{\"id\":\"S002\",\"title\":\"Geometry courses\",\"meaning\":\"Geometry courses are courses that teach geometry, with all teaching and student participation taking place online.\"},{\"id\":\"S003\",\"title\":\"History courses\",\"meaning\":\"History courses are courses that teach history, with all teaching and student participation taking place online.\"},{\"id\":\"S004\",\"title\":\"Music courses\",\"meaning\":\"Music courses are courses that teach music, with all teaching and student participation taking place online.\"}]}"
+      }
+    },
+    {
+      "id": "unrestricted-children-under-online-parent",
+      "inputs": {
+        "INPUT_JSON": "{\"parent\":{\"id\":\"P001\",\"title\":\"Online courses\",\"meaning\":\"Online courses are courses in which all teaching and student participation take place online.\"},\"siblings\":[{\"id\":\"S001\",\"title\":\"Algebra courses\",\"meaning\":\"Algebra courses are courses that teach algebra.\"},{\"id\":\"S002\",\"title\":\"Geometry courses\",\"meaning\":\"Geometry courses are courses that teach geometry.\"},{\"id\":\"S003\",\"title\":\"History courses\",\"meaning\":\"History courses are courses that teach history.\"},{\"id\":\"S004\",\"title\":\"Music courses\",\"meaning\":\"Music courses are courses that teach music.\"}]}"
+      }
+    },
+    {
+      "id": "unrestricted-children-as-roots",
+      "inputs": {
+        "INPUT_JSON": "{\"parent\":null,\"siblings\":[{\"id\":\"S001\",\"title\":\"Algebra courses\",\"meaning\":\"Algebra courses are courses that teach algebra.\"},{\"id\":\"S002\",\"title\":\"Geometry courses\",\"meaning\":\"Geometry courses are courses that teach geometry.\"},{\"id\":\"S003\",\"title\":\"History courses\",\"meaning\":\"History courses are courses that teach history.\"},{\"id\":\"S004\",\"title\":\"Music courses\",\"meaning\":\"Music courses are courses that teach music.\"}]}"
+      }
+    }
+  ]
+}

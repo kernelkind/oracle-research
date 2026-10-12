@@ -1,0 +1,1 @@
+State required absences that define the topic directly. Do not leave required versus optional membership to frequency qualifiers such as "typically" or "usually".

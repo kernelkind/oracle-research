@@ -27,6 +27,42 @@ class DistillationCoverageSearchTests(unittest.TestCase):
         self.assertIn("--answer-id", result.stdout)
         self.assertIn("--premise-audit", result.stdout)
 
+    def test_native_cli_prepares_medium_searches_without_running_premises(self):
+        from sse_multivector import distillation_review_assessment as assessment
+        from sse_multivector import distillation_review_evaluation as evaluation
+        from sse_multivector import test_distillation_review_evaluation as fixtures
+        fixture = fixtures.DistillationReviewEvaluationTests()
+        fixture.root = self.root
+        teacher = fixtures.subjects(("1", "Cable A"), ("2", "Cables"))
+        selected = fixture.selection([dict(note_id="validation-a", post="Cable A.",
+            teacher=teacher, answer=fixtures.answer(teacher))])
+        context = self.root / "assessment"
+        assessment.record(selected, "R01", context, teacher_meanings=[
+            dict(teacher_numbers=["1"], required=True),
+            dict(teacher_numbers=["2"], required=False)],
+            reason="Exact matching premises; separate teacher roots have no trusted relationship.")
+        baseline = self.root / "baseline"
+        evaluation.prepare(selected, baseline, assessment_directory=context)
+        frozen = (baseline / "evaluation.json").read_bytes()
+        prepared = json.loads(fixture.native("prepare-distillation-coverage-search", baseline,
+            "--output", self.root / "medium-search", "--reasoning-effort", "medium"))
+        self.assertEqual(prepared["search_cases"], 1)
+        self.assertEqual(prepared["inference_calls"], 0)
+        for entry in prepared["experiments"]:
+            report = json.loads(fixture.native("show", entry["path"], "--json"))
+            self.assertEqual(report["settings"]["reasoning_effort"], "medium")
+            self.assertEqual(report["prompt_id"], "DCSv1")
+            self.assertEqual(report["cases"][0]["status"], "unrun")
+        self.assertEqual((baseline / "evaluation.json").read_bytes(), frozen)
+        self.assertFalse((self.root / "calls.json").exists())
+
+    def test_bad_search_effort_is_rejected_before_creating_output(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        destination = self.root / "invalid-effort"
+        with self.assertRaisesRegex(ValueError, "reasoning_effort"):
+            coverage.prepare(self.root / "missing-evaluation", destination, reasoning_effort="none")
+        self.assertFalse(destination.exists())
+
     def test_null_requires_every_candidate_and_positive_requires_only_the_witness(self):
         case = dict(inputs=dict(COVERAGE_INPUT=json.dumps(dict(teacher_subject="Cable A", candidates=[
             dict(student_number="1", student_subject="Fruits", teacher_contexts=[]),

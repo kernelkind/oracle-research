@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "prompt_id": "Hierarchy-bootstrap-v104",
+  "output": {
+    "path": "Hierarchy-bootstrap-v104.md",
+    "sha256": "d97d0cfe078546e9525ac15252b81eee20630fba6e4786b1000c5cf942d49ba0"
+  },
+  "parts": [
+    {
+      "path": "prompt_sources/Hierarchy-bootstrap-v104.shared-v2.gap-01.md",
+      "sha256": "c32a927ae22a7058d2f4ba44b1769ef18d8cff49863412b1cf6ff87cabf9b388"
+    },
+    {
+      "path": "prompt_parts/explicit-meaning-rules-v2/01-identity.md",
+      "sha256": "8e8354f08b19993f415f76a1dd7cdc935f48999402adc70af2e3242f28f6feba"
+    },
+    {
+      "path": "prompt_sources/Hierarchy-bootstrap-v104.shared-v2.gap-02.md",
+      "sha256": "5a3b75b2806b555e2f1467722c0e0e0de4f37b5bc6b1549e5afffbe4eafb78f2"
+    },
+    {
+      "path": "prompt_parts/explicit-meaning-rules-v2/02-roles.md",
+      "sha256": "6ebf1ee7c6082a5fdf372e2342ecfaf3a581090ae03b5f7c309cd0de5304dbac"
+    },
+    {
+      "path": "prompt_sources/Hierarchy-bootstrap-v104.shared-v2.gap-03.md",
+      "sha256": "f9a264e7b833249c8cc0946c7afd3269a23fb789b32f284fcdef9294f558cb2f"
+    },
+    {
+      "path": "prompt_parts/explicit-meaning-rules-v2/03-alternatives.md",
+      "sha256": "a83e2cfac95c96307ae1deaebdfbd56ee0f41d095b5ec5fdc0cda7e6d97ede32"
+    },
+    {
+      "path": "prompt_sources/Hierarchy-bootstrap-v104.shared-v2.gap-04.md",
+      "sha256": "10e2beeb0b56b1e052819d3fcf9a9f56b67efd7e2c45fad59ef189aa3a497d6f"
+    },
+    {
+      "path": "prompt_parts/explicit-meaning-rules-v2/04-activities.md",
+      "sha256": "c698474ca843129103e896b13d4d0d150c8e988b4fb6e9cde2cd51c272a281dc"
+    },
+    {
+      "path": "prompt_sources/Hierarchy-bootstrap-v104.shared-v2.gap-05.md",
+      "sha256": "9fa1fceca1b133b3d4aa5d80b75d1db442361b816347a99eeadc72a5a946291b"
+    },
+    {
+      "path": "prompt_parts/explicit-meaning-rules-v2/05-boundaries.md",
+      "sha256": "50b62f996f131d5305ebf3dcdcaf743e03813acfdb6f05d89172ca6da2b90f34"
+    },
+    {
+      "path": "prompt_sources/Hierarchy-bootstrap-v104.shared-v2.gap-06.md",
+      "sha256": "a052dc8df96958f61521697e68479e7c51f61eb96d4e415963c538bd6676a09c"
+    },
+    {
+      "path": "prompt_parts/explicit-meaning-rules-v2/06-definition.md",
+      "sha256": "0a243de2ac9013212f8b35317f6ad0b52b4757c467f81f54d9ab9ff4cb46c7ff"
+    },
+    {
+      "path": "prompt_sources/Hierarchy-bootstrap-v104.shared-v2.gap-07.md",
+      "sha256": "0d2800f658a7a21cd32fc25bb019a07cb7ab9d0f4c1fdf2d41b9baa5ef26a1af"
+    },
+    {
+      "path": "prompt_parts/explicit-meaning-rules-v2/07-variations.md",
+      "sha256": "39e66ded2d87074b709d61d769487185bfb4020875ef196b48b160ad36da0924"
+    },
+    {
+      "path": "prompt_sources/Hierarchy-bootstrap-v104.shared-v2.gap-08.md",
+      "sha256": "2d86dba8ffab68a0c58f020a2513b4e78fa34963a3ca220cf426c3aa65cce362"
+    },
+    {
+      "path": "prompt_parts/explicit-meaning-rules-v2/08-qualifiers.md",
+      "sha256": "298921be024b1d67b08d2416103678b21b29563c93144292fe3d6d8285e413c1"
+    },
+    {
+      "path": "prompt_sources/Hierarchy-bootstrap-v104.shared-v2.gap-09.md",
+      "sha256": "75a11da44c802486bc6f65640aa48a730f0f684c5c07a42ba3cd1735eb3fb070"
+    },
+    {
+      "path": "prompt_parts/explicit-meaning-rules-v2/09-consistency.md",
+      "sha256": "99cfd9192fb8604b5da5645cde17b9d601e53895ab8ee4226f7bc916c8158781"
+    },
+    {
+      "path": "prompt_sources/Hierarchy-bootstrap-v104.shared-v2.gap-10.md",
+      "sha256": "918969db05e568e3d236bdf2170cc1c75ce0d15f6efe9d7db1c86f3aad8dfb11"
+    }
+  ]
+}

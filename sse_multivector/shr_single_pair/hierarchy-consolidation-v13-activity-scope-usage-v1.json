@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "consolidation_v13_activity_scope": [
+      "../../target/canonical-shaping-selection-v1/consolidation-v13-original-first-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v13-original-repeat-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v13-completed-first-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v13-completed-repeat-v1"
+    ]
+  }
+}

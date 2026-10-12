@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "consolidation_v14_coverage": [
+      "../../target/canonical-shaping-selection-v1/consolidation-v14-food-first-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v14-food-repeat-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v14-restriction-first-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v14-restriction-repeat-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v14-planned-first-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v14-planned-repeat-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v14-completed-first-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v14-completed-repeat-v1"
+    ]
+  }
+}

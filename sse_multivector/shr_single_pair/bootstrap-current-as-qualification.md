@@ -3,6 +3,33 @@
 Bootstrap establishes a standalone information-topic meaning for one original
 local entry. It does not compare canonical nodes or construct a hierarchy.
 
+## Current model-attempt policy
+
+The user permanently removed the shared **20,000 model-attempt cap** for
+Bootstrap, Compare and hierarchy work. Run authorized experiments through the
+shared runner without `--attempt-budget`; do not restore the retired counter or
+impose another attempt cap unless the user explicitly sets one. Earlier
+instructions in this record to use that counter are historical and superseded
+for current execution.
+
+Retain historical used counts, claims, outputs and receipts unchanged. Fresh
+attempts, retries, exact reuses and usage remain recorded by the native runner.
+This decision does not change task authorization, deliberately bounded
+unrelated experiments or the monetary ledger.
+
+## Current review requirement: Compare counterexamples
+
+The user explicitly requires considering counterexamples presented by Compare
+when reviewing Bootstrap meanings. Fitting the particular source example is
+insufficient. Reassess relevant saved witness hypotheses against each exact
+fresh meaning and the intended category supported by its post. Preserve all
+stated conditions, identify genuinely ambiguous admissions, and do not repair
+missing restrictions inside the review. Historical labels do not transfer
+automatically, but the hypotheses must not be dismissed merely as historical.
+
+The [four-Food counterexample reassessment](bootstrap-v122-hr04-four-foods-v1.md#compare-counterexamples-reassessment-of-the-exact-fresh-meanings)
+corrects an initial source-fit-only review without changing producer outputs.
+
 ## Approved sense and factual-evidence rule
 
 The user approved these rules verbatim, replying **“agree”**:
@@ -3812,5 +3839,44 @@ is prepared with the original 346 ASv6.100 inputs. Native history scoped to the
 completed focused experiment preserves exactly its 22 original producers;
 324 definitions are new. The earlier broad-history preparation remains unrun,
 because it would substitute two latest repeat receipts. No cache or receipt is
-manually edited. Full review and qualification remain pending; V122 is not
-activated. No Compare inference or hierarchy construction occurs.
+manually edited. The [completed full qualification](bootstrap-v122-full-qualification-v1.md)
+records all 346 valid nonnull outputs: agent review assesses 341 accepts or
+qualified accepts, four uncertainties and one unsupported particular-stage
+statement. All 384 selected ancestor checks are assessed; three fixed-output
+scope implications fail. Fresh paired repeats fit different independently
+chosen boundaries and do not repair those original outputs. V122 remains
+unactivated; the whole-branch invariant is not solved. At that checkpoint the
+shared 20,000-attempt cap was exhausted and model work stopped. No Compare inference or hierarchy
+construction occurs. The proposed next diagnostic supplies exact fixed ancestor
+definitions to a child; that input-contract change is not implemented or approved.
+
+### Fresh V122 definitions for all four original HR04 Food nodes
+
+The user requested fresh meanings for C003/C004/C009/C014 and assessment of
+their discrepancies against the source posts. They then clarified that another
+agent had removed the prior attempt cap. The old 20,000/20,000 counter remains
+unchanged; this newly authorized native run omits that optional historical limit.
+
+The [four-Food report](bootstrap-v122-hr04-four-foods-v1.md) preserves the exact
+original ASv6.100 posts and root trees and runs unchanged Bootstrap-v122 with
+Sol 6.1 medium and prefix caching. All four meanings are valid fresh draws;
+five attempts include one warmup, with zero failures, retries or answer reuses.
+Known API-equivalent cost is $0.0533864 with complete usage.
+
+The initial source-fit-only review was too permissive. After the user's explicit
+instruction to consider Compare counterexamples, root and the independent reviewer
+tested the unchanged fresh meanings against saved HR04 poison, diagnostic-drink,
+wafer, gold, animal-feed, medicinal-oil and amoeba hypotheses. Risotto's unrestricted
+human eating/drinking clause admits nonfood toxic and medicinal ingestion; later
+culinary examples do not impose a shared kind condition. Its agent review is now
+reject. Sourdough excludes the specified non-nourishing, non-ingredient witnesses
+through its stated conditions; pie admits animal nourishment, a broader scope
+that is not inherently an invalid Food choice. Brisket's amoeba admission depends
+on the unsettled consumer reference of "edible". The latest agent assessments are
+one reject, two qualified accepts and one uncertain meaning, not human gold.
+
+These discrepancies are not required by differences in the posts. The proposed
+next focus is the risotto qualifying-kind gap, with consumer and edibility
+questions kept separate. V122 remains unactivated; no Compare calls, hierarchy
+build or new prompt occurred. The user has permanently removed the prior shared
+attempt cap; its active artifact is retired and historical bytes are preserved.

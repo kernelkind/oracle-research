@@ -1,5 +1,18 @@
 # General model runner
 
+## Current Bootstrap, Compare and hierarchy attempt policy
+
+The user permanently removed the shared **20,000 model-attempt cap**. For
+authorized Bootstrap, Compare and hierarchy experiments, invoke the shared
+runner without `--attempt-budget`. Do not restore the retired counter or impose
+another attempt cap unless the user explicitly sets one. Earlier counter
+instructions in historical findings are superseded for current execution.
+
+Preserve historical used counts, claims and receipts. The native runner still
+records fresh attempts, retries, exact reuses and usage without a persistent
+attempt budget. Generic optional budget support, deliberately bounded unrelated
+experiments, task authorization and the monetary ledger remain unchanged.
+
 Current Bootstrap prompt status, ASv6.100-only provenance requirements and
 branch regression findings are maintained in
 [Bootstrap qualification](shr_single_pair/bootstrap-current-as-qualification.md).
@@ -281,8 +294,19 @@ definitions and two-case repeat validate. Full qualification uses all 346 curren
 ASv6.100 inputs, with the native history root limited to the completed focused
 experiment to preserve its exact 22 original producers. Scoped history selects
 reuse evidence; it does not change model-facing inputs or fabricate receipts.
-The remaining 324 definitions are new. Full review is pending; no activation,
-Compare inference or hierarchy build is part of this Bootstrap stage.
+The remaining 324 definitions are new. The [completed full review](shr_single_pair/bootstrap-v122-full-qualification-v1.md)
+covers 346 definitions and 384 selected ancestor checks, with one flagged
+factual statement, four individual uncertainties and three exact-output scope
+conflicts. Compatible paired repeats retain separate producer bindings; they
+do not replace the original cohort. Native activity locks serialize review
+mutation, so material flags were persisted through one writer and full review
+coverage is documented against the frozen cohort rather than claimed as 346
+native verdicts. V122 is not activated. At that checkpoint, the shared counter
+reached 20,000 and inference stopped. The user subsequently confirmed removal
+of that cap and requested [fresh meanings for all four original HR04 Food nodes](shr_single_pair/bootstrap-v122-hr04-four-foods-v1.md).
+That four-case V122 draw omits the old optional counter, preserves its historical
+bytes and records native attempts independently. No replacement global cap is
+established by this diagnostic. No Compare or hierarchy work occurred.
 
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at
@@ -1329,6 +1353,26 @@ read-only inspection completed in 5.5 seconds after preparation had spent over
 19 minutes in repeated file reads. Request identities and reuse decisions are
 unchanged; the measurement does not describe model latency.
 
+### Saved consolidation review
+
+Use `canonical_consolidation_review` to inspect receipt-bound saved proposals.
+Its schema-1 source contains `proposals`, each with an `experiment` path and
+SHA-256 plus a `case` ID. Optional `include_nomination` defaults to true. Setting
+it to false omits only `proposal.children` from model input, retaining the parent,
+complete siblings, proposed title/meaning and original producer receipt.
+The setting must be a boolean and is supported only for whole-group review;
+`canonical_consolidation_pairs` rejects it. This supports controlled coverage
+diagnostics without rewriting saved answers or applying hierarchy placements.
+
+For a synthetic whole-group diagnostic, a proposal reference may also supply
+`meaning_edit` with exactly `before` and `after`. `before` must match the saved
+meaning byte-for-byte; `after` must be a nonblank changed string. Preparation
+changes only that proposal's model-input meaning, retains its original receipt
+and all other inputs, and records `synthetic: true` plus the edit in evidence.
+The evidence remains outside model input and `application_allowed` stays false.
+Pairwise preparation rejects `meaning_edit`; it cannot rewrite a canonical
+meaning or the original producer answer.
+
 ### Saved subject-pair preparation
 
 Use `dataset.adapter: "subject_pairs"` for comparisons between saved SP
@@ -1552,27 +1596,41 @@ runner's code-upgrade audit. It cannot authorize changing the corpus, prompts,
 schemas or frozen experiment inputs. Finish active experiments before changing
 their bound source. Saved meanings, decisions and native receipts are retained.
 
-The current constructor selects L1 roots first, then L2 and deeper local levels.
-At each level, rotate across notes in saved order, one entry per note per pass. Up to three searches
-can overlap on fixed graph snapshots; placements follow selection order.
-Before placement, account for graph changes and reuse only exact unchanged
-comparisons. Sharing a note does not exclude a canonical comparison. Mapped
-original-parent containment may follow from traversal or transitive inference;
-an unchecked or contradicted requirement holds the local entry without reopening
-a pruned branch.
+The current standalone constructor implements
+[hierarchy generation V2](hierarchy-generation-draft-v2.md). It independently
+establishes every original L1 meaning, then uses the unchanged PPv35 prompt to
+score each meaning against its full post. PPv35 inherits Bootstrap runner
+settings. All L1s scoring at least 50 are guaranteed; when none qualifies, only
+the highest is guaranteed, with saved order resolving ties. Rotate across notes
+and finish every guaranteed entry before considering completion. Failed scoring
+is unresolved evidence, never zero or permission for a partial fallback.
 
-The constructor implements restricted refinement after note
-coverage: deeper selections come only from notes represented by leaves
-containing multiple notes. The finished hierarchy must remove redundant steps
-with equal parent/child note sets and retain individual access with one note per
-leaf. The constructor and structural audit now check single-note leaves, even
-when the same notes are individually accessible elsewhere. Retain the deeper
-heading when a parent and child represent the same notes, reconnecting other
-branches through established ancestors. The saved `menu` is separate from the
-unchanged raw comparison graph; the audit and requested viewer export use it.
-Rebuild it as notes arrive, so a previously omitted heading can return when
-useful. Keep skipped local entries unused for later eligibility changes.
-Separate required L1 processing in the prominence draft is unchanged.
+For uncovered notes, process remaining L1s by prominence until each note is
+admitted; permit only one such fallback search per note in flight. Next give
+eligible local children matching existing canonical headings priority, including
+children of one-note parents. Their original immediate parent must be admitted
+and the matching canonical node must not yet represent that note. A heading
+match is eligibility only; every selected child follows ordinary traversal.
+When none qualifies, refine the largest unfinished multi-note canonical leaf
+from the immediate children of its original supporting entries, then nearer
+original descendants before farther ones. Use prominence within each note and
+rotate across notes, without a deeper 50-point cutoff. Reassess after placement
+and consolidation; process each original local entry at most once.
+
+Up to three local searches can overlap on fixed graph snapshots; placements
+follow selection order. Before placement, account for graph changes and reuse
+only exact unchanged comparisons. Sharing a note does not exclude a canonical
+comparison. An unchecked or contradicted mapped original-parent relationship
+holds the entry without reopening a pruned branch.
+
+The saved `menu` is separate from the raw comparison graph. For an equal-set
+single-child parent, retain the deeper heading. For a parent with multiple
+children, retain the parent and bypass equal-set children only on that browsing
+branch, exposing their children through transitive containment. Display-only
+`note_ids` preserve access through bypassed leaves without changing canonical
+`entries`. The audit and requested viewer use the menu. No equal-note-set check
+rejects an otherwise valid consolidation. Rebuild the menu from the original
+graph as support grows.
 
 Each selected local node receives an independently generated immutable meaning.
 Every comparison is local versus canonical with fixed meanings; its input
@@ -1588,7 +1646,7 @@ Producer reviews remain bound to native input/output hashes. The latest user
 verdict takes precedence over the latest agent verdict. A current rejection or
 uncertainty at a receiving experiment or an exact reused producer holds the
 entry. Output mechanics and graph checks do not establish semantic accuracy.
-See the [complete algorithm and preparation contract](hierarchy-traversal-draft.md).
+See the [V2 algorithm and preparation contract](hierarchy-generation-draft-v2.md).
 
 Use these offline commands after construction:
 
@@ -1602,27 +1660,22 @@ Use these offline commands after construction:
 
 Shaping can bypass redundant intermediates through witnessed transitive
 ancestry. Omission is not a negative relationship or an equivalence merge.
-Count a node's own supporting notes and recursive descendants, deduplicating
-note IDs. The approved finished-hierarchy conditions are all notes reachable
-individually,
-one distinct note per canonical leaf, and strictly smaller note sets on every
-downward edge. Individual access permits notes attached directly to a parent
-that also has children; it does not require one singleton canonical node per
-note. The current constructor checks individual access, single-note
-leaves and strict edges. Exhausted local inventory with a multi-note leaf reports
-unfinished construction. There is no
-additional requirement to find or apply every known regrouping or shortcut, or to conduct a
-final improvement review before stopping. Manage root and child choice counts
-on a best-effort basis; exceeding six is no longer a reason by itself to declare
-the hierarchy unfinished. The
-[constructor](hierarchy-traversal-draft.md) calls consolidation after an addition
-leaves six or more siblings. Its stopping-check timing remains provisional:
-check individual note access, single-note leaves and strict note-set narrowing after each placement
-and all triggered consolidation against the whole selected corpus. When both
-pass, stop dispatching new searches/comparisons and save already-dispatched
-answers without further graph changes. The constructor does not solve menu optimization
-automatically. A structural audit is neither semantic certification nor proof
-of optimality. Keep finished menus out of subsequent raw-trial preparation.
+Count original supporting notes plus recursive descendants, deduplicating note
+IDs. V2 finishes after all guaranteed L1s and coverage work, eligible heading
+matches, relevant multi-note-leaf descendants, placements and triggered
+consolidations are settled. Every note must remain individually accessible and
+every displayed edge must strictly narrow its distinct-note set. Exhausted
+multi-note leaves may remain with direct note access; separate singleton
+canonical nodes are not required. Unresolved scoring or missing coverage returns
+an unresolved outcome, not successful completion.
+
+Six siblings is a best-effort consolidation trigger, not a hard maximum. Null
+or a semantically invalid proposal leaves the triggering placement intact;
+an accepted synthetic addition can trigger another sibling check. There is no
+additional requirement to find every possible regrouping or prove globally
+minimal browsing depth. Offline tests exercise V2 through the native workflow;
+no V2 provider trial, semantic certification or measured cost saving is claimed.
+Keep finished menus out of subsequent raw-trial preparation.
 
 Candidate ranking is a bounded scan of at most 4,096 local rows and 64 ancestor
 headings. Comparison selection allows at most 512 eligible canonical nodes;
@@ -2005,9 +2058,21 @@ using forty-five calls plus one warmup and $0.1191624 API-equivalent cost.
 There are no retries/failures/missing usage; net cache savings are 9.05%.
 Five interpretation uncertainties and three correct-null explanation caveats
 remain visible in native reviews. High matching and medium support are
-expansion candidates, not a globally qualified minimum. Complete coverage and
-relationship reruns at the candidate efforts remain open before note-count
-expansion. Prompts, schemas and production defaults remain unchanged.
+expansion candidates, not a globally qualified minimum.
+The [complete four-answer trial](distillation-review-v1/README.md#complete-four-answer-review-and-effort-step-ups-october-11)
+reuses those matching/support results and finishes the necessary actual-edge,
+guard and coverage work. Medium rejects a valid human-family Mothers edge;
+high corrects it. Medium DCS selects an invalid Incest witness, caught by high
+DSL, and a fresh repeated medium call misses Peacock's valid Television match.
+High final coverage restores that match. Its thirty resolved searches are
+correct, with four source interpretations unscored; all selected witnesses
+already have exact high DSL outputs. The tested expansion candidates are now
+high matching/relationships/coverage and medium support, with no joined final
+score or global qualification. Local accounting is 246 attempts, including
+both levels, verifiers, 24 warmups, three recovered transport failures and three
+redundant calls. The known API-equivalent subtotal is $1.4636508; failed-attempt
+usage is unknown. Final high DCS takes 71.636 seconds, separate from preparation
+and audit time. Prompts, schemas and production defaults remain unchanged.
 
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,
@@ -2020,6 +2085,12 @@ and delegates requests, reuse, warmups, retry handling and receipts to the share
 runner. Compatible-heading comparisons use the configured relationship template,
 defaulting to DSLv2; required flags and meaning groups come from a source-bound
 candidate-independent assessment.
+Evaluation preparation's optional `--matching-reasoning-effort` overrides
+matching alone while `--reasoning-effort` supplies the other check settings.
+Coverage-search preparation also accepts `--reasoning-effort`, retaining
+xhigh as its default. This lets new native preparations bind the tested
+high matching / medium other-check combination and reuse exact saved requests
+without changing source wording, mechanical rules or existing manifests.
 Expectation files freeze before calls and remain agent-assessed rather than gold.
 Only repeated natural prefixes meeting the existing eligibility threshold are
 warmed, using explicit prefix/key configuration. Sequential native groups use
@@ -7217,7 +7288,7 @@ fixtures. Do not rerun model calls merely to add a preparation capability.
 
 `GraphSearch(nodes)` implements the agreed traversal directly, with no legacy
 mode, same-note filter, ranking shortlist or forced mapped-parent comparison.
-The [standalone constructor](hierarchy-traversal-draft.md) uses it for ordinary
+The [V2 standalone constructor](hierarchy-generation-draft-v2.md) uses it for ordinary
 local nodes and synthetic consolidation proposals. Historical scalability
 measurements remain in [the graph-search findings](canonical-graph-search-v1.md);
 they used the former traversal and do not measure the current constructor.
@@ -7673,7 +7744,12 @@ boundary, but the remaining sixteen gate cases, fresh confirmation and broader
 qualification are unrun. Equipment's modifier-scope qualification remains;
 reciprocal answers do not establish new human semantic gold.
 
-The shared persistent counter reaches 20,000/20,000; inference stops. The
+The previous shared persistent counter reached 20,000/20,000 and inference
+stopped at that checkpoint. The user subsequently removed the call allowance
+and authorized continued Compare qualification. Preserve that historical counter;
+subsequent native runs omit its exhausted cap and still record all attempts.
+This does not change the project monetary ceiling or authorize Bootstrap or
+hierarchy work. The
 [native aggregate source](shr_single_pair/hierarchy-compare-v187-v191-gate-usage-v1.json)
 counts this loop's own 83 attempts, including eight warmups and one recovered
 retry, with seventy-four valid comparisons and zero exact reuses. One failed
@@ -7681,3 +7757,14 @@ attempt lacks usage: $0.5447196 is a known API-equivalent subtotal only, not a
 complete cost or subscription charge. Generated native receipts and unrun cases
 remain in the retained task worktree. No Bootstrap, hierarchy, UI or outgoing
 owner-message work is performed by this Compare loop.
+
+V191's completed eighteen-case panel preserves six synthetic controls and both
+approved MrBeast positives, with five settled reciprocal pairs and one unresolved
+brand pair. Its unchanged fresh repeat preserves those controls and Equipment's
+reciprocal answers, but has a Restaurant reversal: commerce is treated as necessary
+in one orientation and a wholly noncommercial restaurant is admitted in the other.
+Brand remains unresolved. V191 is not qualified; the broader fifty-case panel is
+held pending diagnosis. Separate explicit-commerce synthetic controls test resolved
+boundaries without replacing any original producer meaning or certifying an old
+label. Native aggregate definitions and detailed qualifications remain in the
+maintained gate record.

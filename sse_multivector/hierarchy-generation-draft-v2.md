@@ -1,17 +1,18 @@
 # Hierarchy generation V2 — FUTURE WORK
 
-**Status: V2 — FUTURE WORK. Design draft; no V2 implementation or generation trial.** This
-document records decisions for a future version, not the current generation
-algorithm. Landing this document in `main` does not activate V2.
+**Status: approved V2 design, implemented as `hierarchy-generation-v2`; offline
+validation only, no V2 provider trial or hierarchy-quality qualification.** V2
+replaces the previous selection implementation through the existing shared-runner
+commands. The FUTURE WORK label denotes pending qualification with real model
+judgments, not an alternative opt-in constructor.
 
-For V2, the user approved guaranteed L1 selection by prominence, additional L1s
-for uncovered notes, prominence-ordered refinement of multi-note leaves, a
-provisional additional eligibility rule for deeper entries matching existing
-canonical headings, giving those entries priority over multi-note-leaf work,
-and retaining the child when an equal-note-set parent has only that child.
-Other equal-note-set cases and automatic shaping remain open.
-The current constructor still follows the
-[standalone traversal design](hierarchy-traversal-draft.md).
+The user approved guaranteed L1 selection by prominence, additional L1s for
+uncovered notes, prominence-ordered refinement of multi-note leaves, additional
+eligibility for deeper entries matching canonical headings, and giving those
+entries priority over multi-note-leaf work. Finished-view shaping retains the
+specific child of an equal-set single-child parent. For a parent with multiple
+children it retains the parent and bypasses equal-set children on that browsing
+branch. The canonical graph, meanings, evidence and relationships remain intact.
 
 ## Purpose
 
@@ -48,7 +49,7 @@ scores need not sum to 100.
   Leave its other L1s unused for now.
 - If **none** reaches 50, select **only the highest-scoring L1** of that note.
 
-Proposed tie handling: when several L1s share the highest score in the fallback
+Tie handling: when several L1s share the highest score in the fallback
 case, select the first in the note's saved local-node order. This keeps the
 fallback to exactly one L1 without an additional model call.
 
@@ -157,7 +158,7 @@ does not require additional comparisons solely to create a singleton node for it
 
 ## Additional deeper-entry eligibility — provisional V2 rule
 
-**Approved provisionally October 11, 2026; future work, not implemented.** After
+**Approved provisionally October 11, 2026; implemented, not model-qualified.** After
 the guaranteed L1 pass, additional L1 work for uncovered notes, and their
 triggered consolidation finish, an unused local child is also eligible when:
 
@@ -199,7 +200,7 @@ relationships and any resulting browsing improvement remain untested.
 ### Approved order within the deeper-node phase
 
 The user accepted this ordering on October 11, 2026: "ok sounds fine".
-**Approved for V2 future work; not implemented or tested.**
+**Approved for V2; covered by offline native-workflow tests, not a provider trial.**
 
 1. After L1 work, note coverage and their consolidation finish, give eligible
    local children matching existing canonical headings priority. Use PPv35
@@ -220,8 +221,7 @@ uses the resulting note groups. This is a conditional illustration, not a
 predicted or observed comparison result.
 
 This rule does not establish discovery of shared topics whose headings differ
-or which have no existing canonical node. Shaping and its paused decisions
-remain open.
+or which have no existing canonical node. The broader width/depth objective remains deferred; no global menu optimum is claimed.
 
 ## Selection completion and shaping
 
@@ -249,10 +249,35 @@ Vegetables. Do not merge their meanings, transfer Food's evidence into
 Vegetables, or delete Food from the original construction graph. This rule
 changes which canonical nodes appear in the finished browsing hierarchy.
 
-Equal-note-set cases involving a parent with multiple children remain open.
-Automatic shaping is not implemented. The selection rules alone do not resolve
-all equal-note-set edges or establish that a finished hierarchy has passed this
-requirement.
+**Approved multiple-child rule (October 11, 2026):** retain the parent created
+by consolidation. In the finished browsing view, bypass any child representing
+exactly the same notes as that parent and show that child's children directly
+beneath the parent. Apply this only on the affected branch; keep useful
+placements of the child beneath other parents. Each exposed child has a
+transitive containment witness in the original canonical graph.
+
+The user's approval was "agree" to: "I propose keeping the parent created by
+consolidation. If a child represents exactly the same notes as that parent,
+remove the child's navigation step and show its children directly beneath the
+parent. This changes the browsing view only. The canonical nodes, meanings,
+evidence and relationships remain intact."
+
+When bypassing a leaf, preserve access to its notes at the retained parent.
+These display-only `note_ids` are derived from the original graph's represented
+notes; they are not new canonical supporting entries. The requested viewer
+export exposes them as notes, while retaining separate original-support labels.
+The finished view preserves each retained node's original represented note set.
+
+Consolidation is not rejected merely because it creates equal-note-set edges.
+Ordinary traversal, semantic placement checks, immutable meanings and valid
+nominated-child relationships still apply. Construct the finished view from the
+raw graph after placement and consolidation, retaining the raw graph unchanged.
+
+Selection exhaustion can finish with an unrefined multi-note leaf; its notes
+remain individually accessible. It cannot claim completion with missing note
+coverage or unresolved L1 scoring. Provider errors, interrupted retries and
+budget exhaustion remain native execution limits, not permission to invent
+support. Broader depth optimization remains deferred.
 
 ## V2 — FUTURE WORK: consolidation investigation
 
@@ -271,7 +296,7 @@ Potatoes A and Broccoli B beneath it. Fruits represents B. Consolidation propose
 Food above Vegetables and Fruits, covering two of the six offered roots.
 
 The existing placement checks permit the assumed containment relationships.
-The consolidation-specific check then rejects the raw Food-to-Vegetables edge
+At that measured source, the consolidation-specific check rejects the raw Food-to-Vegetables edge
 because both represent A and B. The original graph remains unchanged. Removing
 only that rejection would not secure a useful finished grouping: the existing
 shaper removes Food, returning to six roots.
@@ -309,27 +334,18 @@ Potatoes and Broccoli beneath Food. All retained note sets and containment
 witnesses survive. This shows why a child should not be erased globally just
 because its edge under one parent is redundant.
 
-### Unapproved direction to investigate next
+### Approved resolution and limits
 
-Assess a consolidation proposal together with a prospective finished shape,
-after the relevant refinement has made that shape possible. Semantic placement
-checks, fixed meanings and original evidence remain mandatory. The assessment
-would check:
+The approved multiple-child rule above preserves the proposed parent in the
+raw graph and bypasses repeated steps only in the finished view. It removes the
+old raw equal-note-set rejection. Display-only note access handles an unrefined
+bypassed leaf without transferring its original supporting entries to the
+synthetic node. Useful placements on other branches remain.
 
-- Preservation of global note access and the represented notes of retained
-  groups, including the notes the proposed group is meant to collect.
-- Valid containment witnesses and strict narrowing for every retained edge.
-- Preservation of useful placements on other parent branches.
-- Choice counts and route lengths before and after shaping, without treating
-  fewer roots alone as proof of improved browsing.
-
-A semantically valid proposal may be premature while a nominated multi-note
-leaf remains unrefined. A possible approach is to retain that proposal for
-reassessment when its descendants change, reusing unchanged saved judgments
-instead of resampling its meaning. This remains a hypothesis: proposal timing,
-the multiple-child shaping rule and the acceptable choice-versus-depth tradeoff
-still require review. These findings do not activate V2 or change the current
-constructor, consolidation prompt or documentation.
+The structural findings remain evidence of the choice/depth tradeoff. They do
+not prove overall browsing quality or API savings. No further global browsing
+objective, synthetic proposal resampling or additional semantic inference is
+introduced by this shaping rule.
 
 ## Existing construction rules
 
@@ -355,7 +371,57 @@ work grows with the entries assessed and their
 source-post lengths, not every local/canonical pair. Reuse exact saved meanings,
 prominence answers and comparisons where available.
 
-No cost reduction or hierarchy-quality improvement has been measured for this
-draft. Compare actual finished hierarchies and total API-equivalent cost,
+No cost reduction or hierarchy-quality improvement has been measured for V2. Compare actual finished hierarchies and total API-equivalent cost,
 including meaning generation, PPv35, traversal and consolidation, before making
 either claim.
+
+## Automated preparation and execution
+
+Use the shared stable launcher from an isolated task worktree:
+
+```bash
+../experiment-runner/bin/experiment-runner prepare-canonical-traversal \
+  target/HR06 --spec traversal.spec.json
+../experiment-runner/bin/experiment-runner run-canonical-traversal \
+  target/HR06 --attempt-budget allowance.json
+```
+
+The traversal spec still names the corpus, selected note IDs, local input schema,
+and Bootstrap, Compare and consolidation specs. Preparation pins PPv35's exact
+text and derives its runner settings from Bootstrap. All original L1 meanings
+are prepared together; the corresponding prominence batch consumes their saved
+meanings. Deeper batches contain only currently eligible entries. Each meaning
+and score records its native producer case and receipt; all comparisons reuse
+the independently established meaning.
+
+`selection_phase` records L1 scoring, guaranteed L1, uncovered-note L1, heading
+matches, multi-note leaf refinement or finished selection. Placements preserve
+selection order with at most three local searches in flight. Exact answers,
+provider retries, prefix warming and the persistent attempt allowance use the
+ordinary shared runner. No new provider call is implied by preparing or testing
+this implementation. Frozen older trials remain bound to their original source
+worktrees; the current constructor has no legacy selection mode.
+
+## Offline implementation verification
+
+Failing-first production checks demonstrated the previous parent-removal rule,
+missing prominence selection, unnecessary waiting for other active searches,
+and a missing selected-score review check. Native CLI tests now cover guaranteed
+roots, threshold/fallback/ties, uncovered-note selection, heading eligibility,
+supporting-branch refinement, duplicate-entry prevention, both Compare formats,
+producer reviews, accepted equal-set consolidation, note preservation and viewer
+export. They use the local fake model transport, not provider judgments.
+
+The broader 275-test run reported 22 failures across 20 existing general-runner
+tests and six unavailable artifact/UI checks. All 20 failing methods were rerun
+at unchanged baseline `6443dcfc`, producing the same 22 failures and no V2-only
+failure method. These include removed external-concurrency expectations,
+provider/proxy scheduling assumptions and an unavailable `tiktoken` dependency.
+The stable runner was clean at `e19592f9a6b0b3a2b3ac0bc63220156d86a0f1a7`.
+Those unrelated failures are reported, not suppressed or fixed by this task.
+
+Frozen older constructor trials and the prior offline structural controls are
+unchanged. No provider requests, prompt text edits, hierarchy UI refresh or
+paid resources were used to implement or validate V2. The next qualification
+step is a separately authorized real hierarchy run and review of its actual
+finished structure and total API-equivalent cost.

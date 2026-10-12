@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "audit_first_draw": [
+      "../../target/canonical-shaping-selection-v1/consolidation-audit-v1-first-v1"
+    ],
+    "audit_fresh_repeat": [
+      "../../target/canonical-shaping-selection-v1/consolidation-audit-v1-repeat-v1"
+    ]
+  }
+}

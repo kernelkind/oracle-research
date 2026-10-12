@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "prompt_id": "Hierarchy-bootstrap-v104",
+  "output": {
+    "path": "Hierarchy-bootstrap-v104.md",
+    "sha256": "d97d0cfe078546e9525ac15252b81eee20630fba6e4786b1000c5cf942d49ba0"
+  },
+  "parts": [
+    {
+      "path": "prompt_sources/Hierarchy-bootstrap-v104.before.md",
+      "sha256": "18899202d944fecfdbadb3987c554a7c00f1dd24419c0ed2d97eef7ccd74fa09"
+    },
+    {
+      "path": "prompt_parts/explicit-meaning-rules-v1.md",
+      "sha256": "0a243de2ac9013212f8b35317f6ad0b52b4757c467f81f54d9ab9ff4cb46c7ff"
+    },
+    {
+      "path": "prompt_sources/Hierarchy-bootstrap-v104.after.md",
+      "sha256": "8a600f1a3d94c1c7bd09fdc54bd43f5ad4bb74c67b38a2804dfad7d50d274a32"
+    }
+  ]
+}

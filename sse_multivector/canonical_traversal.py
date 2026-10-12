@@ -1,4 +1,4 @@
-"""Native, resumable construction using the approved traversal-v24 policy.
+"""Native, resumable construction using the approved hierarchy-generation-v2 policy.
 
 Preparation and advancement are offline. The run command executes their loop
 through the shared runner, which owns admission, caching, retries and accounting.
@@ -22,7 +22,7 @@ from .canonical_hierarchy_shape import finish_nodes
 from .canonical_trial import _note_sets
 
 
-POLICY = 'traversal-v24'
+POLICY = 'hierarchy-generation-v2'
 _CODE_FILES = ('canonical_traversal.py', 'canonical_graph_search.py', 'canonical_trial.py',
                'canonical_hierarchy_shape.py',
                'hierarchy_node_pairs.py', 'canonical_receipts.py', 'experiment_inputs.py',
@@ -87,10 +87,35 @@ def check_state(state):
     keys = [(s['local']['note_id'], s['local']['number']) for s in selected]
     if (len(selected) != state['cursor'] or len(set(keys)) != len(keys)
             or any(key not in ordinals for key in keys)
-            or [s.get('selection_index', ordinals.get(key)) for s, key in zip(selected, keys)]
+            or [s['selection_index'] for s in selected]
                != list(range(state['cursor']))
-            or any(s.get('ordinal', ordinals[key]) != ordinals[key] for s, key in zip(selected, keys))):
+            or any(s['ordinal'] != ordinals[key] for s, key in zip(selected, keys))):
         raise ValueError('traversal selection order differs from saved history')
+    corpus = {n['note_id']: n for n in workflow.read(state['corpus'])['notes']}
+    expected = _inventory([corpus[n] for n in state['note_ids']])
+    if [{k: row[k] for k in ('local', 'subject')} for row in state['inventory']] != expected:
+        raise ValueError('saved local inventory differs from original corpus')
+    for row in state['inventory']:
+        for field, producer_field, case_field, role in (
+                ('meaning', 'producer', 'producer_case', 'meaning'),
+                ('prominence', 'prominence_producer', 'prominence_case', 'prominence')):
+            if producer_field not in row:
+                if field in row:
+                    raise ValueError('saved '+field+' lacks native producer evidence')
+                continue
+            record = state['experiments'][row[producer_field]]
+            if record['role'] != role or row[case_field] not in record['inputs']:
+                raise ValueError('invalid local assessment producer')
+            if field in row:
+                answers = [a for a in record.get('answers', []) if a['id'] == row[case_field]]
+                if (len(answers) != 1 or answers[0]['status'] != 'valid'
+                        or (answers[0]['output'] or {}).get(field) != row[field]):
+                    raise ValueError('saved '+field+' differs from native producer evidence')
+    for slot in selected:
+        row = state['inventory'][slot['ordinal']]
+        meaning = slot.get('selected_meaning', slot.get('meaning'))
+        if meaning != row.get('meaning'):
+            raise ValueError('selected meaning differs from independently established meaning')
     trial._ancestors(state['nodes'])
     if 'menu' in state and state['menu'] != _menu(state['nodes']):
         raise ValueError('saved browsing hierarchy differs from construction graph')
@@ -152,8 +177,9 @@ def _collect(state):
                         for failure in failures)
         if not any(c['status'] == 'unrun' for c in cases) and not retryable:
             record['answers'] = answers
-            if record['role'] in ('meaning', 'consolidation'):
-                record['producer_hold'] = _producer_hold(record['experiment'], cases)
+            if record['role'] in ('meaning', 'prominence', 'consolidation'):
+                record['producer_holds'] = {c['id']: _producer_hold(record['experiment'], [c])
+                                            for c in cases}
 
 
 def _canonical_input(nodes, identifier):
@@ -199,35 +225,92 @@ def _comparison_output(slot, output):
     return output
 
 
+def _assess(directory, state, ordinals):
+    """Establish each eligible meaning once, then score that exact meaning."""
+    rows = state['inventory']
+    missing = [i for i in ordinals if 'producer' not in rows[i]]
+    if missing:
+        source = dict(schema_version=state['local_schema_version'], corpus=state['corpus'],
+            nodes=[dict(id=f'L{i:05}', local=rows[i]['local'], review={}) for i in missing])
+        producer = _experiment(directory, state, 'meaning', state['bootstrap_spec'],
+                               source, adapter='hierarchy_local_nodes')
+        for i in missing:
+            rows[i].update(producer=producer, producer_case=f'L{i:05}')
+    ready = True
+    to_score = []
+    for i in ordinals:
+        row = rows[i]
+        if 'hold' in row:
+            continue
+        record = state['experiments'][row['producer']]
+        if 'answers' not in record:
+            ready = False
+            continue
+        answer = next(a for a in record['answers'] if a['id'] == row['producer_case'])
+        meaning = (answer['output'] or {}).get('meaning')
+        hold = record.get('producer_holds', {}).get(row['producer_case'])
+        if hold or answer['status'] != 'valid' or not isinstance(meaning, str) or not meaning.strip():
+            row['hold'] = hold or 'local meaning unresolved; manual review required'
+            continue
+        row['meaning'] = meaning
+        if 'prominence_producer' not in row:
+            to_score.append(i)
+    if to_score:
+        notes = {n['note_id']: n for n in workflow.read(state['corpus'])['notes']}
+        cases = []
+        for i in to_score:
+            row = rows[i]
+            payload = dict(node_title=row['subject'], node_description=row['meaning'],
+                           post=notes[row['local']['note_id']]['text'])
+            cases.append(dict(id=f'L{i:05}', inputs={'INPUT_JSON': json.dumps(payload, ensure_ascii=False)},
+                evidence=dict(local=row['local'], producer=row['producer'],
+                              producer_case=row['producer_case'])))
+        producer = _experiment(directory, state, 'prominence', state['prominence_spec'],
+                               dict(cases=cases), adapter='hierarchy_prominence')
+        for i in to_score:
+            rows[i].update(prominence_producer=producer, prominence_case=f'L{i:05}')
+    for i in ordinals:
+        row = rows[i]
+        if 'hold' in row:
+            continue
+        if 'prominence_producer' not in row:
+            ready = False
+            continue
+        record = state['experiments'][row['prominence_producer']]
+        if 'answers' not in record:
+            ready = False
+            continue
+        answer = next(a for a in record['answers'] if a['id'] == row['prominence_case'])
+        score = (answer['output'] or {}).get('prominence')
+        hold = record.get('producer_holds', {}).get(row['prominence_case'])
+        if hold or answer['status'] != 'valid' or type(score) is not int or not 0 <= score <= 100:
+            row['hold'] = hold or 'local prominence unresolved; manual review required'
+        else:
+            row['prominence'] = score
+    return ready
+
+
 def _new_search(directory, state, row, ordinal):
-    slot = dict(**deepcopy(row), ordinal=ordinal, selection_index=state['cursor'],
-                snapshot=deepcopy(state['nodes']),
-                cache={}, experiments=[], meaning=None, symmetric=_symmetric(state))
-    source = dict(schema_version=state['local_schema_version'], corpus=state['corpus'],
-                  nodes=[dict(id='meaning', local=row['local'], review={})])
-    slot['producer'] = _experiment(directory, state, 'meaning', state['bootstrap_spec'],
-                                  source, adapter='hierarchy_local_nodes', local=row['local'])
-    return slot
+    phase = state['selection_phase']
+    state.setdefault('selection_turns', {})[phase] = row['local']['note_id']
+    row = {**row, 'meaning': row.get('meaning')}
+    return dict(**deepcopy(row), ordinal=ordinal, selection_index=state['cursor'],
+                selection_phase=phase, snapshot=deepcopy(state['nodes']),
+                cache={}, experiments=[], symmetric=_symmetric(state))
 
 
 def _search_work(directory, state, slot):
     """Apply unchanged saved answers before preparing another reached frontier."""
     if slot.get('hold'):
         return True, {}
-    producer = state['experiments'][slot['producer']]
-    if producer.get('producer_hold'):
-        slot['hold'] = producer['producer_hold']
-        return True, {}
-    if slot['meaning'] is None:
-        producer = state['experiments'][slot['producer']]
-        if 'answers' not in producer:
-            return False, {}
-        case = producer['answers'][0]
-        meaning = (case['output'] or {}).get('meaning')
-        if case['status'] != 'valid' or not isinstance(meaning, str) or not meaning.strip():
-            slot['hold'] = 'local meaning unresolved; manual review required'
-            return True, {}
-        slot['meaning'] = meaning
+    for producer_field, case_field in (('producer', 'producer_case'),
+                                       ('prominence_producer', 'prominence_case')):
+        if producer_field in slot:
+            producer = state['experiments'][slot[producer_field]]
+            hold = producer.get('producer_holds', {}).get(slot[case_field])
+            if hold:
+                slot['hold'] = hold
+                return True, {}
     for number in slot['experiments']:
         record = state['experiments'][number]
         if 'answers' not in record:
@@ -284,29 +367,118 @@ def _menu(nodes):
 def _stopping(state):
     state['menu'] = _menu(state['nodes'])
     represented, children = _note_sets(state['menu']['nodes'])
-    accessible = {entry['note_id'] for node in state['menu']['nodes'] for entry in node['entries']}
+    accessible = set().union(*represented.values()) if represented else set()
     equal = [dict(parent=parent, child=child) for parent, kids in children.items()
              for child in kids if not represented[child] < represented[parent]]
+    raw_notes, raw_children = _note_sets(state['nodes'])
     multi = [dict(id=identifier, note_ids=sorted(notes))
-             for identifier, notes in represented.items() if not children[identifier] and len(notes) > 1]
+             for identifier, notes in raw_notes.items() if not raw_children[identifier] and len(notes) > 1]
     return dict(individual_access=set(state['note_ids']) <= accessible, strict_edges=not equal,
                 single_note_leaves=all(len(notes) == 1 for identifier, notes in represented.items()
                                        if not children[identifier]), multi_note_leaves=multi,
                 missing_individual=sorted(set(state['note_ids'])-accessible), equal_note_edges=equal)
 
 
-def _next_locals(state):
-    """Keep skipped entries unused; changed leaves can make them eligible later."""
-    selected = {(s['local']['note_id'], s['local']['number']) for s in state['steps']
-                if s['local'] is not None}
-    selected.update((s['local']['note_id'], s['local']['number']) for s in state['searches'])
-    eligible = {note for leaf in state['stopping']['multi_note_leaves'] for note in leaf['note_ids']}
-    for ordinal, row in enumerate(state['inventory']):
+def _selected(state):
+    return {s['ordinal'] for s in [*state['steps'], *state['searches']] if s.get('local') is not None}
+
+
+def _rotate_candidates(state, ordinals, *, rank=True):
+    groups = {n: [] for n in state['note_ids']}
+    for i in ordinals:
+        groups[state['inventory'][i]['local']['note_id']].append(i)
+    if rank:
+        for group in groups.values():
+            group.sort(key=lambda i: (-state['inventory'][i].get('prominence', -1), i))
+    notes = state['note_ids']
+    last = state.get('selection_turns', {}).get(state['selection_phase'])
+    start = notes.index(last)+1 if last in notes else 0
+    order = notes[start:]+notes[:start]
+    while any(groups.values()):
+        for note in order:
+            if groups[note]:
+                i = groups[note].pop(0)
+                yield i, state['inventory'][i]
+
+
+def _eligible(state):
+    """Return one approved phase's candidates, independent of model scheduling."""
+    rows = state['inventory']
+    selected = _selected(state)
+    completed = {s['ordinal'] for s in state['steps'] if s.get('local') is not None}
+    roots = [i for i, r in enumerate(rows) if '.' not in r['local']['number']]
+    if any('prominence' not in rows[i] and 'hold' not in rows[i] for i in roots):
+        return 'l1_scoring', roots
+    guaranteed, unresolved = [], []
+    for note in state['note_ids']:
+        options = [i for i in roots if rows[i]['local']['note_id'] == note]
+        if any('prominence' not in rows[i] for i in options):
+            unresolved.append(note)
+            continue
+        high = [i for i in options if rows[i]['prominence'] >= 50]
+        guaranteed.extend(high or [max(options, key=lambda i: (rows[i]['prominence'], -i))])
+    state['guaranteed'] = guaranteed
+    state['unresolved_scoring'] = unresolved
+    if set(guaranteed) - completed:
+        return 'guaranteed_l1', [i for i in guaranteed if i not in selected]
+    represented = {e['note_id'] for n in state['nodes'] for e in n['entries']}
+    active_notes = {s['local']['note_id'] for s in state['searches']}
+    uncovered = set(state['note_ids']) - represented - set(unresolved)
+    remaining = [i for i in roots if i not in selected and rows[i]['local']['note_id'] in uncovered]
+    if remaining:
+        choices = []
+        for note in state['note_ids']:
+            options = [i for i in remaining if rows[i]['local']['note_id'] == note]
+            if options and note not in active_notes:
+                choices.append(max(options, key=lambda i: (rows[i]['prominence'], -i)))
+        return 'coverage_l1', choices
+    if uncovered & active_notes:
+        # A fallback must settle before this note can leave the coverage phase.
+        return 'coverage_l1', []
+    represented_sets, children = _note_sets(state['nodes'])
+    admitted = {(e['note_id'], e['number']) for n in state['nodes'] for e in n['entries']}
+    by_heading = {}
+    for n in state['nodes']:
+        by_heading.setdefault(n['subject'], []).append(n['id'])
+    matches = []
+    for i, row in enumerate(rows):
         local = row['local']
-        if ((local['note_id'], local['number']) not in selected and (
-                not state['stopping']['individual_access'] or '.' not in local['number']
-                or local['note_id'] in eligible)):
-            yield ordinal, row
+        if i in selected or '.' not in local['number']:
+            continue
+        parent = (local['note_id'], local['number'].rsplit('.', 1)[0])
+        if parent in admitted and any(local['note_id'] not in represented_sets[n]
+                                     for n in by_heading.get(row['subject'], [])):
+            matches.append(i)
+    if matches:
+        return 'heading_matches', matches
+    leaves = sorted((n for n in state['nodes'] if not children[n['id']]
+                     and len(represented_sets[n['id']]) > 1),
+                    key=lambda n: -len(represented_sets[n['id']]))
+    for leaf in leaves:
+        descendants = {}
+        for support in leaf['entries']:
+            prefix = support['number']+'.'
+            for i, row in enumerate(rows):
+                local = row['local']
+                if (i not in selected and local['note_id'] == support['note_id']
+                        and local['number'].startswith(prefix)):
+                    distance = local['number'].count('.') - support['number'].count('.')
+                    branch = descendants.setdefault(local['note_id'], {})
+                    branch[i] = min(distance, branch.get(i, distance))
+        candidates = []
+        for branch in descendants.values():
+            depth = min(branch.values())
+            candidates.extend(i for i, d in branch.items() if d == depth)
+        if candidates:
+            state['selection_leaf'] = leaf['id']
+            return 'multi_note_leaf', candidates
+    return 'finished', []
+
+
+def _next_locals(state):
+    phase, ordinals = _eligible(state)
+    state['selection_phase'] = phase
+    return _rotate_candidates(state, ordinals, rank=phase != 'guaranteed_l1')
 
 
 def _mapped_parent(state, slot):
@@ -357,11 +529,6 @@ def _apply(state, slot, values, comment, *, group=None):
             reason = 'synthetic target or nominated-child containment not established'
         else:
             represented, children = _note_sets(prospective)
-            previous_edges = {(p, n['id']) for n in before for p in n['parents']}
-            new_edges = [(p, n['id']) for n in prospective for p in n['parents']
-                         if target in (p, n['id']) and (p, n['id']) not in previous_edges]
-            if any(not represented[c] < represented[p] for p, c in new_edges):
-                reason = 'synthetic grouping does not strictly narrow note sets'
             after_choices = len(children[parent]) if parent else sum(not n['parents'] for n in prospective)
             if after_choices >= len(offered):
                 reason = reason or 'synthetic grouping does not reduce immediate choices'
@@ -378,7 +545,8 @@ def _apply(state, slot, values, comment, *, group=None):
         answers.append(deepcopy(slot['cache'][workflow.inputs.digest(inputs)]))
     state['steps'].append(dict(index=state['index'], local=slot.get('local'),
         ordinal=slot.get('ordinal'), selection_index=slot.get('selection_index', slot.get('ordinal')),
-        selected_meaning=slot['meaning'], status='held' if reason else 'equivalent' if equivalent else 'added',
+        producer_case=slot['producer_case'],
+        selection_phase=slot.get('selection_phase'), selected_meaning=slot['meaning'], status='held' if reason else 'equivalent' if equivalent else 'added',
         reason=reason, canonical_id=None if reason else target, before=before,
         after=deepcopy(state['nodes']), answers=answers, comment=comment,
         reviewer='agent', experiment=state['experiments'][slot['producer']]['experiment'],
@@ -418,13 +586,14 @@ def _consolidate(directory, state, comment):
     answer = record['answers'][0]
     output = answer['output']
     if 'slot' not in active:
-        if record.get('producer_hold'):
-            active['outcome'] = record['producer_hold']
+        if record.get('producer_holds', {}).get('consolidate'):
+            active['outcome'] = record['producer_holds']['consolidate']
         elif output is None or answer['status'] != 'valid':
             active['outcome'] = 'null' if answer['status'] == 'valid' else 'invalid'
         else:
             active['slot'] = dict(local=None, subject=output['title'], meaning=output['meaning'],
-                nominated=output['children'], producer=active['producer'], cache={}, experiments=[],
+                nominated=output['children'], producer=active['producer'], producer_case='consolidate',
+                cache={}, experiments=[],
                 snapshot=active['snapshot'], symmetric=_symmetric(state))
     if 'slot' in active:
         complete, values = _search_work(directory, state, active['slot'])
@@ -439,40 +608,49 @@ def _consolidate(directory, state, comment):
 
 def _schedule(directory, state, comment):
     state['stopping'] = _stopping(state)
-    # Advance independent snapshots even while consolidation blocks placements.
+    # Independent queries may progress while consolidation blocks placements.
     for slot in state['searches']:
         _search_work(directory, state, slot)
-    while state['status'] != 'complete':
+    while state['status'] not in ('complete', 'exhausted'):
         if state.get('consolidation') or state['pending_groups']:
             if not _consolidate(directory, state, comment):
                 break
             continue
-        if state.pop('check_stopping', False):
-            if (state['stopping']['individual_access'] and state['stopping']['strict_edges']
-                    and state['stopping']['single_note_leaves']):
-                state['status'] = 'complete'
-                _stop_dispatch(state)
-                break
+        if state['searches']:
+            slot = state['searches'][0]
+            complete, values = _search_work(directory, state, slot)
+            if complete and not slot.get('hold') and slot['snapshot'] != state['nodes']:
+                slot['snapshot'] = deepcopy(state['nodes'])
+                complete, values = _search_work(directory, state, slot)
+            if complete:
+                _apply(state, slot, values, comment)
+                state['searches'].pop(0)
+                continue
+        phase, candidates = _eligible(state)
+        state['selection_phase'] = phase
+        if not _assess(directory, state, candidates):
+            break
+        if phase == 'l1_scoring':
+            continue
+        added = []
         for ordinal, row in _next_locals(state):
             if len(state['searches']) >= 3:
                 break
-            state['searches'].append(_new_search(directory, state, row, ordinal))
+            slot = _new_search(directory, state, row, ordinal)
+            state['searches'].append(slot)
             state['cursor'] += 1
+            added.append(slot)
         if not state['searches']:
-            state['status'] = 'exhausted'
-            break
-        slot = state['searches'][0]
-        complete, values = _search_work(directory, state, slot)
-        if not complete:
-            break
-        if not slot.get('hold') and slot['snapshot'] != state['nodes']:
-            slot['snapshot'] = deepcopy(state['nodes'])
-            complete, values = _search_work(directory, state, slot)
-            if not complete:
+            if phase == 'finished':
+                state['status'] = ('complete' if state['stopping']['individual_access']
+                                   and state['stopping']['strict_edges']
+                                   and not state.get('unresolved_scoring') else 'exhausted')
                 break
-        _apply(state, slot, values, comment)
-        state['searches'].pop(0)
-        state['check_stopping'] = True
+            continue
+        if not added:
+            break
+        for slot in added:
+            _search_work(directory, state, slot)
     workflow.write(directory/'state.json', state)
     return summary(state)
 
@@ -497,7 +675,8 @@ def summary(state):
                 canonical_nodes=len(state['nodes']), active_searches=len(state['searches']),
                 browsing_nodes=len(state.get('menu', {}).get('nodes', state['nodes'])),
                 held=sum(s['status'] == 'held' for s in state['steps']),
-                stopping=state.get('stopping'),
+                stopping=state.get('stopping'), selection_phase=state.get('selection_phase'),
+                unresolved_scoring=state.get('unresolved_scoring', []),
                 experiments=[] if state['status'] == 'complete' else [
                     r['experiment'] for r in state['experiments'] if 'answers' not in r])
 
@@ -563,6 +742,12 @@ def prepare(spec_path, directory, history_root=None):
     if directory.exists():
         raise ValueError('traversal destination already exists')
     directory.mkdir(parents=True)
+    prominence_prompt = Path(__file__).with_name('prominence-prompt-goal-v1') / 'ppv35-post-meaning-v1' / 'PPv35-post-meaning-v1.md'
+    prominence_spec = deepcopy(state['bootstrap_spec'])
+    prominence_spec['prompt'] = dict(id='PPv35-post-meaning-v1', path=str(prominence_prompt.resolve()))
+    prominence_spec['runner'].pop('output_schema', None)
+    state['prominence_spec'] = prominence_spec
+    sources[str(prominence_prompt.resolve())] = trial._hash(prominence_prompt)
     workflow.write(directory/'state.json', state)
     return _schedule(directory, state, 'Initial native preparation')
 
@@ -598,10 +783,6 @@ def _resume_sources(directory, reason):
                 if path not in allowed:
                     raise ValueError('trial source changed: '+path)
                 before[path], after[path] = digest, current
-        shape = str(Path(__file__).with_name('canonical_hierarchy_shape.py').resolve())
-        constructor = str(Path(__file__).resolve())
-        if shape not in state['sources'] and constructor in state['sources']:
-            before[shape], after[shape] = None, trial._hash(shape)
         if after:
             from experiment_runner.scheduling import snapshot
             for record in state['experiments']:
@@ -614,8 +795,7 @@ def _resume_sources(directory, reason):
             state['sources'].update(after)
             if state['status'] == 'complete':
                 state['status'] = 'constructing'
-                state['check_stopping'] = True
-        check_state(state)
+                check_state(state)
         if after:
             workflow.write(directory/'state.json', state)
 

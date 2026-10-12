@@ -418,7 +418,7 @@ def add_commands(commands):
     p.add_argument('--registry', type=Path, required=True)
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--saved-only', action='store_true', help='rebuild the catalogue from retained records without discovering new outputs')
-    p = commands.add_parser('prepare-canonical-traversal', help='prepare the approved L1-first traversal policy; no inference')
+    p = commands.add_parser('prepare-canonical-traversal', help='prepare V2 prominence selection and traversal; no inference')
     p.add_argument('directory', type=Path)
     p.add_argument('--spec', type=Path, required=True)
     p.add_argument('--history-root', type=Path)
@@ -467,6 +467,8 @@ def add_commands(commands):
     p.add_argument('--runner-binary', type=Path)
     p.add_argument('--history-root', type=Path)
     p.add_argument('--reasoning-effort', choices=('xhigh', 'high', 'medium', 'low'))
+    p.add_argument('--matching-reasoning-effort', choices=('xhigh', 'high', 'medium', 'low'),
+                   help='override reasoning effort for matching checks only')
     p.add_argument('--answer-id', action='append', help='prepare only this frozen answer ID; repeat for a subset')
     p.add_argument('--relationship-history-root', type=Path, help='override saved-request history for relationship checks only')
     p.add_argument('--relationship-runner-binary', type=Path, help='override the worker for relationship checks only')
@@ -478,6 +480,7 @@ def add_commands(commands):
     p.add_argument('--answer-id', action='append', help='prepare only this frozen answer ID; repeat for a subset')
     p.add_argument('--runner-binary', type=Path)
     p.add_argument('--history-root', type=Path)
+    p.add_argument('--reasoning-effort', choices=('xhigh', 'high', 'medium', 'low'), default='xhigh')
     p.add_argument('--premise-audit', type=Path, action='append',
                    help='bind an existing complete-output audit JSONL for conditional reuse; repeat for multiple audits')
     p = commands.add_parser('show-distillation-review-evaluation', help='collect native trial results; no inference')
@@ -651,7 +654,7 @@ def handle_command(args):
         from . import distillation_coverage_search
         result = distillation_coverage_search.prepare(args.evaluation, args.output,
             answer_ids=args.answer_id, runner_binary=args.runner_binary, history_root=args.history_root,
-            premise_audits=args.premise_audit)
+            premise_audits=args.premise_audit, reasoning_effort=args.reasoning_effort)
         print(json.dumps(result, ensure_ascii=False, indent=2))
     elif args.command in {'prepare-distillation-review-evaluation', 'show-distillation-review-evaluation', 'run-distillation-review-evaluation'}:
         from . import distillation_review_evaluation as evaluation
@@ -659,6 +662,7 @@ def handle_command(args):
             result = evaluation.prepare(args.selection, args.output, runner_binary=args.runner_binary,
                 history_root=args.history_root, assessment_directory=args.assessments,
                 reasoning_effort=args.reasoning_effort, relationship_prompt=args.relationship_prompt,
+                matching_reasoning_effort=args.matching_reasoning_effort,
                 relationship_prompt_id=args.relationship_prompt_id,
                 relationship_runner_binary=args.relationship_runner_binary, answer_ids=args.answer_id,
                 relationship_history_root=args.relationship_history_root)
@@ -855,7 +859,60 @@ def code_files(dataset):
         names += ['distillation_coverage_search.py']
     return {name: directory / name for name in names if (directory / name).exists()}
 
+def consolidation_shapes(plan, cases):
+    """Check proposed grouping against saved note sets without changing a graph."""
+    from graphlib import TopologicalSorter
+    summaries, menus = [], {}
+    for case in cases:
+        summary = dict(case=case['id'], status=case['status'], applied=False)
+        if case['status'] != 'valid' or case.get('parsed') is None:
+            summaries.append(summary)
+            continue
+        if case.get('evidence', {}).get('synthetic'):
+            summary['qualification'] = ('Synthetic meaning edits; saved-menu note sets do not '
+                                        'establish shape quality for these altered topics.')
+            summaries.append(summary)
+            continue
+        path = case.get('evidence', {}).get('menu')
+        if path is None:
+            summary['qualification'] = 'No saved menu supplied; note-set shape checks are unavailable.'
+            summaries.append(summary)
+            continue
+        if path not in menus:
+            if engine._sha256_file(Path(path)) != plan['sources'][path]:
+                raise ValueError('consolidation menu changed during shape review')
+            nodes = {node['id']: node for node in read(Path(path))['nodes']}
+            notes = {key: {entry['note_id'] for entry in node['entries']}
+                     for key, node in nodes.items()}
+            order = list(TopologicalSorter({key: node['parents'] for key, node in nodes.items()}).static_order())
+            for child in reversed(order):
+                for parent in nodes[child]['parents']:
+                    notes[parent].update(notes[child])
+            menus[path] = notes
+        notes = menus[path]
+        payload = json.loads(case['inputs']['INPUT_JSON'])
+        children = case['parsed']['children']
+        represented = set().union(*(notes[child] for child in children))
+        equal = [child for child in children if notes[child] == represented]
+        parent = payload['parent']
+        equal_parent = parent is not None and represented == notes[parent['id']]
+        before = len(payload['siblings'])
+        after = before - len(children) + 1
+        summary.update(title=case['parsed']['title'], choices_before=before, choices_after=after,
+            new_parent_choices=len(children), proposed_note_count=len(represented),
+            child_note_counts={child: len(notes[child]) for child in children},
+            equal_note_set_children=equal, equal_note_set_parent=equal_parent,
+            local_group_constraints_met=not equal and not equal_parent and after < before
+                                        and after <= 6 and len(children) <= 6,
+            qualification='Prospective local grouping only; not full traversal, semantic approval '
+                          'or a generated hierarchy. Existing branches are unchanged.')
+        summaries.append(summary)
+    return summaries
+
+
 def enrich_report(result, plan, cases):
+    if result['adapter'] == 'canonical_consolidation':
+        result['consolidation_shapes'] = consolidation_shapes(plan, cases)
     diagnostics = (relation_diagnostics(cases)
                    if result['adapter'] in {'generic', 'subject_pairs'}
                    and (plan.get('preparation') or {}).get('source_adapter') != 'hierarchy_node_pairs'

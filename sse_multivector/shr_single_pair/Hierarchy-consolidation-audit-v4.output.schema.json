@@ -1,0 +1,37 @@
+{
+  "type": "object",
+  "properties": {
+    "assessments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "decision": {
+            "type": "string",
+            "enum": [
+              "include",
+              "exclude",
+              "uncertain"
+            ]
+          },
+          "justification": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "decision",
+          "justification"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "assessments"
+  ],
+  "additionalProperties": false
+}
