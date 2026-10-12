@@ -63,24 +63,30 @@ from provisional teacher agreement. These exposed, correlated cases do not
 establish final accuracy, refusal reliability or a model-capacity ceiling.
 
 The completed B109 Qwen passes each produce 40 valid, nonnull answers with no
-failures or exact reuses. Shared-rule adjudication appends six review corrections
+failures or exact reuses. Shared-rule adjudication appends ten review corrections
 while retaining all original records and answer bytes. Current source-based
-agent assessments and native timings are:
+agent assessments and native timings, including the completed Gemma first pass,
+are:
 
 | Saved Bootstrap checkpoint | Accept / reject / uncertain | Median execution seconds | Generation wall seconds | Peak CUDA GiB |
 | --- | ---: | ---: | ---: | ---: |
-| Qwen27 epoch 1 | 30 / 6 / 4 | 14.94 | 639.73 | 20.49 |
-| Qwen27 epoch 4 | 27 / 9 / 4 | 14.58 | 633.41 | 20.49 |
+| Qwen27 epoch 1 | 31 / 6 / 3 | 14.94 | 639.73 | 20.49 |
+| Qwen27 epoch 4 | 28 / 9 / 3 | 14.58 | 633.41 | 20.49 |
+| Gemma26 epoch 1 | 26 / 11 / 3 | 58.91 | 2369.38 | 51.98 |
 
-Both consume 237,758 input tokens; outputs total 1,912/1,850 tokens respectively.
+Both Qwen passes consume 237,758 input tokens; outputs total 1,912/1,850 tokens
+respectively. Gemma consumes 238,209 input and 1,288 output tokens on the same
+40 inputs and template. Its three nulls are two rejected and one uncertain
+refusal; these exposed cases do not estimate a qualified refusal rate.
 Wall time excludes server loading. Ratings include scope and B109 instruction
 following, remain provisional, and are not blind gold accuracy. The Qwen review
-files contain 44/42 historical records but exactly 40 effective current case
-assessments. Their SHA-256 bindings are
-`2d124ccae617c51610cabcf4c887ee129c37951bff3edaf299b8686d18459e16` and
-`a5999a03a57513084c0e470e7f7882127fa4b30dbd2b696d5234d2025c187ad0`.
+files contain 45/43 historical records; Gemma's contains 42. Each retains exactly
+40 effective current case assessments. Their SHA-256 bindings in table order are
+`ee1fe801d7a97b205f35dfb83caebf5444f00c7668ac7a9b868f6b72e33663b8`,
+`74a688257f4584ca1dcd76b6844ecc41b17e899f2bc86ca6952a9e62acf8cbb4` and
+`d9a6460adb25d20f754d3a91be0da3de01e6d72b596ad292463da62511edd29d`.
 The earlier B96 preference for the fourth epoch does not establish the best
-transfer checkpoint under B109. Gemma and the actual C179 Compare passes remain
+transfer checkpoint under B109. Gemma epoch four and the actual C179 Compare passes remain
 pending; no production adapter or epoch is selected.
 
 The user subsequently authorized preparing small reviewed development training
