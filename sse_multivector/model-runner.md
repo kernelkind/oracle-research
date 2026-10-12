@@ -262,11 +262,16 @@ adoption occurred.
 The authorized [Bootstrap-v117 draft](shr_single_pair/Hierarchy-bootstrap-v117.md)
 clarifies that defining designs/methods remain permitted and removes repeated
 scope reminders. Main scope rules, both scope checks, examples and schema stay
-unchanged. Two written reviews and nine native revision tests pass. Model
-qualification and empty/null regression coverage remain the next proposed work.
-Offline preparation retains both HR04 inputs and medium settings with a
-4,683-token cache-eligible prefix; both cases remain unrun and
-no inference or adoption occurred.
+unchanged. Two written reviews and nine native revision tests pass. Offline
+preparation retains both HR04 inputs and medium settings with a 4,683-token
+cache-eligible prefix; those two draft-preparation cases remain unrun.
+The subsequent [focused qualification](shr_single_pair/bootstrap-v117-focused-qualification-v1.md)
+uses fresh matched v109/v117 requests for 22 selected ASv6.100 entries, automatic
+prefix caching and the persistent attempt counter. Native individual reviews,
+independently frozen branch checks and fresh repeats are separate evidence.
+V118–v120 isolate scope-prohibition wording; they remain experimental.
+Full-collection qualification, empty/null calibration and the unresolved scope
+contract remain open. No adoption, Compare calls or hierarchy build occurred.
 
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at

@@ -3774,6 +3774,12 @@ Nine native revision tests and exact replacement/hash/preserved-check tests
 pass. Native offline preparation preserves the two HR04 inputs and medium
 settings with a locally cache-eligible 4,683-token prefix. Both cases remain
 unrun in `target/bootstrap-v117-clarity-draft-v1/prepared`.
-No model calls, qualification, adoption, Compare changes or hierarchy
-construction occurred. Next is matched qualification of generated meanings,
-including saved empty-diagnostic and null-meaning cases, before another rewrite.
+That preparation made no model calls. The subsequent user-authorized
+[focused qualification](bootstrap-v117-focused-qualification-v1.md) compares
+22 fresh v109/v117 definitions per arm, then repeats consequential witnesses
+and isolates the two scope-prohibition blocks. All inputs remain ASv6.100.
+The Soup mugs/Pottery incompatibility recurs with unchanged v117; its Food
+closure qualification does not recur. Experimental v118–v120 are diagnostic
+removals from v117, not adopted meanings or an approved inheritance policy.
+Full-collection qualification, empty/null calibration and the scope contract
+remain open. No Compare calls or hierarchy construction are part of this work.
