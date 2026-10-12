@@ -207,6 +207,11 @@ attempts, including three warmups, have complete usage: $0.0477292 native
 API-equivalent cost, zero reuse/failures. Inputs and actual provider requests
 match HR04 exactly. This establishes a bounded producer-variation diagnostic,
 not equivalence, negative gold, or permission to rewrite historical meanings.
+The user's subsequent partial review accepts the old C003 poisoned-drink
+counterexample as exposing an insufficiently bounded explicit meaning. The
+ceremonial-gold witness and whole pair remain unreviewed; no judgment transfers
+to the fresh meanings. Compare should evaluate the supplied boundaries rather
+than add an unstated condition to remove this accepted witness.
 
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at

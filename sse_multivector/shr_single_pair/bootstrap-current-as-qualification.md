@@ -3591,9 +3591,13 @@ All actual provider requests exactly match their original HR04 counterparts.
 The historical C003 nourishment-or-component condition recurs in zero of three
 fresh draws. All six meanings admit broad human food covering prepared items
 and ingredients. No definite evidence conflict was established; edibility and
-culinary-role expression still vary. Historical poison/ceremonial-gold
-counterexamples remain unvalidated interpretations of the old fixed strings,
-not labels transferred to these new meanings. Native fresh API-equivalent
+culinary-role expression still vary. The user subsequently accepted the poison
+witness as exposing a scope-closure gap in the exact old C003 meaning; its
+stated component clause admits the case. Compare should not repair an unstated
+restriction to exclude it. The ceremonial-gold witness and whole old pair's
+relation remain unreviewed, and no judgment transfers to the fresh meanings.
+The [primary record](bootstrap-hr04-food-boundaries-v1.md#historical-distinction)
+preserves the user's verbatim judgment and its limits. Native fresh API-equivalent
 cost is $0.0477292 with complete usage. No Bootstrap edit, Compare test,
 hierarchy change or UI update occurred. The useful next draft would preserve
 chosen-kind conditions consistently through final wording without prescribing

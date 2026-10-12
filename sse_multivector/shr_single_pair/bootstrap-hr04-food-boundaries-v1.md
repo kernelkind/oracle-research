@@ -58,11 +58,18 @@ a producer error under the user's evidence-consistent-boundary policy.
 The historical comparison in `batch-00010/experiment`, case `C003`, returned
 neither. It admits a lethal, non-edible chemical intended as a poisoned-drink
 component under C003, and ceremonial edible gold consumed alone under C004.
-These are saved model constructions, not user-certified counterexamples.
-The poison construction tests a culinary-kind versus arbitrary ingestible
-component ambiguity; it does not establish that the producer chose the latter
-sense. The gold construction requires its stipulated edibility and consumption
-purpose, and does not by itself prove how the selected Food sense handles it.
+The user subsequently accepted the poison witness as exposing insufficient
+closure of the exact C003 meaning. Their judgment, verbatim, on October 12,
+2026 UTC:
+
+> while i hate to say it, i think the couterexample is doing it's job. the explicit meaning must be air-tight. and i don't think this one was
+
+This settles the disputed poison admission under the stated component clause;
+Compare should not supply an unstated condition merely to exclude that witness.
+It does not establish that the producer deliberately wanted poisoned components
+in its Food category. The ceremonial-gold witness and the whole C003/C004
+relation remain unreviewed by the user. This partial judgment is bound to the
+exact old meaning, not transferred to fresh definitions or other poison cases.
 Do not silently add missing conditions or retroactively repair fixed meanings.
 
 ## Fresh unchanged-prompt draws
@@ -131,11 +138,12 @@ and documentation diff checks passed. No implementation behavior changed.
 
 No source poisoning or mixed prompt inputs were found. The old C003 condition
 did not recur in three identical-input draws; this does not establish a stable
-category distinction caused by the source note. The concrete unresolved issue
-is whether final definitions faithfully carry each chosen kind's conditions,
-and whether comparison preserves that kind when construing generic component
-language. Both deserve investigation; neither heading equivalence nor the
-historical neither label is gold.
+category distinction caused by the source note. The producer issue is whether
+final definitions faithfully carry each chosen kind's conditions. The user's
+accepted poison witness now establishes a scope-closure gap in the old C003
+wording; excluding it by repairing that wording inside Compare is not the
+desired response. Other kind-interpretation questions, heading equivalence
+and the complete historical neither label remain open.
 
 The next proposed Bootstrap work is a small draft clarifying preservation of
 the chosen kind and its conditions when writing the final meaning. It should
