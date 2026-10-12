@@ -8797,3 +8797,37 @@ twenty-four fresh attempts, twenty-four valid responses, zero reuse, warmups,
 retries, failures or missing usage, and $0.094172 API-equivalent catalog cost.
 This is subscription experiment accounting, not a new cash charge. Every
 receipt and old output remains preserved. V179 stays the approved reference.
+
+### V219/V220: observable joint admission before the directional conclusion
+
+V219 is an unrun preflight draft. It retains V217's scope contract and four-field
+schema, but asks a concrete question case and records that same case's admission
+under both A and B in the existing justification. Independent preflight identifies
+one synthetic-example gap: chemical-only shortening does not itself exclude an
+unknown cutting-related participant or means role. V220 fixes only that fictional
+question and its A-exclusion prefix by expressly making the chemical service
+independent of cutting and cutting-related roles. V219 is never silently edited.
+Both versions have native revision provenance against approved V179.
+
+The operative hypothesis differs from V212's admission reminder: the joint
+assessments are observable output, named by A/B rather than parent/child roles.
+V194 already used concrete question scaffolding; that part is not novel.
+Existing Hair and Watches examples demonstrate the same output operation; no
+real regression meanings, posts or model answers become teaching examples.
+
+Assess each candidate against the entire information scope, not solely physical
+kind membership. An unresolved admission blocks using that candidate as a
+counterexample, not every other counterexample or independent universal proof.
+A failed or covered candidate cannot establish full coverage. The unchanged
+all-supported-readings rule still applies to the proof and any relevant unknown
+candidate boundary. No additional fields, new meanings or reasoning trace are
+requested; generic string validation does not certify these semantic conditions.
+
+The first gate uses fresh V217 and V220 Metal draws in both assignments and both
+physical input orders, plus twelve physical/explicit-human controls. Require
+retained resolved controls, supported admission/coverage evidence and consistent
+directional judgments; turning everything uncertain is not success. Broader
+eighteen-case producer core and four preservation controls are prepared offline
+but dispatched only after a useful gate. Separate selection changes, lexical
+interpretation changes and assessment-to-conclusion consistency. Original Metal
+semantic gold remains unresolved; Bootstrap and hierarchy data remain untouched.
