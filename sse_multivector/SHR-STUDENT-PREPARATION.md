@@ -17,6 +17,20 @@ pilot adapter or epoch is selected. Bootstrap's final
 target format, training volume and settings remain open. The owned worktree
 retains needed source-bound artifacts and native receipt paths.
 
+The user subsequently confirmed an HR05-aligned saved-checkpoint rerun using
+exactly **Bootstrap-v109 / Compare-v179**, with v109-produced meanings throughout
+Compare. This is evaluation of the existing v96/v48 pilot weights, with no new
+gradients or final training. Compare-v179 supplies only symmetric A/B subjects
+and fixed meanings; canonical branches are absent from its model input. The
+original experiments remain historical, source-bound evidence. The new matched
+evaluation is pending, and may change the starting-model recommendation.
+
+Native `bootstrap_student_pilot prepare-prompt` preserves the complete selected
+teacher instructions and appends the existing single-field meaning/null student
+contract, without requiring teacher answers or assigning training roles. It
+records both prompt hashes, makes no model calls and refuses to overwrite an
+existing prompt. Its five preparation/generation regressions pass.
+
 The user subsequently authorized preparing small reviewed development training
 sets, running GB10 task-specific pilot fine-tunes, and comparing learning,
 remaining errors and cost. Broaden Bootstrap's published-checkpoint evidence

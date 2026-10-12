@@ -13,12 +13,21 @@ Earlier SHR results below inform candidate priorities but are not measurements
 of the new tasks. See
 [current preparation and evaluation roles](SHR-STUDENT-PREPARATION.md#current-authorized-goal-october-10).
 
+The user has now confirmed re-evaluation with the completed HR05 build's exact
+**Bootstrap-v109 / Compare-v179** pair. All Compare meanings must have v109
+producer provenance. This rerun evaluates the saved v96/v48 fits without new
+gradients; its results remain pending. Compare-v179's A/B fixed-meaning input
+has no canonical branch fields. The earlier recommendation and branch results
+remain evidence for their original versions, rather than qualification of this
+new contract.
+
 Bootstrap consumes a selected ASv6.100 subject, its complete original selected
 root tree and full post, then generates a standalone meaning. Its present
 four-field API also carries ambiguities, resolutions and quoted evidence.
 It needs a generative model; a classification-only Kev or Ettin checkpoint
-cannot supply this contract. Compare consumes already fixed meanings and a
-canonical branch, then decides one of five relations. The user confirmed a
+cannot supply this contract. The HR05-aligned Compare-v179 consumes A/B subjects
+and fixed meanings, then decides one of five relations. The earlier Compare-v48
+pilot additionally supplied a canonical branch. The user confirmed a
 **relation-only distilled Compare output**, making decision models eligible.
 The frozen Compare-v48 development pilot's teacher API copies the local meaning
 and gives a diagnostic reason. The later Compare-v75 definition additionally returns
