@@ -256,8 +256,26 @@ def _cases(report, assessments, audits=None):
                             semantic_status="Conditional on the accepted actual-edge verdict and fixed interpretations."))
                     else:
                         roots.append(number)
+                baseline_pairs = {row["evidence"]["heading_number"]: row
+                    for row in answer["checks"]["relationship"]
+                    if row["evidence"]["role"] == "compatibility"
+                    and row["evidence"]["teacher_numbers"] == group["teacher_numbers"]}
+                excluded = []
+                for number in roots:
+                    pair = baseline_pairs[number]
+                    if pair["status"] == "valid" and pair["parsed"]["valid"] is False:
+                        premise = _accepted_premise(pair, audits)
+                        if premise is not None:
+                            excluded.append(dict(student_number=number, compatibility_premise=premise))
+                excluded_numbers = {row["student_number"] for row in excluded}
+                roots = [number for number in roots if number not in excluded_numbers]
                 if not roots:
-                    settlements.append(dict(identity, rule="no_uncovered_heading", covered=True))
+                    if excluded:
+                        settlements.append(dict(identity, rule="accepted_uncovered_incompatible_headings", covered=None,
+                            excluded_incompatible_candidates=excluded, omitted_descendants=omitted,
+                            semantic_status="Accepted negative roots; collection separately requires accepted descendant edges."))
+                    else:
+                        settlements.append(dict(identity, rule="no_uncovered_heading", covered=True))
                     continue
                 candidates = [dict(student_number=number, student_subject=students[number],
                     teacher_contexts=[{key: row[key] for key in ("subject", "context")}
@@ -271,15 +289,12 @@ def _cases(report, assessments, audits=None):
                     representative_candidate = distinct.setdefault(key, candidate)
                     aliases.setdefault(representative_candidate["student_number"], []).append(candidate["student_number"])
                 candidates = list(distinct.values())
-                baseline_pairs = {row["evidence"]["heading_number"]: row
-                    for row in answer["checks"]["relationship"]
-                    if row["evidence"]["role"] == "compatibility"
-                    and row["evidence"]["teacher_numbers"] == group["teacher_numbers"]}
                 evidence = dict(identity, check="coverage_search", cohort=cohort, note_id=answer["note_id"],
                     generation=answer["generation"], teacher_representative_number=representative,
                     matched_student_numbers=matches, covered_heading_numbers=sorted(covered),
                     original_uncovered_heading_numbers=uncovered,
                     candidate_student_numbers=[row["student_number"] for row in candidates], omitted_descendants=omitted,
+                    excluded_incompatible_candidates=excluded,
                     candidate_aliases=[dict(representative_student_number=number, student_numbers=numbers)
                         for number, numbers in aliases.items() if len(numbers) > 1],
                     matching_case_ids=[row["id"] for row in matching],
@@ -500,7 +515,7 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
                     scoring=dict(status="valid", scores=answer["scores"]), dependencies=[]))
                 continue
             checks = answer["checks"]
-            dependencies, premises = [], []
+            dependencies, premises, inconsistencies = [], [], []
             source_rows = {(row["id"], row["input_sha256"], hashlib.sha256(row["output"].encode()).hexdigest()): row
                 for rows in checks.values() for row in rows if row["status"] == "valid"}
 
@@ -543,6 +558,16 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
                 identifiers = {teacher.by_number[number] for number in group["teacher_numbers"]}
                 matches = [number for number, identifier in matching.items() if identifier in identifiers]
                 known = {}
+
+                def assign(number, value, source):
+                    if number in known and known[number] is not value:
+                        inconsistencies.append(dict(teacher_numbers=group["teacher_numbers"], student_number=number,
+                            existing_valid=known[number], conflicting_valid=value, source=source))
+                        dependencies.append(dict(check="coverage_search", teacher_numbers=group["teacher_numbers"],
+                            reason="Accepted exact compatibility evidence is contradictory."))
+                    else:
+                        known[number] = value
+
                 pairs = [row for row in checks["relationship"] if row["evidence"]["role"] == "compatibility"
                     and row["evidence"]["teacher_numbers"] == group["teacher_numbers"]]
                 if group["required"]:
@@ -553,31 +578,52 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
                             candidates = [pair] + candidates
                         accepted_pairs = [row for row in candidates if _accepted_premise(row, audits) is not None]
                         verdicts = {row["parsed"]["valid"] for row in accepted_pairs}
+                        premises.extend(_accepted_premise(row, audits) for row in accepted_pairs)
                         if len(verdicts) == 1:
-                            known[number] = verdicts.pop()
-                            premises.extend(_accepted_premise(row, audits) for row in accepted_pairs)
+                            assign(number, verdicts.pop(), pair["id"])
+                        elif len(verdicts) > 1:
+                            inconsistencies.append(dict(teacher_numbers=group["teacher_numbers"], student_number=number,
+                                source=pair["id"], reason="Accepted exact DSL comparisons disagree."))
                         elif candidates:
                             dependencies.append(dict(check="relationship", case_id=pair["id"],
                                 reason="Exact verification is disputed, unaudited or contradictory."))
                     settlement = settlements.get(key)
                     if (settlement is not None and settlement.get("covered") is False
                             and settlement.get("witness_student_number") and settlement_accepted(settlement)):
-                        known[settlement["witness_student_number"]] = True
+                        assign(settlement["witness_student_number"], True, settlement["rule"])
                     search = searches.get(key)
+                    exclusions = []
+                    omitted = []
+                    for evidence in (settlement, search["evidence"] if search is not None else None):
+                        if evidence is not None:
+                            exclusions.extend(evidence.get("excluded_incompatible_candidates", []))
+                            omitted.extend(evidence.get("omitted_descendants", []))
+                    for excluded in exclusions:
+                        proof = dict(compatibility_premise=excluded["compatibility_premise"])
+                        if settlement_accepted(proof):
+                            assign(excluded["student_number"], False, excluded["compatibility_premise"]["case_id"])
+                            premises.append(excluded["compatibility_premise"])
                     if search is not None and accepted(search):
                         witness = search["parsed"]["witness_student_number"]
                         if witness is None:
                             for number in search["evidence"]["candidate_student_numbers"]:
-                                known[number] = False
+                                assign(number, False, search["id"])
                             for alias in search["evidence"]["candidate_aliases"]:
-                                known.update({number: False for number in alias["student_numbers"]})
-                            for omitted in search["evidence"]["omitted_descendants"]:
-                                number, parent = omitted["student_number"], omitted["parent_number"]
-                                if known.get(parent) is False and relationships.get(number) is True:
-                                    known[number] = False
+                                for number in alias["student_numbers"]:
+                                    assign(number, False, search["id"])
                         elif known.get(witness) is not True:
                             dependencies.append(dict(check="coverage_search", case_id=search["id"],
                                 reason="Positive search lacks an accepted exact positive DSL witness."))
+                    changed = True
+                    while changed:
+                        changed = False
+                        for edge in omitted:
+                            number, parent = edge["student_number"], edge["parent_number"]
+                            if (known.get(parent) is False and relationships.get(number) is True
+                                    and known.get(number) is not False):
+                                new_fact = number not in known
+                                assign(number, False, edge["edge_case_id"])
+                                changed |= new_fact
                 coverage.append(dict(teacher_numbers=group["teacher_numbers"], required=group["required"],
                     student_numbers=matches, compatibility=known))
             scored = review.score_partial(dict(post=answer["post"], teacher=answer["teacher"],
@@ -590,8 +636,16 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
                 scored.setdefault("pending", {})["matching"] = matching_pending
                 for finding in scored.get("findings", {}).get("coverage", []):
                     finding["covered"] = None
+            if inconsistencies:
+                scored["status"] = "pending"
+                scored.get("scores", {}).pop("coverage", None)
+                scored.setdefault("pending", {})["coverage_inconsistencies"] = inconsistencies
+                disputed = {tuple(row["teacher_numbers"]) for row in inconsistencies}
+                for finding in scored.get("findings", {}).get("coverage", []):
+                    if tuple(finding["teacher_numbers"]) in disputed:
+                        finding["covered"] = None
             answers.append(dict(id=answer["id"], note_id=answer["note_id"], scoring=scored,
-                dependencies=dependencies, premises=premises))
+                dependencies=dependencies, premises=premises, coverage_inconsistencies=inconsistencies))
         cohorts[cohort] = dict(answers=answers)
     for path, checksum in protected.items():
         if engine._sha256_file(Path(path)) != checksum:

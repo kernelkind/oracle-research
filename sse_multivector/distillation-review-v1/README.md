@@ -58,7 +58,14 @@ baseline already passed the same six cases, so no benefit was demonstrated.
 The frozen trial is retained as regression evidence, not as the current prompt
 direction or an independent accuracy test.
 
-**Current development result:** xhigh generation finishes on
+**Current mixed-effort result:** the [complete eight-answer trial](#complete-eight-answer-mixed-effort-trial-october-12)
+uses high matching, relationships and coverage with medium post support. Native
+collection produces four complete scores and four partial scores, preserving
+unresolved interpretations. An invalid search witness is caught and excluded
+through an accepted exact negative comparison. Prompts and defaults are
+unchanged; broader accuracy and minimum effort remain unqualified.
+
+**Earlier development result:** xhigh generation finishes on
 [24 notes from the frozen sixty](#dslv10-twenty-four-note-regression-october-11),
 retaining the previous eight and adding sixteen structurally valid random
 answers. Three agents audit complete decisions and reasons during generation
@@ -2292,11 +2299,14 @@ mixed-effort trial uses `--reasoning-effort high --support-reasoning-effort
 medium`, retaining high matching and relationships. Invalid support efforts
 fail before creating output; omitted overrides retain existing defaults.
 
-Coverage preparation now settles an already completed, accepted exact
+Coverage preparation now settles an already completed, accepted exact positive
 compatibility comparison beneath an uncovered student subject without another
-DCS call. Its settlement retains the native input/output identity, receipt and
+DCS call. Accepted exact negative comparisons remove their candidates before
+search; when all remaining roots have these proofs, no DCS call is needed.
+Each deduction retains the native input/output identity, receipt and
 complete-output audit. Rejected, uncertain, stale or unaudited comparisons cannot
-supply this deduction.
+supply a deduction. Collection separately requires accepted actual student edges
+before extending a negative parent comparison to its descendants.
 
 `collect-distillation-coverage-search COVERAGE --output REPORT` assembles the
 bounded workflow through the existing production `score_partial` path without
@@ -2309,6 +2319,8 @@ Preparation audits stay bound, additional withdrawals invalidate their
 settlements, and frozen source/receipt changes are refused. Support and actual
 edge audits gate correctness; matching and self-guard audits gate coverage.
 Collection writes a fresh report and preserves the original native artifacts.
+Contradictory accepted compatibility evidence withholds coverage grading and
+retains both proofs; an accepted null cannot overwrite an accepted exact positive.
 The new support override and collector have production-path failing controls
 before implementation. The combined evaluation/coverage/effort suite passes
 70 of 72 tests; its two remaining failures are the previously established
@@ -6594,6 +6606,84 @@ The task worktree is retained for frozen source and receipt references. Current
 expansion candidates are high matching/relationships/coverage and medium
 support; a global minimum effort, unresolved source readings and the eventual
 sixty-answer final qualification remain open.
+
+### Complete eight-answer mixed-effort trial (October 12)
+
+The authorized expansion retains the four ETF, family, television and NFT answers
+and adds the first four other structurally valid distinct notes in the frozen
+random order: MempoolMadness, runtime telemetry, a NYT jobs report and a stock
+market report. All eight come from the agreed sixty and cover all three
+distilled-model families. Original teacher-meaning groups and required flags
+are preserved. These notes have development exposure; this is not an unseen
+accuracy test or the final sixty-answer qualification.
+
+Native preparation binds gpt-6.1-sol high for DSMv3, DSLv10 and DCSv1, and medium
+for DSSv2. The shared subscription queue has capacity thirty. Only eligible
+natural prefixes are warmed. Exact saved results are reused at their original
+effort; xhigh results do not substitute for high or medium. Prompts, schemas and
+production defaults remain unchanged.
+
+| Reviewer check | Source-resolved correct decisions | Source uncertainties |
+| --- | ---: | ---: |
+| Matching, high | 73/73 | 5 |
+| Post support, medium | 77/77 | 1 |
+| Initial actual-edge and self-guard panel, high | 115/115 | 5 |
+| Final coverage searches, high | 28/28 | 4 |
+
+These denominators count distinct semantic inputs, including saved results;
+they do not measure fresh-repeat reliability. Matching retains three
+explanation caveats for otherwise correct null decisions. Additional saved
+compatibility verifications remain separately audited.
+
+The initial high search makes one known error: it selects Incest as a parent
+for Sex between family members. An already completed, accepted exact high DSL
+comparison rejects this placement. Native preparation now excludes all nine
+candidates with accepted exact negative proofs, retaining their identities and
+audits. The recheck supplies only The body and Mature content. Thirty-one other
+search requests are reused unchanged. The new null remains source-uncertain;
+the invalid witness is eliminated without converting uncertainty into a pass.
+
+A source-first challenge also withdraws acceptance of the actual Family Ties
+child beneath Family-related sexual content. The explanation does not resolve
+how the fixed named work carries its ordinary type meaning. An immutable
+exact-output reassessment records uncertainty, preserving the original audit;
+neither true nor false is certified. This revises the earlier four-answer
+panel's current certification from 69 accepts/3 uncertainties to 68 accepts/4
+uncertainties. The distinct comparison of generic Sex between family members
+beneath the named Family Ties work remains a supported negative.
+
+`collect-distillation-coverage-search` then joins audited matching, support,
+actual edges, guard checks, settlements, searches and exact witnesses through
+production partial scoring, without another model call or the unused pairwise
+matrix. The final report produces complete distilled-model scores for
+MempoolMadness, the jobs report, the stock report and ETF. Runtime telemetry,
+television, NFT and family retain partial scores. Software-runtime, Girls,
+Digital and family/body/maturity interpretations remain unresolved. Distilled
+model scores are separate from the reviewer correctness counts above.
+
+Local native accounting is **137 attempts: 129 semantic comparisons and eight
+warmups**, with no failures, retries or missing usage. The API-equivalent cost
+is **$0.5993576**, including the first erroneous search and focused recheck;
+this is not subscription billing. Cached input is **13,056/142,786 tokens
+(9.14%)**. The complete native accounting is retained in
+`complete-local-usage-summary.json`; reused generations are not new spend.
+
+Thirty coverage tests pass, including production-path controls first shown
+failing for negative candidate exclusion, withdrawal of an all-negative
+settlement and a null conflicting with accepted positive evidence. The earlier
+combined suite has seventy passes and two failures reproduced on unchanged
+main: the shared-runner stop-reason expectation and a legacy concurrency-eight
+fixture. No attempt is made to alter those unrelated behaviors.
+
+Ignored native artifacts remain under
+`oracle-mvp-review-mixed-eight/target/distillation-review-v1/mixed-eight/` and
+`oracle-mvp-review-mixed-eight-mechanics/target/distillation-review-v1/mixed-eight-mechanics/`.
+The final `final-reviewed-collected-review.json` binds fifteen immutable audit
+files and has SHA256
+`2e1954d5ab1afb0125225a53c456cf97b1ebff3d5815857d42d42c5322366fc9`.
+Both worktrees are retained for frozen absolute source and receipt bindings.
+The mixed efforts remain expansion candidates; this trial does not establish
+the accepted two-percentage-point loss bound against xhigh or a global minimum.
 
 ## Actual distilled wording: offline preview (October 8)
 
