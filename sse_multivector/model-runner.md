@@ -2107,6 +2107,13 @@ An invalid high search witness is caught by its existing exact high DSL
 comparison and excluded before the focused recheck. The remaining search is
 source-uncertain, rather than certified by agreement. This is development
 evidence; global reviewer qualification and the final sixty remain open.
+The [source-only interpretation audit](distillation-review-v1/README.md#source-only-interpretation-audit-october-12)
+then resolves standalone Girls to Women under existing wording-disambiguation
+rules and finds a formerly unscored high television match wrong: describing
+Palmer's contribution to the reboot does not express the review highlighting
+that contribution. It preserves the original native reports and labels;
+remaining interpretation conventions are pending, with no new model calls or
+prompt edits.
 
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,
