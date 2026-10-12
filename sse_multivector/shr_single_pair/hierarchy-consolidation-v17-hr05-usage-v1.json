@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v16_saved_hr05_screen": [
+      "../../target/canonical-shaping-selection-v1/consolidation-v16-hr05-food-first-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v16-hr05-food-repeat-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v16-hr05-material-first-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v16-hr05-material-repeat-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v16-hr05-heating-first-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v16-hr05-heating-repeat-v1"
+    ],
+    "v17_scope_check_hr05_screen": [
+      "../../target/canonical-shaping-selection-v1/consolidation-v17-hr05-food-first-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v17-hr05-food-repeat-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v17-hr05-material-first-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v17-hr05-material-repeat-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v17-hr05-heating-first-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v17-hr05-heating-repeat-v1"
+    ]
+  }
+}

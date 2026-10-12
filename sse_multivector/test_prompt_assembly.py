@@ -330,6 +330,7 @@ class PromptAssemblyTests(unittest.TestCase):
             ('v14', 'v13', 'baa849577fdfd0f9b46f035192681e8d8dca4db6163bc2b1ed430a33b946e644'),
             ('v15', 'v14', '514630345cf469ec79b41573b37d9e50414c8cbce0803c3dc6de54370493d377'),
             ('v16', 'v15', '89ada99a213be8637c6fce916f6a5d4da22abfa199978ce0ce9af1e6e58b6249'),
+            ('v17', 'v16', '9e44bae31b2b577097791ea77c2e4af0f737dd092340e8f5bb3158a52132afab'),
         ):
             with self.subTest(version=version):
                 spec = PROMPTS / f'Hierarchy-consolidation-{version}.assembly.json'
@@ -349,6 +350,10 @@ class PromptAssemblyTests(unittest.TestCase):
                     self.assertEqual(prompt.split(output, 1)[1], old_prompt.split(output, 1)[1])
                 else:
                     self.assertEqual(prompt.split(example, 1)[1], old_prompt.split(example, 1)[1])
+                if version == 'v17':
+                    self.assertNotIn(b'or its topic identity', prompt)
+                    self.assertIn(b'a node\'s title, customary uses, association or existing placement', prompt)
+                    self.assertIn(b'Exclude a sibling only when its fixed meaning admits information outside the proposed meaning.', prompt)
                 shared = (PROMPTS / current['parts'][2]['path']).read_bytes()
                 self.assertEqual(prompt.count(shared), 1)
                 self.assertEqual(sha256(old_prompt), previous_hash)
@@ -377,7 +382,8 @@ class PromptAssemblyTests(unittest.TestCase):
                         'Hierarchy-consolidation-v9', 'Hierarchy-consolidation-v10',
                         'Hierarchy-consolidation-v11', 'Hierarchy-consolidation-v12',
                         'Hierarchy-consolidation-v13', 'Hierarchy-consolidation-v14',
-                        'Hierarchy-consolidation-v15', 'Hierarchy-consolidation-v16'):
+                        'Hierarchy-consolidation-v15', 'Hierarchy-consolidation-v16',
+                        'Hierarchy-consolidation-v17'):
             with self.subTest(version=version):
                 inputs = json.dumps({key: value for key, value in data.items()
                                      if version not in ('Hierarchy-consolidation-v3', 'Hierarchy-consolidation-v4',
@@ -386,7 +392,8 @@ class PromptAssemblyTests(unittest.TestCase):
                                                         'Hierarchy-consolidation-v9', 'Hierarchy-consolidation-v10',
                                                         'Hierarchy-consolidation-v11', 'Hierarchy-consolidation-v12',
                                                         'Hierarchy-consolidation-v13', 'Hierarchy-consolidation-v14',
-                                                        'Hierarchy-consolidation-v15', 'Hierarchy-consolidation-v16')
+                                                        'Hierarchy-consolidation-v15', 'Hierarchy-consolidation-v16',
+                                                        'Hierarchy-consolidation-v17')
                                      or key != 'ancestors'})
                 cases.write_text(json.dumps({'cases': [{'id': 'roots', 'inputs': {'INPUT_JSON': inputs}}]}))
                 spec = self.root / (version + '.spec.json')

@@ -1,5 +1,12 @@
 # Selecting local entries to reduce overcrowding
 
+The newest user-authorized draft is
+[Hierarchy-consolidation-v17](shr_single_pair/Hierarchy-consolidation-v17.md).
+Only the scope-checking instructions change: supplied meanings and their
+necessary implications are authoritative, and inclusion/exclusion are decided
+from the final proposed meaning. Shared writing, example and output remain
+byte-identical to v16. See [the v17 screen](#consolidation-v17-fixed-meaning-scope-checks).
+
 The newest user-authorized tested candidate is
 [Hierarchy-consolidation-v16](shr_single_pair/Hierarchy-consolidation-v16.md).
 Its unrelated synthetic example covers two device topics and a third topic
@@ -4620,3 +4627,56 @@ prove it. A revision should keep the distinction between freely proposing a
 new parent's scope and faithfully reading every supplied child's fixed scope,
 then test the same frozen inputs. No such revision or further inference is
 undertaken by this screen.
+
+## Consolidation-v17 fixed-meaning scope checks
+
+The user approves a scope-checking-only revision and tests on the same frozen
+HR05 inputs, with focused coverage diagnostics if failures persist. V17 replaces
+the permissive "or its topic identity" clause: each supplied node is interpreted
+from its fixed meaning and necessary implications; general knowledge may clarify
+language, but titles, customary uses, associations and placement cannot add
+conditions. The child-identification paragraph separately states what inclusion
+and exclusion require under the final proposed meaning, including all covered
+siblings beyond the initial grouping. A new parent may choose a restricted
+scope, but it must then select only the siblings wholly fitting that scope.
+
+The shared explicit-meaning rules, all text before `Check the proposal`, the
+synthetic example and output contract remain byte-identical to v16. The new
+wrapper is `prompt_sources/Hierarchy-consolidation-v17.after.md`; the production
+assembly and native revision retain pinned components and the last-approved v3
+diff baseline. V17 SHA-256 is
+`877fc2885d36f2c2b2b47027f5e73550febb4c2119f94992d7c011cc1beb03fd`.
+The existing production-path version check is extended first and fails on the
+missing v17 manifest; after assembly, all 68 relevant assembly, revision and
+subject-consolidation checks pass. The native fake-worker preparation test also
+freezes v17 without inference. No Bootstrap or Compare prompt is edited.
+
+The [native usage selection](shr_single_pair/hierarchy-consolidation-v17-hr05-usage-v1.json)
+separates the six saved v16 draws from six fresh v17 draws. Native preparation
+inherits exact `consolidate` cases and medium/SSE settings from v16, replacing
+only the template with v17 and pinning main's shared worker. First/repeat use
+identical inputs, prompts and settings; `--repeat` dispatches an independent
+draw. Prefix caching is inherited with 1,256 estimated tokens and automatic
+warming. The v16 pre-call assessment criteria remain unchanged; no verdict or
+expected child list enters generation input.
+
+The new persistent counter is
+`target/canonical-shaping-selection-v1/consolidation-v17-hr05-budget-v1.json`,
+bounded at **14 total actual attempts**: at most 12 for six consolidation answers
+and six warmups, followed by at most two uncached fixed-proposal coverage
+diagnostics if clear failures persist. Failures and retries count against the
+same ceiling; no prior counter is reset. At most three one-case generation runs
+execute simultaneously. Diagnostics retain a saved final meaning and ask which
+supplied siblings it covers, without generating a new proposal or applying
+relationships. The existing `canonical_consolidation_review` adapter can bind
+that evidence without constructing inputs manually; its supplied old child list
+remains visible data and is a possible anchoring limitation of the diagnostic.
+
+This is a hypothesis test of fixed-scope interpretation, not proof that one
+phrase caused the v16 errors. Straightforward constraints and clear success
+criteria follow [OpenAI reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices).
+Small repeat samples cannot establish a reliable gain, and uncertain judgments
+remain uncertain, consistent with [evaluation guidance](https://developers.openai.com/api/docs/guides/evaluation-best-practices).
+Construction/shaping policy, fixed canonical meanings, hierarchy artifacts and
+UI remain outside this task. The task stays isolated in the user's requested
+worktree.
