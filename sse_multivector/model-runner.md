@@ -2005,9 +2005,21 @@ using forty-five calls plus one warmup and $0.1191624 API-equivalent cost.
 There are no retries/failures/missing usage; net cache savings are 9.05%.
 Five interpretation uncertainties and three correct-null explanation caveats
 remain visible in native reviews. High matching and medium support are
-expansion candidates, not a globally qualified minimum. Complete coverage and
-relationship reruns at the candidate efforts remain open before note-count
-expansion. Prompts, schemas and production defaults remain unchanged.
+expansion candidates, not a globally qualified minimum.
+The [complete four-answer trial](distillation-review-v1/README.md#complete-four-answer-review-and-effort-step-ups-october-11)
+reuses those matching/support results and finishes the necessary actual-edge,
+guard and coverage work. Medium rejects a valid human-family Mothers edge;
+high corrects it. Medium DCS selects an invalid Incest witness, caught by high
+DSL, and a fresh repeated medium call misses Peacock's valid Television match.
+High final coverage restores that match. Its thirty resolved searches are
+correct, with four source interpretations unscored; all selected witnesses
+already have exact high DSL outputs. The tested expansion candidates are now
+high matching/relationships/coverage and medium support, with no joined final
+score or global qualification. Local accounting is 246 attempts, including
+both levels, verifiers, 24 warmups, three recovered transport failures and three
+redundant calls. The known API-equivalent subtotal is $1.4636508; failed-attempt
+usage is unknown. Final high DCS takes 71.636 seconds, separate from preparation
+and audit time. Prompts, schemas and production defaults remain unchanged.
 
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,

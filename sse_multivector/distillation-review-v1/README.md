@@ -6480,11 +6480,93 @@ Ignored experiments, reviews and native usage summaries remain under
 `fresh-dcs/high-matching/` and its parent. Together these trials leave **high
 matching and medium post support** as candidates for expansion, alongside
 the earlier targeted medium DCSv1/DSLv10 evidence. They do not establish a
-global minimum effort or unseen-data accuracy. The next useful test runs the
-complete review process on these four answers at those candidate efforts
-before increasing note count; coverage and relationships have so far been
-retested only on selected judgments. Prompts, schemas and production defaults
-remain unchanged.
+global minimum effort or unseen-data accuracy. The complete four-answer trial
+below follows this matching/support screen before increasing note count.
+
+### Complete four-answer review and effort step-ups (October 11)
+
+The authorized trial retains the same complete ETF, family, television and NFT
+answers. Native preparation binds high DSMv3 matching and medium DSSv2 support,
+DSLv10 relationships and DCSv1 coverage search. Matching/support reuse all ninety
+distinct saved semantic outputs and fifty-eight trusted mechanical occurrences;
+neither check requires a new call. All 81 needed actual student edges complete;
+the incoming edge of one unsupported family subject is skipped. Coverage retains
+all 62 required teacher-meaning groups. Its final frozen preparation settles
+28 mechanically or through audited teacher paths and prepares 34 searches.
+It avoids executing the unused all-pair compatibility matrix.
+
+Full-output audits use exact input and raw-output hashes, preserve existing
+source adjudications and keep unresolved interpretations outside correctness
+denominators. In the 72 distinct relationship inputs, medium has one substantive
+error: it rejects Mothers beneath the inclusive Girls and women parent by
+switching to animal mothers despite the established human-family meaning.
+The unchanged inputs step up to high; that error is corrected. Three pre-existing
+relationship interpretations remain unresolved at both efforts.
+
+Medium coverage search initially selects Incest as a parent for Sex between
+family members. A separate high DSL verification rejects that witness correctly:
+sex between unrelated spouses does not necessarily preserve incestuous kinship.
+The remaining eleven candidates are checked at high. The Body and Mature content
+interpretations remain unresolved, so the complete search receives no settled
+positive or negative label. The pre-call Mature content rejection is preserved
+alongside its interpretation discrepancy; agreement between model calls does
+not replace source adjudication.
+
+The final preparation adds the accepted NFT teacher-path proofs without changing
+any remaining input. A mistaken history-root choice then sends three redundant
+medium calls before the missing eight exact receipts are recovered with zero
+further calls. One redundant call falsely changes Peacock streaming service's
+valid Television match to null. This is a known error on unchanged input.
+Coverage therefore steps up to high on all 34 final inputs, with unchanged
+prompts. High restores the Television witness and rejects Incest. Every selected
+high witness already has an exact completed high DSL verification; no further
+verifier call is needed.
+
+| Final candidate check | Effort | Correct resolved semantic decisions | Unresolved interpretations |
+| --- | --- | ---: | ---: |
+| Matching | High, saved outputs | 40/40 | 5 |
+| Post support | Medium, saved outputs | 45/45 | 0 |
+| Relationships, initial complete actual-edge and guard panel | High | 69/69 | 3 |
+| Final coverage search | High | 30/30 | 4 |
+
+The relationship denominator describes its 72-input panel; the additional
+positive-witness and failed-search verifications remain separately audited.
+Matching also retains three explanation-only caveats for otherwise correct
+null decisions. Coverage's four uncertainties concern two Girls readings,
+Digital's scope and the complete family-sex search. These are exposed
+development answers, not independent gold or an unseen sample. The original
+native evaluation still reports pending legacy matrix rows and comparisons
+against some superseded expectation metadata. Separate high preparations and
+exact source audits establish the evidence above; there is no joined final
+score or blanket reviewer qualification.
+
+All groups use the shared queue with capacity 30 and native eligible-prefix
+warming. Local accounting across this trial is **246 attempts: 219 successful
+semantic calls, 24 warmups and three recovered transport failures**. This
+includes both effort levels, witness checks and the three redundant calls;
+it is not the cost of one evaluation pass. All three failed attempts lack
+usage/cost, so **$1.4636508 is a known API-equivalent subtotal**, not a complete
+cost or subscription bill. The final high search takes 71.636 seconds from
+first admission through last release, including warming and its recovered
+retry. Fresh-request run windows across the phases total 343.307 seconds;
+first admission to last release spans 66 minutes including iteration/audit gaps.
+Neither model timing measures preparation before the first call.
+
+Ignored artifacts and immutable audit files live under
+`oracle-mvp-review-complete-four/target/distillation-review-v1/complete-four/`.
+`complete-local-usage-summary.json` binds native accounting across 38 experiments;
+the final medium receipts combine `final-coverage/` with
+`final-coverage-recovery/`. All 385 protected final-search bindings and exact
+input/prompt parity pass. Prompts, schemas and production defaults are unchanged.
+
+The four new production-path preparation/validation tests pass after syncing
+main. The broader 62-test regression previously passed sixty checks and exposed
+two failures also reproduced on unmodified main: a shared-runner stop-reason
+expectation and an old concurrency-eight fixture. They are not changed here.
+The task worktree is retained for frozen source and receipt references. Current
+expansion candidates are high matching/relationships/coverage and medium
+support; a global minimum effort, unresolved source readings and the eventual
+sixty-answer final qualification remain open.
 
 ## Actual distilled wording: offline preview (October 8)
 
