@@ -1,8 +1,8 @@
 # Hierarchy generation V2 — FUTURE WORK
 
 **Status: approved V2 design, implemented as `hierarchy-generation-v2`; initial
-provider trials HR08–HR10 have started, with no completed hierarchy-quality
-qualification.** V2
+provider trials HR08–HR10 have started. HR08 exhausted eligible selection with
+23/24 notes; no completed hierarchy-quality qualification is claimed.** V2
 replaces the previous selection implementation through the existing shared-runner
 commands. The FUTURE WORK label denotes pending qualification with real model
 judgments, not an alternative opt-in constructor.
@@ -201,7 +201,9 @@ relationships and any resulting browsing improvement remain untested.
 ### Approved order within the deeper-node phase
 
 The user accepted this ordering on October 11, 2026: "ok sounds fine".
-**Approved for V2; covered by offline native-workflow tests, not a provider trial.**
+**Approved for V2; covered by offline native-workflow tests and the HR08 provider
+trial.** HR08 selected three deeper heading matches and proceeded to multi-note
+leaf refinement. Its partial outcome does not qualify hierarchy quality.
 
 1. After L1 work, note coverage and their consolidation finish, give eligible
    local children matching existing canonical headings priority. Use PPv35
