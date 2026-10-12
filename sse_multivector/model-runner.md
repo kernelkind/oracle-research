@@ -1313,6 +1313,17 @@ read-only inspection completed in 5.5 seconds after preparation had spent over
 19 minutes in repeated file reads. Request identities and reuse decisions are
 unchanged; the measurement does not describe model latency.
 
+### Saved consolidation review
+
+Use `canonical_consolidation_review` to inspect receipt-bound saved proposals.
+Its schema-1 source contains `proposals`, each with an `experiment` path and
+SHA-256 plus a `case` ID. Optional `include_nomination` defaults to true. Setting
+it to false omits only `proposal.children` from model input, retaining the parent,
+complete siblings, proposed title/meaning and original producer receipt.
+The setting must be a boolean and is supported only for whole-group review;
+`canonical_consolidation_pairs` rejects it. This supports controlled coverage
+diagnostics without rewriting saved answers or applying hierarchy placements.
+
 ### Saved subject-pair preparation
 
 Use `dataset.adapter: "subject_pairs"` for comparisons between saved SP

@@ -10,6 +10,11 @@ accepts and two unresolved assessments. Fixed-proposal coverage diagnostics
 repeat the two clear failure mechanisms; v17 remains experimental and unapplied.
 See [the completed v17 screen](#completed-v17-hr05-screen).
 
+The current user-authorized diagnostic is
+[Audit-v3](shr_single_pair/Hierarchy-consolidation-audit-v3.md), comparing the
+same fixed proposals with and without their previous child lists. See
+[the controlled nomination test](#audit-v3-previous-nomination-contrast).
+
 The preceding user-authorized tested candidate is
 [Hierarchy-consolidation-v16](shr_single_pair/Hierarchy-consolidation-v16.md).
 Its unrelated synthetic example covers two device topics and a third topic
@@ -4813,3 +4818,56 @@ limitation before another scope-wording change. Existing production preparation
 always carries the saved nomination, so the smallest reusable source-bound
 support would be needed; inputs must not be assembled manually. This screen
 does not implement that option or authorize a production validation stage.
+
+## Audit-v3 previous-nomination contrast
+
+The user approves removing the old nomination from otherwise identical
+fixed-proposal inputs. To avoid changing the prompt between the two conditions,
+Audit-v3 describes `proposal.children` as optional and removes the requirement
+to refer to an earlier nomination when identifying all covered siblings. All
+interpretation, inclusion/exclusion and output rules remain unchanged from
+audit-v2. Both conditions use this same version and the already working
+nullable-child-array schema v2. No real-case example or expected ID enters the
+prompt. Audit-v3 SHA-256 is
+`4defcc3fc7e48b7ee8fae948579286a8da282e2911a4615fbb8f180a29eca31f`;
+native `revise` pins the historical experimental audit-v2 as its source.
+
+The existing source-bound whole-group review loader gains optional boolean
+`include_nomination`, defaulting to true. False constructs the input proposal
+from only its saved title and meaning. Parent, sibling order and complete fixed
+meanings, producer validation and receipts are unchanged. The pairwise adapter
+rejects this option, and non-boolean values fail before inference. The existing
+production CLI test is extended first and fails on the unknown option; after
+the small loader change, it verifies default preservation, omission, unchanged
+producer receipts, invalid-value rejection and rejection on the pairwise path.
+That test and the three related review/pairwise integration tests pass. No new
+runner command, production API or manual case assembly is introduced.
+
+The two [with-nomination](shr_single_pair/hierarchy-consolidation-audit-v3-hr05-with-nomination.spec.json)
+and [without-nomination](shr_single_pair/hierarchy-consolidation-audit-v3-hr05-without-nomination.spec.json)
+specs bind the same v17 Food-first and Material-repeat producer references.
+Native preparation verifies that each paired input differs only by removing
+`proposal.children`; prompt, model, reasoning, schema and settings are identical.
+The previous lists stay in original receipts and review evidence, outside the
+nomination-free model input. The native adapter still retains the title and
+fixed meaning, not a new interpretation or replacement definition.
+
+Pre-call criteria remain those of the earlier fixed-proposal diagnostic: the
+people-only Food resources meaning must not cover unrestricted Food C009; the
+broad nourishment-capable organism alternative must consider the fixed human
+MrBeast C025 identity. Other siblings are assessed from their own unchanged
+meanings; null retains uncertainty rather than establishing the correct list.
+These are bounded agent assessments, not new human gold. Observe whether either
+condition changes the two target judgments; one draw per condition cannot
+establish an anchoring effect or its absence reliably.
+
+This screen uses four maximum GPT-6.1 Sol medium subscription attempts, two
+cases in each condition, uncached SSE with no warmups. The new native counter
+is `consolidation-audit-v3-hr05-nomination-budget-v1.json`; previous 14/14, 2/2
+and older counters remain unchanged. Failures and retries count within this
+ceiling. [Native usage selection](shr_single_pair/hierarchy-consolidation-audit-v3-hr05-usage-v1.json)
+keeps conditions separate. Both preparations freeze the current shared worker;
+only native `run` will dispatch. Main is synchronized at `c47e7552` before
+implementation. The user-requested task remains isolated; no change to the
+main consolidation prompt, hierarchy, construction policy, UI or another
+agent's worktree is made.

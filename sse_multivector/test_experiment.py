@@ -197,6 +197,33 @@ class ExperimentTests(unittest.TestCase):
         self.assertEqual(self.show('proposal-review')['summary']['valid'], 1)
         self.assertEqual(len(self.calls()), 2)
 
+        source['include_nomination'] = False
+        self.write('nomination-free-source.json', source)
+        spec['dataset']['path'] = 'nomination-free-source.json'
+        no_nomination_spec = self.write('nomination-free-spec.json', spec)
+        self.cli('prepare', 'nomination-free', '--spec', no_nomination_spec)
+        case = self.show('nomination-free')['cases'][0]
+        payload = json.loads(case['inputs']['INPUT_JSON'])
+        self.assertEqual(payload, {**json.loads(original['inputs']['INPUT_JSON']),
+                                  'proposal': {key: proposal[key] for key in ('title', 'meaning')}})
+        self.assertEqual(case['evidence']['proposal_receipt'], original['receipt'])
+        self.assertNotIn('REVIEW_ONLY_VERDICT', case['prompt'])
+        self.assertEqual(len(self.calls()), 2, 'omitting a nomination makes no calls')
+        self.assertEqual(self.show('E1', '--case', 'group')['receipt'], original['receipt'])
+
+        for index, invalid in enumerate(('false', 0, None)):
+            self.write('bad-nomination-source.json', {**source, 'include_nomination': invalid})
+            spec['dataset']['path'] = 'bad-nomination-source.json'
+            bad_spec = self.write('bad-nomination-spec.json', spec)
+            failure = self.cli('prepare', f'bad-nomination-{index}', '--spec', bad_spec, ok=False)
+            self.assertIn('include_nomination must be a boolean', failure.stderr)
+
+        spec['dataset'] = dict(adapter='canonical_consolidation_pairs', path='nomination-free-source.json')
+        pair_spec = self.write('nomination-option-pair-spec.json', spec)
+        failure = self.cli('prepare', 'nomination-option-pairs', '--spec', pair_spec, ok=False)
+        self.assertIn('include_nomination is only supported for whole-group review', failure.stderr)
+        self.assertEqual(len(self.calls()), 2)
+
     def test_consolidation_coverage_diagnostic_preserves_meaning_and_recomputes_children(self):
         self.consolidation_spec(parent='P')
         self.prepare()

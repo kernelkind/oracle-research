@@ -869,7 +869,15 @@ def prepare_consolidations(source, base, read):
 def prepare_saved_consolidations(source, base, read, load_report, sources, *, pairwise):
     """Load verified saved proposals for whole-group review or edge comparisons."""
     from . import canonical_trial as trial
-    engine._expect_fields(source, 'consolidation comparisons', {'schema_version', 'proposals'})
+    fields = {'schema_version', 'proposals'}
+    if isinstance(source, dict) and 'include_nomination' in source:
+        fields.add('include_nomination')
+    engine._expect_fields(source, 'consolidation comparisons', fields)
+    include_nomination = source.get('include_nomination', True)
+    if type(include_nomination) is not bool:
+        raise ValueError('include_nomination must be a boolean')
+    if pairwise and 'include_nomination' in source:
+        raise ValueError('include_nomination is only supported for whole-group review')
     if (type(source['schema_version']) is not int or source['schema_version'] != 1
             or not isinstance(source['proposals'], list) or not source['proposals']):
         raise ValueError('consolidation comparisons require schema 1 and nonempty proposals')
@@ -906,8 +914,10 @@ def prepare_saved_consolidations(source, base, read, load_report, sources, *, pa
         sources[str(receipt_path)] = engine._sha256_file(receipt_path)
         offered = json.loads(saved['inputs']['INPUT_JSON'])
         if not pairwise:
+            proposal_input = proposal if include_nomination else {
+                key: proposal[key] for key in ('title', 'meaning')}
             cases.append(dict(id=f'proposal-{index}',
-                inputs=dict(INPUT_JSON=json.dumps({**offered, 'proposal': proposal}, ensure_ascii=False)),
+                inputs=dict(INPUT_JSON=json.dumps({**offered, 'proposal': proposal_input}, ensure_ascii=False)),
                 evidence=dict(proposal_experiment=str(directory), proposal_case=item['case'],
                     proposal_receipt=saved['receipt'], application_allowed=False)))
             continue

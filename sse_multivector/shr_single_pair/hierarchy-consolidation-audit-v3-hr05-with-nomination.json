@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "proposals": [
+    {
+      "experiment": {
+        "path": "../../target/canonical-shaping-selection-v1/consolidation-v17-hr05-food-first-v1",
+        "sha256": "8c826e872489bae17ff1fa99a92c202efcae57441101c390a25b2ed7ffa4020f"
+      },
+      "case": "consolidate"
+    },
+    {
+      "experiment": {
+        "path": "../../target/canonical-shaping-selection-v1/consolidation-v17-hr05-material-repeat-v1",
+        "sha256": "9e31f9d737e96c1e47f08a3de8f23b2c4538388d202ccfb06478711f09459b26"
+      },
+      "case": "consolidate"
+    }
+  ],
+  "include_nomination": true
+}

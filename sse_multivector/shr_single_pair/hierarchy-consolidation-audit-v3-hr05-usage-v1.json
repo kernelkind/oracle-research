@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "with_nomination": [
+      "../../target/canonical-shaping-selection-v1/consolidation-audit-v3-hr05-with-nomination-v1"
+    ],
+    "without_nomination": [
+      "../../target/canonical-shaping-selection-v1/consolidation-audit-v3-hr05-without-nomination-v1"
+    ]
+  }
+}
