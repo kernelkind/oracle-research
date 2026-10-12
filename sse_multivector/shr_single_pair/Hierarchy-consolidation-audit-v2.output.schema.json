@@ -1,0 +1,12 @@
+{
+  "type": "object",
+  "properties": {
+    "children": {
+      "type": ["array", "null"],
+      "items": {"type": "string"},
+      "uniqueItems": true
+    }
+  },
+  "required": ["children"],
+  "additionalProperties": false
+}

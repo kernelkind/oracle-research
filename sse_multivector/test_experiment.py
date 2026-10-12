@@ -197,6 +197,44 @@ class ExperimentTests(unittest.TestCase):
         self.assertEqual(self.show('proposal-review')['summary']['valid'], 1)
         self.assertEqual(len(self.calls()), 2)
 
+    def test_consolidation_coverage_diagnostic_preserves_meaning_and_recomputes_children(self):
+        self.consolidation_spec(parent='P')
+        self.prepare()
+        proposal = dict(title='Equipment', meaning='Equipment used in preparation.',
+                        children=['C0', 'C1'])
+        self.cli('run', 'E1', env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(proposal)})
+        original = self.show('E1', '--case', 'group')
+        envelope = self.root / 'E1/experiment.json'
+        self.write('coverage-source.json', dict(schema_version=1, proposals=[dict(
+            experiment=dict(path='E1', sha256=hashlib.sha256(envelope.read_bytes()).hexdigest()),
+            case='group')]))
+        prompts = CLI.parent / 'shr_single_pair'
+        audit_text = (prompts / 'Hierarchy-consolidation-audit-v2.md').read_text()
+        fixture_prompt = self.root / 'coverage-prompt.md'
+        fixture_prompt.write_text('GENERIC PROMPT\n' + audit_text)
+        spec = json.loads(self.spec.read_text())
+        spec['prompt'] = dict(id='Hierarchy-consolidation-audit-v2',
+                             path=str(fixture_prompt))
+        spec['dataset'] = dict(adapter='canonical_consolidation_review', path='coverage-source.json')
+        spec['runner']['output_schema'] = json.loads(
+            (prompts / 'Hierarchy-consolidation-audit-v2.output.schema.json').read_text())
+        coverage_spec = self.write('coverage-spec.json', spec)
+        self.cli('prepare', 'coverage', '--spec', coverage_spec)
+        case = self.show('coverage')['cases'][0]
+        payload = json.loads(case['inputs']['INPUT_JSON'])
+        self.assertEqual(payload, {**json.loads(original['inputs']['INPUT_JSON']), 'proposal': proposal})
+        self.assertEqual(case['prompt'], 'GENERIC PROMPT\n' +
+                         audit_text.replace('{INPUT_JSON}', case['inputs']['INPUT_JSON']))
+        self.assertEqual(case['evidence']['proposal_receipt'], original['receipt'])
+        self.assertFalse(case['evidence']['application_allowed'])
+        self.assertEqual(len(self.calls()), 1, 'coverage preparation makes no calls')
+        self.cli('run', 'coverage', env={'FAKE_RUNNER_PROMPT_RESPONSE':
+            '{"children":["C0","C1","C2"]}'})
+        answer = self.show('coverage')['cases'][0]
+        self.assertEqual(answer['status'], 'valid')
+        self.assertEqual(json.loads(answer['output']), dict(children=['C0', 'C1', 'C2']))
+        self.assertEqual(self.show('E1', '--case', 'group')['receipt'], original['receipt'])
+
     def test_consolidation_review_rejects_null_and_changed_producer_references(self):
         self.consolidation_spec()
         self.prepare()

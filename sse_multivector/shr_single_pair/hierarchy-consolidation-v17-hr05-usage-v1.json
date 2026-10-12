@@ -16,6 +16,9 @@
       "../../target/canonical-shaping-selection-v1/consolidation-v17-hr05-material-repeat-v1",
       "../../target/canonical-shaping-selection-v1/consolidation-v17-hr05-heating-first-v1",
       "../../target/canonical-shaping-selection-v1/consolidation-v17-hr05-heating-repeat-v1"
+    ],
+    "fixed_proposal_coverage_diagnostics": [
+      "../../target/canonical-shaping-selection-v1/consolidation-audit-v2-hr05-fixed-v1"
     ]
   }
 }

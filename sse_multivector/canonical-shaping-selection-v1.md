@@ -4680,3 +4680,44 @@ remain uncertain, consistent with [evaluation guidance](https://developers.opena
 Construction/shaping policy, fixed canonical meanings, hierarchy artifacts and
 UI remain outside this task. The task stays isolated in the user's requested
 worktree.
+
+### V17 fixed-proposal diagnostic preparation
+
+The first generation draw still selects unrestricted Food C009 beneath a
+people-only Food resources meaning. The material repeat also supplies a broad
+organism alternative capable of nourishment while listing only Equipment and
+Nutritional resources. These trigger the approved fixed-proposal diagnostic.
+The receipt-bound source is
+[hierarchy-consolidation-audit-v2-hr05.json](shr_single_pair/hierarchy-consolidation-audit-v2-hr05.json),
+selecting v17 Food first and Material repeat without copying their inputs.
+
+[Hierarchy-consolidation-audit-v2](shr_single_pair/Hierarchy-consolidation-audit-v2.md)
+keeps each saved meaning fixed and asks only for the complete covered-sibling
+list. Its interpretation and inclusion/exclusion rules are verbatim from v17.
+The complete original group and saved proposal come from the existing production
+`canonical_consolidation_review` adapter; no new adapter or production API is
+added. Earlier nominated IDs remain visible data, explicitly distinguished from
+the list to determine. Null is permitted for an unresolved complete list; no
+replacement meaning, placement judgment, explanation or reasoning trace is
+requested. The diagnostic is experimental and does not establish causal
+separation or general accuracy from two selected failure cases.
+
+Audit-v2 SHA-256 is
+`71ae57a3033c77f53775b2832f62f56561aac14e7f6fdb675c43b14e855d5c9c`.
+Native `revise` preserves the historical experimental audit-v1 bytes and records
+that source as the revision base, without claiming human approval of v1. A new
+production CLI test first fails on the absent schema, then verifies exact saved
+meaning/receipt preservation, complete group preparation, new child-list output
+and unchanged producer receipt. Its fixture prefix selects the existing fake
+worker protocol; the native run uses the unmodified audit-v2 prompt. That test
+and the two existing consolidation-review source-protection tests pass.
+
+The [native diagnostic spec](shr_single_pair/hierarchy-consolidation-audit-v2-hr05.spec.json)
+uses GPT-6.1 Sol medium/SSE with no caching or warmups. Two maximum new attempts
+use the existing 14-attempt counter, already at 12 after the six generation
+draws and six warmups. Pre-call check: a corrected Food list must exclude C009
+under this people-only meaning; a complete broad-nourishment organism list must
+consider the same fixed MrBeast C025 identity, rather than substituting a
+conventional resource interpretation. Remaining cases are assessed from their
+unchanged meanings, with ambiguity retained. These are bounded agent criteria,
+not human gold. No expected IDs or agent reviews enter the native input.
