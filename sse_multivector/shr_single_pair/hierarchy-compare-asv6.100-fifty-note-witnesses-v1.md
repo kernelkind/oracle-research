@@ -8139,3 +8139,42 @@ controls, complete chains and producer qualification before adoption. Replacing
 an entire example also removes the Watch-repair demonstration, so do not report
 a word-level causal attribution. Independent reviewers retain provisional
 synthetic labels separately from original data and human decisions.
+
+### V207 result: example transfer remains directional
+
+All six responses validate. The four resolved paper/steel answers remain intact;
+only the omitted-material forward direction recognizes the unknown material.
+The reverse proves not-production, then declares exclusion without checking
+whether the same physical surface qualifies as paper. The candidate fails its
+preregistered gate. This one changed answer is not evidence of reliable repair
+or a causal effect, and no broader V207 qualification follows.
+
+A second independent review of V202/V206 inputs and outputs finds no coherent
+whole-parent exclusion regardless of the unstated surface material. The paper-
+covering completion satisfies the entire omitted meaning, including unrelated
+production; the steel completion also satisfies it. Neither completion may be
+assigned as a fact about the particular omitted case. The physical-property
+qualification is therefore unresolved under V202's existing contract.
+
+Native `hierarchy-compare-v207-physical-usage-v1.json` records seven fresh attempts
+including one warmup, six valid cases, no reuse/retry/failure/missing usage and
+$0.0423048 API-equivalent catalog cost. The retired allowance stays untouched.
+
+### V208: qualify the thing described by a kind-property connection
+
+V208 returns to V202, retaining both original examples. It changes only the kind
+paragraph to make the properties/composition connection's qualification explicit:
+the thing whose property or composition is described must qualify for the kind.
+For a particular thing, unstated qualification leaves that connection unresolved
+independently of whether another connection is ruled out. The existing production
+limit and whole-topic boundary remain. This states the condition of the connection,
+not a new physical-instance requirement for the information itself.
+
+The hypothesis is failure to apply the qualifying-kind requirement to a particular
+aspect's owner, rather than lack of a direct unknown-membership example. It is not
+yet demonstrated; V205's route-focus and V206/V207's example treatments failed.
+First run the unchanged physical six-case matrix. Require four resolved answers
+and two unknown qualifications with sound diagnostics. If it passes, use a fresh
+repeat and the unchanged original aspect panel before broader resolved/chain/
+producer qualification. No schema, frozen meaning, source expectation or
+historical review changes; no Bootstrap or hierarchy work follows.

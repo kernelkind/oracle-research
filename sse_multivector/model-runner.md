@@ -7868,3 +7868,9 @@ unresolved factual-qualification failure rather than certifying a negative label
 No V196–V206 candidate is adopted; V179 remains the development reference.
 Native usage and source-quality qualifications are retained in the Compare
 findings, with historical allowance removal and scope limits unchanged.
+
+V207's particular aspect-owner example preserves the known physical-surface
+controls but recognizes the missing material in only one orientation. It fails
+qualification and is not adopted. The next mechanism to test is explicit kind
+qualification for the described thing before accepting or excluding its property
+connection; rejecting a production connection alone cannot decide that issue.
