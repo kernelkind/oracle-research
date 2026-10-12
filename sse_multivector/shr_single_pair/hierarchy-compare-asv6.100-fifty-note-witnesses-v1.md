@@ -7964,3 +7964,22 @@ negatives, unchanged particular-brand uncertainty and diagnostics without
 invented particular facts. The fresh ten-case V202 reference is preserved; do
 not present retained labels or an isolated null as repair. Any promising change
 requires fresh confirmation and broader qualification before adoption.
+
+
+### Attention scope qualification after input-only review
+
+The stronger earlier description of the attention diagnostics as invented
+particular-event facts is qualified. The stripped meaning, "the author's
+attention being unfocused or diverted from the immediate situation", does not
+explicitly distinguish one episode, the particular author's distraction
+episodes, and a general author-state category. Conversation or remembered
+content is unsupported under the particular-episode reading, but a general
+reading may admit hypothetical episodes. Compare changes from "the author" to
+"an author" without settling this. Keep the diagnostics uncertified rather
+than restoring omitted post context or making an unconditional fabrication
+claim. The attention cases remain open scope/proof probes in V204's screen.
+
+This qualification does not affect Pump P's explicit particular identity or the
+proper-name brand probe. V203's brand inclusion demonstrably omits its parent's
+commercial condition, and the decorative exclusions still fail to check direct
+Paper-property coverage when the particular pattern carrier is unknown.
