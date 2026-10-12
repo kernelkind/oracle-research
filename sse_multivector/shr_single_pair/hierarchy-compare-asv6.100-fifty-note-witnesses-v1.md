@@ -7450,3 +7450,54 @@ check that particular-entity questions do not invent unknown properties and that
 an easy rejected candidate does not replace a proof of every parent condition.
 The same twelve-case screen precedes any full gate or fresh confirmation. No
 preferred Restaurant/Bread answer or new Bootstrap scope is prescribed.
+
+V194's twelve comparisons validate and preserve all six positive controls.
+Food/Bread is neither in both directions and Brand remains unresolved in both.
+Restaurant still reverses: its forward diagnostic tests a complimentary meal
+at a commercial restaurant and infers every restaurant is commercial; its reverse
+admits an entirely free charitable restaurant without either commercial-parent
+alternative. The selected candidate differs in strength, but concrete-question
+formatting does not resolve the underlying interpretation switch. Both Brand
+answers retain the missing commerce fact rather than assigning it to the named
+entity. Native exports are `target/compare-v194-concrete-screen-v1/*-native.json`.
+V194 is not qualified or adopted; repeating formatting edits is not established
+as a productive remedy.
+
+The native V192-full/V193-screen/V194-screen usage source records forty-nine
+fresh attempts, eight exact answer reuses, forty-eight valid cases, zero failures,
+retries or missing usage and $0.3279068 newly dispatched API-equivalent cost.
+Accounting for the original generation behind reuse raises the catalog total to
+$0.3889256. These are subscription catalog equivalents, not provider charges.
+The removed shared cap is not passed to execution; historical counters and
+receipts remain preserved.
+
+### Separate broader diagnosis and V195 requested-order ablation
+
+The persistent unresolved Restaurant stress case no longer blocks all broader
+diagnosis. V194 is tested on the unchanged fifty-case independently frozen B109
+cohort, without adoption. Native preflight verifies every endpoint against one
+producer cohort and exact reversal swaps. A further read-only preflight qualifies
+the former metal-handles-signature positive: the parent expressly requires a
+handhold while the child says handles, leaving machine-only grips relevant.
+Preserve the original source and historical expected label; score this pair as
+an unresolved probe. The current assessment therefore has nine provisionally
+labeled pairs (eighteen responses) and sixteen probes (thirty-two responses).
+Source ancestry and frozen producer acceptance still do not certify comparisons.
+
+[V195](Hierarchy-compare-v195.md) is an experimental requested-report-order
+diagnostic, not a proposed semantic fix. It changes one sentence of V194, asking
+for B_contains_A before A_contains_B. Meanings, input order, examples, schema and
+other instructions remain identical. The examples are deliberately not reordered
+for this ablation; verify actual output compliance. A fresh matched two-draw
+test uses both Restaurant orientations under unchanged V194 and V195: eight
+comparisons total. This tests requested/report order, not observable internal
+reasoning order. The earlier V182 Stockpots diagnostic is a negative precedent,
+not evidence that this new Restaurant pattern is order-induced.
+
+Preregistered prediction: if the asymmetry follows requested direction order,
+the entirely charitable candidate and rejection should move to Restaurant-first,
+while commercial-necessity reasoning moves to Commerce-first. Track candidates
+and premises as well as labels. If the effect remains attached to input A/B
+orientation, requested report order does not explain it. Neither outcome chooses
+the original pair's correct semantic label. The fifty-case diagnosis remains
+separate and does not clear the Restaurant failure or qualify adoption.

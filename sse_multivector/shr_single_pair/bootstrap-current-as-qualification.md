@@ -3880,3 +3880,38 @@ next focus is the risotto qualifying-kind gap, with consumer and edibility
 questions kept separate. V122 remains unactivated; no Compare calls, hierarchy
 build or new prompt occurred. The user has permanently removed the prior shared
 attempt cap; its active artifact is retired and historical bytes are preserved.
+
+### Bootstrap-v123 qualifying-kind diagnostic
+
+The user authorized targeting the risotto qualifying-kind gap. Experimental
+[Bootstrap-v123](Hierarchy-bootstrap-v123.md) replaces only the second paragraph
+of `Identify category ambiguities` in tested v122. It establishes kinds and
+defining features before use/component membership and asks for material
+ambiguities in introduced conditions. Roles may define kinds; no Food-specific
+condition, validation example, input field or output schema is added.
+
+The [matched four-Food qualification](bootstrap-v123-hr04-four-foods-v1.md)
+uses the exact original HR04 inputs and unchanged Sol 6.1 medium settings,
+then independently repeats only risotto and sourdough. Six definitions are valid
+fresh outputs from eight attempts including two warmups, with no failures,
+retries or answer reuses. All six definitions hit prefix cache. Native incremental
+API-equivalent cost is $0.0663836; usage is complete and the obsolete global
+attempt budget is not used.
+
+Both risotto draws and both sourdough draws exclude the explicitly non-edible
+poison through a shared edible condition. The first risotto definition still
+admits the edible clinical wafer and ceremonial gold. Its fresh repeat instead
+requires nourishment or refreshment; that is a different producer scope, not
+a repaired or contradictory interpretation of its earlier fixed string.
+Sourdough's "as part of eating" persists and admits the explicitly eaten wafer
+under the literal condition; a narrower culinary-purpose interpretation is not
+supplied silently. Medical drinks/oil remain qualified where edibility is not
+stated. These admissions are not predefined failure gold for every Food meaning.
+
+No concrete lost source ingredient was established. Introduced purpose/consumer
+conditions still lack direct ambiguity questions. The narrow poison improvement
+does not solve general boundary identification or certify a wording effect.
+V123 remains unactivated; no nonfood/full-branch qualification, Compare calls or
+hierarchy build occurs in this stage. The next proposed focus is understanding
+the missed consequential conditions and the wider edible-ingestion choice,
+before another rule or a prescribed Food boundary.
