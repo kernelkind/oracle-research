@@ -8435,3 +8435,29 @@ physical, explicit-human and intention/capability controls so any role-label
 sensitivity is distinguished from broad positive or uncertainty regression.
 A positive requires wider source/control checks before adoption. V209's recent
 full core and gate remain preserved, without treating saved answers as fresh.
+
+### V213 result: example-role mirroring has no measured effect
+
+All thirty comparisons complete valid. Every one of three fresh V209 draws and
+three fresh V213 draws returns the same original Metal pair outcomes: forward
+A_contains_B, reverse neither. Each draw therefore retains a settled reversal
+conflict. All outputs report A_contains_B before B_contains_A, including V213,
+whose mirrored example reports its positive B_contains_A first. The physical,
+explicit-human and intention/capability controls retain their expected outcomes.
+This experiment establishes no repair and no measured example-role sensitivity;
+it does not settle the original ambiguous grip/handhold relationship.
+
+Native usage source `hierarchy-compare-v213-role-mirror-usage-v1.json` records
+forty fresh attempts, including nine warmups and one recovered failure, zero
+reuse, and one attempt lacking usage. $0.235284 is a known API-equivalent
+subtotal, not complete cost or a subscription charge. V213 remains experimental.
+
+The next isolated diagnostic changes actual presentation order to B then A,
+without changing A/B assignments, fixed meanings, prompt or producer receipts.
+Native `symmetric_fixed_meanings` projection already supports this operation;
+no new adapter code or manually assembled model inputs are needed. The source
+pins the completed V209 producer experiment and retains its full provenance.
+Compare fresh repeated Metal orientations against the preserved A-first draws.
+If outcomes follow physical position, that establishes presentation sensitivity,
+not semantic correctness. Unknown original scope remains unresolved rather than
+being relabeled to make a preferred orientation pass.

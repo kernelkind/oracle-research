@@ -7909,3 +7909,10 @@ controls but fails the same producer consistency gate. It is not adopted. The
 next diagnostic mirrors the positive example's A/B assignments rather than
 appending another scope reminder; earlier reporting-order and zero-shot studies
 remain negative precedents and are not relabeled as this new intervention.
+
+V213's example-role mirror has no measured effect across three fresh matched
+draws: every original Metal pair retains the same reversal conflict. Resolved
+controls remain intact; the candidate is not adopted. The next isolated test
+uses the native fixed-meaning projection's B-first input order, preserving A/B
+assignments and producer receipts. Presentation sensitivity, if found, is a
+diagnosis rather than a certified relationship or prompt repair.
