@@ -34,10 +34,15 @@ draws; there are no answer reuses. The experiment is
 remain immutable.
 
 Before dispatch, the user clarified that another agent had removed the earlier
-20,000-attempt cap. The old counter still reads limit/used 20,000; it was not
-reset or edited. This newly authorized four-case run omits that obsolete optional
-counter. This record does not impose a replacement total allowance or authorize
-additional experiments.
+20,000-attempt cap. This newly authorized four-case run omits that obsolete
+optional counter. The user subsequently explicitly required permanent removal.
+Main's AGENTS.md and current workflow records now supersede all old counter
+instructions. The active artifact path was retired to
+`target/hierarchy-selective-sprint-v1/attempt-budget.json.retired`, preserving
+its exact historical bytes and used count. Its SHA-256 is
+`d0199c9f595afd646f501be8f74689c8f616e857e926abf8e542b500a689847b`.
+No replacement global attempt cap is established; native attempts and usage
+continue to be recorded without that optional counter.
 
 ## Exact fresh meanings and evidence assessment
 
@@ -98,33 +103,86 @@ not nourishment versus enjoyment or human versus other consumers.
 Producer record SHA-256:
 `187a40ea2f813b5c2dc1e5501001403be2eff97bf2ae3087df7eeedae23d5f39`.
 
-## Finding and limits
+## Compare counterexamples: reassessment of the exact fresh meanings
 
-Root and an independent read-only reviewer find that all four meanings fit the
-source examples; no definite post contradiction is established. Material
-consumer, purpose and eating/drinking differences remain. The posts do not
-establish why these four categories must differ in those conditions.
+The first review checked source-example fit and called the differences
+individually permissible. The user explicitly corrected that standard:
+"regarding the results, you MUST consider the counterexamples presented by
+COmpare." Root and the independent reviewer reassessed the same unchanged
+outputs using the actual saved HR04 witnesses. Fitting the particular post
+does not establish that a definition preserves the chosen category's scope.
 
-These are individually permissible boundary choices under the present contract,
-not evidence-required discrepancies. The source supports culinary interpretation
-and food/ingredient examples; absence of an enjoyment statement does not make
-nourishment mandatory. Conversely, praise of one food does not by itself dictate
-the whole category's purpose boundary. Matching headings do not certify
-equivalence, and no new pair label is established here.
+The witness hypotheses are tested against fresh final wording, without silently
+adding conditions or transferring historical pair labels. This is read-only
+Bootstrap review; no new Compare calls or relation labels were generated.
 
-The diagnostics never directly identify or resolve the consequential contrasts
-between human and other consumers, nourishment and enjoyment, or eating and
-drinking. Those choices nonetheless enter final membership conditions. No
-definite resolution/final mismatch is established: the weak point is boundary
-identification and selection before final expression. A single fresh draw per
-source cannot establish repeatability or attribute these choices to a particular
-prompt sentence. Old C003 poison judgments are not transferred to these strings.
+| Saved Compare witness | Fresh risotto Food | Fresh sourdough Food | Fresh pie Food | Fresh brisket Food |
+|---|---|---|---|---|
+| Lethal, non-edible chemical intended as a component of a human-consumed poisoned drink | Admitted by unrestricted human eating/drinking condition | Excluded: no nourishment or edible ingredient role | Excluded: no nourishment or enjoyment purpose | Excluded: no nourishment, not edible |
+| Barium sulfate in a human-consumed drink solely for diagnostic imaging | Admitted by human drinking condition | Excluded: no nourishment or edible ingredient in something eaten | Excluded: no nourishment or enjoyment purpose | Excluded: no nourishment purpose |
+| Edible, nonnutritive wafer eaten solely to measure intestinal transit | Admitted by human eating condition | Excluded: neither nourishment nor an ingredient role | Excluded: neither nourishment nor enjoyment | Excluded: no nourishment |
+| Food-grade edible gold swallowed alone solely for ceremony, without nourishment or a component role | Admission depends on whether the stated swallowing counts as eating | Excluded: neither nourishment nor an ingredient role | Uncertain: the witness does not explicitly resolve enjoyment as a purpose | Excluded: no nourishment |
+| Cattle or horse feed intended exclusively for those animals to eat as nourishment | Excluded by human-consumer condition | Excluded by human-consumer condition | Admitted: nourishment and intended eating, with no human condition | Admitted when edible for the relevant consumer; human edibility cannot be added silently |
+| Pure nonnutritive mineral oil intended to be drunk solely as a laxative, with no food-ingredient or accompanying-beverage use | Admitted by human drinking condition | Excluded: no nourishment or qualifying ingredient role | Excluded: no nourishment or enjoyment | Excluded: no nourishment |
+| Bacterium eaten as nourishment by a wild amoeba, with no intended consumption, preparation use or meal connection | Excluded: no intended human consumption | Excluded: no intended human consumption | Excluded: no intended eating | Conditional: actual consumption is admitted, but the intended consumer of "edible" is unsettled |
 
-The proposed next step is to review with the user whether this source-independent
-boundary variation is acceptable, before another prompt edit. If it is not,
-test a general requirement to explicitly examine each consequential condition
-being introduced, rather than prescribing one Food definition or food-specific
-exceptions. No such edit or further generation occurred.
+These are semantic hypotheses as stated by Compare, not assertions that a
+source post contains any of them. Qualified admissions stay qualified. In
+particular, the gold witness cannot acquire an unstated enjoyment purpose or
+an automatic equivalence between swallowing and eating.
+
+### Source-bound witness provenance
+
+All experiments below are under the original HR04
+`target/hierarchy-hr04-twelve-note-v1/trial` directory in
+`oracle-mvp-hierarchy-hr04-twelve-note-v1`. Saved historical meanings remain
+unchanged, and the fresh four-output cohort is separate.
+
+| Native experiment / case | Witnesses | Compare record SHA-256 |
+|---|---|---|
+| batch-00010/experiment / C003 | Poison; ceremonial gold | a2915d0c6c644180cf821a7de56c504703e0d785bd3f4254f0376e7c9e0f2039 |
+| batch-00017/experiment / C003 | Diagnostic contrast drink; cattle feed | 9df0b81b836352f5222c6d5d4455b750e317f896e4335b91595b3fe711cba548 |
+| batch-00017/experiment / C004 | Diagnostic wafer; horse feed | fa0844207cbe59c95afa6b9c5d270e8312a6d9d16c126b41b87522e414396a4b |
+| batch-00039/experiment / C007 | Medicinal mineral oil; wild amoeba eating a bacterium | 2ee768406f3a7d410ef03417dd10db2f2659832ca556ea5f3e4beb05424152c3 |
+
+The [earlier user-reviewed poison admission](bootstrap-hr04-food-boundaries-v1.md#historical-distinction)
+is bound to the old C003 string. Here the same hypothesis is independently
+admitted by the fresh risotto string's broader head clause. Other witnesses are
+saved Compare proposals assessed by agents; their existence is not human gold.
+
+## Corrected finding and limits
+
+**Risotto's fresh meaning has a concrete scope-quality defect.** Its unrestricted
+head clause admits toxic and medicinal human ingestion. Naming finished dishes
+and culinary ingredients afterward does not make culinary or edible status a
+shared condition on all substances admitted by that clause. The chosen culinary
+Food identity is therefore broader in its expressed membership than the source
+interpretation supports. The native agent review is revised to reject on that
+ground, rather than claiming a false fact about the particular risotto.
+
+Sourdough excludes the specified non-nourishing, non-ingredient ingestion
+witnesses through its own stated conditions. Its nourishment-or-ingredient
+boundary is still a choice, not a distinction uniquely required by the bread
+post. Pie admits animal feed; that is a real broader consumer scope, not by
+itself proof that animal Food is an invalid category choice. Brisket additionally
+leaves whether edibility is human-relative or consumer-relative unclear for
+the amoeba witness. Original human-culinary context cannot silently supply a
+human restriction missing from either final meaning. The assessments are one
+reject, two qualified accepts and one uncertain meaning; they are agent reviews,
+not a human accuracy score or certification of pair relationships.
+
+The posts do not establish why nourishment, enjoyment or consumer conditions
+must differ. The diagnostics fail to directly examine those consequential
+contrasts. The producer weakness includes both choosing the category boundary
+and carrying its identity and conditions into every admitted alternative. A
+single fresh draw cannot establish recurrence or identify a responsible prompt
+sentence. Matching Food headings do not certify equivalence.
+
+The next proposed focus is the risotto head-clause gap: examine how the producer
+can state a category's qualifying kind for every alternative, rather than add
+exceptions for poisons or medicines. Review the unresolved consumer/edibility
+boundaries separately. No prompt edit or additional generation was performed
+in this reassessment.
 
 ## Native accounting and verification
 

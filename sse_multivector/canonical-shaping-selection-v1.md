@@ -1,5 +1,12 @@
 # Selecting local entries to reduce overcrowding
 
+The consolidation prompts, shared-text assembly, source-bound preparation,
+tests and maintained findings are integrated into local `main` following
+the user's request. Integration preserves their experimental status: v18 is
+not activated, and the last human-approved consolidation wording remains v3.
+Generated inputs, vectors, receipts and review artifacts remain ignored in the
+task worktree; their frozen references must be retained for reproduction.
+
 The newest user-authorized candidate is
 [Hierarchy-consolidation-v18](shr_single_pair/Hierarchy-consolidation-v18.md),
 tested with direct coverage conditions for every admitted child
@@ -42,8 +49,12 @@ The current user-authorized diagnostic is
 [Audit-v5](shr_single_pair/Hierarchy-consolidation-audit-v5.md), sharing v18's
 coverage conditions on the same fixed Food and Material proposals plus the
 saved heating positive control. Output and producer meanings remain unchanged.
-Its next authorized screen isolates the Food proposal's illustrative sentence,
-using the unchanged Audit-v5 prompt and a labeled synthetic input variant. See
+Its completed illustration screen uses the unchanged Audit-v5 prompt and a
+labeled synthetic input variant. Beets is included in both original-text draws
+and one of two illustration-free draws, so removing the illustration does not
+consistently correct the disputed coverage. Food C009 is excluded in all four.
+These remain bounded agent assessments, with stock's purpose interpretation
+unsettled. See
 [the illustration contrast](#audit-v5-food-illustration-contrast).
 
 The preceding user-authorized tested candidate is
@@ -5290,3 +5301,119 @@ separates first draw and fresh repeat. Previous counters stay fixed, including
 the v18 9/12 screen. Main is synchronized at `24908ab0`. This two-input diagnostic
 adds no production per-node stage and remains in the expressly isolated task
 worktree; no graph, UI, Bootstrap/Compare prompt or external agent is changed.
+
+### Completed illustration contrast
+
+All four fresh cases complete: two independent draws for each condition,
+without failures, retries, warmups or answer reuse. The unchanged proposal
+includes C003/C006/C007 in both draws and excludes C001/C005/C009. The variant
+omitting only the illustrative sentence gives that same list once and includes
+only C003 on its independent repeat. Every answer assesses all six supplied
+IDs exactly once, in their original order.
+
+| Condition | Beets C007 | Food C009 | Chicken stock C006 |
+|---|---|---|---|
+| Original illustration, first draw | Included | Excluded | Included |
+| Original illustration, fresh repeat | Included | Excluded | Included |
+| Illustration omitted, first draw | Included | Excluded | Included |
+| Illustration omitted, fresh repeat | Excluded | Excluded | Excluded |
+
+The original-condition Beets explanations are retained verbatim:
+
+> Both beet plants grown for edible roots and the roots as vegetables are explicitly covered.
+
+> Both beet plants grown for edible roots and the roots themselves are expressly covered.
+
+Without the illustration, the first draw still includes Beets:
+
+> The meaning covers plants grown to provide edible vegetable roots and those roots as food materials.
+
+The independent repeat excludes it:
+
+> Beet plants grown for edible roots can provide animal feed rather than materials intended for people to consume.
+
+That repeat also excludes Chicken stock:
+
+> Being a culinary liquid made to extract flavor does not require that it be intended for consumption by people.
+
+Food C009's repeat explanation is:
+
+> Its meaning requires intended eating but does not restrict the intended consumers to people.
+
+Removing the illustration is therefore not a consistent fix. The illustration
+is not necessary for the disputed Beets inclusion: that answer recurs once
+without it. The reported justifications show different stated interpretations,
+not proof of the model's internal mechanism or a reliable causal effect.
+The bounded Beets exclusion criterion is an agent assessment, not new human
+gold. Chicken stock's consumer-purpose inference remains unsettled, so the
+final repeat is not certified as an entirely correct list. The original two
+answers and illustration-free first answer receive attributed agent rejects;
+the illustration-free repeat receives an attributed agent uncertainty. No
+canonical meaning or hierarchy is repaired.
+
+Actual request bodies are identical across independent draws for each
+condition. Within each draw, only the proposal meaning's final illustrative
+sentence differs. Prompt, schema, parent, sibling meanings/order, title,
+absent prior nomination and original producer receipt remain fixed. Synthetic
+edit metadata remains outside model input. All four raw HTTP 200 responses
+report GPT-6.1 Sol, use medium effort and have distinct response references,
+one HTTP attempt each, and no previous-response or conversation linkage.
+The configured credential route is unchanged; retained account/authentication
+headers are redacted and `experiment_scopes` is false, so these receipts do
+not independently establish actual account identity or matching opaque scopes.
+
+The counter and native claim ledger reconcile at **4/8 actual attempts**.
+The four unused attempts were reserved for recovery, not further tests. The
+[native usage selection](shr_single_pair/hierarchy-consolidation-audit-v5-hr05-food-illustration-usage-v1.json)
+records **$0.020338 complete API-equivalent catalog cost**: **3,494 input
+tokens**, zero cached reads/writes, and **1,335 output tokens including 543
+reasoning tokens** already counted in output. This is an estimate using API
+prices, not a subscription charge. The ignored native reviewed report is
+`target/canonical-shaping-selection-v1/consolidation-audit-v5-hr05-food-illustration-reviewed-v1.json`;
+both original receipts remain immutable in the corresponding first/repeat
+experiment directories.
+
+The next suggested diagnostic would state the human-consumer condition
+directly for both materials and producer organisms instead of using the
+back-reference “such materials,” keeping the illustration omitted and all
+other input/prompt settings fixed. That would isolate condition propagation
+before another consolidation prompt change. It is a proposal only: no new
+variant or inference has been prepared or authorized. The current user request
+instead prioritizes integrating the completed task into local `main` while
+preserving experimental status and saved evidence.
+
+### Local main integration
+
+The user asks why the completed work is absent from `main`. The earlier
+“for now do it in your own wt” instruction had kept the consolidation work
+isolated; this request supersedes that isolation. Integration includes the
+versioned prompts and assembly sources, production input adapters, tests,
+regression definitions and maintained results. It does not activate a new
+prompt, run inference, change a hierarchy, refresh the UI or authorize a
+remote push. The task worktree is retained for the ignored source-bound
+experiment receipts needed by continuing consolidation research.
+
+The current main-to-task merge has one adapter-dispatch conflict. Its
+resolution retains both receipt-bound consolidation inputs and main's
+`hierarchy_prominence` inputs. Canonical `docs/planning/release-decisions.md`
+has a pre-existing unrelated edit; it is preserved outside task commits.
+
+Two focused production-path runs pass **125 tests**: shared prompt assembly,
+revision and consolidation wording; all consolidation preparation/review and
+shape-report tests; prominence ranking; current traversal; and V2 generation.
+The four actual diagnostic request/body contrasts and the native usage/counter
+assertions also pass. Historical prompt and receipt bytes remain unchanged.
+
+A broader 265-test run reports 23 failure records and six skips, rather than
+a clean suite. Of those, 21 failure records reproduce in a 21-test selection
+on unchanged pre-integration main. They concern changed shared-runner queue,
+retry, execution-upgrade and concurrency contracts plus missing `tiktoken`.
+The other two concern answer ordering/retry expectations in unchanged
+prominence/resume paths; they pass in that first main selection. In three
+further fresh main checks per test, resume fails once and passes twice, while
+prominence passes all three times. Thus 22 of the 23 failure records have also been observed
+on pre-integration main; the prominence ordering failure has not reproduced
+in this bounded baseline check. No new prominence behavior is established.
+This integration does not change those paths or rewrite shared-runner policy
+to satisfy old expectations. These unrelated checks are reported explicitly,
+not counted as successful consolidation validation.

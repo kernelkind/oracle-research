@@ -17,6 +17,19 @@ attempts, retries, exact reuses and usage remain recorded by the native runner.
 This decision does not change task authorization, deliberately bounded
 unrelated experiments or the monetary ledger.
 
+## Current review requirement: Compare counterexamples
+
+The user explicitly requires considering counterexamples presented by Compare
+when reviewing Bootstrap meanings. Fitting the particular source example is
+insufficient. Reassess relevant saved witness hypotheses against each exact
+fresh meaning and the intended category supported by its post. Preserve all
+stated conditions, identify genuinely ambiguous admissions, and do not repair
+missing restrictions inside the review. Historical labels do not transfer
+automatically, but the hypotheses must not be dismissed merely as historical.
+
+The [four-Food counterexample reassessment](bootstrap-v122-hr04-four-foods-v1.md#compare-counterexamples-reassessment-of-the-exact-fresh-meanings)
+corrects an initial source-fit-only review without changing producer outputs.
+
 ## Approved sense and factual-evidence rule
 
 The user approved these rules verbatim, replying **“agree”**:
@@ -3850,11 +3863,20 @@ Sol 6.1 medium and prefix caching. All four meanings are valid fresh draws;
 five attempts include one warmup, with zero failures, retries or answer reuses.
 Known API-equivalent cost is $0.0533864 with complete usage.
 
-Root and an independent reviewer find no definite contradiction with the post
-examples. Human-consumer, nourishment/enjoyment and eating/drinking boundaries
-nonetheless vary. The source posts do not establish why those category-wide
-conditions must differ; diagnostics do not directly contrast them. These are
-individually permissible choices under the current contract, not source-required
-distinctions or new equivalence labels. The next proposed discussion concerns
-whether such variation is acceptable before another prompt edit. V122 remains
-unactivated; no Compare calls, hierarchy build or new prompt occurred.
+The initial source-fit-only review was too permissive. After the user's explicit
+instruction to consider Compare counterexamples, root and the independent reviewer
+tested the unchanged fresh meanings against saved HR04 poison, diagnostic-drink,
+wafer, gold, animal-feed, medicinal-oil and amoeba hypotheses. Risotto's unrestricted
+human eating/drinking clause admits nonfood toxic and medicinal ingestion; later
+culinary examples do not impose a shared kind condition. Its agent review is now
+reject. Sourdough excludes the specified non-nourishing, non-ingredient witnesses
+through its stated conditions; pie admits animal nourishment, a broader scope
+that is not inherently an invalid Food choice. Brisket's amoeba admission depends
+on the unsettled consumer reference of "edible". The latest agent assessments are
+one reject, two qualified accepts and one uncertain meaning, not human gold.
+
+These discrepancies are not required by differences in the posts. The proposed
+next focus is the risotto qualifying-kind gap, with consumer and edibility
+questions kept separate. V122 remains unactivated; no Compare calls, hierarchy
+build or new prompt occurred. The user has permanently removed the prior shared
+attempt cap; its active artifact is retired and historical bytes are preserved.
