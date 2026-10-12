@@ -7353,3 +7353,38 @@ noncommercial operation, or both. Each is tested against the unchanged commercia
 parent in both directions. Expectations are provisional agent assessments outside
 input; the original restaurant pair remains unchanged and unresolved. These controls
 test whether Compare respects a resolved boundary before another prompt change.
+
+### Explicit-commerce result and V192 matched question contrast
+
+All six explicit-commerce V191 responses match the provisional control labels,
+and two independent reviews accept the directional proofs. Commercial operation
+and meal sales are explicit in the positive variant. Noncommercial and mixed
+variants retain every restaurant/customer/takeaway requirement and exclude both
+commercial offerings and commercial-source brands; independent businesses establish
+the reverse negatives. This qualifies those resolved synthetic scopes, not the
+original restaurant pair. These controls are never inserted into prompt examples.
+
+Native results are `target/compare-v191-explicit-commerce-v2/native.json`: six
+valid comparisons and one warmup with no reuse, failure or retry. The first v1
+preparation was refused before dispatch after main synchronization changed code
+bindings; it remains unrun. V2 is freshly prepared against synchronized code,
+not an override of frozen code identity. No source was changed during inference.
+
+[Experimental V192](Hierarchy-compare-v192.md) retains V191 and replaces only
+the question instruction. A question searches for a concrete case satisfying
+every child requirement while escaping a parent boundary, rather than asking
+to confirm necessity or classify the child's kind. Positive answers still prove
+necessary full coverage under the unchanged rules. Input, schema, examples,
+meanings and particular-entity unknown-property guard remain unchanged.
+The native full revision records the composed changes against V179.
+
+The first screen compares fresh V191 and V192 on six exact saved cases: both
+Restaurant orientations, both Brand orientations and both approved MrBeast
+positives. Both are prepared against the same synchronized executable code.
+Two additional V192 explicit-commercial restaurant controls use their saved V191
+answers as baseline; they establish that explicit commerce still supports coverage.
+No fresh-baseline call is claimed for those two controls. Original Restaurant and
+Brand labels remain unresolved. A lexical-premise change or additional uncertainty
+is not automatically success; retained positive controls and proof validity matter.
+If promising, test all twenty-four HR05/smoke/commerce cases and an unchanged
+fresh confirmation before the separate fifty-case Bootstrap-only cohort.
