@@ -980,7 +980,7 @@ Only `run` performs inference. `prepare`, `show`, `revise`, `review`, `collect` 
 or provider acceptance. User approval and the repository spending rules still
 apply before `run`; preparing an experiment does not authorize spending.
 
-Recording a CLI judgment with `review --case` skips request-availability previews
+Recording CLI judgments with `review --case` or repeated `review --only` skips request-availability previews
 for unused cases, including when refreshing the complete saved report. The review
 still binds the exact saved input and output, preserves all cases in the report,
 and makes no model calls. UI reviews retain their usual request previews.
@@ -3771,6 +3771,22 @@ python3 sse_multivector/experiment.py review experiments/E1 \
 Verdicts are `accept`, `reject` or `uncertain`. Use `--role user` **only to
 record a decision the user actually made**. Reviews carry input/output hashes;
 neither mechanical validation nor agent assessment becomes a user approval.
+
+For several inspected cases sharing one explicit judgment, repeat `--only ID`
+with the usual `--role`, `--verdict` and `--comment`. All IDs are validated before
+any review is recorded, and the complete report is refreshed once. `--case` and
+`--only` are mutually exclusive.
+
+`review TARGET --from-experiment SOURCE` imports current attributed judgments
+from an immutable native experiment; repeat the source option for multiple
+experiments. Import requires the same adapter, check, complete rendered prompt,
+input hash and raw output. Source files and journals are hash-checked before
+writing. Agent and user attribution, rejection and uncertainty are preserved;
+identical source-alias assessments are recorded once per target alias. Each
+record retains its original source case, judgment digest, timestamp and journal
+hash without nesting earlier imported reviews. Repeating an import adds no
+duplicate records. Import cannot be combined with UI options or a new judgment
+and makes no model calls.
 
 For titles or masks, `review experiments/E1 --ui` exports compatible cases and
 launches the existing `target/release/sse-mask-review` UI. Override its path with

@@ -227,14 +227,91 @@ def collect(directories, output, worker_config=None):
     return dict(output=str(output), files=sorted(files), inference_calls=0)
 
 
+def _import_reviews(directories, result):
+    """Transfer current attributed judgments only between exact saved answers."""
+    def identity(case):
+        return case.get("evidence", {}).get("check"), case["prompt"], case["input_sha256"], case["output"]
+
+    def recorded_identity(row):
+        source = row.get("source")
+        if not isinstance(source, dict):
+            return None
+        return (row["case_id"], row["role"], row["verdict"], row["comment"],
+                row["input_sha256"], row["output_sha256"], source.get("experiment"),
+                source.get("case_id"), source.get("review_sha256"))
+
+    targets = {}
+    seen = set()
+    for case in result["cases"]:
+        if case["status"] in {"valid", "empty"} and isinstance(case["output"], str):
+            targets.setdefault(identity(case), []).append(case)
+        seen.update(recorded_identity(row) for row in case["reviews"])
+    rows, protected = [], {}
+    now = datetime.now(timezone.utc).isoformat()
+    for directory in dict.fromkeys(Path(item).expanduser().resolve() for item in directories):
+        if str(directory) == result["experiment"]:
+            raise ValueError("cannot import reviews from the destination experiment")
+        plan, _, _ = load(directory)
+        references = {**plan["sources"], **{str(directory / name): checksum
+                      for name, checksum in plan["files"].items()}}
+        for path in (directory / "experiment.json", directory / "run/manifest.json",
+                     directory / "reviews.jsonl", directory / "run/results.jsonl"):
+            if path.exists():
+                references[str(path)] = engine._sha256_file(path)
+        for path, expected in references.items():
+            if path in protected and protected[path] != expected:
+                raise ValueError("conflicting review source hashes: " + path)
+            if engine._sha256_file(Path(path)) != expected:
+                raise ValueError("review source changed: " + path)
+            protected[path] = expected
+        source_report = report(directory, include_request_preview=False)
+        if source_report["adapter"] != result["adapter"]:
+            continue
+        assessments = set()
+        for case in source_report["cases"]:
+            if case["status"] not in {"valid", "empty"} or not isinstance(case["output"], str):
+                continue
+            for judgment in case["reviews"]:
+                if judgment.get("current") is not True or judgment.get("verdict") == "comment":
+                    continue
+                if (judgment.get("role") not in {"agent", "user"}
+                        or judgment.get("verdict") not in {"accept", "reject", "uncertain"}
+                        or not isinstance(judgment.get("comment"), str) or not judgment["comment"].strip()):
+                    raise ValueError("invalid attributed source review")
+                assessment = identity(case) + (judgment["role"], judgment["verdict"], judgment["comment"])
+                if assessment in assessments:
+                    continue
+                assessments.add(assessment)
+                original = {key: value for key, value in judgment.items() if key != "current"}
+                provenance = dict(experiment=str(directory),
+                    experiment_sha256=references[str(directory / "experiment.json")],
+                    reviews_sha256=references.get(str(directory / "reviews.jsonl")),
+                    case_id=case["id"], review_sha256=inputs.digest(original),
+                    time=judgment.get("time"), receipt=case.get("receipt"))
+                for target in targets.get(identity(case), []):
+                    row = dict(case_id=target["id"], role=judgment["role"], verdict=judgment["verdict"],
+                        comment=judgment["comment"], time=now, input_sha256=target["input_sha256"],
+                        output_sha256=inputs.digest(target["output"]), source=provenance)
+                    key = recorded_identity(row)
+                    if key not in seen:
+                        rows.append(row)
+                        seen.add(key)
+    for path, expected in protected.items():
+        if engine._sha256_file(Path(path)) != expected:
+            raise ValueError("review source changed: " + path)
+    return rows
+
+
 def review(args):
     directory = args.experiment.resolve()
     if args.cosine_comparison and not args.ui:
         raise ValueError("--cosine-comparison requires --ui")
     if args.flagged_only and not args.ui:
         raise ValueError("--flagged-only requires --ui")
-    if args.only and not args.ui:
-        raise ValueError("--only requires --ui")
+    if args.case and args.only:
+        raise ValueError("--case and --only cannot be combined")
+    if args.from_experiment and (args.ui or any((args.case, args.only, args.role, args.verdict, args.comment))):
+        raise ValueError("--from-experiment cannot be combined with UI or a new judgment")
     if (args.view or args.node or args.ordering or args.check) and not args.ui:
         raise ValueError("--view/--node/--ordering/--check require --ui")
     if args.ordering and not args.cosine_comparison:
@@ -368,27 +445,25 @@ def review(args):
                 raise ValueError(f"review UI exited with {completed.returncode}")
             write(directory / "report.json", report(directory))
             return
-        if not all((args.case, args.role, args.verdict, args.comment)):
+        if args.from_experiment:
+            rows = _import_reviews(args.from_experiment, result)
+        elif not all((args.case or args.only, args.role, args.verdict, args.comment)):
             raise ValueError(
-                "recording review requires --case, --role agent|user, --verdict and --comment"
+                "recording review requires --case or --only, --role agent|user, --verdict and --comment"
             )
-        case = next((c for c in result["cases"] if c["id"] == args.case), None)
-        if case is None:
-            raise ValueError("unknown case")
-        engine._append_json_line(
-            directory / "reviews.jsonl",
-            {
-                "case_id": args.case,
-                "role": args.role,
-                "verdict": args.verdict,
-                "comment": args.comment,
-                "time": datetime.now(timezone.utc).isoformat(),
-                "input_sha256": case["input_sha256"],
-                "output_sha256": inputs.digest(case["output"]),
-            },
-        )
+        else:
+            selected = args.only or [args.case]
+            cases = {case["id"]: case for case in result["cases"]}
+            if len(selected) != len(set(selected)) or set(selected) - cases.keys():
+                raise ValueError("unknown or duplicate review case IDs")
+            rows = [dict(case_id=identifier, role=args.role, verdict=args.verdict,
+                comment=args.comment, time=datetime.now(timezone.utc).isoformat(),
+                input_sha256=cases[identifier]["input_sha256"],
+                output_sha256=inputs.digest(cases[identifier]["output"])) for identifier in selected]
+        for row in rows:
+            engine._append_json_line(directory / "reviews.jsonl", row)
         write(directory / "report.json", report(directory, include_request_preview=False))
-        print(f"Recorded {args.role} review for {args.case}. Model calls made: 0")
+        print(f"Recorded {len(rows)} attributed reviews. Model calls made: 0")
 
 
 def score_review(args):
@@ -413,6 +488,11 @@ def score_review(args):
 
 
 def add_commands(commands):
+    commands.choices["review"].add_argument("--from-experiment", type=Path, action="append",
+        help="import current attributed reviews of exact saved prompts, inputs and outputs; repeat for sources")
+    for action in commands.choices["review"]._actions:
+        if "--only" in action.option_strings:
+            action.help = "review these cases with one explicit judgment, or select cases in the UI (repeatable)"
     p = commands.add_parser('catalogue-hierarchies', help='version saved hierarchies and collect recorded parameters; no inference')
     p.add_argument('--source', type=Path, required=True)
     p.add_argument('--registry', type=Path, required=True)
