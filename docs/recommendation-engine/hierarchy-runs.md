@@ -6,9 +6,10 @@ experimental parameters. **HR05** is the completed 24-note rerun with a review U
 Each run's raw build, browsing menu and export share its ID.
 
 **HR08** has finished with a partial result: 23 of 24 notes, after eligible
-selection was exhausted. **HR09** completed with all 24 notes. **HR10** stopped
-with a provider-blocked partial result, 48 of 50 notes. No driver is running.
-Status checked October 12, 2026 at 15:17 UTC. Their fixed V2 parameters are
+selection was exhausted. **HR09** completed with all 24 notes. **HR10** resumed
+from its provider-blocked checkpoint with 48 of 50 notes represented.
+The new warmup and pending comparison succeeded; the same attempt counter is
+at 2,637/10,000 as of October 12, 2026 at 15:29 UTC. Their fixed V2 parameters are
 recorded below; native preparation pinned exact source
 commits, prompt hashes and input evidence before model requests.
 
@@ -31,7 +32,7 @@ They were registered later, so ID order is not generation order. The intervening
 
 | Parameter | HR08 | HR09 | HR10 |
 | --- | --- | --- | --- |
-| Status | Exhausted selection; partial, 23/24 notes | Complete, 24/24 notes | Provider-blocked; partial, 48/50 notes |
+| Status | Exhausted selection; partial, 23/24 notes | Complete, 24/24 notes | Resumed from provider-blocked checkpoint; construction running |
 | Notes | HR05's same 24, same order | HR05's same 24, same order | HR03's exact original 50-note AS selection order |
 | Run definition | [HR08](../../sse_multivector/hierarchy-runs/hr08/traversal.spec.json) | [HR09](../../sse_multivector/hierarchy-runs/hr09/traversal.spec.json) | [HR10](../../sse_multivector/hierarchy-runs/hr10/traversal.spec.json) |
 | Prepared provenance | [HR08](../../../oracle-mvp-hierarchy-hr08-v2/target/hierarchy-hr08-v2-24-note-v1/prepared-provenance.json) | [HR09](../../../oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/prepared-provenance.json) | [HR10](../../../oracle-mvp-hierarchy-hr10-v2/target/hierarchy-hr10-v2-50-note-v1/prepared-provenance.json) |
@@ -266,7 +267,21 @@ records exact native exports, the exporter commit and the existing HR05 viewer
 binary hash. No display placements were added; the original binary build commit
 remains unknown.
 
-## HR10 — ASv6.100 50-note V2, new prompts, resumable stopped checkpoint
+## HR10 — ASv6.100 50-note V2, new prompts, resumed
+
+The user authorized resume on October 12, 2026. The existing native driver
+resumed the original `trial` from frozen continuation commit
+`542d5697ccee1b85b28f3ded0a9e093c36de0c1b` and runner
+`e19592f9a6b0b3a2b3ac0bc63220156d86a0f1a7`. Saved code, prompts, selection,
+graph, answers and the 10,000-attempt counter remain fixed. It prepared a new
+native warmup child; the warmup and previously unrun comparison succeeded at
+2,637 attempts. Construction continues. The
+[resume provenance](../../../oracle-mvp-hierarchy-hr10-v2/target/hierarchy-hr10-v2-50-note-v1/resume-20261012-v1-provenance.json)
+and [native resume log](../../../oracle-mvp-hierarchy-hr10-v2/target/hierarchy-hr10-v2-50-note-v1/resume-20261012-v1.log)
+retain this continuation. The prior checkpoint, cost reports and review UI
+below remain unchanged; later outcomes will be saved separately.
+
+### Preserved stopped checkpoint
 
 Stopped October 12, 2026 with native graph status `constructing` and execution
 status `blocked`. The final comparison cache warmup, batch `00443`, failed twice
@@ -277,7 +292,8 @@ Native resume can prepare a new warmup child while preserving the exhausted
 child's two failed attempts, the current graph and the same attempt counter.
 There are 7,365 attempts remaining. The stopped checkpoint is preserved, while
 HR10's final immutable catalogue binding is deferred to allow continuation under
-the same run ID. No resume has been started.
+the same run ID. Resume has now started as recorded above; all measurements
+below describe the preserved pre-resume checkpoint.
 
 | Measurement | Saved result |
 | --- | --- |
