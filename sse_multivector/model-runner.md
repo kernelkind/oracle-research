@@ -1792,7 +1792,20 @@ validates seven fresh calls including one eligible DCS warmup, no reuse,
 retry or failure, and a 58.39-second generation span. Prompts and source
 bindings remain unchanged; no new semantic rule or prompt edit is adopted,
 and further votes do not supply semantic ground truth. Supplying the trusted
-example to both prompts is proposed for review before another focused test.
+example to both prompts is subsequently authorized and tested below.
+
+The [trusted payment example trial](distillation-review-v1/README.md#trusted-payment-example-prompt-trial-october-11)
+adds identical source-grounded precedent to experimental **DCSv2/DSLv11**
+through pinned native revisions. Six fresh complete outputs pass full-output
+agent audit; exact inputs, evidence, settings, schemas and cache boundaries
+retain parity. The DCS prefix grows to 1,285 tokens with a new native key; DSL
+remains uncached. Generation takes 49.47 seconds. Native accounting records
+eight attempts including warming and one recovered socket failure, with no
+reuse or unfinished case. Missing failed-call usage keeps total API-equivalent
+cost and aggregate cache savings unknown; known subtotal is $0.0866192.
+DCS's one-case warming adds $0.0029972 in net estimated cost. Production
+defaults and broader qualification remain unchanged. The experiment worktree
+is retained for source bindings; NGP/Investments interpretation remains open.
 
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,
