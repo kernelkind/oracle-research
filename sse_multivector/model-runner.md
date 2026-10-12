@@ -7857,3 +7857,14 @@ particular circumstances persist and a brand-scope reversal appears. V204 is an
 isolated V202 example ablation, not a stack of V203 changes: remove the first
 example's rejected-candidate opening while keeping its necessary coverage proof.
 The same frozen screen and fresh V202 reference remain the qualification basis.
+
+V204's example-opening ablation and V205's independent-route wording fail the
+unknown-route screen. V206 changes only the second example to demonstrate an
+unknown particular entity's membership; it also fails. A separate physically
+bounded surface panel removes the original pattern's design/content ambiguity.
+Both V202 and V206 correctly distinguish known paper from known steel but treat
+omitted surface material as exclusion in both orientations. This isolates an
+unresolved factual-qualification failure rather than certifying a negative label.
+No V196–V206 candidate is adopted; V179 remains the development reference.
+Native usage and source-quality qualifications are retained in the Compare
+findings, with historical allowance removal and scope limits unchanged.

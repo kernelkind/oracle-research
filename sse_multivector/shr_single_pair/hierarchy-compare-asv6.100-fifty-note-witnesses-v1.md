@@ -8089,3 +8089,31 @@ uncertain in exact reversals. They are synthetic, not new human gold, AS or
 Bootstrap outputs. Matched V202/V206 tests isolate factual membership treatment
 with clearer information scope; they do not retroactively certify the original
 pattern readings or turn omission into a negative judgment.
+
+### Physical-appearance matrix: missing fact treated as exclusion
+
+Both V202 and V206 complete all six comparisons. Both retain the four resolved
+Paper-covering and uncoated-Steel answers in their exact reversals; both answer
+neither for the two omitted-material comparisons. An independent input-only
+review, performed before reading these model outputs or expectations, accepts
+the three-way contrast: properties of an explicitly qualifying paper covering
+are covered, the bounded steel appearance escapes Paper and its production
+connection, and the particular surface's unstated material cannot be assigned
+to establish either coverage or exclusion. The inverse admits properties of an
+unrelated paper sheet in all three variants.
+
+The explicitly physical wording separates this failure from the original
+pattern's design/content ambiguity. The model still collapses absence of a
+proved direct-material connection into exclusion, despite closing only the
+production route. Known variants are contrasts, not evidence about the omitted
+variant's actual surface. These are provisional agent assessments of synthetic
+fixed meanings, not new human labels, AS links or Bootstrap producer outputs.
+V206's direct entity/elevation example does not repair this aspect-owner case.
+No failed candidate is adopted or expanded into broader qualification.
+
+The native aggregate source
+`hierarchy-compare-v206-physical-diagnostic-usage-v1.json` includes V206's original
+eight-case screen and both physical six-case panels: twenty valid comparisons,
+twenty-three fresh attempts including three warmups, no exact reuse, retry,
+failure or missing usage, and $0.117908 API-equivalent catalog cost. This is not
+a subscription charge. Preserve all original source fixtures and native exports.
