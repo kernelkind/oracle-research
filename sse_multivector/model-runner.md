@@ -228,6 +228,17 @@ revision tests and matched offline HR04 preparation pass; the 4,600-token
 prefix remains cache-eligible. No model qualification, adoption, Compare or
 hierarchy work occurred.
 
+The subsequent authorized [Bootstrap-v114 draft](shr_single_pair/Hierarchy-bootstrap-v114.md)
+revises boundary selection as well as expression from working v109. Shared
+conditions apply to each alternative, role/component admission specifies its
+qualifying kind, and checks cover unintended inclusion and exclusion within
+the chosen information topic. The final meaning must express the same scope
+without diagnostic supplementation. V113 remains the expression-only control;
+neither draft is model-qualified or adopted. Nine native revision tests and
+exact unchanged input/output/example checks pass. Offline preparation retains
+the two HR04 inputs and medium settings with a 4,689-token cache-eligible prefix;
+both cases are unrun. No calls, Compare changes or hierarchy work occurred.
+
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at
 `~/src/notedeck_worktrees/algos/experiment-runner`. All migrated project worktrees
