@@ -239,6 +239,26 @@ exact unchanged input/output/example checks pass. Offline preparation retains
 the two HR04 inputs and medium settings with a 4,689-token cache-eligible prefix;
 both cases are unrun. No calls, Compare changes or hierarchy work occurred.
 
+[Bootstrap-v115](shr_single_pair/Hierarchy-bootstrap-v115.md) is the subsequent
+authorized example-only draft from v114. It changes the Feedback anonymity
+resolution and justification to preserve the shared content condition across
+anonymous and identified responses. Inputs, final meanings, instructions and
+schema are unchanged. Nine revision tests and exact example/quote/hash checks
+pass. Offline preparation preserves the two HR04 inputs and medium settings;
+the 4,712-token prefix is cache-eligible and both cases are unrun. No inference
+or adoption occurred. V114 remains the matched control for
+the example change.
+
+[Bootstrap-v116](shr_single_pair/Hierarchy-bootstrap-v116.md) corrects only the
+Feedback anonymity answer: the anonymity decision comes first, followed by
+the shared content condition. Nine revision tests and exact example/schema/
+quotation checks pass. The [official-guidance audit](shr_single_pair/bootstrap-current-as-qualification.md#bootstrap-v116-direct-answer-and-official-guidance-audit)
+records two untested clarity risks: the method-detail prohibition and repeated
+scope rules. Offline preparation preserves both HR04 inputs and medium settings
+with a 4,719-token cache-eligible prefix; both cases remain unrun. Broader edits
+and model qualification remain open; no calls or
+adoption occurred.
+
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at
 `~/src/notedeck_worktrees/algos/experiment-runner`. All migrated project worktrees
@@ -1900,9 +1920,17 @@ also passes all nine full-output audits, using the same inputs, prompts and
 cache policy. Its three concurrent groups finish in 19.054 seconds; ten fresh
 attempts cost $0.055674, 45.36% below matched xhigh and 10.98% below high.
 There are no retries, failures, reuse, missing usage or cached tokens. Medium
-is the lowest tested passing effort on this limited panel; the next comparison
-is low before expanding it. Matching/support and broader qualification remain
-open, and production defaults stay unchanged.
+passes this limited panel; the following low comparison completes the effort
+descent before expansion. Matching/support and broader qualification remain
+open, and production defaults stay unchanged. The subsequent [low comparison](distillation-review-v1/README.md#low-comparison-on-the-frozen-coverage-controls)
+also passes all nine full-output audits and all 44 candidate rejection reasons.
+Three concurrent groups finish in 18.087 seconds; ten fresh attempts cost
+$0.054944, 46.07% below matched xhigh and only 1.31% below medium. Inputs and
+cache policy remain identical; cached tokens, retries, failures, reuse and
+missing usage remain zero. Low is the lowest passing level tested on this
+limited panel. The next test expands to four complete answers with more
+positive placements and missing restrictions; broader qualification and
+production defaults remain unchanged.
 
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,

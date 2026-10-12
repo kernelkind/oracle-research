@@ -3679,3 +3679,77 @@ witnesses and four nonfood controls. Independent reviewers should assess final
 meanings before reading diagnostics, preserving original evidence and judging
 both unintended inclusion and lost legitimate coverage. That proposal has not
 been prepared or run beyond the two-case offline mechanical check above.
+
+### Bootstrap-v115 shared-condition example draft
+
+The user approved refining the Feedback example to teach v114's shared-condition
+rule. [Bootstrap-v115](Hierarchy-bootstrap-v115.md) is a hash-pinned native
+revision of v114, changing only the anonymity resolution's answer and brief
+justification. Anonymous and identified responses retain the same communicated
+views, evaluations or suggestions about an activity or experience. A slip or
+spoken remark qualifies through that content, rather than its form alone.
+
+Both example inputs, the Feedback final meaning, the glass-negative example,
+all instructions and the output contract are byte-identical to v114. A read-only
+review found no unsupported post claims or changed final scope. Nine native
+revision tests, exact two-string replacement/hash checks, parsed example outputs
+and all evidence quotations pass. Native offline preparation retains both
+HR04 inputs and medium settings, with a locally cache-eligible 4,712-token prefix.
+Both cases remain unrun in `target/bootstrap-v115-example-draft-v1/prepared`.
+No model calls, qualification, adoption,
+Compare changes or hierarchy construction occurred. V114 remains available to
+isolate the effect of this example change in subsequent matched testing.
+
+### Bootstrap-v116 direct answer and official-guidance audit
+
+The user found that v115's anonymity resolution described feedback without
+directly answering whether anonymity is required. The authorized
+[Bootstrap-v116 draft](Hierarchy-bootstrap-v116.md) changes only that answer:
+it first says feedback may be anonymous or identified, then preserves the shared
+content condition. All instructions, both inputs, final meanings and other
+example fields remain byte-identical to v115. No broader prompt change is
+approved by this audit.
+
+The audit uses the fetched official [reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices#how-to-prompt-reasoning-models-effectively)
+and [prompt-engineering guidance](https://developers.openai.com/api/docs/guides/prompt-engineering).
+Their relevant recommendations are direct instructions, clear delimiters,
+closely aligned examples, concrete output requirements and measured evaluations.
+They do not establish this task's semantic boundaries or prove the proposed
+scope checks improve generation. Two independent read-only reviewers assessed
+the complete prompt against those recommendations.
+
+The Markdown sections and XML delimiters separate rules, examples and input.
+The four-field JSON contract specifies null and empty-array behavior, exact
+post quotations and concise diagnostics rather than a reasoning trace. Both
+examples preserve valid selected entries, complete root trees and the intended
+output schema. All six evidence quotations are exact post excerpts. The
+examples teach different mechanisms: broader category interpretation and
+preserving restrictions despite a grouped descendant.
+
+Two wording risks remain hypotheses, not demonstrated model failures:
+
+- Line 22 prohibits adding method details, while lines 36/48 require defining
+  actions and methods. The existing distinction between defining features and
+  further restrictions helps, but explicitly limiting the prohibition to
+  non-defining details would make the instruction clearer.
+- Lines 16/28/34/38 repeat identity and scope-preservation rules. They could be
+  consolidated for brevity. The condition-selection check at line 40 and
+  standalone-expression check at line 50 serve different purposes and should
+  survive any simplification.
+
+Qualification should also exercise empty diagnostics and null meanings using
+saved regressions; neither example demonstrates those modes. The 21-entry
+Feedback tree adds fixed-prefix input, but it is a complete approved source
+tree and no observed failure implicates its length. Do not prune it or add
+repetitive examples on the strength of this audit alone. Model identity and
+settings must remain bound in future native trials; prompt review is not
+empirical qualification.
+
+Nine native revision tests and exact single-string replacement/hash, schema,
+tree and quotation checks pass. Native offline preparation retains both HR04
+inputs and medium settings; the 4,719-token prefix is locally cache-eligible.
+Both cases remain unrun in `target/bootstrap-v116-guidance-audit-v1/prepared`.
+No model calls, adoption, Compare changes or
+hierarchy construction occurred. The next proposed wording change is to
+clarify the method-detail prohibition, followed by matched qualification of
+the chosen version rather than further untested rule accumulation.
