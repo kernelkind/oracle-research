@@ -7649,3 +7649,29 @@ comparisons records twenty fresh attempts including two warmups, eighteen valid
 responses, zero reuse/retry/failure/missing usage and $0.109524 API-equivalent
 cost. This is catalog accounting, not a subscription charge. The retired attempt
 counter remains unchanged; no replacement attempt allowance is imposed.
+
+### V197: the child's own admitted information
+
+[Experimental V197](Hierarchy-compare-v197.md) retains V196's independent
+interpretation and connection rules. It replaces the directional operational
+requirement with complete child-information coverage, including information
+admitted through the child's own connections. The question and counterexample
+paragraphs allow such admitted information rather than requiring the candidate
+to instantiate the child's kind or perform its activity. The full-coverage proof
+and the synthetic service example are aligned with that obligation. This is one
+semantic mechanism with aligned diagnostics/example wording, not a single-line
+causal ablation. Neither the Food nor Paper labels are specified in the prompt.
+
+The change does not expand a node through arbitrary associations or import
+counterpart facts. Both nodes apply the existing connection conditions
+independently. The experimental hypothesis is that this prevents proving coverage
+from only a child's defining material/activity while ignoring its own admitted
+information. First test the same twelve triad inputs, then retain the frozen
+thirty-two-case controls/probes. Reduced settled contradictions alone, all-neither
+answers or increased uncertainty do not qualify adoption. Earlier original labels
+and producer meanings remain unchanged.
+
+Official reasoning guidance favors direct task instructions and closely aligned
+examples, not requested reasoning traces; it does not certify this semantic
+contract. V197 still requests concise task diagnostics under the unchanged A/B
+input and four-field output schema.
