@@ -4467,3 +4467,75 @@ existing v14 Food draws supply their frozen baseline. This directly compares the
 simple and component-role examples on the omission case and checks that the
 candidate still rejects equivalent-parent proposals. No new preparation or
 inference for that screen is undertaken here; all earlier caps remain exhausted.
+
+## HR05 consolidation audit and v16 regression screen
+
+The user asks to inspect HR05, corrects the agent's inclusion of hierarchy depth
+as a consolidation failure, and approves an audit followed by tests of v16 on
+clear cases. Consolidation is evaluated only on one coherent proposed title and
+meaning, full containment of every selected fixed sibling meaning, complete
+selection of covered siblings, a proper subset of at least two siblings, and
+strict containment beneath the supplied parent when present. Accumulated path
+length and construction policy are outside this assessment.
+
+HR05 uses its own saved Consolidation-v4, not this task's current draft. Its 15
+proposals comprise seven placed and eight held: six for unestablished nominated
+containment and two for uncertainty. All 15 producer outputs and 109 saved
+validation outputs match native `final_output_raw`, for 124 exact output checks.
+ASv6.100 provenance comes from HR05's frozen 24-note definition and corpus. No
+historical output, fixed canonical meaning or graph is changed by this audit.
+
+The first clear restriction error is batch 26. Its Food resources proposal
+requires human consumers for edible materials and producer organisms but selects
+Food C009, whose meaning requires nourishment or enjoyment without a human
+consumer restriction. Food prepared for an animal satisfies that child meaning
+without satisfying either human-purpose alternative of the proposal. Other
+rejections involving customary meanings of culinary liquid or an additional
+nourishment/enjoyment requirement remain separate diagnostic questions; the
+historical comparison label alone does not establish their correctness.
+
+Batch 91 proposes Material resources, including organisms suitable as means for
+practical tasks, and selects Equipment C028 and Nutritional resources C034.
+Comparison in batch 92 additionally covers MrBeast C025: his video-creator role
+establishes a human organism's suitability for a practical task, with no supplied
+resource-role or nonhuman condition. Under that broad literal proposal, omission
+of C025 is inconsistent with complete child selection. This is an agent assessment
+of the supplied wording, not new human gold. A later proposal that requires a
+particular resource role can exclude him if his fixed meaning does not establish
+that role. Do not force the old broad topic or its child list.
+
+Batch 34 supplies the successful Heat-producing appliances control: its final
+meaning covers Rocket stoves C001 and Crockpots C012, including cooking and
+space-heating alternatives and incorporated appliance units. The food and brand
+siblings do not acquire an appliance identity from association.
+
+The native regression sources are exact `consolidate` cases from HR05 batches
+26, 91 and 34, all beneath
+`../oracle-mvp-hierarchy-hr05-twenty-four-note-v1/target/hierarchy-hr05-twenty-four-note-v1/trial`.
+Their producer record SHA-256 values are respectively
+`17ca152a05bb30e9a936c15e18d99a8658366466831b0a3891e1ea889db63732`,
+`0536cad7f082db729537bedfc59f2e5cc797c67ac9512b521acee6d09cd50e81`,
+and `40b4e1690ba4b99d3cdb408415173883dface690e0a9dad9b94bcc26bf900310`.
+
+Pre-call assessment: compare each proposed meaning with every complete supplied
+sibling meaning, allowing a coherent different topic and child list. Reject any
+selected child missing a required consumer, role, purpose or state; reject an
+omitted wholly covered child. For Material resources, resolve MrBeast from the
+new proposal's actual conditions. For Food, do not silently add a human consumer
+restriction to C009. A valid alternative grouping is assessed on its own. Null
+provides no positive grouping and does not prove none is possible. The heating
+input is a known available positive control; selecting another valid grouping
+leaves that particular appliance control unexercised.
+
+The approved small-test scope is bounded at 12 actual GPT-6.1 Sol medium
+subscription attempts: two independent draws per input, including six automatic
+prefix warmups, failures and retries. The native counter is
+`target/canonical-shaping-selection-v1/consolidation-v16-hr05-budget-v1.json`;
+all exhausted earlier counters stay unchanged. At most three one-case runs from
+this task execute concurrently. Native `prepare --from --only consolidate`
+preserves complete input bytes and saved baseline outputs, replaces only the
+prompt with unchanged v16 and selects main's shared worker. Native `--repeat`
+creates the second draw. No Bootstrap/Compare inference, prompt edit, hierarchy
+construction, UI refresh or agent communication is included. The source and
+[usage selection](shr_single_pair/hierarchy-consolidation-v16-hr05-usage-v1.json)
+remain isolated in the user's requested task worktree.
