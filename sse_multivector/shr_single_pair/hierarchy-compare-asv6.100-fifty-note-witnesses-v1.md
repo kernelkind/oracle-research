@@ -7735,3 +7735,66 @@ are separately labeled synthetic diagnostics, not producer outputs, source
 hierarchies, human gold or future prompt examples. All individual labels stay
 unresolved. Test V197 on these new inputs as a matched reference and V199 on the
 unchanged twelve triad cases before wider qualification.
+
+### V199 result and independent counterexample qualification
+
+All twenty candidate responses validate. Both synthetic triads now return
+reciprocal neither for kind versus complete processing activity and kind versus
+equipment, preserving the two useful activity-to-equipment containments. No
+settled reversal or chain contradiction remains in this draw. The four functional
+pump responses are supported: their whole information scope concerns a narrowly
+specified paper-production function; no achieved use or successful outcome is
+assumed. This is a bounded improvement, not general adoption.
+
+Independent review flags all four decorative exclusion proofs. The input rules
+out a production connection, but the particular pattern's material is unspecified;
+a cellulose-paper exterior label or covering remains a possible Paper-property
+connection. Missing particular facts cannot be assigned to exclude that route.
+V197's intended-forward null correctly identifies it. V199's reciprocal neither
+answers therefore are unsupported exclusion proofs with unresolved membership,
+not four certified negatives or certified opposite labels. The source and
+outputs remain unchanged. Native attributed reviews record this qualification.
+
+One additional definite failure is diagnostic binding: paper-process-equipment-
+reverse labels its B-covers-A proof A_contains_B and its B-outside-A counterexample
+B_contains_A, while the final relation correctly says B_contains_A. Native review
+rejects this direction mismatch without imposing another semantic label. Correct
+final labels alone do not establish correct diagnostic questions and answers.
+
+The matched V197 aspect reference has four supported functional positives,
+intended-decoration uncertainty versus neither, and reciprocal actual-decoration
+positives. The latter use actual production role to import an unrelated aspect.
+Thus material incompleteness and role/scope transfer must be separated. These
+are two single draws, not a measured reliability or causal frequency.
+
+A deeper independent recheck also qualifies earlier original grip/handhold
+reasoning. The child still requires handles, not every steel/brass gripping
+interface. The parent says handhold, not necessarily current human access.
+Enclosure or tiny size alone need not remove a designed handhold function, and
+a robotic handhold remains a supported reading. Both universal coverage and
+the reverse machine-only exclusion need qualification. The unchanged original
+remains an unresolved interpretation probe with inconsistent settled responses;
+the separate explicit-human controls provide no missing original restriction.
+This corrects agent interpretation, not producer strings, historical receipts
+or user decisions.
+
+### V200: complete parent-route exclusion
+
+[Experimental V200](Hierarchy-compare-v200.md) retains V199 and changes only
+the unresolved-outcome paragraph. An unknown particular fact deciding another
+parent alternative/connection prevents exclusion; escaping the connection named
+in the question does not establish escaping the whole parent scope. This keeps
+all frozen diagnostic inputs intact and does not prescribe a Paper membership
+label or expand arbitrary associations. General-child hypothetical cases remain
+permitted. Test the same twenty candidate inputs and retained explicit controls,
+then qualify complete frozen producer chains; uncertainty that closes a real
+missing fact is distinct from blanket uncertainty inflation.
+
+Independent preflight qualifies V200's unrun wording: an unstated fact can still
+be necessarily implied and usable. [Experimental V201](Hierarchy-compare-v201.md)
+increments the edit and changes that condition to an unknown fact, using the
+existing distinction between necessarily implied facts and facts that remain
+unknown. V200 is preserved as an unrun draft; V201 is the actual next candidate.
+The three V197/V199 production experiments use thirty-one fresh attempts,
+twenty-eight valid comparisons, zero reuse/retry/failure/missing usage and
+$0.2409708 API-equivalent cost, not a subscription charge.
