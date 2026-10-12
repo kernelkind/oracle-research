@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v203-particular-case-screen": [
+      "../../target/compare-v203-particular-case-screen-v1/aspect",
+      "../../target/compare-v203-particular-case-screen-v1/attention",
+      "../../target/compare-v203-particular-case-screen-v1/handhold",
+      "../../target/compare-v203-particular-case-screen-v1/preservation"
+    ],
+    "v202-matched-fresh-reference": [
+      "../../target/compare-v202-particular-case-reference-v1/aspect",
+      "../../target/compare-v202-particular-case-reference-v1/attention"
+    ]
+  }
+}

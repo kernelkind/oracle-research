@@ -7934,3 +7934,33 @@ unknown-route treatment in all four decorative comparisons, retained functional
 and resolved controls, and no invented facts in particular-attention diagnostics.
 More nulls or reciprocal labels alone do not qualify V203. No Bootstrap work,
 new prompt examples, hierarchy placements or external agent messages follow.
+
+### V203 result and aligned positive-example ablation
+
+All twenty V203 and ten matched fresh V202 responses validate. Each aspect arm
+recognizes the unknown direct Paper connection in only one of four decorative
+comparisons, in different orientations. Both retain the four functional
+positives. V203 retains all six resolved handhold labels and two approved
+MrBeast positives, but its particular-brand pair changes from forward null to
+reverse coverage by treating the design-brand illustration as unconditional.
+Both attention directions still invent remembered content/circumstances.
+V203 fails qualification; the scope split does not demonstrate a repair.
+The exact deictic author meaning remains preserved; no invented scenario becomes
+source evidence or new gold. Thirty-six fresh attempts include six warmups,
+zero reuse/retry/failure/missing usage and $0.2134176 API-equivalent cost.
+
+Experimental V204 returns to V202 rather than stacking the unsuccessful V203
+intervention. It changes only two aligned fields in the first example: replace
+its chemical-only candidate question with an open counterexample question, and
+remove the initial rejected-candidate sentence from its answer. The existing
+necessary whole-coverage proof remains unchanged. This tests whether the example's
+rejected-child-case opening anchors the invalid failed-search-to-coverage
+shortcut. It is a hypothesis, not a demonstrated mechanism; earlier zero-shot
+and report-order ablations remain negative precedents.
+
+Use the same twenty-case screen and unchanged means/settings/schema. Require
+correct particular unknown-route treatment, preserved resolved positives and
+negatives, unchanged particular-brand uncertainty and diagnostics without
+invented particular facts. The fresh ten-case V202 reference is preserved; do
+not present retained labels or an isolated null as repair. Any promising change
+requires fresh confirmation and broader qualification before adoption.

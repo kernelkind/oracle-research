@@ -7848,3 +7848,9 @@ an experimental scope-specific counterexample-selection diagnostic: it separates
 hypothetical general cases from fixed particular facts without changing the
 information convention or four-field schema. Native fresh reference draws and
 proof review are required; neither version is adopted.
+
+V203 fails its twenty-case screen: no demonstrated unknown-route gain, invented
+particular circumstances persist and a brand-scope reversal appears. V204 is an
+isolated V202 example ablation, not a stack of V203 changes: remove the first
+example's rejected-candidate opening while keeping its necessary coverage proof.
+The same frozen screen and fresh V202 reference remain the qualification basis.
