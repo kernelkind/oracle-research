@@ -10,7 +10,7 @@ accepts and two unresolved assessments. Fixed-proposal coverage diagnostics
 repeat the two clear failure mechanisms; v17 remains experimental and unapplied.
 See [the completed v17 screen](#completed-v17-hr05-screen).
 
-The current user-authorized diagnostic is
+The preceding user-authorized diagnostic is
 [Audit-v3](shr_single_pair/Hierarchy-consolidation-audit-v3.md), comparing the
 same fixed proposals with and without their previous child lists. Four fresh
 answers correct the targeted Food C009 selection only when that list is omitted;
@@ -18,6 +18,13 @@ the MrBeast omission remains in both conditions. The nomination-free Food list
 also retains a qualified Beets scope error, so neither complete list is cleared.
 One draw per condition does not establish an anchoring effect. See
 [the controlled nomination test](#audit-v3-previous-nomination-contrast).
+
+The current user-authorized diagnostic is
+[Audit-v4](shr_single_pair/Hierarchy-consolidation-audit-v4.md), requesting one
+coverage decision and short decisive justification per sibling on the same
+nomination-free fixed proposals. Coverage instructions remain byte-identical
+to v3; only the output contract changes. See
+[the justification diagnostic](#audit-v4-per-sibling-justifications).
 
 The preceding user-authorized tested candidate is
 [Hierarchy-consolidation-v16](shr_single_pair/Hierarchy-consolidation-v16.md).
@@ -4932,3 +4939,59 @@ before changing the main consolidation instructions. This is a proposed future
 test, not a request for private reasoning traces, an implemented prompt or an
 additional model-call authorization. The current screen does not establish that
 another generic scope reminder would address the remaining errors.
+
+## Audit-v4 per-sibling justifications
+
+The user approves the next proposed diagnostic. Audit-v4 retains all Audit-v3
+task, input and coverage instructions byte-for-byte, replacing only its output
+paragraph. Each supplied sibling receives an `id`, `decision` (`include`,
+`exclude` or `uncertain`) and one short `justification` naming the decisive
+condition in the supplied meanings. There is no redundant overall child list,
+new definition or requested reasoning trace. Per-sibling uncertainty replaces
+the earlier whole-list null response. Audit-v4 SHA-256 is
+`cd6c6f14645cc22e5c5f0f708302905dd6624868efa1fe50e2759d8bf5181c01`.
+Native `revise` pins the historical experimental Audit-v3, preserving its bytes.
+
+The [native spec](shr_single_pair/hierarchy-consolidation-audit-v4-hr05.spec.json)
+uses the same original Food-first and Material-repeat producer references and
+the existing nomination-free source. No model input is manually assembled.
+Parent, complete sibling group/order, proposed title/meaning and producer
+receipts remain unchanged. The new
+[schema](shr_single_pair/Hierarchy-consolidation-audit-v4.output.schema.json)
+requires the three fields for each assessment; exact sibling completeness and
+decision quality are separately checked against the frozen input. Existing
+source-bound preparation and schema validation suffice; there is no new runner
+code, adapter or production validation stage.
+
+The production CLI test is written first and fails on the absent versioned
+prompt. After the prompt/schema are added, it prepares the saved proposal with
+the earlier nomination omitted, retains its exact producer receipt, executes
+through the existing worker protocol and reads back the per-sibling answer.
+The source protection tests remain required. Fixture answers test mechanics,
+not semantic correctness.
+
+Pre-call questions: does Food C009 receive a human-consumer restriction it does
+not state; does the Beets plant alternative receive that restriction; and does
+MrBeast C025 get excluded by an unstated food-production requirement despite
+the proposal's broader nourishment-capability alternative? Interpretations of
+Chicken stock remain unresolved. These are bounded agent review questions,
+not added model input or human gold. A changed decision under the expanded
+output contract cannot establish why the earlier answer was produced; the saved
+justification is evidence of this response's stated interpretation.
+
+OpenAI's [reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices)
+supports direct instructions and avoiding requested reasoning traces. The
+diagnostic requests a concise decision justification, without adding examples,
+procedural reasoning steps or real-case hints. This does not establish the
+particular semantic rule as correct.
+
+This screen has two cases and a **four-attempt ceiling including provider
+retries**, GPT-6.1 Sol medium/SSE, no warmups or prefix-cache experiment. The new
+persistent counter is `consolidation-audit-v4-hr05-budget-v1.json`; all previous
+counters remain unchanged. The
+[native usage selection](shr_single_pair/hierarchy-consolidation-audit-v4-hr05-usage-v1.json)
+retains these diagnostic calls separately. Both cases are prepared but unrun at
+this checkpoint. This is a bounded prompt-development diagnostic on two saved
+groups, not a proposed per-node production step or full-corpus scan. Main is
+already synchronized at `ebc61d21`. The expressly isolated task does not modify
+the main consolidation prompt, hierarchy, UI or another agent's worktree.

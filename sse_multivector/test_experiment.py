@@ -263,6 +263,45 @@ class ExperimentTests(unittest.TestCase):
         self.assertEqual(json.loads(answer['output']), dict(children=['C0', 'C1', 'C2']))
         self.assertEqual(self.show('E1', '--case', 'group')['receipt'], original['receipt'])
 
+    def test_consolidation_justifications_preserve_nomination_free_proposal(self):
+        self.consolidation_spec(parent='P')
+        self.prepare()
+        proposal = dict(title='Equipment', meaning='Equipment used in preparation.',
+                        children=['C0', 'C1'])
+        self.cli('run', 'E1', env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(proposal)})
+        original = self.show('E1', '--case', 'group')
+        envelope = self.root / 'E1/experiment.json'
+        self.write('justification-source.json', dict(schema_version=1,
+            include_nomination=False, proposals=[dict(experiment=dict(path='E1',
+                sha256=hashlib.sha256(envelope.read_bytes()).hexdigest()), case='group')]))
+        prompts = CLI.parent / 'shr_single_pair'
+        text = (prompts / 'Hierarchy-consolidation-audit-v4.md').read_text()
+        fixture = self.root / 'justification-prompt.md'
+        fixture.write_text('GENERIC PROMPT\n' + text)
+        spec = json.loads(self.spec.read_text())
+        spec['prompt'] = dict(id='Hierarchy-consolidation-audit-v4', path=str(fixture))
+        spec['dataset'] = dict(adapter='canonical_consolidation_review',
+                               path='justification-source.json')
+        spec['runner']['output_schema'] = json.loads(
+            (prompts / 'Hierarchy-consolidation-audit-v4.output.schema.json').read_text())
+        path = self.write('justification-spec.json', spec)
+        self.cli('prepare', 'justifications', '--spec', path)
+        case = self.show('justifications')['cases'][0]
+        expected = {**json.loads(original['inputs']['INPUT_JSON']),
+                    'proposal': dict(title=proposal['title'], meaning=proposal['meaning'])}
+        self.assertEqual(json.loads(case['inputs']['INPUT_JSON']), expected)
+        self.assertEqual(case['evidence']['proposal_receipt'], original['receipt'])
+        self.assertEqual(len(self.calls()), 1, 'preparation makes no calls')
+        answer = dict(assessments=[dict(id=f'C{i}', decision='include' if i < 2 else 'exclude',
+            justification='The required equipment role is present.' if i < 2 else
+                          'The meaning admits information outside the equipment role.')
+            for i in range(7)])
+        self.cli('run', 'justifications', env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(answer)})
+        saved = self.show('justifications')['cases'][0]
+        self.assertEqual(saved['status'], 'valid')
+        self.assertEqual(json.loads(saved['output']), answer)
+        self.assertEqual(self.show('E1', '--case', 'group')['receipt'], original['receipt'])
+
     def test_consolidation_review_rejects_null_and_changed_producer_references(self):
         self.consolidation_spec()
         self.prepare()
