@@ -7294,7 +7294,8 @@ answer reuses, and one recovered retry whose failed attempt lacks usage.
 $0.5447196 is only the known API-equivalent subtotal. Complete cost and aggregate
 completion remain unknown/incomplete; neither missing usage nor unrun cases
 are counted as free success. Shared allowance reads exactly 20,000/20,000.
-No further inference is authorized under that exhausted allowance.
+Inference stopped at this checkpoint; the subsequent user authorization below
+removes the model-call cap for continued Compare qualification.
 
 V179 remains the approved development baseline with its known failures. V187–V191
 are preserved experimental candidates; V191's remaining gate, unchanged fresh
@@ -7302,3 +7303,53 @@ repeat and broader frozen-input qualification are incomplete. No Bootstrap
 meaning, original producer output, hierarchy, UI or owner message is changed.
 The task worktree is retained because native receipts, pinned producer paths
 and frozen experiment source bindings require it.
+
+### User-authorized continuation without a model-call cap
+
+The user explicitly says "remove the allowance. proceed" after the proposed
+completion/repeat/broader-qualification process. The old persistent counter is
+preserved at 20,000/20,000 as historical evidence. Subsequent shared-runner calls
+omit that cap; native receipts still record every dispatch, failure, retry and
+warmup. The project monetary ceiling and Compare-only ownership remain intact.
+No Bootstrap/hierarchy work or outgoing owner message is added.
+
+The completed V191 panel has all eighteen valid outputs: six smoke-device controls
+and both approved MrBeast positives survive; five HR05 pairs have reciprocal settled
+labels and zero conflicts. Brand has a positive/unknown split: one answer treats
+"design brand" as necessarily commercial while the reverse treats commercial
+operation as customary and unstated. Neither answer imports actual product facts.
+This is a premise instability on an unresolved lexical boundary, not a settled
+negative reversal or new semantic gold.
+
+The unchanged fresh eighteen-case repeat preserves all six controls, both MrBeast
+positives and Equipment's reciprocal neither. Brand is unknown in both directions.
+Restaurant has one settled reversal: one answer treats restaurants serving
+customers as necessarily commercial, while the other admits a wholly charitable
+free-meal restaurant. Both questions name the commerce boundary; question specificity
+alone has not established reliability. Original restaurant expectations remain
+null. The small gate fails and the broader fifty-case panel is not dispatched.
+
+Independent reviews retain Equipment's coordinated modifier qualification,
+Bread's food-kind/intended-role qualification and the Food witnesses' consumer
+scope. In particular, real paraffin cannot simply be declared incapable of
+providing nourishment to every possible consumer; microbial uptake versus
+"eating/drinking" remains unresolved. This does not force a changed pair label.
+Hypothetical nonnutritive preparations and actual consumer-specific claims are
+distinct kinds of evidence.
+
+Native exports preserve the pre-cap snapshots and add
+`target/compare-v191-intention-capability-v1/{hr05,controls}-complete-native.json`
+and `target/compare-v191-intention-capability-repeat-v1/{hr05,controls}-native.json`.
+The [completed/repeat aggregate](hierarchy-compare-v191-complete-repeat-usage-v1.json)
+records forty total attempts including the two historical pre-cap Equipment
+responses, thirty-six valid comparisons, four warmups, zero reuse/retries/failures/
+missing usage and $0.2630756 API-equivalent cost. Of those attempts, thirty-eight
+are newly dispatched after removal of the cap. No subscription charge is inferred.
+
+The [six explicit-commerce controls](hierarchy-compare-explicit-commerce-controls-v1.json)
+are separate synthetic variants, not new Bootstrap outputs. They preserve the saved
+restaurant wording and explicitly choose commercial operation, exclusively
+noncommercial operation, or both. Each is tested against the unchanged commercial
+parent in both directions. Expectations are provisional agent assessments outside
+input; the original restaurant pair remains unchanged and unresolved. These controls
+test whether Compare respects a resolved boundary before another prompt change.

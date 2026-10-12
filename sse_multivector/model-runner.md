@@ -7673,7 +7673,12 @@ boundary, but the remaining sixteen gate cases, fresh confirmation and broader
 qualification are unrun. Equipment's modifier-scope qualification remains;
 reciprocal answers do not establish new human semantic gold.
 
-The shared persistent counter reaches 20,000/20,000; inference stops. The
+The previous shared persistent counter reached 20,000/20,000 and inference
+stopped at that checkpoint. The user subsequently removed the call allowance
+and authorized continued Compare qualification. Preserve that historical counter;
+subsequent native runs omit its exhausted cap and still record all attempts.
+This does not change the project monetary ceiling or authorize Bootstrap or
+hierarchy work. The
 [native aggregate source](shr_single_pair/hierarchy-compare-v187-v191-gate-usage-v1.json)
 counts this loop's own 83 attempts, including eight warmups and one recovered
 retry, with seventy-four valid comparisons and zero exact reuses. One failed
@@ -7681,3 +7686,14 @@ attempt lacks usage: $0.5447196 is a known API-equivalent subtotal only, not a
 complete cost or subscription charge. Generated native receipts and unrun cases
 remain in the retained task worktree. No Bootstrap, hierarchy, UI or outgoing
 owner-message work is performed by this Compare loop.
+
+V191's completed eighteen-case panel preserves six synthetic controls and both
+approved MrBeast positives, with five settled reciprocal pairs and one unresolved
+brand pair. Its unchanged fresh repeat preserves those controls and Equipment's
+reciprocal answers, but has a Restaurant reversal: commerce is treated as necessary
+in one orientation and a wholly noncommercial restaurant is admitted in the other.
+Brand remains unresolved. V191 is not qualified; the broader fifty-case panel is
+held pending diagnosis. Separate explicit-commerce synthetic controls test resolved
+boundaries without replacing any original producer meaning or certifying an old
+label. Native aggregate definitions and detailed qualifications remain in the
+maintained gate record.
