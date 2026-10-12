@@ -7833,3 +7833,34 @@ merely raising null counts. Retain functional and activity/equipment positives
 and all resolved handhold controls. A matched fresh V201 aspect repeat separates
 sampling variation from a contrast with old outputs. Source metadata and earlier
 agent/user judgments remain outside the A/B model input.
+
+### Open-question result: no measured repair
+
+All thirty V202 responses and twelve matched fresh V201 responses validate.
+Both fresh aspect panels identify the unknown direct Paper-property route in
+one of four decorative comparisons and make unsupported exclusions in the
+other three. The correct null changes orientation: V202 intended-forward versus
+V201 intended-reverse. This does not demonstrate a procedure-induced improvement;
+variation remains visible. Functional positives, explicit handhold controls,
+MrBeast positives and particular-brand uncertainty are retained.
+
+An independent agent checks all forty-two responses and eighty-four diagnostic
+records: IDs are complete, unique and correctly assigned. V202 mixes broader
+questions with concrete candidates, both allowed by the simplified procedure.
+Some questions still foreground production; neither asking an open question nor
+repeating the full-exclusion requirement reliably checks the other route. This
+negative ablation result does not identify one offending word or certify the
+meaning of the unresolved decorative fixture.
+
+Broaden unchanged V202 to the original fifty-case frozen B109 producer panel as
+diagnostic qualification. Keep the eight currently provisional control pairs
+separate from seventeen open probes; do not restore withdrawn provisional
+expectations, stitch meanings from other draws or adopt the candidate based on
+reciprocity alone. This panel can reveal real producer-scope proof omissions
+beyond the synthetic fixture without another reminder edit.
+
+Native accounting for the six procedure-ablation experiments records forty-eight
+fresh attempts including six warmups, forty-two valid comparisons, zero
+reuse/retry/failure/missing usage and $0.272776 API-equivalent cost. The reference
+uses native --repeat and distinct responses; its twelve outputs are new samples,
+not reused baseline answers. No allowance or new attempt cap is imposed.

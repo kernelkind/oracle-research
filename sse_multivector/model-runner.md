@@ -7833,3 +7833,10 @@ usage and fresh/reuse distinctions are maintained in the
 The removed attempt allowance remains removed; retained monetary and task scope
 constraints still apply. No Bootstrap or hierarchy construction changes follow
 from integrating these experimental definitions.
+
+The completed V202 procedure ablation retains its controls but establishes no
+repair: both the candidate and fresh V201 reference identify the unknown Paper
+carrier in one of four decorative comparisons. Original inputs and all reviews
+remain preserved. V202 stays experimental and unqualified; the next diagnostic
+uses the unchanged single-producer fifty-case collection rather than another
+local wording reminder.
