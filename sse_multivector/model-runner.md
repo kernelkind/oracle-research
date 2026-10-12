@@ -1895,7 +1895,14 @@ cost falls from $0.101884 to $0.062544 (38.61%), with identical input tokens,
 no cached tokens and one warmup in each run. There are no retries, failures,
 reuse or missing usage. Matching premises remain at xhigh/mechanical settings;
 this small mixed-control comparison does not qualify minimum effort across
-all checks. The next comparison is medium on the frozen controls.
+all checks. The subsequent [medium comparison](distillation-review-v1/README.md#medium-comparison-on-the-frozen-coverage-controls)
+also passes all nine full-output audits, using the same inputs, prompts and
+cache policy. Its three concurrent groups finish in 19.054 seconds; ten fresh
+attempts cost $0.055674, 45.36% below matched xhigh and 10.98% below high.
+There are no retries, failures, reuse, missing usage or cached tokens. Medium
+is the lowest tested passing effort on this limited panel; the next comparison
+is low before expanding it. Matching/support and broader qualification remain
+open, and production defaults stay unchanged.
 
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,
