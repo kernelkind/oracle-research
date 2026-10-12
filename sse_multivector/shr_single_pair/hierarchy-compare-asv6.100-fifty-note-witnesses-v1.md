@@ -7388,3 +7388,41 @@ Brand labels remain unresolved. A lexical-premise change or additional uncertain
 is not automatically success; retained positive controls and proof validity matter.
 If promising, test all twenty-four HR05/smoke/commerce cases and an unchanged
 fresh confirmation before the separate fifty-case Bootstrap-only cohort.
+
+### V192 full-gate failure and V193 interpretation criterion
+
+The fresh matched six-case V191/V192 screen has the same labels and premises in
+both versions: Restaurant reciprocal positives, Brand uncertainty in both directions,
+and both approved MrBeast positives. V192 preserves the two explicit-commercial
+positive controls. There is no demonstrated causal improvement from the question
+change. All receipts and matched executable/input bindings pass independent audit.
+
+V192's complete twenty-four-case gate preserves all twelve synthetic controls and
+both approved MrBeast positives. It reuses eight exact screen answers and dispatches
+sixteen new comparisons plus three warmups. Food/Bread has a settled reversal:
+forward treats "food" as a nourishment-oriented identity supplying required intention;
+reverse admits display-only bread and says customary nutritional function does not
+supply intention. Producer strings, exact requests and reuses are verified; this is
+not output contamination. Original Bread semantic gold remains null. V192 fails and
+receives no fresh confirmation or broader fifty-case execution.
+
+Both independent reviewers diagnose an interpretation switch rather than a missing
+question boundary. The separate human-paraffin exclusion remains qualified because
+the parent supplies no explicit human-only consumer restriction. Closed-scope controls
+remain separate from these open kind/role boundaries.
+
+[Experimental V193](Hierarchy-compare-v193.md) retains V192 and replaces only its
+final ambiguity sentence. Necessary implications must hold across every supported
+reading compatible with the whole meaning; if coverage or a counterexample depends
+on choosing a reading, that direction is unresolved. The existing general-scope rule
+still says an omitted condition alone is not ambiguity. No preferred Bread/Restaurant
+label, consumer boundary or producer revision is imposed.
+
+The small screen preserves four original HR05 pairs in both orientations:
+Food/Bread, Restaurant/commerce, Brand/commerce and approved MrBeast positives.
+It additionally retains both explicit-commercial positives and both smoke-intention/
+intersection positives. All twelve comparisons use unchanged fixed inputs and
+existing native sources; no new Bootstrap generation is performed. Extra uncertainty
+on an ambiguous probe is useful only if its diagnostic identifies the material
+alternative readings. Loss of these six clear positives is a failure. No broader
+qualification is claimed from this screen.
