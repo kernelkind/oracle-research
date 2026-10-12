@@ -418,7 +418,7 @@ def add_commands(commands):
     p.add_argument('--registry', type=Path, required=True)
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--saved-only', action='store_true', help='rebuild the catalogue from retained records without discovering new outputs')
-    p = commands.add_parser('prepare-canonical-traversal', help='prepare the approved L1-first traversal policy; no inference')
+    p = commands.add_parser('prepare-canonical-traversal', help='prepare V2 prominence selection and traversal; no inference')
     p.add_argument('directory', type=Path)
     p.add_argument('--spec', type=Path, required=True)
     p.add_argument('--history-root', type=Path)

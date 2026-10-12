@@ -73,7 +73,11 @@ def audit_trial(directory, output, max_choices=6, work_budget=200000):
             seen.add(key)
         nodes[identifier] = row
         children[identifier] = []
-        direct[identifier] = {entry['note_id'] for entry in row['entries']}
+        displayed_notes = row.get('note_ids', [])
+        if (not isinstance(displayed_notes, list) or any(not isinstance(n, str) for n in displayed_notes)
+                or len(set(displayed_notes)) != len(displayed_notes) or set(displayed_notes) - selected):
+            raise ValueError('invalid display-only note references')
+        direct[identifier] = {entry['note_id'] for entry in row['entries']} | set(displayed_notes)
     for identifier, row in nodes.items():
         for parent in row['parents']:
             if parent not in nodes:
@@ -104,8 +108,8 @@ def audit_trial(directory, output, max_choices=6, work_budget=200000):
     equal_edges, proper_edges = [], []
     for parent in order:
         if not children[parent] and len(represented[parent]) > 1:
-            violations.append({'kind': 'multi_note_leaf', 'node': parent,
-                               'note_ids': sorted(represented[parent])})
+            choice_warnings.append({'kind': 'multi_note_leaf', 'node': parent,
+                                    'note_ids': sorted(represented[parent])})
         if len(children[parent]) > max_choices:
             choice_warnings.append({'kind': 'too_many_children', 'node': parent,
                                     'count': len(children[parent])})

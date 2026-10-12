@@ -1541,27 +1541,41 @@ runner's code-upgrade audit. It cannot authorize changing the corpus, prompts,
 schemas or frozen experiment inputs. Finish active experiments before changing
 their bound source. Saved meanings, decisions and native receipts are retained.
 
-The current constructor selects L1 roots first, then L2 and deeper local levels.
-At each level, rotate across notes in saved order, one entry per note per pass. Up to three searches
-can overlap on fixed graph snapshots; placements follow selection order.
-Before placement, account for graph changes and reuse only exact unchanged
-comparisons. Sharing a note does not exclude a canonical comparison. Mapped
-original-parent containment may follow from traversal or transitive inference;
-an unchecked or contradicted requirement holds the local entry without reopening
-a pruned branch.
+The current standalone constructor implements
+[hierarchy generation V2](hierarchy-generation-draft-v2.md). It independently
+establishes every original L1 meaning, then uses the unchanged PPv35 prompt to
+score each meaning against its full post. PPv35 inherits Bootstrap runner
+settings. All L1s scoring at least 50 are guaranteed; when none qualifies, only
+the highest is guaranteed, with saved order resolving ties. Rotate across notes
+and finish every guaranteed entry before considering completion. Failed scoring
+is unresolved evidence, never zero or permission for a partial fallback.
 
-The constructor implements restricted refinement after note
-coverage: deeper selections come only from notes represented by leaves
-containing multiple notes. The finished hierarchy must remove redundant steps
-with equal parent/child note sets and retain individual access with one note per
-leaf. The constructor and structural audit now check single-note leaves, even
-when the same notes are individually accessible elsewhere. Retain the deeper
-heading when a parent and child represent the same notes, reconnecting other
-branches through established ancestors. The saved `menu` is separate from the
-unchanged raw comparison graph; the audit and requested viewer export use it.
-Rebuild it as notes arrive, so a previously omitted heading can return when
-useful. Keep skipped local entries unused for later eligibility changes.
-Separate required L1 processing in the prominence draft is unchanged.
+For uncovered notes, process remaining L1s by prominence until each note is
+admitted; permit only one such fallback search per note in flight. Next give
+eligible local children matching existing canonical headings priority, including
+children of one-note parents. Their original immediate parent must be admitted
+and the matching canonical node must not yet represent that note. A heading
+match is eligibility only; every selected child follows ordinary traversal.
+When none qualifies, refine the largest unfinished multi-note canonical leaf
+from the immediate children of its original supporting entries, then nearer
+original descendants before farther ones. Use prominence within each note and
+rotate across notes, without a deeper 50-point cutoff. Reassess after placement
+and consolidation; process each original local entry at most once.
+
+Up to three local searches can overlap on fixed graph snapshots; placements
+follow selection order. Before placement, account for graph changes and reuse
+only exact unchanged comparisons. Sharing a note does not exclude a canonical
+comparison. An unchecked or contradicted mapped original-parent relationship
+holds the entry without reopening a pruned branch.
+
+The saved `menu` is separate from the raw comparison graph. For an equal-set
+single-child parent, retain the deeper heading. For a parent with multiple
+children, retain the parent and bypass equal-set children only on that browsing
+branch, exposing their children through transitive containment. Display-only
+`note_ids` preserve access through bypassed leaves without changing canonical
+`entries`. The audit and requested viewer use the menu. No equal-note-set check
+rejects an otherwise valid consolidation. Rebuild the menu from the original
+graph as support grows.
 
 Each selected local node receives an independently generated immutable meaning.
 Every comparison is local versus canonical with fixed meanings; its input
@@ -1577,7 +1591,7 @@ Producer reviews remain bound to native input/output hashes. The latest user
 verdict takes precedence over the latest agent verdict. A current rejection or
 uncertainty at a receiving experiment or an exact reused producer holds the
 entry. Output mechanics and graph checks do not establish semantic accuracy.
-See the [complete algorithm and preparation contract](hierarchy-traversal-draft.md).
+See the [V2 algorithm and preparation contract](hierarchy-generation-draft-v2.md).
 
 Use these offline commands after construction:
 
@@ -1591,27 +1605,22 @@ Use these offline commands after construction:
 
 Shaping can bypass redundant intermediates through witnessed transitive
 ancestry. Omission is not a negative relationship or an equivalence merge.
-Count a node's own supporting notes and recursive descendants, deduplicating
-note IDs. The approved finished-hierarchy conditions are all notes reachable
-individually,
-one distinct note per canonical leaf, and strictly smaller note sets on every
-downward edge. Individual access permits notes attached directly to a parent
-that also has children; it does not require one singleton canonical node per
-note. The current constructor checks individual access, single-note
-leaves and strict edges. Exhausted local inventory with a multi-note leaf reports
-unfinished construction. There is no
-additional requirement to find or apply every known regrouping or shortcut, or to conduct a
-final improvement review before stopping. Manage root and child choice counts
-on a best-effort basis; exceeding six is no longer a reason by itself to declare
-the hierarchy unfinished. The
-[constructor](hierarchy-traversal-draft.md) calls consolidation after an addition
-leaves six or more siblings. Its stopping-check timing remains provisional:
-check individual note access, single-note leaves and strict note-set narrowing after each placement
-and all triggered consolidation against the whole selected corpus. When both
-pass, stop dispatching new searches/comparisons and save already-dispatched
-answers without further graph changes. The constructor does not solve menu optimization
-automatically. A structural audit is neither semantic certification nor proof
-of optimality. Keep finished menus out of subsequent raw-trial preparation.
+Count original supporting notes plus recursive descendants, deduplicating note
+IDs. V2 finishes after all guaranteed L1s and coverage work, eligible heading
+matches, relevant multi-note-leaf descendants, placements and triggered
+consolidations are settled. Every note must remain individually accessible and
+every displayed edge must strictly narrow its distinct-note set. Exhausted
+multi-note leaves may remain with direct note access; separate singleton
+canonical nodes are not required. Unresolved scoring or missing coverage returns
+an unresolved outcome, not successful completion.
+
+Six siblings is a best-effort consolidation trigger, not a hard maximum. Null
+or a semantically invalid proposal leaves the triggering placement intact;
+an accepted synthetic addition can trigger another sibling check. There is no
+additional requirement to find every possible regrouping or prove globally
+minimal browsing depth. Offline tests exercise V2 through the native workflow;
+no V2 provider trial, semantic certification or measured cost saving is claimed.
+Keep finished menus out of subsequent raw-trial preparation.
 
 Candidate ranking is a bounded scan of at most 4,096 local rows and 64 ancestor
 headings. Comparison selection allows at most 512 eligible canonical nodes;
@@ -7206,7 +7215,7 @@ fixtures. Do not rerun model calls merely to add a preparation capability.
 
 `GraphSearch(nodes)` implements the agreed traversal directly, with no legacy
 mode, same-note filter, ranking shortlist or forced mapped-parent comparison.
-The [standalone constructor](hierarchy-traversal-draft.md) uses it for ordinary
+The [V2 standalone constructor](hierarchy-generation-draft-v2.md) uses it for ordinary
 local nodes and synthetic consolidation proposals. Historical scalability
 measurements remain in [the graph-search findings](canonical-graph-search-v1.md);
 they used the former traversal and do not measure the current constructor.

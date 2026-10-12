@@ -18,25 +18,54 @@ except ImportError:
 
 
 def finish_nodes(nodes):
-    """Bypass equal-note-set parents, retaining deeper nodes and their evidence.
+    """Remove repeated browsing steps without changing canonical evidence.
 
-    Other children reconnect to surviving ancestors, never to an equal sibling.
-    Rebuild from the raw graph so later note growth can restore a broad heading.
+    A single-child equal-set parent gives way to its more specific child.
+    A multi-child parent stays; equal-set children are bypassed on that branch.
+    Display-only note_ids preserve access through bypassed leaves; entries
+    remain the original canonical supports, never transferred evidence.
     """
     represented, children = canonical_trial._note_sets(nodes)
-    omitted = {parent for parent, kids in children.items()
-               if any(represented[parent] == represented[child] for child in kids)}
-    parents = {n['id']: n['parents'] for n in nodes}
-    surviving = {}
-    for identifier in TopologicalSorter(parents).static_order():
-        surviving[identifier] = ({identifier} if identifier not in omitted else
-            {ancestor for parent in parents[identifier] for ancestor in surviving[parent]})
+    omitted = {p for p, kids in children.items() if len(kids) == 1
+               and represented[p] == represented[kids[0]]}
+    order = list(TopologicalSorter({n['id']: n['parents'] for n in nodes}).static_order())
+    replacements = {}
+    displayed_children = {}
+    for identifier in reversed(order):
+        replacements[identifier] = (replacements[children[identifier][0]]
+                                    if identifier in omitted else {identifier})
+        targets = set()
+        for child in children[identifier]:
+            for target in replacements[child]:
+                if represented[target] == represented[identifier]:
+                    targets.update(displayed_children[target])
+                else:
+                    targets.add(target)
+        displayed_children[identifier] = targets
+    roots = {r for n in nodes if not n['parents'] for r in replacements[n['id']]}
+    retained, pending = set(), list(roots)
+    while pending:
+        identifier = pending.pop()
+        if identifier not in retained:
+            retained.add(identifier)
+            pending.extend(displayed_children[identifier])
+    parents = {n: [] for n in retained}
+    for parent in order:
+        if parent in retained:
+            for child in displayed_children[parent]:
+                parents[child].append(parent)
     result = []
     for node in nodes:
-        if node['id'] not in omitted:
+        identifier = node['id']
+        if identifier in retained:
             copied = deepcopy(node)
-            copied['parents'] = sorted({ancestor for parent in node['parents']
-                                        for ancestor in surviving[parent]})
+            copied['parents'] = sorted(parents[identifier])
+            visible = {e['note_id'] for e in copied['entries']}
+            for child in displayed_children[identifier]:
+                visible.update(represented[child])
+            remaining = represented[identifier] - visible
+            if remaining:
+                copied['note_ids'] = sorted(remaining)
             result.append(copied)
     return result
 
