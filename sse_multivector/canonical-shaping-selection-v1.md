@@ -7,13 +7,16 @@ not activated, and the last human-approved consolidation wording remains v3.
 Generated inputs, vectors, receipts and review artifacts remain ignored in the
 task worktree; their frozen references must be retained for reproduction.
 
-The newest user-authorized draft is
+The newest user-authorized tested candidate is
 [Hierarchy-consolidation-v19](shr_single_pair/Hierarchy-consolidation-v19.md).
 It changes only the inclusion-check block to seek and qualify a counterexample
 before including a sibling, without treating failure to find one as proof of
 coverage. Shared definition writing, the synthetic example and output remain
-unchanged. Its authorized actual-generation screen uses the saved Food,
-Material and Heating groups, with two independent fresh draws each. See
+unchanged. Its six actual-generation answers retain the broad Material
+completeness concern once; the Material repeat narrows the organism alternative
+and receives a qualified accept. Food-purpose qualifications persist, and both
+Heating inputs choose alternative food proposals rather than exercise the
+heating pair. This does not demonstrate a reliable improvement. See
 [the v19 screen](#consolidation-v19-counterexample-check).
 
 The preceding user-authorized candidate is
@@ -5661,3 +5664,93 @@ and input size depend on these three bounded sibling groups; no corpus-wide
 search or production per-node stage is added. Experimental integration does
 not activate v19. No hierarchy, UI, Bootstrap/Compare file, model evaluator or
 external agent is changed by this screen.
+
+### Completed v19 actual-generation screen
+
+Six actual proposal answers and six native warmups complete, with no failures,
+retries, answer reuse or missing usage. All six proposals have valid IDs and
+at least two, but fewer than all, offered siblings. No null proposal is used to
+claim corrected consolidation.
+
+| Group / draw | Generated topic and children | Bounded agent assessment |
+|---|---|---|
+| Food first | Food and food crops; C003/C006/C007/C009 | Uncertain: consumers unrestricted and producer plants explicit; Stock's kind-purpose implication remains qualified |
+| Food repeat | Food and culinary ingredients; C003/C006/C009 | Uncertain: Beets' producer-plant alternative is omitted from a materials/preparation meaning; do not force inclusion merely because its roots fit; purpose boundaries remain qualified |
+| Material first | Material resources; C028/C034 | Reject under the bounded literal capability criterion: the unrestricted organism alternative still omits the supplied human creator |
+| Material repeat | Material resources; C028/C034 | Qualified accept under the recorded kind reading: organisms now have an explicit food/drink-production restriction |
+| Heating first | Food resources; C003/C006/C007/C009 | Uncertain Food-purpose interpretation; heating pair not exercised |
+| Heating repeat | Food and food crops; C003/C006/C007/C009 | Same qualification; heating pair not exercised |
+
+The two Material answers have the same title and IDs but different fixed
+definitions. Their verbatim meanings are:
+
+> Material resources are tangible articles, substances, or organisms that can be used to perform or support practical tasks or to nourish living organisms, including but not limited to equipment and nutritional resources.
+
+> Material resources are physical articles or substances intended or suitable for use in performing practical tasks or supplying food, drink, or nourishment. They also include organisms grown or raised to produce food or drink.
+
+Under the existing literal criterion, the first still raises the human omission
+concern. The second no longer supplies the unrestricted organism alternative;
+the earlier creator expectation cannot simply be copied to that new scope.
+The ordinary physical-article/substance reading and information-topic boundary
+remain a qualification, not new human gold. A changed definition is not evidence
+that the earlier fixed-definition coverage error has been repaired.
+
+Food repeat's verbatim definition is:
+
+> Food and culinary ingredients are materials intended to be eaten or drunk, or to be used in preparing items for eating or drinking, including but not limited to prepared dishes, beverages, stocks, and edible ingredients.
+
+It omits Beets, whose supplied meaning includes living plants as well as roots.
+The omission is not declared an error from one fitting root example. The first
+Food draw instead explicitly includes plants grown for edible parts. Both
+definitions avoid the earlier human-consumer restriction, but Stock's purpose
+implication and whole-plant/preparation interpretation remain unsettled.
+Neither complete Food answer is certified from that wording change alone.
+
+Both Heating-group answers select four food-related siblings from the complete
+seven-node group. Such a coherent alternative is permitted by the pre-call
+criteria; selecting Food instead of the earlier heating topic is not itself a
+regression. However, neither answer exercises the expected Rocket-stoves /
+Crockpots grouping. Do not count those controls as passed or as failed
+containment judgments. This limits the proposed positive-control screen.
+
+The equally sized first-draw screens have these attributed agent statuses:
+saved v18 has one accept, one reject and one uncertainty; new v19 has one
+reject and two uncertainties. The three v19 repeats have one qualified accept
+and two uncertainties. Those are sample assessments under qualified meanings,
+not accuracy scores, a deterioration estimate or proof of causal benefit.
+The broad Material concern recurs; no dependable correction is established.
+V19 remains experimental and unapplied, with no new prompt approval inferred.
+
+Actual raw requests confirm identical complete bodies between each group's
+first/repeat generation. Original inputs, sibling order, schema and medium
+effort remain fixed. All twelve provider responses, including six warmups,
+have distinct references, raw HTTP 200, one HTTP attempt and reported
+GPT-6.1 Sol. Generation supplies no previous-response or conversation linkage.
+The two focused canonical-main assembly/native-freezing checks pass after
+integration, as do the six generation/warmup receipt checks and native usage
+assertions. Main publication of the tested draft is `88b4ffb9`, reachable
+through integration `b7bf2360`. The original v18 receipts remain immutable.
+
+The [fresh native selection](shr_single_pair/hierarchy-consolidation-v19-hr05-fresh-usage-v1.json)
+records **12 actual requests: six generation calls and six warmups**. Complete
+API-equivalent catalog cost is **$0.056834**, with **14,340 uncached input
+tokens**, **3,840 cached input tokens**, zero cache-write tokens and **2,777
+output tokens including 2,370 reasoning tokens** already counted in output.
+Three of six generation requests report cached reads. The native estimate
+includes every warmup and shows negative net caching savings for this small
+panel; caching is not investigated or changed here. Subscription billing is
+not inferred. The ignored reviewed summary is
+`target/canonical-shaping-selection-v1/consolidation-v19-hr05-fresh-reviewed-v1.json`.
+The [compared selection](shr_single_pair/hierarchy-consolidation-v18-v19-hr05-usage-v1.json)
+also retains six earlier v18 requests: its 18-request total and $0.08605 catalog
+estimate are not new v19 work. No retired counter is restarted or old claim
+refunded.
+
+The next suggested test keeps v19 unchanged and uses the existing explicit
+online-course parent-restriction controls. This root-only screen cannot establish
+containment beneath a supplied parent, and the offered Heating group permitted
+a different consolidation. Clear bounded parent controls would test the
+important upper-containment requirement before another wording edit; Food and
+Material scope qualifications must still be retained. This suggestion is not
+preparation or authorization of another run. No hierarchy, UI, comparison
+prompt, bootstrap prompt, production guard or external agent is changed.
