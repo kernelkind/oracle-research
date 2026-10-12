@@ -7192,6 +7192,17 @@ preserves null-answer uncertainty. Existing local/canonical paths are unchanged.
 Native pair consistency supports symmetric reversals and chains without
 requiring the removed meaning copy or applying canonical placement guards.
 
+Canonical fixtures in `hierarchy_node_pairs` may supply
+`meaning_from: {"experiment": "...", "case": "..."}` instead of literal
+`meaning`, with one original supporting entry and its unchanged subject. Native
+preparation validates the saved non-null Bootstrap answer, receipt and exact
+original selected entry, post and complete schema-4 tree. The same resolver
+validates `local_meaning_from`; both endpoint receipts remain in review evidence
+and hashed source bindings. Symmetric projection sends only subject and meaning.
+This prepares comparisons without regenerating or manually copying producer
+definitions. Twelve new CLI checks and 95 existing pair/snapshot/consistency
+checks pass; the initial production-path test failed before this support.
+
 The authorized examples ablation compares V179 with experimental V180, which
 removes only its synthetic-example section. Five fixed ASv6.100/Bootstrap-v96
 pairs, both orientations and two fresh draws yield 40 comparison requests.
