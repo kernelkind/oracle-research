@@ -1687,7 +1687,13 @@ minimal browsing depth. Offline tests exercise V2 through the native workflow.
 The user-authorized [HR08–HR10 provider trials](../docs/recommendation-engine/hierarchy-runs.md)
 have saved their initial L1 meanings. HR08 has exhausted eligible selection at
 2,603/3,000 attempts, retaining a partial 23/24-note hierarchy and a review UI;
-HR09 completed with 24/24 notes at 2,646/3,000 attempts; HR10 continues.
+HR09 completed with 24/24 notes at 2,646/3,000 attempts. HR10 stopped with
+execution `blocked` and graph `constructing` at 2,635/10,000 attempts after
+two provider failures in a comparison cache warmup, retaining 48/50 notes.
+The user authorized native HR10 resume using the same frozen source, prompts
+and persistent counter. A new native warmup and the pending comparison
+succeeded at 2,637 attempts; construction continues. The register preserves
+the stopped checkpoint, its review UI and usage reports separately.
 A tested native eligibility fix runs the
 short PPv35 prefix uncached while retaining caching for eligible prompts.
 Reviewed continuation can bind stopped construction to a separate isolated
@@ -2101,6 +2107,13 @@ An invalid high search witness is caught by its existing exact high DSL
 comparison and excluded before the focused recheck. The remaining search is
 source-uncertain, rather than certified by agreement. This is development
 evidence; global reviewer qualification and the final sixty remain open.
+The [source-only interpretation audit](distillation-review-v1/README.md#source-only-interpretation-audit-october-12)
+then resolves standalone Girls to Women under existing wording-disambiguation
+rules and finds a formerly unscored high television match wrong: describing
+Palmer's contribution to the reboot does not express the review highlighting
+that contribution. It preserves the original native reports and labels;
+remaining interpretation conventions are pending, with no new model calls or
+prompt edits.
 
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,

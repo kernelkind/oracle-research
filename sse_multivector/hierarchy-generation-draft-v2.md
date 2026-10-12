@@ -1,8 +1,10 @@
 # Hierarchy generation V2 — FUTURE WORK
 
-**Status: approved V2 design, implemented as `hierarchy-generation-v2`; initial
-provider trials HR08–HR10 have started. HR08 exhausted eligible selection with
-23/24 notes; no completed hierarchy-quality qualification is claimed.** V2
+**Status: approved V2 design, implemented as `hierarchy-generation-v2`.
+HR09 completed construction with 24/24 notes; HR08 exhausted selection with
+23/24. HR10 resumed from a provider-blocked 48/50-note checkpoint using its
+same frozen source, prompts and attempt counter. No hierarchy-quality
+qualification is claimed.** V2
 replaces the previous selection implementation through the existing shared-runner
 commands. The FUTURE WORK label denotes pending qualification with real model
 judgments, not an alternative opt-in constructor.

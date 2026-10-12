@@ -64,6 +64,11 @@ collection produces four complete scores and four partial scores, preserving
 unresolved interpretations. An invalid search witness is caught and excluded
 through an accepted exact negative comparison. Prompts and defaults are
 unchanged; broader accuracy and minimum effort remain unqualified.
+The [source-only interpretation audit](#source-only-interpretation-audit-october-12)
+subsequently resolves standalone Girls to Women and identifies one formerly
+unscored television match as an error: the reboot's positive contribution does
+not express the review's highlighting relation. Remaining sense choices stay
+pending; no further model calls or prompt changes have occurred.
 
 **Earlier development result:** xhigh generation finishes on
 [24 notes from the frozen sixty](#dslv10-twenty-four-note-regression-october-11),
@@ -6684,6 +6689,67 @@ files and has SHA256
 Both worktrees are retained for frozen absolute source and receipt bindings.
 The mixed efforts remain expansion candidates; this trial does not establish
 the accepted two-percentage-point loss bound against xhigh or a global minimum.
+
+### Source-only interpretation audit (October 12)
+
+The user authorizes auditing the recurring interpretation uncertainties before
+expansion. Three agents divide the source review; the coordinator inspects the
+original post, trusted teacher wording and complete saved reviewer evidence.
+ASv6.100 is trusted throughout. This follow-up changes no prompt, experiment,
+frozen expectation, audit ledger or collected score. It distinguishes source
+findings from proposed conventions that still need approval.
+
+Two findings follow from existing approved rules:
+
+- **Standalone Girls means Women here.** Trusted family teacher row 11 says
+  `#girls refers to women in the surrounding adult sexual-content categories`;
+  row 11.1 also identifies the girls tag. DSMv3 permits interpreting wording
+  already present using the original post. This selects the adult word sense
+  without adding a sexual-content restriction to the general subject. The
+  saved Girls match to T21 and the exact Women-under-Girls self guard are sound.
+  This does not fix the complete phrase Girls and women.
+- **The television review match to T05 is wrong.** The teacher requires a
+  review `highlighting Keke Palmer's positive contribution`. The student says
+  `Review of Peacock's mixed-bag The 'Burbs' television dark comedy reboot, in
+  which Keke Palmer brightens the reboot`. A contribution qualifying the
+  reboot does not require the review to highlight it. A review can discuss
+  pacing while the same fixed reboot still has Palmer's contribution; no
+  referent or work fact changes. DSMv3 requires preserving that expressed
+  relationship and forbids supplying it from the original post. None of the
+  other supplied teacher subjects has this complete meaning, so the expected
+  verdict is null. The saved high output selects T05 and claims both reviews
+  highlight the contribution. The earlier uncertainty is now a source-based
+  error finding, independently confirmed by a second reader.
+
+The television finding binds input
+`8c6c9bb064b2163fbf0ee602a3c0d6163f4dc8cb8e8174087e74e9d033dba259`
+and raw output
+`5aa88043efa43af3e624b5c0565cc53f2606adfdcca5d250254aa8d840a7fdf6`.
+Exact evidence remains in
+`oracle-mvp-review-fresh-dcs/target/distillation-review-v1/fresh-dcs/high-matching/matching-tv/report.json`.
+The following posting variant is distinct: T07 requires a review post about
+both the reboot and the contribution. Whether the student's relative clause
+expresses review topic or only qualifies the work remains unresolved; T05's
+finding does not automatically decide T07.
+
+The other unresolved boundaries are recorded without adopting new rules:
+
+| Supplied wording | Remaining boundary |
+| --- | --- |
+| Girls and women | Inclusive human-female heading across ages versus redundant adult-women terms. The inclusive interpretation agrees with earlier accepted Mothers placements, but does not make standalone tag-derived Girls age-inclusive. |
+| Software runtimes | Execution phase versus runtime systems/environments. Runtime telemetry alone does not settle which meaning is intended. |
+| Family Ties | The source identifies a fixed work. Whether its source-established genre is an intrinsic type meaning is not settled by the rule excluding additional attributed facts. The prior actual-edge FALSE remains withdrawn. |
+| The body | Whether an activity's meaning preserves a physical-body subject. Merely changing a post's discussion to law or social matters is an invalid rejection argument under DSLv10. |
+| Mature content | Adult subject matter versus material classified for mature audiences. The trusted teacher interprets #mature as Mature women, so that tag alone cannot select a content sense. |
+| Digital | Broad digital subject matter versus Digital media. The teacher's complete Digital media wording does not automatically supply the omitted noun in the student heading. |
+
+The two sexual-content actual edges retain their existing activity-versus-content
+uncertainty. Three NFT null verdicts remain correct but their explanations retain
+platform/media, link/media or URL-evidence caveats; they are not made acceptable
+merely because their decisions are correct. Their existing complete-output audit
+gates remain in place. The eight-answer report and its original diagnostic counts
+above remain frozen; the new source findings are follow-up evidence, not a
+regenerated qualification report or a demonstration of the two-point loss bound.
 
 ## Actual distilled wording: offline preview (October 8)
 
