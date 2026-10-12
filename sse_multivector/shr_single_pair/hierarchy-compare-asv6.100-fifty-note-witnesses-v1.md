@@ -7450,3 +7450,23 @@ check that particular-entity questions do not invent unknown properties and that
 an easy rejected candidate does not replace a proof of every parent condition.
 The same twelve-case screen precedes any full gate or fresh confirmation. No
 preferred Restaurant/Bread answer or new Bootstrap scope is prescribed.
+
+V194's twelve comparisons validate and preserve all six positive controls.
+Food/Bread is neither in both directions and Brand remains unresolved in both.
+Restaurant still reverses: its forward diagnostic tests a complimentary meal
+at a commercial restaurant and infers every restaurant is commercial; its reverse
+admits an entirely free charitable restaurant without either commercial-parent
+alternative. The selected candidate differs in strength, but concrete-question
+formatting does not resolve the underlying interpretation switch. Both Brand
+answers retain the missing commerce fact rather than assigning it to the named
+entity. Native exports are `target/compare-v194-concrete-screen-v1/*-native.json`.
+V194 is not qualified or adopted; repeating formatting edits is not established
+as a productive remedy.
+
+The native V192-full/V193-screen/V194-screen usage source records forty-nine
+fresh attempts, eight exact answer reuses, forty-eight valid cases, zero failures,
+retries or missing usage and $0.3279068 newly dispatched API-equivalent cost.
+Accounting for the original generation behind reuse raises the catalog total to
+$0.3889256. These are subscription catalog equivalents, not provider charges.
+The removed shared cap is not passed to execution; historical counters and
+receipts remain preserved.
