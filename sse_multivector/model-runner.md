@@ -1,5 +1,17 @@
 # General model runner
 
+## Bootstrap prompt-development cases: reset
+
+The user retired the existing Bootstrap prompt-development test cases while
+retaining prompts. See the [Git backup and removal record](shr_single_pair/bootstrap-test-case-reset.md).
+No Bootstrap regression collection is active. Historical case plans, meanings,
+counterexamples and judgments must not seed or grade the fresh collection.
+Unbacked inputs/results remain on disk and retired from use; they were not
+deleted. General experiment code, shared runner behavior and other tasks remain
+unchanged. Historical records below may name deleted case sources; recover
+those paths from the recorded Git tag only for provenance, not current tests.
+
+
 ## Synchronized Bootstrap and consolidation definition-writing
 
 Shared definition-writing changes must reach both prompts. The initial paired

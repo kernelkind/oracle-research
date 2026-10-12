@@ -3,6 +3,20 @@
 Bootstrap establishes a standalone information-topic meaning for one original
 local entry. It does not compare canonical nodes or construct a hierarchy.
 
+## Current test-case status: reset
+
+The user retired all existing Bootstrap prompt-development test cases and asked
+to start from scratch, retaining the prompts. The
+[reset record](bootstrap-test-case-reset.md) identifies the local Git backup,
+removed datasets/specifications and unbacked artifacts preserved on disk.
+There is **no active Bootstrap regression collection**. All experiments and
+semantic assessments below are historical records, not current validation
+evidence or expected answers. Their deleted source paths are recoverable from
+the backup tag; links to those paths do not designate available working inputs.
+Do not reuse old case plans, saved meanings, counterexample hypotheses or
+historical judgments to seed or grade the new collection.
+
+
 ## Shared definition-writing publication
 
 Bootstrap-v129 and Consolidation-v21 introduce synchronized source assembly
