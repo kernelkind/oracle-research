@@ -6317,9 +6317,71 @@ Low is the lowest passing effort tested on this small panel. Its small
 additional saving versus medium does not establish equivalent reliability
 on harder cases. Matching premises still use xhigh/mechanical results;
 matching, post support and broader relationship/search qualification remain
-open. Prompts, schemas and production defaults stay unchanged. The next
-useful test expands low to four complete saved answers with more positive
-placement and missing-restriction cases before returning to larger panels.
+open. Prompts, schemas and production defaults stay unchanged. The following
+four-note diagnostic expands the selected placement and restriction checks.
+
+### Four-note expansion and step back to medium
+
+The user approves a four-note trial with harder positive and negative cases.
+To keep iteration bounded, native preparation reuses existing audited xhigh
+DCSv1/DSLv10 inputs and source judgments from four complete saved answers;
+this is a **targeted 20-judgment regression**, not a complete evaluation of
+every subject in those answers. The original sixty are development-exposed,
+and no new selection or reserved-test content is introduced.
+
+| Saved answer | Selected coverage searches | Additional DSL checks |
+| --- | --- | --- |
+| `M01-checkpoint-200-N0054` | Five ETF meanings with a valid Markets witness. | Five exact witness pairs. |
+| `M02-checkpoint-200-N0015` | Sisters beneath Girls and women. | Its witness pair and actual Body parts → The body edge, expected false because the child omits the part-of restriction. |
+| `M01-checkpoint-600-N0017` | Two negatives and Peacock streaming service beneath Television. | Exact Peacock/Television witness pair. |
+| `M01-baseline-N0076` | Three NFT-related negative searches. | None. |
+
+Exact source case IDs, inputs, prompt bytes, schemas and model retain parity.
+The twelve searches have **seven established positive and five negative
+judgments**; seven DSL witnesses are true and the actual whole-body edge is
+false. Peacock's corrected positive interpretation was established before
+this trial. Older false/null expectation metadata and provisional uncertainty
+remain preserved; automatic agreement with that metadata is not the semantic
+score. Existing native matching/self-guard snapshots remain frozen at xhigh
+or mechanical results. Matching and post support are not retested here.
+
+Low passes **19/20** full-output audits: **11/12 searches** and **8/8 DSL
+checks**. It incorrectly returns null for Peacock streaming service despite
+the valid Television candidate. Its explanation adds a requirement for
+specific television content or activities and uses film offerings to exclude
+the fixed TV-distribution service. The simultaneous low DSL correctly accepts
+that pair; that agreement does not itself settle truth. The already-established
+source interpretation supplies the error judgment. One weak non-review-post
+illustration in another otherwise-sound rejection is caveated in native review,
+with its valid missing-review-subject restriction retained as the basis.
+
+The **five-percentage-point loss** exceeds the user's approved two-point
+allowance, so further low expansion stops. Under the standing step-up policy,
+the exact same twenty cases run at medium immediately. Independent complete
+output audit accepts **20/20**, including the corrected Television witness;
+the weak illustration remains caveated. This is the lowest passing effort on
+this expanded panel, not a general reliability or deployment qualification.
+
+| Native accounting | Low | Medium |
+| --- | ---: | ---: |
+| Fresh attempts, including three warmups | 23 | 23 |
+| Input tokens | 35,442 | 35,442 |
+| Cached input tokens | 4,096 | 4,096 |
+| Output tokens, including reasoning | 4,948 | 5,738 |
+| Reasoning tokens, already in output | 819 | 1,790 |
+| API-equivalent cost | $0.1207736 | $0.1286736 |
+| Concurrent run span, including warming | 27.871 s | 26.054 s |
+
+Eight independent groups run together at each level. Both runs have no
+retries, failures, reuse or missing usage. Four of twenty comparison requests
+receive cache hits; warmup overhead still yields negative net savings of
+$0.0011036 at low and $0.0021636 at medium. Single-case groups prioritize the
+comparison and skip warming. Both levels' outputs, current native reviews,
+scheduling and usage summaries remain ignored under `fresh-dcs/low-four/`,
+`fresh-dcs/medium-four/` and their parent in the retained worktree. All protected
+source hashes pass. Prompts, schemas, review precedence and production defaults
+stay unchanged. The next useful step tests matching and post support at medium
+on these same four answers before increasing note count.
 
 ## Actual distilled wording: offline preview (October 8)
 

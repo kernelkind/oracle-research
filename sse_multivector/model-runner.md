@@ -1928,9 +1928,23 @@ Three concurrent groups finish in 18.087 seconds; ten fresh attempts cost
 $0.054944, 46.07% below matched xhigh and only 1.31% below medium. Inputs and
 cache policy remain identical; cached tokens, retries, failures, reuse and
 missing usage remain zero. Low is the lowest passing level tested on this
-limited panel. The next test expands to four complete answers with more
-positive placements and missing restrictions; broader qualification and
-production defaults remain unchanged.
+limited panel. The subsequent [four-note diagnostic](distillation-review-v1/README.md#four-note-expansion-and-step-back-to-medium)
+reuses twenty established source judgments on four saved answers: twelve
+coverage searches, seven DSL witnesses and one actual missing-restriction edge.
+Low passes 19/20 but falsely rejects Peacock beneath Television, adding a
+television-content/activity requirement absent from the broad parent. Its five
+percentage-point loss exceeds the approved two-point allowance. Under the
+standing policy, the same cases immediately run at medium and pass 20/20 full
+output audits. A weak illustration in one otherwise-supported negative is
+explicitly caveated. Each level sends 23 fresh attempts including three warmups,
+with no retries/failures/reuse/missing usage. Concurrent spans are 27.871/26.054
+seconds and API-equivalent costs $0.1207736/$0.1286736 for low/medium. Both have
+4,096 cached input tokens; warming outweighs the observed cache savings.
+Source snapshots and original expectation metadata stay frozen; interpretation
+judgments use the documented corrected source labels. This targeted regression
+does not evaluate every subject or retest matching/post support. Medium is the
+candidate to test on those remaining checks before expanding the note panel;
+prompts, schemas and production defaults remain unchanged.
 
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,
