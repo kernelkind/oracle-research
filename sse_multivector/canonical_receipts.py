@@ -16,8 +16,7 @@ def _failure_receipts(experiment, cases):
     if not failed:
         return []
     _, config, manifest = workflow.load(experiment)
-    records = {workflow.inputs.digest(record): record for record in (
-        json.loads(line) for line in (config.run_directory / 'results.jsonl').read_bytes().splitlines())}
+    records = workflow.result_records(config.run_directory / 'results.jsonl')
     verified = []
     for case in failed:
         receipt = case.get('receipt', {})
@@ -56,31 +55,32 @@ def _failure_receipts(experiment, cases):
 
 def _producer_hold(experiment, cases):
     """Use bound native reviews, including the exact receipt behind reuse."""
-    for case in cases:
-        reviewed = [(experiment, case)]
-        if case.get('reused') and case['status'] == 'valid':
-            _, config, manifest = workflow.load(experiment)
-            records = (json.loads(line) for line in (config.run_directory / 'results.jsonl').read_bytes().splitlines())
-            record = next(r for r in records if workflow.inputs.digest(r) == case['receipt']['record_sha256'])
-            reference = record['reused_from']
-            source = engine._read_request_source(reference, engine._prompt_request_key(manifest, case['prompt']))
-            origin = Path(reference['results_path']).parent.parent
-            if (origin / 'experiment.json').exists():
-                plan, _, _ = workflow.load(origin)
-                source_case = next(c for c in plan['cases']
-                                   if c.get('job_id', c['id']) == source['note_id'])
-                shown = workflow.report(origin, only=[source_case['id']], include_request_preview=False)['cases'][0]
-                if (shown['status'] != 'valid' or shown['receipt']['record_sha256'] != workflow.inputs.digest(source)):
-                    raise engine.RunnerError('reused producer review is not bound to the source receipt')
-                reviewed.append((origin, shown))
-        for origin, shown in reviewed:
-            # Native `current` marks matching input/output hashes, not the
-            # newest decision. Later verdicts supersede earlier ones per role;
-            # a user verdict takes precedence over the latest agent verdict.
-            latest = {r['role']: r for r in shown.get('reviews', [])
-                      if r.get('current') and r['verdict'] != 'comment'}
-            review = latest.get('user', latest.get('agent'))
-            if review and review['verdict'] in ('reject', 'uncertain'):
-                return (f"automatic hold: current input/output-bound {review['role']} producer "
-                        f"review {review['verdict']} at {origin}/{shown['id']}: {review['comment']}")
-    return None
+    with workflow.report_scope() as files:
+        for case in cases:
+            reviewed = [(experiment, case)]
+            if case.get('reused') and case['status'] == 'valid':
+                _, config, manifest = workflow.load(experiment)
+                record = workflow.result_records(config.run_directory / 'results.jsonl')[case['receipt']['record_sha256']]
+                reference = record['reused_from']
+                source = engine._read_request_source(reference, engine._prompt_request_key(manifest, case['prompt']),
+                                                    files=files)
+                origin = Path(reference['results_path']).parent.parent
+                if (origin / 'experiment.json').exists():
+                    plan, _, _ = workflow.load(origin)
+                    source_case = next(c for c in plan['cases']
+                                       if c.get('job_id', c['id']) == source['note_id'])
+                    shown = workflow.report(origin, only=[source_case['id']], include_request_preview=False)['cases'][0]
+                    if (shown['status'] != 'valid' or shown['receipt']['record_sha256'] != workflow.inputs.digest(source)):
+                        raise engine.RunnerError('reused producer review is not bound to the source receipt')
+                    reviewed.append((origin, shown))
+            for origin, shown in reviewed:
+                # Native `current` marks matching input/output hashes, not the
+                # newest decision. Later verdicts supersede earlier ones per role;
+                # a user verdict takes precedence over the latest agent verdict.
+                latest = {r['role']: r for r in shown.get('reviews', [])
+                          if r.get('current') and r['verdict'] != 'comment'}
+                review = latest.get('user', latest.get('agent'))
+                if review and review['verdict'] in ('reject', 'uncertain'):
+                    return (f"automatic hold: current input/output-bound {review['role']} producer "
+                            f"review {review['verdict']} at {origin}/{shown['id']}: {review['comment']}")
+        return None
