@@ -3679,3 +3679,23 @@ witnesses and four nonfood controls. Independent reviewers should assess final
 meanings before reading diagnostics, preserving original evidence and judging
 both unintended inclusion and lost legitimate coverage. That proposal has not
 been prepared or run beyond the two-case offline mechanical check above.
+
+### Bootstrap-v115 shared-condition example draft
+
+The user approved refining the Feedback example to teach v114's shared-condition
+rule. [Bootstrap-v115](Hierarchy-bootstrap-v115.md) is a hash-pinned native
+revision of v114, changing only the anonymity resolution's answer and brief
+justification. Anonymous and identified responses retain the same communicated
+views, evaluations or suggestions about an activity or experience. A slip or
+spoken remark qualifies through that content, rather than its form alone.
+
+Both example inputs, the Feedback final meaning, the glass-negative example,
+all instructions and the output contract are byte-identical to v114. A read-only
+review found no unsupported post claims or changed final scope. Nine native
+revision tests, exact two-string replacement/hash checks, parsed example outputs
+and all evidence quotations pass. Native offline preparation retains both
+HR04 inputs and medium settings, with a locally cache-eligible 4,712-token prefix.
+Both cases remain unrun in `target/bootstrap-v115-example-draft-v1/prepared`.
+No model calls, qualification, adoption,
+Compare changes or hierarchy construction occurred. V114 remains available to
+isolate the effect of this example change in subsequent matched testing.
