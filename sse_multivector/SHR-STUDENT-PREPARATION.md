@@ -31,6 +31,24 @@ contract, without requiring teacher answers or assigning training roles. It
 records both prompt hashes, makes no model calls and refuses to overwrite an
 existing prompt. Its five preparation/generation regressions pass.
 
+Compare transfer preparation separately binds the original C48/B96 fit and the
+selected C179/B109 evaluation. Both A/B subjects and meanings must match their
+selected native Bootstrap producers. The saved five-way indices retain their
+directions under `A_contains_B` and `B_contains_A`; the current readout returns
+only the relation. Native preparation preserves the original fit guards and
+rejects mixed versions, forged producer receipts and fitting exposure. The
+four-module CPU suite passes 57 tests with 39 explicit GPU cases skipped;
+the extended four-path GPU check remains pending.
+
+The HR05-aligned panel uses the same 40 disjoint Bootstrap cases. Compare reuses
+50 complete C179 judgments on B109-produced meanings: 20 directions are
+provisional controls and 30 are unresolved probes. All five teacher reversal
+conflicts occur among probes; a reciprocal student can match at most 45/50
+unchanged teacher targets. There are no `uncertain` references and only one
+nonidentity-equivalence pair. Report controls and reversal consistency separately
+from provisional teacher agreement. These exposed, correlated cases do not
+establish final accuracy, refusal reliability or a model-capacity ceiling.
+
 The user subsequently authorized preparing small reviewed development training
 sets, running GB10 task-specific pilot fine-tunes, and comparing learning,
 remaining errors and cost. Broaden Bootstrap's published-checkpoint evidence

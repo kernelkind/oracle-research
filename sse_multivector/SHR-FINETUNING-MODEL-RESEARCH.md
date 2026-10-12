@@ -21,6 +21,16 @@ has no canonical branch fields. The earlier recommendation and branch results
 remain evidence for their original versions, rather than qualification of this
 new contract.
 
+The new Compare evaluator keeps the old fitting instructions, targets and saved
+heads immutable while selecting exact C179 instructions and B109 producer
+receipts. It maps the trained directional indices to `A_contains_B` and
+`B_contains_A`, with no diagnostic generation or added branch fields. Its CPU
+regressions pass; the four-path GPU integration and actual model passes remain
+pending. The 50 existing C179 references contain five inconsistent reversal
+pairs, all unresolved probes; the 20 provisional control directions are
+consistent. Current model selection must therefore consider control agreement
+and student reversal consistency, rather than rank raw teacher matches alone.
+
 Bootstrap consumes a selected ASv6.100 subject, its complete original selected
 root tree and full post, then generates a standalone meaning. Its present
 four-field API also carries ambiguities, resolutions and quoted evidence.
@@ -54,11 +64,11 @@ do not guarantee fast GB10 training.
 
 | Candidate | Bootstrap investigation | Compare investigation | Evidence still needed |
 | --- | --- | --- | --- |
-| Qwen3.8-27B | Recommended Bootstrap starting weights from matched learning and generation evidence | Common-foundation reference, including direct option scoring | Scope/state errors, final frozen-task learning and production branch coverage |
+| Qwen3.8-27B | Recommended Bootstrap starting weights from matched learning and generation evidence | Common-foundation reference, including direct option scoring | Scope/state errors, final frozen-task learning and independent A/B coverage |
 | Gemma 4 12B-it | Cached compact generative alternative with an independently developed foundation | Compact generative/reference readout | Current semantics and strict output behavior; earlier SHR JSON formatting failures do not establish post-fit failure |
 | Gemma 4 26B-A4B-it | Retained for generative quality with fewer active parameters; expert adaptation and long suffix training/reload verified on GB10 | Potentially useful for many repeated decisions | Representative meaning-generation learning and semantic fidelity |
 | Qwen3.6-35B-A3B | Add a sparse Qwen alternative rather than restrict the investigation to dense models | Potential quality/cost comparison with dense Qwen and Kev | GB10 loader, memory, adaptation coverage and current task quality |
-| Kev-27B, current pinned v2 | Classification-only release; not a Bootstrap starting contract | Recommended relation-only Compare starting weights from matched B96/C48 evidence | Broader independent coverage, production branch lengths and checkpoint tradeoff |
+| Kev-27B, current pinned v2 | Classification-only release; not a Bootstrap starting contract | Recommended relation-only Compare starting weights from matched B96/C48 evidence | Broader independent A/B coverage and checkpoint tradeoff |
 | Kev-9B, current pinned v2 | Classification-only release | Compact decision candidate; the previous SHR compact lead was not stable across prompts | New task semantics and long-input reliability; corresponding Qwen3.5-9B-Base control if matched training is investigated |
 | Ettin-1B encoder | Cannot generate a Bootstrap meaning | Inexpensive input-JSON candidate with measured transfer limits | Broader reviewed learning and evaluation coverage; its random head is not a published task model |
 | Ministral 3 14B Instruct | Independent dense compact generative alternative, distinct from its reasoning release | Potential generative or decision reference | Current task evidence, native tokenizer/FP8 loading and verified adaptation path |
