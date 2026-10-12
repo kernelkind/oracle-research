@@ -7593,3 +7593,34 @@ positive/neither/neither labels and rationale stay outside model input. This
 isolates honoring explicit conditions from interpreting the original implicit
 handhold/grip relationship. These definitions are never prompt examples or
 applied hierarchy changes.
+
+All six V196 explicit-handhold responses match the provisional labels and retain
+the complete condition in their proofs. The parent human-handhold boundary and
+the child's human/machine alternatives are explicitly honored in both orientations.
+This supports preservation of resolved conditions, not a repair or semantic label
+for the unchanged ambiguous original. Native result:
+`target/compare-v196-explicit-handhold-v1/native.json`.
+
+### Whole-information-scope contract diagnostic
+
+A read-only first-principles audit identifies a distinct possible contract gap.
+Let a node's defining cases differ from its complete permitted information scope.
+Covering its defining cases alone does not cover information admitted through its
+own connections. A material kind may accept a production activity as production
+information, and that activity may accept equipment as its means, without the
+first test checking the equipment information admitted by the activity. These
+two one-hop judgments do not establish transitive whole-scope containment.
+This is a logical risk, not certification of which particular link must change.
+
+The [two synthetic triads](hierarchy-compare-whole-information-scope-controls-v1.json)
+hold three independent fixed meanings each: a material kind, an activity processing
+that same material and equipment explicitly used for that activity. Food and
+paper provide separate domains. Every pair runs in both orientations (twelve
+responses). No per-pair gold is asserted; assess actual admitted scopes, both
+complete chains and reversal consistency. A consistent result that removes every
+useful relationship is not a success. Inputs are standalone synthetic definitions,
+not producer outputs, source hierarchies or future prompt examples.
+
+Test unchanged V196 first. Only an observed response/proof defect justifies a
+subsequent focused scope change. Existing original and resolved-boundary panels
+remain unchanged. No extra graph context or descendant evidence enters A/B.
