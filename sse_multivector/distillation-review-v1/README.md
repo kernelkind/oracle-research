@@ -6380,8 +6380,95 @@ comparison and skip warming. Both levels' outputs, current native reviews,
 scheduling and usage summaries remain ignored under `fresh-dcs/low-four/`,
 `fresh-dcs/medium-four/` and their parent in the retained worktree. All protected
 source hashes pass. Prompts, schemas, review precedence and production defaults
-stay unchanged. The next useful step tests matching and post support at medium
+stay unchanged. The following trial tests matching and post support at medium
 on these same four answers before increasing note count.
+
+### Medium matching and support on the same four answers
+
+The user approves DSMv3 matching and DSSv2 post support at medium on the same
+ETF, family, television and NFT answers. Native preparation preserves all
+244 occurrences, exact inputs, prompt bytes, schemas, model and cache settings.
+Without `--repeat`, **58 trusted mechanical decisions** require no inference;
+the other 186 occurrences use **90 distinct semantic calls** and **96 duplicate
+reuses**. Independent groups run concurrently through the shared queue.
+
+Frozen source audits supply expectations, including the established corrections
+for financial Speculation and digital Posting. Original expectation metadata
+remains unchanged: raw agreement with its obsolete null labels is not the
+correctness score. Five distinct matching interpretations remain unresolved:
+family Girls and women/Girls, two television review-scope inputs, and NFT
+Digital. They are excluded from the resolved-decision denominator at every
+effort. YouTube matching has a resolved null decision but retains a separate
+platform/media explanation uncertainty.
+
+| Medium check | Resolved semantic decisions correct | Unresolved interpretations |
+| --- | ---: | ---: |
+| Matching | 39/40 | 5 |
+| Post support | 45/45 | 0 |
+
+Medium incorrectly returns null for television **Posting**, reasoning that
+Post sharing adds a narrower restriction. The frozen source interpretation
+already establishes their same general digital activity in this context;
+DSMv3 permits using the post to interpret the supplied wording. Matching's
+**2.5-percentage-point loss** exceeds the approved two-point allowance. Under
+the standing step-up policy, expansion at medium stops for matching and the
+same five matching groups run at high. Support retains its passing medium
+evidence. No prompt or source-label change is introduced.
+
+Native medium reviews cover all ninety distinct semantic outputs: **83 accept,
+one reject and six uncertain**. Five uncertainties concern interpretations;
+the sixth concerns the correct YouTube null explanation. All mechanical
+proofs, duplicate output identities and protected source bindings pass.
+The nine groups finish in **24.625 seconds**, with **91 fresh attempts**
+including one eligible family-matching warmup and no retries, failures or
+missing usage. Native accounting records 70,061 input tokens, 13,824 cached
+input tokens and 5,221 output tokens including 1,106 reasoning tokens.
+API-equivalent cost is **$0.1937144**; twelve comparison requests receive
+cache hits. Net savings including warming are **$0.0230096 (10.62%)**.
+Support has no eligible warmed prefix and receives no cached tokens.
+
+Artifacts and exact-output-bound reviews remain ignored beneath
+`fresh-dcs/medium-matching-support/`, with native usage reports in its parent.
+This is a development regression on four exposed answers, not unseen-data
+accuracy or a complete coverage/relationship rerun. Production defaults stay
+unchanged; frozen references require retaining the task worktree.
+
+### High matching step-up on the same four answers
+
+Only matching steps up. Native `--from` preparations retain the same 122
+occurrences, DSMv3, exact inputs, mechanical proofs and cache policy. All
+**40 resolved semantic matching decisions are correct** at high; the five
+pre-existing interpretation uncertainties remain unscored. Posting now matches
+T11 Post sharing, with a sound general-activity explanation and no added
+content or destination restriction. Financial Speculation retains its accepted
+T10 match. No source labels or original audit records are rewritten.
+
+Full-output reviews are **37 accept and eight uncertain, with no rejects**.
+Besides the five interpretation uncertainties, three correct NFT null
+decisions retain explanation-only caveats: YouTube/platform versus media,
+YouTube URLs/links versus media, and an unestablished video-presence premise
+for YouTube video links. The latter two were accepted at medium; high is not
+uniformly better on explanations. These caveats remain visible and are not
+converted into passing full-record audits or false decision errors.
+
+All five groups complete concurrently in **25.040 seconds**. The 29 mechanical
+occurrences use no inference, and 48 duplicate occurrences reuse exact fresh
+outputs. Native accounting records **46 attempts**, including one eligible
+warmup, with no retries, failures or missing usage: 38,798 input tokens,
+8,064 cached input tokens, and 4,076 output tokens including 1,865 reasoning
+tokens. API-equivalent cost is **$0.1191624**; seven comparison requests have
+cache hits. Net savings including warming are **$0.0118556 (9.05%)**.
+Protected source bindings and exact input/output review hashes pass.
+
+Ignored experiments, reviews and native usage summaries remain under
+`fresh-dcs/high-matching/` and its parent. Together these trials leave **high
+matching and medium post support** as candidates for expansion, alongside
+the earlier targeted medium DCSv1/DSLv10 evidence. They do not establish a
+global minimum effort or unseen-data accuracy. The next useful test runs the
+complete review process on these four answers at those candidate efforts
+before increasing note count; coverage and relationships have so far been
+retested only on selected judgments. Prompts, schemas and production defaults
+remain unchanged.
 
 ## Actual distilled wording: offline preview (October 8)
 
