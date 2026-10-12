@@ -56,8 +56,10 @@ consistently correct the disputed coverage. Food C009 is excluded in all four.
 These remain bounded agent assessments, with stock's purpose interpretation
 unsettled. See
 [the illustration contrast](#audit-v5-food-illustration-contrast).
-The next authorized contrast states the consumer condition directly for both
-materials and producer organisms, keeping the illustration omitted. See
+The completed condition contrast states the consumer requirement directly for
+both materials and producer organisms, keeping the illustration omitted. Beets
+is still included in one of two direct-condition answers; the alternative
+wording does not consistently satisfy the recorded exclusion criterion. See
 [the condition-wording test](#audit-v5-food-condition-wording-contrast).
 
 The preceding user-authorized tested candidate is
@@ -5482,3 +5484,90 @@ Those sources support the evaluation discipline, not this semantic hypothesis.
 Total preparation and input size depend on this one six-sibling group, not the
 whole corpus. No production per-node step, Bootstrap/Compare edit, hierarchy
 change, UI refresh, runner implementation or external agent message is added.
+
+### Completed condition wording contrast
+
+All four fresh answers complete with no failures, retries, warmups or exact
+answer reuse. Every answer assesses the six supplied sibling IDs once and
+in order. Three answers include C003/C006/C007 and exclude C001/C005/C009.
+Only the direct-condition repeat includes C003 alone.
+
+| Proposal wording | Beets C007, first draw | Beets C007, fresh repeat | Stock C006 |
+|---|---|---|---|
+| “such materials” control | Included | Included | Included in both |
+| Explicit human condition for each kind | Included | Excluded | Included first, excluded on repeat |
+
+All four answers include human-purpose Food C003 and exclude stoves C001,
+brand C005 and unrestricted-consumer Food C009. The outcome is mixed on the
+target despite the directly written consumer restriction. This does not show
+a reliable wording improvement. The earlier illustration-free control itself
+gave one inclusion and one exclusion; comparing those two historical draws
+with the current two inclusions would not establish deterioration either.
+These small samples document observed answers, not a measured error rate.
+
+The direct-condition first answer's Beets justification is retained verbatim:
+
+> The meaning covers vegetable roots for human consumption and beet plants grown to provide those roots.
+
+The direct-condition independent repeat instead says:
+
+> Beet plants grown for edible roots can be grown for animal feed, so human consumption is not required throughout the meaning.
+
+The consumer condition is present explicitly in the proposed parent in both
+answers. Under the bounded literal criterion, the first justification asserts
+that condition for the child without establishing it across the admitted plant
+alternative. The second identifies an allowed case that fails that condition.
+Thus the back-reference is not necessary for the disputed inclusion; replacing
+it does not consistently stop the missing child condition from being supplied.
+This interpretation remains an agent assessment, not newly reviewed human gold
+or proof of the model's internal cause.
+
+The two controls' Beets reasons are:
+
+> Both beet plants grown for edible roots and the roots as vegetables satisfy the proposed meaning.
+
+> The meaning covers plants grown to provide edible vegetable roots and those roots as food materials.
+
+Stock also switches in the direct-condition repeat:
+
+> Being a culinary liquid does not require that the stock be intended for people rather than other consumers.
+
+Its consumer-purpose interpretation remains unsettled. The three answers
+retaining Beets receive attributed agent rejects under the registered criterion;
+the direct-condition repeat receives an attributed agent uncertainty because
+its complete list is not certified. No whole-list human approval is inferred.
+The main consolidation prompt remains v18, experimental and unapplied.
+
+Raw request/body checks verify that each condition's complete body is identical
+across the two draws and that only `proposal.meaning` differs between conditions.
+All four response references are distinct, with raw HTTP 200, one HTTP attempt
+each, reported GPT-6.1 Sol and requested medium effort. No prior response or
+conversation linkage is supplied. Synthetic edit metadata stays outside model
+input; both inputs retain the original proposal receipt and application
+prohibition. The configured credential route stays fixed, but redacted account
+headers and absent scope records do not independently establish account identity.
+
+The [native usage selection](shr_single_pair/hierarchy-consolidation-audit-v5-hr05-food-condition-usage-v1.json)
+records **four fresh attempts**, zero reuses/retries and complete observed
+usage: **3,464 input tokens**, zero cached reads/writes, and **1,399 output
+tokens including 595 reasoning tokens** already counted in output. Complete
+API-equivalent catalog cost is **$0.020918**; subscription cash billing is not
+inferred. The ignored native summary is
+`target/canonical-shaping-selection-v1/consolidation-audit-v5-hr05-food-condition-reviewed-v1.json`.
+Old attempt counters and receipts remain untouched, with no new shared cap.
+
+The source-bound preparation test passes in both the task worktree and canonical
+main. Native preparation makes zero calls and its input/control assertions pass;
+the four completed raw receipt/usage assertions also pass. Preparations and
+pre-call criteria land on main at `65da12d8` before dispatch. Current main is
+merged before the results checkpoint, preserving the separately owned official
+V2 run definitions and current Compare work without changing either.
+
+The next suggested prompt experiment is a general counterexample check in
+consolidation: test whether a case allowed by a sibling's fixed meaning can
+fail a required condition of the proposed meaning before including that sibling.
+Replace the existing inclusion-check paragraph rather than adding another
+preservation rule; keep shared definition writing, example and output fixed.
+Evaluate actual consolidation generation against these saved problem groups
+and positive controls. This is a proposed change requiring the next user
+approval, not a drafted prompt, new inference or a production guard.

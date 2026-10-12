@@ -308,6 +308,16 @@ That four-case V122 draw omits the old optional counter, preserves its historica
 bytes and records native attempts independently. No replacement global cap is
 established by this diagnostic. No Compare or hierarchy work occurred.
 
+The [V123 four-Food diagnostic](shr_single_pair/bootstrap-v123-hr04-four-foods-v1.md)
+changes one ambiguity-identification paragraph and preserves all four exact
+HR04 inputs, schema, examples and Sol 6.1 medium settings. Six fresh definitions
+include two disputed-case repeats. Shared edibility excludes the non-edible
+poison in both risotto and both sourdough draws; broader clinical/ceremonial
+admissions and missed purpose/consumer questions remain qualified. Native usage
+records eight attempts including warmups, zero failures/reuses and $0.0663836
+API-equivalent cost. V123 is experimental and unactivated, without nonfood or
+full-branch qualification. No replacement global attempt cap is imposed.
+
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at
 `~/src/notedeck_worktrees/algos/experiment-runner`. All migrated project worktrees
