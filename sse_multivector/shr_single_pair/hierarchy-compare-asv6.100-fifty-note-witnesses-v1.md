@@ -8360,3 +8360,32 @@ and two attempts lacking usage. $0.6212912 is a known API-equivalent subtotal,
 not complete cost or a subscription charge. Neither candidate is adopted.
 Keep the independently qualified particular-property repair distinct from these
 unresolved general-kind/admission mechanisms.
+
+### V212: counterexample admission and interpretation quantifiers
+
+V212 returns to V209, preserving its property qualification and original examples.
+One admission mechanism changes two aligned locations. A counterexample must
+establish membership from the child's own defining terms and admission route;
+related material, a similar process, or absence of a prohibition is not sufficient
+by itself. Unusual hypothetical cases and genuinely admitted partial stages
+remain permitted, without demanding a completed result.
+
+The interpretation rule separates actual alternatives explicitly included in a
+meaning from unresolved possible readings. Directional outcomes must agree
+across supported readings; different valid counterexamples may witness the same
+negative outcome under different readings. This avoids an unnecessarily stronger
+requirement for one common witness, while refusing to merge ambiguous readings
+into a broader invented union. Omitted general conditions still vary unless
+necessarily implied, and unknown particular facts stay protected. No Bread or
+grip label is prescribed and no V210 illustration or V211 occurrence text is
+stacked into this candidate.
+
+First compare V212 on the same eighteen-case frozen B109 core with the preserved
+fresh V209 reference, plus unchanged physical six, goal eight, explicit-human six
+and explicit-commerce six controls. The latter test that actual alternative
+branches still yield counterexamples rather than wholesale uncertainty. Require
+sound admission/exclusion proofs and preserved resolved outcomes, not only fewer
+settled contradictions. A promising result needs fresh confirmation and the full
+producer/resolved panels before adoption. Independent review verifies both
+unchanged examples and exact native V179 revision provenance; no calls occur
+during drafting. The old qualified meanings and receipts remain untouched.
