@@ -8679,3 +8679,36 @@ is against V179. Screen two fresh draws of the original Metal orientations in
 both physical input orders, a fresh V217 reference in both orders, and twelve
 explicit-human/physical controls. Require supported proofs and retained resolved
 outcomes; neither a convenient label nor indiscriminate uncertainty is success.
+
+### V218 result: grammar ambiguity example does not transfer to the lexical conflict
+
+All twenty-four comparisons complete valid. All four candidate reversal checks
+conflict: both A-first draws return forward A_contains_B/reverse neither, and
+both B-first draws return forward neither/reverse B_contains_A. The fresh V217
+reference conflicts in A-first and remains reciprocally positive in B-first.
+All twelve physical and explicit-human/machine/mixed controls retain expected
+outcomes. V218 establishes no repair and is not expanded or adopted. A grammar
+example's validity does not certify transfer to grip/handhold membership.
+
+Native `hierarchy-compare-v218-general-ambiguity-usage-v1.json` records thirty-two
+fresh attempts including eight warmups, zero reuse/retries/failures/missing usage,
+and $0.1878768 API-equivalent cost. Definitions, source receipts and provisional
+expectations remain unchanged.
+
+Before another question-strengthening edit, read-only historical review checks
+the prior mechanisms. V178 targeted absent requirements; V191 preferred parent
+requirements not guaranteed by the child; V194 requested concrete candidates and
+specific conditions; V196 strengthened testing of the entire absent condition.
+Both V196 draws already ask about handhold qualification forward but still assert
+grip implies handhold, while reverse admits machine-only handles. V197 retains
+that preference. Moving the same rule into the shorter body's output section
+would not establish a new semantic mechanism. Do not repeat it as a novel fix.
+
+The next diagnostic supplies the same neutral physical cases rather than letting
+the teacher select a different counterexample in each direction. Existing native
+meaning diagnostics copy receipt-bound meanings without source evidence; generic
+prepared-input reuse preserves paired A/B values and presentation order. No new
+adapter is required. This assesses admission under unchanged definitions, not
+Bootstrap generation, comparison-label gold or a replacement Compare contract.
+Single-meaning and paired representations differ in namespace and subject
+duplication as well as counterpart presence; any effect must retain that caveat.

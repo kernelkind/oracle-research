@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "reference": [
+      "../../target/compare-v218-general-ambiguity-screen-v1/reference/a-first",
+      "../../target/compare-v218-general-ambiguity-screen-v1/reference/b-first"
+    ],
+    "candidate": [
+      "../../target/compare-v218-general-ambiguity-screen-v1/candidate/a-first-1",
+      "../../target/compare-v218-general-ambiguity-screen-v1/candidate/a-first-2",
+      "../../target/compare-v218-general-ambiguity-screen-v1/candidate/b-first-1",
+      "../../target/compare-v218-general-ambiguity-screen-v1/candidate/b-first-2"
+    ],
+    "controls": [
+      "../../target/compare-v218-general-ambiguity-screen-v1/candidate/physical",
+      "../../target/compare-v218-general-ambiguity-screen-v1/candidate/handhold"
+    ]
+  }
+}

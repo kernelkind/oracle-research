@@ -7943,3 +7943,10 @@ The combined sentence restoration has a bounded measured effect. Metal reversal
 conflicts reappear under A-first presentation in both V217 draws, so this is not
 a broad stability repair or adopted candidate. Open producer scopes and provisional
 brand expectations remain qualified; native usage includes failed attempts.
+
+V218's general grammatical-ambiguity example retains closed controls but fails
+all four candidate Metal reversal checks. It is not adopted. Historical review
+also rules out presenting the previously failed missing-condition question rule
+as a novel mechanism. Fixed-candidate admission diagnosis uses existing native
+meaning-diagnostic and generic prepared-input adapters, with original meanings
+and producer receipts preserved; it does not replace the A/B Compare line.
