@@ -3750,6 +3750,30 @@ tree and quotation checks pass. Native offline preparation retains both HR04
 inputs and medium settings; the 4,719-token prefix is locally cache-eligible.
 Both cases remain unrun in `target/bootstrap-v116-guidance-audit-v1/prepared`.
 No model calls, adoption, Compare changes or
-hierarchy construction occurred. The next proposed wording change is to
-clarify the method-detail prohibition, followed by matched qualification of
-the chosen version rather than further untested rule accumulation.
+hierarchy construction occurred. The user subsequently authorized the method
+clarification and consolidation below; their empirical effects remain untested.
+
+### Bootstrap-v117 defining-method clarification and scope consolidation
+
+The user approved both wording fixes identified in the v116 audit.
+[Bootstrap-v117](Hierarchy-bootstrap-v117.md) is a native hash-pinned revision
+of v116 with four replacements. It permits a design or method needed to define
+the chosen sense, while preventing non-defining details from becoming extra
+membership conditions. Three repeated reminders about example-specific
+restrictions, identity and scope are shortened or removed. The unchanged main
+scope paragraph, naming instruction and per-alternative rules retain those
+requirements.
+
+Both independent reviewers found no lost substantive rule or unintended scope
+change in the draft. The boundary-selection check and final standalone-meaning
+check remain byte-identical, as do input/output contracts and both complete
+examples. The instruction text has 32 fewer whitespace-delimited words; that
+count does not establish a latency or cost improvement.
+
+Nine native revision tests and exact replacement/hash/preserved-check tests
+pass. Native offline preparation preserves the two HR04 inputs and medium
+settings with a locally cache-eligible 4,683-token prefix. Both cases remain
+unrun in `target/bootstrap-v117-clarity-draft-v1/prepared`.
+No model calls, qualification, adoption, Compare changes or hierarchy
+construction occurred. Next is matched qualification of generated meanings,
+including saved empty-diagnostic and null-meaning cases, before another rewrite.
