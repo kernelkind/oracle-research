@@ -3912,6 +3912,33 @@ No concrete lost source ingredient was established. Introduced purpose/consumer
 conditions still lack direct ambiguity questions. The narrow poison improvement
 does not solve general boundary identification or certify a wording effect.
 V123 remains unactivated; no nonfood/full-branch qualification, Compare calls or
-hierarchy build occurs in this stage. The next proposed focus is understanding
-the missed consequential conditions and the wider edible-ingestion choice,
-before another rule or a prescribed Food boundary.
+hierarchy build occurs in this stage. The subsequent v124 diagnostic below
+tests the missed consequential conditions without prescribing a Food boundary.
+
+### Bootstrap-v124 proposed-definition boundary diagnostic
+
+Experimental [Bootstrap-v124](Hierarchy-bootstrap-v124.md) removes the
+input-only framing from the opening ambiguity-identification sentence and its
+output-field description. Questions can include material choices introduced by
+the proposed definition, while the chosen meaning still requires source support.
+All other prompt bytes, examples, schema, four exact HR04 inputs and Sol 6.1
+medium settings are preserved.
+
+The [four-Food test and fresh risotto/brisket repeat](bootstrap-v124-hr04-four-foods-v1.md)
+complete six valid nonnull definitions. The first risotto head again admits the
+explicitly non-edible poison intended for human drinking; its edible-ingredient
+subset cannot narrow that opening. The independent repeat restores shared
+edibility. This variation does not establish a causal regression or a repair to
+the frozen first output. The other meanings receive qualified agent accepts;
+clinical-wafer or animal-feed admission is not automatically failure gold.
+Consumer/purpose/qualifying-kind alternatives still lack direct ambiguity
+questions. No systematic boundary-identification improvement is established.
+
+Native accounting reports eight attempts including two warmups, no failures,
+retries or reuses, complete usage and $0.0979948 API-equivalent incremental cost.
+Caching is enabled; two repeat definitions hit cache, whereas the four first
+definitions do not. Twenty-three focused workflow tests and independent
+receipt/input/output/quote checks pass. V124 remains experimental without an
+activation recommendation. No Compare calls, hierarchy work or new attempt cap
+is introduced. The next proposed hypothesis concerns checking the whole defining
+clause, beyond its listed alternatives or relationships.

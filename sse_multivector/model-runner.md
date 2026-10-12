@@ -318,6 +318,17 @@ records eight attempts including warmups, zero failures/reuses and $0.0663836
 API-equivalent cost. V123 is experimental and unactivated, without nonfood or
 full-branch qualification. No replacement global attempt cap is imposed.
 
+The [V124 proposed-boundary diagnostic](shr_single_pair/bootstrap-v124-hr04-four-foods-v1.md)
+removes the input-only ambiguity framing and preserves the same four original
+HR04 inputs. Six fresh valid definitions include risotto/brisket repeats. The
+first risotto broad-ingestion head again admits the explicitly non-edible
+poison; the independent repeat restores shared edibility. No systematic
+diagnostic improvement or causal wording effect is established. Native usage
+records eight attempts including warmups, zero failures/retries/reuses and
+$0.0979948 API-equivalent cost. Caching is enabled, with hits on the two repeat
+definitions and zero hits on the four first definitions. V124 remains
+experimental and unactivated; no Compare calls or hierarchy work occurs.
+
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at
 `~/src/notedeck_worktrees/algos/experiment-runner`. All migrated project worktrees
