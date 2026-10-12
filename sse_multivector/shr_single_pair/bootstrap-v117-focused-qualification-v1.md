@@ -221,3 +221,127 @@ Repeated requests have fresh response IDs with no conversation linkage. The
 three ablations preserve both example bytes. Nine native prompt-revision tests
 and diff checks pass. No production implementation, Compare prompt, hierarchy
 artifact, UI or active prompt configuration changed.
+
+## User-reviewed Soup mugs boundary
+
+After presentation of the full original post and the original branch
+Pottery → Soup mugs → the author's particular soup mug, the user approved the
+pottery-scoped interpretation. The question and reply were:
+
+> I lean toward the second interpretation: the branch establishes the pottery
+> domain; the particular carving technique and morning-tea use remain optional
+> details. Do you agree?
+
+> agree
+
+This resolves the material boundary for this source entry, not every entry
+with the same title. It does not approve automatic inheritance of all ancestor
+restrictions, narrowing to one illustrated item or deleting a named alternative
+to satisfy a source relationship. Experimental v120 remains a removal diagnostic;
+a concise positive interpretation rule still needs qualification on contrasting
+complete branches before broader testing.
+
+## Frozen V122 positive-rule qualification
+
+The continuing authorized Bootstrap loop drafts V121 from V117, replacing the
+two prohibitions with a supported original-branch interpretation rule. A
+read-only review catches an absolute claim that descendants cannot exhaust a
+category, which would conflict with explicit closed sets. V122 changes that
+clause to say they do not **automatically** exhaust it. V121's prepared 22 cases
+remain unrun; no output or failed draw is hidden by the version increment.
+
+The V122 experiment is
+`target/bootstrap-v122-branch-scope-v1/candidate`. Before dispatch it selects
+the same 22 original entries listed above, preserving every full post and
+complete root tree, with fresh Sol 6.1 medium requests, SSE, automatic caching,
+native host queue and the same persistent counter. The stage cap is 32 attempts
+including warmups/retries. Source ASv6.100 provenance and prompt/worker/schema
+bindings must verify. Current main changes two executable source files relative
+to the V117 experiment; this is a matched-input current-code qualification,
+not a claim of an unchanged-executable causal comparison.
+
+Three independent reviewers inspect final meanings before diagnostics. They
+check each selected child's whole meaning against every independently defined
+selected ancestor from this single draw, and challenge category breadth,
+named alternatives/parts, defining methods and unsupported instance facts.
+Pottery-scoped Soup mugs is now a user-approved expectation for this source;
+the decorative technique and actual tea use stay optional. It is not universal
+gold for every Soup mugs entry. Recipe/stock, Coffee and material/application
+qualifications stay visible rather than becoming convenient negative labels.
+
+A consequential new defect or changed questionable boundary triggers an
+identical-input fresh repeat before another edit. A clear contextual-boundary
+failure blocks broader qualification. If contrasting branches preserve their
+supported meanings without a definite new scope failure, proceed to the
+remaining full inventory using native exact reuse. Existing review qualifications
+remain separate from passes; no automatic prompt activation, Compare work or
+hierarchy build follows.
+
+### V122 focused results and evaluation corrections
+
+The focused cohort completes 22 valid nonnull definitions in 23 attempts,
+including one warmup. All definition calls report prefix cache hits; no reuse,
+retry, failure or missing usage occurs. Native API-equivalent cost is
+$0.2145276. Independent reviews preserve the approved Pottery/Soup mugs boundary,
+broad Mental states, material alternatives, collection items and mistaken-belief
+status. Individual latest reviews record 21 qualified accepts and one Coffee
+source-reference uncertainty. This is not human gold or complete branch
+certification; required-part/information-topic implications remain qualified.
+
+The two-case unchanged V122 repeat is
+`target/bootstrap-v122-branch-scope-v1/repeat`: the particular oven rice-cooking
+leaf and HR04 risotto Food. Both validate in three attempts including a warmup;
+both hit cache, with no reuse, retry or missing usage. Native cost is $0.0237548.
+Exact bodies and fresh receipt IDs verify. The counter is now 19,578/20,000.
+
+These repetitions expose two evaluation distinctions:
+
+- The oven leaf names **one particular activity**, whose post establishes stock.
+  A stock-free hypothetical replaces that activity, rather than demonstrates
+  another member admitted by its meaning. The omitted word is not a demonstrated
+  scope incompatibility. Both selected ancestor links fit that supported event;
+  whether downstream evidence is sufficient remains separate Compare work.
+- Food expressly chooses intended human eating/drinking as its condition;
+  diagnostics and final text agree. A later reassessment withdraws the provisional
+  missing-condition concern while retaining its native history. A second reviewer
+  still questions whether this intentionally broad condition preserves the
+  selected Food kind. This unresolved interpretation is not missing edibility
+  gold and cannot be scored using the old C003 judgment. No edibility/nourishment
+  condition is imposed merely to block a hypothetical ingestion example.
+
+No definite new evidence contradiction or required scope loss is established in
+the focused panel. Full qualification can gather broader evidence while these
+review qualifications stay visible; it does not adopt the prompt or certify
+every boundary.
+
+### Frozen full-collection qualification
+
+Prepare `target/bootstrap-v122-branch-scope-v1/full-pinned-v1` using the original 346-case
+plan, V122 and native exact-request reuse. It offers 22 exact focused reuses and
+324 new definitions, preserving all original posts, trees and ASv6.100 provenance.
+The invocation cap is 352 attempts including warmups/retries, within the existing
+persistent lifetime counter; other activity may reduce the available allowance.
+Never reset it or count reused answers as fresh draws.
+
+Three semantic reviewers partition complete source-note groups deterministically:
+group by corpus path and note ID, sort groups by descending case count with
+stable first-occurrence ties, and assign each to the currently smallest of three
+review counts, choosing the lower index on a tie. The groups contain 116, 115
+and 115 cases. Keep each original branch together; perform whole-child/ancestor
+checks only where both independently generated definitions are present in this
+single-version draw. Null, failed, unrun and disputed cases stay visible.
+Review meanings from original inputs before diagnostics or historical outputs.
+Do not transplant old labels, scope choices or AS prompt examples as gold.
+Preserve reviewer disagreement, original-post factual unknowns and the distinction
+between a general category and one identified event. Actual receipts and native
+reuse/cost accounting require separate verification. No hierarchy construction,
+Compare inference or active configuration change is authorized by this stage.
+
+The initial offline `full` preparation remains unrun. Its broad history root
+would select two latest repeat receipts rather than the two original focused
+receipts. Native preparation of `full-pinned-v1` instead sets `history_root` to
+the completed focused `candidate` directory. Read-only native discovery verifies
+exactly 22 original producers and excludes the repeat directory. No cache file
+or receipt is manually rewritten. This preserves the frozen first-draw cohort
+while retaining exact-request reuse; full-run checks must verify those producer
+bindings again after execution.

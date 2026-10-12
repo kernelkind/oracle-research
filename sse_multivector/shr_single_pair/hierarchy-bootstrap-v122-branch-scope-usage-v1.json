@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v122_focused": [
+      "../../target/bootstrap-v122-branch-scope-v1/candidate"
+    ],
+    "v122_targeted_repeat": [
+      "../../target/bootstrap-v122-branch-scope-v1/repeat"
+    ],
+    "v122_full": [
+      "../../target/bootstrap-v122-branch-scope-v1/full-pinned-v1"
+    ]
+  }
+}
