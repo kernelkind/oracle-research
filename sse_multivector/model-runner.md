@@ -352,6 +352,19 @@ Eight attempts include two warmups, with no failures, retries or reuses; all six
 definition requests hit cache. Complete native API-equivalent cost is $0.0769484.
 No Compare inference or hierarchy work occurs.
 
+The [V128 four-Food breadth test](shr_single_pair/bootstrap-v128-food-breadth-qualification-v1.md)
+ports BB's preference into v126 while preserving newer safeguards and examples.
+It is not full BBv7 qualification. Four fresh outputs and two deliberate fresh
+repeats show mixed scope changes: risotto stays similar, sourdough changes
+purpose boundaries, and brisket's initially wider consumer/actual-consumption
+scope does not persist. Physical qualifications survive; ingredient-purpose
+attribution and an inherited example tension remain qualified. No reliable
+general broadening is established. V128 stays experimental; v126 stays the
+working candidate. Updated shared-runner main is pinned at `ac6222d` in
+`experiment-runner-bootstrap-v128-source-v1`. Eight attempts include two warmups,
+zero failures/retries/reuses, six cached definition requests and $0.0707044
+complete incremental API-equivalent cost. No Compare or hierarchy work occurs.
+
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at
 `~/src/notedeck_worktrees/algos/experiment-runner`. All migrated project worktrees

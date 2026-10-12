@@ -3997,5 +3997,38 @@ failures, retries or reuses. All six definition requests hit cache. Complete
 native usage reports $0.0769484 API-equivalent cost, not subscription cash spend.
 Forty-four focused checks and two independent integrity/semantic reviews pass
 with the recorded qualifications. V127 remains unactivated; v126 remains the
-working experimental baseline. Full Food-branch compatibility is the proposed
-next qualification, not a completed test or production approval.
+working experimental baseline. The user subsequently prioritizes these four
+Food definitions directly; the v128 breadth test below precedes further branch
+qualification. No full-branch test or production approval is established.
+
+### Bootstrap-v128 supported-breadth test on the four Food inputs
+
+The user authorized testing the Bootstrap-broad preference. Experimental
+[v128](Hierarchy-bootstrap-v128.md) ports that scope-selection rule into v126,
+retaining its newer defining-feature safeguards and both existing examples.
+This is a partial breadth-factor test, not the complete BBv7 prompt.
+
+The [qualification](bootstrap-v128-food-breadth-qualification-v1.md) compares
+four fresh outputs with saved v126 first-draw meanings. Risotto stays broadly
+similar. Sourdough trades meal-role coverage for nourishment/enjoyment coverage,
+which is not pure broadening. Pie and brisket omit human-only and add actual
+consumption alternatives, potentially widening scope subject to edibility.
+Fresh sourdough/brisket repeats preserve physical features, but brisket restores
+human intended nourishment; that widening does not persist. No particular
+completed cooking/eating or concrete source-ingredient loss is established.
+
+Ingredient-versus-whole purpose attribution remains unresolved. The retained
+Feedback example also teaches an activity/experience restriction absent from
+complete BBv7, a possible instruction/example tension without demonstrated
+causality. Independent reviews qualify both findings; no blanket clinical
+exclusion, root equivalence or reliable breadth improvement is claimed.
+
+Six valid fresh definitions use eight attempts including two warmups, with zero
+failures, retries or reuses. All six definition requests hit cache. Complete
+incremental native API-equivalent cost is $0.0707044, excluding earlier baseline
+generation; this is not subscription cash spend. Forty-four focused checks
+and independent receipt/input/output/quotation checks pass. Execution pins
+updated shared-runner main at `ac6222d` in a separate isolated checkout. V128
+remains unactivated and v126 remains the working experimental baseline. The
+proposed next test is complete unchanged BBv7 on these exact four inputs;
+it has not begun. No Compare inference, hierarchy build or new attempt cap occurs.

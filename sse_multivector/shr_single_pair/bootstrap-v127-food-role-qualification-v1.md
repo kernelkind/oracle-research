@@ -96,12 +96,13 @@ Qualified native agent accepts preserve these findings and unresolved cases;
 they are not user semantic approvals or full-branch passes.
 
 Keep v127 as tested evidence rather than adding restrictions to force clinical
-negatives. The proposed next step is complete original Food-branch qualification
-under one fixed v126 cohort: independently establish child meanings and evaluate
-them against exact pinned parent meanings, preserving qualifying-kind, purpose
-and consumer conditions. This can expose actual lost restrictions rather than
-optimizing isolated counterexamples toward an unstated preferred category. It
-has not begun in this stage.
+negatives. The user subsequently prioritizes the four Food definitions directly.
+The [v128 breadth diagnostic](bootstrap-v128-food-breadth-qualification-v1.md)
+tests that objective before further branch qualification. Complete original
+Food-branch qualification remains unperformed: independently established children
+would need assessment against their exact pinned parent meanings, preserving
+qualifying-kind, purpose and consumer conditions. Do not optimize isolated
+counterexamples toward an unstated preferred category.
 
 ## Native accounting and verification
 
