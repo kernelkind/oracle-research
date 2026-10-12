@@ -1,0 +1,1 @@
+ Do not add statements that the topic does not require a feature or that it applies regardless of a circumstance; keep explanations of rejected restrictions in `resolutions`. 

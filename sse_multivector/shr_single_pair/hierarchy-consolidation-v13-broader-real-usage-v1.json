@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "consolidation_v13_remaining_real": [
+      "../../target/canonical-shaping-selection-v1/consolidation-v13-roots-first-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v13-roots-repeat-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v13-mental-first-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v13-mental-repeat-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v13-cuisine-first-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v13-cuisine-repeat-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v13-broader-first-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v13-broader-repeat-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v13-remaining-first-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v13-remaining-repeat-v1"
+    ]
+  }
+}

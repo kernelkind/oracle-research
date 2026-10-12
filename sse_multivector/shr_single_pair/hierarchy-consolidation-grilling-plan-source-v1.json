@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "state": {
+    "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/regrouping-roots-v1/state.json",
+    "sha256": "853343330cac7db7c2cc9c5a2a333b590c05ca79c8563df0b7261850789a3aae"
+  },
+  "menu": {
+    "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-bootstrap-v88-three-note-v1/target/hierarchy-as100-b96-c48-fifty-note-v1/menu-v2/state.json",
+    "sha256": "4fd0a99ed797b57f94a79d8c1c90ba5d81df72de071bec73d1372a0922e1dc8c"
+  },
+  "selections": [
+    {"id": "with-plans", "parent": "C005"},
+    {
+      "id": "without-plans",
+      "parent": "C005",
+      "meaning_edits": [
+        {
+          "id": "C012",
+          "before": "Grilling is cooking food on a grill using direct heat. The topic covers indoor and outdoor grilling and plans to perform it, including but not limited to planned outdoor preparation of dinner.",
+          "after": "Grilling is cooking food on a grill using direct heat. The topic covers indoor and outdoor grilling."
+        }
+      ]
+    }
+  ]
+}

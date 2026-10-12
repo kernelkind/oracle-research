@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "consolidation_v11_online_scope": [
+      "../../target/canonical-shaping-selection-v1/consolidation-v11-online-scope-first-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v11-online-scope-repeat-v1"
+    ]
+  }
+}

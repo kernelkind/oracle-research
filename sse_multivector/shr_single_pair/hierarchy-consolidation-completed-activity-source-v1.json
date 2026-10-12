@@ -1,0 +1,10 @@
+{
+  "cases": [
+    {
+      "id": "completed-work-parent",
+      "inputs": {
+        "INPUT_JSON": "{\"parent\":{\"id\":\"P001\",\"title\":\"Completed home painting\",\"meaning\":\"Completed home painting is applying paint to surfaces or fixtures of a home, with the painting finished.\"},\"siblings\":[{\"id\":\"S001\",\"title\":\"Completed interior wall painting\",\"meaning\":\"Completed interior wall painting is applying paint to interior walls of a home, with the painting finished.\"},{\"id\":\"S002\",\"title\":\"Completed interior ceiling painting\",\"meaning\":\"Completed interior ceiling painting is applying paint to ceilings inside a home, with the painting finished.\"},{\"id\":\"S003\",\"title\":\"Plans to paint cabinets\",\"meaning\":\"Plans to paint cabinets are plans to apply paint to cabinets in a home, whether or not the painting is carried out.\"},{\"id\":\"S004\",\"title\":\"Plans to paint exterior doors\",\"meaning\":\"Plans to paint exterior doors are plans to apply paint to exterior doors of a home, whether or not the painting is carried out.\"}]}"
+      }
+    }
+  ]
+}

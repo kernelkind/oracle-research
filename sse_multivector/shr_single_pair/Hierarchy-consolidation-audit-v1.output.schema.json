@@ -1,0 +1,11 @@
+{
+  "type": "object",
+  "properties": {
+    "covers_children": {"type": "boolean"},
+    "fits_parent": {"type": "boolean"},
+    "valid": {"type": "boolean"},
+    "reason": {"type": "string"}
+  },
+  "required": ["covers_children", "fits_parent", "valid", "reason"],
+  "additionalProperties": false
+}

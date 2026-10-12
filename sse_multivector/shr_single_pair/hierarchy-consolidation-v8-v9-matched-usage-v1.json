@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "consolidation_v8": [
+      "../../target/canonical-shaping-selection-v1/consolidation-v8-matched-roots-first-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v8-matched-first-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v8-matched-roots-repeat-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v8-matched-repeat-v1"
+    ],
+    "consolidation_v9": [
+      "../../target/canonical-shaping-selection-v1/consolidation-v9-matched-roots-first-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v9-matched-first-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v9-matched-roots-repeat-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v9-matched-repeat-v1"
+    ]
+  }
+}

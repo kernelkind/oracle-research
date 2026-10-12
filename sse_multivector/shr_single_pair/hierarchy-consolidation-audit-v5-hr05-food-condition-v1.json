@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "proposals": [
+    {
+      "experiment": {
+        "path": "../../target/canonical-shaping-selection-v1/consolidation-v17-hr05-food-first-v1",
+        "sha256": "8c826e872489bae17ff1fa99a92c202efcae57441101c390a25b2ed7ffa4020f"
+      },
+      "case": "consolidate",
+      "meaning_edit": {
+        "before": "Food resources are materials intended for people to eat or drink and organisms grown or raised to provide such materials. They include, but are not limited to, prepared dishes, culinary ingredients, edible roots and plants grown for their edible parts.",
+        "after": "Food resources are materials intended for people to eat or drink and organisms grown or raised to provide such materials."
+      }
+    },
+    {
+      "experiment": {
+        "path": "../../target/canonical-shaping-selection-v1/consolidation-v17-hr05-food-first-v1",
+        "sha256": "8c826e872489bae17ff1fa99a92c202efcae57441101c390a25b2ed7ffa4020f"
+      },
+      "case": "consolidate",
+      "meaning_edit": {
+        "before": "Food resources are materials intended for people to eat or drink and organisms grown or raised to provide such materials. They include, but are not limited to, prepared dishes, culinary ingredients, edible roots and plants grown for their edible parts.",
+        "after": "Food resources are materials intended for people to eat or drink. Food resources also include organisms grown or raised to provide materials intended for people to eat or drink."
+      }
+    }
+  ],
+  "include_nomination": false
+}

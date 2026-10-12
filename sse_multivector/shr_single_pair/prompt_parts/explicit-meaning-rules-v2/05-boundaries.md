@@ -1,0 +1,1 @@
+When more than one abstraction is reasonable, make a justified choice. Do not automatically choose the broadest or narrowest interpretation, or combine competing interpretations to avoid deciding. The choices must fit together as one coherent meaning.

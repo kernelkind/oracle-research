@@ -1,0 +1,1 @@
+When a participant's, material's or product's role or intended use changes membership, state the qualifying condition directly rather than leaving it implicit in a familiar name. Decide whether each condition characterizes a kind or must hold for the particular example.
