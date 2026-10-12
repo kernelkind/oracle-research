@@ -8913,3 +8913,24 @@ meaning-only and paired inputs, without loop examples or old judgments. The
 question concerns qualifying physical parts themselves, not whether every
 admitted information case is itself a physical part. This is an auxiliary
 diagnosis, not another main prompt line, Bootstrap revision or certified label.
+
+### Bare implication diagnostic v1: frozen design
+
+`Compare-implication-diagnostic-v1` asks whether qualifying physical parts under
+each unchanged definition necessarily provide the exact stated handhold
+function. It uses the same single-meaning and paired inputs as admission v2,
+preserving field order, producer receipts and source evidence outside model input.
+It contains no loop facts, relation judgments or information-scope expansion.
+Legacy `Compare-condition-diagnostic-v1` through v8 remain untouched: those
+were full local/canonical comparison workflows, not this single-condition test.
+
+Six prepared native experiments repeat the three presentations twice, twelve
+requests. The short prompt uses no padding, caching or external concurrency flag.
+Audit exactly one node record per supplied definition; the schema alone cannot
+enforce per-input node coverage. Singleton/paired subject-presence and namespace
+differences remain confounds. Different counterexamples across supported readings
+are explicitly allowed for a stable not-necessary outcome; main V217's wording
+is less explicit about that permission. Do not equate the auxiliary instructions
+or a not-necessary answer with a certified full-information-scope counterexample.
+A necessary answer must hold under all supported readings. This diagnostic can
+localize the premise problem but does not certify an original relationship.
