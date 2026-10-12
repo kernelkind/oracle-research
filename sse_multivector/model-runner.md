@@ -1599,8 +1599,9 @@ one unique ID for the raw build and its derived menu/export in reports and
 comparisons; checkpoints do not receive separate run IDs. **HR03** identifies
 the official ASv6.100 50-note Bootstrap-v96 / Compare-v48 build. Its frozen inputs,
 prompt/model settings, construction policy and native receipts are collected in
-the [Markdown hierarchy register](../docs/recommendation-engine/hierarchy-runs.md).
-Update that register and the explicit official-run list before regenerating the
+the [parameter ledger (CSV)](../docs/recommendation-engine/hierarchy-parameters.csv)
+and [detailed run records](../docs/recommendation-engine/hierarchy-runs.md).
+Update those records and the explicit official-run list before regenerating the
 HTML viewer with the offline
 `catalogue-hierarchies` command. Diagnostic execution approval, completion and
 browsing exports do not establish official status. The previous `H0001`–`H0701`

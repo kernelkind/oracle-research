@@ -1,7 +1,14 @@
-# Official hierarchy runs and experimental parameters
+# Official hierarchy run records
 
-This Markdown file is the register of official hierarchy runs and their
-experimental parameters. **HR05** is the completed 24-note rerun with a review UI.
+For experimental parameters only, open the
+[spreadsheet ledger (CSV)](hierarchy-parameters.csv) in Excel or Google Sheets.
+It has one row per official run, with prompt versions, selection and construction
+settings, model execution, attempt limits and generation Git commits. Its model
+settings describe hierarchy construction; the corpus hash binds the saved
+subject outputs. `not used`, `not recorded` and `unspecified` are distinct values.
+
+This Markdown file retains detailed run results, provenance, usage and review
+commands. **HR05** is the completed 24-note rerun with a review UI.
 **HR04** is the completed 12-note run; **HR03** is the completed 50-note baseline.
 Each run's raw build, browsing menu and export share its ID.
 
@@ -1053,8 +1060,10 @@ its preserved output and parameter evidence. The existing-run cutoff remains
 October 8, 2026 at midnight America/New_York (`2026-10-08T04:00:00Z`). Older bound
 inputs remain provenance.
 
-Keep this Markdown register and the explicit source list synchronized when
-registering an official run. Before a new run, record the full commits of Oracle
+Keep the parameter ledger, these run records and the explicit source list
+synchronized when registering an official run. Add only experimental settings
+to the CSV; outcomes, usage, costs and review instructions belong here.
+Before a new run, record the full commits of Oracle
 and the shared runner, plus any uncommitted source changes, alongside their
 frozen code hashes. Generator source is accepted only when its bytes match a
 saved hash. An exact Git blob identifies file contents, not the run's overall

@@ -44,8 +44,10 @@ failure-receipt, constructor and resume checks remain required.
 
 ## Existing frozen runs
 
-Landing this fix does not change HR10's running process or either of its frozen
-source checkouts. Adoption requires a recorded continuation using updated
+Landing this fix did not change HR10's process or either of its frozen source
+checkouts. HR10 was subsequently stopped by the user without adopting this fix.
+
+Adoption requires a recorded continuation using updated
 runner/project source bindings after active native batches finish. Preserve
 all original inputs, prompt versions, graph history, receipts and the existing
 attempt counter. Never edit the currently bound source in place or start a
