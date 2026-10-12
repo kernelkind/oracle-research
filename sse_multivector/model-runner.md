@@ -7874,3 +7874,10 @@ controls but recognizes the missing material in only one orientation. It fails
 qualification and is not adopted. The next mechanism to test is explicit kind
 qualification for the described thing before accepting or excluding its property
 connection; rejecting a production connection alone cannot decide that issue.
+
+V208's explicit kind-property qualification passes the physical first draw and
+fresh repeat, retaining functional-production controls on the original aspect
+panel. V209 corrects qualification to allow necessary implications and described
+components; its physical first draw passes too. Both remain experimental pending
+fresh confirmation, resolved controls, chains and the frozen B109 producer panel.
+No older producer means are rewritten and no hierarchy adoption follows.

@@ -8203,3 +8203,24 @@ qualifications in the original aspect panel. Require known controls and sound
 unknown-direction diagnostics, then use fresh V209 confirmation and resolved,
 complete-chain and original producer cases before adoption. No new gold,
 Bootstrap data, hierarchy construction or owner messages follow.
+
+### V208 fresh confirmation and V209 first screen
+
+The independent V208 six-case repeat preserves all resolved material answers
+and both unknown qualifications. Its unchanged original eight-case aspect panel
+retains four functional-production positives and four unresolved particular
+surface qualifications. That older pattern fixture's design/content ambiguity
+remains documented; these nulls do not certify a narrower source reading.
+V209's six-case physical first draw also preserves all known and unknown answers.
+Independent review accepts V208's first physical proofs and directional IDs.
+No candidate is adopted from these bounded observations.
+
+Next qualify V209 with an exact fresh physical repeat and separate unchanged
+scope-chain, original-aspect, explicit-human-handhold, explicit-commerce,
+intention/capability, particular-brand/MrBeast and numeric-goal panels. These
+retain positive and negative controls, not only known errors. Preserve their
+synthetic/provisional versus user-approved versus open-probe classifications.
+A failed control or proof prevents adoption; unresolved original meanings are
+not negative gold. After this gate, run the unchanged fifty-case single-version
+B109 producer collection separately, checking reversals, equivalent substitution
+and full proofs rather than requiring its historical labels.
