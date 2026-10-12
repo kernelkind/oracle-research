@@ -27,6 +27,16 @@ class DistillationCoverageSearchTests(unittest.TestCase):
         self.assertIn("--answer-id", result.stdout)
         self.assertIn("--premise-audit", result.stdout)
 
+    def test_native_cli_exposes_coverage_collection(self):
+        project = Path(__file__).resolve().parents[1]
+        launcher = project.parent / "experiment-runner/bin/experiment-runner"
+        result = subprocess.run([sys.executable, str(launcher), "--project-root", str(project),
+            "collect-distillation-coverage-search", "--help"], cwd=project,
+            capture_output=True, text=True, timeout=30)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("--verification-experiment", result.stdout)
+        self.assertIn("--premise-audit", result.stdout)
+
     def test_native_cli_prepares_medium_searches_without_running_premises(self):
         from sse_multivector import distillation_review_assessment as assessment
         from sse_multivector import distillation_review_evaluation as evaluation
@@ -395,6 +405,224 @@ class DistillationCoverageSearchTests(unittest.TestCase):
                 self.assertEqual(prepared["search_cases"], 0)
                 self.assertEqual(prepared["experiments"], [])
                 self.assertEqual(prepared["preparation"]["settlements"][0]["rule"], rule)
+
+    def collection_fixture(self, name, *, witness=None):
+        from sse_multivector import distillation_coverage_search as coverage
+        from sse_multivector import test_distillation_review_evaluation as fixtures
+        teacher = fixtures.subjects(("1", "Fruits"), ("2", "Cable A"), ("3", "Vehicles"))
+        student = fixtures.subjects(("1", "Fruits"), ("2", "Vehicles"), ("3", "Cable A"))
+        if witness is not None:
+            teacher = fixtures.subjects(("1", "Fruits"), ("2", "Cable A"))
+            student = fixtures.subjects(("1", "Fruits"), ("2", "Cables"), ("3", "Cable A"))
+        fixture, baseline, worker = self.baseline(name, teacher=teacher, student=student)
+        from sse_multivector import distillation_review_evaluation as evaluation
+        for group in evaluation.report(baseline)["experiments"]:
+            for row in group["cases"]:
+                if row["status"] == "valid" and row.get("origin") != "mechanical":
+                    fixture.native("review", group["experiment"], "--case", row["id"], "--role", "agent",
+                        "--verdict", "accept", "--comment", "Complete source prerequisite independently audited.")
+        result = dict(evidence=[dict(student_number=number, reason="Fixture complete candidate assessment.")
+                               for number in ([witness] if witness else ["1", "2"])],
+                      witness_student_number=witness)
+        worker.write_text(worker.read_text().replace(
+            '("DSMv3", "DSSv2", "DSLv2", "DSLv4")',
+            '("DSMv3", "DSSv2", "DSLv2", "DSLv4", "DCSv1")').replace(
+            'else {"valid": True, "reason": "Fixture semantic verdict."}',
+            'else (' + repr(result) + ' if prompt.startswith("DCSv1") else '
+            '{"valid": True, "reason": "Fixture semantic verdict."})'))
+        output = self.root / (name + "-coverage")
+        prepared = coverage.prepare(baseline, output, runner_binary=worker)
+        native = Path(prepared["experiments"][0]["path"])
+        fixture.native("run", native, "--max-new-attempts", 10)
+        row = json.loads(fixture.native("show", native, "--json"))["cases"][0]
+        return fixture, baseline, output, native, row
+
+    def test_native_collector_scores_only_accepted_complete_search_outputs(self):
+        fixture, _, output, native, row = self.collection_fixture("collect-null")
+        fixture.native("review", native, "--case", row["id"], "--role", "agent",
+            "--verdict", "accept", "--comment", "Complete null output independently audited.")
+        destination = self.root / "collected.json"
+        result = json.loads(fixture.native("collect-distillation-coverage-search", output,
+            "--output", destination))
+        answer = result["random"]["answers"][0]
+        self.assertEqual(answer["scoring"]["status"], "valid")
+        self.assertEqual(answer["scoring"]["scores"]["coverage"]["value"], 1)
+        self.assertEqual(answer["scoring"]["scores"]["correctness"]["value"], 1)
+        self.assertEqual(result, json.loads(destination.read_text()))
+
+    def test_unaudited_rejected_and_uncertain_search_outputs_remain_ungraded(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        fixture, _, output, native, row = self.collection_fixture("ungraded-null")
+        for verdict in (None, "reject", "uncertain"):
+            with self.subTest(verdict=verdict):
+                if verdict:
+                    fixture.native("review", native, "--case", row["id"], "--role", "agent",
+                        "--verdict", verdict, "--comment", "This complete search output is not accepted.")
+                result = coverage.collect(output, self.root / (str(verdict) + "-collected.json"))
+                answer = result["random"]["answers"][0]
+                self.assertEqual(answer["scoring"]["status"], "pending")
+                self.assertNotIn("coverage", answer["scoring"].get("scores", {}))
+                self.assertTrue(answer["dependencies"])
+
+    def test_positive_search_needs_exact_accepted_native_verification(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        from sse_multivector import distillation_review_evaluation as evaluation
+        fixture, baseline, output, native, row = self.collection_fixture("collect-positive", witness="2")
+        fixture.native("review", native, "--case", row["id"], "--role", "agent",
+            "--verdict", "accept", "--comment", "Complete positive search independently audited.")
+        pending = coverage.collect(output, self.root / "positive-pending.json")
+        self.assertNotIn("coverage", pending["random"]["answers"][0]["scoring"].get("scores", {}))
+        original = evaluation.report(baseline)
+        pair = next(case for case in original["random"]["answers"][0]["checks"]["relationship"]
+                    if case["evidence"].get("teacher_numbers") == ["2"]
+                    and case["evidence"].get("heading_number") == "2")
+        source = next(group["experiment"] for group in original["experiments"]
+                      if any(case["id"] == pair["id"] for case in group["cases"]))
+        verification = self.root / "positive-verification"
+        fixture.native("prepare", verification, "--from", source, "--only", pair["id"], "--reasoning-effort", "high")
+        fixture.native("run", verification, "--max-new-attempts", 2)
+        unreviewed = coverage.collect(output, self.root / "unreviewed-positive.json",
+            verification_experiments=[verification])
+        self.assertNotIn("coverage", unreviewed["random"]["answers"][0]["scoring"].get("scores", {}))
+        fixture.native("review", verification, "--case", pair["id"], "--role", "agent",
+            "--verdict", "accept", "--comment", "Exact complete positive pair independently audited.")
+        result = coverage.collect(output, self.root / "positive-collected.json", verification_experiments=[verification])
+        self.assertEqual(result["random"]["answers"][0]["scoring"]["scores"]["coverage"]["value"], 0)
+
+    def test_collector_requires_exact_external_search_output_hash(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        _, _, output, _, row = self.collection_fixture("external-collection")
+        for label, digest in (("wrong", "0" * 64), ("exact", hashlib.sha256(row["output"].encode()).hexdigest())):
+            audit = self.root / (label + "-collection-audit.jsonl")
+            audit.write_text(json.dumps(dict(check="coverage_search", input_sha256=row["input_sha256"],
+                output_sha256=digest, verdict="accept", reason="Complete exact search assessment.")) + "\n")
+            result = coverage.collect(output, self.root / (label + "-external-collected.json"), premise_audits=[audit])
+            scores = result["random"]["answers"][0]["scoring"].get("scores", {})
+            self.assertEqual("coverage" in scores, label == "exact")
+
+    def test_collector_rejects_a_changed_frozen_source_ledger(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        from sse_multivector import distillation_review_evaluation as evaluation
+        _, baseline, output, _, _ = self.collection_fixture("collection-integrity", witness="2")
+        original = evaluation.report(baseline)
+        ledger = next(Path(case["receipt"]["results_path"]) for group in original["experiments"]
+                      for case in group["cases"] if case.get("receipt"))
+        ledger.write_bytes(ledger.read_bytes() + b"\n")
+        destination = self.root / "changed-source-collected.json"
+        with self.assertRaisesRegex(ValueError, "coverage collection source changed"):
+            coverage.collect(output, destination)
+        self.assertFalse(destination.exists())
+
+    def test_accepted_exact_uncovered_pair_is_settled_before_search(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        from sse_multivector import distillation_review_evaluation as evaluation
+        fixture, baseline, worker = self.baseline("accepted-pair", edge_valid=True)
+        original = evaluation.report(baseline)
+        pair = next(row for row in original["random"]["answers"][0]["checks"]["relationship"]
+                    if row["evidence"].get("teacher_numbers") == ["2"]
+                    and row["evidence"].get("heading_number") == "1.1")
+        group = next(native for native in original["experiments"]
+                     if any(case["id"] == pair["id"] for case in native["cases"]))
+        fixture.native("review", group["experiment"], "--case", pair["id"], "--role", "agent",
+            "--verdict", "accept", "--comment", "Complete compatible pair independently audited.")
+        result = coverage.prepare(baseline, self.root / "accepted-pair-coverage", runner_binary=worker)
+        self.assertEqual(result["search_cases"], 0)
+        settlement = result["preparation"]["settlements"][0]
+        self.assertEqual(settlement["rule"], "accepted_uncovered_compatible_heading")
+        self.assertEqual(settlement["compatibility_premise"]["case_id"], pair["id"])
+
+    def test_collection_withdraws_a_settlement_when_its_exact_premise_is_disputed(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        from sse_multivector import distillation_review_evaluation as evaluation
+        fixture, baseline, worker = self.baseline("withdraw-pair", edge_valid=True)
+        original = evaluation.report(baseline)
+        pair = next(row for row in original["random"]["answers"][0]["checks"]["relationship"]
+                    if row["evidence"].get("teacher_numbers") == ["2"]
+                    and row["evidence"].get("heading_number") == "1.1")
+        for group in original["experiments"]:
+            for row in group["cases"]:
+                if row["id"] == pair["id"] or (row["evidence"]["check"] == "matching" and row["status"] == "valid"):
+                    fixture.native("review", group["experiment"], "--case", row["id"], "--role", "agent",
+                        "--verdict", "accept", "--comment", "Complete source premise independently audited.")
+        output = self.root / "withdraw-pair-coverage"
+        prepared = coverage.prepare(baseline, output, runner_binary=worker)
+        self.assertEqual(prepared["search_cases"], 0)
+        audit = self.root / "withdraw-exact-pair.jsonl"
+        audit.write_text(json.dumps(dict(check="relationship", input_sha256=pair["input_sha256"],
+            output_sha256=hashlib.sha256(pair["output"].encode()).hexdigest(), verdict="uncertain",
+            reason="The exact complete pair interpretation remains disputed.")) + "\n")
+        result = coverage.collect(output, self.root / "withdraw-pair-collected.json", premise_audits=[audit])
+        self.assertNotIn("coverage", result["random"]["answers"][0]["scoring"].get("scores", {}))
+
+    def negative_pair_fixture(self, name, accepted_numbers):
+        from sse_multivector import distillation_review_evaluation as evaluation
+        from sse_multivector import test_distillation_review_evaluation as fixtures
+        fixture, baseline, worker = self.baseline(name, edge_valid=False,
+            teacher=fixtures.subjects(("1", "Fruits"), ("2", "Cable A"), ("3", "Vehicles")),
+            student=fixtures.subjects(("1", "Fruits"), ("2", "Vehicles"), ("3", "Cable A")))
+        pairs = {}
+        for group in evaluation.report(baseline)["experiments"]:
+            for row in group["cases"]:
+                if (row["evidence"].get("teacher_numbers") == ["2"]
+                        and row["evidence"].get("heading_number") in accepted_numbers):
+                    self.assertFalse(row["parsed"]["valid"])
+                    pairs[row["evidence"]["heading_number"]] = row
+                    fixture.native("review", group["experiment"], "--case", row["id"], "--role", "agent",
+                        "--verdict", "accept", "--comment", "Complete exact negative pair independently audited.")
+        return fixture, baseline, worker, pairs
+
+    def test_accepted_negative_pairs_are_removed_before_search_with_bound_proofs(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        fixture, baseline, worker, pairs = self.negative_pair_fixture("negative-candidate", ["1"])
+        prepared = coverage.prepare(baseline, self.root / "negative-candidate-coverage", runner_binary=worker)
+        native = json.loads(fixture.native("show", prepared["experiments"][0]["path"], "--json"))
+        case = native["cases"][0]
+        self.assertEqual(case["evidence"]["candidate_student_numbers"], ["2"])
+        excluded = case["evidence"]["excluded_incompatible_candidates"]
+        self.assertEqual([row["student_number"] for row in excluded], ["1"])
+        self.assertEqual(excluded[0]["compatibility_premise"]["case_id"], pairs["1"]["id"])
+
+    def test_all_accepted_negative_roots_settle_and_withdrawals_keep_coverage_pending(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        _, baseline, worker, pairs = self.negative_pair_fixture("negative-settlement", ["1", "2"])
+        output = self.root / "negative-settlement-coverage"
+        prepared = coverage.prepare(baseline, output, runner_binary=worker)
+        self.assertEqual(prepared["search_cases"], 0)
+        self.assertEqual(prepared["preparation"]["settlements"][0]["rule"], "accepted_uncovered_incompatible_headings")
+        result = coverage.collect(output, self.root / "negative-settled-collected.json")
+        self.assertEqual(result["random"]["answers"][0]["scoring"]["scores"]["coverage"]["value"], 1)
+        audit = self.root / "withdraw-negative-pair.jsonl"
+        pair = pairs["2"]
+        audit.write_text(json.dumps(dict(check="relationship", input_sha256=pair["input_sha256"],
+            output_sha256=hashlib.sha256(pair["output"].encode()).hexdigest(), verdict="uncertain",
+            reason="The exact negative interpretation is now unresolved.")) + "\n")
+        pending = coverage.collect(output, self.root / "negative-withdrawn-collected.json", premise_audits=[audit])
+        self.assertNotIn("coverage", pending["random"]["answers"][0]["scoring"].get("scores", {}))
+
+    def test_accepted_null_cannot_overwrite_an_accepted_exact_positive_pair(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        from sse_multivector import distillation_review_evaluation as evaluation
+        fixture, baseline, output, native, row = self.collection_fixture("null-contradiction")
+        fixture.native("review", native, "--case", row["id"], "--role", "agent",
+            "--verdict", "accept", "--comment", "Complete null search audited before contradiction discovery.")
+        original = evaluation.report(baseline)
+        pair = next(case for case in original["random"]["answers"][0]["checks"]["relationship"]
+                    if case["evidence"].get("teacher_numbers") == ["2"]
+                    and case["evidence"].get("heading_number") == "2")
+        source = next(group["experiment"] for group in original["experiments"]
+                      if any(case["id"] == pair["id"] for case in group["cases"]))
+        verification = self.root / "null-contradiction-verification"
+        fixture.native("prepare", verification, "--from", source, "--only", pair["id"], "--reasoning-effort", "high")
+        fixture.native("run", verification, "--max-new-attempts", 2)
+        fixture.native("review", verification, "--case", pair["id"], "--role", "agent",
+            "--verdict", "accept", "--comment", "Exact positive comparison independently audited.")
+        result = coverage.collect(output, self.root / "null-contradiction-collected.json",
+            verification_experiments=[verification])
+        answer = result["random"]["answers"][0]
+        self.assertEqual(answer["scoring"]["status"], "pending")
+        self.assertNotIn("coverage", answer["scoring"].get("scores", {}))
+        self.assertTrue(answer["coverage_inconsistencies"])
+        self.assertTrue(any(premise["case_id"] == pair["id"] for premise in answer["premises"]))
 
 
 if __name__ == "__main__":

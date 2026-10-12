@@ -1,6 +1,10 @@
 """V2 selection and finishing through production preparation and construction."""
 from copy import deepcopy
 import json
+from pathlib import Path
+import shutil
+import subprocess
+import sys
 import unittest
 
 from sse_multivector.canonical_hierarchy_shape import finish_nodes
@@ -17,6 +21,169 @@ class V2NativeTests(unittest.TestCase):
     advance = traversal_fixture.CanonicalTraversalTests.advance
     automatic_fixture = traversal_fixture.CanonicalTraversalTests.automatic_fixture
     automatic_run = traversal_fixture.CanonicalTraversalTests.automatic_run
+
+    def cached_runner(self):
+        fixture = Path(__file__).resolve().parents[2]/'experiment-runner/tests/fixtures/fake-runner.py'
+        self.runner.write_text(fixture.read_text().replace(
+            'if prompt.startswith("GENERIC PROMPT"):',
+            'if prompt.startswith("GENERIC PROMPT") or prompt.startswith("Prominence estimates"):'))
+
+    def test_short_real_prominence_prefix_does_not_inherit_bootstrap_caching(self):
+        self.cached_runner()
+        self.prepare(count=2, runner_overrides=dict(prompt_cache=True,
+            model='gpt-6.1-sol', transport='sse'),
+            prompt_text='GENERIC PROMPT '+('Fixed instruction. '*1100)+'{INPUT_JSON}')
+        state = self.state()
+        self.assertTrue(state['bootstrap_spec']['runner']['prompt_cache'])
+        self.assertTrue(state['comparison_spec']['runner']['prompt_cache'])
+        self.assertTrue(state['consolidation_spec']['runner']['prompt_cache'])
+        self.assertFalse(state['prominence_spec']['runner']['prompt_cache'])
+        meaning = state['experiments'][0]['experiment']
+        self.cli('run', meaning, env={'FAKE_RUNNER_PROMPT_RESPONSE':'{"meaning":"Fixed"}'})
+        self.advance()
+        prominence = next(r for r in self.state()['experiments'] if r['role']=='prominence')
+        envelope = json.loads((Path(prominence['experiment'])/'experiment.json').read_text())
+        self.assertNotIn('cache_warmup', envelope['plan'])
+        self.assertTrue(envelope['plan']['prompt']['text'].startswith('Prominence estimates'))
+        self.cli('run', prominence['experiment'], env={'FAKE_RUNNER_PROMPT_RESPONSE':json.dumps(dict(
+            prominence=60, missing_meaning='Other', allocation=[dict(
+                meaning='Complete post', points=100, represented=60, missing=40)]))})
+        self.advance()
+        self.assertTrue(all('prominence' in row for row in self.state()['inventory'] if '.' not in row['local']['number']))
+
+    def test_separate_project_continuation_requires_reviewed_source_rebinding(self):
+        project = Path(__file__).resolve().parents[1]
+        self.project = self.root/'original-project'
+        (self.project/'sse_multivector').mkdir(parents=True)
+        shutil.copy2(project/'experiment-runner.json', self.project)
+        for path in (project/'sse_multivector').glob('*.py'):
+            shutil.copy2(path, self.project/'sse_multivector')
+        shutil.copytree(project/'sse_multivector/prominence-prompt-goal-v1/ppv35-post-meaning-v1',
+                        self.project/'sse_multivector/prominence-prompt-goal-v1/ppv35-post-meaning-v1')
+        self.automatic_fixture(count=2, roots_only=True)
+        self.write('allowance.json', dict(schema_version=1, limit=2, used=0))
+        self.automatic_run(ok=False)
+        saved = self.state()
+        calls = traversal_fixture.fixtures.ExperimentTests.calls(self)
+        receipts = {Path(r['experiment'])/'run/results.jsonl':
+                    (Path(r['experiment'])/'run/results.jsonl').read_bytes()
+                    for r in saved['experiments'] if 'answers' in r}
+        new_project = self.root/'continuation-project'
+        shutil.copytree(self.project, new_project)
+        code = new_project/'sse_multivector/canonical_traversal.py'
+        code.write_text(code.read_text()+'\n# Reviewed continuation fix.\n')
+        self.project = new_project
+        refused = self.automatic_run(ok=False)
+        self.assertIn('trial source binding changed', refused.stderr)
+        self.assertEqual(traversal_fixture.fixtures.ExperimentTests.calls(self), calls)
+        self.write('allowance.json', dict(schema_version=1, limit=20, used=2))
+        result = self.cli('run-canonical-traversal', 'trial', '--attempt-budget', 'allowance.json',
+                          '--runner-upgrade-reason', 'Reviewed fix in isolated continuation checkout')
+        self.assertEqual(json.loads(result.stdout)['status'], 'complete')
+        state = self.state()
+        for field in ('corpus','note_ids','bootstrap_spec','comparison_spec','consolidation_spec'):
+            self.assertEqual(state[field], saved[field])
+        self.assertEqual(state['experiments'][0], saved['experiments'][0])
+        for path, raw in receipts.items():
+            self.assertEqual(path.read_bytes(), raw)
+        self.assertGreaterEqual(json.loads((self.root/'allowance.json').read_text())['used'], 2)
+        upgrade = state['source_upgrades'][0]
+        self.assertEqual(upgrade['reason'], 'Reviewed fix in isolated continuation checkout')
+        self.assertIn(str(code), upgrade['after'])
+        self.assertIn(str(code), state['sources'])
+        old_code = self.root/'original-project/sse_multivector/canonical_traversal.py'
+        self.assertIn(str(old_code), upgrade['before'])
+        self.assertNotIn(str(old_code), state['sources'])
+
+    def test_reviewed_upgrade_preserves_failed_unprepared_batch_and_meaning_receipts(self):
+        self.cached_runner()
+        project = Path(__file__).resolve().parents[1]
+        self.project = self.root/'original-project'
+        (self.project/'sse_multivector').mkdir(parents=True)
+        shutil.copy2(project/'experiment-runner.json', self.project)
+        for path in (project/'sse_multivector').glob('*.py'):
+            shutil.copy2(path, self.project/'sse_multivector')
+        shutil.copytree(project/'sse_multivector/prominence-prompt-goal-v1/ppv35-post-meaning-v1',
+                        self.project/'sse_multivector/prominence-prompt-goal-v1/ppv35-post-meaning-v1')
+        old_code = self.project/'sse_multivector/canonical_traversal.py'
+        old_code.write_text(old_code.read_text().replace('    _prominence_cache(prominence_spec)\n', ''))
+        original_code = old_code.read_bytes()
+        self.prepare(count=2, runner_overrides=dict(prompt_cache=True,
+            model='gpt-6.1-sol', transport='sse'),
+            prompt_text='GENERIC PROMPT '+('Fixed instruction. '*1100)+'{INPUT_JSON}')
+        self.write('allowance.json', dict(schema_version=1, limit=3, used=0))
+        meaning = self.state()['experiments'][0]['experiment']
+        self.cli('run', meaning, '--attempt-budget', 'allowance.json',
+                 env={'FAKE_RUNNER_PROMPT_RESPONSE':'{"meaning":"Fixed"}'})
+        failed = self.cli('advance-canonical-traversal','trial','--comment','Collect meanings',ok=False)
+        self.assertIn('829 estimated o200k_base tokens; minimum is 1,024', failed.stderr)
+        saved = self.state()
+        native = Path(meaning)
+        preserved = {path: path.read_bytes() for path in (native/'experiment.json',
+            native/'run/results.jsonl', self.root/'trial/batch-00000/source.json',
+            self.root/'trial/batch-00000/spec.json', self.prompt)}
+        partial = self.root/'trial/batch-00001'
+        partial_bytes = {name: (partial/name).read_bytes() for name in ('source.json','spec.json')}
+        self.assertFalse((partial/'experiment').exists())
+        calls = traversal_fixture.fixtures.ExperimentTests.calls(self)
+        counter = (self.root/'allowance.json').read_bytes()
+        new_project = self.root/'continuation-project'
+        shutil.copytree(self.project, new_project)
+        shutil.copy2(project/'sse_multivector/canonical_traversal.py',
+                     new_project/'sse_multivector/canonical_traversal.py')
+        self.project = new_project
+        interruption = subprocess.run([sys.executable, '-c', '''
+from pathlib import Path
+import sys
+from unittest.mock import patch
+sys.path.insert(0, sys.argv[1])
+sys.path.insert(0, sys.argv[3])
+from sse_multivector import canonical_traversal as traversal
+original = traversal.workflow.write
+def interrupted(path, value):
+    if Path(path).name == 'state.json':
+        raise OSError('simulated state-write interruption')
+    return original(path, value)
+with patch.object(traversal.workflow, 'write', interrupted):
+    traversal._resume_sources(Path(sys.argv[2]), 'Native prefix eligibility fix; original inputs preserved')
+''', str(new_project), str(self.root/'trial'), str(project.parent/'experiment-runner')],
+            capture_output=True, text=True)
+        self.assertNotEqual(interruption.returncode, 0)
+        self.assertIn('simulated state-write interruption', interruption.stderr)
+        self.assertFalse(partial.exists())
+        self.cli('run-canonical-traversal','trial','--attempt-budget','allowance.json',
+            '--runner-upgrade-reason','Native prefix eligibility fix; original inputs preserved',ok=False)
+        state = self.state()
+        self.assertEqual((self.root/'allowance.json').read_bytes(), counter)
+        self.assertEqual(traversal_fixture.fixtures.ExperimentTests.calls(self), calls)
+        self.assertEqual(old_code.read_bytes(), original_code)
+        for path, raw in preserved.items():
+            self.assertEqual(path.read_bytes(), raw)
+        for field in ('corpus','note_ids','bootstrap_spec','comparison_spec','consolidation_spec'):
+            self.assertEqual(state[field], saved[field])
+        self.assertEqual(state['experiments'][0]['inputs'], saved['experiments'][0]['inputs'])
+        self.assertFalse(state['prominence_spec']['runner']['prompt_cache'])
+        upgrade = state['source_upgrades'][0]
+        self.assertEqual(upgrade['prominence_cache']['policy']['estimated_prefix_tokens'], 829)
+        self.assertEqual(upgrade['unprepared_batch']['model_attempts'], 0)
+        archive = Path(upgrade['unprepared_batch']['after'])
+        for name, raw in partial_bytes.items():
+            self.assertEqual((archive/name).read_bytes(), raw)
+        self.assertEqual((partial/'source.json').read_bytes(), partial_bytes['source.json'])
+        self.assertFalse(json.loads((partial/'spec.json').read_text())['runner']['prompt_cache'])
+        self.write('allowance.json', dict(schema_version=1, limit=20, used=3))
+        prominence = state['experiments'][1]['experiment']
+        self.cli('run',prominence,'--attempt-budget','allowance.json',env={
+            'FAKE_RUNNER_PROMPT_RESPONSE':json.dumps(dict(prominence=60, missing_meaning='Other',
+                allocation=[dict(meaning='Complete post',points=100,represented=60,missing=40)]))})
+        self.advance()
+        comparison = self.state()['experiments'][2]['experiment']
+        self.cli('run',comparison,'--attempt-budget','allowance.json',env={
+            'FAKE_RUNNER_PROMPT_RESPONSE':'{"meaning":"Fixed","relation":"neither","reason":"Fixture"}'})
+        self.advance()
+        self.assertEqual(self.state()['status'], 'complete')
+        for path, raw in preserved.items():
+            self.assertEqual(path.read_bytes(), raw)
 
     def execute(self, notes, *, scores=None, relations=None):
         self.automatic_fixture(notes=notes)

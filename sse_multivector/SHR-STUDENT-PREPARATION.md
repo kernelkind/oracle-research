@@ -62,6 +62,27 @@ nonidentity-equivalence pair. Report controls and reversal consistency separatel
 from provisional teacher agreement. These exposed, correlated cases do not
 establish final accuracy, refusal reliability or a model-capacity ceiling.
 
+The completed B109 Qwen passes each produce 40 valid, nonnull answers with no
+failures or exact reuses. Shared-rule adjudication appends six review corrections
+while retaining all original records and answer bytes. Current source-based
+agent assessments and native timings are:
+
+| Saved Bootstrap checkpoint | Accept / reject / uncertain | Median execution seconds | Generation wall seconds | Peak CUDA GiB |
+| --- | ---: | ---: | ---: | ---: |
+| Qwen27 epoch 1 | 30 / 6 / 4 | 14.94 | 639.73 | 20.49 |
+| Qwen27 epoch 4 | 27 / 9 / 4 | 14.58 | 633.41 | 20.49 |
+
+Both consume 237,758 input tokens; outputs total 1,912/1,850 tokens respectively.
+Wall time excludes server loading. Ratings include scope and B109 instruction
+following, remain provisional, and are not blind gold accuracy. The Qwen review
+files contain 44/42 historical records but exactly 40 effective current case
+assessments. Their SHA-256 bindings are
+`2d124ccae617c51610cabcf4c887ee129c37951bff3edaf299b8686d18459e16` and
+`a5999a03a57513084c0e470e7f7882127fa4b30dbd2b696d5234d2025c187ad0`.
+The earlier B96 preference for the fourth epoch does not establish the best
+transfer checkpoint under B109. Gemma and the actual C179 Compare passes remain
+pending; no production adapter or epoch is selected.
+
 The user subsequently authorized preparing small reviewed development training
 sets, running GB10 task-specific pilot fine-tunes, and comparing learning,
 remaining errors and cost. Broaden Bootstrap's published-checkpoint evidence

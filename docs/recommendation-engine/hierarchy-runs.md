@@ -5,7 +5,7 @@ experimental parameters. **HR05** is the completed 24-note rerun with a review U
 **HR04** is the completed 12-note run; **HR03** is the completed 50-note baseline.
 Each run's raw build, browsing menu and export share its ID.
 
-**HR08**, **HR09** and **HR10** are running the approved V2 comparison. Their
+**HR08**, **HR09** and **HR10** have started the approved V2 comparison. Their
 fixed parameters are recorded below; native preparation pinned exact source
 commits, prompt hashes and input evidence before model requests.
 
@@ -28,10 +28,11 @@ They were registered later, so ID order is not generation order. The intervening
 
 | Parameter | HR08 | HR09 | HR10 |
 | --- | --- | --- | --- |
-| Status | Running | Running | Running |
+| Status | Running after reviewed continuation | Running after reviewed continuation | Running after reviewed continuation |
 | Notes | HR05's same 24, same order | HR05's same 24, same order | HR03's exact original 50-note AS selection order |
 | Run definition | [HR08](../../sse_multivector/hierarchy-runs/hr08/traversal.spec.json) | [HR09](../../sse_multivector/hierarchy-runs/hr09/traversal.spec.json) | [HR10](../../sse_multivector/hierarchy-runs/hr10/traversal.spec.json) |
 | Prepared provenance | [HR08](../../../oracle-mvp-hierarchy-hr08-v2/target/hierarchy-hr08-v2-24-note-v1/prepared-provenance.json) | [HR09](../../../oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/prepared-provenance.json) | [HR10](../../../oracle-mvp-hierarchy-hr10-v2/target/hierarchy-hr10-v2-50-note-v1/prepared-provenance.json) |
+| Continuation provenance | [HR08](../../../oracle-mvp-hierarchy-hr08-v2/target/hierarchy-hr08-v2-24-note-v1/continuation-provenance-v1.json) | [HR09](../../../oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/continuation-provenance-v1.json) | [HR10](../../../oracle-mvp-hierarchy-hr10-v2/target/hierarchy-hr10-v2-50-note-v1/continuation-provenance-v1.json) |
 | Subject trees | Saved ASv6.100 from HR03 | Same | Same |
 | Local subject entries / L1 roots | 832 / 150 | 832 / 150 | 1,510 / 326 |
 | Bootstrap | v109 | v122 | v122 |
@@ -55,7 +56,9 @@ There is no prominence cutoff for deeper entries. Exact native answer reuse
 retains its producer evidence and is reported separately from new attempts.
 
 Model execution is `openai-codex` subscription / `gpt-6.1-sol` / medium reasoning
-/ SSE, with prefix caching and automatic warming. Bootstrap and prominence use
+/ SSE, with prefix caching and automatic warming for eligible prompts. Bootstrap,
+Compare and consolidation retain caching; PPv35's 829-token prefix is below the
+runner's 1,024-token minimum and runs uncached. Bootstrap and prominence use
 600-second timeouts; Compare and consolidation use 1,800 seconds. No explicit
 output-token limit, seed or temperature override is set. Each hierarchy permits
 three active searches with placements in selection order; the shared provider
@@ -68,7 +71,7 @@ artifact storage. Native request identity and producer receipts govern exact
 reuse across these official runs; earlier diagnostic outputs are not added to
 this history. Identical requests are not additional independent samples.
 
-All three isolated project worktrees are frozen at full generation commit
+The original three isolated project worktrees remain frozen at generation commit
 `1a7f68a3b27b8ab19f30256a6c613ce28768e0d9`. Both the shared stable launcher
 and model worker use the isolated runner worktree
 `experiment-runner-hr08-hr10-source-v1`, frozen at
@@ -94,6 +97,29 @@ changing their adoption status. Each output will receive its run ID, a review
 view, a native usage report and API-equivalent cost accounting. Full generation
 commits and clean uncommitted-source status were recorded before execution;
 token, cost and structural results remain pending.
+
+### Initial execution checkpoint
+
+All original L1 meanings are valid: 150 for HR08, 150 for HR09 and 326 for
+HR10. HR10 includes 150 exact native reuses from HR09. The drivers stopped
+before any prominence request or placement because V2 inherited Bootstrap's
+cache flag for PPv35, whose fixed prefix has 829 estimated tokens, below the
+shared runner's 1,024-token minimum. Saved meanings, receipts and counters are
+preserved. A tested constructor fix now applies the native prefix eligibility
+policy. Reviewed continuation from separate isolated source worktrees records
+the original and replacement constructor paths and hashes, the effective PP
+cache setting, and the archived zero-call preparation. All selected prompt
+bytes, note inputs and persistent counters remain fixed. The three production
+regressions and relevant constructor/graph/receipt/viewer suite pass 59 tests;
+all three also pass on the combined landed result.
+
+The cache fix is commit `90cfa66026a9167a314607a22f7a4b7ad1eceb56` on local
+`main`. All three continuation source worktrees are frozen at
+`542d5697ccee1b85b28f3ded0a9e093c36de0c1b`; the original worktrees and
+meaning receipts remain unchanged. Native `source_upgrades` records all eight
+constructor bindings, old/new source hashes, PP caching true to false, and the
+archived unprepared batch. The original counters were 152/3,000, 151/3,000 and
+178/10,000 at continuation; none was reset. New prominence requests are running.
 
 ## Token usage and API cost
 
