@@ -7928,3 +7928,11 @@ three of four original-pair reversal checks still conflict, with all twelve
 resolved/targeted-unknown controls preserved. The candidate is not adopted or
 broadened. Repeated scope reminders have not established a durable repair;
 any body simplification must be separately qualified against the frozen panels.
+
+V216's consolidated body removes the measured producer-core and crossed-order
+contradictions in its first screen, but regresses the physical-material-unknown
+qualification and changes provisional commercial-status controls. Independent
+reviews preserve open proof boundaries; consistency is not certification. V216
+is unadopted. V217 restores one exact V209 property-qualification sentence in the
+shorter body, separating that definite failure from the brand knowledge-policy
+qualification. V215 remains an unrun preflight draft.

@@ -8575,3 +8575,52 @@ production controls. The original decorative qualification remains; the four
 functional positives test preservation of useful production connections.
 No original open relationship becomes human gold. Any apparent improvement
 requires sound proofs, fresh confirmation and wider producer qualification.
+
+### V216 result: measured consistency improves, factual qualification regresses
+
+All forty-eight comparisons complete valid. The eighteen-case producer core has
+zero settled reversal or equivalence/transitivity witnesses. All four crossed
+order/repeated Metal checks are reciprocally consistent, with Metal containing
+Steel-or-Brass. These are observable consistency improvements, not certification
+of those open meanings or evidence that the model followed an internal sequence.
+
+Independent proof review retains readiness-directed Bread qualifications and
+the Cooking eating-purpose obligation. It finds a better time-purpose argument
+through connected preparatory means, without certifying every substitute proof.
+Metal's material implication is sound; universal grip-to-handhold coverage stays
+lexically qualified because machine-only handle admission has not been settled.
+Four Bread coverage cases have native uncertain agent reviews. Earlier outputs,
+review-free exports, producer receipts and human decisions remain unchanged.
+
+The six explicit-human/machine/mixed controls, two MrBeast preservation controls,
+four known-material physical controls and four functional-production positives
+retain expected outcomes. Both physical-material-omitted cases regress to neither:
+they exclude production but assert away a possible qualifying paper surface.
+Independent review identifies this as a definite route-qualification proof failure.
+The original decorative panel produces three neither and one uncertain; its
+physical-pattern versus independent-design qualification remains unresolved.
+
+The two particular-brand commercial-status controls change from provisional
+uncertain to positive. The forward proof imports product offerings not in the
+meaning; the reverse treats the design-brand illustration as unconditional
+membership without proving the surrounding commercial requirement. Neither
+changed label is automatically wrong merely because it differs from an agent
+expectation. Under the supplied-facts contract, the forward uses an extra
+qualification premise; the reverse has a definite proof gap. Do not equate
+known entity facts with term clarification without closing that policy boundary.
+
+V216 is not adopted. Native `hierarchy-compare-v216-consolidation-screen-usage-v1.json`
+records sixty-two fresh attempts including thirteen warmup attempts, six recovered
+failures, zero reuse and six attempts without usage. $0.2788364 is a known
+API-equivalent subtotal, not complete cost or a subscription charge.
+
+### V217: isolate the property-qualification wording lost in compression
+
+V217 changes one sentence in V216's properties/composition paragraph, restoring
+V209's exact qualification gate for a particular thing or component and its
+warning that ruling out another connection does not rule this one out. Every
+other body, output and example byte is unchanged. This isolates the combined
+sentence restoration; it does not distinguish its component reference from its
+other-route warning or repair the separately qualified brand proof by decree.
+Native revision remains bound to approved V179. Screen the physical contrast,
+original Metal orientations/orders and wider producer core before qualification.
