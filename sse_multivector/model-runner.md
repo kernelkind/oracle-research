@@ -341,6 +341,17 @@ definitions use seventeen attempts including warmups and one recovered failure.
 Its cost is unknown, so $0.181612 is only the known API-equivalent subtotal.
 Neither version is activated and no Compare or hierarchy inference occurs.
 
+The [V127 role/function diagnostic](shr_single_pair/bootstrap-v127-food-role-qualification-v1.md)
+extends one v126 instruction and preserves the exact four Food inputs. Six fresh
+valid definitions retain physical qualification, but no explicit
+relationship-versus-function diagnostic or robust benefit is established. The
+risotto repeat's incorporated material must qualify as culinary ingredients;
+its direct-consumption route cannot automatically admit medical beads mixed
+into porridge. V127 remains experimental; v126 remains the working candidate.
+Eight attempts include two warmups, with no failures, retries or reuses; all six
+definition requests hit cache. Complete native API-equivalent cost is $0.0769484.
+No Compare inference or hierarchy work occurs.
+
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at
 `~/src/notedeck_worktrees/algos/experiment-runner`. All migrated project worktrees

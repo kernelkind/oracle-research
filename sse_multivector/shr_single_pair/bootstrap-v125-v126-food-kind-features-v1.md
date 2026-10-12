@@ -156,12 +156,13 @@ direct-consumption alternative. Clinical admission therefore is not by itself
 an established producer failure. Its relationship between broad preparation
 and the more specific culinary-ingredient conditions remains qualified.
 
-The next proposed diagnostic is to distinguish direct-consumption scope from
-ingredient-role scope using the existing standalone wafer and tracer beads
-mixed into porridge. Inspect what each final meaning admits and whether its
-resolutions actually choose those boundaries. Do not edit merely to force
-clinical-negative labels. Broader standalone/branch qualification is still
-needed before recommending v126 for general hierarchy generation.
+The subsequent [v127 diagnostic](bootstrap-v127-food-role-qualification-v1.md)
+distinguishes direct-consumption scope from ingredient-role scope using the
+existing standalone wafer and tracer beads mixed into porridge. It does not
+establish robust benefit from its extra function instruction. Preserve each
+meaning's exact alternatives rather than forcing clinical-negative labels.
+Complete Food-branch qualification remains proposed before recommending v126
+for general hierarchy generation.
 
 ## Native accounting and verification
 

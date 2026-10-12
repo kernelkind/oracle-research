@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v127_four_foods_fresh": [
+      "../../target/bootstrap-v127-hr04-four-foods-v1/draw1"
+    ],
+    "v127_risotto_sourdough_repeat": [
+      "../../target/bootstrap-v127-hr04-four-foods-v1/repeat"
+    ]
+  }
+}
