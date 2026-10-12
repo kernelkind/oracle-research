@@ -2277,6 +2277,22 @@ in the corresponding prepared check group; the scorer's stopping rules and
 frozen labels stay unchanged. The effort override and subset production paths
 passed all 117 tests across the seven distillation-review modules.
 
+Evaluation preparation also accepts `--matching-reasoning-effort`, which
+overrides matching alone. For example, `--reasoning-effort medium
+--matching-reasoning-effort high` freezes high DSMv3 and medium DSS/DSL groups
+in one native evaluation. Omitting the matching override preserves the global
+or selection effort. `prepare-distillation-coverage-search --reasoning-effort
+medium` freezes medium DCSv1 groups; its default remains xhigh. Both options
+validate before output creation. They change settings for new preparations,
+preserve request inputs and mechanical routing, and allow verified history
+at each check's exact effort to be reused without rewriting frozen manifests.
+
+Four new production-path preparation and validation tests pass after first
+demonstrating the missing CLI options. The 62-test evaluation/coverage/effort
+regression run has 60 passes and two failures also reproduced on unmodified
+`c47e7552`: execution-budget handling of a shared-runner stop reason and an
+effort-analysis fixture expecting concurrency eight instead of thirty.
+
 The prespecified screen uses `R01`, `R02`, `R03`, `C01` and `C06`: three random
 answers covering all three distilled-model families, plus two challenge
 answers with both supported and unsupported wording. Remaining answer order

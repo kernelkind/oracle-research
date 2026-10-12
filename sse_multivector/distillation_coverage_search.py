@@ -341,10 +341,13 @@ def validate(case, raw):
             witness_requires_verification=witness is not None))
 
 
-def prepare(evaluation_path, output, *, answer_ids=None, runner_binary=None, history_root=None, premise_audits=None):
-    """Prepare native xhigh search experiments; never performs inference."""
+def prepare(evaluation_path, output, *, answer_ids=None, runner_binary=None, history_root=None, premise_audits=None,
+            reasoning_effort="xhigh"):
+    """Prepare native search experiments; never performs inference."""
     from experiment_runner import experiment, inputs, project, prompt_cache
     project.configure(Path(__file__).resolve().parents[1])
+    if reasoning_effort not in ("xhigh", "high", "medium", "low"):
+        raise ValueError("reasoning_effort must be xhigh, high, medium or low")
     path = Path(evaluation_path).expanduser().resolve()
     path = path / "evaluation.json" if path.is_dir() else path
     output = Path(output).expanduser().resolve()
@@ -379,7 +382,7 @@ def prepare(evaluation_path, output, *, answer_ids=None, runner_binary=None, his
     for name, rows, cached in groups:
         source_path = output / "sources" / (name + ".json")
         experiment.write(source_path, source)
-        runner = dict(provider="openai-codex", auth_file=None, model="gpt-6.1-sol", reasoning_effort="xhigh",
+        runner = dict(provider="openai-codex", auth_file=None, model="gpt-6.1-sol", reasoning_effort=reasoning_effort,
             transport="sse", timeout_seconds=3600,
             output_schema_path=str(directory / "coverage-search-response-schema.json"))
         if runner_binary is not None:

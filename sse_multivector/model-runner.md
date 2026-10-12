@@ -2004,6 +2004,12 @@ and delegates requests, reuse, warmups, retry handling and receipts to the share
 runner. Compatible-heading comparisons use the configured relationship template,
 defaulting to DSLv2; required flags and meaning groups come from a source-bound
 candidate-independent assessment.
+Evaluation preparation's optional `--matching-reasoning-effort` overrides
+matching alone while `--reasoning-effort` supplies the other check settings.
+Coverage-search preparation also accepts `--reasoning-effort`, retaining
+xhigh as its default. This lets new native preparations bind the tested
+high matching / medium other-check combination and reuse exact saved requests
+without changing source wording, mechanical rules or existing manifests.
 Expectation files freeze before calls and remain agent-assessed rather than gold.
 Only repeated natural prefixes meeting the existing eligibility threshold are
 warmed, using explicit prefix/key configuration. Sequential native groups use
