@@ -62,32 +62,44 @@ nonidentity-equivalence pair. Report controls and reversal consistency separatel
 from provisional teacher agreement. These exposed, correlated cases do not
 establish final accuracy, refusal reliability or a model-capacity ceiling.
 
-The completed B109 Qwen passes each produce 40 valid, nonnull answers with no
-failures or exact reuses. Shared-rule adjudication appends ten review corrections
-while retaining all original records and answer bytes. Current source-based
-agent assessments and native timings, including the completed Gemma first pass,
-are:
+All four B109 Bootstrap passes produce 40 valid answers each with no failures or
+exact reuses. Shared-rule adjudication appends thirteen review corrections while
+retaining all original records and answer bytes. Current source-based agent
+assessments and native timings are:
 
 | Saved Bootstrap checkpoint | Accept / reject / uncertain | Median execution seconds | Generation wall seconds | Peak CUDA GiB |
 | --- | ---: | ---: | ---: | ---: |
 | Qwen27 epoch 1 | 31 / 6 / 3 | 14.94 | 639.73 | 20.49 |
 | Qwen27 epoch 4 | 28 / 9 / 3 | 14.58 | 633.41 | 20.49 |
 | Gemma26 epoch 1 | 26 / 11 / 3 | 58.91 | 2369.38 | 51.98 |
+| Gemma26 epoch 4 | 30 / 6 / 4 | 67.82 | 2974.84 | 51.98 |
 
 Both Qwen passes consume 237,758 input tokens; outputs total 1,912/1,850 tokens
-respectively. Gemma consumes 238,209 input and 1,288 output tokens on the same
-40 inputs and template. Its three nulls are two rejected and one uncertain
-refusal; these exposed cases do not estimate a qualified refusal rate.
+respectively. Both Gemma passes consume 238,209 input tokens; outputs total
+1,288/1,662. Only Gemma epoch one returns nulls: two rejected and one uncertain
+refusal. These exposed cases do not estimate a qualified refusal rate.
 Wall time excludes server loading. Ratings include scope and B109 instruction
 following, remain provisional, and are not blind gold accuracy. The Qwen review
-files contain 45/43 historical records; Gemma's contains 42. Each retains exactly
-40 effective current case assessments. Their SHA-256 bindings in table order are
+files contain 45/43 historical records; Gemma's contain 42/43. All 160 effective
+case assessments and all 173 historical review bindings are verified. Review
+SHA-256 bindings in table order are
 `ee1fe801d7a97b205f35dfb83caebf5444f00c7668ac7a9b868f6b72e33663b8`,
-`74a688257f4584ca1dcd76b6844ecc41b17e899f2bc86ca6952a9e62acf8cbb4` and
-`d9a6460adb25d20f754d3a91be0da3de01e6d72b596ad292463da62511edd29d`.
+`74a688257f4584ca1dcd76b6844ecc41b17e899f2bc86ca6952a9e62acf8cbb4`,
+`d9a6460adb25d20f754d3a91be0da3de01e6d72b596ad292463da62511edd29d` and
+`115eb3e28fcfbb2bf6d0dd18cce01aff404fd354e9498b5fc2373f72caa092ca`.
 The earlier B96 preference for the fourth epoch does not establish the best
-transfer checkpoint under B109. Gemma epoch four and the actual C179 Compare passes remain
-pending; no production adapter or epoch is selected.
+transfer checkpoint under B109. Qwen epoch one and Gemma epoch four have close
+provisional quality (31 versus 30 accepts, both six rejects), with different
+strengths. Qwen better preserves the generic Potatoes topic and planned Sushi
+food-portion identity. Gemma gives a concrete Cooking process, keeps harmfulness
+attributed rather than asserting an experienced outcome, and states sourdough's
+defining process without separately defining the bread. Both still miss stock
+and pressure-canning process boundaries. Qwen's measured worker execution median
+is about 4.54 times faster on these serving paths. Gemma's unmerged expert
+adapters limit extrapolation to optimized architecture cost. Qwen remains the
+practical Bootstrap starting-model recommendation; Gemma remains a credible
+quality alternative. C179 Compare evaluation is still in progress; no
+production adapter or epoch is selected.
 
 The user subsequently authorized preparing small reviewed development training
 sets, running GB10 task-specific pilot fine-tunes, and comparing learning,

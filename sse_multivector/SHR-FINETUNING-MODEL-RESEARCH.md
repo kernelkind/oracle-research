@@ -38,12 +38,18 @@ source-based assessments, versus 28 / 9 / 3 at epoch four. Median execution is
 14.94/14.58 seconds with 20.49 GiB peak CUDA allocation. These provisional
 reviews include B109 instruction following; they are not blind gold accuracy.
 Stronger adaptation to the old B96 targets does not automatically improve
-transfer to B109. Gemma's first pass has 26 / 11 / 3 assessments, 58.91-second
-median execution and 51.98 GiB peak CUDA allocation; three nulls include two
-rejected refusals and one uncertainty. Its current unmerged-expert serving path
-is not an optimized architecture-speed comparison. Gemma epoch four and C179
-model evaluation remain pending, so no production checkpoint is selected and
-the foundation recommendation remains provisional.
+transfer to B109. Gemma's two passes have 26 / 11 / 3 and 30 / 6 / 4 assessments,
+58.91/67.82-second median execution and 51.98 GiB peak CUDA allocation. Only its
+first pass has nulls: two rejected refusals and one uncertainty. All 160 current
+assessments and 173 preserved historical review bindings are verified.
+Qwen epoch one and Gemma epoch four have close provisional quality, with both
+six rejects. Gemma improves process definitions and reported harmfulness; Qwen
+better preserves generic food topics and planned food-portion identity. Qwen's
+measured worker execution median is about 4.54 times faster on these serving
+paths. Gemma's current unmerged-expert path limits extrapolation to optimized
+architecture cost. Qwen remains the practical Bootstrap starting-model
+recommendation, with Gemma retained as a credible alternative. C179 Compare
+evaluation remains pending; no production adapter or epoch is selected.
 
 Bootstrap consumes a selected ASv6.100 subject, its complete original selected
 root tree and full post, then generates a standalone meaning. Its present
