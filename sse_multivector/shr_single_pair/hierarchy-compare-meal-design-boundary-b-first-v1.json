@@ -1,0 +1,705 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "original__meal-included-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"B\": {\"subject\": \"Stockpots\", \"meaning\": \"Stockpots are large, deep cooking vessels designed to hold food while it is cooked using heat, specifically by simmering ingredients in liquid to prepare edible culinary stock. Edible culinary stock counts as food whether or not meal preparation or consumption is intended. Every Stockpot is designed for laboratory experiments. For every Stockpot, preparing meals is also one of its design purposes.\"}, \"A\": {\"subject\": \"Cookware\", \"meaning\": \"Cookware is vessels designed to hold food while it is cooked using heat, including but not limited to cocottes and frying pans, for preparing meals such as a Full English Breakfast.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Controlled diagnostic copies of independently fixed endpoints; supplied directly without AS or Bootstrap generation.",
+        "panel": "meal-design-boundary-v1",
+        "input_view": "symmetric_fixed_meanings",
+        "pair_id": "original__meal-included",
+        "orientation": "forward",
+        "input_order": [
+          "B",
+          "A"
+        ],
+        "condition_kind": "one-original-bridge",
+        "first_endpoint": "cookware_original",
+        "second_endpoint": "stockpots_meal_included",
+        "application_allowed": false,
+        "original_endpoint_reference": {
+          "experiment": "target/compare-v179-matched-input-order-v1/a-first-01",
+          "case": "isolated-035-forward",
+          "source_AS": "ASv6.100",
+          "bootstrap_version": "Hierarchy-bootstrap-v96",
+          "qualification": "Original endpoint strings are preserved exactly where referenced. Diagnostic strings are not producer meanings, semantic gold, or replacements for frozen regressions."
+        },
+        "review": {
+          "expected_relation": null,
+          "expectation_role": "agent",
+          "expectation_basis": "One original producer string remains interpretively disputed. Record labels and boundary readings without forcing a semantic expectation. Original Cookware with meal-included stockpots is predicted positive under either main meal-clause reading, but remains outside the closed-anchor gate.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "original__meal-included-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"B\": {\"subject\": \"Cookware\", \"meaning\": \"Cookware is vessels designed to hold food while it is cooked using heat, including but not limited to cocottes and frying pans, for preparing meals such as a Full English Breakfast.\"}, \"A\": {\"subject\": \"Stockpots\", \"meaning\": \"Stockpots are large, deep cooking vessels designed to hold food while it is cooked using heat, specifically by simmering ingredients in liquid to prepare edible culinary stock. Edible culinary stock counts as food whether or not meal preparation or consumption is intended. Every Stockpot is designed for laboratory experiments. For every Stockpot, preparing meals is also one of its design purposes.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Controlled diagnostic copies of independently fixed endpoints; supplied directly without AS or Bootstrap generation.",
+        "panel": "meal-design-boundary-v1",
+        "input_view": "symmetric_fixed_meanings",
+        "pair_id": "original__meal-included",
+        "orientation": "reverse",
+        "input_order": [
+          "B",
+          "A"
+        ],
+        "condition_kind": "one-original-bridge",
+        "first_endpoint": "cookware_original",
+        "second_endpoint": "stockpots_meal_included",
+        "application_allowed": false,
+        "original_endpoint_reference": {
+          "experiment": "target/compare-v179-matched-input-order-v1/a-first-01",
+          "case": "isolated-035-forward",
+          "source_AS": "ASv6.100",
+          "bootstrap_version": "Hierarchy-bootstrap-v96",
+          "qualification": "Original endpoint strings are preserved exactly where referenced. Diagnostic strings are not producer meanings, semantic gold, or replacements for frozen regressions."
+        },
+        "review": {
+          "expected_relation": null,
+          "expectation_role": "agent",
+          "expectation_basis": "One original producer string remains interpretively disputed. Record labels and boundary readings without forcing a semantic expectation. Original Cookware with meal-included stockpots is predicted positive under either main meal-clause reading, but remains outside the closed-anchor gate.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "original__meal-excluded-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"B\": {\"subject\": \"Stockpots\", \"meaning\": \"Stockpots are large, deep cooking vessels designed to hold food while it is cooked using heat, specifically by simmering ingredients in liquid to prepare edible culinary stock. Edible culinary stock counts as food whether or not meal preparation or consumption is intended. Every Stockpot is designed for laboratory experiments. For every Stockpot, preparing meals is not one of its design purposes.\"}, \"A\": {\"subject\": \"Cookware\", \"meaning\": \"Cookware is vessels designed to hold food while it is cooked using heat, including but not limited to cocottes and frying pans, for preparing meals such as a Full English Breakfast.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Controlled diagnostic copies of independently fixed endpoints; supplied directly without AS or Bootstrap generation.",
+        "panel": "meal-design-boundary-v1",
+        "input_view": "symmetric_fixed_meanings",
+        "pair_id": "original__meal-excluded",
+        "orientation": "forward",
+        "input_order": [
+          "B",
+          "A"
+        ],
+        "condition_kind": "one-original-bridge",
+        "first_endpoint": "cookware_original",
+        "second_endpoint": "stockpots_meal_excluded",
+        "application_allowed": false,
+        "original_endpoint_reference": {
+          "experiment": "target/compare-v179-matched-input-order-v1/a-first-01",
+          "case": "isolated-035-forward",
+          "source_AS": "ASv6.100",
+          "bootstrap_version": "Hierarchy-bootstrap-v96",
+          "qualification": "Original endpoint strings are preserved exactly where referenced. Diagnostic strings are not producer meanings, semantic gold, or replacements for frozen regressions."
+        },
+        "review": {
+          "expected_relation": null,
+          "expectation_role": "agent",
+          "expectation_basis": "One original producer string remains interpretively disputed. Record labels and boundary readings without forcing a semantic expectation. Original Cookware with meal-included stockpots is predicted positive under either main meal-clause reading, but remains outside the closed-anchor gate.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "original__meal-excluded-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"B\": {\"subject\": \"Cookware\", \"meaning\": \"Cookware is vessels designed to hold food while it is cooked using heat, including but not limited to cocottes and frying pans, for preparing meals such as a Full English Breakfast.\"}, \"A\": {\"subject\": \"Stockpots\", \"meaning\": \"Stockpots are large, deep cooking vessels designed to hold food while it is cooked using heat, specifically by simmering ingredients in liquid to prepare edible culinary stock. Edible culinary stock counts as food whether or not meal preparation or consumption is intended. Every Stockpot is designed for laboratory experiments. For every Stockpot, preparing meals is not one of its design purposes.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Controlled diagnostic copies of independently fixed endpoints; supplied directly without AS or Bootstrap generation.",
+        "panel": "meal-design-boundary-v1",
+        "input_view": "symmetric_fixed_meanings",
+        "pair_id": "original__meal-excluded",
+        "orientation": "reverse",
+        "input_order": [
+          "B",
+          "A"
+        ],
+        "condition_kind": "one-original-bridge",
+        "first_endpoint": "cookware_original",
+        "second_endpoint": "stockpots_meal_excluded",
+        "application_allowed": false,
+        "original_endpoint_reference": {
+          "experiment": "target/compare-v179-matched-input-order-v1/a-first-01",
+          "case": "isolated-035-forward",
+          "source_AS": "ASv6.100",
+          "bootstrap_version": "Hierarchy-bootstrap-v96",
+          "qualification": "Original endpoint strings are preserved exactly where referenced. Diagnostic strings are not producer meanings, semantic gold, or replacements for frozen regressions."
+        },
+        "review": {
+          "expected_relation": null,
+          "expectation_role": "agent",
+          "expectation_basis": "One original producer string remains interpretively disputed. Record labels and boundary readings without forcing a semantic expectation. Original Cookware with meal-included stockpots is predicted positive under either main meal-clause reading, but remains outside the closed-anchor gate.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "meal-required__original-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"B\": {\"subject\": \"Stockpots\", \"meaning\": \"Stockpots are large, deep cooking vessels designed for preparing stock by simmering ingredients in liquid.\"}, \"A\": {\"subject\": \"Cookware\", \"meaning\": \"Cookware is vessels designed to hold food while it is cooked using heat, including qualifying cocottes and frying pans. Edible culinary stock counts as food whether or not meal preparation or consumption is intended. For a vessel to qualify as Cookware, preparing meals such as a Full English Breakfast must be one of its design purposes.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Controlled diagnostic copies of independently fixed endpoints; supplied directly without AS or Bootstrap generation.",
+        "panel": "meal-design-boundary-v1",
+        "input_view": "symmetric_fixed_meanings",
+        "pair_id": "meal-required__original",
+        "orientation": "forward",
+        "input_order": [
+          "B",
+          "A"
+        ],
+        "condition_kind": "one-original-bridge",
+        "first_endpoint": "cookware_meal_required",
+        "second_endpoint": "stockpots_original",
+        "application_allowed": false,
+        "original_endpoint_reference": {
+          "experiment": "target/compare-v179-matched-input-order-v1/a-first-01",
+          "case": "isolated-035-forward",
+          "source_AS": "ASv6.100",
+          "bootstrap_version": "Hierarchy-bootstrap-v96",
+          "qualification": "Original endpoint strings are preserved exactly where referenced. Diagnostic strings are not producer meanings, semantic gold, or replacements for frozen regressions."
+        },
+        "review": {
+          "expected_relation": null,
+          "expectation_role": "agent",
+          "expectation_basis": "One original producer string remains interpretively disputed. Record labels and boundary readings without forcing a semantic expectation. Original Cookware with meal-included stockpots is predicted positive under either main meal-clause reading, but remains outside the closed-anchor gate.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "meal-required__original-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"B\": {\"subject\": \"Cookware\", \"meaning\": \"Cookware is vessels designed to hold food while it is cooked using heat, including qualifying cocottes and frying pans. Edible culinary stock counts as food whether or not meal preparation or consumption is intended. For a vessel to qualify as Cookware, preparing meals such as a Full English Breakfast must be one of its design purposes.\"}, \"A\": {\"subject\": \"Stockpots\", \"meaning\": \"Stockpots are large, deep cooking vessels designed for preparing stock by simmering ingredients in liquid.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Controlled diagnostic copies of independently fixed endpoints; supplied directly without AS or Bootstrap generation.",
+        "panel": "meal-design-boundary-v1",
+        "input_view": "symmetric_fixed_meanings",
+        "pair_id": "meal-required__original",
+        "orientation": "reverse",
+        "input_order": [
+          "B",
+          "A"
+        ],
+        "condition_kind": "one-original-bridge",
+        "first_endpoint": "cookware_meal_required",
+        "second_endpoint": "stockpots_original",
+        "application_allowed": false,
+        "original_endpoint_reference": {
+          "experiment": "target/compare-v179-matched-input-order-v1/a-first-01",
+          "case": "isolated-035-forward",
+          "source_AS": "ASv6.100",
+          "bootstrap_version": "Hierarchy-bootstrap-v96",
+          "qualification": "Original endpoint strings are preserved exactly where referenced. Diagnostic strings are not producer meanings, semantic gold, or replacements for frozen regressions."
+        },
+        "review": {
+          "expected_relation": null,
+          "expectation_role": "agent",
+          "expectation_basis": "One original producer string remains interpretively disputed. Record labels and boundary readings without forcing a semantic expectation. Original Cookware with meal-included stockpots is predicted positive under either main meal-clause reading, but remains outside the closed-anchor gate.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "meal-required__meal-included-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"B\": {\"subject\": \"Stockpots\", \"meaning\": \"Stockpots are large, deep cooking vessels designed to hold food while it is cooked using heat, specifically by simmering ingredients in liquid to prepare edible culinary stock. Edible culinary stock counts as food whether or not meal preparation or consumption is intended. Every Stockpot is designed for laboratory experiments. For every Stockpot, preparing meals is also one of its design purposes.\"}, \"A\": {\"subject\": \"Cookware\", \"meaning\": \"Cookware is vessels designed to hold food while it is cooked using heat, including qualifying cocottes and frying pans. Edible culinary stock counts as food whether or not meal preparation or consumption is intended. For a vessel to qualify as Cookware, preparing meals such as a Full English Breakfast must be one of its design purposes.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Controlled diagnostic copies of independently fixed endpoints; supplied directly without AS or Bootstrap generation.",
+        "panel": "meal-design-boundary-v1",
+        "input_view": "symmetric_fixed_meanings",
+        "pair_id": "meal-required__meal-included",
+        "orientation": "forward",
+        "input_order": [
+          "B",
+          "A"
+        ],
+        "condition_kind": "closed-crossed-anchor",
+        "first_endpoint": "cookware_meal_required",
+        "second_endpoint": "stockpots_meal_included",
+        "application_allowed": false,
+        "original_endpoint_reference": {
+          "experiment": "target/compare-v179-matched-input-order-v1/a-first-01",
+          "case": "isolated-035-forward",
+          "source_AS": "ASv6.100",
+          "bootstrap_version": "Hierarchy-bootstrap-v96",
+          "qualification": "Original endpoint strings are preserved exactly where referenced. Diagnostic strings are not producer meanings, semantic gold, or replacements for frozen regressions."
+        },
+        "review": {
+          "expected_relation": "A_contains_B",
+          "expectation_role": "agent",
+          "expectation_basis": "Every Stockpot supplies the parent's food-holding and heat-cooking design; meal-included copies also guarantee any required meal intention, and unrestricted parents permit laboratory-only food cooking. A shallow meal-purpose frying pan without stock/laboratory design is a permitted Cookware case outside Stockpots.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "meal-required__meal-included-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"B\": {\"subject\": \"Cookware\", \"meaning\": \"Cookware is vessels designed to hold food while it is cooked using heat, including qualifying cocottes and frying pans. Edible culinary stock counts as food whether or not meal preparation or consumption is intended. For a vessel to qualify as Cookware, preparing meals such as a Full English Breakfast must be one of its design purposes.\"}, \"A\": {\"subject\": \"Stockpots\", \"meaning\": \"Stockpots are large, deep cooking vessels designed to hold food while it is cooked using heat, specifically by simmering ingredients in liquid to prepare edible culinary stock. Edible culinary stock counts as food whether or not meal preparation or consumption is intended. Every Stockpot is designed for laboratory experiments. For every Stockpot, preparing meals is also one of its design purposes.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Controlled diagnostic copies of independently fixed endpoints; supplied directly without AS or Bootstrap generation.",
+        "panel": "meal-design-boundary-v1",
+        "input_view": "symmetric_fixed_meanings",
+        "pair_id": "meal-required__meal-included",
+        "orientation": "reverse",
+        "input_order": [
+          "B",
+          "A"
+        ],
+        "condition_kind": "closed-crossed-anchor",
+        "first_endpoint": "cookware_meal_required",
+        "second_endpoint": "stockpots_meal_included",
+        "application_allowed": false,
+        "original_endpoint_reference": {
+          "experiment": "target/compare-v179-matched-input-order-v1/a-first-01",
+          "case": "isolated-035-forward",
+          "source_AS": "ASv6.100",
+          "bootstrap_version": "Hierarchy-bootstrap-v96",
+          "qualification": "Original endpoint strings are preserved exactly where referenced. Diagnostic strings are not producer meanings, semantic gold, or replacements for frozen regressions."
+        },
+        "review": {
+          "expected_relation": "B_contains_A",
+          "expectation_role": "agent",
+          "expectation_basis": "Every Stockpot supplies the parent's food-holding and heat-cooking design; meal-included copies also guarantee any required meal intention, and unrestricted parents permit laboratory-only food cooking. A shallow meal-purpose frying pan without stock/laboratory design is a permitted Cookware case outside Stockpots.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "meal-required__meal-excluded-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"B\": {\"subject\": \"Stockpots\", \"meaning\": \"Stockpots are large, deep cooking vessels designed to hold food while it is cooked using heat, specifically by simmering ingredients in liquid to prepare edible culinary stock. Edible culinary stock counts as food whether or not meal preparation or consumption is intended. Every Stockpot is designed for laboratory experiments. For every Stockpot, preparing meals is not one of its design purposes.\"}, \"A\": {\"subject\": \"Cookware\", \"meaning\": \"Cookware is vessels designed to hold food while it is cooked using heat, including qualifying cocottes and frying pans. Edible culinary stock counts as food whether or not meal preparation or consumption is intended. For a vessel to qualify as Cookware, preparing meals such as a Full English Breakfast must be one of its design purposes.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Controlled diagnostic copies of independently fixed endpoints; supplied directly without AS or Bootstrap generation.",
+        "panel": "meal-design-boundary-v1",
+        "input_view": "symmetric_fixed_meanings",
+        "pair_id": "meal-required__meal-excluded",
+        "orientation": "forward",
+        "input_order": [
+          "B",
+          "A"
+        ],
+        "condition_kind": "closed-crossed-anchor",
+        "first_endpoint": "cookware_meal_required",
+        "second_endpoint": "stockpots_meal_excluded",
+        "application_allowed": false,
+        "original_endpoint_reference": {
+          "experiment": "target/compare-v179-matched-input-order-v1/a-first-01",
+          "case": "isolated-035-forward",
+          "source_AS": "ASv6.100",
+          "bootstrap_version": "Hierarchy-bootstrap-v96",
+          "qualification": "Original endpoint strings are preserved exactly where referenced. Diagnostic strings are not producer meanings, semantic gold, or replacements for frozen regressions."
+        },
+        "review": {
+          "expected_relation": "neither",
+          "expectation_role": "agent",
+          "expectation_basis": "The specified meal-excluded stockpot fits its food/heating/stock/laboratory requirements but fails required meal-design intention. A shallow meal-designed frying pan fits Cookware but lacks Stockpots' large/deep form and stock/laboratory design role.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "meal-required__meal-excluded-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"B\": {\"subject\": \"Cookware\", \"meaning\": \"Cookware is vessels designed to hold food while it is cooked using heat, including qualifying cocottes and frying pans. Edible culinary stock counts as food whether or not meal preparation or consumption is intended. For a vessel to qualify as Cookware, preparing meals such as a Full English Breakfast must be one of its design purposes.\"}, \"A\": {\"subject\": \"Stockpots\", \"meaning\": \"Stockpots are large, deep cooking vessels designed to hold food while it is cooked using heat, specifically by simmering ingredients in liquid to prepare edible culinary stock. Edible culinary stock counts as food whether or not meal preparation or consumption is intended. Every Stockpot is designed for laboratory experiments. For every Stockpot, preparing meals is not one of its design purposes.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Controlled diagnostic copies of independently fixed endpoints; supplied directly without AS or Bootstrap generation.",
+        "panel": "meal-design-boundary-v1",
+        "input_view": "symmetric_fixed_meanings",
+        "pair_id": "meal-required__meal-excluded",
+        "orientation": "reverse",
+        "input_order": [
+          "B",
+          "A"
+        ],
+        "condition_kind": "closed-crossed-anchor",
+        "first_endpoint": "cookware_meal_required",
+        "second_endpoint": "stockpots_meal_excluded",
+        "application_allowed": false,
+        "original_endpoint_reference": {
+          "experiment": "target/compare-v179-matched-input-order-v1/a-first-01",
+          "case": "isolated-035-forward",
+          "source_AS": "ASv6.100",
+          "bootstrap_version": "Hierarchy-bootstrap-v96",
+          "qualification": "Original endpoint strings are preserved exactly where referenced. Diagnostic strings are not producer meanings, semantic gold, or replacements for frozen regressions."
+        },
+        "review": {
+          "expected_relation": "neither",
+          "expectation_role": "agent",
+          "expectation_basis": "The specified meal-excluded stockpot fits its food/heating/stock/laboratory requirements but fails required meal-design intention. A shallow meal-designed frying pan fits Cookware but lacks Stockpots' large/deep form and stock/laboratory design role.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "meal-unrestricted__original-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"B\": {\"subject\": \"Stockpots\", \"meaning\": \"Stockpots are large, deep cooking vessels designed for preparing stock by simmering ingredients in liquid.\"}, \"A\": {\"subject\": \"Cookware\", \"meaning\": \"Cookware is vessels designed to hold food while it is cooked using heat, including qualifying cocottes and frying pans. Edible culinary stock counts as food whether or not meal preparation or consumption is intended. For a vessel to qualify as Cookware, preparing meals such as a Full English Breakfast need not be one of its design purposes.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Controlled diagnostic copies of independently fixed endpoints; supplied directly without AS or Bootstrap generation.",
+        "panel": "meal-design-boundary-v1",
+        "input_view": "symmetric_fixed_meanings",
+        "pair_id": "meal-unrestricted__original",
+        "orientation": "forward",
+        "input_order": [
+          "B",
+          "A"
+        ],
+        "condition_kind": "one-original-bridge",
+        "first_endpoint": "cookware_meal_unrestricted",
+        "second_endpoint": "stockpots_original",
+        "application_allowed": false,
+        "original_endpoint_reference": {
+          "experiment": "target/compare-v179-matched-input-order-v1/a-first-01",
+          "case": "isolated-035-forward",
+          "source_AS": "ASv6.100",
+          "bootstrap_version": "Hierarchy-bootstrap-v96",
+          "qualification": "Original endpoint strings are preserved exactly where referenced. Diagnostic strings are not producer meanings, semantic gold, or replacements for frozen regressions."
+        },
+        "review": {
+          "expected_relation": null,
+          "expectation_role": "agent",
+          "expectation_basis": "One original producer string remains interpretively disputed. Record labels and boundary readings without forcing a semantic expectation. Original Cookware with meal-included stockpots is predicted positive under either main meal-clause reading, but remains outside the closed-anchor gate.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "meal-unrestricted__original-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"B\": {\"subject\": \"Cookware\", \"meaning\": \"Cookware is vessels designed to hold food while it is cooked using heat, including qualifying cocottes and frying pans. Edible culinary stock counts as food whether or not meal preparation or consumption is intended. For a vessel to qualify as Cookware, preparing meals such as a Full English Breakfast need not be one of its design purposes.\"}, \"A\": {\"subject\": \"Stockpots\", \"meaning\": \"Stockpots are large, deep cooking vessels designed for preparing stock by simmering ingredients in liquid.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Controlled diagnostic copies of independently fixed endpoints; supplied directly without AS or Bootstrap generation.",
+        "panel": "meal-design-boundary-v1",
+        "input_view": "symmetric_fixed_meanings",
+        "pair_id": "meal-unrestricted__original",
+        "orientation": "reverse",
+        "input_order": [
+          "B",
+          "A"
+        ],
+        "condition_kind": "one-original-bridge",
+        "first_endpoint": "cookware_meal_unrestricted",
+        "second_endpoint": "stockpots_original",
+        "application_allowed": false,
+        "original_endpoint_reference": {
+          "experiment": "target/compare-v179-matched-input-order-v1/a-first-01",
+          "case": "isolated-035-forward",
+          "source_AS": "ASv6.100",
+          "bootstrap_version": "Hierarchy-bootstrap-v96",
+          "qualification": "Original endpoint strings are preserved exactly where referenced. Diagnostic strings are not producer meanings, semantic gold, or replacements for frozen regressions."
+        },
+        "review": {
+          "expected_relation": null,
+          "expectation_role": "agent",
+          "expectation_basis": "One original producer string remains interpretively disputed. Record labels and boundary readings without forcing a semantic expectation. Original Cookware with meal-included stockpots is predicted positive under either main meal-clause reading, but remains outside the closed-anchor gate.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "meal-unrestricted__meal-included-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"B\": {\"subject\": \"Stockpots\", \"meaning\": \"Stockpots are large, deep cooking vessels designed to hold food while it is cooked using heat, specifically by simmering ingredients in liquid to prepare edible culinary stock. Edible culinary stock counts as food whether or not meal preparation or consumption is intended. Every Stockpot is designed for laboratory experiments. For every Stockpot, preparing meals is also one of its design purposes.\"}, \"A\": {\"subject\": \"Cookware\", \"meaning\": \"Cookware is vessels designed to hold food while it is cooked using heat, including qualifying cocottes and frying pans. Edible culinary stock counts as food whether or not meal preparation or consumption is intended. For a vessel to qualify as Cookware, preparing meals such as a Full English Breakfast need not be one of its design purposes.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Controlled diagnostic copies of independently fixed endpoints; supplied directly without AS or Bootstrap generation.",
+        "panel": "meal-design-boundary-v1",
+        "input_view": "symmetric_fixed_meanings",
+        "pair_id": "meal-unrestricted__meal-included",
+        "orientation": "forward",
+        "input_order": [
+          "B",
+          "A"
+        ],
+        "condition_kind": "closed-crossed-anchor",
+        "first_endpoint": "cookware_meal_unrestricted",
+        "second_endpoint": "stockpots_meal_included",
+        "application_allowed": false,
+        "original_endpoint_reference": {
+          "experiment": "target/compare-v179-matched-input-order-v1/a-first-01",
+          "case": "isolated-035-forward",
+          "source_AS": "ASv6.100",
+          "bootstrap_version": "Hierarchy-bootstrap-v96",
+          "qualification": "Original endpoint strings are preserved exactly where referenced. Diagnostic strings are not producer meanings, semantic gold, or replacements for frozen regressions."
+        },
+        "review": {
+          "expected_relation": "A_contains_B",
+          "expectation_role": "agent",
+          "expectation_basis": "Every Stockpot supplies the parent's food-holding and heat-cooking design; meal-included copies also guarantee any required meal intention, and unrestricted parents permit laboratory-only food cooking. A shallow meal-purpose frying pan without stock/laboratory design is a permitted Cookware case outside Stockpots.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "meal-unrestricted__meal-included-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"B\": {\"subject\": \"Cookware\", \"meaning\": \"Cookware is vessels designed to hold food while it is cooked using heat, including qualifying cocottes and frying pans. Edible culinary stock counts as food whether or not meal preparation or consumption is intended. For a vessel to qualify as Cookware, preparing meals such as a Full English Breakfast need not be one of its design purposes.\"}, \"A\": {\"subject\": \"Stockpots\", \"meaning\": \"Stockpots are large, deep cooking vessels designed to hold food while it is cooked using heat, specifically by simmering ingredients in liquid to prepare edible culinary stock. Edible culinary stock counts as food whether or not meal preparation or consumption is intended. Every Stockpot is designed for laboratory experiments. For every Stockpot, preparing meals is also one of its design purposes.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Controlled diagnostic copies of independently fixed endpoints; supplied directly without AS or Bootstrap generation.",
+        "panel": "meal-design-boundary-v1",
+        "input_view": "symmetric_fixed_meanings",
+        "pair_id": "meal-unrestricted__meal-included",
+        "orientation": "reverse",
+        "input_order": [
+          "B",
+          "A"
+        ],
+        "condition_kind": "closed-crossed-anchor",
+        "first_endpoint": "cookware_meal_unrestricted",
+        "second_endpoint": "stockpots_meal_included",
+        "application_allowed": false,
+        "original_endpoint_reference": {
+          "experiment": "target/compare-v179-matched-input-order-v1/a-first-01",
+          "case": "isolated-035-forward",
+          "source_AS": "ASv6.100",
+          "bootstrap_version": "Hierarchy-bootstrap-v96",
+          "qualification": "Original endpoint strings are preserved exactly where referenced. Diagnostic strings are not producer meanings, semantic gold, or replacements for frozen regressions."
+        },
+        "review": {
+          "expected_relation": "B_contains_A",
+          "expectation_role": "agent",
+          "expectation_basis": "Every Stockpot supplies the parent's food-holding and heat-cooking design; meal-included copies also guarantee any required meal intention, and unrestricted parents permit laboratory-only food cooking. A shallow meal-purpose frying pan without stock/laboratory design is a permitted Cookware case outside Stockpots.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "meal-unrestricted__meal-excluded-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"B\": {\"subject\": \"Stockpots\", \"meaning\": \"Stockpots are large, deep cooking vessels designed to hold food while it is cooked using heat, specifically by simmering ingredients in liquid to prepare edible culinary stock. Edible culinary stock counts as food whether or not meal preparation or consumption is intended. Every Stockpot is designed for laboratory experiments. For every Stockpot, preparing meals is not one of its design purposes.\"}, \"A\": {\"subject\": \"Cookware\", \"meaning\": \"Cookware is vessels designed to hold food while it is cooked using heat, including qualifying cocottes and frying pans. Edible culinary stock counts as food whether or not meal preparation or consumption is intended. For a vessel to qualify as Cookware, preparing meals such as a Full English Breakfast need not be one of its design purposes.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Controlled diagnostic copies of independently fixed endpoints; supplied directly without AS or Bootstrap generation.",
+        "panel": "meal-design-boundary-v1",
+        "input_view": "symmetric_fixed_meanings",
+        "pair_id": "meal-unrestricted__meal-excluded",
+        "orientation": "forward",
+        "input_order": [
+          "B",
+          "A"
+        ],
+        "condition_kind": "closed-crossed-anchor",
+        "first_endpoint": "cookware_meal_unrestricted",
+        "second_endpoint": "stockpots_meal_excluded",
+        "application_allowed": false,
+        "original_endpoint_reference": {
+          "experiment": "target/compare-v179-matched-input-order-v1/a-first-01",
+          "case": "isolated-035-forward",
+          "source_AS": "ASv6.100",
+          "bootstrap_version": "Hierarchy-bootstrap-v96",
+          "qualification": "Original endpoint strings are preserved exactly where referenced. Diagnostic strings are not producer meanings, semantic gold, or replacements for frozen regressions."
+        },
+        "review": {
+          "expected_relation": "A_contains_B",
+          "expectation_role": "agent",
+          "expectation_basis": "Every Stockpot supplies the parent's food-holding and heat-cooking design; meal-included copies also guarantee any required meal intention, and unrestricted parents permit laboratory-only food cooking. A shallow meal-purpose frying pan without stock/laboratory design is a permitted Cookware case outside Stockpots.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "meal-unrestricted__meal-excluded-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"B\": {\"subject\": \"Cookware\", \"meaning\": \"Cookware is vessels designed to hold food while it is cooked using heat, including qualifying cocottes and frying pans. Edible culinary stock counts as food whether or not meal preparation or consumption is intended. For a vessel to qualify as Cookware, preparing meals such as a Full English Breakfast need not be one of its design purposes.\"}, \"A\": {\"subject\": \"Stockpots\", \"meaning\": \"Stockpots are large, deep cooking vessels designed to hold food while it is cooked using heat, specifically by simmering ingredients in liquid to prepare edible culinary stock. Edible culinary stock counts as food whether or not meal preparation or consumption is intended. Every Stockpot is designed for laboratory experiments. For every Stockpot, preparing meals is not one of its design purposes.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Controlled diagnostic copies of independently fixed endpoints; supplied directly without AS or Bootstrap generation.",
+        "panel": "meal-design-boundary-v1",
+        "input_view": "symmetric_fixed_meanings",
+        "pair_id": "meal-unrestricted__meal-excluded",
+        "orientation": "reverse",
+        "input_order": [
+          "B",
+          "A"
+        ],
+        "condition_kind": "closed-crossed-anchor",
+        "first_endpoint": "cookware_meal_unrestricted",
+        "second_endpoint": "stockpots_meal_excluded",
+        "application_allowed": false,
+        "original_endpoint_reference": {
+          "experiment": "target/compare-v179-matched-input-order-v1/a-first-01",
+          "case": "isolated-035-forward",
+          "source_AS": "ASv6.100",
+          "bootstrap_version": "Hierarchy-bootstrap-v96",
+          "qualification": "Original endpoint strings are preserved exactly where referenced. Diagnostic strings are not producer meanings, semantic gold, or replacements for frozen regressions."
+        },
+        "review": {
+          "expected_relation": "B_contains_A",
+          "expectation_role": "agent",
+          "expectation_basis": "Every Stockpot supplies the parent's food-holding and heat-cooking design; meal-included copies also guarantee any required meal intention, and unrestricted parents permit laboratory-only food cooking. A shallow meal-purpose frying pan without stock/laboratory design is a permitted Cookware case outside Stockpots.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "direct-cookware-purpose-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"B\": {\"subject\": \"Cookware\", \"meaning\": \"Cookware is vessels designed to hold food while it is cooked using heat, including qualifying cocottes and frying pans. Edible culinary stock counts as food whether or not meal preparation or consumption is intended. For a vessel to qualify as Cookware, preparing meals such as a Full English Breakfast need not be one of its design purposes.\"}, \"A\": {\"subject\": \"Cookware\", \"meaning\": \"Cookware is vessels designed to hold food while it is cooked using heat, including qualifying cocottes and frying pans. Edible culinary stock counts as food whether or not meal preparation or consumption is intended. For a vessel to qualify as Cookware, preparing meals such as a Full English Breakfast must be one of its design purposes.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Controlled diagnostic copies of independently fixed endpoints; supplied directly without AS or Bootstrap generation.",
+        "panel": "meal-design-boundary-v1",
+        "input_view": "symmetric_fixed_meanings",
+        "pair_id": "direct-cookware-purpose",
+        "orientation": "forward",
+        "input_order": [
+          "B",
+          "A"
+        ],
+        "condition_kind": "direct-clause-anchor",
+        "first_endpoint": "cookware_meal_required",
+        "second_endpoint": "cookware_meal_unrestricted",
+        "application_allowed": false,
+        "original_endpoint_reference": {
+          "experiment": "target/compare-v179-matched-input-order-v1/a-first-01",
+          "case": "isolated-035-forward",
+          "source_AS": "ASv6.100",
+          "bootstrap_version": "Hierarchy-bootstrap-v96",
+          "qualification": "Original endpoint strings are preserved exactly where referenced. Diagnostic strings are not producer meanings, semantic gold, or replacements for frozen regressions."
+        },
+        "review": {
+          "expected_relation": "B_contains_A",
+          "expectation_role": "agent",
+          "expectation_basis": "Every meal-required food-heating vessel satisfies the unrestricted design. A laboratory-only food-heating vessel with no meal-design purpose fits unrestricted Cookware and escapes required Cookware. Coherent permitted designs suffice; no actual occurrence is claimed.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "direct-cookware-purpose-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"B\": {\"subject\": \"Cookware\", \"meaning\": \"Cookware is vessels designed to hold food while it is cooked using heat, including qualifying cocottes and frying pans. Edible culinary stock counts as food whether or not meal preparation or consumption is intended. For a vessel to qualify as Cookware, preparing meals such as a Full English Breakfast must be one of its design purposes.\"}, \"A\": {\"subject\": \"Cookware\", \"meaning\": \"Cookware is vessels designed to hold food while it is cooked using heat, including qualifying cocottes and frying pans. Edible culinary stock counts as food whether or not meal preparation or consumption is intended. For a vessel to qualify as Cookware, preparing meals such as a Full English Breakfast need not be one of its design purposes.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Controlled diagnostic copies of independently fixed endpoints; supplied directly without AS or Bootstrap generation.",
+        "panel": "meal-design-boundary-v1",
+        "input_view": "symmetric_fixed_meanings",
+        "pair_id": "direct-cookware-purpose",
+        "orientation": "reverse",
+        "input_order": [
+          "B",
+          "A"
+        ],
+        "condition_kind": "direct-clause-anchor",
+        "first_endpoint": "cookware_meal_required",
+        "second_endpoint": "cookware_meal_unrestricted",
+        "application_allowed": false,
+        "original_endpoint_reference": {
+          "experiment": "target/compare-v179-matched-input-order-v1/a-first-01",
+          "case": "isolated-035-forward",
+          "source_AS": "ASv6.100",
+          "bootstrap_version": "Hierarchy-bootstrap-v96",
+          "qualification": "Original endpoint strings are preserved exactly where referenced. Diagnostic strings are not producer meanings, semantic gold, or replacements for frozen regressions."
+        },
+        "review": {
+          "expected_relation": "A_contains_B",
+          "expectation_role": "agent",
+          "expectation_basis": "Every meal-required food-heating vessel satisfies the unrestricted design. A laboratory-only food-heating vessel with no meal-design purpose fits unrestricted Cookware and escapes required Cookware. Coherent permitted designs suffice; no actual occurrence is claimed.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "direct-stockpots-purpose-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"B\": {\"subject\": \"Stockpots\", \"meaning\": \"Stockpots are large, deep cooking vessels designed to hold food while it is cooked using heat, specifically by simmering ingredients in liquid to prepare edible culinary stock. Edible culinary stock counts as food whether or not meal preparation or consumption is intended. Every Stockpot is designed for laboratory experiments. For every Stockpot, preparing meals is not one of its design purposes.\"}, \"A\": {\"subject\": \"Stockpots\", \"meaning\": \"Stockpots are large, deep cooking vessels designed to hold food while it is cooked using heat, specifically by simmering ingredients in liquid to prepare edible culinary stock. Edible culinary stock counts as food whether or not meal preparation or consumption is intended. Every Stockpot is designed for laboratory experiments. For every Stockpot, preparing meals is also one of its design purposes.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Controlled diagnostic copies of independently fixed endpoints; supplied directly without AS or Bootstrap generation.",
+        "panel": "meal-design-boundary-v1",
+        "input_view": "symmetric_fixed_meanings",
+        "pair_id": "direct-stockpots-purpose",
+        "orientation": "forward",
+        "input_order": [
+          "B",
+          "A"
+        ],
+        "condition_kind": "direct-clause-anchor",
+        "first_endpoint": "stockpots_meal_included",
+        "second_endpoint": "stockpots_meal_excluded",
+        "application_allowed": false,
+        "original_endpoint_reference": {
+          "experiment": "target/compare-v179-matched-input-order-v1/a-first-01",
+          "case": "isolated-035-forward",
+          "source_AS": "ASv6.100",
+          "bootstrap_version": "Hierarchy-bootstrap-v96",
+          "qualification": "Original endpoint strings are preserved exactly where referenced. Diagnostic strings are not producer meanings, semantic gold, or replacements for frozen regressions."
+        },
+        "review": {
+          "expected_relation": "neither",
+          "expectation_role": "agent",
+          "expectation_basis": "Both supplied kinds retain food identity, stock preparation and laboratory-design role. A qualifying dual laboratory-and-meal design meets meal-included and fails meal-excluded; a qualifying laboratory design without meal intent meets meal-excluded and fails meal-included. Shared subject wording and food identity do not erase the opposite design requirements.",
+          "user_gold": false
+        }
+      }
+    },
+    {
+      "id": "direct-stockpots-purpose-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"B\": {\"subject\": \"Stockpots\", \"meaning\": \"Stockpots are large, deep cooking vessels designed to hold food while it is cooked using heat, specifically by simmering ingredients in liquid to prepare edible culinary stock. Edible culinary stock counts as food whether or not meal preparation or consumption is intended. Every Stockpot is designed for laboratory experiments. For every Stockpot, preparing meals is also one of its design purposes.\"}, \"A\": {\"subject\": \"Stockpots\", \"meaning\": \"Stockpots are large, deep cooking vessels designed to hold food while it is cooked using heat, specifically by simmering ingredients in liquid to prepare edible culinary stock. Edible culinary stock counts as food whether or not meal preparation or consumption is intended. Every Stockpot is designed for laboratory experiments. For every Stockpot, preparing meals is not one of its design purposes.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Controlled diagnostic copies of independently fixed endpoints; supplied directly without AS or Bootstrap generation.",
+        "panel": "meal-design-boundary-v1",
+        "input_view": "symmetric_fixed_meanings",
+        "pair_id": "direct-stockpots-purpose",
+        "orientation": "reverse",
+        "input_order": [
+          "B",
+          "A"
+        ],
+        "condition_kind": "direct-clause-anchor",
+        "first_endpoint": "stockpots_meal_included",
+        "second_endpoint": "stockpots_meal_excluded",
+        "application_allowed": false,
+        "original_endpoint_reference": {
+          "experiment": "target/compare-v179-matched-input-order-v1/a-first-01",
+          "case": "isolated-035-forward",
+          "source_AS": "ASv6.100",
+          "bootstrap_version": "Hierarchy-bootstrap-v96",
+          "qualification": "Original endpoint strings are preserved exactly where referenced. Diagnostic strings are not producer meanings, semantic gold, or replacements for frozen regressions."
+        },
+        "review": {
+          "expected_relation": "neither",
+          "expectation_role": "agent",
+          "expectation_basis": "Both supplied kinds retain food identity, stock preparation and laboratory-design role. A qualifying dual laboratory-and-meal design meets meal-included and fails meal-excluded; a qualifying laboratory design without meal intent meets meal-excluded and fails meal-included. Shared subject wording and food identity do not erase the opposite design requirements.",
+          "user_gold": false
+        }
+      }
+    }
+  ]
+}

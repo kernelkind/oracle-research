@@ -7354,3 +7354,29 @@ persistent counter moves to 19,277. Seventy-three production node-pair tests
 pass. Full proof review and exact request/receipt audit are recorded with the
 maintained results; neither prompt is certified by consistent clear controls
 alone.
+
+### Fixed-V179 meal-design boundary diagnostic
+
+Under unchanged Compare-v179, the user-authorized diagnostic compares explicit
+meal-required versus unrestricted Cookware and meal-included versus excluded
+Stockpots. Both axes retain stipulated food identity; laboratory design stays
+fixed between child variants. The original and one-original bridges keep
+unresolved semantic expectations. Six fully synthetic conditions, including
+direct same-subject variant controls, have independently qualified provisional
+agent labels outside model input. No producer meanings, prompts or hierarchies
+are changed.
+
+The first 44-call block passes closed-anchor labels, proofs, validation and
+order checks, admitting one unchanged fresh 44-call confirmation. Across both,
+48/48 closed-anchor responses are supported; all 80 copy/bridge responses have
+zero reversal, member-order or repeat changes. The untouched original has
+3/4 reversal conflicts, 3/4 member-order changes and 1/4 repeat changes.
+This shows explicit design clauses are followed in these copies, not a general
+Compare repair, original semantic gold or a causal word diagnosis.
+
+Native aggregate records 88 valid outputs from 91 attempts: three temporary
+HTTP/2 stream failures recover on their second attempts. Their usage remains
+unknown; $0.610562 API-equivalent is a known subtotal only. No answer reuse,
+warmups, terminal failure, Bootstrap work or hierarchy generation occurs.
+The persistent counter reaches 19,368. See [frozen design and completed
+qualification](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#fixed-v179-meal-design-boundary-diagnostic).
