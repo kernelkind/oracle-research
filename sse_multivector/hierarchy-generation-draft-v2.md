@@ -7,8 +7,9 @@ algorithm. Landing this document in `main` does not activate V2.
 For V2, the user approved guaranteed L1 selection by prominence, additional L1s
 for uncovered notes, prominence-ordered refinement of multi-note leaves, a
 provisional additional eligibility rule for deeper entries matching existing
-canonical headings, and retaining the child when an equal-note-set parent has
-only that child. Other equal-note-set cases and automatic shaping remain open.
+canonical headings, giving those entries priority over multi-note-leaf work,
+and retaining the child when an equal-note-set parent has only that child.
+Other equal-note-set cases and automatic shaping remain open.
 The current constructor still follows the
 [standalone traversal design](hierarchy-traversal-draft.md).
 
@@ -168,9 +169,32 @@ and [original subject entries](../../oracle-mvp-hierarchy-hr05-twenty-four-note-
 No new meanings, prominence scores or comparisons were generated. Their
 relationships and any resulting browsing improvement remain untested.
 
-Ordering these candidates against multi-note-leaf work remains open. This rule
-does not establish discovery of shared topics whose headings differ or which
-have no existing canonical node. Shaping and its paused decisions remain open.
+### Approved order within the deeper-node phase
+
+The user accepted this ordering on October 11, 2026: "ok sounds fine".
+**Approved for V2 future work; not implemented or tested.**
+
+1. After L1 work, note coverage and their consolidation finish, give eligible
+   local children matching existing canonical headings priority. Use PPv35
+   priority within each note and round robin across notes, as above.
+2. When no such eligible entries remain, select deeper entries for the
+   unfinished multi-note leaf containing the most notes. Retain its existing
+   prominence priority, note rotation and saved-order tie handling.
+3. After each placement and its triggered consolidation, reassess eligibility
+   before selecting further entries. A newly admitted canonical heading may
+   make other unused local children eligible; give those entries priority
+   before continuing multi-note-leaf work. Process each original local entry
+   at most once.
+
+In the HR05 Bread case, process the cranberry-bread and dinner-bread entries
+before expanding multi-note leaves. If ordinary traversal establishes suitable
+relationships, Bread can collect their support; any subsequent deeper selection
+uses the resulting note groups. This is a conditional illustration, not a
+predicted or observed comparison result.
+
+This rule does not establish discovery of shared topics whose headings differ
+or which have no existing canonical node. Shaping and its paused decisions
+remain open.
 
 ## Selection completion and shaping
 
