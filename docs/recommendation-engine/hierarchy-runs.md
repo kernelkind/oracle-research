@@ -5,9 +5,9 @@ experimental parameters. **HR05** is the completed 24-note rerun with a review U
 **HR04** is the completed 12-note run; **HR03** is the completed 50-note baseline.
 Each run's raw build, browsing menu and export share its ID.
 
-**HR08**, **HR09** and **HR10** are approved V2 runs awaiting execution. Their
-fixed parameters are recorded below; preparation will pin exact source commits,
-prompt hashes and input evidence before any model request.
+**HR08**, **HR09** and **HR10** are running the approved V2 comparison. Their
+fixed parameters are recorded below; native preparation pinned exact source
+commits, prompt hashes and input evidence before model requests.
 
 **HR06** and **HR07** preserve the two earlier ASv6.48 builds the user reviewed.
 They were registered later, so ID order is not generation order. The intervening
@@ -28,9 +28,10 @@ They were registered later, so ID order is not generation order. The intervening
 
 | Parameter | HR08 | HR09 | HR10 |
 | --- | --- | --- | --- |
-| Status | Approved; not started | Approved; not started | Approved; not started |
+| Status | Running | Running | Running |
 | Notes | HR05's same 24, same order | HR05's same 24, same order | HR03's exact original 50-note AS selection order |
 | Run definition | [HR08](../../sse_multivector/hierarchy-runs/hr08/traversal.spec.json) | [HR09](../../sse_multivector/hierarchy-runs/hr09/traversal.spec.json) | [HR10](../../sse_multivector/hierarchy-runs/hr10/traversal.spec.json) |
+| Prepared provenance | [HR08](../../../oracle-mvp-hierarchy-hr08-v2/target/hierarchy-hr08-v2-24-note-v1/prepared-provenance.json) | [HR09](../../../oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/prepared-provenance.json) | [HR10](../../../oracle-mvp-hierarchy-hr10-v2/target/hierarchy-hr10-v2-50-note-v1/prepared-provenance.json) |
 | Subject trees | Saved ASv6.100 from HR03 | Same | Same |
 | Local subject entries / L1 roots | 832 / 150 | 832 / 150 | 1,510 / 326 |
 | Bootstrap | v109 | v122 | v122 |
@@ -61,6 +62,19 @@ three active searches with placements in selection order; the shared provider
 queue admits at most 30 requests across experiments. Each run's separate
 persistent ceiling includes warmups, retries and every resume.
 
+The three runs share a fresh native history at
+`target/hierarchy-v2-official-history-v1/` in the canonical repository's ignored
+artifact storage. Native request identity and producer receipts govern exact
+reuse across these official runs; earlier diagnostic outputs are not added to
+this history. Identical requests are not additional independent samples.
+
+All three isolated project worktrees are frozen at full generation commit
+`1a7f68a3b27b8ab19f30256a6c613ce28768e0d9`. Both the shared stable launcher
+and model worker use the isolated runner worktree
+`experiment-runner-hr08-hr10-source-v1`, frozen at
+`e19592f9a6b0b3a2b3ac0bc63220156d86a0f1a7`. Native preparation records
+exact prompt/schema/code hashes and clean source status before dispatch.
+
 Consolidation is best effort after an addition leaves at least six siblings,
 including roots. Proposals undergo ordinary Compare traversal and placement
 checks; Audit-v5 is not an extra construction step. Finished-view shaping keeps
@@ -78,8 +92,8 @@ Bootstrap-v122, Compare-v192 and Consolidation-v18 remain experimental.
 These official runs evaluate them without declaring the prompts qualified or
 changing their adoption status. Each output will receive its run ID, a review
 view, a native usage report and API-equivalent cost accounting. Full generation
-commits and uncommitted-source status will be recorded before execution; token,
-cost and structural results remain pending.
+commits and clean uncommitted-source status were recorded before execution;
+token, cost and structural results remain pending.
 
 ## Token usage and API cost
 
