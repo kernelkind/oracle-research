@@ -1,0 +1,149 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "intention-versus-capability-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"A\": {\"subject\": \"Devices intended for detecting smoke\", \"meaning\": \"Devices intended for detecting smoke, encompassing working and nonworking devices.\"}, \"B\": {\"subject\": \"Devices currently able to detect smoke\", \"meaning\": \"Devices currently able to detect smoke, including devices intended for other purposes.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Directly specified general device scopes. No original post, AS output, Bootstrap generation, canonical graph or producer receipt is asserted.",
+        "input_view": "symmetric_fixed_meanings",
+        "panel": "intention-current-capability-controls",
+        "pair_id": "intention-versus-capability",
+        "orientation": "forward",
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "intention-versus-capability",
+        "application_allowed": false,
+        "review": {
+          "expected_relation": "neither",
+          "expectation_authority": "provisional-agent-assessment",
+          "expectation_basis": "An intended smoke-detection device may be nonworking and unable to detect smoke. A device currently able to detect smoke may have only another intended purpose. Neither broad category requires the other condition.",
+          "user_gold": false,
+          "qualification": "The controls isolate intended role from current capability. Each counterexample must preserve the whole selected general category; intention does not imply current capability and current capability does not imply intention."
+        }
+      }
+    },
+    {
+      "id": "intention-versus-capability-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"A\": {\"subject\": \"Devices currently able to detect smoke\", \"meaning\": \"Devices currently able to detect smoke, including devices intended for other purposes.\"}, \"B\": {\"subject\": \"Devices intended for detecting smoke\", \"meaning\": \"Devices intended for detecting smoke, encompassing working and nonworking devices.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Directly specified general device scopes. No original post, AS output, Bootstrap generation, canonical graph or producer receipt is asserted.",
+        "input_view": "symmetric_fixed_meanings",
+        "panel": "intention-current-capability-controls",
+        "pair_id": "intention-versus-capability",
+        "orientation": "reverse",
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "intention-versus-capability",
+        "application_allowed": false,
+        "review": {
+          "expected_relation": "neither",
+          "expectation_authority": "provisional-agent-assessment",
+          "expectation_basis": "An intended smoke-detection device may be nonworking and unable to detect smoke. A device currently able to detect smoke may have only another intended purpose. Neither broad category requires the other condition.",
+          "user_gold": false,
+          "qualification": "The controls isolate intended role from current capability. Each counterexample must preserve the whole selected general category; intention does not imply current capability and current capability does not imply intention."
+        }
+      }
+    },
+    {
+      "id": "intention-versus-both-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"A\": {\"subject\": \"Devices intended for detecting smoke\", \"meaning\": \"Devices intended for detecting smoke, encompassing working and nonworking devices.\"}, \"B\": {\"subject\": \"Devices intended and currently able to detect smoke\", \"meaning\": \"Devices intended for detecting smoke that are currently able to detect smoke.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Directly specified general device scopes. No original post, AS output, Bootstrap generation, canonical graph or producer receipt is asserted.",
+        "input_view": "symmetric_fixed_meanings",
+        "panel": "intention-current-capability-controls",
+        "pair_id": "intention-versus-both",
+        "orientation": "forward",
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "intention-versus-both",
+        "application_allowed": false,
+        "review": {
+          "expected_relation": "A_contains_B",
+          "expectation_authority": "provisional-agent-assessment",
+          "expectation_basis": "The narrower category explicitly retains smoke-detection intention and additionally requires current detection capability. The broad intended category also admits nonworking devices.",
+          "user_gold": false,
+          "qualification": "The controls isolate intended role from current capability. Each counterexample must preserve the whole selected general category; intention does not imply current capability and current capability does not imply intention."
+        }
+      }
+    },
+    {
+      "id": "intention-versus-both-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"A\": {\"subject\": \"Devices intended and currently able to detect smoke\", \"meaning\": \"Devices intended for detecting smoke that are currently able to detect smoke.\"}, \"B\": {\"subject\": \"Devices intended for detecting smoke\", \"meaning\": \"Devices intended for detecting smoke, encompassing working and nonworking devices.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Directly specified general device scopes. No original post, AS output, Bootstrap generation, canonical graph or producer receipt is asserted.",
+        "input_view": "symmetric_fixed_meanings",
+        "panel": "intention-current-capability-controls",
+        "pair_id": "intention-versus-both",
+        "orientation": "reverse",
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "intention-versus-both",
+        "application_allowed": false,
+        "review": {
+          "expected_relation": "B_contains_A",
+          "expectation_authority": "provisional-agent-assessment",
+          "expectation_basis": "The narrower category explicitly retains smoke-detection intention and additionally requires current detection capability. The broad intended category also admits nonworking devices.",
+          "user_gold": false,
+          "qualification": "The controls isolate intended role from current capability. Each counterexample must preserve the whole selected general category; intention does not imply current capability and current capability does not imply intention."
+        }
+      }
+    },
+    {
+      "id": "capability-versus-both-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"A\": {\"subject\": \"Devices currently able to detect smoke\", \"meaning\": \"Devices currently able to detect smoke, including devices intended for other purposes.\"}, \"B\": {\"subject\": \"Devices intended and currently able to detect smoke\", \"meaning\": \"Devices intended for detecting smoke that are currently able to detect smoke.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Directly specified general device scopes. No original post, AS output, Bootstrap generation, canonical graph or producer receipt is asserted.",
+        "input_view": "symmetric_fixed_meanings",
+        "panel": "intention-current-capability-controls",
+        "pair_id": "capability-versus-both",
+        "orientation": "forward",
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "capability-versus-both",
+        "application_allowed": false,
+        "review": {
+          "expected_relation": "A_contains_B",
+          "expectation_authority": "provisional-agent-assessment",
+          "expectation_basis": "The narrower category explicitly retains current smoke-detection capability and additionally requires smoke-detection intention. The broad capable category also admits devices intended for other purposes.",
+          "user_gold": false,
+          "qualification": "The controls isolate intended role from current capability. Each counterexample must preserve the whole selected general category; intention does not imply current capability and current capability does not imply intention."
+        }
+      }
+    },
+    {
+      "id": "capability-versus-both-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"A\": {\"subject\": \"Devices intended and currently able to detect smoke\", \"meaning\": \"Devices intended for detecting smoke that are currently able to detect smoke.\"}, \"B\": {\"subject\": \"Devices currently able to detect smoke\", \"meaning\": \"Devices currently able to detect smoke, including devices intended for other purposes.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Directly specified general device scopes. No original post, AS output, Bootstrap generation, canonical graph or producer receipt is asserted.",
+        "input_view": "symmetric_fixed_meanings",
+        "panel": "intention-current-capability-controls",
+        "pair_id": "capability-versus-both",
+        "orientation": "reverse",
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "capability-versus-both",
+        "application_allowed": false,
+        "review": {
+          "expected_relation": "B_contains_A",
+          "expectation_authority": "provisional-agent-assessment",
+          "expectation_basis": "The narrower category explicitly retains current smoke-detection capability and additionally requires smoke-detection intention. The broad capable category also admits devices intended for other purposes.",
+          "user_gold": false,
+          "qualification": "The controls isolate intended role from current capability. Each counterexample must preserve the whole selected general category; intention does not imply current capability and current capability does not imply intention."
+        }
+      }
+    }
+  ]
+}

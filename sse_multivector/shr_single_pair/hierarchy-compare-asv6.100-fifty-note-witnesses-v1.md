@@ -7065,3 +7065,52 @@ of twenty-four comparison responses report cache hits. The shared counter reads
 19,532/20,000 after this run; intervening other-agent admissions are not counted
 as this panel's calls. No additional prompt revision, fresh confirmation,
 Bootstrap inference or hierarchy construction follows from this screen.
+
+## Compare-v187: necessary coverage conditions
+
+The user authorizes a rapid edit/test/review loop with independent subagents.
+[Experimental V187](Hierarchy-compare-v187.md) is a single Full coverage
+paragraph replacement from the V179 development baseline; it does not carry
+forward V186's separately unqualified particular-entity revision. Each applicable
+parent condition needs a child condition or necessary implication. Intention
+alone does not establish actual capability, suitability or success; sharing a
+kind name alone cannot supply additional restrictions. The A/B input, four
+output fields, schema and existing examples remain byte-identical.
+
+The [six synthetic controls](hierarchy-compare-intention-capability-controls-v1.json)
+use independently specified device scopes: intention I, current capability C,
+and their intersection IC. I/C is provisionally neither; I/IC and C/IC have
+strict containment. Both orientations are included. Counterexamples must preserve
+current state and exclusive purpose and exclude permitted information connections;
+merely switching off a device or omitting an intention is insufficient. These
+are reviewed agent controls, not AS/Bootstrap outputs, human gold, or prompt
+examples. No original source post or producer receipt is fabricated.
+
+The first gate comprises the unchanged twelve native HR05 cases inherited
+from the saved V179 run and six new generic controls: **eighteen candidate
+comparisons**, plus two eligible automatic warmups. The saved V179 HR05 baseline
+is reused; it is not rerun. No matched synthetic V179 draw is claimed.
+Native preparations and generation remain in the task worktree under
+`target/compare-v187-intention-capability-v1/{hr05,controls}`. Both use the shared
+runner, Sol 6.1 medium/SSE, automatic caching and the existing persistent 20,000
+attempt counter. Stage caps reserve provider retries; they are not new allowances.
+
+Predeclared passing criteria are valid complete generation; six supported control
+labels and directional proofs; the two exact user-approved MrBeast positives;
+no HR05 reversal conflict; and no demonstrated unsupported necessity claim,
+dropped parent alternative, or invented particular-entity fact. Real probes keep
+null semantic expectations. Warranted uncertainty remains qualified rather than
+being counted as a correction, and clear controls cannot be cleared by returning
+uncertain/neither indiscriminately. Generic controls have manual independent
+semantic/reversal review and the existing strict production comparison validator;
+the native receipt-bound checker covers HR05, without invented producer identities
+for synthetic cases.
+
+A failing candidate receives no broader confirmation. Revise one demonstrated
+mechanism in a new version and repeat the small gate. A promising candidate needs
+an unchanged fresh confirmation and broader frozen-input regressions before an
+adoption recommendation. Keep source cohorts separate, preserve original
+meanings/receipts and count all dispatched attempts including warmups and failures.
+The [native first-gate usage source](hierarchy-compare-v187-intention-capability-gate-usage-v1.json)
+keeps HR05 and synthetic groups separate. No Bootstrap edit/inference, hierarchy
+construction, UI refresh or outgoing owner message is part of this work.
