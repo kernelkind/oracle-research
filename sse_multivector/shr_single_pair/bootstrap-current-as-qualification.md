@@ -3975,3 +3975,27 @@ byte-identical to current shared-runner main; all model settings and inputs are
 preserved. Forty-four focused checks and independent receipt/output/input/quote
 checks pass. Neither candidate is activated; no Compare inference, hierarchy
 build, source-data change or replacement attempt cap occurs.
+
+### Bootstrap-v127 direct-consumption and ingredient-role diagnostic
+
+Experimental [v127](Hierarchy-bootstrap-v127.md) adds one generic instruction to
+v126: decide whether a qualifying relationship suffices or requires a particular
+function/purpose, and distinguish intended from actual roles. All other bytes,
+the four original ASv6.100 Food inputs and model settings remain fixed.
+
+The [six-definition qualification](bootstrap-v127-food-role-qualification-v1.md)
+preserves shared edibility/suitability, but does not establish systematic benefit
+from the added instruction. No ambiguity list explicitly contrasts relationship
+alone with a required function. The risotto repeat explicitly qualifies
+incorporated material as culinary ingredients: standalone clinical eating is
+admitted, while diagnostic beads mixed into porridge remain qualified. The
+sourdough repeat has a broader ingredient alternative admitting those beads.
+These different scopes are not predetermined producer errors.
+
+Six valid fresh definitions use eight attempts including two warmups, with zero
+failures, retries or reuses. All six definition requests hit cache. Complete
+native usage reports $0.0769484 API-equivalent cost, not subscription cash spend.
+Forty-four focused checks and two independent integrity/semantic reviews pass
+with the recorded qualifications. V127 remains unactivated; v126 remains the
+working experimental baseline. Full Food-branch compatibility is the proposed
+next qualification, not a completed test or production approval.

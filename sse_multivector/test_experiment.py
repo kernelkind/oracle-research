@@ -3189,6 +3189,108 @@ class ExperimentTests(unittest.TestCase):
         self.assertEqual({name: (directory / name).read_bytes() for name in protected}, protected)
         self.assertEqual(self.calls(), calls)
 
+    def test_cli_batch_review_validates_all_cases_before_recording(self):
+        from unittest.mock import patch
+        from sse_multivector import experiment, experiment_extension
+
+        self.prepare()
+        self.cli("run", "E1")
+        directory = self.root / "E1"
+        protected = {name: (directory / name).read_bytes() for name in (
+            "experiment.json", "runner-config.json", "run/manifest.json", "run/results.jsonl")}
+        calls = self.calls()
+        args = experiment.parser().parse_args([
+            "review", str(directory), "--only", "one", "--only", "two",
+            "--role", "agent", "--verdict", "accept", "--comment", "Both exact outputs inspected."])
+        with patch.object(experiment_extension, "report", wraps=experiment_extension.report) as reports:
+            experiment_extension.review(args)
+        self.assertEqual(reports.call_count, 2)
+        ledger = directory / "reviews.jsonl"
+        saved = ledger.read_bytes()
+        rows = [json.loads(line) for line in saved.splitlines()]
+        self.assertEqual([row["case_id"] for row in rows], ["one", "two"])
+        for selected in (("one", "missing"), ("one", "one")):
+            with self.subTest(selected=selected):
+                failed = self.cli("review", "E1", "--only", selected[0], "--only", selected[1],
+                    "--role", "agent", "--verdict", "reject", "--comment", "Invalid selection.", ok=False)
+                self.assertIn("unknown or duplicate", failed.stderr)
+                self.assertEqual(ledger.read_bytes(), saved)
+        self.assertEqual({name: (directory / name).read_bytes() for name in protected}, protected)
+        self.assertEqual(self.calls(), calls)
+
+    def test_cli_import_reviews_preserves_exact_current_verdicts_and_source_bindings(self):
+        cases = json.loads(self.cases.read_text())
+        cases["cases"].append({"id": "source-alias", "inputs": cases["cases"][0]["inputs"]})
+        self.write("cases.json", cases)
+        self.prepare()
+        self.cli("review", "E1", "--case", "one", "--role", "agent", "--verdict", "reject",
+                 "--comment", "Unrun assessment becomes stale.")
+        self.cli("run", "E1")
+        for case, role, verdict in (("one", "agent", "accept"), ("one", "agent", "uncertain"),
+                                    ("source-alias", "agent", "accept"), ("source-alias", "agent", "uncertain"),
+                                    ("two", "user", "reject")):
+            self.cli("review", "E1", "--case", case, "--role", role, "--verdict", verdict,
+                     "--comment", f"Explicit {role} {verdict} assessment.")
+        original = self.show("E1")
+        target_cases = self.write("target-cases.json", {"cases": [
+            {"id": "alias-a", "inputs": original["cases"][0]["inputs"]},
+            {"id": "alias-b", "inputs": original["cases"][0]["inputs"]},
+            {"id": "alias-c", "inputs": original["cases"][1]["inputs"]}]})
+        spec = json.loads(self.spec.read_text())
+        spec["dataset"]["path"] = target_cases.name
+        target_spec = self.write("target-spec.json", spec)
+        self.cli("prepare", "E2", "--spec", target_spec)
+        self.cli("run", "E2")
+        frozen = {(name, filename): (self.root / name / filename).read_bytes()
+            for name in ("E1", "E2") for filename in (
+                "experiment.json", "runner-config.json", "run/manifest.json", "run/results.jsonl")}
+        source_ledger = (self.root / "E1/reviews.jsonl").read_bytes()
+        calls = self.calls()
+        self.cli("review", "E2", "--from-experiment", "E1")
+        current = self.show("E2")
+        for case in current["cases"]:
+            expected = [("agent", "accept"), ("agent", "uncertain")] if case["id"] != "alias-c" else [("user", "reject")]
+            self.assertEqual([(row["role"], row["verdict"]) for row in case["reviews"]], expected)
+            self.assertTrue(all(row["current"] for row in case["reviews"]))
+            self.assertTrue(all(row["source"]["experiment"] == str(self.root / "E1") for row in case["reviews"]))
+            self.assertTrue(all(row["source"]["reviews_sha256"] == hashlib.sha256(source_ledger).hexdigest()
+                                for row in case["reviews"]))
+        saved = (self.root / "E2/reviews.jsonl").read_bytes()
+        self.assertEqual(len(saved.splitlines()), 5)
+        self.cli("review", "E2", "--from-experiment", "E1", "--from-experiment", "E1")
+        self.assertEqual((self.root / "E2/reviews.jsonl").read_bytes(), saved)
+        self.assertEqual((self.root / "E1/reviews.jsonl").read_bytes(), source_ledger)
+        self.assertEqual({key: (self.root / key[0] / key[1]).read_bytes() for key in frozen}, frozen)
+        self.assertEqual(self.calls(), calls)
+
+        self.cli("prepare", "E3", "--from", "E2", "--repeat")
+        self.cli("run", "E3", env={"FAKE_RUNNER_PROMPT_RESPONSE": "Different complete output."})
+        calls = self.calls()
+        self.cli("review", "E3", "--from-experiment", "E1")
+        self.assertTrue(all(not case["reviews"] for case in self.show("E3")["cases"]))
+        changed_prompt = self.root / "v2.txt"
+        changed_prompt.write_text("GENERIC PROMPT changed {POST}")
+        spec["prompt"]["path"] = changed_prompt.name
+        changed_spec = self.write("changed-spec.json", spec)
+        self.cli("prepare", "E4", "--spec", changed_spec)
+        self.cli("run", "E4", "--only", "alias-a", env={"FAKE_RUNNER_PROMPT_RESPONSE": original["cases"][0]["output"]})
+        calls = self.calls()
+        self.cli("review", "E4", "--from-experiment", "E1")
+        self.assertTrue(all(not case["reviews"] for case in self.show("E4")["cases"]))
+        self.assertEqual(self.calls(), calls)
+        self.cli("prepare", "E5", "--from", "E2", "--repeat")
+        self.cli("run", "E5")
+        calls = self.calls()
+        changed_prompt.write_bytes(changed_prompt.read_bytes() + b"\n")
+        failed = self.cli("review", "E5", "--from-experiment", "E1", "--from-experiment", "E4", ok=False)
+        self.assertIn("review source changed", failed.stderr)
+        self.assertFalse((self.root / "E5/reviews.jsonl").exists())
+        self.assertEqual(self.calls(), calls)
+        self.cases.write_bytes(self.cases.read_bytes() + b"\n")
+        failed = self.cli("review", "E2", "--from-experiment", "E1", ok=False)
+        self.assertIn("review source changed", failed.stderr)
+        self.assertEqual((self.root / "E2/reviews.jsonl").read_bytes(), saved)
+
     def mask_spec(self):
         self.prompt.write_text("GENERIC PROMPT\n{POST}\n{SUBJECT}\n{INDEXED_POST}")
         self.cases.write_text(
