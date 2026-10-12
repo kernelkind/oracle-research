@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v224_candidate": [
+      "../../target/compare-v224-information-connection-v1/raves-01",
+      "../../target/compare-v224-information-connection-v1/raves-02",
+      "../../target/compare-v224-information-connection-v1/handhold",
+      "../../target/compare-v224-information-connection-v1/physical"
+    ]
+  }
+}
