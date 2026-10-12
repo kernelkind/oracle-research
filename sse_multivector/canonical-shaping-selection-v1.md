@@ -5970,3 +5970,90 @@ on scoped real-case tests and human calibration. These sources support the
 method, not the proposed semantic rule or an accuracy guarantee. No extra
 prompt stage, diagnostic output, comparison-prompt edit, hierarchy repair,
 production trigger change, UI refresh or external message is introduced.
+
+### Completed v20 HR09 generation screen
+
+Ten independent generations and ten native warmups complete with no nulls,
+malformed answers, reuse, failures, retries or missing usage. All outputs are
+receipt-bound and receive native agent reviews under the pre-call criteria.
+All five original inputs and first/repeat settings remain exact. Actual
+first/repeat request bodies are identical, response references distinct and
+HTTP status 200. Raw metadata reports GPT-6.1 Sol, with requested medium effort.
+There is no previous-response or conversation linkage. V19/v20 workflow code
+bindings, actual worker/request-code hashes, opaque account/transport scopes,
+schema/settings and variable user items agree. The only request differences
+are the changed instruction prefix and its derived cache key/session metadata;
+the native developer/developer/user layout remains fixed. Historical HR09 state
+retains its original hash.
+
+| Group | V20 first draw | V20 independent repeat | Bounded assessment |
+|---|---|---|---|
+| Stock | Food and eating; C002/C003/C006 | Food and meals; C002/C003/C006/C007 | First rejects under consumer criterion; repeat removes human restriction but retains purpose qualification |
+| Heating | Food and meals; C002/C003/C006/C009/C016 | Food and meals; same IDs | Both uncertain on Stock's culinary-kind versus individual-use purpose; appliance control not exercised |
+| Simmered | Liquid foods; C006/C031 | Simmered foods; C006/C056 | Both qualified accepts; exact simmered-food control exercised in repeat only |
+| Earlier rejected Slush group | Activity participation; C088/C095 | Food and drink; C071/C074/C101 | First qualified alternative accept, not a Slush correction; repeat uncertain on consumption purpose |
+| Earlier accepted Slush group | Food and eating; C071/C074/C115/C133 | Food and eating; same IDs | First qualified accept with independently admitted beverage kind; repeat uncertain on consumption purpose |
+
+Stock first retains the failure. Its final definition is:
+
+> Food and eating concerns substances intended for human consumption as nourishment or as part of eating, and the meals in which people consume food. It includes, but is not limited to, prepared dishes, edible ingredients used to prepare or season food, and main meals of the day.
+
+It selects Dinner and Chicken stock without requiring those children's fixed
+meanings to establish a human consumer. Omitting Beets does not repair these
+selected-child mismatches. The independent repeat instead removes that
+consumer restriction and explicitly covers ingredients, meals and cultivated
+plants. Its definition is:
+
+> Food and meals encompass substances intended for consumption as nourishment or as part of eating, ingredients used to prepare or season food, meals composed of food, and plants cultivated for edible parts used as food.
+
+This corrects the targeted human-only boundary in that draw, but whole Stock
+coverage and the cultivated-plant use wording remain qualified. Record it as
+uncertain rather than certifying the whole answer from the repaired consumer
+condition. V19 had the targeted mismatch in both Stock draws; v20 has it in
+one. Two samples per version do not establish a reliable improvement or isolate
+instruction adherence from ordinary model variability.
+
+The later Slush group's first draw admits "beverages" as a separate kind,
+without adding an instance-consumption condition to that alternative. Its
+other alternatives explicitly cover culinary ingredients, cultivated plants,
+gastronomic exploration/prospective offerings and meals. This is a qualified
+agent accept on the actual definition. Its repeat again qualifies food and
+beverages by human/animal consumption, so the kind-function versus individual
+intention question remains unresolved. The earlier Slush group's first draw
+instead selects a valid activity-participation grouping; do not count avoiding
+Slush as fixing its coverage. Historical acceptance or rejection is not gold
+for these different final meanings.
+
+The Simmered repeat actually exercises the Stock/Stew control: both fixed
+meanings require production by simmering ingredients in liquid and fit the
+candidate's culinary preparation scope beneath C040 Food. Its other offered
+siblings do not wholly require that process. The first draw chooses Liquid
+foods covering Stock and Milk, also a qualified kind-function accept. Neither
+Heating draw selects Rocket stoves/Crockpots, so that exact control remains
+unexercised. No fresh Compare result or hierarchy placement is claimed.
+
+Complete attributed review counts are one bounded reject, four qualified
+accepts and five uncertainties, compared with v19's two rejects, two qualified
+accepts and six uncertainties. These are diagnostic agent assessments of
+different generated meanings, not semantic accuracy or a measured reliability
+gain. V20 remains experimental and unapplied; the targeted failure still
+recurs, and the Slush convention is not settled by these results.
+
+Native fresh generation cost is **$0.086946 API-equivalent**, including all
+20 actual attempts. Usage is 16,994 uncached input tokens, 17,280 cached input
+tokens, zero cache-write tokens and 5,123 output tokens including 4,315 reasoning
+tokens already counted in output. All ten generation calls report cached reads.
+The ignored native summary is
+`target/canonical-shaping-selection-v1/consolidation-v20-hr09-fresh-usage-v1.json`.
+Different cache observations do not establish a prompt-related cost reduction,
+and catalog pricing is not subscription billing. Prior v19 and HR09 costs are
+not counted as newly dispatched work.
+
+The next suggested test moves the same restriction instruction before
+definition-writing while holding its words fixed. That would test instruction
+placement as a possible cause of generating a restrictive meaning and keeping
+incompatible children.
+Use the original Stock input and independent draws, retaining a positive
+control and the existing purpose qualifications. This suggestion does not
+create a new prompt, authorize further calls, edit another teacher or start
+another experiment.
