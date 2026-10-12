@@ -7501,3 +7501,51 @@ and premises as well as labels. If the effect remains attached to input A/B
 orientation, requested report order does not explain it. Neither outcome chooses
 the original pair's correct semantic label. The fifty-case diagnosis remains
 separate and does not clear the Restaurant failure or qualify adoption.
+
+### Broader V194 results and whole-condition candidate test
+
+All fifty broader V194 comparisons validate. The native checker reports two
+settled reversal conflicts among twenty-three settled pairs: sourdough-time-
+general-substitution and metal-handles-alternatives. Two additional pairs mix
+uncertainty with a settled positive: sourdough-time-purpose-original and mental-
+states-thinking. Do not count those mixed pairs as settled reversals or as
+consistency successes. The saved V179 cohort has five settled reversals; this
+single V194 draw is a diagnostic contrast, not a population accuracy estimate
+or a causal demonstration. Final native export is
+`target/compare-v194-b109-broader-diagnostic-v2/native.json`.
+
+Independent recheck qualifies another former positive: "steps toward making"
+may include preliminary learning/planning, while its proposed parent expressly
+describes operations on ingredients or dough. Allowed activity connections can
+cover some preparatory information but do not establish every permitted reading.
+The original expectation stays preserved; the current semantic assessment has
+eight provisional control pairs and seventeen unresolved probes. The recheck
+used exact meanings independently of model outputs and does not prescribe a
+new negative label. Post-hoc qualification is reported openly, not silently
+rewritten into the frozen source.
+
+Both V195 draws follow the requested B-first question/answer order and still
+reverse Restaurant. Fresh V194 has reciprocal positives in draw one and a
+reversal in draw two. The preregistered direction-order effect is not observed;
+input-orientation-dependent interpretation and candidate selection remain
+plausible, not proven. Examples, meanings and all other instructions match.
+No requested-order diagnostic is adopted as a semantic fix.
+
+Native accounting across this broader draw and the order test records sixty-four
+attempts, fifty-eight valid cases, zero reuse and one recovered provider failure
+with one retry. That failed attempt lacks usage, so $0.4567032 is a known
+API-equivalent subtotal, not a complete total or a subscription charge. V1 broader
+preparation remains unrun after subsequent source synchronization; V2 is the
+actual frozen execution.
+
+[Experimental V196](Hierarchy-compare-v196.md) retains V194 and replaces only
+its question paragraph. A general-kind candidate challenges the entire parent
+condition, rather than a weaker fact compatible with it. A particular-entity
+candidate retains unknown facts as unknown. Unstated parent conditions receive
+priority, but failed child admission alone still does not prove coverage; all
+parent alternatives and permitted information connections remain applicable.
+This differs from V192's weak question preference: it tests whether the actual
+candidate negates the whole condition. Missing particular identity facts cannot
+be assigned, and source ancestry supplies no proof. Original labels stay
+unresolved. Qualification tracks candidate admission/exclusion and necessary
+proofs, not just lower reversal counts or increased uncertainty.

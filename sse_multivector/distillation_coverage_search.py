@@ -64,7 +64,7 @@ def _premise_audits(references, base, protected):
             row = json.loads(line, object_pairs_hook=engine._position_decoder().unique_object)
             if isinstance(row, dict) and row.get("record_type") == "skip" and "verdict" not in row:
                 continue
-            if (not isinstance(row, dict) or row.get("check") not in {"matching", "support", "relationship"}
+            if (not isinstance(row, dict) or row.get("check") not in {"matching", "support", "relationship", "coverage_search"}
                     or row.get("verdict") not in {"accept", "reject", "uncertain"}
                     or not isinstance(row.get("reason"), str) or not row["reason"].strip()):
                 raise ValueError("coverage premise audit requires a complete-output assessment")
@@ -228,6 +228,17 @@ def _cases(report, assessments, audits=None):
                     settlements.append(dict(identity, rule="trusted_uncovered_compatible_heading", covered=False,
                         witness_student_number=number, mechanical_evidence=proof["evidence"]))
                     continue
+                accepted_pair = next((row for row in answer["checks"]["relationship"]
+                    if row["evidence"]["role"] == "compatibility"
+                    and row["evidence"]["teacher_numbers"] == group["teacher_numbers"]
+                    and row["evidence"]["heading_number"] in uncovered
+                    and row["status"] == "valid" and row["parsed"]["valid"] is True
+                    and _accepted_premise(row, audits) is not None), None)
+                if accepted_pair is not None:
+                    settlements.append(dict(identity, rule="accepted_uncovered_compatible_heading", covered=False,
+                        witness_student_number=accepted_pair["evidence"]["heading_number"],
+                        compatibility_premise=_accepted_premise(accepted_pair, audits)))
+                    continue
                 derived = _matching_path_settlement(identity, teacher, group, matching,
                     accepted_matching, uncovered, guard_rows, audits)
                 if derived is not None:
@@ -245,8 +256,26 @@ def _cases(report, assessments, audits=None):
                             semantic_status="Conditional on the accepted actual-edge verdict and fixed interpretations."))
                     else:
                         roots.append(number)
+                baseline_pairs = {row["evidence"]["heading_number"]: row
+                    for row in answer["checks"]["relationship"]
+                    if row["evidence"]["role"] == "compatibility"
+                    and row["evidence"]["teacher_numbers"] == group["teacher_numbers"]}
+                excluded = []
+                for number in roots:
+                    pair = baseline_pairs[number]
+                    if pair["status"] == "valid" and pair["parsed"]["valid"] is False:
+                        premise = _accepted_premise(pair, audits)
+                        if premise is not None:
+                            excluded.append(dict(student_number=number, compatibility_premise=premise))
+                excluded_numbers = {row["student_number"] for row in excluded}
+                roots = [number for number in roots if number not in excluded_numbers]
                 if not roots:
-                    settlements.append(dict(identity, rule="no_uncovered_heading", covered=True))
+                    if excluded:
+                        settlements.append(dict(identity, rule="accepted_uncovered_incompatible_headings", covered=None,
+                            excluded_incompatible_candidates=excluded, omitted_descendants=omitted,
+                            semantic_status="Accepted negative roots; collection separately requires accepted descendant edges."))
+                    else:
+                        settlements.append(dict(identity, rule="no_uncovered_heading", covered=True))
                     continue
                 candidates = [dict(student_number=number, student_subject=students[number],
                     teacher_contexts=[{key: row[key] for key in ("subject", "context")}
@@ -260,15 +289,12 @@ def _cases(report, assessments, audits=None):
                     representative_candidate = distinct.setdefault(key, candidate)
                     aliases.setdefault(representative_candidate["student_number"], []).append(candidate["student_number"])
                 candidates = list(distinct.values())
-                baseline_pairs = {row["evidence"]["heading_number"]: row
-                    for row in answer["checks"]["relationship"]
-                    if row["evidence"]["role"] == "compatibility"
-                    and row["evidence"]["teacher_numbers"] == group["teacher_numbers"]}
                 evidence = dict(identity, check="coverage_search", cohort=cohort, note_id=answer["note_id"],
                     generation=answer["generation"], teacher_representative_number=representative,
                     matched_student_numbers=matches, covered_heading_numbers=sorted(covered),
                     original_uncovered_heading_numbers=uncovered,
                     candidate_student_numbers=[row["student_number"] for row in candidates], omitted_descendants=omitted,
+                    excluded_incompatible_candidates=excluded,
                     candidate_aliases=[dict(representative_student_number=number, student_numbers=numbers)
                         for number, numbers in aliases.items() if len(numbers) > 1],
                     matching_case_ids=[row["id"] for row in matching],
@@ -404,9 +430,228 @@ def prepare(evaluation_path, output, *, answer_ids=None, runner_binary=None, his
         if engine._sha256_file(Path(filename)) != checksum:
             raise ValueError("coverage premise changed while preparing: " + filename)
     frozen = dict(schema_version=1, evaluation=reference, answer_ids=answer_ids, sources=protected,
+        premise_audits=source.get("premise_audits", []),
         experiments=experiments, inference_calls=0, preparation=preparation,
         semantic_status="Experimental. DCS-returned positive witnesses require separate unchanged DSL verification; conditional teacher-path settlements retain their accepted premises.")
     experiment.write(output / "coverage-search.json", frozen)
     experiment.write(output / "coverage-search.complete.json", {
         "coverage-search.json": engine._sha256_file(output / "coverage-search.json")})
     return dict(frozen, output=str(output), search_cases=len(cases))
+
+
+def collect(coverage_directory, output, *, verification_experiments=None, premise_audits=None):
+    """Score accepted native checks and searches without running the old matrix."""
+    from experiment_runner import experiment, project
+    project.configure(Path(__file__).resolve().parents[1])
+    directory = Path(coverage_directory).expanduser().resolve()
+    output = Path(output).expanduser().resolve()
+    if output.exists():
+        raise ValueError("coverage collection output already exists")
+    frozen_path = directory / "coverage-search.json"
+    if experiment.read(directory / "coverage-search.complete.json") != {
+            "coverage-search.json": engine._sha256_file(frozen_path)}:
+        raise ValueError("coverage search preparation changed")
+    frozen = experiment.read(frozen_path)
+    protected = dict(frozen["sources"])
+    for path, checksum in protected.items():
+        if engine._sha256_file(Path(path)) != checksum:
+            raise ValueError("coverage collection source changed: " + path)
+
+    def protect(sources):
+        for path, checksum in sources.items():
+            if path in protected and protected[path] != checksum:
+                raise ValueError("coverage collection source changed: " + path)
+            protected[path] = checksum
+
+    protected[str(frozen_path)] = engine._sha256_file(frozen_path)
+    baseline, assessments, snapshot_sources = _snapshot(frozen["evaluation"], directory)
+    protect(snapshot_sources)
+    baseline = evaluation._answer_subset(baseline, frozen["answer_ids"])
+    audit_references = [dict(path=str(Path(path).expanduser().resolve()),
+        sha256=engine._sha256_file(Path(path).expanduser().resolve())) for path in premise_audits or []]
+    # Preparation audits remain part of the immutable native source definition.
+    preparation_references = list(frozen.get("premise_audits", []))
+    searches, verifiers = {}, {}
+
+    def native(path):
+        path = Path(path).expanduser().resolve()
+        plan, _, _ = experiment.load(path)
+        protect(plan["sources"])
+        protected[str(path / "experiment.json")] = engine._sha256_file(path / "experiment.json")
+        result = experiment.report(path, include_request_preview=False)
+        for name in ("reviews.jsonl", "run/results.jsonl", "run/manifest.json"):
+            source = path / name
+            if source.exists():
+                protected[str(source)] = engine._sha256_file(source)
+        return plan, result
+
+    for entry in frozen["experiments"]:
+        path = Path(entry["path"])
+        if engine._sha256_file(path / "experiment.json") != entry["sha256"]:
+            raise ValueError("coverage native preparation changed")
+        plan, result = native(path)
+        definition = experiment.read(Path(plan["dataset"]["path"]))
+        preparation_references.extend(definition.get("premise_audits", []))
+        for row in result["cases"]:
+            key = row["evidence"]["answer_id"], tuple(row["evidence"]["teacher_numbers"])
+            if key in searches:
+                raise ValueError("duplicate coverage search teacher group")
+            searches[key] = row
+    audits = _premise_audits(preparation_references + audit_references, directory, protected)
+    for path in verification_experiments or []:
+        _, result = native(path)
+        for row in result["cases"]:
+            if row["evidence"].get("check") != "relationship":
+                raise ValueError("coverage verification requires native relationship checks")
+            verifiers.setdefault((row["input_sha256"], row["prompt"]), []).append(row)
+    settlements = {(row["answer_id"], tuple(row["teacher_numbers"])): row
+        for row in frozen["preparation"]["settlements"] if "teacher_numbers" in row}
+    cohorts = {}
+    for cohort in ("random", "challenge"):
+        answers = []
+        for answer in baseline[cohort]["answers"]:
+            if answer["errors"]:
+                answers.append(dict(id=answer["id"], note_id=answer["note_id"],
+                    scoring=dict(status="valid", scores=answer["scores"]), dependencies=[]))
+                continue
+            checks = answer["checks"]
+            dependencies, premises, inconsistencies = [], [], []
+            source_rows = {(row["id"], row["input_sha256"], hashlib.sha256(row["output"].encode()).hexdigest()): row
+                for rows in checks.values() for row in rows if row["status"] == "valid"}
+
+            def settlement_accepted(settlement):
+                stored = [settlement[field] for field in ("matching_premise", "compatibility_premise")
+                          if field in settlement]
+                stored.extend(settlement.get("matching_self_guard_premises", []))
+                for premise in stored:
+                    key = premise["case_id"], premise["input_sha256"], premise["output_sha256"]
+                    row = source_rows.get(key)
+                    if row is None or _accepted_premise(row, audits) is None:
+                        dependencies.append(dict(check="relationship", case_id=premise["case_id"],
+                            reason="Previously accepted settlement premise is now absent or disputed."))
+                        return False
+                return True
+
+            def accepted(row):
+                premise = _accepted_premise(row, audits)
+                if premise is not None:
+                    premises.append(premise)
+                    return True
+                dependencies.append(dict(check=row["evidence"]["check"], case_id=row["id"],
+                    status=row["status"], reason="No accepted complete input/output-bound assessment.",
+                    reviews=row.get("reviews", [])))
+                return False
+
+            subjects = {row["evidence"]["student_number"]: row["parsed"]["valid"]
+                for row in checks["support"] if row["status"] == "valid" and accepted(row)}
+            actual = {row["evidence"]["student_number"]: row for row in checks["relationship"]
+                if row["evidence"]["role"] == "actual_relationship"}
+            relationships = {number: row["parsed"]["valid"] if row["status"] == "valid" and accepted(row)
+                else None for number, row in actual.items()}
+            matching_pending = [row["id"] for row in checks["matching"] if not accepted(row)]
+            teacher = review._TeacherIndex(answer["teacher"])
+            matching = {row["evidence"]["student_number"]: row["parsed"]["teacher_id"]
+                for row in checks["matching"] if row["status"] == "valid"}
+            coverage = []
+            for group in assessments["contexts"][answer["id"]]:
+                key = answer["id"], tuple(group["teacher_numbers"])
+                identifiers = {teacher.by_number[number] for number in group["teacher_numbers"]}
+                matches = [number for number, identifier in matching.items() if identifier in identifiers]
+                known = {}
+
+                def assign(number, value, source):
+                    if number in known and known[number] is not value:
+                        inconsistencies.append(dict(teacher_numbers=group["teacher_numbers"], student_number=number,
+                            existing_valid=known[number], conflicting_valid=value, source=source))
+                        dependencies.append(dict(check="coverage_search", teacher_numbers=group["teacher_numbers"],
+                            reason="Accepted exact compatibility evidence is contradictory."))
+                    else:
+                        known[number] = value
+
+                pairs = [row for row in checks["relationship"] if row["evidence"]["role"] == "compatibility"
+                    and row["evidence"]["teacher_numbers"] == group["teacher_numbers"]]
+                if group["required"]:
+                    for pair in pairs:
+                        number = pair["evidence"]["heading_number"]
+                        candidates = verifiers.get((pair["input_sha256"], pair["prompt"]), [])
+                        if number in matches:
+                            candidates = [pair] + candidates
+                        accepted_pairs = [row for row in candidates if _accepted_premise(row, audits) is not None]
+                        verdicts = {row["parsed"]["valid"] for row in accepted_pairs}
+                        premises.extend(_accepted_premise(row, audits) for row in accepted_pairs)
+                        if len(verdicts) == 1:
+                            assign(number, verdicts.pop(), pair["id"])
+                        elif len(verdicts) > 1:
+                            inconsistencies.append(dict(teacher_numbers=group["teacher_numbers"], student_number=number,
+                                source=pair["id"], reason="Accepted exact DSL comparisons disagree."))
+                        elif candidates:
+                            dependencies.append(dict(check="relationship", case_id=pair["id"],
+                                reason="Exact verification is disputed, unaudited or contradictory."))
+                    settlement = settlements.get(key)
+                    if (settlement is not None and settlement.get("covered") is False
+                            and settlement.get("witness_student_number") and settlement_accepted(settlement)):
+                        assign(settlement["witness_student_number"], True, settlement["rule"])
+                    search = searches.get(key)
+                    exclusions = []
+                    omitted = []
+                    for evidence in (settlement, search["evidence"] if search is not None else None):
+                        if evidence is not None:
+                            exclusions.extend(evidence.get("excluded_incompatible_candidates", []))
+                            omitted.extend(evidence.get("omitted_descendants", []))
+                    for excluded in exclusions:
+                        proof = dict(compatibility_premise=excluded["compatibility_premise"])
+                        if settlement_accepted(proof):
+                            assign(excluded["student_number"], False, excluded["compatibility_premise"]["case_id"])
+                            premises.append(excluded["compatibility_premise"])
+                    if search is not None and accepted(search):
+                        witness = search["parsed"]["witness_student_number"]
+                        if witness is None:
+                            for number in search["evidence"]["candidate_student_numbers"]:
+                                assign(number, False, search["id"])
+                            for alias in search["evidence"]["candidate_aliases"]:
+                                for number in alias["student_numbers"]:
+                                    assign(number, False, search["id"])
+                        elif known.get(witness) is not True:
+                            dependencies.append(dict(check="coverage_search", case_id=search["id"],
+                                reason="Positive search lacks an accepted exact positive DSL witness."))
+                    changed = True
+                    while changed:
+                        changed = False
+                        for edge in omitted:
+                            number, parent = edge["student_number"], edge["parent_number"]
+                            if (known.get(parent) is False and relationships.get(number) is True
+                                    and known.get(number) is not False):
+                                new_fact = number not in known
+                                assign(number, False, edge["edge_case_id"])
+                                changed |= new_fact
+                coverage.append(dict(teacher_numbers=group["teacher_numbers"], required=group["required"],
+                    student_numbers=matches, compatibility=known))
+            scored = review.score_partial(dict(post=answer["post"], teacher=answer["teacher"],
+                student=answer["student"], exact_matches=review.exact_matches(answer["teacher"], answer["student"]),
+                teacher_meanings=assessments["contexts"][answer["id"]]), subjects=subjects,
+                relationships=relationships, coverage=coverage)
+            if matching_pending:
+                scored["status"] = "pending"
+                scored.get("scores", {}).pop("coverage", None)
+                scored.setdefault("pending", {})["matching"] = matching_pending
+                for finding in scored.get("findings", {}).get("coverage", []):
+                    finding["covered"] = None
+            if inconsistencies:
+                scored["status"] = "pending"
+                scored.get("scores", {}).pop("coverage", None)
+                scored.setdefault("pending", {})["coverage_inconsistencies"] = inconsistencies
+                disputed = {tuple(row["teacher_numbers"]) for row in inconsistencies}
+                for finding in scored.get("findings", {}).get("coverage", []):
+                    if tuple(finding["teacher_numbers"]) in disputed:
+                        finding["covered"] = None
+            answers.append(dict(id=answer["id"], note_id=answer["note_id"], scoring=scored,
+                dependencies=dependencies, premises=premises, coverage_inconsistencies=inconsistencies))
+        cohorts[cohort] = dict(answers=answers)
+    for path, checksum in protected.items():
+        if engine._sha256_file(Path(path)) != checksum:
+            raise ValueError("coverage collection source changed: " + path)
+    result = dict(schema_version=1, coverage=str(directory), output=str(output), sources=protected,
+        inference_calls=0, **cohorts)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    experiment.write(output, result)
+    return result
