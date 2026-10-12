@@ -2045,6 +2045,19 @@ Coverage-search preparation also accepts `--reasoning-effort`, retaining
 xhigh as its default. This lets new native preparations bind the tested
 high matching / medium other-check combination and reuse exact saved requests
 without changing source wording, mechanical rules or existing manifests.
+The optional `--support-reasoning-effort` overrides support alone; global high
+with support medium freezes the eight-note candidate configuration. Omitted
+overrides preserve defaults and invalid values fail before output creation.
+
+`collect-distillation-coverage-search COVERAGE --output REPORT` uses production
+partial scoring to collect audited searches and separate exact DSL witnesses.
+Repeat `--verification-experiment` and `--premise-audit` for their native paths.
+Accepted complete null evidence can settle uncovered candidates; positive
+searches require an accepted exact positive witness. Existing accepted native
+compatibility pairs settle missing placements during preparation without DCS.
+Unknown/rejected premises, later withdrawals and missing self guards prevent
+qualification; changed frozen sources are refused. No inference occurs during
+collection, and the unused pairwise matrix need not be executed.
 Expectation files freeze before calls and remain agent-assessed rather than gold.
 Only repeated natural prefixes meeting the existing eligibility threshold are
 warmed, using explicit prefix/key configuration. Sequential native groups use
