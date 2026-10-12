@@ -1685,8 +1685,11 @@ an accepted synthetic addition can trigger another sibling check. There is no
 additional requirement to find every possible regrouping or prove globally
 minimal browsing depth. Offline tests exercise V2 through the native workflow.
 The user-authorized [HR08–HR10 provider trials](../docs/recommendation-engine/hierarchy-runs.md)
-have saved their initial L1 meanings and await a tested prominence-cache
-eligibility fix before continuation. No completed hierarchy-quality
+have saved their initial L1 meanings. A tested native eligibility fix runs the
+short PPv35 prefix uncached while retaining caching for eligible prompts.
+Reviewed continuation can bind stopped construction to a separate isolated
+checkout and archive a zero-call failed preparation without changing saved
+inputs, meanings or counters. No completed hierarchy-quality
 qualification or measured cost saving is claimed.
 Keep finished menus out of subsequent raw-trial preparation.
 

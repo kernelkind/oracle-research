@@ -28,7 +28,7 @@ They were registered later, so ID order is not generation order. The intervening
 
 | Parameter | HR08 | HR09 | HR10 |
 | --- | --- | --- | --- |
-| Status | Awaiting prominence cache fix | Awaiting prominence cache fix | Awaiting prominence cache fix |
+| Status | Ready for reviewed continuation | Ready for reviewed continuation | Ready for reviewed continuation |
 | Notes | HR05's same 24, same order | HR05's same 24, same order | HR03's exact original 50-note AS selection order |
 | Run definition | [HR08](../../sse_multivector/hierarchy-runs/hr08/traversal.spec.json) | [HR09](../../sse_multivector/hierarchy-runs/hr09/traversal.spec.json) | [HR10](../../sse_multivector/hierarchy-runs/hr10/traversal.spec.json) |
 | Prepared provenance | [HR08](../../../oracle-mvp-hierarchy-hr08-v2/target/hierarchy-hr08-v2-24-note-v1/prepared-provenance.json) | [HR09](../../../oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/prepared-provenance.json) | [HR10](../../../oracle-mvp-hierarchy-hr10-v2/target/hierarchy-hr10-v2-50-note-v1/prepared-provenance.json) |
@@ -55,7 +55,9 @@ There is no prominence cutoff for deeper entries. Exact native answer reuse
 retains its producer evidence and is reported separately from new attempts.
 
 Model execution is `openai-codex` subscription / `gpt-6.1-sol` / medium reasoning
-/ SSE, with prefix caching and automatic warming. Bootstrap and prominence use
+/ SSE, with prefix caching and automatic warming for eligible prompts. Bootstrap,
+Compare and consolidation retain caching; PPv35's 829-token prefix is below the
+runner's 1,024-token minimum and runs uncached. Bootstrap and prominence use
 600-second timeouts; Compare and consolidation use 1,800 seconds. No explicit
 output-token limit, seed or temperature override is set. Each hierarchy permits
 three active searches with placements in selection order; the shared provider
@@ -68,7 +70,7 @@ artifact storage. Native request identity and producer receipts govern exact
 reuse across these official runs; earlier diagnostic outputs are not added to
 this history. Identical requests are not additional independent samples.
 
-All three isolated project worktrees are frozen at full generation commit
+The original three isolated project worktrees remain frozen at generation commit
 `1a7f68a3b27b8ab19f30256a6c613ce28768e0d9`. Both the shared stable launcher
 and model worker use the isolated runner worktree
 `experiment-runner-hr08-hr10-source-v1`, frozen at
@@ -102,8 +104,13 @@ HR10. HR10 includes 150 exact native reuses from HR09. The drivers stopped
 before any prominence request or placement because V2 inherited Bootstrap's
 cache flag for PPv35, whose fixed prefix has 829 estimated tokens, below the
 shared runner's 1,024-token minimum. Saved meanings, receipts and counters are
-preserved. A tested constructor fix and reviewed source upgrade are required
-before continuation; the selected prompt bytes and note inputs remain fixed.
+preserved. A tested constructor fix now applies the native prefix eligibility
+policy. Reviewed continuation from separate isolated source worktrees records
+the original and replacement constructor paths and hashes, the effective PP
+cache setting, and the archived zero-call preparation. All selected prompt
+bytes, note inputs and persistent counters remain fixed. The three production
+regressions and relevant constructor/graph/receipt/viewer suite pass 59 tests;
+the resumed source commit will be recorded before new dispatch.
 
 ## Token usage and API cost
 

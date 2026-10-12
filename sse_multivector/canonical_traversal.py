@@ -29,6 +29,27 @@ _CODE_FILES = ('canonical_traversal.py', 'canonical_graph_search.py', 'canonical
                'experiment_extension.py')
 
 
+def _construction_sources(state):
+    sources = {name: [path for path in state['sources']
+        if Path(path).name == name and Path(path).parent.name == 'sse_multivector']
+        for name in _CODE_FILES}
+    if any(len(paths) != 1 for paths in sources.values()):
+        raise ValueError('invalid construction source bindings')
+    return {name: paths[0] for name, paths in sources.items()}
+
+
+def _prominence_cache(spec):
+    """Use the native cache policy for this prompt's actual fixed prefix."""
+    if not spec['runner'].get('prompt_cache'):
+        return None
+    from experiment_runner.inputs import template_prefix
+    from experiment_runner.prompt_cache import prefix_policy
+    prefix, _ = template_prefix(Path(spec['prompt']['path']).read_bytes().decode())
+    policy = prefix_policy(prefix)
+    spec['runner']['prompt_cache'] = policy['eligible']
+    return policy
+
+
 def validate_consolidation(raw, payload):
     value = json.loads(raw, object_pairs_hook=workflow.engine._position_decoder().unique_object)
     if value is None:
@@ -75,6 +96,9 @@ def _inventory(notes):
 def check_state(state):
     if state.get('traversal_policy') != POLICY:
         raise ValueError('unknown traversal policy')
+    if any(path != str(Path(__file__).with_name(name).resolve())
+           for name, path in _construction_sources(state).items()):
+        raise ValueError('trial source binding changed; supply a reviewed runner upgrade reason')
     for path, digest in state['sources'].items():
         if trial._hash(path) != digest:
             raise ValueError('trial source changed: '+path)
@@ -746,6 +770,7 @@ def prepare(spec_path, directory, history_root=None):
     prominence_spec = deepcopy(state['bootstrap_spec'])
     prominence_spec['prompt'] = dict(id='PPv35-post-meaning-v1', path=str(prominence_prompt.resolve()))
     prominence_spec['runner'].pop('output_schema', None)
+    _prominence_cache(prominence_spec)
     state['prominence_spec'] = prominence_spec
     sources[str(prominence_prompt.resolve())] = trial._hash(prominence_prompt)
     workflow.write(directory/'state.json', state)
@@ -775,28 +800,62 @@ def _resume_sources(directory, reason):
         raise ValueError('runner upgrade reason must be nonempty text')
     with workflow.locked(directory):
         state = workflow.read(directory/'state.json')
-        allowed = {str(Path(__file__).with_name(name).resolve()) for name in _CODE_FILES}
+        bound = _construction_sources(state)
+        allowed = set(bound.values())
         before, after = {}, {}
         for path, digest in state['sources'].items():
             current = trial._hash(path)
-            if current != digest:
-                if path not in allowed:
-                    raise ValueError('trial source changed: '+path)
-                before[path], after[path] = digest, current
-        if after:
+            if current != digest and path not in allowed:
+                raise ValueError('trial source changed: '+path)
+        for name, old_path in bound.items():
+            path = str(Path(__file__).with_name(name).resolve())
+            digest = trial._hash(path)
+            if path != old_path or digest != state['sources'][old_path]:
+                before[old_path], after[path] = state['sources'][old_path], digest
+        prominence = deepcopy(state['prominence_spec'])
+        policy = _prominence_cache(prominence)
+        settings_changed = prominence != state['prominence_spec']
+        if after or settings_changed:
             from experiment_runner.scheduling import snapshot
             for record in state['experiments']:
                 _, config, _ = workflow.load(record['experiment'])
                 if snapshot(config.run_directory)['state'] in ('running', 'pausing'):
                     raise ValueError('finish active experiments before a construction code upgrade')
-            state.setdefault('source_upgrades', []).append(dict(
+            upgrade = dict(
                 reason=reason, before=before, after=after, index=state['index'],
-                graph_sha256=workflow.inputs.digest(state['nodes'])))
+                graph_sha256=workflow.inputs.digest(state['nodes']))
+            if settings_changed:
+                if any(record['role'] == 'prominence' for record in state['experiments']):
+                    raise ValueError('cannot change caching of prepared prominence experiments')
+                upgrade['prominence_cache'] = dict(before=state['prominence_spec']['runner']['prompt_cache'],
+                    after=prominence['runner']['prompt_cache'], policy=policy)
+                step = directory / f"batch-{len(state['experiments']):05}"
+                archive = directory/'unprepared-batches'/(
+                    step.name+f"-source-upgrade-{len(state.get('source_upgrades', []))+1:05}")
+                if step.exists() and archive.exists():
+                    raise ValueError('duplicate unprepared prominence batch archive')
+                partial = step if step.exists() else archive
+                if partial.exists():
+                    expected = deepcopy(state['prominence_spec'])
+                    expected['dataset'] = dict(adapter='hierarchy_prominence', path='source.json')
+                    if ({p.name for p in partial.iterdir()} != {'source.json', 'spec.json'}
+                            or workflow.read(partial/'spec.json') != expected):
+                        raise ValueError('unprepared prominence batch differs from saved settings')
+                    upgrade['unprepared_batch'] = dict(before=str(step), after=str(archive),
+                        sources={name: trial._hash(partial/name) for name in ('source.json','spec.json')},
+                        model_attempts=0)
+                    if partial == step:
+                        archive.parent.mkdir(exist_ok=True)
+                        step.rename(archive)
+                state['prominence_spec'] = prominence
+            state.setdefault('source_upgrades', []).append(upgrade)
+            for path in before:
+                del state['sources'][path]
             state['sources'].update(after)
             if state['status'] == 'complete':
                 state['status'] = 'constructing'
                 check_state(state)
-        if after:
+        if after or settings_changed:
             workflow.write(directory/'state.json', state)
 
 

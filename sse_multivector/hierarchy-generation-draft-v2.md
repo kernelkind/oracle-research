@@ -389,7 +389,10 @@ Use the shared stable launcher from an isolated task worktree:
 
 The traversal spec still names the corpus, selected note IDs, local input schema,
 and Bootstrap, Compare and consolidation specs. Preparation pins PPv35's exact
-text and derives its runner settings from Bootstrap. All original L1 meanings
+text and derives its runner settings from Bootstrap, applying the shared runner's
+native prefix-cache eligibility policy. The current PPv35 prefix has 829
+estimated tokens, below the 1,024-token minimum, so prominence runs uncached;
+the other selected prompts retain eligible caching. All original L1 meanings
 are prepared together; the corresponding prominence batch consumes their saved
 meanings. Deeper batches contain only currently eligible entries. Each meaning
 and score records its native producer case and receipt; all comparisons reuse
@@ -400,8 +403,12 @@ matches, multi-note leaf refinement or finished selection. Placements preserve
 selection order with at most three local searches in flight. Exact answers,
 provider retries, prefix warming and the persistent attempt allowance use the
 ordinary shared runner. No new provider call is implied by preparing or testing
-this implementation. Frozen older trials remain bound to their original source
-worktrees; the current constructor has no legacy selection mode.
+this implementation. A reviewed `--runner-upgrade-reason` can continue a stopped
+trial from a separate isolated source checkout, recording constructor paths and
+hashes and preserving frozen inputs, meaning receipts and attempt counters. An
+unprepared zero-call prominence batch is archived before eligible preparation;
+existing prepared prominence settings cannot be changed. Frozen older source
+worktrees remain intact; the current constructor has no legacy selection mode.
 
 ## Offline implementation verification
 
@@ -426,6 +433,7 @@ unchanged. The original implementation and offline validation used no provider
 requests, prompt text edits, hierarchy UI refresh or paid resources. The user
 subsequently authorized the three official [HR08–HR10 provider trials](../docs/recommendation-engine/hierarchy-runs.md).
 Their initial L1 meanings are saved; prominence preparation exposed an
-inherited cache flag on PPv35's ineligible short prefix. Continuation awaits
-a tested constructor fix. Finished structure and total API-equivalent cost
-remain unqualified.
+inherited cache flag on PPv35's ineligible short prefix. The native eligibility
+fix and isolated reviewed continuation pass 59 relevant tests, including the
+exact stopped preparation and recovery after an interrupted upgrade record.
+Finished structure and total API-equivalent cost remain unqualified.
