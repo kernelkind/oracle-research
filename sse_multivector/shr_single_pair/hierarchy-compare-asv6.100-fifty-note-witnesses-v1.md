@@ -8322,3 +8322,41 @@ label is assigned to disputed original meanings. Increased uncertainty alone is
 not success; do not count unsettled witnesses as resolved. A promising arm needs
 fresh confirmation, the full resolved gate and complete fifty-case panel before
 adoption. These mechanism hypotheses are not proved by their observed failures.
+
+### Matched V210/V211 results and admission qualifications
+
+All eighty-two comparisons complete valid. Fresh V209 core has three settled
+reversal conflicts and one mixed unresolved pair. V211 also has three settled
+reversals, now in different bread pairs, and two mixed unresolved pairs. V210
+has one settled handle reversal and two mixed unresolved pairs. No settled
+forward/reverse chain contradiction is reported in these subsets, but unresolved
+checks remain unresolved, not passed. Both candidates retain all physical and
+goal-control labels. Native exact source means and new receipts are unchanged;
+these are first draws and do not establish reliability or a causal improvement.
+
+Occurrence review finds no demonstrated V211 repair. Attention diagnostics no
+longer invent conversation details, but the forward four-food proof asserts
+coverage under both readings while reverse selects a particular-event reading
+and leaves eating purpose unknown. The potatoes eating-purpose implication is
+still asserted rather than independently established. Time-qualified bread
+introduces another action-versus-enabling-steps qualification. V211 is not adopted
+or expanded merely because some conflict locations changed.
+
+Two independent V210 bread reviews accept its inverse salad exclusions but keep
+all four Food-preparation/bread negatives semantically qualified. Measurement and
+disposal do not establish whether the actions are genuine bread-making stages or
+readiness-directed steps. Deliberately toxic baked bread specimens are plausible,
+and not demonstrably inadmissible merely because unsafe, but neither lack of an
+edible outcome nor later non-consumption proves absence of a readiness goal.
+The distinction between genuine bread-production and the parent's "steps toward"
+readiness remains unclosed. V210 stops the illustration-name shortcut, then
+asserts the opposite boundary without certifying its admission/exclusion proof.
+Native agent uncertain reviews preserve this qualification; they are not new
+human labels or a requirement to restore the old positive.
+
+Native `hierarchy-compare-v210-v211-scope-ablation-usage-v1.json` records ninety-one
+fresh attempts including seven warmups and two recovered failures, zero reuse,
+and two attempts lacking usage. $0.6212912 is a known API-equivalent subtotal,
+not complete cost or a subscription charge. Neither candidate is adopted.
+Keep the independently qualified particular-property repair distinct from these
+unresolved general-kind/admission mechanisms.

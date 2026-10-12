@@ -7895,3 +7895,11 @@ prevents treating the reduced count versus V202 as clean progress. The property
 repair remains bounded; V209 is unadopted while particular-instance and general-
 meaning qualifications are diagnosed independently. Native reports preserve all
 receipts and source means without restoring retired caps or messaging Bootstrap.
+
+Matched V210 illustration and V211 occurrence-scope ablations complete with
+physical/goal controls retained. V211 establishes no reliable occurrence-scope
+repair. V210 reduces settled conflicts in one draw but its new bread exclusions
+remain qualified on admission and readiness-goal grounds, with native agent
+uncertain reviews. Neither is adopted; fewer settled contradictions through
+unresolved checks do not establish semantic progress. Native source and usage
+records retain the exact fresh V209 reference and all original meanings.
