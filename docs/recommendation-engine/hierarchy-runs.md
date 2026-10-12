@@ -5,6 +5,10 @@ experimental parameters. **HR05** is the completed 24-note rerun with a review U
 **HR04** is the completed 12-note run; **HR03** is the completed 50-note baseline.
 Each run's raw build, browsing menu and export share its ID.
 
+**HR08**, **HR09** and **HR10** are approved V2 runs awaiting execution. Their
+fixed parameters are recorded below; preparation will pin exact source commits,
+prompt hashes and input evidence before any model request.
+
 **HR06** and **HR07** preserve the two earlier ASv6.48 builds the user reviewed.
 They were registered later, so ID order is not generation order. The intervening
 16-note builds are not official entries.
@@ -16,6 +20,66 @@ They were registered later, so ID order is not generation order. The intervening
 | HR03 | 50 | ASv6.100 | v96 / v48 |
 | HR04 | 12 | ASv6.100 | v109 / v179 |
 | HR05 | 24 | ASv6.100 | v109 / v179 |
+| HR08 | 24 | ASv6.100 | v109 / v179 |
+| HR09 | 24 | ASv6.100 | v122 / v192 |
+| HR10 | 50 | ASv6.100 | v122 / v192 |
+
+## HR08–HR10 — approved V2 comparison
+
+| Parameter | HR08 | HR09 | HR10 |
+| --- | --- | --- | --- |
+| Status | Approved; not started | Approved; not started | Approved; not started |
+| Notes | HR05's same 24, same order | HR05's same 24, same order | HR03's exact original 50-note AS selection order |
+| Run definition | [HR08](../../sse_multivector/hierarchy-runs/hr08/traversal.spec.json) | [HR09](../../sse_multivector/hierarchy-runs/hr09/traversal.spec.json) | [HR10](../../sse_multivector/hierarchy-runs/hr10/traversal.spec.json) |
+| Subject trees | Saved ASv6.100 from HR03 | Same | Same |
+| Local subject entries / L1 roots | 832 / 150 | 832 / 150 | 1,510 / 326 |
+| Bootstrap | v109 | v122 | v122 |
+| Compare | v179 | v192 | v192 |
+| Consolidation | v4, exact HR05 prompt | v18 | v18 |
+| Prominence | PPv35-post-meaning-v1 | Same | Same |
+| Persistent attempt ceiling | 3,000 | 3,000 | 10,000 |
+
+All three use `hierarchy-generation-v2`, local schema 4 and an empty initial
+graph. They reuse the exact ASv6.100 corpus SHA-256
+`18370b4772fee22c8d11f49a505f20f781f163e0512a8f32473d487ebdc8849a`;
+no subject extraction or vector generation is included.
+
+V2 establishes an independent Bootstrap meaning and PPv35 prominence for every
+original L1. For each note it guarantees every L1 scoring at least 50, or the
+first highest-scoring L1 when none meets 50. Guaranteed processing and triggered
+consolidation finish before additional L1 selection for uncovered notes.
+Eligible deeper heading matches take priority over prominence-ordered refinement
+of multi-note leaves. Original note order and local-node tie order are retained.
+There is no prominence cutoff for deeper entries. Exact native answer reuse
+retains its producer evidence and is reported separately from new attempts.
+
+Model execution is `openai-codex` subscription / `gpt-6.1-sol` / medium reasoning
+/ SSE, with prefix caching and automatic warming. Bootstrap and prominence use
+600-second timeouts; Compare and consolidation use 1,800 seconds. No explicit
+output-token limit, seed or temperature override is set. Each hierarchy permits
+three active searches with placements in selection order; the shared provider
+queue admits at most 30 requests across experiments. Each run's separate
+persistent ceiling includes warmups, retries and every resume.
+
+Consolidation is best effort after an addition leaves at least six siblings,
+including roots. Proposals undergo ordinary Compare traversal and placement
+checks; Audit-v5 is not an extra construction step. Finished-view shaping keeps
+the child of an equal-note-set single-child parent; for a multiple-child parent
+it retains the parent and bypasses equal-note-set children on that branch.
+The raw canonical graph and fixed meanings remain preserved.
+
+Completion requires all guaranteed entries and triggered consolidation to
+finish, exhaustion of eligible selection, access to every selected note, and
+strictly narrowing browsing edges. Refinement exhaustion may leave multi-note
+leaves; singleton leaves are measured rather than required by V2. An exhausted
+attempt allowance preserves partial work and reports unfinished construction.
+
+Bootstrap-v122, Compare-v192 and Consolidation-v18 remain experimental.
+These official runs evaluate them without declaring the prompts qualified or
+changing their adoption status. Each output will receive its run ID, a review
+view, a native usage report and API-equivalent cost accounting. Full generation
+commits and uncommitted-source status will be recorded before execution; token,
+cost and structural results remain pending.
 
 ## Token usage and API cost
 

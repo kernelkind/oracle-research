@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "prompt": {
+    "id": "Hierarchy-compare-v192",
+    "path": "../../shr_single_pair/Hierarchy-compare-v192.md"
+  },
+  "dataset": {
+    "adapter": "generic",
+    "path": "unused-source.json"
+  },
+  "runner": {
+    "provider": "openai-codex",
+    "auth_file": null,
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "medium",
+    "transport": "sse",
+    "timeout_seconds": 1800,
+    "runner_binary": "/home/dev/src/notedeck_worktrees/algos/experiment-runner-hr08-hr10-source-v1/experiment_runner/run-model.sh",
+    "prompt_cache": true,
+    "output_schema_path": "../../shr_single_pair/Hierarchy-compare-v179.output.schema.json"
+  }
+}

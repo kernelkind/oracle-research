@@ -7426,3 +7426,27 @@ existing native sources; no new Bootstrap generation is performed. Extra uncerta
 on an ambiguous probe is useful only if its diagnostic identifies the material
 alternative readings. Loss of these six clear positives is a failure. No broader
 qualification is claimed from this screen.
+
+### V193 screen failure and V194 concrete-candidate hypothesis
+
+V193 preserves all six positive controls in the twelve-case screen, but Restaurant
+again reverses: child-first is contained by Commercial entities; parent-first is
+neither. Food/Bread is neither in both directions and Brand remains unresolved in
+both. The original semantic labels remain unresolved. V193 fails this screen and
+receives no broader qualification. Native exports are
+`target/compare-v193-reading-screen-v1/{hr05,commerce,smoke}-native.json`.
+
+[Experimental V194](Hierarchy-compare-v194.md) requires each diagnostic question
+to name a concrete candidate and the potentially failing parent condition. Its
+four existing fictional example questions are aligned with that contract. The
+positive example separately rejects its chemical-only candidate and proves the
+universal cutting implication; rejecting one candidate alone is not coverage.
+Example inputs, relation labels, fixed producer meanings, A/B schema and the
+other containment rules remain unchanged. This tests an aligned instruction and
+example revision, not the isolated causal effect of the instruction alone.
+
+Two independent read-only reviews find the draft coherent. Qualification must
+check that particular-entity questions do not invent unknown properties and that
+an easy rejected candidate does not replace a proof of every parent condition.
+The same twelve-case screen precedes any full gate or fresh confirmation. No
+preferred Restaurant/Bread answer or new Bootstrap scope is prescribed.
