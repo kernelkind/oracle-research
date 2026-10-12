@@ -7899,3 +7899,38 @@ Later research use does not negate that physical goal. Provisional agent
 expectations stay outside inputs, are not human gold, and these cases never
 become prompt examples or hierarchy placements. Baseline V202 runs first;
 no new prompt revision is justified merely by the unresolved food probe.
+
+### Closed-goal result and particular-case counterexample diagnostic
+
+All eight canopy-goal responses match the provisional agent assessment in both
+orientations. The numeric goal remains required with and without the activity
+illustration; laboratory-only later use does not negate that goal. Proofs retain
+whole activity connections without asserting successful cultivation. This does
+not establish an illustration-wording fix or settle genuine bread identity and
+readiness boundaries. Nine fresh attempts include one warmup, with no reuse,
+retry, failure or missing usage; $0.0486448 API-equivalent cost.
+
+Independent review of V202's fifty-case collection confirms all sixteen current
+provisional control labels survive. It does not certify every proof: both
+negative-metal-handles / attention answers invent remembered content for the
+particular author's distraction. The mixed mental-state pair also changes its
+personhood implication across orientations. Preserve these qualifications
+rather than counting retained labels as correct diagnostics.
+
+Experimental V203 reorganizes the existing counterexample constraint: general
+kinds permit coherent hypothetical cases satisfying all admission conditions;
+a particular entity or event must retain its identity and use established
+facts for admission and exclusion. A coherent possibility is not an established
+fact about that particular case. The redundant later particular-entity sentence
+is removed; information connections, meanings, examples, schema and all other
+rules remain fixed. This tests scope-specific counterexample selection, not a
+new prohibition or a demonstrated wording cause. Revision remains against V179.
+
+The first screen uses eight production-aspect cases, six explicit human-handhold
+controls, two approved MrBeast positives, two brand-uncertainty probes and two
+particular-attention negatives. Matched fresh V202 aspect and attention outputs
+separate sampling variation from old outputs. Qualification requires correct
+unknown-route treatment in all four decorative comparisons, retained functional
+and resolved controls, and no invented facts in particular-attention diagnostics.
+More nulls or reciprocal labels alone do not qualify V203. No Bootstrap work,
+new prompt examples, hierarchy placements or external agent messages follow.

@@ -7840,3 +7840,11 @@ carrier in one of four decorative comparisons. Original inputs and all reviews
 remain preserved. V202 stays experimental and unqualified; the next diagnostic
 uses the unchanged single-producer fifty-case collection rather than another
 local wording reminder.
+
+V202's subsequent fifty-case producer panel completes with four settled reversal
+conflicts and overlapping equivalence witnesses. The synthetic numeric-goal
+contrast passes, so no conditional-illustration repair is established. V203 is
+an experimental scope-specific counterexample-selection diagnostic: it separates
+hypothetical general cases from fixed particular facts without changing the
+information convention or four-field schema. Native fresh reference draws and
+proof review are required; neither version is adopted.
