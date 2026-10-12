@@ -288,8 +288,12 @@ conflicts. Compatible paired repeats retain separate producer bindings; they
 do not replace the original cohort. Native activity locks serialize review
 mutation, so material flags were persisted through one writer and full review
 coverage is documented against the frozen cohort rather than claimed as 346
-native verdicts. V122 is not activated; the shared counter is exhausted at
-20,000 and inference is stopped. No Compare or hierarchy work occurred.
+native verdicts. V122 is not activated. At that checkpoint, the shared counter
+reached 20,000 and inference stopped. The user subsequently confirmed removal
+of that cap and requested [fresh meanings for all four original HR04 Food nodes](shr_single_pair/bootstrap-v122-hr04-four-foods-v1.md).
+That four-case V122 draw omits the old optional counter, preserves its historical
+bytes and records native attempts independently. No replacement global cap is
+established by this diagnostic. No Compare or hierarchy work occurred.
 
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at
