@@ -180,30 +180,37 @@ def _experiment(directory, state, role, spec, source, *, adapter='generic', loca
 
 def _collect(state):
     """Validate native receipts on every advancement, including saved answers."""
-    from experiment_runner.scheduling import snapshot
     for record in state['experiments']:
-        if 'answers' not in record:
-            _, config, _ = workflow.load(record['experiment'])
-            if snapshot(config.run_directory)['state'] in ('running', 'pausing'):
-                # A failed attempt may still be awaiting its native provider retry.
-                continue
-        cases = workflow.report(record['experiment'], include_request_preview=False)['cases']
-        if {c['id']: c['inputs'] for c in cases} != record['inputs']:
-            raise ValueError('traversal experiment input changed')
-        answers = [dict(id=c['id'], output=c.get('parsed'), receipt=c.get('receipt'),
-                        status=c['status'], experiment=record['experiment']) for c in cases]
-        failures = _failure_receipts(record['experiment'], cases)
-        if any(c['status'] == 'invalid_receipt' for c in cases) or failures is None:
-            raise ValueError('invalid traversal receipt')
-        if 'answers' in record and answers != record['answers']:
-            raise ValueError('saved traversal answers changed')
-        retryable = any(workflow.engine.provider_retry_delay(failure) is not None
-                        for failure in failures)
-        if not any(c['status'] == 'unrun' for c in cases) and not retryable:
-            record['answers'] = answers
-            if record['role'] in ('meaning', 'prominence', 'consolidation'):
-                record['producer_holds'] = {c['id']: _producer_hold(record['experiment'], [c])
-                                            for c in cases}
+        _collect_record(record)
+
+
+@workflow.report_scope(isolated=True)
+def _collect_record(record):
+    # Retain shared producers while this batch is checked, then release its
+    # file contents instead of accumulating the entire construction history.
+    from experiment_runner.scheduling import snapshot
+    if 'answers' not in record:
+        _, config, _ = workflow.load(record['experiment'])
+        if snapshot(config.run_directory)['state'] in ('running', 'pausing'):
+            # A failed attempt may still be awaiting its native provider retry.
+            return
+    cases = workflow.report(record['experiment'], include_request_preview=False)['cases']
+    if {c['id']: c['inputs'] for c in cases} != record['inputs']:
+        raise ValueError('traversal experiment input changed')
+    answers = [dict(id=c['id'], output=c.get('parsed'), receipt=c.get('receipt'),
+                    status=c['status'], experiment=record['experiment']) for c in cases]
+    failures = _failure_receipts(record['experiment'], cases)
+    if any(c['status'] == 'invalid_receipt' for c in cases) or failures is None:
+        raise ValueError('invalid traversal receipt')
+    if 'answers' in record and answers != record['answers']:
+        raise ValueError('saved traversal answers changed')
+    retryable = any(workflow.engine.provider_retry_delay(failure) is not None
+                    for failure in failures)
+    if not any(c['status'] == 'unrun' for c in cases) and not retryable:
+        record['answers'] = answers
+        if record['role'] in ('meaning', 'prominence', 'consolidation'):
+            record['producer_holds'] = {c['id']: _producer_hold(record['experiment'], [c])
+                                        for c in cases}
 
 
 def _canonical_input(nodes, identifier):
@@ -781,7 +788,7 @@ def advance(directory, comment):
     if not isinstance(comment, str) or not comment.strip():
         raise ValueError('an advancement comment is required')
     directory = Path(directory).resolve()
-    with workflow.locked(directory):
+    with workflow.locked(directory), workflow.report_scope():
         state = workflow.read(directory/'state.json')
         check_state(state)
         _collect(state)

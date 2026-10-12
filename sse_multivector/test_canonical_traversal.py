@@ -7,6 +7,8 @@ import time
 import signal
 import shutil
 import unittest
+from collections import Counter
+from unittest.mock import patch
 
 from sse_multivector import test_experiment as fixtures
 
@@ -22,7 +24,9 @@ class CanonicalTraversalTests(unittest.TestCase):
 
     def cli(self, *args, ok=True, env=None):
         project = getattr(self, 'project', Path(__file__).resolve().parents[1])
-        launcher = Path(__file__).resolve().parents[2]/'experiment-runner/bin/experiment-runner'
+        runner_root = Path(os.environ.get('EXPERIMENT_RUNNER_ROOT',
+            Path(__file__).resolve().parents[2] / 'experiment-runner'))
+        launcher = runner_root / 'bin/experiment-runner'
         result = subprocess.run([str(launcher), '--project-root', str(project), *map(str,args)],
             cwd=self.root, env={**os.environ, 'FAKE_RUNNER_LOG':str(self.log), **(env or {})},
             text=True, capture_output=True,
@@ -84,6 +88,56 @@ class CanonicalTraversalTests(unittest.TestCase):
 
     def advance(self):
         return self.cli('advance-canonical-traversal', 'trial', '--comment', 'Fixture mechanics')
+
+    def test_advancement_reads_each_native_ledger_once_and_rechecks_on_next_advance(self):
+        self.automatic_fixture(count=2, roots_only=True)
+        self.run_pending({'meaning': 'Root meaning'})
+        from sse_multivector import canonical_traversal as traversal
+        ledger = Path(self.state()['experiments'][0]['experiment']) / 'run/results.jsonl'
+        reads = Counter()
+        original = Path.read_bytes
+
+        def counted(path):
+            reads[path] += 1
+            return original(path)
+
+        with patch.object(Path, 'read_bytes', counted):
+            traversal.advance(self.root / 'trial', 'Read native evidence once')
+        self.assertEqual(reads[ledger], 1)
+        saved = json.loads(ledger.read_text().splitlines()[0])
+        saved['final_output_raw'] = '{"meaning":"Tampered"}'
+        lines = ledger.read_text().splitlines()
+        lines[0] = json.dumps(saved)
+        ledger.write_text('\n'.join(lines) + '\n')
+        with self.assertRaisesRegex(ValueError, 'invalid traversal receipt'):
+            traversal.advance(self.root / 'trial', 'Reject changed evidence')
+
+    def test_reused_producer_reads_are_shared_and_source_reviews_still_hold_only_their_case(self):
+        self.automatic_fixture(count=2, roots_only=True)
+        original = Path(self.state()['experiments'][0]['experiment'])
+        self.run_pending({'meaning': 'Root meaning'})
+        self.cli('prepare-canonical-traversal', 'reuse', '--spec', 'traversal.json')
+        state = json.loads((self.root / 'reuse/state.json').read_text())
+        producer = Path(state['experiments'][0]['experiment'])
+        self.cli('run', producer)
+        records = [json.loads(line) for line in (producer / 'run/results.jsonl').read_text().splitlines()]
+        self.assertTrue(all(r['execution'] == 'cross_run_reuse' for r in records))
+        self.cli('review', original, '--case', 'L00000', '--role', 'user',
+                 '--verdict', 'reject', '--comment', 'Preserve original role')
+        from sse_multivector import canonical_traversal as traversal
+        reads = Counter()
+        read_bytes = Path.read_bytes
+        def counted(path):
+            reads[path] += 1
+            return read_bytes(path)
+        with patch.object(Path, 'read_bytes', counted):
+            traversal.advance(self.root / 'reuse', 'Check reused producer reviews')
+        state = json.loads((self.root / 'reuse/state.json').read_text())
+        self.assertIn('user producer review reject', state['inventory'][0]['hold'])
+        self.assertNotIn('hold', state['inventory'][1])
+        for path in (producer / 'run/results.jsonl', original / 'run/manifest.json',
+                     original / 'experiment.json', original / 'runner-config.json'):
+            self.assertEqual(reads[path], 1, path)
 
 
     def run_pending(self, answer):
@@ -250,7 +304,8 @@ class CanonicalTraversalTests(unittest.TestCase):
         self.automatic_fixture(count=2, roots_only=True)
         marker = self.root/'comparison-waiting'
         project = Path(__file__).resolve().parents[1]
-        launcher = project.parent/'experiment-runner/bin/experiment-runner'
+        launcher = Path(os.environ.get('EXPERIMENT_RUNNER_ROOT',
+            project.parent / 'experiment-runner')) / 'bin/experiment-runner'
         with (self.root/'driver.log').open('w') as log:
             process = subprocess.Popen([str(launcher), '--project-root', str(project),
                 'run-canonical-traversal', 'trial', '--attempt-budget', 'allowance.json'],
