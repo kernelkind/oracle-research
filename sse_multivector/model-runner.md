@@ -1858,7 +1858,26 @@ Native accounting includes only the final experiment: ten fresh calls,
 API-equivalent estimate $0.164466. Its natural prefix has 76 tokens, below the
 warming threshold. Prompts, schemas and production code remain unchanged;
 the frozen task worktree is retained. DCS null-search qualification still
-requires its genuine matching/self-guard prerequisites and separate testing.
+requires separate testing with its genuine matching/self-guard prerequisites.
+
+The subsequent [native coverage diagnostic](distillation-review-v1/README.md#native-coverage-diagnostic-with-genuine-prerequisites)
+freezes actual saved answers and pre-call assessments, runs complete matching
+and necessary self guards through native groups, then searches residual
+candidates. Seven source-null searches and one positive Songs-beneath-Music
+control pass independent full-output audit; unchanged DSLv10 separately verifies
+the positive pair. Original premise ledgers remain frozen; verification uses
+a separate native experiment. Support and unrelated relationship checks stay
+unrun and cannot license omissions. Native accounting includes 22 fresh
+attempts, one warmup, six duplicate occurrence reuses, no failures/retries or
+missing usage, and $0.17604 API-equivalent cost. Warming produces no cached
+tokens and adds $0.00495. Source selection and auditing between stages account
+for much of the 724.576-second first-to-last run span; the union of native run
+intervals is 150.743 seconds. N13 is previously DSL-exposed; N53 excludes that
+four-post trial. Prompts, schemas and production behavior stay unchanged.
+One positive control does not qualify diverse-data false-null reliability,
+minimum reasoning effort or full-evaluation runtime. Frozen artifacts retain
+the task worktree; the next comparison can reuse these assessed inputs at
+lower reasoning without repeating source selection.
 
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,
