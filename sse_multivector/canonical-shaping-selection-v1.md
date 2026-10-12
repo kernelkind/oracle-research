@@ -5914,3 +5914,59 @@ exact appliance and simmered proposals remain useful fixed-meaning controls,
 but an unrestricted generator may choose another valid grouping. Clarify the
 Slush kind-versus-instance convention before using it to prescribe a prompt
 change. This suggestion does not start further edits or inference.
+
+## Consolidation-v20 independent sibling restrictions
+
+The user approves the focused revision and exact HR09 regression screen.
+Experimental [Consolidation-v20](shr_single_pair/Hierarchy-consolidation-v20.md)
+replaces one paragraph in v19's Identify the children section. It makes explicit
+that a restriction on one sibling does not restrict another and permits two
+coherent responses: retain that condition and exclude siblings that do not
+establish it, or choose a broader meaning and reassess every sibling. Conditions
+still apply to the kinds or relationships they qualify. This targets the
+repeated human-consumer mismatch without prescribing a Food grouping or treating
+the disputed Slush laboratory counterexample as semantic gold.
+
+The earlier counterexample check, useful-parent instructions, whole-scope rules,
+strict containment beneath the supplied parent, synthetic display-panel example,
+shared definition-writing fragment and output schema remain byte-identical.
+The shared Bootstrap-v104 wording and historical prompt/receipt files are not
+edited. The native revision still uses last human-approved full Consolidation-v3
+as its base; v19 is the experimental behavioral comparator. V20 is a tested
+draft, not activation or a new approved hierarchy policy.
+
+The new production assembly test is written first and fails because the v20
+manifest is absent. The implementation adds only the versioned wrapper,
+pinned assembly and native revision. Assembly reconstruction and actual shared
+runner freezing are tested; 24 relevant existing/new production-path checks
+pass. V20 SHA-256 is
+`07b87f7f54ca079564228c067a40f7ec3655388763aa4796bdd7bbbff79a21be`.
+
+The experiment preserves the same five complete ASv6.100 HR09 Stock, Heating,
+Simmered and two Slush inputs and their first/repeat order from the preceding
+v19 screen. Native `prepare --from` retains saved v19 answers as baseline
+without rerunning them, switches to v20 and retains GPT-6.1 Sol / medium / SSE
+and the current worker. An independent repeat for each group is prepared
+before inference. No old answers, labels or reviews enter the model input.
+Native automatic warmups, retries, failures and usage remain counted; no
+retired cross-experiment cap is restored. Fresh work is tracked by the
+[v20 native usage selection](shr_single_pair/hierarchy-consolidation-v20-hr09-usage-v1.json).
+
+Pre-call criteria are unchanged from v19: assess each final meaning, whole
+child coverage, omitted siblings, useful proper-subset grouping and existing
+parent containment. Choosing a different coherent parent is allowed. A Stock
+answer corrects the targeted mismatch only if its proposed condition covers
+the selected unrestricted consumers or those siblings are coherently excluded;
+a new title, null, or wholesale uncertainty alone is not correction. Slush
+kind-function versus particular-use boundaries remain qualified. Heating and
+Simmered are only exercised controls if the proposal actually chooses those
+relationships; other coherent groupings do not certify them. Native reviews
+are agent assessments, not newly invented user gold or fresh Compare results.
+
+The edit follows official [reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices)
+on direct instructions without requested reasoning traces and
+[evaluation guidance](https://developers.openai.com/api/docs/guides/evaluation-best-practices)
+on scoped real-case tests and human calibration. These sources support the
+method, not the proposed semantic rule or an accuracy guarantee. No extra
+prompt stage, diagnostic output, comparison-prompt edit, hierarchy repair,
+production trigger change, UI refresh or external message is introduced.

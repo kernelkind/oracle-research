@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v20_first_draw": [
+      "../../target/canonical-shaping-selection-v1/consolidation-v20-hr09-stock-first-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v20-hr09-heating-first-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v20-hr09-simmered-first-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v20-hr09-slush-rejected-first-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v20-hr09-slush-accepted-first-v1"
+    ],
+    "v20_fresh_repeat": [
+      "../../target/canonical-shaping-selection-v1/consolidation-v20-hr09-stock-repeat-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v20-hr09-heating-repeat-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v20-hr09-simmered-repeat-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v20-hr09-slush-rejected-repeat-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v20-hr09-slush-accepted-repeat-v1"
+    ]
+  }
+}

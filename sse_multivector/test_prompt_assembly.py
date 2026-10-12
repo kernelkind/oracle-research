@@ -400,6 +400,32 @@ class PromptAssemblyTests(unittest.TestCase):
         self.assertEqual(revision['base_sha256'], sha256((PROMPTS / 'Hierarchy-consolidation-v3.md').read_bytes()))
         self.assertEqual(revision['prompt_sha256'], current['output']['sha256'])
 
+    def test_sibling_scope_revision_preserves_shared_rules_and_other_checks(self):
+        spec = PROMPTS / 'Hierarchy-consolidation-v20.assembly.json'
+        result = self.invoke('check', spec)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        current = json.loads(spec.read_text())
+        previous = json.loads((PROMPTS / 'Hierarchy-consolidation-v19.assembly.json').read_text())
+        self.assertEqual(current['parts'][:-1], previous['parts'][:-1])
+        prompt = (PROMPTS / current['output']['path']).read_bytes()
+        old_prompt = (PROMPTS / previous['output']['path']).read_bytes()
+        old = b"A required consumer, purpose, role or state must follow from the sibling's fixed meaning or its necessary implications; illustrative examples and conventional associations cannot supply it. Include all siblings meeting these conditions. Apply any stated coverage of associated activities, products or participants."
+        before, after = old_prompt.split(old)
+        self.assertTrue(prompt.startswith(before))
+        self.assertTrue(prompt.endswith(after))
+        changed = prompt[len(before):-len(after)]
+        self.assertIn(b'A restriction stated by one sibling does not restrict another sibling.', changed)
+        self.assertIn(b'either retain it and exclude the others, or choose a coherent broader meaning', changed)
+        self.assertIn(b'recheck every sibling against that final meaning', changed)
+        self.assertIn(b'Apply each condition to the kind or relationship it qualifies.', changed)
+        shared = (PROMPTS / current['parts'][2]['path']).read_bytes()
+        self.assertEqual(prompt.count(shared), 1)
+        self.assertEqual(sha256(old_prompt),
+                         '4abab9a5dad919537fdf47b05e20cca1ee66ec52955a7d79ae8f741803da6303')
+        revision = json.loads((PROMPTS / 'Hierarchy-consolidation-v20.md.revision.json').read_text())
+        self.assertEqual(revision['base_sha256'], sha256((PROMPTS / 'Hierarchy-consolidation-v3.md').read_bytes()))
+        self.assertEqual(revision['prompt_sha256'], current['output']['sha256'])
+
     def test_shared_runner_freezes_the_complete_assembled_prompt_without_inference(self):
         runner_root = CLI.resolve().parents[2] / 'experiment-runner'
         launcher = runner_root / 'bin' / 'experiment-runner'
@@ -419,7 +445,7 @@ class PromptAssemblyTests(unittest.TestCase):
                         'Hierarchy-consolidation-v13', 'Hierarchy-consolidation-v14',
                         'Hierarchy-consolidation-v15', 'Hierarchy-consolidation-v16',
                         'Hierarchy-consolidation-v17', 'Hierarchy-consolidation-v18',
-                        'Hierarchy-consolidation-v19'):
+                        'Hierarchy-consolidation-v19', 'Hierarchy-consolidation-v20'):
             with self.subTest(version=version):
                 inputs = json.dumps({key: value for key, value in data.items()
                                      if version not in ('Hierarchy-consolidation-v3', 'Hierarchy-consolidation-v4',
