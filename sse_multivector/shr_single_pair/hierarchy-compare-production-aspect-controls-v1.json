@@ -1,0 +1,221 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "paper-pump-intended-functional-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Paper\",\"meaning\":\"Paper is material in the form of thin sheets made from cellulose fibres.\"},\"B\":{\"subject\":\"Functional water-supply information about Pump P\",\"meaning\":\"Pump P is designed and intended to supply water during processing cellulose fibres into thin sheets of paper. The topic is solely how Pump P is designed to supply water during that cellulose-fibre processing into paper.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "panel": "production-aspect",
+        "family": "paper",
+        "pair_id": "paper-pump-intended-functional",
+        "orientation": "forward",
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "paper-pump-intended-functional",
+        "application_allowed": false,
+        "origin": "Independently specified synthetic information-scope diagnostic. No real post, AS output, Bootstrap output or producer receipt is asserted. These inputs never become prompt examples or hierarchy placements.",
+        "role_configuration": "intended",
+        "aspect_configuration": "functional",
+        "qualification_clause": "Pump P is designed and intended to supply water during processing cellulose fibres into thin sheets of paper.",
+        "control_design": "Functional and decorative cases in each role configuration describe the same expressly qualified Pump P and repeat its qualification clause exactly. The intended and actual configurations are separate controlled alternatives, not additional jointly asserted facts about a historical entity. Across role configurations only the qualification clause changes.",
+        "review": {
+          "expected_relation": null,
+          "expectation_authority": "unresolved-agent-diagnostic",
+          "user_gold": false,
+          "qualification": "No individual relation is predetermined. Assess exact reversals and whether the stated functional production connection and expressly unrelated decorative scope are interpreted consistently. Isolate intended versus actual use from functional versus decorative information; preserve the fixed Paper meaning and each whole supplied information scope. Physical nonidentity alone does not establish exclusion, and a pump's qualifying role alone does not prove coverage of every independent aspect."
+        }
+      }
+    },
+    {
+      "id": "paper-pump-intended-functional-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Functional water-supply information about Pump P\",\"meaning\":\"Pump P is designed and intended to supply water during processing cellulose fibres into thin sheets of paper. The topic is solely how Pump P is designed to supply water during that cellulose-fibre processing into paper.\"},\"B\":{\"subject\":\"Paper\",\"meaning\":\"Paper is material in the form of thin sheets made from cellulose fibres.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "panel": "production-aspect",
+        "family": "paper",
+        "pair_id": "paper-pump-intended-functional",
+        "orientation": "reverse",
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "paper-pump-intended-functional",
+        "application_allowed": false,
+        "origin": "Independently specified synthetic information-scope diagnostic. No real post, AS output, Bootstrap output or producer receipt is asserted. These inputs never become prompt examples or hierarchy placements.",
+        "role_configuration": "intended",
+        "aspect_configuration": "functional",
+        "qualification_clause": "Pump P is designed and intended to supply water during processing cellulose fibres into thin sheets of paper.",
+        "control_design": "Functional and decorative cases in each role configuration describe the same expressly qualified Pump P and repeat its qualification clause exactly. The intended and actual configurations are separate controlled alternatives, not additional jointly asserted facts about a historical entity. Across role configurations only the qualification clause changes.",
+        "review": {
+          "expected_relation": null,
+          "expectation_authority": "unresolved-agent-diagnostic",
+          "user_gold": false,
+          "qualification": "No individual relation is predetermined. Assess exact reversals and whether the stated functional production connection and expressly unrelated decorative scope are interpreted consistently. Isolate intended versus actual use from functional versus decorative information; preserve the fixed Paper meaning and each whole supplied information scope. Physical nonidentity alone does not establish exclusion, and a pump's qualifying role alone does not prove coverage of every independent aspect."
+        }
+      }
+    },
+    {
+      "id": "paper-pump-intended-decorative-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Paper\",\"meaning\":\"Paper is material in the form of thin sheets made from cellulose fibres.\"},\"B\":{\"subject\":\"Decorative exterior information about Pump P\",\"meaning\":\"Pump P is designed and intended to supply water during processing cellulose fibres into thin sheets of paper. The topic is solely Pump P's exterior decorative pattern, which is unrelated to that cellulose-fibre processing or the production of paper.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "panel": "production-aspect",
+        "family": "paper",
+        "pair_id": "paper-pump-intended-decorative",
+        "orientation": "forward",
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "paper-pump-intended-decorative",
+        "application_allowed": false,
+        "origin": "Independently specified synthetic information-scope diagnostic. No real post, AS output, Bootstrap output or producer receipt is asserted. These inputs never become prompt examples or hierarchy placements.",
+        "role_configuration": "intended",
+        "aspect_configuration": "decorative",
+        "qualification_clause": "Pump P is designed and intended to supply water during processing cellulose fibres into thin sheets of paper.",
+        "control_design": "Functional and decorative cases in each role configuration describe the same expressly qualified Pump P and repeat its qualification clause exactly. The intended and actual configurations are separate controlled alternatives, not additional jointly asserted facts about a historical entity. Across role configurations only the qualification clause changes.",
+        "review": {
+          "expected_relation": null,
+          "expectation_authority": "unresolved-agent-diagnostic",
+          "user_gold": false,
+          "qualification": "No individual relation is predetermined. Assess exact reversals and whether the stated functional production connection and expressly unrelated decorative scope are interpreted consistently. Isolate intended versus actual use from functional versus decorative information; preserve the fixed Paper meaning and each whole supplied information scope. Physical nonidentity alone does not establish exclusion, and a pump's qualifying role alone does not prove coverage of every independent aspect."
+        }
+      }
+    },
+    {
+      "id": "paper-pump-intended-decorative-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Decorative exterior information about Pump P\",\"meaning\":\"Pump P is designed and intended to supply water during processing cellulose fibres into thin sheets of paper. The topic is solely Pump P's exterior decorative pattern, which is unrelated to that cellulose-fibre processing or the production of paper.\"},\"B\":{\"subject\":\"Paper\",\"meaning\":\"Paper is material in the form of thin sheets made from cellulose fibres.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "panel": "production-aspect",
+        "family": "paper",
+        "pair_id": "paper-pump-intended-decorative",
+        "orientation": "reverse",
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "paper-pump-intended-decorative",
+        "application_allowed": false,
+        "origin": "Independently specified synthetic information-scope diagnostic. No real post, AS output, Bootstrap output or producer receipt is asserted. These inputs never become prompt examples or hierarchy placements.",
+        "role_configuration": "intended",
+        "aspect_configuration": "decorative",
+        "qualification_clause": "Pump P is designed and intended to supply water during processing cellulose fibres into thin sheets of paper.",
+        "control_design": "Functional and decorative cases in each role configuration describe the same expressly qualified Pump P and repeat its qualification clause exactly. The intended and actual configurations are separate controlled alternatives, not additional jointly asserted facts about a historical entity. Across role configurations only the qualification clause changes.",
+        "review": {
+          "expected_relation": null,
+          "expectation_authority": "unresolved-agent-diagnostic",
+          "user_gold": false,
+          "qualification": "No individual relation is predetermined. Assess exact reversals and whether the stated functional production connection and expressly unrelated decorative scope are interpreted consistently. Isolate intended versus actual use from functional versus decorative information; preserve the fixed Paper meaning and each whole supplied information scope. Physical nonidentity alone does not establish exclusion, and a pump's qualifying role alone does not prove coverage of every independent aspect."
+        }
+      }
+    },
+    {
+      "id": "paper-pump-actual-functional-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Paper\",\"meaning\":\"Paper is material in the form of thin sheets made from cellulose fibres.\"},\"B\":{\"subject\":\"Functional water-supply information about Pump P\",\"meaning\":\"Pump P is designed and actually used to supply water during processing cellulose fibres into thin sheets of paper. The topic is solely how Pump P is designed to supply water during that cellulose-fibre processing into paper.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "panel": "production-aspect",
+        "family": "paper",
+        "pair_id": "paper-pump-actual-functional",
+        "orientation": "forward",
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "paper-pump-actual-functional",
+        "application_allowed": false,
+        "origin": "Independently specified synthetic information-scope diagnostic. No real post, AS output, Bootstrap output or producer receipt is asserted. These inputs never become prompt examples or hierarchy placements.",
+        "role_configuration": "actual",
+        "aspect_configuration": "functional",
+        "qualification_clause": "Pump P is designed and actually used to supply water during processing cellulose fibres into thin sheets of paper.",
+        "control_design": "Functional and decorative cases in each role configuration describe the same expressly qualified Pump P and repeat its qualification clause exactly. The intended and actual configurations are separate controlled alternatives, not additional jointly asserted facts about a historical entity. Across role configurations only the qualification clause changes.",
+        "review": {
+          "expected_relation": null,
+          "expectation_authority": "unresolved-agent-diagnostic",
+          "user_gold": false,
+          "qualification": "No individual relation is predetermined. Assess exact reversals and whether the stated functional production connection and expressly unrelated decorative scope are interpreted consistently. Isolate intended versus actual use from functional versus decorative information; preserve the fixed Paper meaning and each whole supplied information scope. Physical nonidentity alone does not establish exclusion, and a pump's qualifying role alone does not prove coverage of every independent aspect."
+        }
+      }
+    },
+    {
+      "id": "paper-pump-actual-functional-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Functional water-supply information about Pump P\",\"meaning\":\"Pump P is designed and actually used to supply water during processing cellulose fibres into thin sheets of paper. The topic is solely how Pump P is designed to supply water during that cellulose-fibre processing into paper.\"},\"B\":{\"subject\":\"Paper\",\"meaning\":\"Paper is material in the form of thin sheets made from cellulose fibres.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "panel": "production-aspect",
+        "family": "paper",
+        "pair_id": "paper-pump-actual-functional",
+        "orientation": "reverse",
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "paper-pump-actual-functional",
+        "application_allowed": false,
+        "origin": "Independently specified synthetic information-scope diagnostic. No real post, AS output, Bootstrap output or producer receipt is asserted. These inputs never become prompt examples or hierarchy placements.",
+        "role_configuration": "actual",
+        "aspect_configuration": "functional",
+        "qualification_clause": "Pump P is designed and actually used to supply water during processing cellulose fibres into thin sheets of paper.",
+        "control_design": "Functional and decorative cases in each role configuration describe the same expressly qualified Pump P and repeat its qualification clause exactly. The intended and actual configurations are separate controlled alternatives, not additional jointly asserted facts about a historical entity. Across role configurations only the qualification clause changes.",
+        "review": {
+          "expected_relation": null,
+          "expectation_authority": "unresolved-agent-diagnostic",
+          "user_gold": false,
+          "qualification": "No individual relation is predetermined. Assess exact reversals and whether the stated functional production connection and expressly unrelated decorative scope are interpreted consistently. Isolate intended versus actual use from functional versus decorative information; preserve the fixed Paper meaning and each whole supplied information scope. Physical nonidentity alone does not establish exclusion, and a pump's qualifying role alone does not prove coverage of every independent aspect."
+        }
+      }
+    },
+    {
+      "id": "paper-pump-actual-decorative-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Paper\",\"meaning\":\"Paper is material in the form of thin sheets made from cellulose fibres.\"},\"B\":{\"subject\":\"Decorative exterior information about Pump P\",\"meaning\":\"Pump P is designed and actually used to supply water during processing cellulose fibres into thin sheets of paper. The topic is solely Pump P's exterior decorative pattern, which is unrelated to that cellulose-fibre processing or the production of paper.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "panel": "production-aspect",
+        "family": "paper",
+        "pair_id": "paper-pump-actual-decorative",
+        "orientation": "forward",
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "paper-pump-actual-decorative",
+        "application_allowed": false,
+        "origin": "Independently specified synthetic information-scope diagnostic. No real post, AS output, Bootstrap output or producer receipt is asserted. These inputs never become prompt examples or hierarchy placements.",
+        "role_configuration": "actual",
+        "aspect_configuration": "decorative",
+        "qualification_clause": "Pump P is designed and actually used to supply water during processing cellulose fibres into thin sheets of paper.",
+        "control_design": "Functional and decorative cases in each role configuration describe the same expressly qualified Pump P and repeat its qualification clause exactly. The intended and actual configurations are separate controlled alternatives, not additional jointly asserted facts about a historical entity. Across role configurations only the qualification clause changes.",
+        "review": {
+          "expected_relation": null,
+          "expectation_authority": "unresolved-agent-diagnostic",
+          "user_gold": false,
+          "qualification": "No individual relation is predetermined. Assess exact reversals and whether the stated functional production connection and expressly unrelated decorative scope are interpreted consistently. Isolate intended versus actual use from functional versus decorative information; preserve the fixed Paper meaning and each whole supplied information scope. Physical nonidentity alone does not establish exclusion, and a pump's qualifying role alone does not prove coverage of every independent aspect."
+        }
+      }
+    },
+    {
+      "id": "paper-pump-actual-decorative-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Decorative exterior information about Pump P\",\"meaning\":\"Pump P is designed and actually used to supply water during processing cellulose fibres into thin sheets of paper. The topic is solely Pump P's exterior decorative pattern, which is unrelated to that cellulose-fibre processing or the production of paper.\"},\"B\":{\"subject\":\"Paper\",\"meaning\":\"Paper is material in the form of thin sheets made from cellulose fibres.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "panel": "production-aspect",
+        "family": "paper",
+        "pair_id": "paper-pump-actual-decorative",
+        "orientation": "reverse",
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "paper-pump-actual-decorative",
+        "application_allowed": false,
+        "origin": "Independently specified synthetic information-scope diagnostic. No real post, AS output, Bootstrap output or producer receipt is asserted. These inputs never become prompt examples or hierarchy placements.",
+        "role_configuration": "actual",
+        "aspect_configuration": "decorative",
+        "qualification_clause": "Pump P is designed and actually used to supply water during processing cellulose fibres into thin sheets of paper.",
+        "control_design": "Functional and decorative cases in each role configuration describe the same expressly qualified Pump P and repeat its qualification clause exactly. The intended and actual configurations are separate controlled alternatives, not additional jointly asserted facts about a historical entity. Across role configurations only the qualification clause changes.",
+        "review": {
+          "expected_relation": null,
+          "expectation_authority": "unresolved-agent-diagnostic",
+          "user_gold": false,
+          "qualification": "No individual relation is predetermined. Assess exact reversals and whether the stated functional production connection and expressly unrelated decorative scope are interpreted consistently. Isolate intended versus actual use from functional versus decorative information; preserve the fixed Paper meaning and each whole supplied information scope. Physical nonidentity alone does not establish exclusion, and a pump's qualifying role alone does not prove coverage of every independent aspect."
+        }
+      }
+    }
+  ]
+}

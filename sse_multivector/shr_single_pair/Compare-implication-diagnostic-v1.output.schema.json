@@ -1,0 +1,25 @@
+{
+  "type": "object",
+  "properties": {
+    "assessments": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/assessment"},
+      "minItems": 1,
+      "maxItems": 2
+    }
+  },
+  "required": ["assessments"],
+  "additionalProperties": false,
+  "$defs": {
+    "assessment": {
+      "type": "object",
+      "properties": {
+        "node": {"type": "string", "enum": ["meaning", "A", "B"]},
+        "implication": {"type": "string", "enum": ["necessary", "not_necessary", "unresolved"]},
+        "reason": {"type": "string", "minLength": 1}
+      },
+      "required": ["node", "implication", "reason"],
+      "additionalProperties": false
+    }
+  }
+}

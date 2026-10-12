@@ -308,6 +308,16 @@ That four-case V122 draw omits the old optional counter, preserves its historica
 bytes and records native attempts independently. No replacement global cap is
 established by this diagnostic. No Compare or hierarchy work occurred.
 
+The [V123 four-Food diagnostic](shr_single_pair/bootstrap-v123-hr04-four-foods-v1.md)
+changes one ambiguity-identification paragraph and preserves all four exact
+HR04 inputs, schema, examples and Sol 6.1 medium settings. Six fresh definitions
+include two disputed-case repeats. Shared edibility excludes the non-edible
+poison in both risotto and both sourdough draws; broader clinical/ceremonial
+admissions and missed purpose/consumer questions remain qualified. Native usage
+records eight attempts including warmups, zero failures/reuses and $0.0663836
+API-equivalent cost. V123 is experimental and unactivated, without nonfood or
+full-branch qualification. No replacement global attempt cap is imposed.
+
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at
 `~/src/notedeck_worktrees/algos/experiment-runner`. All migrated project worktrees
@@ -1673,8 +1683,17 @@ Six siblings is a best-effort consolidation trigger, not a hard maximum. Null
 or a semantically invalid proposal leaves the triggering placement intact;
 an accepted synthetic addition can trigger another sibling check. There is no
 additional requirement to find every possible regrouping or prove globally
-minimal browsing depth. Offline tests exercise V2 through the native workflow;
-no V2 provider trial, semantic certification or measured cost saving is claimed.
+minimal browsing depth. Offline tests exercise V2 through the native workflow.
+The user-authorized [HR08–HR10 provider trials](../docs/recommendation-engine/hierarchy-runs.md)
+have saved their initial L1 meanings. HR08 has exhausted eligible selection at
+2,603/3,000 attempts, retaining a partial 23/24-note hierarchy and a review UI;
+HR09 completed with 24/24 notes at 2,646/3,000 attempts; HR10 continues.
+A tested native eligibility fix runs the
+short PPv35 prefix uncached while retaining caching for eligible prompts.
+Reviewed continuation can bind stopped construction to a separate isolated
+checkout and archive a zero-call failed preparation without changing saved
+inputs, meanings or counters. No completed hierarchy-quality
+qualification or measured cost saving is claimed.
 Keep finished menus out of subsequent raw-trial preparation.
 
 Candidate ranking is a bounded scan of at most 4,096 local rows and 64 ancestor
@@ -2068,11 +2087,20 @@ High final coverage restores that match. Its thirty resolved searches are
 correct, with four source interpretations unscored; all selected witnesses
 already have exact high DSL outputs. The tested expansion candidates are now
 high matching/relationships/coverage and medium support, with no joined final
-score or global qualification. Local accounting is 246 attempts, including
+score in that four-answer trial or global qualification. Local accounting is
+246 attempts, including
 both levels, verifiers, 24 warmups, three recovered transport failures and three
 redundant calls. The known API-equivalent subtotal is $1.4636508; failed-attempt
 usage is unknown. Final high DCS takes 71.636 seconds, separate from preparation
 and audit time. Prompts, schemas and production defaults remain unchanged.
+
+The subsequent [complete eight-answer mixed-effort trial](distillation-review-v1/README.md#complete-eight-answer-mixed-effort-trial-october-12)
+joins the same candidate efforts through native partial scoring: four complete
+scores and four partial scores. Source uncertainties retain pending status.
+An invalid high search witness is caught by its existing exact high DSL
+comparison and excluded before the focused recheck. The remaining search is
+source-uncertain, rather than certified by agreement. This is development
+evidence; global reviewer qualification and the final sixty remain open.
 
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,
@@ -2091,6 +2119,24 @@ Coverage-search preparation also accepts `--reasoning-effort`, retaining
 xhigh as its default. This lets new native preparations bind the tested
 high matching / medium other-check combination and reuse exact saved requests
 without changing source wording, mechanical rules or existing manifests.
+The optional `--support-reasoning-effort` overrides support alone; global high
+with support medium freezes the eight-note candidate configuration. Omitted
+overrides preserve defaults and invalid values fail before output creation.
+
+`collect-distillation-coverage-search COVERAGE --output REPORT` uses production
+partial scoring to collect audited searches and separate exact DSL witnesses.
+Repeat `--verification-experiment` and `--premise-audit` for their native paths.
+Accepted complete null evidence can settle uncovered candidates; positive
+searches require an accepted exact positive witness. Existing accepted native
+compatibility pairs settle missing placements during preparation without DCS.
+Accepted exact negative pairs exclude candidates before search, retaining their
+bound proofs; collection requires accepted actual edges to propagate those
+negatives to descendants. Contradictory accepted compatibility evidence retains
+both proofs and withholds coverage grading, rather than allowing a null to
+overwrite a positive.
+Unknown/rejected premises, later withdrawals and missing self guards prevent
+qualification; changed frozen sources are refused. No inference occurs during
+collection, and the unused pairwise matrix need not be executed.
 Expectation files freeze before calls and remain agent-assessed rather than gold.
 Only repeated natural prefixes meeting the existing eligibility threshold are
 warmed, using explicit prefix/key configuration. Sequential native groups use
@@ -7768,3 +7814,156 @@ held pending diagnosis. Separate explicit-commerce synthetic controls test resol
 boundaries without replacing any original producer meaning or certifying an old
 label. Native aggregate definitions and detailed qualifications remain in the
 maintained gate record.
+
+### Latest Compare scope qualification (V196–V202)
+
+The approved A/B development reference remains Compare-v179. V196–V201 are
+experimental and unqualified; V198 and V200 are preserved unrun drafts. Whole-
+child information coverage removes an observed Food-chain contradiction; bounded
+kind-production coverage removes the Paper contradiction in the subsequent
+diagnostic draws, preserving activity-to-equipment and narrow functional
+production information. These bounded results do not certify all frozen producer
+relationships. Unknown material facts in particular decorative topics still
+prevent complete parent exclusion, and the original handhold/grip probe remains
+unstable. A V199 diagnostic-ID swap did not recur in the V201 scope panel.
+
+V201 preserves eighteen resolved synthetic controls and two approved MrBeast
+positives, but fails the unknown-route qualification. V202 is a prepared prompt
+procedure ablation with unchanged semantic rules, source meanings and four-field
+output schema; it is not adopted. Native inputs, receipts, agent qualifications,
+usage and fresh/reuse distinctions are maintained in the
+[Compare findings](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md).
+The removed attempt allowance remains removed; retained monetary and task scope
+constraints still apply. No Bootstrap or hierarchy construction changes follow
+from integrating these experimental definitions.
+
+The completed V202 procedure ablation retains its controls but establishes no
+repair: both the candidate and fresh V201 reference identify the unknown Paper
+carrier in one of four decorative comparisons. Original inputs and all reviews
+remain preserved. V202 stays experimental and unqualified; the next diagnostic
+uses the unchanged single-producer fifty-case collection rather than another
+local wording reminder.
+
+V202's subsequent fifty-case producer panel completes with four settled reversal
+conflicts and overlapping equivalence witnesses. The synthetic numeric-goal
+contrast passes, so no conditional-illustration repair is established. V203 is
+an experimental scope-specific counterexample-selection diagnostic: it separates
+hypothetical general cases from fixed particular facts without changing the
+information convention or four-field schema. Native fresh reference draws and
+proof review are required; neither version is adopted.
+
+V203 fails its twenty-case screen: no demonstrated unknown-route gain, invented
+particular circumstances persist and a brand-scope reversal appears. V204 is an
+isolated V202 example ablation, not a stack of V203 changes: remove the first
+example's rejected-candidate opening while keeping its necessary coverage proof.
+The same frozen screen and fresh V202 reference remain the qualification basis.
+
+V204's example-opening ablation and V205's independent-route wording fail the
+unknown-route screen. V206 changes only the second example to demonstrate an
+unknown particular entity's membership; it also fails. A separate physically
+bounded surface panel removes the original pattern's design/content ambiguity.
+Both V202 and V206 correctly distinguish known paper from known steel but treat
+omitted surface material as exclusion in both orientations. This isolates an
+unresolved factual-qualification failure rather than certifying a negative label.
+No V196–V206 candidate is adopted; V179 remains the development reference.
+Native usage and source-quality qualifications are retained in the Compare
+findings, with historical allowance removal and scope limits unchanged.
+
+V207's particular aspect-owner example preserves the known physical-surface
+controls but recognizes the missing material in only one orientation. It fails
+qualification and is not adopted. The next mechanism to test is explicit kind
+qualification for the described thing before accepting or excluding its property
+connection; rejecting a production connection alone cannot decide that issue.
+
+V208's explicit kind-property qualification passes the physical first draw and
+fresh repeat, retaining functional-production controls on the original aspect
+panel. V209 corrects qualification to allow necessary implications and described
+components; its physical first draw passes too. Both remain experimental pending
+fresh confirmation, resolved controls, chains and the frozen B109 producer panel.
+No older producer means are rewritten and no hierarchy adoption follows.
+
+V209's fifty-six-case wider gate completes with retained resolved controls,
+reciprocal chains, fresh physical qualification and targeted uncertainty. Three
+independent reviews find no definite proof/ID defect. The original decorative
+source-reading qualification remains. The separately frozen fifty-case B109
+producer panel is prepared next; V209 is still experimental and unadopted.
+
+V209's frozen B109 producer panel completes all fifty cases but fails broader
+consistency: three settled reversals, overlapping bread equivalence/transitivity
+witnesses and two mixed unresolved pairs. One new rocket-stove purpose conflict
+prevents treating the reduced count versus V202 as clean progress. The property
+repair remains bounded; V209 is unadopted while particular-instance and general-
+meaning qualifications are diagnosed independently. Native reports preserve all
+receipts and source means without restoring retired caps or messaging Bootstrap.
+
+Matched V210 illustration and V211 occurrence-scope ablations complete with
+physical/goal controls retained. V211 establishes no reliable occurrence-scope
+repair. V210 reduces settled conflicts in one draw but its new bread exclusions
+remain qualified on admission and readiness-goal grounds, with native agent
+uncertain reviews. Neither is adopted; fewer settled contradictions through
+unresolved checks do not establish semantic progress. Native source and usage
+records retain the exact fresh V209 reference and all original meanings.
+
+V212's independent-admission/interpretation clarification retains the resolved
+controls but fails the same producer consistency gate. It is not adopted. The
+next diagnostic mirrors the positive example's A/B assignments rather than
+appending another scope reminder; earlier reporting-order and zero-shot studies
+remain negative precedents and are not relabeled as this new intervention.
+
+V213's example-role mirror has no measured effect across three fresh matched
+draws: every original Metal pair retains the same reversal conflict. Resolved
+controls remain intact; the candidate is not adopted. The next isolated test
+uses the native fixed-meaning projection's B-first input order, preserving A/B
+assignments and producer receipts. Presentation sensitivity, if found, is a
+diagnosis rather than a certified relationship or prompt repair.
+
+V209's actual B-first input test changes the original Metal pair's outcome in
+all three reverse repeats and two of three forward repeats. Two of the three
+draws still conflict on reversal. This establishes presentation sensitivity,
+not a semantic repair; A/B assignments, fixed meanings and diagnostic order
+remain unchanged. Native usage is complete and the original label stays open.
+
+V214's interpretation-before-role instruction fails its twenty-case screen:
+three of four original-pair reversal checks still conflict, with all twelve
+resolved/targeted-unknown controls preserved. The candidate is not adopted or
+broadened. Repeated scope reminders have not established a durable repair;
+any body simplification must be separately qualified against the frozen panels.
+
+V216's consolidated body removes the measured producer-core and crossed-order
+contradictions in its first screen, but regresses the physical-material-unknown
+qualification and changes provisional commercial-status controls. Independent
+reviews preserve open proof boundaries; consistency is not certification. V216
+is unadopted. V217 restores one exact V209 property-qualification sentence in the
+shorter body, separating that definite failure from the brand knowledge-policy
+qualification. V215 remains an unrun preflight draft.
+
+V217's property gate repairs both physical-material-unknown directions in its
+first draw and fresh repeat; matched V216 repeats retain unsupported exclusions.
+The combined sentence restoration has a bounded measured effect. Metal reversal
+conflicts reappear under A-first presentation in both V217 draws, so this is not
+a broad stability repair or adopted candidate. Open producer scopes and provisional
+brand expectations remain qualified; native usage includes failed attempts.
+
+V218's general grammatical-ambiguity example retains closed controls but fails
+all four candidate Metal reversal checks. It is not adopted. Historical review
+also rules out presenting the previously failed missing-condition question rule
+as a novel mechanism. Fixed-candidate admission diagnosis uses existing native
+meaning-diagnostic and generic prepared-input adapters, with original meanings
+and producer receipts preserved; it does not replace the A/B Compare line.
+
+Auxiliary admission v1/v2 completes twenty-four fresh native requests without
+an attempt allowance. Removing the targeted lexical cue changes Metal machine
+qualification, while Steel/brass machine admission remains mostly unresolved
+and differs between two standalone draws. All required assessment records are
+audited. This localizes proof qualifications without certifying the original
+relation or adopting a main Compare candidate; native usage and frozen meanings
+remain preserved. No Bootstrap or hierarchy work is performed.
+
+Experimental V220 joint A/B candidate evidence and V221's isolated variation-
+sentence deletion each retain closed controls but fail two of four original
+Metal reversal checks, matching the fresh V217 conflict count. Neither is
+adopted; V220's broader twenty-two prepared cases remain unrun. A separate bare
+implication diagnostic is stable in both orders but asserts the same unqualified
+grip/handhold bridge. Results establish task-dependent interpretation, not
+semantic gold or a certified repair. Native accounting separates saved reference
+costs from fresh work and keeps the retired attempt counter untouched.

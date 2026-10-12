@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "single": [
+      "../../target/compare-implication-diagnostic-v1/single-01",
+      "../../target/compare-implication-diagnostic-v1/single-02"
+    ],
+    "a-first": [
+      "../../target/compare-implication-diagnostic-v1/a-first-01",
+      "../../target/compare-implication-diagnostic-v1/a-first-02"
+    ],
+    "b-first": [
+      "../../target/compare-implication-diagnostic-v1/b-first-01",
+      "../../target/compare-implication-diagnostic-v1/b-first-02"
+    ]
+  }
+}

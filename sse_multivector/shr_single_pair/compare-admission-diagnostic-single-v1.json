@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "corpus": "../../../oracle-mvp-shr-pair-correctness-v1/target/bootstrap-asv6.100-regression-refresh-v1/collected/subjects.json",
+  "nodes": [
+    {
+      "id": "metal-handles-meaning-only",
+      "producer": {
+        "experiment": "../../../oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-00a0c16c50868b89372b401e609957cf25963f72eede71ac5e03566ddcd9abdd",
+        "record_sha256": "c278bdf60339e4b57aa05ebec7a4a4fa35ee38d237dd38d7530da15857b44f13"
+      },
+      "include_source": false,
+      "review": {
+        "purpose": "Fixed-candidate admission diagnostic; no semantic gold, relationship label, universal-coverage claim, Bootstrap change or hierarchy generation.",
+        "planned_fresh_draws": 2,
+        "planned_inputs": "Two separately receipt-bound meaning-only inputs and two original A/B assignments in each member order, repeated once:12 fresh requests total. Candidate facts and diagnostic prompt/schema remain identical.",
+        "assessment": "Compare candidate admission by the named definition across draws, A/B assignment and member order. Missing/duplicate node-candidate records are invalid diagnostics, not semantic shifts.",
+        "qualification": "Single inputs omit the separate subject field; pair inputs contain subject plus meaning. Differences measure presentation/context sensitivity, not isolated counterpart causality. Two draws do not establish reliability."
+      }
+    },
+    {
+      "id": "steel-brass-handles-meaning-only",
+      "producer": {
+        "experiment": "../../../oracle-mvp-shr-pair-correctness-v1/target/bootstrap-v109-scope-preservation-v1/candidate",
+        "case": "bootstrap-565746d591a13f18c21b12cf9ef961ec172330e1caf49e30700e7febf402b82a",
+        "record_sha256": "f74927940fb1ff30cdc7ff15a0c064dc0fb116e05ac703a9f1419aca0ed8bfcf"
+      },
+      "include_source": false,
+      "review": {
+        "purpose": "Fixed-candidate admission diagnostic; no semantic gold, relationship label, universal-coverage claim, Bootstrap change or hierarchy generation.",
+        "planned_fresh_draws": 2,
+        "planned_inputs": "Two separately receipt-bound meaning-only inputs and two original A/B assignments in each member order, repeated once:12 fresh requests total. Candidate facts and diagnostic prompt/schema remain identical.",
+        "assessment": "Compare candidate admission by the named definition across draws, A/B assignment and member order. Missing/duplicate node-candidate records are invalid diagnostics, not semantic shifts.",
+        "qualification": "Single inputs omit the separate subject field; pair inputs contain subject plus meaning. Differences measure presentation/context sensitivity, not isolated counterpart causality. Two draws do not establish reliability."
+      }
+    }
+  ]
+}

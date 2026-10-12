@@ -43,8 +43,9 @@ class CanonicalTraversalTests(unittest.TestCase):
                 self.assertNotIn(retired, help_text)
 
 
-    def prepare(self, count=4, extra_root=False, notes=None, symmetric=False):
-        self.prompt.write_text('GENERIC PROMPT {INPUT_JSON}')
+    def prepare(self, count=4, extra_root=False, notes=None, symmetric=False,
+                prompt_text='GENERIC PROMPT {INPUT_JSON}', runner_overrides=None):
+        self.prompt.write_text(prompt_text)
         subjects = lambda i: [dict(number='1', subject=f'Root {i}', context='Original role'),
                               dict(number='1.1', subject=f'Child {i}', context='Narrower role')]
         if notes is None:
@@ -54,6 +55,7 @@ class CanonicalTraversalTests(unittest.TestCase):
             notes[0]['subjects'].append(dict(number='2', subject='Second root', context='Other'))
         self.write('notes.json', dict(schema_version=1, notes=notes))
         base = json.loads(self.spec.read_text())
+        base['runner'].update(runner_overrides or {})
         for name in ('bootstrap', 'comparison', 'consolidation'):
             schema = (json.loads(Path(__file__).with_name('shr_single_pair').joinpath(
                 'Hierarchy-compare-v4.output.schema.json').read_text()) if name == 'comparison' else

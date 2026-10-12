@@ -1,0 +1,36 @@
+{
+  "type": "object",
+  "properties": {
+    "assessments": {
+      "anyOf": [
+        {
+          "type": "array",
+          "items": {"$ref": "#/$defs/assessment"},
+          "minItems": 2,
+          "maxItems": 2
+        },
+        {
+          "type": "array",
+          "items": {"$ref": "#/$defs/assessment"},
+          "minItems": 4,
+          "maxItems": 4
+        }
+      ]
+    }
+  },
+  "required": ["assessments"],
+  "additionalProperties": false,
+  "$defs": {
+    "assessment": {
+      "type": "object",
+      "properties": {
+        "node": {"type": "string", "enum": ["meaning", "A", "B"]},
+        "candidate": {"type": "string", "enum": ["human", "machine"]},
+        "admission": {"type": "string", "enum": ["admitted", "excluded", "uncertain"]},
+        "reason": {"type": "string", "minLength": 1}
+      },
+      "required": ["node", "candidate", "admission", "reason"],
+      "additionalProperties": false
+    }
+  }
+}

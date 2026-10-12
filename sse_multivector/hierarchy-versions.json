@@ -35,6 +35,13 @@
       "artifact_path": "target/hierarchy-b96-c48-fifty-note-v1/menu-access-children-01/state.json",
       "sha256": "fd3e5b8e3831a7952dc66de0686a1383c3fb1e9ff07dcbbc1fdb275740cc22f8",
       "family": "Canonical"
+    },
+    {
+      "version_id": "HR08",
+      "identity": "cbf7a4a1740cd5cbd833231138de94bbe3d8f0f710f83dce1de5a080c4bc62d7",
+      "artifact_path": "target/hierarchy-hr08-v2-24-note-v1/HR08/state.json",
+      "sha256": "156c83cd1db31075eef485d8447394ec85903fe135eec1aa8f5c5929ce1035f9",
+      "family": "Canonical"
     }
   ]
 }

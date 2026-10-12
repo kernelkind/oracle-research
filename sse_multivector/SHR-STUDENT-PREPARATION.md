@@ -17,7 +17,157 @@ pilot adapter or epoch is selected. Bootstrap's final
 target format, training volume and settings remain open. The owned worktree
 retains needed source-bound artifacts and native receipt paths.
 
-The user subsequently authorized preparing small reviewed development training
+The user subsequently confirmed an HR05-aligned saved-checkpoint rerun using
+exactly **Bootstrap-v109 / Compare-v179**, with v109-produced meanings throughout
+Compare. This is evaluation of the existing v96/v48 pilot weights, with no new
+gradients or final training. Compare-v179 supplies only symmetric A/B subjects
+and fixed meanings; canonical branches are absent from its model input. The
+original experiments remain historical, source-bound evidence. All four
+Bootstrap passes and all eight Compare checkpoint evaluations are complete.
+The current Compare panel ties Qwen and Kev; it does not independently establish
+Kev superiority. The provisional starting choices remain Qwen for Bootstrap and
+Kev for Compare, considering the earlier matched learning evidence as well.
+
+Native `bootstrap_student_pilot prepare-prompt` preserves the complete selected
+teacher instructions and appends the existing single-field meaning/null student
+contract, without requiring teacher answers or assigning training roles. It
+records both prompt hashes, makes no model calls and refuses to overwrite an
+existing prompt. Its five preparation/generation regressions pass.
+
+Compare transfer preparation separately binds the original C48/B96 fit and the
+selected C179/B109 evaluation. Both A/B subjects and meanings must match their
+selected native Bootstrap producers. The saved five-way indices retain their
+directions under `A_contains_B` and `B_contains_A`; the current readout returns
+only the relation. Native preparation preserves the original fit guards and
+rejects mixed versions, forged producer receipts and fitting exposure. The
+four-module CPU suite passes 57 tests with 39 explicit GPU cases skipped;
+the extended four-path GPU check passes in 71.16 seconds. It verifies both
+legacy and A/B evaluation, reversed option order, direct-forward agreement,
+zero updates and unchanged fitting artifacts. The first staged check stopped
+before weights because its bundle omitted the C179 schema; the corrected
+immutable runtime is `hr05-matched-student-evaluation-v1/compare-evaluation-runtime-v2`.
+Its 527-file snapshot SHA-256 is
+`e7f10cfc572a5e1690231875560f073ae017aa524a84acba3be5c10ea093140d`.
+
+Exact cached-tokenizer preflight also passes all 200 Compare encodings without
+truncation or CUDA initialization. Maximum lengths are 2,171 for Ettin full
+state, 162 for Ettin input JSON, 2,234 for Qwen and 2,194 for Kev; their unchanged
+limits are 7,168/7,168/8,192/8,192 respectively. All four native prepared data
+files have SHA-256
+`a4d300956cd541ed0e9bc6a74dcec10b8e768c2f51a016e47f31a84fdbb9f605`.
+
+The HR05-aligned panel uses the same 40 disjoint Bootstrap cases. Compare reuses
+50 complete C179 judgments on B109-produced meanings: 20 directions are
+provisional controls and 30 are unresolved probes. All five teacher reversal
+conflicts occur among probes; a reciprocal student can match at most 45/50
+unchanged teacher targets. There are no `uncertain` references and only one
+nonidentity-equivalence pair. Report controls and reversal consistency separately
+from provisional teacher agreement. These exposed, correlated cases do not
+establish final accuracy, refusal reliability or a model-capacity ceiling.
+
+All four B109 Bootstrap passes produce 40 valid answers each with no failures or
+exact reuses. Shared-rule adjudication appends thirteen review corrections while
+retaining all original records and answer bytes. Current source-based agent
+assessments and native timings are:
+
+| Saved Bootstrap checkpoint | Accept / reject / uncertain | Median execution seconds | Generation wall seconds | Peak CUDA GiB |
+| --- | ---: | ---: | ---: | ---: |
+| Qwen27 epoch 1 | 31 / 6 / 3 | 14.94 | 639.73 | 20.49 |
+| Qwen27 epoch 4 | 28 / 9 / 3 | 14.58 | 633.41 | 20.49 |
+| Gemma26 epoch 1 | 26 / 11 / 3 | 58.91 | 2369.38 | 51.98 |
+| Gemma26 epoch 4 | 30 / 6 / 4 | 67.82 | 2974.84 | 51.98 |
+
+Both Qwen passes consume 237,758 input tokens; outputs total 1,912/1,850 tokens
+respectively. Both Gemma passes consume 238,209 input tokens; outputs total
+1,288/1,662. Only Gemma epoch one returns nulls: two rejected and one uncertain
+refusal. These exposed cases do not estimate a qualified refusal rate.
+Wall time excludes server loading. Ratings include scope and B109 instruction
+following, remain provisional, and are not blind gold accuracy. The Qwen review
+files contain 45/43 historical records; Gemma's contain 42/43. All 160 effective
+case assessments and all 173 historical review bindings are verified. Review
+SHA-256 bindings in table order are
+`ee1fe801d7a97b205f35dfb83caebf5444f00c7668ac7a9b868f6b72e33663b8`,
+`74a688257f4584ca1dcd76b6844ecc41b17e899f2bc86ca6952a9e62acf8cbb4`,
+`d9a6460adb25d20f754d3a91be0da3de01e6d72b596ad292463da62511edd29d` and
+`115eb3e28fcfbb2bf6d0dd18cce01aff404fd354e9498b5fc2373f72caa092ca`.
+The earlier B96 preference for the fourth epoch does not establish the best
+transfer checkpoint under B109. Qwen epoch one and Gemma epoch four have close
+provisional quality (31 versus 30 accepts, both six rejects), with different
+strengths. Qwen better preserves the generic Potatoes topic and planned Sushi
+food-portion identity. Gemma gives a concrete Cooking process, keeps harmfulness
+attributed rather than asserting an experienced outcome, and states sourdough's
+defining process without separately defining the bread. Both still miss stock
+and pressure-canning process boundaries. Qwen's measured worker execution median
+is about 4.54 times faster on these serving paths. Gemma's unmerged expert
+adapters limit extrapolation to optimized architecture cost. Qwen remains the
+practical Bootstrap starting-model recommendation; Gemma remains a credible
+quality alternative. No production adapter or epoch is selected.
+
+### HR05 Compare saved-checkpoint transfer
+
+All four variants evaluate epochs one and four without gradients on the same
+50 C179 cases and B109-produced A/B meanings. Control matches use the 20 explicit
+provisional expectations. Probe matches use 30 unchanged provisional teacher
+targets, whose five conflicting reversal families make raw agreement unreliable
+as a ranking by itself.
+
+| Saved Compare variant / epoch | Control matches | Probe teacher matches | All teacher matches | Reciprocal pairs | Forward seconds | Peak CUDA GiB |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Ettin full instructions / 1 | 10/20 | 7/30 | 17/50 | 25/25 | 9.22 | 4.44 |
+| Ettin full instructions / 4 | 10/20 | 7/30 | 17/50 | 25/25 | 8.64 | 4.44 |
+| Ettin input JSON / 1 | 10/20 | 7/30 | 17/50 | 25/25 | 1.18 | 3.93 |
+| Ettin input JSON / 4 | 10/20 | 7/30 | 17/50 | 22/25 | 0.68 | 3.93 |
+| Qwen27 / 1 | 19/20 | 21/30 | 40/50 | 23/25 | 158.12 | 17.36 |
+| Qwen27 / 4 | 20/20 | 21/30 | 41/50 | 25/25 | 156.75 | 17.37 |
+| Kev27 / 1 | 20/20 | 21/30 | 41/50 | 25/25 | 222.77 | 18.83 |
+| Kev27 / 4 | 20/20 | 21/30 | 41/50 | 25/25 | 222.46 | 18.86 |
+
+Both full-instruction Ettin checkpoints and input-JSON epoch one predict
+`neither` for all 50 cases. Input-JSON epoch four changes three predictions to
+`A_contains_B` against reverse-direction targets, adding asymmetry without
+repairing agreement. All miss the eight containment and two nonidentity
+equivalence control directions. This saved recipe fails transfer to the new
+contract; it does not establish an encoder-capacity ceiling.
+
+Kev's two checkpoints and Qwen epoch four make identical decisions on all 50
+cases. They match all controls, preserve every reversal and match 36/40 teacher
+directions outside the five conflict families. The remaining four differences
+are two reciprocal-equivalence probe families, rocket-four-foods-performer and
+sourdough-time-equivalence, whose expected labels remain unresolved. Neither
+model predicts `uncertain`; the panel supplies no such target. Qwen epoch four
+repairs its earlier metal-handle control miss and sourdough reversal. These
+results qualify neither all-five-label behavior nor independent final accuracy.
+
+Qwen's current forward pass is about 1.42 times faster than Kev's. Loading is
+excluded; both use the existing reference PyTorch convolution fallback. Kev's
+earlier B96/C48 first epoch reached the shared 44/46 result in 49.65 phase
+minutes, versus Qwen's measured fourth epoch at 141.37. Kev's full fourth-epoch
+phase took 191.21 minutes; Qwen's intervening checkpoints were not measured.
+Kev also had stronger broader original-version evidence. These are different
+workloads: neither earlier convergence nor this transfer tie proves a frozen-task
+quality winner. Retain Kev as the provisional Compare starting
+choice and Qwen as an equally credible current-contract alternative with faster
+measured inference. Final fitting follows prompt freeze; no pilot adapter or
+epoch is selected.
+
+All four native reports authenticate the original fitting config, supervision,
+fit report and both saved checkpoint hash tables. They record `complete=true`,
+`updates=0` and `training_examples_seen=0`. The reports and closed logs were
+copied byte-for-byte from GB10. Report SHA-256 bindings in variant order are:
+`53406d4234a37b758ad3aa70c4947ee8626e62d6dbb545df4254f7100ca9da08`,
+`e756fad33b33bf7ae114ac26c93698e9d8790672445c8dc6b10bcc6f0f81b43c`,
+`53f2c140e2a5c01a383f85d766c76a79946e4d192a5d02db5af7fec72e13d5e1` and
+`8b6c08c2f299bdbf6ea79109be49d2ea8351aab7e03ac27c675fe1b0c6e1845b`.
+Native artifacts remain under
+`target/bootstrap-compare-student-v1/hr05-matched-student-evaluation-v1/`.
+All owned GPU jobs, Bootstrap servers and the tunnel are closed. GB10 reports
+no compute applications after the final job. The paused serving container was
+left untouched. The worktree remains necessary for ignored artifacts and
+absolute native receipt paths. The reserved final 200 notes remain sealed.
+
+### Historical B96/C48 pilot and evaluation
+
+The user previously authorized preparing small reviewed development training
 sets, running GB10 task-specific pilot fine-tunes, and comparing learning,
 remaining errors and cost. Broaden Bootstrap's published-checkpoint evidence
 before narrowing that pilot. The broader Compare evidence now supports the

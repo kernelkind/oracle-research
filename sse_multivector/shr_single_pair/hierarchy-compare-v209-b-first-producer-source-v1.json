@@ -1,0 +1,8 @@
+{
+  "prepared_experiment": {
+    "path": "../../target/compare-v209-b109-broader-diagnostic-v1",
+    "sha256": "73b4172c829f5a673c71557af902747db009dafe6e76bc827bb9493625deac52"
+  },
+  "input_view": "symmetric_fixed_meanings",
+  "input_order": ["B", "A"]
+}

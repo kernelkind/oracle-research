@@ -1,0 +1,61 @@
+{
+  "base_sha256": "49d936bd6d5e251bcc1317f34a87fd71c25eb1e63f972e5ec8824b81f73eb9ed",
+  "edits": [
+    {
+      "old": "- **Full coverage:** identify why every case in every child alternative necessarily satisfies at least one parent alternative or permitted information connection, including its applicable conditions. Different cases may satisfy different parent alternatives or connections. For a requirement absent from the child's wording, explain what child requirement or necessary implication makes it unavoidable wherever that covering alternative or connection is relied on. A case covered by both nodes, a case rejected by the child, or an unsuccessful counterexample search does not prove full coverage.",
+      "new": "- **Full coverage:** Explain why all information admitted through every child alternative and its own permitted connections necessarily satisfies a parent alternative or permitted information connection, including all conditions of that coverage. Different cases may use different alternatives or connections. For each applicable parent condition, identify the child condition or necessary implication that establishes it. Intention or intended purpose alone does not establish actual capability, suitability or a successful result. A shared kind name alone does not supply the parent's additional restrictions. A covered example, a case the child rejects, or an unsuccessful counterexample search does not prove full coverage. Return null if a required implication remains unresolved."
+    },
+    {
+      "old": "General knowledge may clarify language, but materially different supported readings that change coverage leave the affected judgment unresolved.",
+      "new": "Use general knowledge to clarify a term within its own meaning; a term shared by the two nodes does not inherit the other node's definition. A kind's customary function or capability does not by itself establish a required intention for every covered case. A required role alone does not exclude a compatible additional role or property. A necessary implication must hold under every supported reading compatible with the whole supplied meaning. If coverage or a counterexample depends on choosing between those readings, return null for that direction."
+    },
+    {
+      "old": "Conditions that are neither required nor necessarily implied may vary; their absence alone is not ambiguity.",
+      "new": "For a general kind or activity, conditions that are neither required nor necessarily implied may vary across its cases; their absence alone is not ambiguity. For a particular entity or event, a property that is neither stated nor necessarily implied remains unknown; do not choose it to construct a counterexample or prove coverage."
+    },
+    {
+      "old": "For each direction, report a question testing whether information admitted by the child can escape the parent. Name A and B and identify the boundary evaluated in the matching answer. Do not presume that a counterexample exists.",
+      "new": "For each direction, ask whether any information admitted by the child can escape every parent alternative and permitted information connection. Name A and B. The answer must establish a concrete admitted-and-excluded case, necessary full coverage, or the unresolved fact or ambiguity."
+    },
+    {
+      "old": "Can B, Hair-cutting services, admit information outside A, Hair cutting, despite requiring hair to be shortened by cutting it?",
+      "new": "Could a grooming service shortening a person's hair chemically without cutting it satisfy B, Hair-cutting services, while escaping A, Hair cutting?"
+    },
+    {
+      "old": "Can A, Hair cutting, admit information with a nonhuman recipient that escapes B, Hair-cutting services, and its person-recipient requirement?",
+      "new": "Could a human groomer cutting a horse's mane satisfy A, Hair cutting, while escaping B, Hair-cutting services, and its person-recipient requirement?"
+    },
+    {
+      "old": "Can B, Watch repair, admit information about restoring a device without mechanical gear-based timekeeping that escapes A, Watches?",
+      "new": "Could repairing an entirely electronic LCD wristwatch satisfy B, Watch repair, while escaping A, Watches, and its gear-based timekeeping requirement?"
+    },
+    {
+      "old": "Can A, Watches, admit information without restoration activity or a repair role that escapes B, Watch repair?",
+      "new": "Could reading the time from an undamaged mechanical wristwatch, with no restoration activity or repair role, satisfy A, Watches, while escaping B, Watch repair?"
+    },
+    {
+      "old": "Every qualifying service necessarily shortens hair by cutting it. Its service and human-recipient restrictions narrow that activity; information about the qualifying service retains the activity connection.",
+      "new": "The chemical-only candidate fails B's requirement that hair be shortened by cutting. Every qualifying service necessarily shortens hair by cutting it. Both scopes admit information about the activity's specific forms, participants and means. B restricts these to grooming services for cutting a person's hair; those restrictions retain A's cutting-activity connection throughout B's scope."
+    },
+    {
+      "old": "Coverage includes equality. Every case in every child alternative must satisfy at least one parent alternative or permitted information connection, with all conditions applicable to that alternative or connection.",
+      "new": "Coverage includes equality. Apply information connections to each node independently. The child's whole scope includes information admitted by its own alternatives and connections, not only instances of its kind or performances of its activity. Every admitted information case must satisfy at least one parent alternative or permitted information connection, with all conditions applicable to that alternative or connection. Covering the child's defining kind or activity alone does not cover its other permitted information."
+    },
+    {
+      "old": "Aspect lists are nonexclusive unless a boundary is stated. The child's own topic must concern the qualifying kind; association alone neither establishes coverage nor expands it into another domain.",
+      "new": "Aspect lists are nonexclusive unless a boundary is stated. Information about a kind's production must itself concern producing that qualifying kind. An object's actual or intended production role does not establish that information about its other aspects concerns this production. The child's own topic must concern the qualifying kind; association alone neither establishes coverage nor expands it into another domain."
+    },
+    {
+      "old": "- **Unresolved:** return null if admission, exclusion or necessary coverage remains unresolved. Identify the missing fact or material ambiguity.",
+      "new": "- **Unresolved:** return null if admission, exclusion or necessary coverage remains unresolved. For a particular child, an unknown fact that decides whether another parent alternative or information connection covers the candidate prevents declaring it excluded. Escaping the connection named in the question does not establish exclusion from the parent's whole scope. Identify the missing fact or material ambiguity."
+    },
+    {
+      "old": "- **Counterexample:** give a concrete case admitted by the whole child meaning and excluded from every parent alternative and permitted information connection. A coherent hypothetical case need not be customary or have occurred. Preserve the child's defining kind or activity and every restriction. Test the actual parent requirement being challenged; failing to be a physical instance or failing to perform an action does not alone establish exclusion.",
+      "new": "- **Counterexample:** give a concrete information case admitted by the whole child meaning and excluded from every parent alternative and permitted information connection. Choose the case according to the child's scope. For a general kind or activity, a coherent hypothetical case need not be customary or have occurred, but must preserve every condition of its admission. For a particular entity or event, keep that same entity or event: every fact used to establish admission or exclusion must be stated or necessarily implied by its supplied meaning. A coherent possibility is not an established fact about that particular case. Information admitted through a child connection need not itself instantiate the child's kind or perform its activity. Test the actual parent requirement being challenged; failing to be a physical instance or failing to perform an action does not alone establish exclusion."
+    },
+    {
+      "old": "For a child about a particular entity, keep that same entity; do not assign an unknown property to construct a counterexample. Before concluding full coverage,",
+      "new": "Before concluding full coverage,"
+    }
+  ]
+}

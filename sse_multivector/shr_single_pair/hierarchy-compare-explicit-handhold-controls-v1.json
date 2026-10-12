@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "handhold-human-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"A\": {\"subject\": \"Metal handles\", \"meaning\": \"Metal handles are physical parts made of metal that provide a handhold for holding, moving or operating an object, including but not limited to handles made of steel or brass. A handhold here is a grasping point usable directly by a human hand.\"}, \"B\": {\"subject\": \"Steel or brass handles\", \"meaning\": \"Steel or brass handles are parts made of either steel or brass that serve as grips for holding, lifting or manipulating an object. Every qualifying part provides a grasping point usable directly by a human hand.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Separately defined diagnostic variants of the saved B109 handle wording; not Bootstrap outputs or replacements. Parent and child boundaries are explicitly resolved for this panel only. No producer receipt is asserted.",
+        "panel": "explicit-handhold-boundaries",
+        "orientation": "forward",
+        "reversal_pair": "handhold-human",
+        "application_allowed": false,
+        "review": {
+          "expected_relation": "A_contains_B",
+          "expectation_authority": "provisional-agent-assessment",
+          "expectation_basis": "The steel-or-brass category explicitly retains the direct human-handhold role and narrows metal to steel or brass. Independent aluminum human handholds escape the reverse.",
+          "user_gold": false,
+          "qualification": "Verify whole-child coverage, all material alternatives and permitted information connections. No label is transferred to the unchanged original handhold/grip probe."
+        }
+      }
+    },
+    {
+      "id": "handhold-human-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"A\": {\"subject\": \"Steel or brass handles\", \"meaning\": \"Steel or brass handles are parts made of either steel or brass that serve as grips for holding, lifting or manipulating an object. Every qualifying part provides a grasping point usable directly by a human hand.\"}, \"B\": {\"subject\": \"Metal handles\", \"meaning\": \"Metal handles are physical parts made of metal that provide a handhold for holding, moving or operating an object, including but not limited to handles made of steel or brass. A handhold here is a grasping point usable directly by a human hand.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Separately defined diagnostic variants of the saved B109 handle wording; not Bootstrap outputs or replacements. Parent and child boundaries are explicitly resolved for this panel only. No producer receipt is asserted.",
+        "panel": "explicit-handhold-boundaries",
+        "orientation": "reverse",
+        "reversal_pair": "handhold-human",
+        "application_allowed": false,
+        "review": {
+          "expected_relation": "B_contains_A",
+          "expectation_authority": "provisional-agent-assessment",
+          "expectation_basis": "The steel-or-brass category explicitly retains the direct human-handhold role and narrows metal to steel or brass. Independent aluminum human handholds escape the reverse.",
+          "user_gold": false,
+          "qualification": "Verify whole-child coverage, all material alternatives and permitted information connections. No label is transferred to the unchanged original handhold/grip probe."
+        }
+      }
+    },
+    {
+      "id": "handhold-machine-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"A\": {\"subject\": \"Metal handles\", \"meaning\": \"Metal handles are physical parts made of metal that provide a handhold for holding, moving or operating an object, including but not limited to handles made of steel or brass. A handhold here is a grasping point usable directly by a human hand.\"}, \"B\": {\"subject\": \"Steel or brass handles\", \"meaning\": \"Steel or brass handles are parts made of either steel or brass that serve as grips for holding, lifting or manipulating an object. These parts serve exclusively as machine-gripping interfaces and cannot provide a grasping point usable directly by a human hand.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Separately defined diagnostic variants of the saved B109 handle wording; not Bootstrap outputs or replacements. Parent and child boundaries are explicitly resolved for this panel only. No producer receipt is asserted.",
+        "panel": "explicit-handhold-boundaries",
+        "orientation": "forward",
+        "reversal_pair": "handhold-machine",
+        "application_allowed": false,
+        "review": {
+          "expected_relation": "neither",
+          "expectation_authority": "provisional-agent-assessment",
+          "expectation_basis": "The machine-only category explicitly excludes the direct human-handhold role. The broader handhold category permits independent aluminum human handholds outside the steel-or-brass restriction.",
+          "user_gold": false,
+          "qualification": "Verify whole-child coverage, all material alternatives and permitted information connections. No label is transferred to the unchanged original handhold/grip probe."
+        }
+      }
+    },
+    {
+      "id": "handhold-machine-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"A\": {\"subject\": \"Steel or brass handles\", \"meaning\": \"Steel or brass handles are parts made of either steel or brass that serve as grips for holding, lifting or manipulating an object. These parts serve exclusively as machine-gripping interfaces and cannot provide a grasping point usable directly by a human hand.\"}, \"B\": {\"subject\": \"Metal handles\", \"meaning\": \"Metal handles are physical parts made of metal that provide a handhold for holding, moving or operating an object, including but not limited to handles made of steel or brass. A handhold here is a grasping point usable directly by a human hand.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Separately defined diagnostic variants of the saved B109 handle wording; not Bootstrap outputs or replacements. Parent and child boundaries are explicitly resolved for this panel only. No producer receipt is asserted.",
+        "panel": "explicit-handhold-boundaries",
+        "orientation": "reverse",
+        "reversal_pair": "handhold-machine",
+        "application_allowed": false,
+        "review": {
+          "expected_relation": "neither",
+          "expectation_authority": "provisional-agent-assessment",
+          "expectation_basis": "The machine-only category explicitly excludes the direct human-handhold role. The broader handhold category permits independent aluminum human handholds outside the steel-or-brass restriction.",
+          "user_gold": false,
+          "qualification": "Verify whole-child coverage, all material alternatives and permitted information connections. No label is transferred to the unchanged original handhold/grip probe."
+        }
+      }
+    },
+    {
+      "id": "handhold-mixed-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"A\": {\"subject\": \"Metal handles\", \"meaning\": \"Metal handles are physical parts made of metal that provide a handhold for holding, moving or operating an object, including but not limited to handles made of steel or brass. A handhold here is a grasping point usable directly by a human hand.\"}, \"B\": {\"subject\": \"Steel or brass handles\", \"meaning\": \"Steel or brass handles are parts made of either steel or brass that serve as grips for holding, lifting or manipulating an object. The category includes both parts providing grasping points usable directly by a human hand and machine-only gripping interfaces that cannot provide such points.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Separately defined diagnostic variants of the saved B109 handle wording; not Bootstrap outputs or replacements. Parent and child boundaries are explicitly resolved for this panel only. No producer receipt is asserted.",
+        "panel": "explicit-handhold-boundaries",
+        "orientation": "forward",
+        "reversal_pair": "handhold-mixed",
+        "application_allowed": false,
+        "review": {
+          "expected_relation": "neither",
+          "expectation_authority": "provisional-agent-assessment",
+          "expectation_basis": "The whole child includes its machine-only alternative outside the direct human-handhold parent. Independent aluminum human handholds establish the reverse negative.",
+          "user_gold": false,
+          "qualification": "Verify whole-child coverage, all material alternatives and permitted information connections. No label is transferred to the unchanged original handhold/grip probe."
+        }
+      }
+    },
+    {
+      "id": "handhold-mixed-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"A\": {\"subject\": \"Steel or brass handles\", \"meaning\": \"Steel or brass handles are parts made of either steel or brass that serve as grips for holding, lifting or manipulating an object. The category includes both parts providing grasping points usable directly by a human hand and machine-only gripping interfaces that cannot provide such points.\"}, \"B\": {\"subject\": \"Metal handles\", \"meaning\": \"Metal handles are physical parts made of metal that provide a handhold for holding, moving or operating an object, including but not limited to handles made of steel or brass. A handhold here is a grasping point usable directly by a human hand.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Separately defined diagnostic variants of the saved B109 handle wording; not Bootstrap outputs or replacements. Parent and child boundaries are explicitly resolved for this panel only. No producer receipt is asserted.",
+        "panel": "explicit-handhold-boundaries",
+        "orientation": "reverse",
+        "reversal_pair": "handhold-mixed",
+        "application_allowed": false,
+        "review": {
+          "expected_relation": "neither",
+          "expectation_authority": "provisional-agent-assessment",
+          "expectation_basis": "The whole child includes its machine-only alternative outside the direct human-handhold parent. Independent aluminum human handholds establish the reverse negative.",
+          "user_gold": false,
+          "qualification": "Verify whole-child coverage, all material alternatives and permitted information connections. No label is transferred to the unchanged original handhold/grip probe."
+        }
+      }
+    }
+  ]
+}

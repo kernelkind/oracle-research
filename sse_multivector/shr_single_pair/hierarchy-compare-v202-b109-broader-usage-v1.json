@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v202-frozen-b109-broader": [
+      "../../target/compare-v202-b109-broader-diagnostic-v1"
+    ]
+  }
+}

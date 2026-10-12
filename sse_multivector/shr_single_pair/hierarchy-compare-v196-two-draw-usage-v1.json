@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v196-first": [
+      "../../target/compare-v196-whole-condition-v1/hr05",
+      "../../target/compare-v196-whole-condition-v1/smoke",
+      "../../target/compare-v196-whole-condition-v1/commerce",
+      "../../target/compare-v196-whole-condition-v1/broader"
+    ],
+    "v196-fresh-repeat": [
+      "../../target/compare-v196-whole-condition-repeat-v1/hr05",
+      "../../target/compare-v196-whole-condition-repeat-v1/smoke",
+      "../../target/compare-v196-whole-condition-repeat-v1/commerce",
+      "../../target/compare-v196-whole-condition-repeat-v1/broader"
+    ]
+  }
+}

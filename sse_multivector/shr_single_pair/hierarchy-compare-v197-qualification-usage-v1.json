@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v197-triads": [
+      "../../target/compare-v197-whole-information-scope-v1"
+    ],
+    "v197-unchanged-qualification": [
+      "../../target/compare-v197-qualification-v1/hr05",
+      "../../target/compare-v197-qualification-v1/smoke",
+      "../../target/compare-v197-qualification-v1/commerce",
+      "../../target/compare-v197-qualification-v1/broader"
+    ]
+  }
+}

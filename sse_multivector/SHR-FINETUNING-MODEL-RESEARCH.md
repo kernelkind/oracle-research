@@ -2,7 +2,7 @@
 
 ## Bootstrap and Compare selection
 
-Updated October 11, 2026. The authorized goal is one student choice per prompt
+Updated October 12, 2026. The authorized goal is one student choice per prompt
 and verified training readiness before freeze, followed by one planned final
 fine-tune per prompt. The completed matched pilot and broader development
 evidence support recommending **Qwen3.8-27B starting weights for Bootstrap**
@@ -13,12 +13,79 @@ Earlier SHR results below inform candidate priorities but are not measurements
 of the new tasks. See
 [current preparation and evaluation roles](SHR-STUDENT-PREPARATION.md#current-authorized-goal-october-10).
 
+The user has now confirmed re-evaluation with the completed HR05 build's exact
+**Bootstrap-v109 / Compare-v179** pair. All Compare meanings must have v109
+producer provenance. This rerun evaluates the saved v96/v48 fits without new
+gradients; all four Bootstrap and eight Compare passes are complete.
+Compare-v179's A/B fixed-meaning input has no canonical branch fields.
+The earlier recommendation and branch results
+remain evidence for their original versions, rather than qualification of this
+new contract.
+
+The new Compare evaluator keeps the old fitting instructions, targets and saved
+heads immutable while selecting exact C179 instructions and B109 producer
+receipts. It maps the trained directional indices to `A_contains_B` and
+`B_contains_A`, with no diagnostic generation or added branch fields. Its CPU
+regressions and 71.16-second four-path GPU integration pass. All completed model
+reports authenticate the original fitting artifacts and record zero updates and
+zero training examples. All 200 panel encodings pass exact tokenizer admission
+without truncation. The 50 existing C179 references contain five inconsistent
+reversal pairs, all unresolved probes; the 20 provisional control directions are
+consistent. Current model selection must therefore consider control agreement
+and student reversal consistency, rather than rank raw teacher matches alone.
+
+The completed B109 Qwen transfer passes have 40 valid outputs each. After
+shared-rule adjudication, epoch one has 31 accept / 6 reject / 3 uncertain
+source-based assessments, versus 28 / 9 / 3 at epoch four. Median execution is
+14.94/14.58 seconds with 20.49 GiB peak CUDA allocation. These provisional
+reviews include B109 instruction following; they are not blind gold accuracy.
+Stronger adaptation to the old B96 targets does not automatically improve
+transfer to B109. Gemma's two passes have 26 / 11 / 3 and 30 / 6 / 4 assessments,
+58.91/67.82-second median execution and 51.98 GiB peak CUDA allocation. Only its
+first pass has nulls: two rejected refusals and one uncertainty. All 160 current
+assessments and 173 preserved historical review bindings are verified.
+Qwen epoch one and Gemma epoch four have close provisional quality, with both
+six rejects. Gemma improves process definitions and reported harmfulness; Qwen
+better preserves generic food topics and planned food-portion identity. Qwen's
+measured worker execution median is about 4.54 times faster on these serving
+paths. Gemma's current unmerged-expert path limits extrapolation to optimized
+architecture cost. Qwen remains the practical Bootstrap starting-model
+recommendation, with Gemma retained as a credible alternative. No production
+adapter or epoch is selected.
+
+On C179, both saved Kev epochs and Qwen epoch four make identical decisions on
+all 50 cases: 20/20 provisional controls, 21/30 probe teacher matches and 25/25
+reciprocal pairs. Outside the five contradictory teacher families they match
+36/40 directions; the four remaining differences are unresolved equivalence
+probes, not certified errors. Qwen epoch one matches 19/20 controls and reverses
+23/25 pairs. Neither model predicts uncertainty, and no reference supports
+measuring that label. Both Ettin variants match only 10/20 controls and 17/50
+teacher directions; three checkpoints predict `neither` everywhere and the last
+adds three incorrect asymmetries. This establishes failure of those saved fits
+to transfer, not an encoder-size ceiling.
+
+There is no current-panel quality winner between Qwen and Kev. Qwen's native
+forward takes 156.75 seconds versus Kev's 222.46/222.77, about 1.42 times faster,
+with 17.37 versus 18.83/18.86 GiB peak allocation. Kev's earlier matched B96/C48
+first-epoch fitting reached the shared 44/46 result in 49.65 phase minutes,
+versus Qwen's measured fourth epoch at 141.37. Kev's full four-epoch phase took
+191.21 minutes; Qwen's intervening checkpoints were not measured. The broader
+original-version panels favored Kev. Retain Kev as the provisional
+Compare starting choice on that combined evidence, with Qwen an equally
+credible current-contract alternative and the faster measured inference path.
+The current transfer tie does not establish Kev superiority or choose final
+training settings. Both training paths are ready; final fitting and independent
+qualification still follow prompt freeze. Native reports, timings and bindings
+are in the
+[completed HR05 transfer results](SHR-STUDENT-PREPARATION.md#hr05-compare-saved-checkpoint-transfer).
+
 Bootstrap consumes a selected ASv6.100 subject, its complete original selected
 root tree and full post, then generates a standalone meaning. Its present
 four-field API also carries ambiguities, resolutions and quoted evidence.
 It needs a generative model; a classification-only Kev or Ettin checkpoint
-cannot supply this contract. Compare consumes already fixed meanings and a
-canonical branch, then decides one of five relations. The user confirmed a
+cannot supply this contract. The HR05-aligned Compare-v179 consumes A/B subjects
+and fixed meanings, then decides one of five relations. The earlier Compare-v48
+pilot additionally supplied a canonical branch. The user confirmed a
 **relation-only distilled Compare output**, making decision models eligible.
 The frozen Compare-v48 development pilot's teacher API copies the local meaning
 and gives a diagnostic reason. The later Compare-v75 definition additionally returns
@@ -40,16 +107,16 @@ The useful distinction is the actual supervised output and complete input,
 not the old SHR/SP model ranking. A common foundation with two adapters is
 possible; different foundations are equally possible. Neither is an approved
 architecture. Complete per-call and whole-build cost matter: a cheap decision
-head still processes the supplied branch, and small active parameter counts
+head still processes the complete supplied input, and small active parameter counts
 do not guarantee fast GB10 training.
 
 | Candidate | Bootstrap investigation | Compare investigation | Evidence still needed |
 | --- | --- | --- | --- |
-| Qwen3.8-27B | Recommended Bootstrap starting weights from matched learning and generation evidence | Common-foundation reference, including direct option scoring | Scope/state errors, final frozen-task learning and production branch coverage |
+| Qwen3.8-27B | Recommended Bootstrap starting weights from matched learning and generation evidence | Common-foundation reference, including direct option scoring | Scope/state errors, final frozen-task learning and independent A/B coverage |
 | Gemma 4 12B-it | Cached compact generative alternative with an independently developed foundation | Compact generative/reference readout | Current semantics and strict output behavior; earlier SHR JSON formatting failures do not establish post-fit failure |
 | Gemma 4 26B-A4B-it | Retained for generative quality with fewer active parameters; expert adaptation and long suffix training/reload verified on GB10 | Potentially useful for many repeated decisions | Representative meaning-generation learning and semantic fidelity |
 | Qwen3.6-35B-A3B | Add a sparse Qwen alternative rather than restrict the investigation to dense models | Potential quality/cost comparison with dense Qwen and Kev | GB10 loader, memory, adaptation coverage and current task quality |
-| Kev-27B, current pinned v2 | Classification-only release; not a Bootstrap starting contract | Recommended relation-only Compare starting weights from matched B96/C48 evidence | Broader independent coverage, production branch lengths and checkpoint tradeoff |
+| Kev-27B, current pinned v2 | Classification-only release; not a Bootstrap starting contract | Recommended relation-only Compare starting weights from matched B96/C48 evidence | Broader independent A/B coverage and checkpoint tradeoff |
 | Kev-9B, current pinned v2 | Classification-only release | Compact decision candidate; the previous SHR compact lead was not stable across prompts | New task semantics and long-input reliability; corresponding Qwen3.5-9B-Base control if matched training is investigated |
 | Ettin-1B encoder | Cannot generate a Bootstrap meaning | Inexpensive input-JSON candidate with measured transfer limits | Broader reviewed learning and evaluation coverage; its random head is not a published task model |
 | Ministral 3 14B Instruct | Independent dense compact generative alternative, distinct from its reasoning release | Potential generative or decision reference | Current task evidence, native tokenizer/FP8 loading and verified adaptation path |
@@ -268,8 +335,8 @@ Qwen passes. Epoch one leads on isolated regressions and epoch four on branches;
 this tradeoff selects neither production pilot adapter nor checkpoint epoch.
 The 21 short single-support branch fixtures from three notes do not establish
 production branch capacity or complete hierarchy performance.
-All authorized Compare and focused Bootstrap evaluations are complete. The owned
-GB10 model server and tunnel were stopped; this work did not restart or delete
+All B96/C48 broader Compare and focused Bootstrap evaluations are complete.
+The owned GB10 model server and tunnel were stopped; this work did not restart or delete
 the previously paused serving container. The owned worktree retains needed
 ignored artifacts and absolute native receipt paths.
 See the

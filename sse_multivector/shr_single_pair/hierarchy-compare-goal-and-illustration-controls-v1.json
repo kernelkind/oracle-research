@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "illustrated-canopy-goal-broad-cultivation-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Large-canopy woody-plant cultivation\",\"meaning\":\"Large-canopy woody-plant cultivation consists of cultivation stages undertaken to produce woody plants with the goal that a woody plant's canopy covers at least 2 square metres when viewed straight from above at maturity, including but not limited to woody-plant cultivation.\"},\"B\":{\"subject\":\"Woody-plant cultivation\",\"meaning\":\"Woody-plant cultivation consists of cultivation stages undertaken to produce woody plants, with any target mature canopy size, including miniature plants.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "panel": "goal-and-illustration",
+        "family": "woody-plant-cultivation",
+        "pair_id": "illustrated-canopy-goal-broad-cultivation",
+        "orientation": "forward",
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "illustrated-canopy-goal-broad-cultivation",
+        "application_allowed": false,
+        "origin": "Independently specified synthetic goal-and-illustration diagnostic. No real post, AS output, Bootstrap output or producer receipt is asserted. These inputs never become prompt examples or hierarchy placements.",
+        "control_design": "Illustration wording does not remove the surrounding mature-canopy goal.",
+        "review": {
+          "expected_relation": "B_contains_A",
+          "expectation_authority": "provisional-agent-assessment",
+          "user_gold": false,
+          "qualification": "These are provisional agent controls, not user-approved semantic gold. Preserve the specified mature-canopy area as a cultivation goal, without asserting success, current canopy size or actual later use. An illustrative activity name retains its surrounding goal restriction. Destructive laboratory use alone does not negate the same canopy goal. Apply each activity's permitted information connections to its complete scope. A tiny-only cultivation counterexample must have no actual or intended role in cultivation with the at-least-two-square-metre goal; a small current canopy or a laboratory purpose alone is not such a counterexample."
+        }
+      }
+    },
+    {
+      "id": "illustrated-canopy-goal-broad-cultivation-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Woody-plant cultivation\",\"meaning\":\"Woody-plant cultivation consists of cultivation stages undertaken to produce woody plants, with any target mature canopy size, including miniature plants.\"},\"B\":{\"subject\":\"Large-canopy woody-plant cultivation\",\"meaning\":\"Large-canopy woody-plant cultivation consists of cultivation stages undertaken to produce woody plants with the goal that a woody plant's canopy covers at least 2 square metres when viewed straight from above at maturity, including but not limited to woody-plant cultivation.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "panel": "goal-and-illustration",
+        "family": "woody-plant-cultivation",
+        "pair_id": "illustrated-canopy-goal-broad-cultivation",
+        "orientation": "reverse",
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "illustrated-canopy-goal-broad-cultivation",
+        "application_allowed": false,
+        "origin": "Independently specified synthetic goal-and-illustration diagnostic. No real post, AS output, Bootstrap output or producer receipt is asserted. These inputs never become prompt examples or hierarchy placements.",
+        "control_design": "Illustration wording does not remove the surrounding mature-canopy goal.",
+        "review": {
+          "expected_relation": "A_contains_B",
+          "expectation_authority": "provisional-agent-assessment",
+          "user_gold": false,
+          "qualification": "These are provisional agent controls, not user-approved semantic gold. Preserve the specified mature-canopy area as a cultivation goal, without asserting success, current canopy size or actual later use. An illustrative activity name retains its surrounding goal restriction. Destructive laboratory use alone does not negate the same canopy goal. Apply each activity's permitted information connections to its complete scope. A tiny-only cultivation counterexample must have no actual or intended role in cultivation with the at-least-two-square-metre goal; a small current canopy or a laboratory purpose alone is not such a counterexample."
+        }
+      }
+    },
+    {
+      "id": "unillustrated-canopy-goal-broad-cultivation-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Large-canopy woody-plant cultivation\",\"meaning\":\"Large-canopy woody-plant cultivation consists of cultivation stages undertaken to produce woody plants with the goal that a woody plant's canopy covers at least 2 square metres when viewed straight from above at maturity.\"},\"B\":{\"subject\":\"Woody-plant cultivation\",\"meaning\":\"Woody-plant cultivation consists of cultivation stages undertaken to produce woody plants, with any target mature canopy size, including miniature plants.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "panel": "goal-and-illustration",
+        "family": "woody-plant-cultivation",
+        "pair_id": "unillustrated-canopy-goal-broad-cultivation",
+        "orientation": "forward",
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "unillustrated-canopy-goal-broad-cultivation",
+        "application_allowed": false,
+        "origin": "Independently specified synthetic goal-and-illustration diagnostic. No real post, AS output, Bootstrap output or producer receipt is asserted. These inputs never become prompt examples or hierarchy placements.",
+        "control_design": "Matched omission of the illustrative phrase; the remaining definition is byte-identical.",
+        "review": {
+          "expected_relation": "B_contains_A",
+          "expectation_authority": "provisional-agent-assessment",
+          "user_gold": false,
+          "qualification": "These are provisional agent controls, not user-approved semantic gold. Preserve the specified mature-canopy area as a cultivation goal, without asserting success, current canopy size or actual later use. An illustrative activity name retains its surrounding goal restriction. Destructive laboratory use alone does not negate the same canopy goal. Apply each activity's permitted information connections to its complete scope. A tiny-only cultivation counterexample must have no actual or intended role in cultivation with the at-least-two-square-metre goal; a small current canopy or a laboratory purpose alone is not such a counterexample."
+        }
+      }
+    },
+    {
+      "id": "unillustrated-canopy-goal-broad-cultivation-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Woody-plant cultivation\",\"meaning\":\"Woody-plant cultivation consists of cultivation stages undertaken to produce woody plants, with any target mature canopy size, including miniature plants.\"},\"B\":{\"subject\":\"Large-canopy woody-plant cultivation\",\"meaning\":\"Large-canopy woody-plant cultivation consists of cultivation stages undertaken to produce woody plants with the goal that a woody plant's canopy covers at least 2 square metres when viewed straight from above at maturity.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "panel": "goal-and-illustration",
+        "family": "woody-plant-cultivation",
+        "pair_id": "unillustrated-canopy-goal-broad-cultivation",
+        "orientation": "reverse",
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "unillustrated-canopy-goal-broad-cultivation",
+        "application_allowed": false,
+        "origin": "Independently specified synthetic goal-and-illustration diagnostic. No real post, AS output, Bootstrap output or producer receipt is asserted. These inputs never become prompt examples or hierarchy placements.",
+        "control_design": "Matched omission of the illustrative phrase; the remaining definition is byte-identical.",
+        "review": {
+          "expected_relation": "A_contains_B",
+          "expectation_authority": "provisional-agent-assessment",
+          "user_gold": false,
+          "qualification": "These are provisional agent controls, not user-approved semantic gold. Preserve the specified mature-canopy area as a cultivation goal, without asserting success, current canopy size or actual later use. An illustrative activity name retains its surrounding goal restriction. Destructive laboratory use alone does not negate the same canopy goal. Apply each activity's permitted information connections to its complete scope. A tiny-only cultivation counterexample must have no actual or intended role in cultivation with the at-least-two-square-metre goal; a small current canopy or a laboratory purpose alone is not such a counterexample."
+        }
+      }
+    },
+    {
+      "id": "canopy-goal-laboratory-use-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Large-canopy woody-plant cultivation\",\"meaning\":\"Large-canopy woody-plant cultivation consists of cultivation stages undertaken to produce woody plants with the goal that a woody plant's canopy covers at least 2 square metres when viewed straight from above at maturity, including but not limited to woody-plant cultivation.\"},\"B\":{\"subject\":\"Laboratory woody-plant cultivation\",\"meaning\":\"Laboratory woody-plant cultivation consists of cultivation stages undertaken to produce woody plants with the goal that a woody plant's canopy covers at least 2 square metres when viewed straight from above at maturity. The plants are intended solely for destructive laboratory research.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "panel": "goal-and-illustration",
+        "family": "woody-plant-cultivation",
+        "pair_id": "canopy-goal-laboratory-use",
+        "orientation": "forward",
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "canopy-goal-laboratory-use",
+        "application_allowed": false,
+        "origin": "Independently specified synthetic goal-and-illustration diagnostic. No real post, AS output, Bootstrap output or producer receipt is asserted. These inputs never become prompt examples or hierarchy placements.",
+        "control_design": "The laboratory purpose narrows later intended use without negating the identical physical canopy-size goal.",
+        "review": {
+          "expected_relation": "A_contains_B",
+          "expectation_authority": "provisional-agent-assessment",
+          "user_gold": false,
+          "qualification": "These are provisional agent controls, not user-approved semantic gold. Preserve the specified mature-canopy area as a cultivation goal, without asserting success, current canopy size or actual later use. An illustrative activity name retains its surrounding goal restriction. Destructive laboratory use alone does not negate the same canopy goal. Apply each activity's permitted information connections to its complete scope. A tiny-only cultivation counterexample must have no actual or intended role in cultivation with the at-least-two-square-metre goal; a small current canopy or a laboratory purpose alone is not such a counterexample."
+        }
+      }
+    },
+    {
+      "id": "canopy-goal-laboratory-use-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Laboratory woody-plant cultivation\",\"meaning\":\"Laboratory woody-plant cultivation consists of cultivation stages undertaken to produce woody plants with the goal that a woody plant's canopy covers at least 2 square metres when viewed straight from above at maturity. The plants are intended solely for destructive laboratory research.\"},\"B\":{\"subject\":\"Large-canopy woody-plant cultivation\",\"meaning\":\"Large-canopy woody-plant cultivation consists of cultivation stages undertaken to produce woody plants with the goal that a woody plant's canopy covers at least 2 square metres when viewed straight from above at maturity, including but not limited to woody-plant cultivation.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "panel": "goal-and-illustration",
+        "family": "woody-plant-cultivation",
+        "pair_id": "canopy-goal-laboratory-use",
+        "orientation": "reverse",
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "canopy-goal-laboratory-use",
+        "application_allowed": false,
+        "origin": "Independently specified synthetic goal-and-illustration diagnostic. No real post, AS output, Bootstrap output or producer receipt is asserted. These inputs never become prompt examples or hierarchy placements.",
+        "control_design": "The laboratory purpose narrows later intended use without negating the identical physical canopy-size goal.",
+        "review": {
+          "expected_relation": "B_contains_A",
+          "expectation_authority": "provisional-agent-assessment",
+          "user_gold": false,
+          "qualification": "These are provisional agent controls, not user-approved semantic gold. Preserve the specified mature-canopy area as a cultivation goal, without asserting success, current canopy size or actual later use. An illustrative activity name retains its surrounding goal restriction. Destructive laboratory use alone does not negate the same canopy goal. Apply each activity's permitted information connections to its complete scope. A tiny-only cultivation counterexample must have no actual or intended role in cultivation with the at-least-two-square-metre goal; a small current canopy or a laboratory purpose alone is not such a counterexample."
+        }
+      }
+    },
+    {
+      "id": "broad-cultivation-laboratory-use-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Woody-plant cultivation\",\"meaning\":\"Woody-plant cultivation consists of cultivation stages undertaken to produce woody plants, with any target mature canopy size, including miniature plants.\"},\"B\":{\"subject\":\"Laboratory woody-plant cultivation\",\"meaning\":\"Laboratory woody-plant cultivation consists of cultivation stages undertaken to produce woody plants with the goal that a woody plant's canopy covers at least 2 square metres when viewed straight from above at maturity. The plants are intended solely for destructive laboratory research.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "panel": "goal-and-illustration",
+        "family": "woody-plant-cultivation",
+        "pair_id": "broad-cultivation-laboratory-use",
+        "orientation": "forward",
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "broad-cultivation-laboratory-use",
+        "application_allowed": false,
+        "origin": "Independently specified synthetic goal-and-illustration diagnostic. No real post, AS output, Bootstrap output or producer receipt is asserted. These inputs never become prompt examples or hierarchy placements.",
+        "control_design": "Broad woody-plant cultivation includes the same canopy-goal cultivation with the additional laboratory-purpose restriction.",
+        "review": {
+          "expected_relation": "A_contains_B",
+          "expectation_authority": "provisional-agent-assessment",
+          "user_gold": false,
+          "qualification": "These are provisional agent controls, not user-approved semantic gold. Preserve the specified mature-canopy area as a cultivation goal, without asserting success, current canopy size or actual later use. An illustrative activity name retains its surrounding goal restriction. Destructive laboratory use alone does not negate the same canopy goal. Apply each activity's permitted information connections to its complete scope. A tiny-only cultivation counterexample must have no actual or intended role in cultivation with the at-least-two-square-metre goal; a small current canopy or a laboratory purpose alone is not such a counterexample."
+        }
+      }
+    },
+    {
+      "id": "broad-cultivation-laboratory-use-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Laboratory woody-plant cultivation\",\"meaning\":\"Laboratory woody-plant cultivation consists of cultivation stages undertaken to produce woody plants with the goal that a woody plant's canopy covers at least 2 square metres when viewed straight from above at maturity. The plants are intended solely for destructive laboratory research.\"},\"B\":{\"subject\":\"Woody-plant cultivation\",\"meaning\":\"Woody-plant cultivation consists of cultivation stages undertaken to produce woody plants, with any target mature canopy size, including miniature plants.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "panel": "goal-and-illustration",
+        "family": "woody-plant-cultivation",
+        "pair_id": "broad-cultivation-laboratory-use",
+        "orientation": "reverse",
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "broad-cultivation-laboratory-use",
+        "application_allowed": false,
+        "origin": "Independently specified synthetic goal-and-illustration diagnostic. No real post, AS output, Bootstrap output or producer receipt is asserted. These inputs never become prompt examples or hierarchy placements.",
+        "control_design": "Broad woody-plant cultivation includes the same canopy-goal cultivation with the additional laboratory-purpose restriction.",
+        "review": {
+          "expected_relation": "B_contains_A",
+          "expectation_authority": "provisional-agent-assessment",
+          "user_gold": false,
+          "qualification": "These are provisional agent controls, not user-approved semantic gold. Preserve the specified mature-canopy area as a cultivation goal, without asserting success, current canopy size or actual later use. An illustrative activity name retains its surrounding goal restriction. Destructive laboratory use alone does not negate the same canopy goal. Apply each activity's permitted information connections to its complete scope. A tiny-only cultivation counterexample must have no actual or intended role in cultivation with the at-least-two-square-metre goal; a small current canopy or a laboratory purpose alone is not such a counterexample."
+        }
+      }
+    }
+  ]
+}

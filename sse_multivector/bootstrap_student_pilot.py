@@ -29,6 +29,22 @@ STUDENT_CONTRACT = '\n\nStudent response contract (Bootstrap meaning-only pilot)
     'Do not output ambiguities, resolutions, evidence, Markdown fences or additional text.\n'
 
 
+def prepare_prompt(teacher_prompt, output):
+    """Preserve teacher instructions while selecting the meaning-only response."""
+    teacher_prompt, output = map(Path, (teacher_prompt, output))
+    source = teacher_prompt.read_bytes()
+    text = source.decode('utf-8')
+    if not text.strip():
+        raise ValueError('Bootstrap teacher prompt must be nonempty')
+    output.parent.mkdir(parents=True, exist_ok=True)
+    with output.open('x', encoding='utf-8') as stream:
+        stream.write(text + STUDENT_CONTRACT)
+    return dict(teacher_prompt=str(teacher_prompt.resolve()),
+        teacher_prompt_sha256=hashlib.sha256(source).hexdigest(),
+        student_prompt=str(output.resolve()), student_prompt_sha256=sha256(output),
+        inference_calls=0)
+
+
 def reviewed_targets(bundle, producers):
     if (bundle.get('schema_version') != 1 or producers.get('schema_version') != 1
             or producers.get('inference_calls') != 0 or len(bundle['prompts']) != 1):
@@ -305,6 +321,9 @@ def main():
     command = commands.add_parser('prepare', help='prepare native reviewed meaning targets; no inference')
     for name in ('collection', 'provenance', 'output'):
         command.add_argument('--'+name, required=True, type=Path)
+    command = commands.add_parser('prepare-prompt', help='derive a meaning-only generation prompt; no targets or inference')
+    for name in ('teacher-prompt', 'output'):
+        command.add_argument('--'+name, required=True, type=Path)
     command = commands.add_parser('train', help='fit causal adapters and separately verify saved weights')
     for name in ('config', 'data', 'output'):
         command.add_argument('--'+name, required=True, type=Path)
@@ -312,6 +331,8 @@ def main():
     args = parser.parse_args()
     if args.command == 'prepare':
         result = prepare(args.collection, args.provenance, args.output)
+    elif args.command == 'prepare-prompt':
+        result = prepare_prompt(args.teacher_prompt, args.output)
     else:
         result = train(args.config, args.data, args.output, args.stage)
     print(json.dumps(result, ensure_ascii=False, indent=2))

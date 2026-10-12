@@ -7470,3 +7470,1499 @@ Accounting for the original generation behind reuse raises the catalog total to
 $0.3889256. These are subscription catalog equivalents, not provider charges.
 The removed shared cap is not passed to execution; historical counters and
 receipts remain preserved.
+
+### Separate broader diagnosis and V195 requested-order ablation
+
+The persistent unresolved Restaurant stress case no longer blocks all broader
+diagnosis. V194 is tested on the unchanged fifty-case independently frozen B109
+cohort, without adoption. Native preflight verifies every endpoint against one
+producer cohort and exact reversal swaps. A further read-only preflight qualifies
+the former metal-handles-signature positive: the parent expressly requires a
+handhold while the child says handles, leaving machine-only grips relevant.
+Preserve the original source and historical expected label; score this pair as
+an unresolved probe. The current assessment therefore has nine provisionally
+labeled pairs (eighteen responses) and sixteen probes (thirty-two responses).
+Source ancestry and frozen producer acceptance still do not certify comparisons.
+
+[V195](Hierarchy-compare-v195.md) is an experimental requested-report-order
+diagnostic, not a proposed semantic fix. It changes one sentence of V194, asking
+for B_contains_A before A_contains_B. Meanings, input order, examples, schema and
+other instructions remain identical. The examples are deliberately not reordered
+for this ablation; verify actual output compliance. A fresh matched two-draw
+test uses both Restaurant orientations under unchanged V194 and V195: eight
+comparisons total. This tests requested/report order, not observable internal
+reasoning order. The earlier V182 Stockpots diagnostic is a negative precedent,
+not evidence that this new Restaurant pattern is order-induced.
+
+Preregistered prediction: if the asymmetry follows requested direction order,
+the entirely charitable candidate and rejection should move to Restaurant-first,
+while commercial-necessity reasoning moves to Commerce-first. Track candidates
+and premises as well as labels. If the effect remains attached to input A/B
+orientation, requested report order does not explain it. Neither outcome chooses
+the original pair's correct semantic label. The fifty-case diagnosis remains
+separate and does not clear the Restaurant failure or qualify adoption.
+
+### Broader V194 results and whole-condition candidate test
+
+All fifty broader V194 comparisons validate. The native checker reports two
+settled reversal conflicts among twenty-three settled pairs: sourdough-time-
+general-substitution and metal-handles-alternatives. Two additional pairs mix
+uncertainty with a settled positive: sourdough-time-purpose-original and mental-
+states-thinking. Do not count those mixed pairs as settled reversals or as
+consistency successes. The saved V179 cohort has five settled reversals; this
+single V194 draw is a diagnostic contrast, not a population accuracy estimate
+or a causal demonstration. Final native export is
+`target/compare-v194-b109-broader-diagnostic-v2/native.json`.
+
+Independent recheck qualifies another former positive: "steps toward making"
+may include preliminary learning/planning, while its proposed parent expressly
+describes operations on ingredients or dough. Allowed activity connections can
+cover some preparatory information but do not establish every permitted reading.
+The original expectation stays preserved; the current semantic assessment has
+eight provisional control pairs and seventeen unresolved probes. The recheck
+used exact meanings independently of model outputs and does not prescribe a
+new negative label. Post-hoc qualification is reported openly, not silently
+rewritten into the frozen source.
+
+Both V195 draws follow the requested B-first question/answer order and still
+reverse Restaurant. Fresh V194 has reciprocal positives in draw one and a
+reversal in draw two. The preregistered direction-order effect is not observed;
+input-orientation-dependent interpretation and candidate selection remain
+plausible, not proven. Examples, meanings and all other instructions match.
+No requested-order diagnostic is adopted as a semantic fix.
+
+Native accounting across this broader draw and the order test records sixty-four
+attempts, fifty-eight valid cases, zero reuse and one recovered provider failure
+with one retry. That failed attempt lacks usage, so $0.4567032 is a known
+API-equivalent subtotal, not a complete total or a subscription charge. V1 broader
+preparation remains unrun after subsequent source synchronization; V2 is the
+actual frozen execution.
+
+[Experimental V196](Hierarchy-compare-v196.md) retains V194 and replaces only
+its question paragraph. A general-kind candidate challenges the entire parent
+condition, rather than a weaker fact compatible with it. A particular-entity
+candidate retains unknown facts as unknown. Unstated parent conditions receive
+priority, but failed child admission alone still does not prove coverage; all
+parent alternatives and permitted information connections remain applicable.
+This differs from V192's weak question preference: it tests whether the actual
+candidate negates the whole condition. Missing particular identity facts cannot
+be assigned, and source ancestry supplies no proof. Original labels stay
+unresolved. Qualification tracks candidate admission/exclusion and necessary
+proofs, not just lower reversal counts or increased uncertainty.
+
+### V196 first draw and fresh confirmation
+
+The first thirty-two-case test and an unchanged fresh repeat both validate all
+responses and preserve all twelve synthetic controls plus both approved MrBeast
+positives. Each draw still has a settled metal-handholds/grips reversal. Its
+forward question now targets a missing handhold but supplies only a generic
+lifting-handle description; the answer treats every handle grip as a handhold.
+Reverse supplies an exclusively machine-gripped microscopic part and admits it.
+Thus the whole-condition wording improves some questions without consistently
+resolving candidate construction or term interpretation.
+
+Restaurant is uncertainty versus positive in draw one and reciprocal positives
+in draw two. The original sourdough-purpose pair is uncertainty in both directions
+in draw one, then positive versus uncertainty in the repeat. Neither uncertainty
+inflation nor disappearance of a settled reversal certifies consistent scope.
+The other selected sourdough shortcut and mental-thinking probes are reciprocal
+positives in both draws, with their semantic qualifications still retained.
+V196 remains experimental and unadopted. Native exports are
+`target/compare-v196-whole-condition{-repeat,}-v1/*-native.json`.
+
+Independent review accepts the clear synthetic controls but flags incomplete
+necessary proofs in the open probes. In particular, an ordinary mixing or kneading
+example does not close preliminary learning/planning, and the author's personhood
+cannot be supplied merely from an easy literal-malfunction question. The prior
+qualification of recipe reading is retained: a stated future-bake purpose already
+establishes more than bare association, and permitted activity connections require
+assessment. No source edge or old positive is restored as gold.
+
+The native two-draw source records seventy-two fresh attempts including eight
+warmups, sixty-four valid comparisons, zero reuse/retry/failure/missing usage and
+$0.4571976 API-equivalent cost. No cap is restored. The repeat uses the same
+executable bindings and frozen request inputs, explicit --repeat, independent
+response receipts and no conversation linkage.
+
+The [six explicit-handhold controls](hierarchy-compare-explicit-handhold-controls-v1.json)
+resolve the parent role as a grasping point usable directly by a human hand and
+separately define all-human-graspable, machine-only, and mixed child categories.
+They are synthetic diagnostic variants, not Bootstrap outputs or replacements
+for the unchanged original probe; no producer receipt is asserted. The provisional
+positive/neither/neither labels and rationale stay outside model input. This
+isolates honoring explicit conditions from interpreting the original implicit
+handhold/grip relationship. These definitions are never prompt examples or
+applied hierarchy changes.
+
+All six V196 explicit-handhold responses match the provisional labels and retain
+the complete condition in their proofs. The parent human-handhold boundary and
+the child's human/machine alternatives are explicitly honored in both orientations.
+This supports preservation of resolved conditions, not a repair or semantic label
+for the unchanged ambiguous original. Native result:
+`target/compare-v196-explicit-handhold-v1/native.json`.
+
+### Whole-information-scope contract diagnostic
+
+A read-only first-principles audit identifies a distinct possible contract gap.
+Let a node's defining cases differ from its complete permitted information scope.
+Covering its defining cases alone does not cover information admitted through its
+own connections. A material kind may accept a production activity as production
+information, and that activity may accept equipment as its means, without the
+first test checking the equipment information admitted by the activity. These
+two one-hop judgments do not establish transitive whole-scope containment.
+This is a logical risk, not certification of which particular link must change.
+
+The [two synthetic triads](hierarchy-compare-whole-information-scope-controls-v1.json)
+hold three independent fixed meanings each: a material kind, an activity processing
+that same material and equipment explicitly used for that activity. Food and
+paper provide separate domains. Every pair runs in both orientations (twelve
+responses). No per-pair gold is asserted; assess actual admitted scopes, both
+complete chains and reversal consistency. A consistent result that removes every
+useful relationship is not a success. Inputs are standalone synthetic definitions,
+not producer outputs, source hierarchies or future prompt examples.
+
+Test unchanged V196 first. Only an observed response/proof defect justifies a
+subsequent focused scope change. Existing original and resolved-boundary panels
+remain unchanged. No extra graph context or descendant evidence enters A/B.
+
+All twelve baseline responses validate and all six pairs reverse consistently.
+The Food triad nevertheless contradicts whole-scope containment in both
+orientations: Food contains Food preparation, Food preparation contains Cooking
+vessels, and Food versus Cooking vessels is neither. The shortcut's counterexample
+is information about a qualifying saucepan's steel construction. The accepted
+activity-to-vessel response explicitly admits that same kind of composition
+information through the vessel's preparation role. The kind-to-activity proof
+only establishes that its processed material satisfies Food's conditions; it
+does not check all information admitted by the activity's own scope. This is a
+demonstrated consistency failure with unchanged meanings, without proving which
+individual label must change.
+
+The Paper triad accepts all three links in both orientations. It describes the
+press as paper-production information rather than independently checking its
+entire machine scope. This draw is internally consistent but not a semantic
+certification. The different domain responses are diagnostic evidence, not proof
+that Food and Paper must receive identical labels. Native baseline export:
+`target/compare-v196-whole-information-scope-v1/native.json`.
+
+Native accounting for the six resolved-handhold and twelve whole-scope
+comparisons records twenty fresh attempts including two warmups, eighteen valid
+responses, zero reuse/retry/failure/missing usage and $0.109524 API-equivalent
+cost. This is catalog accounting, not a subscription charge. The retired attempt
+counter remains unchanged; no replacement attempt allowance is imposed.
+
+### V197: the child's own admitted information
+
+[Experimental V197](Hierarchy-compare-v197.md) retains V196's independent
+interpretation and connection rules. It replaces the directional operational
+requirement with complete child-information coverage, including information
+admitted through the child's own connections. The question and counterexample
+paragraphs allow such admitted information rather than requiring the candidate
+to instantiate the child's kind or perform its activity. The full-coverage proof
+and the synthetic service example are aligned with that obligation. This is one
+semantic mechanism with aligned diagnostics/example wording, not a single-line
+causal ablation. Neither the Food nor Paper labels are specified in the prompt.
+
+The change does not expand a node through arbitrary associations or import
+counterpart facts. Both nodes apply the existing connection conditions
+independently. The experimental hypothesis is that this prevents proving coverage
+from only a child's defining material/activity while ignoring its own admitted
+information. First test the same twelve triad inputs, then retain the frozen
+thirty-two-case controls/probes. Reduced settled contradictions alone, all-neither
+answers or increased uncertainty do not qualify adoption. Earlier original labels
+and producer meanings remain unchanged.
+
+Official reasoning guidance favors direct task instructions and closely aligned
+examples, not requested reasoning traces; it does not certify this semantic
+contract. V197 still requests concise task diagnostics under the unchanged A/B
+input and four-field output schema.
+
+### V197 outcome: Food repair, remaining production-scope transfer
+
+All forty-four responses validate. The Food triad now returns reciprocal neither
+for Food versus Food preparation, preserves preparation containing vessels and
+returns reciprocal neither for Food versus vessels. Its activity counterexample
+checks independently admitted tool information, rather than only preparation
+episodes. This fixes the observed Food-chain contradiction in one draw; it is
+not a reliability estimate or automatic adoption.
+
+The Paper kind-to-process pair now reverses. Forward claims all production means
+and their aspects remain Paper information; reverse excludes a qualifying pump's
+decorative exterior. Both Paper-to-press responses still claim the entire machine
+scope is covered through production. Their proofs do not establish that every
+equipment aspect concerns making paper. The candidates also differ in actual
+versus intended use and functional versus decorative information; isolate those
+factors before claiming one causes the different result. Physical nonidentity
+alone still supplies no exclusion.
+
+All twelve explicit smoke/commerce controls and both approved MrBeast positives
+survive. Particular-brand commercial status remains uncertain in both
+orientations. Original sourdough mixes positive/uncertain; general sourdough and
+grip/handhold still have settled reversals. Reciprocal Restaurant positives are
+not certified: one candidate explicitly ceases to operate as a restaurant, and
+its failed admission does not establish commercial necessity for every restaurant.
+Three settled reversal pairs occur across the forty-four requests: one Paper
+pair and the two original broader probes. These are dependent paired/chain
+observations, not forty-four independently labeled accuracy cases.
+
+Two independent agents inspect complete native proofs and agree on the central
+omissions. No new individual gold, Bootstrap revision or hierarchy insertion is
+inferred. Exports: `target/compare-v197-whole-information-scope-v1/native.json`
+and `target/compare-v197-qualification-v1/*/native.json`. Native usage records
+forty-nine fresh attempts including five warmups, forty-four valid comparisons,
+zero reuse/retry/failure/missing usage and $0.350682 API-equivalent cost, not a
+subscription charge. V197 remains experimental and unqualified.
+
+### Bounded production connection: V198 draft and V199 candidate
+
+[V198](Hierarchy-compare-v198.md) is an unrun draft adding a general production
+scope boundary. Independent preflight identifies two unintended readings: "how
+a kind is made" could restrict production information to technique; "objects
+used" could imply actual use is required. The next edit increments to
+[experimental V199](Hierarchy-compare-v199.md), preserving both draft versions
+and native revisions. Neither is automatically adopted. V199 changes only two
+kind-connection sentences relative to V197: production information must concern
+producing the qualifying kind; an actual or intended production role alone does
+not establish that information about the object's other aspects concerns that
+production. Activity/participant/means coverage remains independently defined.
+
+The [eight matched production-aspect requests](hierarchy-compare-production-aspect-controls-v1.json)
+compare Paper with functional versus expressly unrelated decorative information
+about one qualified pump, separately fixing intended and actual use. Each pair
+is reversed exactly. Role wording is identical within each aspect contrast;
+only intended versus actual qualification varies across role configurations.
+The entity facts and information boundaries are supplied, not inferred. These
+are separately labeled synthetic diagnostics, not producer outputs, source
+hierarchies, human gold or future prompt examples. All individual labels stay
+unresolved. Test V197 on these new inputs as a matched reference and V199 on the
+unchanged twelve triad cases before wider qualification.
+
+### V199 result and independent counterexample qualification
+
+All twenty candidate responses validate. Both synthetic triads now return
+reciprocal neither for kind versus complete processing activity and kind versus
+equipment, preserving the two useful activity-to-equipment containments. No
+settled reversal or chain contradiction remains in this draw. The four functional
+pump responses are supported: their whole information scope concerns a narrowly
+specified paper-production function; no achieved use or successful outcome is
+assumed. This is a bounded improvement, not general adoption.
+
+Independent review flags all four decorative exclusion proofs. The input rules
+out a production connection, but the particular pattern's material is unspecified;
+a cellulose-paper exterior label or covering remains a possible Paper-property
+connection. Missing particular facts cannot be assigned to exclude that route.
+V197's intended-forward null correctly identifies it. V199's reciprocal neither
+answers therefore are unsupported exclusion proofs with unresolved membership,
+not four certified negatives or certified opposite labels. The source and
+outputs remain unchanged. Native attributed reviews record this qualification.
+
+One additional definite failure is diagnostic binding: paper-process-equipment-
+reverse labels its B-covers-A proof A_contains_B and its B-outside-A counterexample
+B_contains_A, while the final relation correctly says B_contains_A. Native review
+rejects this direction mismatch without imposing another semantic label. Correct
+final labels alone do not establish correct diagnostic questions and answers.
+
+The matched V197 aspect reference has four supported functional positives,
+intended-decoration uncertainty versus neither, and reciprocal actual-decoration
+positives. The latter use actual production role to import an unrelated aspect.
+Thus material incompleteness and role/scope transfer must be separated. These
+are two single draws, not a measured reliability or causal frequency.
+
+A deeper independent recheck also qualifies earlier original grip/handhold
+reasoning. The child still requires handles, not every steel/brass gripping
+interface. The parent says handhold, not necessarily current human access.
+Enclosure or tiny size alone need not remove a designed handhold function, and
+a robotic handhold remains a supported reading. Both universal coverage and
+the reverse machine-only exclusion need qualification. The unchanged original
+remains an unresolved interpretation probe with inconsistent settled responses;
+the separate explicit-human controls provide no missing original restriction.
+This corrects agent interpretation, not producer strings, historical receipts
+or user decisions.
+
+### V200: complete parent-route exclusion
+
+[Experimental V200](Hierarchy-compare-v200.md) retains V199 and changes only
+the unresolved-outcome paragraph. An unknown particular fact deciding another
+parent alternative/connection prevents exclusion; escaping the connection named
+in the question does not establish escaping the whole parent scope. This keeps
+all frozen diagnostic inputs intact and does not prescribe a Paper membership
+label or expand arbitrary associations. General-child hypothetical cases remain
+permitted. Test the same twenty candidate inputs and retained explicit controls,
+then qualify complete frozen producer chains; uncertainty that closes a real
+missing fact is distinct from blanket uncertainty inflation.
+
+Independent preflight qualifies V200's unrun wording: an unstated fact can still
+be necessarily implied and usable. [Experimental V201](Hierarchy-compare-v201.md)
+increments the edit and changes that condition to an unknown fact, using the
+existing distinction between necessarily implied facts and facts that remain
+unknown. V200 is preserved as an unrun draft; V201 is the actual next candidate.
+The three V197/V199 production experiments use thirty-one fresh attempts,
+twenty-eight valid comparisons, zero reuse/retry/failure/missing usage and
+$0.2409708 API-equivalent cost, not a subscription charge.
+
+### V201 qualification and question-procedure ablation
+
+All fifty-eight V201 responses validate. Independent review confirms correct
+directional IDs across the twenty scope/aspect cases; the V199 swap does not
+recur. Both triads remain reciprocal and internally consistent, functional pump
+coverage remains supported, and all eighteen explicit smoke/commerce/handhold
+controls plus two approved MrBeast positives survive. The unchanged original
+handhold/grip probe still reverses. Original sourdough and Restaurant reciprocals
+remain qualified interpretations, not newly certified gold.
+
+The added unknown-route rule does not repair any of the four decorative proofs.
+They still equate escaping production with escaping Paper's entire scope and
+assert that the unknown carrier need not be checked. Keep their membership
+unresolved and their source fixed. The first-draw native usage records sixty-five
+fresh attempts including seven warmups, fifty-eight valid comparisons, zero
+reuse/retry/failure/missing usage and $0.4188332 API-equivalent cost, not a
+subscription charge. V201 remains experimental and unqualified.
+
+[Experimental V202](Hierarchy-compare-v202.md) changes only V201's question
+procedure. It removes mandatory concrete-candidate selection, the preference
+for one parent condition and the associated procedural constraints. The question
+now asks whether child information can escape every parent alternative and
+connection. All semantic rules, fields, examples and input meanings stay fixed.
+The hypothesis is that the prior single-condition candidate focus restricts
+attention to the production route, despite the full-parent exclusion requirement.
+This is a coupled procedure ablation, not identification of one responsible word.
+
+The examples remain concrete, which preserves a possible demonstration anchor;
+failure does not rule out all question-anchoring mechanisms. Preregistered
+qualification requires identifying the unknown direct Paper-property route, not
+merely raising null counts. Retain functional and activity/equipment positives
+and all resolved handhold controls. A matched fresh V201 aspect repeat separates
+sampling variation from a contrast with old outputs. Source metadata and earlier
+agent/user judgments remain outside the A/B model input.
+
+### Open-question result: no measured repair
+
+All thirty V202 responses and twelve matched fresh V201 responses validate.
+Both fresh aspect panels identify the unknown direct Paper-property route in
+one of four decorative comparisons and make unsupported exclusions in the
+other three. The correct null changes orientation: V202 intended-forward versus
+V201 intended-reverse. This does not demonstrate a procedure-induced improvement;
+variation remains visible. Functional positives, explicit handhold controls,
+MrBeast positives and particular-brand uncertainty are retained.
+
+An independent agent checks all forty-two responses and eighty-four diagnostic
+records: IDs are complete, unique and correctly assigned. V202 mixes broader
+questions with concrete candidates, both allowed by the simplified procedure.
+Some questions still foreground production; neither asking an open question nor
+repeating the full-exclusion requirement reliably checks the other route. This
+negative ablation result does not identify one offending word or certify the
+meaning of the unresolved decorative fixture.
+
+Broaden unchanged V202 to the original fifty-case frozen B109 producer panel as
+diagnostic qualification. Keep the eight currently provisional control pairs
+separate from seventeen open probes; do not restore withdrawn provisional
+expectations, stitch meanings from other draws or adopt the candidate based on
+reciprocity alone. This panel can reveal real producer-scope proof omissions
+beyond the synthetic fixture without another reminder edit.
+
+Native accounting for the six procedure-ablation experiments records forty-eight
+fresh attempts including six warmups, forty-two valid comparisons, zero
+reuse/retry/failure/missing usage and $0.272776 API-equivalent cost. The reference
+uses native --repeat and distinct responses; its twelve outputs are new samples,
+not reused baseline answers. No allowance or new attempt cap is imposed.
+
+### V202 broader producer panel: unresolved instability
+
+The unchanged V202 panel completes all fifty responses with valid receipts.
+Native consistency reports four settled reversal conflicts: original sourdough /
+Food preparation, general sourdough substitution, time-purpose general
+substitution and metal-handle alternatives. Three overlapping equivalence
+substitution witnesses concern the sourdough definitions; these are dependent
+witnesses, not additional independent error counts. Mental states / attention
+has one positive and one unresolved direction. Do not adopt V202.
+
+The sourdough answers alternate between treating Food preparation's explicit
+bread illustration as necessary whole-scope coverage and enforcing its
+ready-to-eat restriction against permanently inedible laboratory bread-making.
+That establishes unstable interpretation, without certifying either disputed
+label. A laboratory purpose alone is not a counterexample: food readiness does
+not require actual consumption or an intention that someone eat it. The generic
+bread comparison was already an open source probe, not a certified positive
+control. Keep producer boundaries and interpretation failures separate.
+
+Native usage records fifty-two fresh attempts, including one warmup and one
+recovered provider failure/retry, zero exact reuses and fifty valid final cases.
+One failed attempt lacks usage. The $0.2894336 API-equivalent known subtotal is
+therefore not a complete cost or subscription charge. No attempt allowance or
+new cap was imposed.
+
+Before adding another reminder, isolate conditional illustrations on eight
+fully synthetic cases. The canopy-goal source compares a numeric mature-canopy
+cultivation goal with unrestricted cultivation, with and without an illustrative
+activity name, plus laboratory cultivation retaining the identical physical
+goal. The contrast preserves goals rather than asserting attained size.
+Later research use does not negate that physical goal. Provisional agent
+expectations stay outside inputs, are not human gold, and these cases never
+become prompt examples or hierarchy placements. Baseline V202 runs first;
+no new prompt revision is justified merely by the unresolved food probe.
+
+### Closed-goal result and particular-case counterexample diagnostic
+
+All eight canopy-goal responses match the provisional agent assessment in both
+orientations. The numeric goal remains required with and without the activity
+illustration; laboratory-only later use does not negate that goal. Proofs retain
+whole activity connections without asserting successful cultivation. This does
+not establish an illustration-wording fix or settle genuine bread identity and
+readiness boundaries. Nine fresh attempts include one warmup, with no reuse,
+retry, failure or missing usage; $0.0486448 API-equivalent cost.
+
+Independent review of V202's fifty-case collection confirms all sixteen current
+provisional control labels survive. It does not certify every proof: both
+negative-metal-handles / attention answers invent remembered content for the
+particular author's distraction. The mixed mental-state pair also changes its
+personhood implication across orientations. Preserve these qualifications
+rather than counting retained labels as correct diagnostics.
+
+Experimental V203 reorganizes the existing counterexample constraint: general
+kinds permit coherent hypothetical cases satisfying all admission conditions;
+a particular entity or event must retain its identity and use established
+facts for admission and exclusion. A coherent possibility is not an established
+fact about that particular case. The redundant later particular-entity sentence
+is removed; information connections, meanings, examples, schema and all other
+rules remain fixed. This tests scope-specific counterexample selection, not a
+new prohibition or a demonstrated wording cause. Revision remains against V179.
+
+The first screen uses eight production-aspect cases, six explicit human-handhold
+controls, two approved MrBeast positives, two brand-uncertainty probes and two
+particular-attention negatives. Matched fresh V202 aspect and attention outputs
+separate sampling variation from old outputs. Qualification requires correct
+unknown-route treatment in all four decorative comparisons, retained functional
+and resolved controls, and no invented facts in particular-attention diagnostics.
+More nulls or reciprocal labels alone do not qualify V203. No Bootstrap work,
+new prompt examples, hierarchy placements or external agent messages follow.
+
+### V203 result and aligned positive-example ablation
+
+All twenty V203 and ten matched fresh V202 responses validate. Each aspect arm
+recognizes the unknown direct Paper connection in only one of four decorative
+comparisons, in different orientations. Both retain the four functional
+positives. V203 retains all six resolved handhold labels and two approved
+MrBeast positives, but its particular-brand pair changes from forward null to
+reverse coverage by treating the design-brand illustration as unconditional.
+Both attention directions still invent remembered content/circumstances.
+V203 fails qualification; the scope split does not demonstrate a repair.
+The exact deictic author meaning remains preserved; no invented scenario becomes
+source evidence or new gold. Thirty-six fresh attempts include six warmups,
+zero reuse/retry/failure/missing usage and $0.2134176 API-equivalent cost.
+
+Experimental V204 returns to V202 rather than stacking the unsuccessful V203
+intervention. It changes only two aligned fields in the first example: replace
+its chemical-only candidate question with an open counterexample question, and
+remove the initial rejected-candidate sentence from its answer. The existing
+necessary whole-coverage proof remains unchanged. This tests whether the example's
+rejected-child-case opening anchors the invalid failed-search-to-coverage
+shortcut. It is a hypothesis, not a demonstrated mechanism; earlier zero-shot
+and report-order ablations remain negative precedents.
+
+Use the same twenty-case screen and unchanged means/settings/schema. Require
+correct particular unknown-route treatment, preserved resolved positives and
+negatives, unchanged particular-brand uncertainty and diagnostics without
+invented particular facts. The fresh ten-case V202 reference is preserved; do
+not present retained labels or an isolated null as repair. Any promising change
+requires fresh confirmation and broader qualification before adoption.
+
+
+### Attention scope qualification after input-only review
+
+The stronger earlier description of the attention diagnostics as invented
+particular-event facts is qualified. The stripped meaning, "the author's
+attention being unfocused or diverted from the immediate situation", does not
+explicitly distinguish one episode, the particular author's distraction
+episodes, and a general author-state category. Conversation or remembered
+content is unsupported under the particular-episode reading, but a general
+reading may admit hypothetical episodes. Compare changes from "the author" to
+"an author" without settling this. Keep the diagnostics uncertified rather
+than restoring omitted post context or making an unconditional fabrication
+claim. The attention cases remain open scope/proof probes in V204's screen.
+
+This qualification does not affect Pump P's explicit particular identity or the
+proper-name brand probe. V203's brand inclusion demonstrably omits its parent's
+commercial condition, and the decorative exclusions still fail to check direct
+Paper-property coverage when the particular pattern carrier is unknown.
+
+### V204 result: positive-example opening does not repair the route failure
+
+All twenty responses validate. Again only intended-decoration reverse identifies
+its unknown Paper carrier; the other three exclusions address production without
+establishing exclusion from direct material-property coverage. Functional
+production positives, six explicit human-handhold controls and two approved
+MrBeast positives survive. The brand returns null in both orientations. That
+retention does not establish a repair: the wider unknown-route qualification
+fails, and the positive-example opening is not identified as its cause. The
+attention diagnostics remain subject to the input-only scope qualification.
+
+Native agent reviews reject the three incomplete V204 decorative exclusions and
+the V203 reverse-brand proof, without fabricating user gold or changing source
+expectations. Original exports remain preserved. V204 uses twenty-four fresh
+attempts including four warmups, zero reuse/retry/failure/missing usage and
+$0.1448672 API-equivalent cost. It is not adopted.
+
+### V205: production-route attention diagnostic
+
+V205 is a separate native revision retaining V202, not accumulating V203/V204.
+It replaces only the two kind-production sentences, retaining the required
+production connection and making other permitted routes an independent check.
+An object's production role alone does not establish its other aspects as
+production information; those aspects must be assessed against the qualifying
+kind itself and its other permitted information connections. This does not
+assert a direct material connection or permit assigning unknown particular facts.
+
+The hypothesis is that the production-specific negative wording focuses the
+model on that route despite the wider all-parent exclusion rule. The recurring
+outputs establish not-production-to-not-Paper reasoning; they do not establish
+which sentence causes it. Run only the eight unchanged aspect comparisons first.
+Qualification requires all four decorative unknown-route checks plus all four
+functional positives, with correct diagnostic IDs and no invented material.
+A failed screen ends this candidate's expansion. A promising screen requires
+fresh confirmation and the triad/resolved/producer controls before adoption.
+Earlier alternative interventions and negative results remain preserved.
+
+### V205 result and missing-fact demonstration
+
+All eight responses validate. Two of four decorative comparisons correctly
+identify an unknown direct Paper route; intended-reverse and actual-forward
+still declare unsupported exclusion. All four functional positives survive.
+This partial result fails the preregistered screen, so no wider V205 execution
+follows and no causal gain is claimed. Nine fresh attempts include one warmup,
+zero reuse/retry/failure/missing usage and $0.0679264 API-equivalent cost.
+
+The intended-reverse answer explicitly says the supplied meaning does not
+establish direct Paper membership, then uses that absence to claim exclusion.
+This exposes a distinction between unproved coverage and proved exclusion, not
+merely overlooking a route. Existing rules require null when an unknown
+particular fact decides membership; neither existing example demonstrates null.
+An independent reviewer recommends an example-only diagnostic before another
+warning. Retain the positive performer/recipient example and replace the second
+example with an independently fictional particular mountain whose required
+summit elevation is unknown. General-kind counterexamples remain permitted.
+Keep all instructions, four fields and validation meanings fixed. Removing the
+shared-term watch demonstration is a qualification limit, not an isolated
+one-sentence treatment. No validation data enter the new example.
+
+### V206: demonstrate unknown particular membership
+
+V206 retains V202's instructions and first example byte for byte, replacing
+only the complete Watch repair demonstration with the independently fictional
+High mountain peaks / Mount Aster comparison. Summit elevation at least 4,000
+metres defines the general parent; the particular peak's elevation is unstated.
+The example returns null without assigning either a low or qualifying elevation.
+The reverse uses a distinct unrelated hypothetical 4,300-metre peak, preserving
+permission for general-kind counterexamples. It has exactly two examples and
+contains no regression subjects, producer outputs or user judgments.
+
+Both example outputs validate through production. Prefix size is 2,174 tokens,
+versus V202's 2,148, preserving native cache eligibility. This is an entire
+example replacement, including removal of the shared-term repair lesson; it
+cannot isolate the causal effect of one sentence. Start with the unchanged eight
+aspect cases. Require all four particular unknown-route checks and all four
+functional positives; a failed screen prevents broader expansion. A promising
+candidate needs fresh confirmation plus resolved human-handhold, MrBeast,
+brand-uncertainty, complete-triad and producer-panel checks before adoption.
+No instruction convention, schema or input evidence changes.
+
+### V206 result and physical-versus-design source audit
+
+All eight responses validate and retain four functional positives, but none of
+the four decorative answers establishes the required unknown-route treatment.
+The candidate fails its screen; no broader V206 qualification follows. Do not
+interpret its consistent negative labels as correct exclusion or declare a
+causal effect from one draw.
+
+A separate input-only semantic audit supports uncertainty while qualifying the
+fixture: a physical surface pattern may be a property of a paper covering; an
+independent design/content topic does not gain Paper coverage through its medium.
+A mathematical description can still describe a physical property. The original
+wording does not clearly settle these readings. Its production irrelevance
+closes only that connection. Source-role actual versus intended changes neither
+issue. The review read input strings but encountered maintained status in the
+workflow documentation, so it is not fully blind to earlier status commentary.
+
+Keep the original fixture and its results unchanged. A separate six-case source
+now explicitly bounds the child to physical colour-and-shape appearance, varying
+only a paper surface, an uncoated steel surface and omitted surface material.
+Provisional agent expectations are respectively Paper coverage, neither and
+uncertain in exact reversals. They are synthetic, not new human gold, AS or
+Bootstrap outputs. Matched V202/V206 tests isolate factual membership treatment
+with clearer information scope; they do not retroactively certify the original
+pattern readings or turn omission into a negative judgment.
+
+### Physical-appearance matrix: missing fact treated as exclusion
+
+Both V202 and V206 complete all six comparisons. Both retain the four resolved
+Paper-covering and uncoated-Steel answers in their exact reversals; both answer
+neither for the two omitted-material comparisons. An independent input-only
+review, performed before reading these model outputs or expectations, accepts
+the three-way contrast: properties of an explicitly qualifying paper covering
+are covered, the bounded steel appearance escapes Paper and its production
+connection, and the particular surface's unstated material cannot be assigned
+to establish either coverage or exclusion. The inverse admits properties of an
+unrelated paper sheet in all three variants.
+
+The explicitly physical wording separates this failure from the original
+pattern's design/content ambiguity. The model still collapses absence of a
+proved direct-material connection into exclusion, despite closing only the
+production route. Known variants are contrasts, not evidence about the omitted
+variant's actual surface. These are provisional agent assessments of synthetic
+fixed meanings, not new human labels, AS links or Bootstrap producer outputs.
+V206's direct entity/elevation example does not repair this aspect-owner case.
+No failed candidate is adopted or expanded into broader qualification.
+
+The native aggregate source
+`hierarchy-compare-v206-physical-diagnostic-usage-v1.json` includes V206's original
+eight-case screen and both physical six-case panels: twenty valid comparisons,
+twenty-three fresh attempts including three warmups, no exact reuse, retry,
+failure or missing usage, and $0.117908 API-equivalent catalog cost. This is not
+a subscription charge. Preserve all original source fixtures and native exports.
+
+### V207: particular aspect-owner qualification example
+
+V207 retains V202's instructions and Hair-cutting example byte for byte. It
+replaces only the complete second example with fictional Birds and the physical
+wing appearance of one particular warm-blooded winged vertebrate, Neri. Feathers
+remain unstated. The example requires establishing the same owner's qualifying
+kind before using its properties connection, and refuses to assign the missing
+condition either way. The inverse counterexample uses a separate bird's beak,
+not an invented fact about Neri. No regression subjects or producer data enter
+this example; the four-field output and A/B input contracts are unchanged.
+
+This differs from V206's direct elevation membership example by exercising
+qualification of the owner of a bounded physical aspect. The causal hypothesis
+is not established. First test only the six-case physical matrix: retain all four
+known-material answers and their supporting proofs, and recognize the two
+omitted-material cases without assigning particular facts. A failed screen ends
+expansion; any positive requires a fresh draw plus original aspect, resolved
+controls, complete chains and producer qualification before adoption. Replacing
+an entire example also removes the Watch-repair demonstration, so do not report
+a word-level causal attribution. Independent reviewers retain provisional
+synthetic labels separately from original data and human decisions.
+
+### V207 result: example transfer remains directional
+
+All six responses validate. The four resolved paper/steel answers remain intact;
+only the omitted-material forward direction recognizes the unknown material.
+The reverse proves not-production, then declares exclusion without checking
+whether the same physical surface qualifies as paper. The candidate fails its
+preregistered gate. This one changed answer is not evidence of reliable repair
+or a causal effect, and no broader V207 qualification follows.
+
+A second independent review of V202/V206 inputs and outputs finds no coherent
+whole-parent exclusion regardless of the unstated surface material. The paper-
+covering completion satisfies the entire omitted meaning, including unrelated
+production; the steel completion also satisfies it. Neither completion may be
+assigned as a fact about the particular omitted case. The physical-property
+qualification is therefore unresolved under V202's existing contract.
+
+Native `hierarchy-compare-v207-physical-usage-v1.json` records seven fresh attempts
+including one warmup, six valid cases, no reuse/retry/failure/missing usage and
+$0.0423048 API-equivalent catalog cost. The retired allowance stays untouched.
+
+### V208: qualify the thing described by a kind-property connection
+
+V208 returns to V202, retaining both original examples. It changes only the kind
+paragraph to make the properties/composition connection's qualification explicit:
+the thing whose property or composition is described must qualify for the kind.
+For a particular thing, unstated qualification leaves that connection unresolved
+independently of whether another connection is ruled out. The existing production
+limit and whole-topic boundary remain. This states the condition of the connection,
+not a new physical-instance requirement for the information itself.
+
+The hypothesis is failure to apply the qualifying-kind requirement to a particular
+aspect's owner, rather than lack of a direct unknown-membership example. It is not
+yet demonstrated; V205's route-focus and V206/V207's example treatments failed.
+First run the unchanged physical six-case matrix. Require four resolved answers
+and two unknown qualifications with sound diagnostics. If it passes, use a fresh
+repeat and the unchanged original aspect panel before broader resolved/chain/
+producer qualification. No schema, frozen meaning, source expectation or
+historical review changes; no Bootstrap or hierarchy work follows.
+
+### V208 first draw and V209 qualification precision
+
+V208 passes the six-case physical matrix in one draw: known paper and steel
+answers remain correct, and both omitted-material directions explicitly leave
+the particular surface's Paper-property qualification unresolved while retaining
+the inverse counterexample. This is a promising bounded result, not qualification
+or proof that the phrase alone caused the change. Native accounting records
+eight fresh attempts including one warmup and one recovered provider failure;
+one attempt lacks usage. $0.0427168 is a known API-equivalent subtotal only.
+
+Independent wording review identifies a precision issue in V208: "unstated
+qualification" could include qualification necessarily implied by supplied facts,
+conflicting with the existing implication rule. V209 increments the version to
+say "neither stated nor necessarily implied" and explicitly allows the described
+thing or component to qualify; the entire equipment need not instantiate the
+material of its surface. All other text and both V202 examples are unchanged.
+
+Preregister three independent executions with source meanings unchanged: a fresh
+six-case V208 repeat, V208's original eight-case aspect panel, and V209's six-case
+physical screen. Do not claim V209 is an exact V208 repeat. Retain unknown-source
+qualifications in the original aspect panel. Require known controls and sound
+unknown-direction diagnostics, then use fresh V209 confirmation and resolved,
+complete-chain and original producer cases before adoption. No new gold,
+Bootstrap data, hierarchy construction or owner messages follow.
+
+### V208 fresh confirmation and V209 first screen
+
+The independent V208 six-case repeat preserves all resolved material answers
+and both unknown qualifications. Its unchanged original eight-case aspect panel
+retains four functional-production positives and four unresolved particular
+surface qualifications. That older pattern fixture's design/content ambiguity
+remains documented; these nulls do not certify a narrower source reading.
+V209's six-case physical first draw also preserves all known and unknown answers.
+Independent review accepts V208's first physical proofs and directional IDs.
+No candidate is adopted from these bounded observations.
+
+Next qualify V209 with an exact fresh physical repeat and separate unchanged
+scope-chain, original-aspect, explicit-human-handhold, explicit-commerce,
+intention/capability, particular-brand/MrBeast and numeric-goal panels. These
+retain positive and negative controls, not only known errors. Preserve their
+synthetic/provisional versus user-approved versus open-probe classifications.
+A failed control or proof prevents adoption; unresolved original meanings are
+not negative gold. After this gate, run the unchanged fifty-case single-version
+B109 producer collection separately, checking reversals, equivalent substitution
+and full proofs rather than requiring its historical labels.
+
+### V209 wider controlled gate: labels and proofs retained
+
+All fifty-six comparisons complete valid. Exact fresh physical confirmation
+retains known-paper positives, known-steel negatives and both omitted-material
+nulls. Functional-production positives and the original decorative nulls survive.
+Both whole-information triads remain reciprocal and internally consistent. The
+six explicit-human, six commerce and six intention/capability controls retain
+resolved relationships; two approved MrBeast positives and two unknown-brand
+nulls survive. All eight goal/illustration controls retain the physical canopy
+purpose without requiring success or importing a laboratory-use restriction.
+
+Three independent read-only reviews examine all gate responses. No definite
+proof or directional-ID defect is found. The older decorative fixture still
+permits physical-pattern and independent design/content readings; an unknown
+carrier is not certified as its only possible uncertainty. The paper-covering
+physical positives concern the qualifying component, not the entire pump.
+These targeted nulls coexist with retained positive and negative controls, so
+the outcome is not wholesale abstention. Synthetic expectations remain
+provisional and distinct from actual user approvals.
+
+Native source `hierarchy-compare-v209-qualified-controls-usage-v1.json` records
+sixty-six fresh attempts including eight warmups and two recovered provider
+failures, no exact reuse, and two attempts lacking usage. $0.3529888 is a known
+API-equivalent subtotal only. Native old-array relation_diagnostics does not
+cover these generic fixed A/B object inputs; do not interpret its incomplete
+counts as current reversal results. Exact pairs and proofs were inspected from
+native exports. The single-version B109 panel uses its existing dedicated
+node_pair_consistency reporting, with historical labels remaining diagnostic.
+
+The unchanged fifty-case B109 panel is now prepared for V209 execution after this
+controlled proof gate. V209 remains experimental, not a replacement for the
+approved V179 development reference or a hierarchy-generation adoption.
+
+### V209 B109 result: property repair is not broader qualification
+
+All fifty cases complete valid with original sixteen independently produced
+meanings and ASv6.100 provenance unchanged. Native dedicated consistency detects
+three settled reversal conflicts: rocket-root-potatoes, sourdough-time-general-
+substitution and metal-handles-alternatives. It also preserves three overlapping
+forward/reverse equivalence-substitution or transitivity witnesses in the bread
+family. These witnesses are not independent semantic-error counts. Two additional
+pairs mix settled and unresolved outcomes: rocket-root-four-foods and the
+metal-handles/attention negative control. Unresolved pairs are not counted as
+settled-consistency success, and complete remains false.
+
+V202 had four settled reversals on this same frozen collection; V209 introduces
+a rocket-stove purpose reversal while some earlier bread reversals disappear.
+One draw does not demonstrate broad improvement or determine which link is
+correct. The known property-qualification repair survives its controlled tests,
+but V209 is still unadopted. Original producer labels and AS edges remain
+non-gold; no parent guard is relaxed and no meanings are regenerated.
+
+The next diagnostic separates missing facts about particular instances from
+material reading differences in general activity or functional-kind terms.
+Rocket-stove positives and negatives disagree on an eating-purpose condition;
+bread alternatives disagree on readiness; grip/handhold alternatives disagree
+on required users. Independent reviews examine those exact inputs and proofs
+before another intervention. Retain the earlier laboratory-food-readiness
+qualification: non-consumption or later disposal alone does not establish
+failure to make food ready to eat. No Bootstrap request or external owner
+message follows this result.
+
+### V210/V211: isolated illustration and occurrence-scope interventions
+
+Input-only review qualifies the rocket and attention witnesses: naming a
+particular stove or author does not alone establish one particular occurrence.
+The potatoes wording admits an activity-form reading constrained to that stove;
+the four-food and attention meanings more strongly suggest an event/state but do
+not independently close recurring-activity readings. Laboratory or conversation
+circumstances are invented under a particular reading and may be hypothetical
+under a general one; their admission still needs the defining cooking/distraction
+conditions. The input does explicitly state a cooking purpose, but its necessary
+relation to the parent's eating purpose remains disputed. No post context is
+restored and these assessments do not create new user gold.
+
+V210 retains V209 except its illustration sentence: a shared illustration name
+does not establish coverage of the independently supplied child; prove required
+conditions from that child's wording or necessary implications. This targets
+observed name-based readiness proofs without fixing Bread's consumer or purpose.
+V211 separately retains V209 except its general/particular classification text:
+a fixed participant or equipment identity alone does not select one occurrence,
+and materially different supported category/occurrence readings remain unresolved.
+It preserves unknown facts about a particular entity; general activity cases may
+not invent that entity's properties. Neither intervention stacks the other.
+Both retain the property qualification, V202 examples, A/B input and four fields.
+
+Matched first diagnostic: exact fresh V209 reference and V210/V211 on eighteen
+unchanged B109 cases: five complete bread/equivalence/time pairs, handle pair,
+two rocket pairs and attention pair, in both orientations. Native receipt-bound
+subset preparation preserves endpoint identity and original metadata. Each
+candidate also receives the unchanged physical six-case and goal eight-case
+panels. Require sound proof/reading qualifications, reversal and complete-chain
+consistency, and preserved known positive/negative controls. No fixed preferred
+label is assigned to disputed original meanings. Increased uncertainty alone is
+not success; do not count unsettled witnesses as resolved. A promising arm needs
+fresh confirmation, the full resolved gate and complete fifty-case panel before
+adoption. These mechanism hypotheses are not proved by their observed failures.
+
+### Matched V210/V211 results and admission qualifications
+
+All eighty-two comparisons complete valid. Fresh V209 core has three settled
+reversal conflicts and one mixed unresolved pair. V211 also has three settled
+reversals, now in different bread pairs, and two mixed unresolved pairs. V210
+has one settled handle reversal and two mixed unresolved pairs. No settled
+forward/reverse chain contradiction is reported in these subsets, but unresolved
+checks remain unresolved, not passed. Both candidates retain all physical and
+goal-control labels. Native exact source means and new receipts are unchanged;
+these are first draws and do not establish reliability or a causal improvement.
+
+Occurrence review finds no demonstrated V211 repair. Attention diagnostics no
+longer invent conversation details, but the forward four-food proof asserts
+coverage under both readings while reverse selects a particular-event reading
+and leaves eating purpose unknown. The potatoes eating-purpose implication is
+still asserted rather than independently established. Time-qualified bread
+introduces another action-versus-enabling-steps qualification. V211 is not adopted
+or expanded merely because some conflict locations changed.
+
+Two independent V210 bread reviews accept its inverse salad exclusions but keep
+all four Food-preparation/bread negatives semantically qualified. Measurement and
+disposal do not establish whether the actions are genuine bread-making stages or
+readiness-directed steps. Deliberately toxic baked bread specimens are plausible,
+and not demonstrably inadmissible merely because unsafe, but neither lack of an
+edible outcome nor later non-consumption proves absence of a readiness goal.
+The distinction between genuine bread-production and the parent's "steps toward"
+readiness remains unclosed. V210 stops the illustration-name shortcut, then
+asserts the opposite boundary without certifying its admission/exclusion proof.
+Native agent uncertain reviews preserve this qualification; they are not new
+human labels or a requirement to restore the old positive.
+
+Native `hierarchy-compare-v210-v211-scope-ablation-usage-v1.json` records ninety-one
+fresh attempts including seven warmups and two recovered failures, zero reuse,
+and two attempts lacking usage. $0.6212912 is a known API-equivalent subtotal,
+not complete cost or a subscription charge. Neither candidate is adopted.
+Keep the independently qualified particular-property repair distinct from these
+unresolved general-kind/admission mechanisms.
+
+### V212: counterexample admission and interpretation quantifiers
+
+V212 returns to V209, preserving its property qualification and original examples.
+One admission mechanism changes two aligned locations. A counterexample must
+establish membership from the child's own defining terms and admission route;
+related material, a similar process, or absence of a prohibition is not sufficient
+by itself. Unusual hypothetical cases and genuinely admitted partial stages
+remain permitted, without demanding a completed result.
+
+The interpretation rule separates actual alternatives explicitly included in a
+meaning from unresolved possible readings. Directional outcomes must agree
+across supported readings; different valid counterexamples may witness the same
+negative outcome under different readings. This avoids an unnecessarily stronger
+requirement for one common witness, while refusing to merge ambiguous readings
+into a broader invented union. Omitted general conditions still vary unless
+necessarily implied, and unknown particular facts stay protected. No Bread or
+grip label is prescribed and no V210 illustration or V211 occurrence text is
+stacked into this candidate.
+
+First compare V212 on the same eighteen-case frozen B109 core with the preserved
+fresh V209 reference, plus unchanged physical six, goal eight, explicit-human six
+and explicit-commerce six controls. The latter test that actual alternative
+branches still yield counterexamples rather than wholesale uncertainty. Require
+sound admission/exclusion proofs and preserved resolved outcomes, not only fewer
+settled contradictions. A promising result needs fresh confirmation and the full
+producer/resolved panels before adoption. Independent review verifies both
+unchanged examples and exact native V179 revision provenance; no calls occur
+during drafting. The old qualified meanings and receipts remain untouched.
+
+### V212 result: admission instruction does not repair scope consistency
+
+All forty-four comparisons complete valid. Physical, goal, explicit-human and
+commerce controls retain resolved and targeted-unknown outcomes, including
+explicit mixed alternatives. The eighteen-case producer subset still has three
+settled reversal conflicts and three overlapping equivalence/transitivity
+witnesses. All core answers are settled, so apparent absence of unresolved pairs
+is not a success: the non-null answers conflict. The same sourdough definitions
+are called equivalent yet receive incompatible Food-preparation outcomes.
+V212 fails the screen and does not enter wider adoption qualification.
+
+The next diagnostic stops adding scope reminders. Prior V182/V195 studies changed
+requested/reporting direction order but did not mirror example meanings; neither
+repaired its target. V180 removed both examples and regressed recipient and
+intended-activity controls, so another zero-shot removal is lower priority.
+Persistent Metal forward-positive/reverse-neither answers motivate an independent
+role-mirror test: does the positive Hair example's A-parent assignment influence
+unresolved judgments? This is a hypothesis, not an established cause. Keep the
+body and second example fixed, swap only first-example A/B assignments, and keep
+positive-first semantic reporting. Its first direction ID necessarily changes;
+observe actual output order and do not attribute an effect solely to priming.
+Use exact fresh matched V209 draws, both orientations and sound-proof review;
+moving the error to the opposite orientation is sensitivity, not repair.
+
+### V213: mirrored positive-example role diagnostic
+
+V213 reproduces V209's body and Watches example byte for byte. Only the complete
+Hair example's A/B assignments are mirrored: A is services, B is cutting,
+coverage is B_contains_A, and the horse counterexample is A_contains_B. The
+semantic positive remains first in questions and answers. Input keys retain A
+then B, so their semantic node order changes along with labels. Both examples
+validate through production and the native revision remains bound to approved
+V179. No new validation-derived example or rule is added.
+
+The focused comparison uses three exact fresh V209 draws and three exact fresh
+V213 draws of the original Metal/Steel-or-Brass pair in both orientations. This
+persistent reversal is a scope probe, not a preferred positive/negative label.
+Check actual diagnostic order and supported proofs as well as reversals. A
+change to the opposite orientation establishes sensitivity, not correctness.
+The entire example assignment and first direction ID are coupled; no isolated
+word-level or internal priming mechanism is claimed. V213 also receives unchanged
+physical, explicit-human and intention/capability controls so any role-label
+sensitivity is distinguished from broad positive or uncertainty regression.
+A positive requires wider source/control checks before adoption. V209's recent
+full core and gate remain preserved, without treating saved answers as fresh.
+
+### V213 result: example-role mirroring has no measured effect
+
+All thirty comparisons complete valid. Every one of three fresh V209 draws and
+three fresh V213 draws returns the same original Metal pair outcomes: forward
+A_contains_B, reverse neither. Each draw therefore retains a settled reversal
+conflict. All outputs report A_contains_B before B_contains_A, including V213,
+whose mirrored example reports its positive B_contains_A first. The physical,
+explicit-human and intention/capability controls retain their expected outcomes.
+This experiment establishes no repair and no measured example-role sensitivity;
+it does not settle the original ambiguous grip/handhold relationship.
+
+Native usage source `hierarchy-compare-v213-role-mirror-usage-v1.json` records
+forty fresh attempts, including nine warmups and one recovered failure, zero
+reuse, and one attempt lacking usage. $0.235284 is a known API-equivalent
+subtotal, not complete cost or a subscription charge. V213 remains experimental.
+
+The next isolated diagnostic changes actual presentation order to B then A,
+without changing A/B assignments, fixed meanings, prompt or producer receipts.
+Native `symmetric_fixed_meanings` projection already supports this operation;
+no new adapter code or manually assembled model inputs are needed. The source
+pins the completed V209 producer experiment and retains its full provenance.
+Compare fresh repeated Metal orientations against the preserved A-first draws.
+If outcomes follow physical position, that establishes presentation sensitivity,
+not semantic correctness. Unknown original scope remains unresolved rather than
+being relabeled to make a preferred orientation pass.
+
+### V209 actual input-order result: presentation sensitivity persists
+
+The native projection verifies byte-identical subject/meaning values and unchanged
+A/B assignments, with only the top-level input member order changed. All six
+comparisons complete valid, fresh, with no reuse. Three B-first draws yield:
+
+| Draw | Forward, Metal as A | Reverse, Metal as B |
+|---|---|---|
+| 1 | neither | B_contains_A |
+| 2 | neither | B_contains_A |
+| 3 | A_contains_B | B_contains_A |
+
+The preserved three fresh A-first V209 draws each yield A_contains_B forward and
+neither reverse. Thus presentation changes the interpretation in all three
+reverse checks and two forward checks; it does not deterministically select one
+outcome. Two B-first draws still have settled reversal conflicts; the third is
+reciprocally consistent but not semantically certified. All outputs retain
+A_contains_B-first diagnostic order, so input-member order and reporting order
+are distinct in this result. No order-normalization workaround is adopted.
+
+The concrete disagreement is whether the child definition's grip necessarily
+provides the parent's required handhold. Positive proofs claim that implication;
+negative proofs admit inaccessible, microscopic or robot-only grips. The original
+wording also calls these parts handles. These are competing scope interpretations,
+not a validated preferred label or evidence that either producer meaning should
+be silently rewritten. Independent review must assess supported readings and
+necessary implication before another prompt treatment.
+
+Native `hierarchy-compare-v209-input-order-usage-v1.json` records nine fresh
+attempts including three warmups, zero reuse/retries/failures/missing usage, and
+$0.0467464 API-equivalent cost. The six responses retain their producer-bound
+receipts in `target/compare-v209-input-order-diagnostic-v1/draw-{1,2,3}`.
+The historical allowance remains retired; no substitute call cap was supplied.
+
+### V214: establish supported interpretations before directional roles
+
+Two fresh internal reviewers assess each original definition separately, without
+the counterpart. Both admit an ordinary human-usable steel carrying handle. Both
+leave an inaccessible steel loop used only by mechanical jaws unresolved under
+their respective definition: material and lifting establish neither the named
+handle kind nor the scope of grip/handhold. These read-only assessments support
+a material interpretation qualification, not new human gold or a teacher panel.
+The physical cases are review probes, not new prompt examples or producer text.
+
+V214 changes only V209's initial interpretation instruction: establish supported
+interpretations before assigning directional roles, and retain those interpretations
+through both tests rather than selecting readings to suit a proof or counterexample.
+All information-connection, admission, property, output and example text remains
+byte-identical to V209. Native revision provenance remains against approved V179.
+This is an experimental ordering of the semantic task, not a certified fix or
+an instruction to disclose reasoning traces or rewrite supplied meanings.
+
+Screen both original Metal orientations in both physical input orders with fresh
+repeats, plus explicit-human and physical-property controls. Correctly explained
+uncertainty on an ambiguous producer scope is acceptable; erasing resolved
+controls is not. A lower reversal count alone is insufficient. Any promising
+effect requires the broader fixed-producer core and independent proof review.
+
+### V214 result: scope-before-role instruction fails the focused gate
+
+All twenty comparisons complete valid. Both A-first fresh draws still return
+forward A_contains_B and reverse neither. The first B-first draw returns
+forward neither and reverse B_contains_A; the second returns reciprocal
+containment. Three of four reversal checks therefore retain settled conflicts.
+No original Metal answer is unresolved: positives still assert grip entails
+handhold, while negative proofs still construct inaccessible machine grips.
+The requested semantic ordering establishes no observable interpretation repair.
+Output alone also cannot prove that the model performed that internal operation.
+
+All six explicit-human/machine/mixed controls and all six physical-paper/steel/
+unknown-material controls retain their resolved or deliberately unresolved
+outcomes. Their preservation does not rescue the failed producer-scope gate.
+V214 is not adopted or expanded to wider qualification. Do not stack another
+independence reminder, choose an orientation workaround, or silently relabel the
+original pair. A possible simplification of the accumulated body needs independent
+design review and its own controlled experiment rather than assumed superiority.
+
+Native `hierarchy-compare-v214-interpretation-screen-usage-v1.json` records twenty-six
+fresh attempts including six warmups, zero reuse/retries/failures/missing usage,
+and $0.1697392 API-equivalent cost. The original inputs, producer receipts,
+candidate meanings and earlier native exports remain unchanged.
+
+### V215–V216: consolidate the body without replacing examples
+
+The next experimental treatment simplifies the accumulated instruction body,
+following official guidance to keep reasoning-model instructions clear and
+direct rather than prescribing a reasoning trace. That guidance does not certify
+this containment convention or predict the effect of this rewrite:
+https://developers.openai.com/api/docs/guides/reasoning-best-practices#how-to-prompt-reasoning-models-effectively
+
+V215 is a prepared, unrun draft. Independent preflight finds that its shortened
+unknown-fact rule omits necessary implications, and its activity paragraph says
+participants rather than participant roles. Its outcome-based reading rule also
+changes the earlier ambiguity procedure. Preserve the draft and its prepared
+artifacts as unrun; no teacher result or cost is attributed to it.
+
+V216 restores the necessary-implication exception, participant roles and V209's
+exact final necessary-implication/reading rule. It keeps the output section,
+both fictional examples and the input tail byte-identical to V209. The revised
+body states fixed independent meanings, general variability versus particular
+unknown facts, required roles/states, qualified kind-property/production and
+activity/means connections, whole-child coverage, complete parent-route exclusion
+and ambiguity handling once. It removes overlapping search prescriptions and
+repeated warnings rather than adding another case-specific exception.
+
+This is a full-body rewrite experiment, not an isolated causal-word ablation
+or a certified semantic equivalence of instructions. Screen the eighteen-case
+frozen B109 core, six additional crossed-order/repeated Metal checks, six physical,
+six explicit-human, four particular-identity and eight functional/decorative
+production controls. The original decorative qualification remains; the four
+functional positives test preservation of useful production connections.
+No original open relationship becomes human gold. Any apparent improvement
+requires sound proofs, fresh confirmation and wider producer qualification.
+
+### V216 result: measured consistency improves, factual qualification regresses
+
+All forty-eight comparisons complete valid. The eighteen-case producer core has
+zero settled reversal or equivalence/transitivity witnesses. All four crossed
+order/repeated Metal checks are reciprocally consistent, with Metal containing
+Steel-or-Brass. These are observable consistency improvements, not certification
+of those open meanings or evidence that the model followed an internal sequence.
+
+Independent proof review retains readiness-directed Bread qualifications and
+the Cooking eating-purpose obligation. It finds a better time-purpose argument
+through connected preparatory means, without certifying every substitute proof.
+Metal's material implication is sound; universal grip-to-handhold coverage stays
+lexically qualified because machine-only handle admission has not been settled.
+Four Bread coverage cases have native uncertain agent reviews. Earlier outputs,
+review-free exports, producer receipts and human decisions remain unchanged.
+
+The six explicit-human/machine/mixed controls, two MrBeast preservation controls,
+four known-material physical controls and four functional-production positives
+retain expected outcomes. Both physical-material-omitted cases regress to neither:
+they exclude production but assert away a possible qualifying paper surface.
+Independent review identifies this as a definite route-qualification proof failure.
+The original decorative panel produces three neither and one uncertain; its
+physical-pattern versus independent-design qualification remains unresolved.
+
+The two particular-brand commercial-status controls change from provisional
+uncertain to positive. The forward proof imports product offerings not in the
+meaning; the reverse treats the design-brand illustration as unconditional
+membership without proving the surrounding commercial requirement. Neither
+changed label is automatically wrong merely because it differs from an agent
+expectation. Under the supplied-facts contract, the forward uses an extra
+qualification premise; the reverse has a definite proof gap. Do not equate
+known entity facts with term clarification without closing that policy boundary.
+
+V216 is not adopted. Native `hierarchy-compare-v216-consolidation-screen-usage-v1.json`
+records sixty-two fresh attempts including thirteen warmup attempts, six recovered
+failures, zero reuse and six attempts without usage. $0.2788364 is a known
+API-equivalent subtotal, not complete cost or a subscription charge.
+
+### V217: isolate the property-qualification wording lost in compression
+
+V217 changes one sentence in V216's properties/composition paragraph, restoring
+V209's exact qualification gate for a particular thing or component and its
+warning that ruling out another connection does not rule this one out. Every
+other body, output and example byte is unchanged. This isolates the combined
+sentence restoration; it does not distinguish its component reference from its
+other-route warning or repair the separately qualified brand proof by decree.
+Native revision remains bound to approved V179. Screen the physical contrast,
+original Metal orientations/orders and wider producer core before qualification.
+
+### V217 result and fresh matched restoration repeat
+
+The fourteen-case first screen completes valid. All six physical controls retain
+the appropriate known-material or unknown-material outcomes, repairing both
+V216 unknown-material exclusions. The A-first Metal pair again conflicts
+(forward A_contains_B, reverse neither), while B-first is reciprocally positive.
+MrBeast preservation remains positive; brand status is uncertain forward and
+positive reverse, retaining an unresolved qualification/proof mismatch.
+
+An additional fresh matched twenty-case repeat holds each arm's exact prompt,
+subjects, meanings, worker and order fixed. Each arm has the six physical cases
+plus both Metal orientations in A-first and B-first presentation. V216 again
+preserves known materials but wrongly excludes one unknown-material direction;
+its other direction is uncertain. V217 preserves all six physical outcomes,
+with both unknown-material directions uncertain. Across the two draws, V216
+therefore has three unsupported exclusions among four unknown-material answers;
+V217 has none. This is bounded evidence for the restored combined sentence, not
+a population rate or separation of its component and other-route clauses.
+
+Fresh V216 Metal answers are reciprocally positive in both orders. Fresh V217
+again conflicts in A-first and is positive in B-first. Thus the property repair
+does not establish general interpretation stability, and the shorter body's
+earlier producer consistency cannot be transferred uncritically to V217.
+No candidate is adopted. The original grip/handhold membership qualification and
+brand knowledge-policy qualification remain distinct from the definite physical
+route failure; source meanings and provisional expectations are not rewritten.
+
+Native `hierarchy-compare-v217-property-restoration-usage-v1.json` accounts for
+all thirty-four comparisons in these ten experiments: forty-five fresh attempts
+including ten warmups and one recovered failure, zero reuse and one attempt
+without usage. $0.2288352 is a known API-equivalent subtotal, not complete cost.
+Reports retain the first screen and matched reference/candidate repeats separately.
+
+### V218: replace one example with general-category scope ambiguity
+
+V218 preserves V217's body, property gate, output contract, Hair example and input.
+Only the complete Watches example is replaced. The new fictional category is
+restricted to red cubes and spheres, with color and shape applying to the physical
+models themselves. Red can govern both shape kinds or only cubes. Coverage by
+the broader red-model category therefore depends on modifier scope; a blue sphere
+is admitted under only one supported reading. The reverse has an independent
+red-cone counterexample under both readings. Explicit restriction avoids turning
+the list into nonexhaustive illustrations, and self-coloring avoids representation
+of differently colored objects. Independent preflight accepts the admission and
+exclusion reasoning; no real post or producer output is used as teaching data.
+
+This is a complete-example intervention, not a claim that grammar and lexical
+role ambiguity are identical. Unlike V206/V207, it demonstrates unresolved scope
+in a general category rather than an unknown particular fact. Total examples
+remain two, and no new reminder or reasoning trace is added. Native provenance
+is against V179. Screen two fresh draws of the original Metal orientations in
+both physical input orders, a fresh V217 reference in both orders, and twelve
+explicit-human/physical controls. Require supported proofs and retained resolved
+outcomes; neither a convenient label nor indiscriminate uncertainty is success.
+
+### V218 result: grammar ambiguity example does not transfer to the lexical conflict
+
+All twenty-four comparisons complete valid. All four candidate reversal checks
+conflict: both A-first draws return forward A_contains_B/reverse neither, and
+both B-first draws return forward neither/reverse B_contains_A. The fresh V217
+reference conflicts in A-first and remains reciprocally positive in B-first.
+All twelve physical and explicit-human/machine/mixed controls retain expected
+outcomes. V218 establishes no repair and is not expanded or adopted. A grammar
+example's validity does not certify transfer to grip/handhold membership.
+
+Native `hierarchy-compare-v218-general-ambiguity-usage-v1.json` records thirty-two
+fresh attempts including eight warmups, zero reuse/retries/failures/missing usage,
+and $0.1878768 API-equivalent cost. Definitions, source receipts and provisional
+expectations remain unchanged.
+
+Before another question-strengthening edit, read-only historical review checks
+the prior mechanisms. V178 targeted absent requirements; V191 preferred parent
+requirements not guaranteed by the child; V194 requested concrete candidates and
+specific conditions; V196 strengthened testing of the entire absent condition.
+Both V196 draws already ask about handhold qualification forward but still assert
+grip implies handhold, while reverse admits machine-only handles. V197 retains
+that preference. Moving the same rule into the shorter body's output section
+would not establish a new semantic mechanism. Do not repeat it as a novel fix.
+
+The next diagnostic supplies the same neutral physical cases rather than letting
+the teacher select a different counterexample in each direction. Existing native
+meaning diagnostics copy receipt-bound meanings without source evidence; generic
+prepared-input reuse preserves paired A/B values and presentation order. No new
+adapter is required. This assesses admission under unchanged definitions, not
+Bootstrap generation, comparison-label gold or a replacement Compare contract.
+Single-meaning and paired representations differ in namespace and subject
+duplication as well as counterpart presence; any effect must retain that caveat.
+
+### Fixed-candidate admission diagnostic v1: frozen design
+
+`Compare-admission-diagnostic-v1` is an auxiliary diagnostic, not a replacement
+Compare prompt or a Bootstrap producer. Two neutral steel-loop configurations
+are assessed against each unchanged B109 definition: a directly human-graspable
+loop and a machine-only loop inaccessible and too small for direct human grasp.
+Neither configuration labels the loop a handle or presupposes its admission.
+The teacher must preserve the named kind as well as the material and function.
+Unresolved readings remain uncertain; a positive instance is not universal proof.
+
+Native preparation creates six experiments under
+`target/compare-admission-diagnostic-v1`: single, A-first and B-first, each with
+two fresh draws of two requests. The single source verifies original ASv6.100
+and both producer receipts; paired sources preserve original input bytes and
+evidence through hash-pinned prepared experiments. No post, context, ancestor,
+historical answer or expected label enters model input. Source files specify
+Sol 6.1 medium/SSE and the shared worker, with caching disabled for this short
+prompt; no padding or external concurrency control is introduced.
+
+The twelve requests assess the same candidates, enabling checks for changed
+membership judgments across A/B assignment, input order and single/pair forms.
+Single/pair differences also change subject duplication and field namespace,
+so they cannot isolate counterpart causality. Audit exactly one assessment per
+supplied definition and candidate: the generic schema alone does not enforce
+that cross-product. Retain any disagreement or missing assessment without
+turning the unresolved original pair into semantic gold. No attempt allowance
+is supplied; the retired counter remains historical and untouched.
+
+### Fixed-candidate v1 result: membership judgments remain presentation-sensitive
+
+All twelve requests complete valid, with no failed, reused or unrun cases.
+All forty assessments have the exact required node/candidate coverage, uniqueness
+and order. Every human-loop assessment is admitted. Every Steel or brass handles
+machine-loop assessment is uncertain: the loop satisfies steel/lifting-grip
+conditions, but the named handle kind may still require direct human grasp.
+This unresolved admission is not a certified negative or positive pair label.
+
+Metal handles admits the human loop throughout. The machine loop is uncertain
+in both standalone draws and both B-first forward draws, but excluded in both
+A-first orientations and both B-first reverse draws. Thus fixing the candidate
+does not eliminate presentation-sensitive membership interpretation. Original
+Compare's free counterexample selection is not the only mechanism implicated.
+The auxiliary instruction's explicit grip/handhold ambiguity cue also differs
+from Compare. Its results cannot certify that a generic admission task alone
+repairs the main prompt. Single/pair subject-presence and namespace confounds
+remain; neither result justifies making all general meanings uncertain.
+
+Next, delete only the targeted grip/handhold sentence in auxiliary v2, retaining
+the same candidate facts, generic whole-definition and uncertainty instructions,
+schema and all input bytes. Repeat the same twelve requests. This separates the
+targeted lexical cue from the admission-task format before proposing another
+main Compare instruction. V179 remains the approved reference; no main candidate
+is adopted and no Bootstrap meaning or hierarchy is changed.
+
+### Fixed-candidate v2 result: the targeted cue is not the whole child-admission issue
+
+V2 deletes exactly one grip/handhold-specific instruction. All twelve fresh
+requests complete valid with exact required assessment coverage, uniqueness and
+order. All twenty human-loop assessments remain admitted. All ten Metal machine
+assessments now exclude the loop as incapable of providing a human handhold.
+V1 had four uncertain Metal assessments. This is bounded cue sensitivity, not
+a population estimate or certification of an original pair label.
+
+Nine Steel/brass machine assessments remain uncertain on the named handle-kind
+boundary. The second standalone draw instead admits the loop because the
+definition does not expressly require human grasp; its first draw is uncertain.
+The targeted sentence therefore does not wholly explain child-admission
+uncertainty, and independent presentation does not guarantee stable membership.
+Two draws cannot establish a reliable classification rate. The diagnostic task
+still differs from main Compare's unrestricted search and universal proof.
+
+Independent read-only reviews distinguish the demonstrated reversal conflict
+from unresolved semantic gold. V217's microscopic robotic gripping-tab proof
+establishes material and lifting-grip function, but does not establish that it
+qualifies as a handle under the child meaning. The positive grip-to-handhold
+universal implication is likewise not certified by these particular admissions.
+Do not broaden either definition, attach a negative expectation, or repair
+Compare by feeding these generated admission answers into frozen meanings.
+
+Native `compare-admission-diagnostic-v1-v2-usage-v1.json` includes both panels:
+twenty-four fresh attempts, twenty-four valid responses, zero reuse, warmups,
+retries, failures or missing usage, and $0.094172 API-equivalent catalog cost.
+This is subscription experiment accounting, not a new cash charge. Every
+receipt and old output remains preserved. V179 stays the approved reference.
+
+### V219/V220: observable joint admission before the directional conclusion
+
+V219 is an unrun preflight draft. It retains V217's scope contract and four-field
+schema, but asks a concrete question case and records that same case's admission
+under both A and B in the existing justification. Independent preflight identifies
+one synthetic-example gap: chemical-only shortening does not itself exclude an
+unknown cutting-related participant or means role. V220 fixes only that fictional
+question and its A-exclusion prefix by expressly making the chemical service
+independent of cutting and cutting-related roles. V219 is never silently edited.
+Both versions have native revision provenance against approved V179.
+
+The operative hypothesis differs from V212's admission reminder: the joint
+assessments are observable output, named by A/B rather than parent/child roles.
+V194 already used concrete question scaffolding; that part is not novel.
+Existing Hair and Watches examples demonstrate the same output operation; no
+real regression meanings, posts or model answers become teaching examples.
+
+Assess each candidate against the entire information scope, not solely physical
+kind membership. An unresolved admission blocks using that candidate as a
+counterexample, not every other counterexample or independent universal proof.
+A failed or covered candidate cannot establish full coverage. The unchanged
+all-supported-readings rule still applies to the proof and any relevant unknown
+candidate boundary. No additional fields, new meanings or reasoning trace are
+requested; generic string validation does not certify these semantic conditions.
+
+The first gate uses fresh V217 and V220 Metal draws in both assignments and both
+physical input orders, plus twelve physical/explicit-human controls. Require
+retained resolved controls, supported admission/coverage evidence and consistent
+directional judgments; turning everything uncertain is not success. Broader
+eighteen-case producer core and four preservation controls are prepared offline
+but dispatched only after a useful gate. Separate selection changes, lexical
+interpretation changes and assessment-to-conclusion consistency. Original Metal
+semantic gold remains unresolved; Bootstrap and hierarchy data remain untouched.
+
+### V220 gate result: joint output does not repair membership interpretation
+
+All twenty-eight dispatched comparisons complete valid. All twelve physical
+and explicit-human/machine/mixed controls retain their expected outcomes. V220
+has two settled original-pair reversal conflicts across its four matched checks,
+both A-first; both B-first draws are reciprocal positives. Fresh V217 has two
+conflicts too, one in each presentation order. This bounded result establishes
+no reduction in reversal failures or dependable interpretation repair.
+
+The requested A/B assessments are present, but they reproduce the inconsistency.
+Forward proofs select ordinary human carrying/drawer grips, then assert that
+every steel/brass grip necessarily provides a handhold. Reversed A-first proofs
+admit microscopic robotic handles from their steel/grip function and absence
+of an express human requirement. They do not establish the named handle-kind
+boundary identified by the auxiliary diagnostic. Explicit joint labels do not
+make those interpretations independently fixed or certify universal coverage.
+Do not call the original label wrong gold; unchanged-meaning reversal conflict
+remains the demonstrated failure. V220 is not adopted or broadened.
+
+The eighteen-case producer core and four preservation cases remain prepared
+unrun. Native usage accounts for thirty-eight fresh attempts, including ten
+warmups, zero reuse/failures/retries/missing usage and $0.2307448 API-equivalent
+catalog cost. Its completion flag correctly remains false because those
+twenty-two cases are unrun, not successes. The gate itself is complete.
+One hundred eleven relevant native tests pass on the combined main checkout.
+
+### V221: isolated general-variation instruction removal
+
+V221 removes only V217's sentence permitting variation of general-kind conditions
+that are neither required nor necessarily implied. Particular-fact unknowns,
+necessary implications under all supported readings, every information connection,
+the property gate, examples and output remain byte-identical to V217. It does
+not inherit V220's unsuccessful joint-output experiment. Native revision remains
+against approved V179. Historical audit finds related V186/V211/V212 mechanisms,
+but no recorded isolated deletion of this sentence.
+
+The causal hypothesis is that the sentence encourages treating an absent human
+word as permission for machine-only cases before resolving the named kind's
+necessary conditions. Its wording is logically conditional: the actual error
+could instead be the prerequisite implication judgment. Removing it therefore
+tests sensitivity, not a certified semantic repair or new original-pair gold.
+
+Prepare two fresh draws in each original Metal input order, twelve physical and
+explicit-human controls, all six intention/capability comparisons, and eight
+functional/decorative aspect checks. The latter original producer judgments stay
+qualified. The four already completed fresh V217 reference experiments from
+V220's gate are the unchanged behavioral comparison; their receipts and costs
+are not newly dispatched calls. Check that any improved consistency preserves
+general-kind variation when actually justified, does not invent restrictions,
+and is supported rather than achieved through blanket uncertainty. No Bootstrap
+or hierarchy changes follow from the test.
+
+### V221 result: deleting general variation does not establish the cause or a repair
+
+All thirty-four newly dispatched candidate comparisons complete valid. Two of
+four original-pair reversal checks conflict, one in each input order, matching
+the saved fresh V217 conflict count. The individual conflicting draws differ;
+this small sample cannot estimate an effect size or establish that the clause
+never contributes. Its isolated removal does not eliminate the demonstrated
+failure. The same incompatible grip/handhold premises remain in the proofs.
+
+All eighteen physical, explicit-human and intention/capability control outcomes
+are retained. The four functional-aspect cases remain positive; all four
+original decorative-aspect cases are unresolved. Those original negative or
+uncertain expectations remain qualified rather than mandatory gold. No broader
+producer pass or adoption follows. Native revisions and receipts are preserved.
+
+The native usage source includes the unchanged already-dispatched V217 reference:
+forty-two total comparisons and fifty-four attempts including twelve warmups,
+zero reuse/retries/failures/missing usage, $0.2744564 API-equivalent cost. Eight
+reference comparisons and four reference warmups were already accounted for in
+V220; they are not new calls or additive costs. The source explicitly separates
+them from the V221 candidate groups. Nine native revision tests pass on combined
+main; the prior 111-codepath suite remains passed with code unchanged.
+
+Next isolate the bare necessary implication of the handhold requirement from
+candidate admission and whole-information-scope coverage. Use the same original
+meaning-only and paired inputs, without loop examples or old judgments. The
+question concerns qualifying physical parts themselves, not whether every
+admitted information case is itself a physical part. This is an auxiliary
+diagnosis, not another main prompt line, Bootstrap revision or certified label.
+
+### Bare implication diagnostic v1: frozen design
+
+`Compare-implication-diagnostic-v1` asks whether qualifying physical parts under
+each unchanged definition necessarily provide the exact stated handhold
+function. It uses the same single-meaning and paired inputs as admission v2,
+preserving field order, producer receipts and source evidence outside model input.
+It contains no loop facts, relation judgments or information-scope expansion.
+Legacy `Compare-condition-diagnostic-v1` through v8 remain untouched: those
+were full local/canonical comparison workflows, not this single-condition test.
+
+Six prepared native experiments repeat the three presentations twice, twelve
+requests. The short prompt uses no padding, caching or external concurrency flag.
+Audit exactly one node record per supplied definition; the schema alone cannot
+enforce per-input node coverage. Singleton/paired subject-presence and namespace
+differences remain confounds. Different counterexamples across supported readings
+are explicitly allowed for a stable not-necessary outcome; main V217's wording
+is less explicit about that permission. Do not equate the auxiliary instructions
+or a not-necessary answer with a certified full-information-scope counterexample.
+A necessary answer must hold under all supported readings. This diagnostic can
+localize the premise problem but does not certify an original relationship.
+
+### Bare implication result: stable assertions do not transfer to candidate admission
+
+All twelve requests complete valid with the exact required node coverage and
+order, producing twenty assessments. Metal and Steel/brass each receive ten
+necessary judgments, including both standalone draws and both paired orders.
+Metal's condition is quoted directly from its own definition. Steel/brass
+justifications assert that serving as grips for holding, lifting or manipulating
+necessarily provides the stated handhold. They do not independently certify
+that lexical bridge or close the machine-handle boundary.
+
+Read this alongside, not in place of, admission v2: nine uncertain and one
+admitted Steel/brass machine case. Main V220/V221 continues to alternate the
+universal bridge with a supposedly admitted no-handhold robotic case. The
+demonstrated dependency is task framing. Removing concrete cases, information
+connections and relation judgment changes the result; it does not isolate the
+counterexample branch as the sole cause or prove the positive label right.
+The same frozen meanings remain unchanged and original semantic gold open.
+
+Native usage reports twelve fresh attempts, twelve valid responses, no reuse,
+warmups/retries/failures/missing usage, and $0.019874 API-equivalent cost. No
+main Compare version is adopted. Source prompts, specs and maintained findings
+are landed; saved inputs/outputs/receipts remain ignored native artifacts.
+
+The useful next diagnostic is independent validation of generated counterexample
+admission and exclusion in fresh context, preserving each node's subject and
+meaning and keeping the old verdict outside input. V220's joint evidence stayed
+inside the original relation-generation response and merely repeated its chosen
+reading. A rejected or unresolved witness cannot itself prove full coverage.
+Check native preparation support before proceeding; do not hand-assemble the
+saved witness inputs or add a universal production verifier without separately
+considering its scale and authorized implementation scope.

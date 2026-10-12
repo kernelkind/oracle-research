@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "b-first": [
+      "../../target/compare-v209-input-order-diagnostic-v1/draw-1",
+      "../../target/compare-v209-input-order-diagnostic-v1/draw-2",
+      "../../target/compare-v209-input-order-diagnostic-v1/draw-3"
+    ]
+  }
+}

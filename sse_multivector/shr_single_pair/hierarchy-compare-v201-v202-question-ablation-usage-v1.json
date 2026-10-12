@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v202-question-procedure": [
+      "../../target/compare-v202-question-ablation-v1/scope",
+      "../../target/compare-v202-question-ablation-v1/aspect",
+      "../../target/compare-v202-question-ablation-v1/handhold",
+      "../../target/compare-v202-question-ablation-v1/preservation"
+    ],
+    "v201-fresh-reference": [
+      "../../target/compare-v201-question-ablation-repeat-v1/aspect",
+      "../../target/compare-v201-question-ablation-repeat-v1/preservation"
+    ]
+  }
+}

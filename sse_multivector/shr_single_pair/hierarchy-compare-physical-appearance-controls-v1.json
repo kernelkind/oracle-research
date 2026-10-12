@@ -1,0 +1,167 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "paper-pump-physical-appearance-paper-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Paper\",\"meaning\":\"Paper is material in the form of thin sheets made from cellulose fibres.\"},\"B\":{\"subject\":\"Pump Q's physical exterior appearance\",\"meaning\":\"Pump Q is designed and actually used to supply water during processing cellulose fibres into thin sheets of paper. The topic is solely the physical colour-and-shape arrangement visible on Pump Q's exterior surface, as that surface's physical appearance. This appearance is unrelated to that cellulose-fibre processing or the production of paper. That exterior surface is a covering made of paper in the form of thin sheets made from cellulose fibres.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "panel": "physical-appearance",
+        "family": "paper",
+        "pair_id": "paper-pump-physical-appearance-paper",
+        "orientation": "forward",
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "paper-pump-physical-appearance-paper",
+        "application_allowed": false,
+        "origin": "Independently specified synthetic physical-appearance diagnostic. No real post, AS output, Bootstrap output or producer receipt is asserted. These inputs never become prompt examples or hierarchy placements.",
+        "surface_material_configuration": "paper",
+        "qualification_clause": "Pump Q is designed and actually used to supply water during processing cellulose fibres into thin sheets of paper.",
+        "appearance_scope_clause": "The topic is solely the physical colour-and-shape arrangement visible on Pump Q's exterior surface, as that surface's physical appearance. This appearance is unrelated to that cellulose-fibre processing or the production of paper.",
+        "control_design": "Each variant preserves the same pump role and sole physical surface-appearance scope. Only the surface-material sentence changes or is omitted. These are separate controlled variants, not jointly asserted facts about a historical Pump Q. The topic is the surface's physical appearance, rather than abstract artistic content, copyright or a design process. This panel disambiguates the separate original decorative-pattern probe without modifying it.",
+        "review": {
+          "expected_relation": "A_contains_B",
+          "expectation_authority": "provisional-agent-assessment",
+          "user_gold": false,
+          "qualification": "The child explicitly makes the described physical appearance a property of qualifying cellulose-fibre paper. Its restricted whole topic preserves that material-property connection even though the appearance has no production function. These labels are provisional agent assessments, not human gold. Assess complete supplied information scope and every applicable parent information connection. A distinct paper-property topic with no Pump Q connection supplies the opposite-direction counterexample without assigning a property to the particular pump. Physical nonidentity alone is insufficient for exclusion."
+        }
+      }
+    },
+    {
+      "id": "paper-pump-physical-appearance-paper-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Pump Q's physical exterior appearance\",\"meaning\":\"Pump Q is designed and actually used to supply water during processing cellulose fibres into thin sheets of paper. The topic is solely the physical colour-and-shape arrangement visible on Pump Q's exterior surface, as that surface's physical appearance. This appearance is unrelated to that cellulose-fibre processing or the production of paper. That exterior surface is a covering made of paper in the form of thin sheets made from cellulose fibres.\"},\"B\":{\"subject\":\"Paper\",\"meaning\":\"Paper is material in the form of thin sheets made from cellulose fibres.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "panel": "physical-appearance",
+        "family": "paper",
+        "pair_id": "paper-pump-physical-appearance-paper",
+        "orientation": "reverse",
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "paper-pump-physical-appearance-paper",
+        "application_allowed": false,
+        "origin": "Independently specified synthetic physical-appearance diagnostic. No real post, AS output, Bootstrap output or producer receipt is asserted. These inputs never become prompt examples or hierarchy placements.",
+        "surface_material_configuration": "paper",
+        "qualification_clause": "Pump Q is designed and actually used to supply water during processing cellulose fibres into thin sheets of paper.",
+        "appearance_scope_clause": "The topic is solely the physical colour-and-shape arrangement visible on Pump Q's exterior surface, as that surface's physical appearance. This appearance is unrelated to that cellulose-fibre processing or the production of paper.",
+        "control_design": "Each variant preserves the same pump role and sole physical surface-appearance scope. Only the surface-material sentence changes or is omitted. These are separate controlled variants, not jointly asserted facts about a historical Pump Q. The topic is the surface's physical appearance, rather than abstract artistic content, copyright or a design process. This panel disambiguates the separate original decorative-pattern probe without modifying it.",
+        "review": {
+          "expected_relation": "B_contains_A",
+          "expectation_authority": "provisional-agent-assessment",
+          "user_gold": false,
+          "qualification": "The child explicitly makes the described physical appearance a property of qualifying cellulose-fibre paper. Its restricted whole topic preserves that material-property connection even though the appearance has no production function. These labels are provisional agent assessments, not human gold. Assess complete supplied information scope and every applicable parent information connection. A distinct paper-property topic with no Pump Q connection supplies the opposite-direction counterexample without assigning a property to the particular pump. Physical nonidentity alone is insufficient for exclusion."
+        }
+      }
+    },
+    {
+      "id": "paper-pump-physical-appearance-steel-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Paper\",\"meaning\":\"Paper is material in the form of thin sheets made from cellulose fibres.\"},\"B\":{\"subject\":\"Pump Q's physical exterior appearance\",\"meaning\":\"Pump Q is designed and actually used to supply water during processing cellulose fibres into thin sheets of paper. The topic is solely the physical colour-and-shape arrangement visible on Pump Q's exterior surface, as that surface's physical appearance. This appearance is unrelated to that cellulose-fibre processing or the production of paper. That exterior surface is uncoated steel, with the visible colour-and-shape arrangement formed directly in the steel.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "panel": "physical-appearance",
+        "family": "paper",
+        "pair_id": "paper-pump-physical-appearance-steel",
+        "orientation": "forward",
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "paper-pump-physical-appearance-steel",
+        "application_allowed": false,
+        "origin": "Independently specified synthetic physical-appearance diagnostic. No real post, AS output, Bootstrap output or producer receipt is asserted. These inputs never become prompt examples or hierarchy placements.",
+        "surface_material_configuration": "steel",
+        "qualification_clause": "Pump Q is designed and actually used to supply water during processing cellulose fibres into thin sheets of paper.",
+        "appearance_scope_clause": "The topic is solely the physical colour-and-shape arrangement visible on Pump Q's exterior surface, as that surface's physical appearance. This appearance is unrelated to that cellulose-fibre processing or the production of paper.",
+        "control_design": "Each variant preserves the same pump role and sole physical surface-appearance scope. Only the surface-material sentence changes or is omitted. These are separate controlled variants, not jointly asserted facts about a historical Pump Q. The topic is the surface's physical appearance, rather than abstract artistic content, copyright or a design process. This panel disambiguates the separate original decorative-pattern probe without modifying it.",
+        "review": {
+          "expected_relation": "neither",
+          "expectation_authority": "provisional-agent-assessment",
+          "user_gold": false,
+          "qualification": "The child expressly concerns only a steel surface's physical appearance, with no qualifying paper surface or production connection. A pump's production role alone does not establish coverage of this independently restricted physical-property topic. These labels are provisional agent assessments, not human gold. Assess complete supplied information scope and every applicable parent information connection. A distinct paper-property topic with no Pump Q connection supplies the opposite-direction counterexample without assigning a property to the particular pump. Physical nonidentity alone is insufficient for exclusion."
+        }
+      }
+    },
+    {
+      "id": "paper-pump-physical-appearance-steel-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Pump Q's physical exterior appearance\",\"meaning\":\"Pump Q is designed and actually used to supply water during processing cellulose fibres into thin sheets of paper. The topic is solely the physical colour-and-shape arrangement visible on Pump Q's exterior surface, as that surface's physical appearance. This appearance is unrelated to that cellulose-fibre processing or the production of paper. That exterior surface is uncoated steel, with the visible colour-and-shape arrangement formed directly in the steel.\"},\"B\":{\"subject\":\"Paper\",\"meaning\":\"Paper is material in the form of thin sheets made from cellulose fibres.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "panel": "physical-appearance",
+        "family": "paper",
+        "pair_id": "paper-pump-physical-appearance-steel",
+        "orientation": "reverse",
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "paper-pump-physical-appearance-steel",
+        "application_allowed": false,
+        "origin": "Independently specified synthetic physical-appearance diagnostic. No real post, AS output, Bootstrap output or producer receipt is asserted. These inputs never become prompt examples or hierarchy placements.",
+        "surface_material_configuration": "steel",
+        "qualification_clause": "Pump Q is designed and actually used to supply water during processing cellulose fibres into thin sheets of paper.",
+        "appearance_scope_clause": "The topic is solely the physical colour-and-shape arrangement visible on Pump Q's exterior surface, as that surface's physical appearance. This appearance is unrelated to that cellulose-fibre processing or the production of paper.",
+        "control_design": "Each variant preserves the same pump role and sole physical surface-appearance scope. Only the surface-material sentence changes or is omitted. These are separate controlled variants, not jointly asserted facts about a historical Pump Q. The topic is the surface's physical appearance, rather than abstract artistic content, copyright or a design process. This panel disambiguates the separate original decorative-pattern probe without modifying it.",
+        "review": {
+          "expected_relation": "neither",
+          "expectation_authority": "provisional-agent-assessment",
+          "user_gold": false,
+          "qualification": "The child expressly concerns only a steel surface's physical appearance, with no qualifying paper surface or production connection. A pump's production role alone does not establish coverage of this independently restricted physical-property topic. These labels are provisional agent assessments, not human gold. Assess complete supplied information scope and every applicable parent information connection. A distinct paper-property topic with no Pump Q connection supplies the opposite-direction counterexample without assigning a property to the particular pump. Physical nonidentity alone is insufficient for exclusion."
+        }
+      }
+    },
+    {
+      "id": "paper-pump-physical-appearance-unspecified-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Paper\",\"meaning\":\"Paper is material in the form of thin sheets made from cellulose fibres.\"},\"B\":{\"subject\":\"Pump Q's physical exterior appearance\",\"meaning\":\"Pump Q is designed and actually used to supply water during processing cellulose fibres into thin sheets of paper. The topic is solely the physical colour-and-shape arrangement visible on Pump Q's exterior surface, as that surface's physical appearance. This appearance is unrelated to that cellulose-fibre processing or the production of paper.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "panel": "physical-appearance",
+        "family": "paper",
+        "pair_id": "paper-pump-physical-appearance-unspecified",
+        "orientation": "forward",
+        "comparison_role": "isolated-forward",
+        "reversal_pair": "paper-pump-physical-appearance-unspecified",
+        "application_allowed": false,
+        "origin": "Independently specified synthetic physical-appearance diagnostic. No real post, AS output, Bootstrap output or producer receipt is asserted. These inputs never become prompt examples or hierarchy placements.",
+        "surface_material_configuration": "unspecified",
+        "qualification_clause": "Pump Q is designed and actually used to supply water during processing cellulose fibres into thin sheets of paper.",
+        "appearance_scope_clause": "The topic is solely the physical colour-and-shape arrangement visible on Pump Q's exterior surface, as that surface's physical appearance. This appearance is unrelated to that cellulose-fibre processing or the production of paper.",
+        "control_design": "Each variant preserves the same pump role and sole physical surface-appearance scope. Only the surface-material sentence changes or is omitted. These are separate controlled variants, not jointly asserted facts about a historical Pump Q. The topic is the surface's physical appearance, rather than abstract artistic content, copyright or a design process. This panel disambiguates the separate original decorative-pattern probe without modifying it.",
+        "review": {
+          "expected_relation": "uncertain",
+          "expectation_authority": "provisional-agent-assessment",
+          "user_gold": false,
+          "qualification": "The particular surface's material is not established in model input. A paper-property connection and its absence cannot be selected by assigning that particular surface a material. This qualification appears only outside model input; the meaning contains no instruction or explicit cue to abstain. These labels are provisional agent assessments, not human gold. Assess complete supplied information scope and every applicable parent information connection. A distinct paper-property topic with no Pump Q connection supplies the opposite-direction counterexample without assigning a property to the particular pump. Physical nonidentity alone is insufficient for exclusion."
+        }
+      }
+    },
+    {
+      "id": "paper-pump-physical-appearance-unspecified-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"A\":{\"subject\":\"Pump Q's physical exterior appearance\",\"meaning\":\"Pump Q is designed and actually used to supply water during processing cellulose fibres into thin sheets of paper. The topic is solely the physical colour-and-shape arrangement visible on Pump Q's exterior surface, as that surface's physical appearance. This appearance is unrelated to that cellulose-fibre processing or the production of paper.\"},\"B\":{\"subject\":\"Paper\",\"meaning\":\"Paper is material in the form of thin sheets made from cellulose fibres.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "panel": "physical-appearance",
+        "family": "paper",
+        "pair_id": "paper-pump-physical-appearance-unspecified",
+        "orientation": "reverse",
+        "comparison_role": "isolated-reverse",
+        "reversal_pair": "paper-pump-physical-appearance-unspecified",
+        "application_allowed": false,
+        "origin": "Independently specified synthetic physical-appearance diagnostic. No real post, AS output, Bootstrap output or producer receipt is asserted. These inputs never become prompt examples or hierarchy placements.",
+        "surface_material_configuration": "unspecified",
+        "qualification_clause": "Pump Q is designed and actually used to supply water during processing cellulose fibres into thin sheets of paper.",
+        "appearance_scope_clause": "The topic is solely the physical colour-and-shape arrangement visible on Pump Q's exterior surface, as that surface's physical appearance. This appearance is unrelated to that cellulose-fibre processing or the production of paper.",
+        "control_design": "Each variant preserves the same pump role and sole physical surface-appearance scope. Only the surface-material sentence changes or is omitted. These are separate controlled variants, not jointly asserted facts about a historical Pump Q. The topic is the surface's physical appearance, rather than abstract artistic content, copyright or a design process. This panel disambiguates the separate original decorative-pattern probe without modifying it.",
+        "review": {
+          "expected_relation": "uncertain",
+          "expectation_authority": "provisional-agent-assessment",
+          "user_gold": false,
+          "qualification": "The particular surface's material is not established in model input. A paper-property connection and its absence cannot be selected by assigning that particular surface a material. This qualification appears only outside model input; the meaning contains no instruction or explicit cue to abstain. These labels are provisional agent assessments, not human gold. Assess complete supplied information scope and every applicable parent information connection. A distinct paper-property topic with no Pump Q connection supplies the opposite-direction counterexample without assigning a property to the particular pump. Physical nonidentity alone is insufficient for exclusion."
+        }
+      }
+    }
+  ]
+}
