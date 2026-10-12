@@ -1685,7 +1685,10 @@ an accepted synthetic addition can trigger another sibling check. There is no
 additional requirement to find every possible regrouping or prove globally
 minimal browsing depth. Offline tests exercise V2 through the native workflow.
 The user-authorized [HR08–HR10 provider trials](../docs/recommendation-engine/hierarchy-runs.md)
-have saved their initial L1 meanings. A tested native eligibility fix runs the
+have saved their initial L1 meanings. HR08 has exhausted eligible selection at
+2,603/3,000 attempts, retaining a partial 23/24-note hierarchy and a review UI;
+HR09 completed with 24/24 notes at 2,646/3,000 attempts; HR10 continues.
+A tested native eligibility fix runs the
 short PPv35 prefix uncached while retaining caching for eligible prompts.
 Reviewed continuation can bind stopped construction to a separate isolated
 checkout and archive a zero-call failed preparation without changing saved
