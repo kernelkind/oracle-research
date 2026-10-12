@@ -8766,3 +8766,34 @@ schema and all input bytes. Repeat the same twelve requests. This separates the
 targeted lexical cue from the admission-task format before proposing another
 main Compare instruction. V179 remains the approved reference; no main candidate
 is adopted and no Bootstrap meaning or hierarchy is changed.
+
+### Fixed-candidate v2 result: the targeted cue is not the whole child-admission issue
+
+V2 deletes exactly one grip/handhold-specific instruction. All twelve fresh
+requests complete valid with exact required assessment coverage, uniqueness and
+order. All twenty human-loop assessments remain admitted. All ten Metal machine
+assessments now exclude the loop as incapable of providing a human handhold.
+V1 had four uncertain Metal assessments. This is bounded cue sensitivity, not
+a population estimate or certification of an original pair label.
+
+Nine Steel/brass machine assessments remain uncertain on the named handle-kind
+boundary. The second standalone draw instead admits the loop because the
+definition does not expressly require human grasp; its first draw is uncertain.
+The targeted sentence therefore does not wholly explain child-admission
+uncertainty, and independent presentation does not guarantee stable membership.
+Two draws cannot establish a reliable classification rate. The diagnostic task
+still differs from main Compare's unrestricted search and universal proof.
+
+Independent read-only reviews distinguish the demonstrated reversal conflict
+from unresolved semantic gold. V217's microscopic robotic gripping-tab proof
+establishes material and lifting-grip function, but does not establish that it
+qualifies as a handle under the child meaning. The positive grip-to-handhold
+universal implication is likewise not certified by these particular admissions.
+Do not broaden either definition, attach a negative expectation, or repair
+Compare by feeding these generated admission answers into frozen meanings.
+
+Native `compare-admission-diagnostic-v1-v2-usage-v1.json` includes both panels:
+twenty-four fresh attempts, twenty-four valid responses, zero reuse, warmups,
+retries, failures or missing usage, and $0.094172 API-equivalent catalog cost.
+This is subscription experiment accounting, not a new cash charge. Every
+receipt and old output remains preserved. V179 stays the approved reference.

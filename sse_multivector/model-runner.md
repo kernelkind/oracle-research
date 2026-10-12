@@ -7950,3 +7950,11 @@ also rules out presenting the previously failed missing-condition question rule
 as a novel mechanism. Fixed-candidate admission diagnosis uses existing native
 meaning-diagnostic and generic prepared-input adapters, with original meanings
 and producer receipts preserved; it does not replace the A/B Compare line.
+
+Auxiliary admission v1/v2 completes twenty-four fresh native requests without
+an attempt allowance. Removing the targeted lexical cue changes Metal machine
+qualification, while Steel/brass machine admission remains mostly unresolved
+and differs between two standalone draws. All required assessment records are
+audited. This localizes proof qualifications without certifying the original
+relation or adopting a main Compare candidate; native usage and frozen meanings
+remain preserved. No Bootstrap or hierarchy work is performed.
