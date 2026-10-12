@@ -10,6 +10,9 @@ but omit Food dishes C020. No correction of the target failure is observed.
 V14 remains experimental and unapplied. See
 [the coverage draft](#consolidation-v14-complete-sibling-coverage-draft) and
 [completed screen](#completed-v14-coverage-screen).
+The subsequent user-authorized [regression registration](#hr04-equivalent-parent-regression-control)
+adds the exact held HR04 Foodstuffs input alongside the saved Meals draws,
+without further inference.
 
 The preceding tested candidate is
 [Hierarchy-consolidation-v13](shr_single_pair/Hierarchy-consolidation-v13.md).
@@ -4280,3 +4283,60 @@ every covered sibling using unrelated synthetic topics, retaining v14's
 instructions for comparison. Repeating the same completeness instruction again
 has no demonstrated benefit. That revision and any new inference are proposed,
 not begun. The task remains isolated as requested.
+
+## HR04 equivalent-parent regression control
+
+The user requests a read-only audit of all three HR04 consolidations, then
+replies "proceed" to adding the held Foodstuffs input as an equivalence-rejection
+control alongside the Meals omission case. This authorizes registration and
+preparation, not a prompt edit or new model calls. The audit's semantic judgments
+remain agent assessments rather than new human-gold labels.
+
+The audit verifies all three producer inputs/outputs and sixteen saved Compare
+answers against native receipts. Food and drink and Heating appliances cover
+their nominated siblings without a missing offered sibling established; both
+placed groups strictly narrow observed note sets. Foodstuffs is held and absent
+from the final graph. Its saved comparison against Food and drink returns
+equivalent: the food-substance and ingredient scope does not establish a
+narrower category. That judgment also implies coverage of all six existing
+children, including omitted Dinner and Meal planning. The proposal cannot add
+a proper narrower grouping under that interpretation.
+
+The exact source is HR04
+`target/hierarchy-hr04-twelve-note-v1/trial/batch-00031/experiment`, case
+`consolidate`, in worktree `oracle-mvp-hierarchy-hr04-twelve-note-v1`. It offers
+Food and drink C007 as parent and Dinner C002, Food C003/C004/C009, Chicken stock
+C006 and Meal planning C010 as siblings. All fixed definitions and order are
+preserved; source posts, old judgments and held outcomes are outside model input.
+The rejected historical proposal's exact meaning is:
+
+> Foodstuffs are substances intended to be eaten or drunk, or used as ingredients
+> to prepare or season foods and beverages, including but not limited to prepared
+> dishes and cooking liquids.
+
+Native shared-runner `prepare --from` creates
+`target/canonical-shaping-selection-v1/consolidation-v14-hr04-equivalence-control-v1`,
+using unchanged v14 and the current shared worker. Original `INPUT_JSON` bytes
+and the saved baseline output match exactly. The inherited HR04 SSE prefix
+warming configuration is preserved and revalidated for v14 at 1,070 estimated
+tokens; no warmup is executed. Future authorized runs must account for warmup
+attempts and preserve matched settings when comparing versions. The new case
+remains **unrun**, with **zero attempts**.
+
+The maintained [native regression selection](shr_single_pair/hierarchy-consolidation-omission-equivalence-regression-v1.json)
+contains both saved v14 Meals draws and the unrun HR04 control. Native
+`summarize-experiments` validates that selection and reports two existing valid
+outputs plus one unrun case; its saved costs are earlier calls, not new spending.
+
+Assessment contract: reject a proposal equivalent to the supplied parent, and
+require complete coverage lists for a genuinely narrower proposed scope. Do not
+force null: a different coherent useful grouping wholly inside the parent can
+pass. Null means no proposal and does not establish that no useful grouping
+exists. The historical equivalence label is evidence for this exact proposal,
+not an instruction to reproduce its wording or return a predetermined answer.
+
+All 37 relevant production-path checks pass after main synchronization. No
+prompt version, source hierarchy, native receipt, saved review, UI or exhausted
+counter changes. Registration remains isolated as requested. The next proposed
+example-only iteration can use both this equivalence control and the omission
+case; no revision or new inference is begun here.
