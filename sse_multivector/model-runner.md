@@ -7936,3 +7936,10 @@ reviews preserve open proof boundaries; consistency is not certification. V216
 is unadopted. V217 restores one exact V209 property-qualification sentence in the
 shorter body, separating that definite failure from the brand knowledge-policy
 qualification. V215 remains an unrun preflight draft.
+
+V217's property gate repairs both physical-material-unknown directions in its
+first draw and fresh repeat; matched V216 repeats retain unsupported exclusions.
+The combined sentence restoration has a bounded measured effect. Metal reversal
+conflicts reappear under A-first presentation in both V217 draws, so this is not
+a broad stability repair or adopted candidate. Open producer scopes and provisional
+brand expectations remain qualified; native usage includes failed attempts.

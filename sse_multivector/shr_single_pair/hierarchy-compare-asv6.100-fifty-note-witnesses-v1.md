@@ -8624,3 +8624,36 @@ sentence restoration; it does not distinguish its component reference from its
 other-route warning or repair the separately qualified brand proof by decree.
 Native revision remains bound to approved V179. Screen the physical contrast,
 original Metal orientations/orders and wider producer core before qualification.
+
+### V217 result and fresh matched restoration repeat
+
+The fourteen-case first screen completes valid. All six physical controls retain
+the appropriate known-material or unknown-material outcomes, repairing both
+V216 unknown-material exclusions. The A-first Metal pair again conflicts
+(forward A_contains_B, reverse neither), while B-first is reciprocally positive.
+MrBeast preservation remains positive; brand status is uncertain forward and
+positive reverse, retaining an unresolved qualification/proof mismatch.
+
+An additional fresh matched twenty-case repeat holds each arm's exact prompt,
+subjects, meanings, worker and order fixed. Each arm has the six physical cases
+plus both Metal orientations in A-first and B-first presentation. V216 again
+preserves known materials but wrongly excludes one unknown-material direction;
+its other direction is uncertain. V217 preserves all six physical outcomes,
+with both unknown-material directions uncertain. Across the two draws, V216
+therefore has three unsupported exclusions among four unknown-material answers;
+V217 has none. This is bounded evidence for the restored combined sentence, not
+a population rate or separation of its component and other-route clauses.
+
+Fresh V216 Metal answers are reciprocally positive in both orders. Fresh V217
+again conflicts in A-first and is positive in B-first. Thus the property repair
+does not establish general interpretation stability, and the shorter body's
+earlier producer consistency cannot be transferred uncritically to V217.
+No candidate is adopted. The original grip/handhold membership qualification and
+brand knowledge-policy qualification remain distinct from the definite physical
+route failure; source meanings and provisional expectations are not rewritten.
+
+Native `hierarchy-compare-v217-property-restoration-usage-v1.json` accounts for
+all thirty-four comparisons in these ten experiments: forty-five fresh attempts
+including ten warmups and one recovered failure, zero reuse and one attempt
+without usage. $0.2288352 is a known API-equivalent subtotal, not complete cost.
+Reports retain the first screen and matched reference/candidate repeats separately.
