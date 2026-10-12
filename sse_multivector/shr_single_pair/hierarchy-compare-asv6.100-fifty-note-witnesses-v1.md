@@ -8389,3 +8389,49 @@ settled contradictions. A promising result needs fresh confirmation and the full
 producer/resolved panels before adoption. Independent review verifies both
 unchanged examples and exact native V179 revision provenance; no calls occur
 during drafting. The old qualified meanings and receipts remain untouched.
+
+### V212 result: admission instruction does not repair scope consistency
+
+All forty-four comparisons complete valid. Physical, goal, explicit-human and
+commerce controls retain resolved and targeted-unknown outcomes, including
+explicit mixed alternatives. The eighteen-case producer subset still has three
+settled reversal conflicts and three overlapping equivalence/transitivity
+witnesses. All core answers are settled, so apparent absence of unresolved pairs
+is not a success: the non-null answers conflict. The same sourdough definitions
+are called equivalent yet receive incompatible Food-preparation outcomes.
+V212 fails the screen and does not enter wider adoption qualification.
+
+The next diagnostic stops adding scope reminders. Prior V182/V195 studies changed
+requested/reporting direction order but did not mirror example meanings; neither
+repaired its target. V180 removed both examples and regressed recipient and
+intended-activity controls, so another zero-shot removal is lower priority.
+Persistent Metal forward-positive/reverse-neither answers motivate an independent
+role-mirror test: does the positive Hair example's A-parent assignment influence
+unresolved judgments? This is a hypothesis, not an established cause. Keep the
+body and second example fixed, swap only first-example A/B assignments, and keep
+positive-first semantic reporting. Its first direction ID necessarily changes;
+observe actual output order and do not attribute an effect solely to priming.
+Use exact fresh matched V209 draws, both orientations and sound-proof review;
+moving the error to the opposite orientation is sensitivity, not repair.
+
+### V213: mirrored positive-example role diagnostic
+
+V213 reproduces V209's body and Watches example byte for byte. Only the complete
+Hair example's A/B assignments are mirrored: A is services, B is cutting,
+coverage is B_contains_A, and the horse counterexample is A_contains_B. The
+semantic positive remains first in questions and answers. Input keys retain A
+then B, so their semantic node order changes along with labels. Both examples
+validate through production and the native revision remains bound to approved
+V179. No new validation-derived example or rule is added.
+
+The focused comparison uses three exact fresh V209 draws and three exact fresh
+V213 draws of the original Metal/Steel-or-Brass pair in both orientations. This
+persistent reversal is a scope probe, not a preferred positive/negative label.
+Check actual diagnostic order and supported proofs as well as reversals. A
+change to the opposite orientation establishes sensitivity, not correctness.
+The entire example assignment and first direction ID are coupled; no isolated
+word-level or internal priming mechanism is claimed. V213 also receives unchanged
+physical, explicit-human and intention/capability controls so any role-label
+sensitivity is distinguished from broad positive or uncertainty regression.
+A positive requires wider source/control checks before adoption. V209's recent
+full core and gate remain preserved, without treating saved answers as fresh.

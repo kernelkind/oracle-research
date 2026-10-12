@@ -7903,3 +7903,9 @@ remain qualified on admission and readiness-goal grounds, with native agent
 uncertain reviews. Neither is adopted; fewer settled contradictions through
 unresolved checks do not establish semantic progress. Native source and usage
 records retain the exact fresh V209 reference and all original meanings.
+
+V212's independent-admission/interpretation clarification retains the resolved
+controls but fails the same producer consistency gate. It is not adopted. The
+next diagnostic mirrors the positive example's A/B assignments rather than
+appending another scope reminder; earlier reporting-order and zero-shot studies
+remain negative precedents and are not relabeled as this new intervention.

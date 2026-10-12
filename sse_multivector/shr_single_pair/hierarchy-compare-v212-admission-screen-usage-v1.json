@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v212-core": ["../../target/compare-v212-admission-screen-v1/core"],
+    "v212-physical": ["../../target/compare-v212-admission-screen-v1/physical"],
+    "v212-goal": ["../../target/compare-v212-admission-screen-v1/goal"],
+    "v212-handhold": ["../../target/compare-v212-admission-screen-v1/handhold"],
+    "v212-commerce": ["../../target/compare-v212-admission-screen-v1/commerce"]
+  }
+}
