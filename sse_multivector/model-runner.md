@@ -1795,7 +1795,7 @@ and further votes do not supply semantic ground truth. Supplying the trusted
 example to both prompts is subsequently authorized and tested below.
 
 The [trusted payment example trial](distillation-review-v1/README.md#trusted-payment-example-prompt-trial-october-11)
-adds identical source-grounded precedent to experimental **DCSv2/DSLv11**
+added identical source-grounded precedent to experimental **DCSv2/DSLv11**
 through pinned native revisions. Six fresh complete outputs pass full-output
 agent audit; exact inputs, evidence, settings, schemas and cache boundaries
 retain parity. The DCS prefix grows to 1,285 tokens with a new native key; DSL
@@ -1806,6 +1806,30 @@ cost and aggregate cache savings unknown; known subtotal is $0.0866192.
 DCS's one-case warming adds $0.0029972 in net estimated cost. Production
 defaults and broader qualification remain unchanged. The experiment worktree
 is retained for source bindings; NGP/Investments interpretation remains open.
+Those example-bearing versions are subsequently **withdrawn**: the unchanged
+baseline already passed the same six exposed cases, so no benefit was shown.
+Their withdrawn current prompt/revision files are removed; frozen experimental
+sources and receipts remain intact.
+
+The [fresh development trial](distillation-review-v1/README.md#fresh-development-after-example-withdrawal-october-11)
+uses unchanged DCSv1/DSLv10 as experimental baselines and selects validation
+posts outside the original sixty's 54 note IDs and maintained development
+definitions. The small DSL trial uses existing source-bound `distillation_verdict`
+schema-2 actual-edge preparation; it tests the common AS relationship rule,
+without claiming DCS search/coverage-workflow validation or inventing missing
+matching premises. Independent pre-call labels and unresolved interpretations
+stay separate. The exposed original sixty remain regression/workload evidence;
+a later unseen-note accuracy assessment requires separately reserved cases.
+The completed source-bound DSLv10 trial contains ten actual pairs on four
+posts outside both exclusion sets: six frozen positive expectations, two
+negative expectations and two uncertainties. All eight resolved decisions and
+complete explanations pass independent audit; uncertainties remain unscored.
+Native accounting includes only the final experiment: ten fresh calls,
+106.45 seconds, no reuse/retry/failure/warming/cache hit, and complete
+API-equivalent estimate $0.164466. Its natural prefix has 76 tokens, below the
+warming threshold. Prompts, schemas and production code remain unchanged;
+the frozen task worktree is retained. DCS null-search qualification still
+requires its genuine matching/self-guard prerequisites and separate testing.
 
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,
