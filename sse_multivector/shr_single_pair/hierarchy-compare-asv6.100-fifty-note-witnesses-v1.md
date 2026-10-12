@@ -7266,3 +7266,39 @@ attempt is available. Prompt caching remains enabled and request construction
 is unchanged; no cache setting or worker is substituted to fit the budget.
 Two outputs cannot establish full gate passage, fresh confirmation, broader
 qualification or adoption. The shared counter is never reset or increased.
+
+### Final V191 diagnostic and allowance stop
+
+Both fresh Equipment orientations return neither. The forward now explicitly
+asks whether the lunch-container meaning necessarily establishes the non-food
+requirement; its answer preserves the lunch-container role while admitting
+edible material. Reverse tests that same boundary. The native checker reports
+one settled complete pair with no reversal conflict, while the other five
+HR05 pairs and all six synthetic controls remain unrun. This is a specific
+question/proof improvement in one draw, not causal proof, resolved Equipment
+gold, fresh confirmation or full prompt qualification. The non-food modifier's
+reach across tools/apparatus/articles remains a linguistic qualification.
+
+Final native exports are
+`target/compare-v191-intention-capability-v1/{hr05,controls}-native.json`;
+the version aggregate records two valid attempts, no warmups/reuse/retries/
+failures/missing usage, zero cache hits and $0.0202260 API-equivalent cost.
+Caching stays enabled; no attempt allowance remains for warming or retries.
+All sixteen deliberately unrun cases remain visible, rather than being
+backfilled with a previous version's answer.
+
+The [whole-loop native usage source](hierarchy-compare-v187-v191-gate-usage-v1.json)
+produces `target/compare-v191-intention-capability-v1/sprint-usage.json`: eighty-three
+actual attempts, eight warmups, seventy-four valid comparisons, zero exact
+answer reuses, and one recovered retry whose failed attempt lacks usage.
+$0.5447196 is only the known API-equivalent subtotal. Complete cost and aggregate
+completion remain unknown/incomplete; neither missing usage nor unrun cases
+are counted as free success. Shared allowance reads exactly 20,000/20,000.
+No further inference is authorized under that exhausted allowance.
+
+V179 remains the approved development baseline with its known failures. V187–V191
+are preserved experimental candidates; V191's remaining gate, unchanged fresh
+repeat and broader frozen-input qualification are incomplete. No Bootstrap
+meaning, original producer output, hierarchy, UI or owner message is changed.
+The task worktree is retained because native receipts, pinned producer paths
+and frozen experiment source bindings require it.
