@@ -7114,3 +7114,36 @@ meanings/receipts and count all dispatched attempts including warmups and failur
 The [native first-gate usage source](hierarchy-compare-v187-intention-capability-gate-usage-v1.json)
 keeps HR05 and synthetic groups separate. No Bootstrap edit/inference, hierarchy
 construction, UI refresh or outgoing owner message is part of this work.
+
+### V187 first-gate failure and V188 local contrast
+
+V187 completes all eighteen valid responses. All six synthetic labels and both
+MrBeast positives survive. The HR05 intention/suitability and Equipment labels
+are reciprocal in this draw, but Food/Bread has a new reversal conflict:
+the forward treats the child word "food" as necessarily supplying nourishing
+intention, while the reverse admits ceremonial bread explicitly lacking it.
+This is incompatible necessity selection for an unchanged meaning, not proof
+of which complete label is correct. V187 fails and receives no repeat or broad
+qualification. The two camera control witnesses retain a precision qualification
+about actual detection versus mere image capture; no autonomous-classification
+requirement is added. Equipment's grammar and intention-to-design claim remain
+qualified, and the brand proofs still import actual product offerings beyond
+the fixed string. No failed probe is made semantic gold.
+
+Two independent reviews and native receipt/request audit validate the inputs,
+twenty distinct responses including warmups, strict output checks and unchanged
+baseline bindings. Native usage is twenty attempts, zero reuse/retries/failures/
+missing usage, twelve comparison cache hits and $0.1394824 API-equivalent cost.
+The shared counter subsequently reads 19,931/20,000; other agents' admissions
+are included there, not in this gate's twenty calls.
+
+[Experimental V188](Hierarchy-compare-v188.md) preserves V187's coverage paragraph
+and changes only the kind-interpretation sentence for the local contrast. It
+requires interpreting a term within its own meaning, without borrowing the other
+node's definition or treating customary function/capability as a required
+intention. This tests two related explanations for the Bread failure; it does
+not prove either word caused it or force ceremonial-Bread admission. The native
+full revision remains against V179, with the retained V187 change explicitly
+recorded. Schema, A/B input and examples remain unchanged. The same eighteen-case
+gate and passing criteria apply under the remaining shared allowance; no new
+cap or reset is introduced.
