@@ -273,6 +273,17 @@ V118–v120 isolate scope-prohibition wording; they remain experimental.
 Full-collection qualification, empty/null calibration and the unresolved scope
 contract remain open. No adoption, Compare calls or hierarchy build occurred.
 
+The continuing [V122 branch-scope qualification](shr_single_pair/bootstrap-current-as-qualification.md#bootstrap-v122-supported-original-branch-scope)
+implements the user-reviewed pottery Soup mugs interpretation while preserving
+named alternatives, original-post factual unknowns and category abstraction.
+V121 stays unrun after a preflight closed-set correction; V122's 22 focused
+definitions and two-case repeat validate. Full qualification uses all 346 current
+ASv6.100 inputs, with the native history root limited to the completed focused
+experiment to preserve its exact 22 original producers. Scoped history selects
+reuse evidence; it does not change model-facing inputs or fabricate receipts.
+The remaining 324 definitions are new. Full review is pending; no activation,
+Compare inference or hierarchy build is part of this Bootstrap stage.
+
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at
 `~/src/notedeck_worktrees/algos/experiment-runner`. All migrated project worktrees
