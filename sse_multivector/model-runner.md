@@ -199,6 +199,20 @@ are 13.34 seconds low and 14.04 medium, not a causal speedup. Low is not adopted
 the recommendation is to retain medium pending matched qualification. No
 Bootstrap prompt, Compare label, hierarchy or UI changed.
 
+The separate [HR04 C003/C004 Food diagnostic](shr_single_pair/bootstrap-hr04-food-boundaries-v1.md)
+registers two exact original ASv6.100 roots for future Bootstrap tests. Three
+fresh unchanged-v109 medium draws per input produce six valid definitions;
+the historical nourishment-or-component condition does not recur. All nine
+attempts, including three warmups, have complete usage: $0.0477292 native
+API-equivalent cost, zero reuse/failures. Inputs and actual provider requests
+match HR04 exactly. This establishes a bounded producer-variation diagnostic,
+not equivalence, negative gold, or permission to rewrite historical meanings.
+The user's subsequent partial review accepts the old C003 poisoned-drink
+counterexample as exposing an insufficiently bounded explicit meaning. The
+ceremonial-gold witness and whole pair remain unreviewed; no judgment transfers
+to the fresh meanings. Compare should evaluate the supplied boundaries rather
+than add an unstated condition to remove this accepted witness.
+
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at
 `~/src/notedeck_worktrees/algos/experiment-runner`. All migrated project worktrees

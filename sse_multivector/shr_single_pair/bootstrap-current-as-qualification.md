@@ -3578,3 +3578,27 @@ further matched confirmation. Lower reasoning substantially reduces recorded
 reasoning tokens, but this panel does not demonstrate a material latency gain
 or equally explicit category boundaries. No further calls or prompt changes
 are implied by that recommendation.
+
+### HR04 C003/C004 Food boundary diagnostic
+
+The user approved investigating whether these two Food definitions deliberately
+choose different categories. The [retained regression and findings](bootstrap-hr04-food-boundaries-v1.md)
+use their exact ASv6.100 full posts/root trees, unchanged Bootstrap-v109 and
+medium reasoning. Three fresh draws per entry produce six valid definitions
+in nine attempts including automatic warmups, with no reuses or failures.
+All actual provider requests exactly match their original HR04 counterparts.
+
+The historical C003 nourishment-or-component condition recurs in zero of three
+fresh draws. All six meanings admit broad human food covering prepared items
+and ingredients. No definite evidence conflict was established; edibility and
+culinary-role expression still vary. The user subsequently accepted the poison
+witness as exposing a scope-closure gap in the exact old C003 meaning; its
+stated component clause admits the case. Compare should not repair an unstated
+restriction to exclude it. The ceremonial-gold witness and whole old pair's
+relation remain unreviewed, and no judgment transfers to the fresh meanings.
+The [primary record](bootstrap-hr04-food-boundaries-v1.md#historical-distinction)
+preserves the user's verbatim judgment and its limits. Native fresh API-equivalent
+cost is $0.0477292 with complete usage. No Bootstrap edit, Compare test,
+hierarchy change or UI update occurred. The useful next draft would preserve
+chosen-kind conditions consistently through final wording without prescribing
+one Food boundary or assuming matching subjects must merge.
