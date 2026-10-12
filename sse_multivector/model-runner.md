@@ -262,11 +262,16 @@ adoption occurred.
 The authorized [Bootstrap-v117 draft](shr_single_pair/Hierarchy-bootstrap-v117.md)
 clarifies that defining designs/methods remain permitted and removes repeated
 scope reminders. Main scope rules, both scope checks, examples and schema stay
-unchanged. Two written reviews and nine native revision tests pass. Model
-qualification and empty/null regression coverage remain the next proposed work.
-Offline preparation retains both HR04 inputs and medium settings with a
-4,683-token cache-eligible prefix; both cases remain unrun and
-no inference or adoption occurred.
+unchanged. Two written reviews and nine native revision tests pass. Offline
+preparation retains both HR04 inputs and medium settings with a 4,683-token
+cache-eligible prefix; those two draft-preparation cases remain unrun.
+The subsequent [focused qualification](shr_single_pair/bootstrap-v117-focused-qualification-v1.md)
+uses fresh matched v109/v117 requests for 22 selected ASv6.100 entries, automatic
+prefix caching and the persistent attempt counter. Native individual reviews,
+independently frozen branch checks and fresh repeats are separate evidence.
+V118–v120 isolate scope-prohibition wording; they remain experimental.
+Full-collection qualification, empty/null calibration and the unresolved scope
+contract remain open. No adoption, Compare calls or hierarchy build occurred.
 
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at
@@ -7630,3 +7635,25 @@ meaning. That control is retained separately from approval of the parent topic.
 HR05's mixed Bootstrap-v109/Consolidation-v4 endpoints remain honestly labeled
 and separate from the independently generated Bootstrap-only scope screen.
 No Bootstrap prompt, historical endpoint or hierarchy is changed.
+
+The [completed matched HR05 screen](shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.md#completed-hr05-matched-screen)
+has twelve fresh valid responses per prompt, with exact original result pins.
+V179 retains one Equipment/Lunch boxes reversal conflict among six settled
+pairs; V186 has one intention/suitability conflict among five settled pairs and
+returns uncertainty for the sixth brand pair. The latter conflict admits a
+mistaken nourishing intention in one orientation, then treats that same intention
+as proof of objective suitability in the reverse. These are comparison
+inconsistencies without predetermined semantic gold. Bread-purpose inference,
+Equipment qualifier grammar and ordinary restaurant-commerce readings remain
+qualified; consistent labels alone do not clear them. All four user-approved
+MrBeast control responses survive. V186 is not adopted; V179 remains the
+development baseline, preserving its known failures.
+
+Independent audit verifies twenty-four valid case receipts, twenty-six unique
+responses including warmups, identical input/code/schema/provider settings and
+the intended single-rule prompt difference, with no conversation linkage.
+Native usage records 26 attempts, zero answer reuse/retries/failures/missing
+usage, fourteen comparison cache hits and $0.1855808 API-equivalent catalog
+cost. The persistent shared counter reads 19,532/20,000 after the run, including
+other agents' intervening calls; the native aggregate bounds this panel's own
+26 attempts. No Bootstrap, hierarchy or UI work is performed.

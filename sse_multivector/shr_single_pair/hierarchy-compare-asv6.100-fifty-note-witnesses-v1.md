@@ -6959,7 +6959,9 @@ Bootstrap-v109 and Consolidation-v4 provenance. They are not spliced into the
 independently frozen producer screen above. Food/Bread and Equipment/Lunch boxes
 raise universal-proof questions: a food-kind assertion must establish the
 specific nourishment purpose where required; an intended food container must
-establish Equipment's non-food and designed-task conditions. These are review
+establish the conditions of an applicable Equipment alternative. The reach of
+its non-food and designed-task qualifiers remains a grammatical review issue.
+These are review
 questions, not predetermined negative labels. Named-brand unknown properties,
 general restaurant hypotheses and intended versus suitable nourishment supply
 contrasting controls. Historical HR05 labels alone are not semantic gold.
@@ -6979,3 +6981,87 @@ receipt `38f00000af359ee910711db1ec415b9b3ee93c3099152c4b45eb197fe322fc38`
 as a reviewed control; this is not approval of the parent meaning, hierarchy
 placement, or a general resource/person relationship. No historical meaning
 or graph is repaired here.
+
+### Completed HR05 matched screen
+
+The [source](hierarchy-compare-hr05-fixed-scopes-source-v1.json) selects six exact
+original comparisons and their reversals. Every selector pins both the experiment
+envelope and the actual original result record. Native preparation preserves
+forward input bytes and swaps complete A/B nodes for the reverse; no old answer,
+producer diagnostic, source context or expected label enters model input.
+Five pairs retain null expectations. The sixth is the exact reviewed MrBeast
+positive, not approval of its parent definition.
+
+[V179](hierarchy-compare-hr05-v179-fixed-scopes-v1.spec.json) and
+[V186](hierarchy-compare-hr05-v186-fixed-scopes-v1.spec.json) each complete twelve
+fresh valid responses. The native checker covers all cases without skipped
+bindings. V179 has one conflict among six settled reversal pairs, on Equipment/
+Lunch boxes. V186 has one conflict among five settled pairs, on Food intention/
+suitability; the remaining brand pair returns uncertainty in both orientations.
+All four MrBeast responses preserve the user-approved relationship.
+
+Both orientations below are normalized to the original source's A/B assignment;
+these are **observations, not accuracy scores**:
+
+| Original pair | V179 forward / reversed | V186 forward / reversed |
+|---|---|---|
+| Food / Bread | A contains B / A contains B | A contains B / A contains B |
+| Equipment / Lunch boxes | neither / A contains B | neither / neither |
+| Commercial entities / Buster + Punch | A contains B / A contains B | uncertain / uncertain |
+| Chinese takeout restaurants / Commercial entities | neither / neither | B contains A / B contains A |
+| Nourishment-intended Food / Nourishment-suitable Food | neither / neither | neither / B contains A |
+| Material resources / MrBeast | A contains B / A contains B | A contains B / A contains B |
+
+The strongest new fixed-scope witness is V186's intention/suitability pair.
+Its forward response admits a safe edible, nutritionally inert preparation
+mistakenly intended to nourish. The reverse asserts that the identical intended
+scope necessarily establishes suitability as nourishment. These incompatible
+necessity claims establish a Compare consistency failure independently of which
+complete label is approved. The reverse proof does not establish the missing
+implication. Preserve the exact pair as a diagnostic; do not choose a semantic
+target merely to make the reversal agree.
+
+V179's Lunch boxes forward similarly admits an edible container while its
+reverse asserts all qualifying containers are non-food. V186's two negatives
+are consistent, but not a certified correction: the phrase "tools, apparatus,
+and other non-food physical articles designed..." permits competing readings
+of which alternatives bear those restrictions. An edible tool/apparatus must
+also be excluded before the counterexample proves noncontainment. The parent
+grammar and complete semantic label remain qualified.
+
+All four Bread positives infer nourishment intention from the ordinary food
+kind without separately closing purpose versus nutritional capability. The
+restaurant responses likewise choose different ordinary-kind commerce readings;
+charitable provision and the word "customers" need qualification. Matching
+labels do not certify either family's proof. V179's brand positive relies on
+actual commercial offerings not separately stated in the supplied named-brand
+definition; V186 follows the unknown-property reading in this draw. That
+behavioral change certifies neither the brand's semantic label nor a general
+reliability improvement.
+
+Two independent semantic reviews agree on the concrete contradictions and
+preserve these qualifications. The native checker scopes saved endpoints to
+their original comparison receipt and original role; it intentionally does not
+join coincident wording from separate cases into producer-certified chains.
+No cross-source chain result or Bootstrap/hierarchy repair is claimed.
+**V186 remains experimental and is not adopted.** V179 remains the development
+baseline, with its own demonstrated conflicts retained.
+
+Native generation snapshots are
+`target/compare-hr05-fixed-scopes-v1/{v179,v186}-native.json`; corresponding
+experiment directories retain full inputs, diagnostics and receipts. Actual
+request audit validates all twenty-four receipts and twenty-six distinct response
+IDs including warmups. Both arms have identical case inputs, schema, model,
+medium effort, worker and code bindings; each matched prompt differs only by
+V186's one-rule replacement and resulting cache prefix/key. Requests contain
+the fixed developer prefix and variable user input, with `store:false` and no
+recorded conversation linkage. All source and historical receipt pins match.
+
+The [native aggregate source](hierarchy-compare-hr05-fixed-scopes-usage-v1.json)
+produces `target/compare-hr05-fixed-scopes-v1/usage.json`: **26 actual attempts**,
+including two warmups, zero reuse/retries/failures/missing usage, and
+**$0.1855808 API-equivalent catalog cost**, not a subscription charge. Fourteen
+of twenty-four comparison responses report cache hits. The shared counter reads
+19,532/20,000 after this run; intervening other-agent admissions are not counted
+as this panel's calls. No additional prompt revision, fresh confirmation,
+Bootstrap inference or hierarchy construction follows from this screen.
