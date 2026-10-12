@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "a-first": [
+      "../../target/compare-v214-interpretation-screen-v1/a-first-1",
+      "../../target/compare-v214-interpretation-screen-v1/a-first-2"
+    ],
+    "b-first": [
+      "../../target/compare-v214-interpretation-screen-v1/b-first-1",
+      "../../target/compare-v214-interpretation-screen-v1/b-first-2"
+    ],
+    "controls": [
+      "../../target/compare-v214-interpretation-screen-v1/physical",
+      "../../target/compare-v214-interpretation-screen-v1/handhold"
+    ]
+  }
+}

@@ -8519,3 +8519,27 @@ repeats, plus explicit-human and physical-property controls. Correctly explained
 uncertainty on an ambiguous producer scope is acceptable; erasing resolved
 controls is not. A lower reversal count alone is insufficient. Any promising
 effect requires the broader fixed-producer core and independent proof review.
+
+### V214 result: scope-before-role instruction fails the focused gate
+
+All twenty comparisons complete valid. Both A-first fresh draws still return
+forward A_contains_B and reverse neither. The first B-first draw returns
+forward neither and reverse B_contains_A; the second returns reciprocal
+containment. Three of four reversal checks therefore retain settled conflicts.
+No original Metal answer is unresolved: positives still assert grip entails
+handhold, while negative proofs still construct inaccessible machine grips.
+The requested semantic ordering establishes no observable interpretation repair.
+Output alone also cannot prove that the model performed that internal operation.
+
+All six explicit-human/machine/mixed controls and all six physical-paper/steel/
+unknown-material controls retain their resolved or deliberately unresolved
+outcomes. Their preservation does not rescue the failed producer-scope gate.
+V214 is not adopted or expanded to wider qualification. Do not stack another
+independence reminder, choose an orientation workaround, or silently relabel the
+original pair. A possible simplification of the accumulated body needs independent
+design review and its own controlled experiment rather than assumed superiority.
+
+Native `hierarchy-compare-v214-interpretation-screen-usage-v1.json` records twenty-six
+fresh attempts including six warmups, zero reuse/retries/failures/missing usage,
+and $0.1697392 API-equivalent cost. The original inputs, producer receipts,
+candidate meanings and earlier native exports remain unchanged.

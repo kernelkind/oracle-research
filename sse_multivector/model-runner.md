@@ -7922,3 +7922,9 @@ all three reverse repeats and two of three forward repeats. Two of the three
 draws still conflict on reversal. This establishes presentation sensitivity,
 not a semantic repair; A/B assignments, fixed meanings and diagnostic order
 remain unchanged. Native usage is complete and the original label stays open.
+
+V214's interpretation-before-role instruction fails its twenty-case screen:
+three of four original-pair reversal checks still conflict, with all twelve
+resolved/targeted-unknown controls preserved. The candidate is not adopted or
+broadened. Repeated scope reminders have not established a durable repair;
+any body simplification must be separately qualified against the frozen panels.
