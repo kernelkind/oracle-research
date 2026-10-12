@@ -1,7 +1,8 @@
 # Hierarchy generation V2 — FUTURE WORK
 
-**Status: approved V2 design, implemented as `hierarchy-generation-v2`; offline
-validation only, no V2 provider trial or hierarchy-quality qualification.** V2
+**Status: approved V2 design, implemented as `hierarchy-generation-v2`; initial
+provider trials HR08–HR10 have started, with no completed hierarchy-quality
+qualification.** V2
 replaces the previous selection implementation through the existing shared-runner
 commands. The FUTURE WORK label denotes pending qualification with real model
 judgments, not an alternative opt-in constructor.
@@ -421,7 +422,10 @@ The stable runner was clean at `e19592f9a6b0b3a2b3ac0bc63220156d86a0f1a7`.
 Those unrelated failures are reported, not suppressed or fixed by this task.
 
 Frozen older constructor trials and the prior offline structural controls are
-unchanged. No provider requests, prompt text edits, hierarchy UI refresh or
-paid resources were used to implement or validate V2. The next qualification
-step is a separately authorized real hierarchy run and review of its actual
-finished structure and total API-equivalent cost.
+unchanged. The original implementation and offline validation used no provider
+requests, prompt text edits, hierarchy UI refresh or paid resources. The user
+subsequently authorized the three official [HR08–HR10 provider trials](../docs/recommendation-engine/hierarchy-runs.md).
+Their initial L1 meanings are saved; prominence preparation exposed an
+inherited cache flag on PPv35's ineligible short prefix. Continuation awaits
+a tested constructor fix. Finished structure and total API-equivalent cost
+remain unqualified.

@@ -1683,8 +1683,11 @@ Six siblings is a best-effort consolidation trigger, not a hard maximum. Null
 or a semantically invalid proposal leaves the triggering placement intact;
 an accepted synthetic addition can trigger another sibling check. There is no
 additional requirement to find every possible regrouping or prove globally
-minimal browsing depth. Offline tests exercise V2 through the native workflow;
-no V2 provider trial, semantic certification or measured cost saving is claimed.
+minimal browsing depth. Offline tests exercise V2 through the native workflow.
+The user-authorized [HR08–HR10 provider trials](../docs/recommendation-engine/hierarchy-runs.md)
+have saved their initial L1 meanings and await a tested prominence-cache
+eligibility fix before continuation. No completed hierarchy-quality
+qualification or measured cost saving is claimed.
 Keep finished menus out of subsequent raw-trial preparation.
 
 Candidate ranking is a bounded scan of at most 4,096 local rows and 64 ancestor

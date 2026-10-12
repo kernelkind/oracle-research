@@ -5,7 +5,7 @@ experimental parameters. **HR05** is the completed 24-note rerun with a review U
 **HR04** is the completed 12-note run; **HR03** is the completed 50-note baseline.
 Each run's raw build, browsing menu and export share its ID.
 
-**HR08**, **HR09** and **HR10** are running the approved V2 comparison. Their
+**HR08**, **HR09** and **HR10** have started the approved V2 comparison. Their
 fixed parameters are recorded below; native preparation pinned exact source
 commits, prompt hashes and input evidence before model requests.
 
@@ -28,7 +28,7 @@ They were registered later, so ID order is not generation order. The intervening
 
 | Parameter | HR08 | HR09 | HR10 |
 | --- | --- | --- | --- |
-| Status | Running | Running | Running |
+| Status | Awaiting prominence cache fix | Awaiting prominence cache fix | Awaiting prominence cache fix |
 | Notes | HR05's same 24, same order | HR05's same 24, same order | HR03's exact original 50-note AS selection order |
 | Run definition | [HR08](../../sse_multivector/hierarchy-runs/hr08/traversal.spec.json) | [HR09](../../sse_multivector/hierarchy-runs/hr09/traversal.spec.json) | [HR10](../../sse_multivector/hierarchy-runs/hr10/traversal.spec.json) |
 | Prepared provenance | [HR08](../../../oracle-mvp-hierarchy-hr08-v2/target/hierarchy-hr08-v2-24-note-v1/prepared-provenance.json) | [HR09](../../../oracle-mvp-hierarchy-hr09-v2/target/hierarchy-hr09-v2-24-note-v1/prepared-provenance.json) | [HR10](../../../oracle-mvp-hierarchy-hr10-v2/target/hierarchy-hr10-v2-50-note-v1/prepared-provenance.json) |
@@ -94,6 +94,16 @@ changing their adoption status. Each output will receive its run ID, a review
 view, a native usage report and API-equivalent cost accounting. Full generation
 commits and clean uncommitted-source status were recorded before execution;
 token, cost and structural results remain pending.
+
+### Initial execution checkpoint
+
+All original L1 meanings are valid: 150 for HR08, 150 for HR09 and 326 for
+HR10. HR10 includes 150 exact native reuses from HR09. The drivers stopped
+before any prominence request or placement because V2 inherited Bootstrap's
+cache flag for PPv35, whose fixed prefix has 829 estimated tokens, below the
+shared runner's 1,024-token minimum. Saved meanings, receipts and counters are
+preserved. A tested constructor fix and reviewed source upgrade are required
+before continuation; the selected prompt bytes and note inputs remain fixed.
 
 ## Token usage and API cost
 
