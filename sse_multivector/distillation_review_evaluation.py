@@ -153,7 +153,8 @@ def _answer_subset(bundle, answer_ids):
 
 
 def prepare(selection_path, output, *, runner_binary=None, history_root=None, assessment_directory=None,
-            reasoning_effort=None, matching_reasoning_effort=None, relationship_prompt=None, relationship_prompt_id=None,
+            reasoning_effort=None, matching_reasoning_effort=None, support_reasoning_effort=None,
+            relationship_prompt=None, relationship_prompt_id=None,
             relationship_runner_binary=None, answer_ids=None, relationship_history_root=None):
     """Freeze native check groups; preparation never performs inference."""
     from experiment_runner import experiment, inputs, project, prompt_cache
@@ -162,6 +163,8 @@ def prepare(selection_path, output, *, runner_binary=None, history_root=None, as
         raise ValueError("reasoning_effort must be xhigh, high, medium or low")
     if matching_reasoning_effort is not None and matching_reasoning_effort not in ("xhigh", "high", "medium", "low"):
         raise ValueError("matching_reasoning_effort must be xhigh, high, medium or low")
+    if support_reasoning_effort is not None and support_reasoning_effort not in ("xhigh", "high", "medium", "low"):
+        raise ValueError("support_reasoning_effort must be xhigh, high, medium or low")
     if (relationship_prompt is None) != (relationship_prompt_id is None):
         raise ValueError("--relationship-prompt and --relationship-prompt-id must be supplied together")
     definitions = dict(_DEFINITIONS)
@@ -219,6 +222,8 @@ def prepare(selection_path, output, *, runner_binary=None, history_root=None, as
             runner["reasoning_effort"] = reasoning_effort
         if check == "matching" and matching_reasoning_effort is not None:
             runner["reasoning_effort"] = matching_reasoning_effort
+        if check == "support" and support_reasoning_effort is not None:
+            runner["reasoning_effort"] = support_reasoning_effort
         runner["auth_file"] = None
         runner["timeout_seconds"] = 3600
         runner["output_schema_path"] = str(directory / schema)

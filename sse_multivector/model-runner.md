@@ -2084,11 +2084,20 @@ High final coverage restores that match. Its thirty resolved searches are
 correct, with four source interpretations unscored; all selected witnesses
 already have exact high DSL outputs. The tested expansion candidates are now
 high matching/relationships/coverage and medium support, with no joined final
-score or global qualification. Local accounting is 246 attempts, including
+score in that four-answer trial or global qualification. Local accounting is
+246 attempts, including
 both levels, verifiers, 24 warmups, three recovered transport failures and three
 redundant calls. The known API-equivalent subtotal is $1.4636508; failed-attempt
 usage is unknown. Final high DCS takes 71.636 seconds, separate from preparation
 and audit time. Prompts, schemas and production defaults remain unchanged.
+
+The subsequent [complete eight-answer mixed-effort trial](distillation-review-v1/README.md#complete-eight-answer-mixed-effort-trial-october-12)
+joins the same candidate efforts through native partial scoring: four complete
+scores and four partial scores. Source uncertainties retain pending status.
+An invalid high search witness is caught by its existing exact high DSL
+comparison and excluded before the focused recheck. The remaining search is
+source-uncertain, rather than certified by agreement. This is development
+evidence; global reviewer qualification and the final sixty remain open.
 
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,
@@ -2107,6 +2116,24 @@ Coverage-search preparation also accepts `--reasoning-effort`, retaining
 xhigh as its default. This lets new native preparations bind the tested
 high matching / medium other-check combination and reuse exact saved requests
 without changing source wording, mechanical rules or existing manifests.
+The optional `--support-reasoning-effort` overrides support alone; global high
+with support medium freezes the eight-note candidate configuration. Omitted
+overrides preserve defaults and invalid values fail before output creation.
+
+`collect-distillation-coverage-search COVERAGE --output REPORT` uses production
+partial scoring to collect audited searches and separate exact DSL witnesses.
+Repeat `--verification-experiment` and `--premise-audit` for their native paths.
+Accepted complete null evidence can settle uncovered candidates; positive
+searches require an accepted exact positive witness. Existing accepted native
+compatibility pairs settle missing placements during preparation without DCS.
+Accepted exact negative pairs exclude candidates before search, retaining their
+bound proofs; collection requires accepted actual edges to propagate those
+negatives to descendants. Contradictory accepted compatibility evidence retains
+both proofs and withholds coverage grading, rather than allowing a null to
+overwrite a positive.
+Unknown/rejected premises, later withdrawals and missing self guards prevent
+qualification; changed frozen sources are refused. No inference occurs during
+collection, and the unused pairwise matrix need not be executed.
 Expectation files freeze before calls and remain agent-assessed rather than gold.
 Only repeated natural prefixes meeting the existing eligibility threshold are
 warmed, using explicit prefix/key configuration. Sequential native groups use
