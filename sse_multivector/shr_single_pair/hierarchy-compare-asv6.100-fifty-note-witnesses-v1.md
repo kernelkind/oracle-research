@@ -7231,3 +7231,38 @@ or extra allowance is introduced. Any unrun or insufficiently repeated
 qualification remains unresolved. Straightforward criteria and concise proof
 diagnostics follow [official reasoning prompting guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices#how-to-prompt-reasoning-models-effectively);
 that guidance does not establish this semantic hypothesis.
+
+### V190 failure and bounded V191 question diagnostic
+
+V190 returns all eighteen valid comparisons; six synthetic controls and both
+MrBeast positives survive. Brand remains qualified uncertainty in both
+orientations. Equipment retains the same reversal: forward calls every lunch
+box non-food and covers it; reverse admits a wholly edible container. The
+compatible-role sentence therefore does not remove this failure in this draw.
+The forward question is generic escape from Equipment; reverse explicitly
+tests its non-food requirement. Neither the question contrast nor these draws
+prove a sole causal mechanism or settle Equipment's coordinated modifier scope.
+
+Native V190 usage records twenty-one attempts including two warmups and one
+recovered failure/retry. One failed attempt lacks usage: $0.1286900 is only the
+known API-equivalent subtotal, and complete cost remains unknown. The shared
+counter reads 19,998/20,000. V190 receives no repeat or broad qualification.
+The earlier V189 erythritol counterexample retains a separate consumer-scope
+qualification: an all-consumer nourishment exclusion is not established by
+ordinary human nutritional use. No new semantic expectation is inferred.
+
+[Experimental V191](Hierarchy-compare-v191.md) retains V190 and replaces only
+the question instruction. It asks for a specific parent requirement or
+information connection, prefers a requirement not explicitly guaranteed by
+the child, and binds the answer to that same question boundary. Necessary
+implications remain permitted under the existing coverage rules. This is a
+general diagnostic criterion, not a lunch-box example or compelled counterexample.
+
+Only the two frozen Equipment orientations will be dispatched. The complete
+eighteen-case gate is prepared unchanged, with all other cases deliberately
+unrun under the existing cap. Each invocation has a one-attempt stage limit;
+the native runner prioritizes its comparison without a warmup when only one
+attempt is available. Prompt caching remains enabled and request construction
+is unchanged; no cache setting or worker is substituted to fit the budget.
+Two outputs cannot establish full gate passage, fresh confirmation, broader
+qualification or adoption. The shared counter is never reset or increased.
