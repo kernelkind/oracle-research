@@ -7675,3 +7675,39 @@ Official reasoning guidance favors direct task instructions and closely aligned
 examples, not requested reasoning traces; it does not certify this semantic
 contract. V197 still requests concise task diagnostics under the unchanged A/B
 input and four-field output schema.
+
+### V197 outcome: Food repair, remaining production-scope transfer
+
+All forty-four responses validate. The Food triad now returns reciprocal neither
+for Food versus Food preparation, preserves preparation containing vessels and
+returns reciprocal neither for Food versus vessels. Its activity counterexample
+checks independently admitted tool information, rather than only preparation
+episodes. This fixes the observed Food-chain contradiction in one draw; it is
+not a reliability estimate or automatic adoption.
+
+The Paper kind-to-process pair now reverses. Forward claims all production means
+and their aspects remain Paper information; reverse excludes a qualifying pump's
+decorative exterior. Both Paper-to-press responses still claim the entire machine
+scope is covered through production. Their proofs do not establish that every
+equipment aspect concerns making paper. The candidates also differ in actual
+versus intended use and functional versus decorative information; isolate those
+factors before claiming one causes the different result. Physical nonidentity
+alone still supplies no exclusion.
+
+All twelve explicit smoke/commerce controls and both approved MrBeast positives
+survive. Particular-brand commercial status remains uncertain in both
+orientations. Original sourdough mixes positive/uncertain; general sourdough and
+grip/handhold still have settled reversals. Reciprocal Restaurant positives are
+not certified: one candidate explicitly ceases to operate as a restaurant, and
+its failed admission does not establish commercial necessity for every restaurant.
+Three settled reversal pairs occur across the forty-four requests: one Paper
+pair and the two original broader probes. These are dependent paired/chain
+observations, not forty-four independently labeled accuracy cases.
+
+Two independent agents inspect complete native proofs and agree on the central
+omissions. No new individual gold, Bootstrap revision or hierarchy insertion is
+inferred. Exports: `target/compare-v197-whole-information-scope-v1/native.json`
+and `target/compare-v197-qualification-v1/*/native.json`. Native usage records
+forty-nine fresh attempts including five warmups, forty-four valid comparisons,
+zero reuse/retry/failure/missing usage and $0.350682 API-equivalent cost, not a
+subscription charge. V197 remains experimental and unqualified.
