@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "prompt": {"id": "Hierarchy-bootstrap-v110", "path": "Hierarchy-bootstrap-v110.md"},
+  "dataset": {
+    "adapter": "hierarchy_local_nodes",
+    "path": "hierarchy-bootstrap-coffee-grounding-subjects-only-v1.json"
+  },
+  "runner": {
+    "provider": "openai-codex",
+    "auth_file": null,
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "medium",
+    "output_schema_path": "Hierarchy-bootstrap-v79.output.schema.json",
+    "transport": "sse",
+    "prompt_cache": true,
+    "runner_binary": "../../../experiment-runner/experiment_runner/run-model.sh"
+  }
+}

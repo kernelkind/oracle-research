@@ -3,19 +3,21 @@
 Bootstrap establishes a standalone information-topic meaning for one original
 local entry. It does not compare canonical nodes or construct a hierarchy.
 
-## Current test-case status: reset
+## Current review policy: reset conclusions, retain evidence
 
-The user retired all existing Bootstrap prompt-development test cases and asked
-to start from scratch, retaining the prompts. The
-[reset record](bootstrap-test-case-reset.md) identifies the local Git backup,
-removed datasets/specifications and unbacked artifacts preserved on disk.
-There is **no active Bootstrap regression collection**. All experiments and
-semantic assessments below are historical records, not current validation
-evidence or expected answers. Their deleted source paths are recoverable from
-the backup tag; links to those paths do not designate available working inputs.
-Do not reuse old case plans, saved meanings, counterexample hypotheses or
-historical judgments to seed or grade the new collection.
+The user clarified that the reset applies to **all prior conclusions**, not the
+underlying evidence. The [review-reset record](bootstrap-test-case-reset.md)
+describes the restored case data and retained original inputs, outputs and
+receipts. Source cases are available for fresh examination; old semantic labels,
+expected meanings, failure classifications and causal diagnoses are not current
+gold, including previously agreed case conclusions.
 
+All semantic assessments below are historical records requiring independent
+reassessment. Mechanical observations such as literal outputs, hashes and call
+counts remain observations. Do not copy old conclusions into a new prompt or
+evaluator. Use native input-only views for fresh review. ASv6.100 provenance
+requirements and prompt versions remain unchanged; no restored historical
+collection is automatically qualified for current validation.
 
 ## Shared definition-writing publication
 

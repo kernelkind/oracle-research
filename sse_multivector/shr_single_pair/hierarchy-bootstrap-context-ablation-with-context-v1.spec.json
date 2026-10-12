@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "prompt": {
+    "id": "Hierarchy-bootstrap-v110",
+    "path": "Hierarchy-bootstrap-v110.md"
+  },
+  "dataset": {
+    "adapter": "hierarchy_local_nodes",
+    "path": "hierarchy-bootstrap-asv6.100-complete-branches-v1.json",
+    "select": [
+      "bootstrap-5011944235c2986dcd05715c3a4585dda652567200c7d7dcd27c077c376ce13b",
+      "bootstrap-b314c715b2878b7010c8e919f524845eb5dce70a7a46709c0ced4c538da396eb",
+      "bootstrap-70f6cacbe0f8cc4f342d93df3bec0e841c083f6dbdce0b4bdceea56d644c4e8c",
+      "bootstrap-1b7df1412832aa92a643682c9d1f98902a08edf839b21b55751af0748bd0df1e",
+      "bootstrap-381362e9dae8a2c98fc4cf78463347b3f87a67f27b4c19542789b3b9aa08d9bb",
+      "bootstrap-ef64532fee2be4368c019c95d193da574ae307f22a7a41b53c18b84d1f9075bf",
+      "bootstrap-3ff314326ff0c69cb4ea0128a99d4ba6fa6151b3fba58935842fd4a20bbd48a5",
+      "bootstrap-686a3cf79f6c31993cd960b9c9e55b3f53de8668efdd6301ec37286d88a3eb8a",
+      "bootstrap-442ace0e32d14e759ebb61485b0f209fa6c9ca9db9fa0fb32e7ea93dbf5ecec1",
+      "bootstrap-fdc900ea40c6e11966da7d0127c61d91c1cda5a4b85108f64525251ce2883ea0",
+      "bootstrap-07e181e89a6505355db1ee59722fca1ad57baa49f7a72c8bccf9c0f4bd2f4005",
+      "bootstrap-4a11a3c7380b80e05a21ad7d8462e77a5eabb61dddf81bbf6e8ee6051a319411"
+    ]
+  },
+  "runner": {
+    "provider": "openai-codex",
+    "auth_file": null,
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "medium",
+    "output_schema_path": "Hierarchy-bootstrap-v79.output.schema.json",
+    "transport": "sse",
+    "prompt_cache": true,
+    "runner_binary": "../../../experiment-runner/experiment_runner/run-model.sh"
+  }
+}

@@ -1,16 +1,16 @@
 # General model runner
 
-## Bootstrap prompt-development cases: reset
+## Bootstrap evidence: conclusions reset, data retained
 
-The user retired the existing Bootstrap prompt-development test cases while
-retaining prompts. See the [Git backup and removal record](shr_single_pair/bootstrap-test-case-reset.md).
-No Bootstrap regression collection is active. Historical case plans, meanings,
-counterexamples and judgments must not seed or grade the fresh collection.
-Unbacked inputs/results remain on disk and retired from use; they were not
-deleted. General experiment code, shared runner behavior and other tasks remain
-unchanged. Historical records below may name deleted case sources; recover
-those paths from the recorded Git tag only for provenance, not current tests.
-
+The user clarified that prior conclusions must be disregarded while retaining
+original evidence. See the [review-reset record](shr_single_pair/bootstrap-test-case-reset.md).
+Removed case datasets and experiment specifications are restored from Git.
+Original posts, model inputs/outputs, receipts and accounting remain available;
+old semantic assessments and expected labels are historical, not current gold.
+Use native `show --inputs-only` for fresh examination and independently assess
+outputs and counterexample hypotheses. Restored historical data still requires
+verified ASv6.100 provenance before current-pipeline use. Prompts, runner behavior
+and other tasks remain unchanged; no old quality claim is reinstated by restoration.
 
 ## Synchronized Bootstrap and consolidation definition-writing
 

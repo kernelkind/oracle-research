@@ -1,0 +1,21 @@
+{
+  "schema_version": 2,
+  "local_schema_version": 4,
+  "sources": [{"path": "hierarchy-bootstrap-asv6.100-rocket-branch-nodes-v1.json"}],
+  "review": {
+    "purpose": "Freshly define every entry in both complete original rocket-device branches, without selecting preferred parent meanings from earlier draws.",
+    "criteria": [
+      "Check each final meaning against its own chosen identity, role, state and required versus optional conditions, with the full post as factual evidence.",
+      "Check all six immediate and nine total original child-to-ancestor implications using only these freshly and independently generated meanings.",
+      "Required joined parts and independently admitted alternatives have different containment consequences. Do not prescribe either reading from historical labels or broaden fixed parents during review.",
+      "Retain nulls and evidential or information-topic qualifications separately from definite incompatibility. This panel is agent-reviewed development evidence, not semantic gold or Compare qualification."
+    ],
+    "current_producer": {
+      "prompt_id": "ASv6.100",
+      "experiment": "target/bootstrap-asv6.100-regression-refresh-v1/real-subjects",
+      "case": "99e6a5148b40b59013d8a391f6f593cb8791c167eb445cf1f49c1565cefdbb92",
+      "record_sha256": "2d14516183ad38a48a5f5f7cc5e453ef432d78a526fde51914d3bc8640cb2755"
+    },
+    "baseline_coverage": "Seven entries have exact full-v98 baseline outputs; original entry 7.2.1 is newly selected from the same validated ASv6.100 tree. All eight outputs in this panel must be fresh."
+  }
+}

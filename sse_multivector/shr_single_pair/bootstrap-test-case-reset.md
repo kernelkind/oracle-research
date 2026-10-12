@@ -1,61 +1,46 @@
-# Bootstrap prompt-development test-case reset
+# Bootstrap evidence review: reset conclusions, retain data
 
-The user requested starting Bootstrap prompt-development evidence from scratch,
-clarifying that the reset concerns **test cases**, while retaining prompts.
-This retires the existing case collection; it does not establish that every
-historical output was incorrect or change the original AS provenance.
+The user clarified the reset: **disregard all conclusions previously drawn from
+the evidence**, rather than discard the evidence itself. This supersedes the
+earlier physical test-case removal. Prompts and original records remain intact.
 
-## Git backup and removal
+## Evidence restored
 
-Before deletion, every selected file's current bytes were checked against its
-committed Git blob. The complete pre-reset state is protected by the local tag
-`bootstrap-tests-before-reset-20261012-cb8c51e0`, pointing to
-`cb8c51e0` on the Bootstrap task history. Recovery requires no model calls.
+All 94 datasets/collections and 179 associated experiment specifications removed
+from the Bootstrap worktree have been restored byte-for-byte from the local tag
+`bootstrap-tests-before-reset-20261012-cb8c51e0` (`cb8c51e0`). The 33 files formerly
+present on main are restored there; the other 240 remain in their original task
+history rather than being newly introduced into main. No case payload was lost.
 
-Removed from the working Bootstrap checkout:
+Frozen original posts, subject hierarchies, model inputs, outputs, receipts,
+reviews and accounting records remain available. The unbacked artifacts under
+`target/` were never deleted. Other agents' worktrees are untouched. The backup
+tag remains available for provenance; restoration required no inference.
 
-- 94 case datasets/collections, including the current ASv6.100 regression and
-  branch collections, focused controls, four-Food selection and their older
-  source selections.
-- 179 experiment specifications referring to those datasets.
-- One obsolete data-specific software test asserting the removed historical
-  case expectations. General experiment and adapter tests remain.
+## Current interpretation and evaluation policy
 
-Of the 273 data/specification files, 33 were present on local main at inventory;
-240 were already absent there and existed only in the retained task history.
-The reset lands the applicable removals on main without reintroducing that
-older history. Git records the complete deleted-path list; the ignored
-`target/bootstrap-test-case-reset-v1/inventory.json` also records classification
-and pre-reset prompt hashes, without retaining case payloads.
+- Use original evidence for fresh examination. Saved model outputs are
+  observations of what a model returned, not certified topic definitions.
+- Disregard prior semantic labels, expected meanings, accept/reject assessments,
+  fault assignments, causal diagnoses and recommendations derived from them.
+  This includes previously agreed case conclusions; the record that someone
+  expressed a judgment does not make that judgment current gold.
+- Retain old review metadata and quotations as historical records. Do not pass
+  their conclusions into the model or use them to seed a fresh evaluator.
+- Inspect original inputs without old assessments, using the native
+  `show --inputs-only` view. Assess outputs and counterexample hypotheses anew;
+  do not import a former acceptance, rejection or inferred restriction.
+- Preserve provenance requirements: only verified ASv6.100 subject data can
+  support current-pipeline testing. Restoring older historical files does not
+  make deprecated or unverified data eligible.
 
-Bootstrap prompts, revision receipts, output schemas and shared prompt fragments
-are preserved. A byte-hash check covers all 270 Bootstrap prompt-related files
-in the pre-reset checkout. Experiment code and the shared runner are unchanged.
-
-## Data that must remain until backed up
-
-Frozen experiment inputs, model outputs, reviews and raw corpora under `target/`
-are not committed Git data. They have **not been deleted**, following the user's
-instruction not to delete evidence that is not Git-backed. Raw shared corpora
-and other agents' worktrees are also untouched. This task does not authorize
-committing ignored model-output blobs or pushing a backup.
-
-Historical findings and accounting records remain available for provenance,
-but their cases, hypotheses, expected meanings and semantic judgments are
-retired as Bootstrap development evidence. Old `prepare --from` artifacts and
-saved case outputs must not be used to seed or grade the fresh Bootstrap tests.
-No active Bootstrap regression collection is currently established. New cases
-must be prepared from scratch under the user's next test-design instructions.
-
-The embedded synthetic examples remain in the retained prompts; they are not
-an active validation set. This reset introduces no new prompt version, inference,
-semantic gold, replacement dataset or hierarchy change.
+No previous semantic qualification or accuracy claim is active merely because
+its case data is restored. Fresh expectations must be established independently.
+The prompts, general experiment code and shared runner are unchanged. This
+clarification does not select a new prompt, run inference or change a hierarchy.
 
 ## Verification
 
-Verified that all 273 selected files are absent, all 270 preserved
-Bootstrap prompt-related files retain their original byte hashes, and unbacked
-native experiment inputs remain present. The native CLI refuses preparation
-from the removed four-Food specification without inference, as expected.
-Forty-four focused prompt/workflow checks and two production-path collection
-adapter checks pass. No model calls were made.
+All 273 restored data/specification files match their original Git blobs.
+Pre-existing prompt hashes remain unchanged, and native raw experiment records
+remain on disk. No model calls were made for the restoration.

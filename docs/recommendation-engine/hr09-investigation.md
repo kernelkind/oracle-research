@@ -4,20 +4,23 @@ This is the maintained evidence source for the HR09 investigation. Record saved
 observations separately from semantic judgments, hypotheses and experiments.
 Evidence IDs remain stable as the investigation grows.
 
-At the start of this investigation, the user instructed: **“we are not assigning
-fault yet”**. Subsequent explicit user judgments and fault assignments are
-recorded separately below and apply to their stated cases. E001 has no fault
-assignment; E002 assigns fault to Bootstrap. No proposed correction has been
-approved. Recording a model answer alone does not endorse it.
-Existing investigation or prompt-trial findings elsewhere are not automatically
-adopted as judgments in this record.
+## Current review policy
+
+The user clarified: disregard **all conclusions** previously drawn from the
+evidence, while retaining the evidence itself. Original posts, prepared inputs,
+model outputs, graph snapshots and receipts remain observations. Prior relation
+judgments, scope approvals and fault assignments below are historical statements,
+not current gold or established diagnoses. Reassess each case independently;
+do not force a new result to preserve a former judgment. The
+[review-reset record](../../sse_multivector/shr_single_pair/bootstrap-test-case-reset.md)
+describes restored data and the continuing ASv6.100 provenance requirement.
 
 ## E001 — Food and Dinner remain separate on the third placement
 
-Status: **user-reviewed; the saved `neither` answer is correct for these exact
-meanings**. Meaning generation remains unreviewed; no fault is assigned. This is the first case
-entered into this investigation, not a claim that all earlier inputs have been
-qualified or that this is the earliest possible defect.
+Status: **saved observation; semantic conclusions require fresh review**.
+The previous comparison approval and consumer-scope discussion remain recorded
+below but do not establish the current answer or intended topic boundaries.
+No new model result or prompt correction is established by this clarification.
 
 ### Position in construction
 
@@ -143,26 +146,60 @@ The user approved the saved Compare answer for this exact input:
 Reviewed relation: **`neither`**. In particular, the user accepts that Dinner's
 meaning admits nonhuman consumption while this Food meaning requires human
 consumption, so Food does not contain Dinner's entire scope. This settles the
-comparison judgment for E001. It does not establish whether either generated
-meaning is the desired definition for its original local node, and does not
-assign a meaning-generation failure or approve a change.
+comparison judgment for the original fixed meanings. That earlier review did
+not establish whether either meaning was the desired definition for its local
+node. The subsequent fresh review below addresses Dinner's consumer scope.
+
+### Fresh Bootstrap review after the test-case reset
+
+After retiring the existing Bootstrap test collection, the user explicitly
+selected E001 for fresh consideration. Historical prompt-development judgments
+are not assumed as gold for this review.
+
+User replies, verbatim:
+
+> i think the question here is, is the author of the dinner post human?
+
+> we've already established that bootstrap can infer things
+
+The assistant clarified that Bootstrap can infer a human speaker from this
+first-person dinner account, and that generalizing beyond this particular dinner
+should not automatically discard the human eating context from Dinner's meaning.
+The user agreed:
+
+> right
+
+Recorded scope clarification: infer the human speaker from the original post
+and retain the human eating context while defining the broader Dinner topic.
+Under the latest conclusions reset, that prior agreement is not automatically a
+current validation rule; the original evidence must be examined independently.
+An explicit statement that the writer is human is not required. This approval
+concerns E001; it does not make every inferred detail a restriction on every
+category. The saved Dinner string lacks an explicit human-consumer condition.
+
+The exact revised standalone wording remains open. The existing comparison
+still concerns the original unchanged definitions; no new relation is certified
+for a revised Dinner meaning. No prompt, test-case dataset, saved model output
+or hierarchy has been changed, and no inference has been run for this review.
 
 ### Open questions
 
-- Do the generated meanings represent the intended information scopes of the
-  original local nodes?
+- What standalone Dinner wording faithfully expresses the approved human scope?
+- Does Food's generated meaning represent its original local node's scope?
 - How does this reviewed separation contribute to the final hierarchy's
   structure and browsing decisions?
 
-The comparison judgment is recorded above. These remaining questions have no
-reviewed answers; no causal attribution or new experimental result is recorded.
+The original comparison judgment and fresh Dinner scope clarification are
+recorded separately above. These remaining questions have no reviewed answers;
+no causal attribution or new experimental result is recorded.
 
 
 ## E002 — Food nests beneath Food on the fourth placement
 
-Status: **user-reviewed; the comparison distinction is correct for the supplied
-meanings; fault assigned to Bootstrap**. The user has not specified which
-meaning should change or approved a prompt correction.
+Status: **saved observation; semantic conclusions require fresh review**.
+The prior comparison approval and Bootstrap fault assignment are historical
+judgments, not current diagnoses. No prompt correction is approved by the
+conclusions reset.
 
 ### Position and state transition
 
