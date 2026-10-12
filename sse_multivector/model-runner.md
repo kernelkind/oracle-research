@@ -329,6 +329,18 @@ $0.0979948 API-equivalent cost. Caching is enabled, with hits on the two repeat
 definitions and zero hits on the four first definitions. V124 remains
 experimental and unactivated; no Compare calls or hierarchy work occurs.
 
+The [V125/V126 Food qualification](shr_single_pair/bootstrap-v125-v126-food-kind-features-v1.md)
+uses saved counterexamples to check complete kind definitions. V125's pie
+repeat reopens the intention-only head. V126 separates intention from other
+required features; all six observed outputs retain an edible/suitable condition.
+Purpose and ingredient-role boundaries remain qualified. Four original Food
+inputs match HR09 byte-for-byte. Both versions run from a task worktree through
+the isolated shared runner at `e19592f`, identical to current runner main;
+schema, medium reasoning, examples and source data stay fixed. Twelve valid
+definitions use seventeen attempts including warmups and one recovered failure.
+Its cost is unknown, so $0.181612 is only the known API-equivalent subtotal.
+Neither version is activated and no Compare or hierarchy inference occurs.
+
 Execution and transport are owned by the separate
 [experiment-runner repository](../../experiment-runner/README.md) at
 `~/src/notedeck_worktrees/algos/experiment-runner`. All migrated project worktrees

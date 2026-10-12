@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v125_four_foods_fresh": [
+      "../../target/bootstrap-v125-hr04-four-foods-v1/draw1-frozen"
+    ],
+    "v125_risotto_pie_repeat": [
+      "../../target/bootstrap-v125-hr04-four-foods-v1/repeat"
+    ],
+    "v126_four_foods_fresh": [
+      "../../target/bootstrap-v126-hr04-four-foods-v1/draw1"
+    ],
+    "v126_risotto_pie_repeat": [
+      "../../target/bootstrap-v126-hr04-four-foods-v1/repeat"
+    ]
+  }
+}

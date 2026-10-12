@@ -3940,5 +3940,38 @@ Caching is enabled; two repeat definitions hit cache, whereas the four first
 definitions do not. Twenty-three focused workflow tests and independent
 receipt/input/output/quote checks pass. V124 remains experimental without an
 activation recommendation. No Compare calls, hierarchy work or new attempt cap
-is introduced. The next proposed hypothesis concerns checking the whole defining
-clause, beyond its listed alternatives or relationships.
+is introduced. The subsequent v125/v126 diagnostic below tests the whole
+defining clause and the distinction between intended use and other kind features.
+
+### Bootstrap-v125/v126 Food kind-feature qualification
+
+The user explicitly redirects this work to counterexamples and Bootstrap gaps,
+excluding Compare-consistency development. Experimental
+[v125](Hierarchy-bootstrap-v125.md) checks the whole proposed definition rather
+than only alternatives/relationships. Its first four outputs retain edibility,
+but the pie repeat again admits the saved poisonous dish mistakenly intended as
+nourishment through its unrestricted intention-only head.
+
+Experimental [v126](Hierarchy-bootstrap-v126.md) then distinguishes intended
+use from other features required of the kind, preserving legitimately
+intention-defined kinds and unknown completed use. All six observed v126 outputs
+retain a shared edible/suitable condition; pie and brisket directly examine
+intention, consumer or completed-state boundaries. The original ingredients,
+including non-nourishing seasonings, remain covered.
+
+The [controlled report](bootstrap-v125-v126-food-kind-features-v1.md) preserves
+separate cohorts and exact receipts. All four selected HR04 input strings are
+byte-identical to their actual HR09 Food inputs. No counterexamples or old labels
+enter generation. The repeated risotto explicitly chooses broad edible direct
+human consumption; clinical-wafer admission is not automatically wrong, and
+ingredient-purpose boundaries remain qualified. Six outputs establish bounded
+physical-feature improvement, not universal closure or general qualification.
+
+Twelve valid fresh definitions across both candidates use seventeen attempts,
+including four warmups and one recovered failure/retry. Its usage is unknown;
+$0.181612 is the known API-equivalent subtotal, not the complete cost. Eight
+completed definitions report cached input. The runner uses an isolated checkout
+byte-identical to current shared-runner main; all model settings and inputs are
+preserved. Forty-three focused checks and independent receipt/output/input/quote
+checks pass. Neither candidate is activated; no Compare inference, hierarchy
+build, source-data change or replacement attempt cap occurs.
