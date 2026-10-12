@@ -2260,6 +2260,26 @@ partial scores. A Payments witness from gas fees and its rejecting exact high
 DSL check both remain source-uncertain. No prompt, schema or default changes;
 the final sixty and general two-point loss bound remain open.
 
+The next [thirty-two-answer mixed-effort expansion](distillation-review-v1/README.md#thirty-two-answer-mixed-effort-expansion-october-12)
+retains the same configuration and adds sixteen distinct notes from the original
+sixty. Exact source-resolved pairs show high matching losing 0.88 percentage
+points, medium support gaining 0.83 points, and high actual-edge/self-guard checks
+gaining 0.57 points versus xhigh on the added answers. Fifty-six valid xhigh DSL
+counterparts are reused; 125 missing unchanged DSLv10 controls are generated.
+Source interpretations remain separate from resolved errors. A pinned project
+producer and pinned shared-runner checkout preserve active source bindings;
+the stable launcher and request identity remain unchanged. Native batch review
+and attributed exact-proof import reduce audit metadata work without changing
+model requests. Source audits find seven errors among 984 resolved reviewer
+decisions (0.71%) and sixty-nine unscored interpretations across all thirty-two
+answers, excluding separate witnesses. Coverage has 93 correct resolved searches
+and sixteen uncertainties. Two sound positive placements pass exact high DSL;
+two uncertain placements retain uncertain status, including a search/verifier
+disagreement for the labor-union inquiry beneath Workers. Native collection
+returns eleven complete distilled-model scores and twenty-one partial scores
+with no inference. These agent-assessed development cases do not qualify the
+final sixty or the general two-point loss bound.
+
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,
 `show-distillation-review-trial`, `assess-distillation-review`,

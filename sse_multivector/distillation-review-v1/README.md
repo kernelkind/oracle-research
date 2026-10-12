@@ -58,17 +58,17 @@ baseline already passed the same six cases, so no benefit was demonstrated.
 The frozen trial is retained as regression evidence, not as the current prompt
 direction or an independent accuracy test.
 
-**Current mixed-effort result:** the [sixteen-answer expansion](#sixteen-answer-mixed-effort-expansion-october-12)
+**Current mixed-effort result:** the [thirty-two-answer expansion](#thirty-two-answer-mixed-effort-expansion-october-12)
 uses high matching, relationships and coverage with medium post support. Source
-audits find four errors among 528 resolved reviewer decisions (0.76%); twenty-six
+audits find seven errors among 984 resolved reviewer decisions (0.71%); sixty-nine
 interpretations remain unscored. These counts cover matching, support,
 actual-edge/self-guard checks and coverage searches, excluding separate witness
-verifiers. On 219 resolved exact-input pairs from the added eight answers,
-current efforts and xhigh both score 216/219, with one support loss and one gain.
-Native collection yields seven complete distilled-model scores and nine partial
-scores, preserving rejected and uncertain evidence. Prompts and defaults remain
-unchanged; broader accuracy, the two-point general loss bound and the final sixty
-remain unqualified.
+verifiers. On the added sixteen answers, the worst observed paired loss versus
+xhigh is 0.88 percentage points for matching; support and relationships improve
+slightly. All 93 resolved coverage searches are source-correct; sixteen remain
+uncertain. Prompts and defaults remain unchanged; these exposed agent assessments
+do not establish unseen accuracy, the general two-point loss bound or final
+sixty-answer qualification.
 
 **Earlier development result:** xhigh generation finishes on
 [24 notes from the frozen sixty](#dslv10-twenty-four-note-regression-october-11),
@@ -6889,6 +6889,182 @@ last release at 16:47:43 UTC spans 65 minutes 42 seconds. Most of that elapsed
 time is source auditing, preparation and recording between model phases;
 execution time alone does not describe qualification turnaround or prove full
 evaluation scalability.
+
+### Thirty-two-answer mixed-effort expansion (October 12)
+
+The authorized expansion retains the preceding sixteen answers and adds the
+next sixteen structurally valid distinct notes in the original frozen random
+order. All thirty-two belong to the agreed sixty and cover the three
+distilled-model families. Original selection, trusted teacher-meaning groups,
+required flags and assessment files remain unchanged. Source audits continue
+to assume ASv6.100 is correct; they assess the reviewer outputs and preserve
+interpretation uncertainty rather than re-auditing the teacher.
+
+The configuration remains gpt-6.1-sol high for DSMv3, DSLv10 and DCSv1, with
+medium DSSv2, queue capacity thirty and eligible natural-prefix warming.
+Reusable prompts, schemas and production defaults are unchanged. Both the
+project producer and the shared experiment-runner source are pinned in separate
+worktrees; the runner uses its unchanged stable launcher and request identity.
+This keeps unrelated canonical-checkout changes outside active experiment
+bindings. Reserved pilot test data remains unopened.
+
+Three agents divide source-first inventories, complete-output audits,
+exact-input xhigh comparisons and mechanical/accounting verification. A
+distinct input is counted as erroneous if any inspected current complete output
+for it is wrong. Correct duplicate versions cannot conceal an error. The added
+sixteen produce the following source-resolved paired comparisons:
+
+| Check on added sixteen answers | Current setting | Current correct | Xhigh correct | Observed loss versus xhigh |
+| --- | --- | ---: | ---: | ---: |
+| Matching | high | 112/114 | 113/114 | 0.88 percentage points |
+| Post support | medium | 120/121 | 119/121 | -0.83 percentage points |
+| Actual-edge and matching-self-guard checks | high | 176/176 | 175/176 | -0.57 percentage points |
+
+All paired rendered prompts and complete inputs are identical between settings.
+Matching and support reuse valid original-sixty xhigh counterparts. Parent-child
+comparison retains fifty-six exact xhigh counterparts and generates 125 missing
+unchanged DSLv10 controls, including two unrun Nostr association pairs. Nineteen
+matching, twelve support and five relationship interpretations on the added
+answers remain unscored at both levels. None of the resolved paired checks
+exceeds the approved two-percentage-point loss allowance. These exposed examples
+and agent judgments do not establish the general loss bound or held-out accuracy.
+
+The added matching errors are an affirmative answer's meaning being confused
+with its underlying question, shared with xhigh, and accepting Starting small as
+a step as a complete match for Starting small, where xhigh correctly rejects the
+added role. Medium support wrongly requires an English qualification in the
+broader 144 XP total subject despite the post's literal total; xhigh accepts it.
+Medium also corrects two xhigh support errors on the other added answers. High
+rejects the related step-role parent-child guard; fresh xhigh wrongly treats the
+expressed step relationship as synonymous with any initiating action or stage.
+No new prompt rule is adopted to repair these results.
+
+Across all thirty-two answers, matching has three errors among 258 resolved
+inputs, with twenty-two source uncertainties; support has four errors among
+263 resolved inputs, with seventeen uncertainties. Actual-edge and matching-self
+guards have no errors among 370 resolved inputs, with fourteen uncertainties.
+Separate positive-witness verifiers are excluded from those denominators.
+On the added answers, native routing selects 355 actual-edge/self-guard
+occurrences: 306 semantic aliases for 181 inputs and forty-nine mechanical
+occurrences for forty-one inputs. Twenty-eight other actual edges are skipped
+by child-support routing. Unrequested compatibility-matrix rows are not run.
+
+Native metadata handling now accepts repeated `review --only` IDs with one
+common explicit judgment and imports exact attributed assessments through
+`review --from-experiment`. Imports require the same check, complete input,
+rendered prompt and raw output; they preserve agent/user attribution and all
+accept/reject/uncertain records, validate every source before writing, and remain
+idempotent. Nine focused production-path tests pass; one existing UI test is
+skipped because its Rust viewer is unavailable. Two coverage regression checks
+pass with the pinned tiktoken dependency. No inference is added by these commands.
+
+Accounting identifies nine fresh complete output versions on old sixteen-answer
+inputs. Independent source audit finds eight correct and one existing Seeing
+interpretation uncertainty. Eight missing exact native assessments are recorded;
+the ninth already has current acceptance. The first coverage preparation has
+no calls and is retained as a superseded artifact. Replacement preparation binds
+the completed current assessments before coverage inference begins.
+
+Native preparation uses existing matching and relationship proofs to settle
+156 required teacher-meaning groups and prepares 109 coverage searches. The
+added answers require fifty-three searches: forty-six source-correct decisions,
+no resolved errors and seven interpretation uncertainties. Two known positive
+placements are People for the painful void left by the author's mother, and
+Growth for further progress following a small start and trust-building.
+Unchanged exact high DSL verifies both. Two uncertain positive placements,
+the playful morning greeting beneath Wishes and the labor-union net-good inquiry
+beneath Workers, receive separate exact high DSL outputs and remain unscored.
+The Workers search accepts while its verifier rejects; agreement or disagreement
+does not settle the underlying interpretation.
+
+The pre-call source inventory labelled that labor-union inquiry null while
+already holding the same union-to-Workers boundary unresolved for another
+teacher subject. Independent output audit exposes the inconsistency. The
+original inventory remains frozen; a separate correction and native uncertain
+review preserve the unresolved boundary. The new label is not inferred from
+the model's choice. Across all thirty-two answers, DCS has no errors among
+ninety-three resolved inputs, with sixteen source uncertainties.
+
+| Reviewer check across thirty-two answers | Source-resolved errors | Source uncertainties |
+| --- | ---: | ---: |
+| Matching, high | 3/258 (1.16%) | 22 |
+| Post support, medium | 4/263 (1.52%) | 17 |
+| Actual-edge and matching-self-guard checks, high | 0/370 | 14 |
+| Coverage searches, high | 0/93 | 16 |
+
+These are 1,053 distinct semantic inputs: 984 resolved and sixty-nine unscored.
+The combined error fraction is seven of 984 (0.71%). Per-check paired comparisons
+remain separate so a gain on one check cannot conceal degradation on another.
+The separate witness verifiers are excluded from this table.
+
+The current relationship scope has 384 inputs. One correct Audience-to-Audience
+not having seen anything yet edge in the archived sixteen-answer benchmark is
+now skipped because a reused source-uncertain support version returns FALSE.
+Its exact input has no other current needed occurrence. Its earlier accepted
+judgment remains archived and is excluded from the current denominator; the
+sixteen-answer historical counts above are unchanged.
+
+Native collection yields eleven complete distilled-model scores and twenty-one
+partial scores. The four newly complete answers concern ET, Axios, a video link
+and a concise encouragement. Their correctness/coverage fractions are respectively
+5/5 and 1/4, 7/14 and 2/5, 4/5 and 1/1, and 5/5 and 2/2. These are student scores,
+not reviewer error rates. Rejected matching and support responses, source
+uncertainties and inconsistent matching self guards retain pending status.
+The false step-role match is caught by its rejecting exact guard; the associated
+answer remains partial rather than repairing its model result. Collection uses
+the fifteen inherited premise audits, current attributed native assessments and
+four native verifier experiments. It makes no model calls.
+
+Ignored artifacts remain under
+`oracle-mvp-review-mixed-thirty-two/target/distillation-review-v1/mixed-thirty-two/`.
+The final preparation is `coverage-fully-audited/coverage-search.json`; the earlier
+unused `coverage/` is superseded and excluded from accounting and current binding
+claims. Source inventories are `first-eight-source-inventory.md`,
+`last-eight-source-inventory.md`, `first-eight-dcs-source-expectations.md` and
+`last-eight-dcs-source-expectations.md`. The latter remains frozen; the separate
+`last-eight-dcs-source-correction-and-audit.md` records its one corrected label.
+The native final report is `final-reviewed-collected-review.json`, SHA256
+`b5008b01f9be465fc14370332b34bf90a5684128cb6079947794c6c61350d41e`,
+binding 914 source files. The producer worktree and
+`experiment-runner-review-mixed-thirty-two` runtime worktree remain necessary for
+their immutable absolute source and receipt paths.
+
+Native local accounting across ninety-four parent experiments is **729 attempts:
+656 successful semantic executions, thirty-six warmups and thirty-seven recovered
+provider failures/retries**. Successful executions include 144 matching,
+147 support, 182 high actual-edge/self-guard DSL, 126 paired xhigh DSL, fifty-three
+coverage and four exact witness calls. Duplicate complete output versions remain
+audited rather than being treated as extra subjects. All requested final results
+are available. There are 1,645 saved-result occurrence reuses. The 7,930 unrun
+native rows are forty-three actual edges skipped by raw child-support FALSE and
+7,887 unrequested compatibility comparisons; they are not pending requested
+inference. Every unrun actual edge has the specified native support verdict.
+
+The known API-equivalent subtotal is **$4.1654296**. Known usage contains 760,934
+uncached and 82,816 cached input tokens: 9.82% of 843,750 known input tokens.
+Output contains 263,528 tokens, including 171,138 reasoning tokens. Thirty-seven
+failed attempts lack usage and cost estimates, so complete cost and net
+warming-inclusive cache savings remain unknown. Historical generation usage
+is separate from new attempts. `accounting-final-native-summary.json` retains
+the native accounting, SHA256
+`bb48cf8c0a4c64d5eafb59456e1f29ac1b3b05b9006363ab8e2afb29497c0cfe`.
+
+All 729 native admissions match accounting. Nonoverlapping active model windows
+total **929.05 seconds (15 minutes 29 seconds)**, including warmups, retries and
+queue time within active windows. First admission at 19:56:00 UTC to last release
+at 20:49:36 UTC spans 53 minutes 36 seconds. Source auditing, preparation and
+recording between active windows dominate that span; the overall task also
+includes the metadata implementation, earlier source inventories and final
+collection/accounting. This does not establish full-evaluation turnaround.
+
+Read-only investigation identifies repeated source-only snapshots as removable
+metadata work: every coverage group rebuilds the full native evaluation report,
+including request-availability previews for unused matrix rows. Explicit answer
+IDs remove only the initial redundant report. A later isolated change can omit
+those availability summaries from source-only snapshots and share a hash-verified
+snapshot within one preparation invocation. No live snapshot cache, source
+validation bypass or frozen producer change is introduced here. All 914 final
+collection source hashes still match after the documentation update.
 
 ## Actual distilled wording: offline preview (October 8)
 
