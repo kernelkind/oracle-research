@@ -3,6 +3,20 @@
 Bootstrap establishes a standalone information-topic meaning for one original
 local entry. It does not compare canonical nodes or construct a hierarchy.
 
+## Current model-attempt policy
+
+The user permanently removed the shared **20,000 model-attempt cap** for
+Bootstrap, Compare and hierarchy work. Run authorized experiments through the
+shared runner without `--attempt-budget`; do not restore the retired counter or
+impose another attempt cap unless the user explicitly sets one. Earlier
+instructions in this record to use that counter are historical and superseded
+for current execution.
+
+Retain historical used counts, claims, outputs and receipts unchanged. Fresh
+attempts, retries, exact reuses and usage remain recorded by the native runner.
+This decision does not change task authorization, deliberately bounded
+unrelated experiments or the monetary ledger.
+
 ## Approved sense and factual-evidence rule
 
 The user approved these rules verbatim, replying **“agree”**:
@@ -3812,5 +3826,35 @@ is prepared with the original 346 ASv6.100 inputs. Native history scoped to the
 completed focused experiment preserves exactly its 22 original producers;
 324 definitions are new. The earlier broad-history preparation remains unrun,
 because it would substitute two latest repeat receipts. No cache or receipt is
-manually edited. Full review and qualification remain pending; V122 is not
-activated. No Compare inference or hierarchy construction occurs.
+manually edited. The [completed full qualification](bootstrap-v122-full-qualification-v1.md)
+records all 346 valid nonnull outputs: agent review assesses 341 accepts or
+qualified accepts, four uncertainties and one unsupported particular-stage
+statement. All 384 selected ancestor checks are assessed; three fixed-output
+scope implications fail. Fresh paired repeats fit different independently
+chosen boundaries and do not repair those original outputs. V122 remains
+unactivated; the whole-branch invariant is not solved. At that checkpoint the
+shared 20,000-attempt cap was exhausted and model work stopped. No Compare inference or hierarchy
+construction occurs. The proposed next diagnostic supplies exact fixed ancestor
+definitions to a child; that input-contract change is not implemented or approved.
+
+### Fresh V122 definitions for all four original HR04 Food nodes
+
+The user requested fresh meanings for C003/C004/C009/C014 and assessment of
+their discrepancies against the source posts. They then clarified that another
+agent had removed the prior attempt cap. The old 20,000/20,000 counter remains
+unchanged; this newly authorized native run omits that optional historical limit.
+
+The [four-Food report](bootstrap-v122-hr04-four-foods-v1.md) preserves the exact
+original ASv6.100 posts and root trees and runs unchanged Bootstrap-v122 with
+Sol 6.1 medium and prefix caching. All four meanings are valid fresh draws;
+five attempts include one warmup, with zero failures, retries or answer reuses.
+Known API-equivalent cost is $0.0533864 with complete usage.
+
+Root and an independent reviewer find no definite contradiction with the post
+examples. Human-consumer, nourishment/enjoyment and eating/drinking boundaries
+nonetheless vary. The source posts do not establish why those category-wide
+conditions must differ; diagnostics do not directly contrast them. These are
+individually permissible choices under the current contract, not source-required
+distinctions or new equivalence labels. The next proposed discussion concerns
+whether such variation is acceptable before another prompt edit. V122 remains
+unactivated; no Compare calls, hierarchy build or new prompt occurred.

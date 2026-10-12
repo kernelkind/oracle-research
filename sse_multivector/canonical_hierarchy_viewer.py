@@ -33,7 +33,8 @@ def export_viewer(directory, output):
     if (len(roots) != len(set(roots)) or
             set(roots) != {node['id'] for node in nodes.values() if not node['parents']}):
         raise ValueError('canonical viewer roots differ from saved parents')
-    selected = {entry['note_id'] for node in nodes.values() for entry in node['entries']}
+    selected = {note for node in nodes.values()
+                for note in [*(e['note_id'] for e in node['entries']), *node.get('note_ids', [])]}
     corpus_path = Path(state['corpus'])
     if str(corpus_path) not in state['sources']:
         raise ValueError('canonical viewer corpus is not source-bound')
@@ -60,12 +61,13 @@ def export_viewer(directory, output):
         f"Status: {state['status']}; not human gold.\n"
         f'{len(nodes)} canonical nodes; {len(originals)} notes.\n{qualification}'}]
     for node in nodes.values():
-        direct = list(dict.fromkeys(short_ids[entry['note_id']] for entry in node['entries']))
+        support = list(dict.fromkeys(short_ids[entry['note_id']] for entry in node['entries']))
+        direct = list(dict.fromkeys([*support, *(short_ids[n] for n in node.get('note_ids', []))]))
         view_nodes.append({'node_id': node['id'],
             'label': f"{node['subject']} ({node['id']}; {', '.join(direct)})",
             'children': children[node['id']], 'note_ids': direct, 'analysis':
             f"Canonical ID: {node['id']}\nHeading: {node['subject']}\n"
-            f"Fixed meaning: {node['meaning']}\nDirect supporting notes: {', '.join(direct)}\n"
+            f"Fixed meaning: {node['meaning']}\nDirect supporting notes: {', '.join(support)}\n"
             f"Canonical parents: {', '.join(node['parents']) or '(root)'}"})
     hierarchy = {'schema_version': 2, 'hierarchy_id': directory.name,
         'source_sha256': hashlib.sha256(notes_bytes).hexdigest(), 'root_node_id': 'VIEW_ROOT',

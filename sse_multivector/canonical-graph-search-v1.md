@@ -11,7 +11,7 @@ hierarchy quality. Its scheduling remained dependent on the chat session,
 causing avoidable idle gaps. The user rejected that process and the duplicate
 baseline, then ended the work. No construction or automation work remains
 active. The measured implementation has been replaced by the
-[standalone traversal constructor](hierarchy-traversal-draft.md). The measurements
+[standalone V2 constructor](hierarchy-generation-draft-v2.md). The measurements
 below describe that saved experiment, not the current traversal rules. Its
 source and construction commands remain in Git history; this document retains
 native cost and saved-graph evidence used by the selection studies.

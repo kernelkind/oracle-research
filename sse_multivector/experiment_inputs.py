@@ -76,6 +76,9 @@ def prepare_file(dataset, path, template, load_report=None):
                                              pairwise=pairwise)
         return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, dict(
             application_allowed=False, purpose='Review saved proposals; full placement is separate.')
+    if dataset['adapter'] == 'hierarchy_prominence':
+        return prepare({**dataset, 'adapter': 'generic'}, source, template), sources, dict(
+            application_allowed=False, purpose='Fixed-meaning prominence for local selection.')
     if dataset['adapter'] == 'canonical_shaping_nomination':
         cases = prepare_shaping_nominations(source, path.parent, sources)
         return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, dict(
@@ -1808,7 +1811,7 @@ def validate(dataset, case, raw, schema):
         result['parsed'] = value
     if adapter == "grouped_masks":
         result.update(grouped_masks.validate(case, raw))
-    if adapter in {'prominence', 'subject_contexts'}:
+    if adapter in {'prominence', 'subject_contexts', 'hierarchy_prominence'}:
         value = json.loads(
             raw, object_pairs_hook=engine._position_decoder().unique_object
         )
@@ -1820,7 +1823,7 @@ def validate(dataset, case, raw, schema):
         ):
             raise ValueError("expected one integer prominence score from 0 through 100")
         result["parsed"] = value
-        if adapter == 'subject_contexts':
+        if adapter in {'subject_contexts', 'hierarchy_prominence'}:
             if set(value) != {'prominence', 'missing_meaning', 'allocation'} or not isinstance(value['missing_meaning'], str):
                 raise ValueError('expected context prominence diagnostics')
             allocation = value['allocation']

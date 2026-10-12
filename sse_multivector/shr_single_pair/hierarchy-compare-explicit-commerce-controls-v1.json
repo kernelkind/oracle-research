@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "commerce-commercial-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"A\": {\"subject\": \"Commercial entities\", \"meaning\": \"Commercial entities are businesses and business establishments that offer goods or services commercially, and brands that identify the commercial source of goods or services, including but not limited to design brands and coffee shops.\"}, \"B\": {\"subject\": \"Chinese takeout restaurants\", \"meaning\": \"Chinese takeout restaurants are restaurants serving Chinese cuisine that offer prepared meals for customers to take away. These restaurants operate commercially, selling the prepared meals to customers.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Separately constructed diagnostic variants of a saved HR05 wording. These additions are not Bootstrap outputs or replacements for original fixed meanings; no generated producer receipt is asserted.",
+        "panel": "explicit-commerce-boundaries",
+        "orientation": "forward",
+        "reversal_pair": "commerce-commercial",
+        "application_allowed": false,
+        "review": {
+          "expected_relation": "A_contains_B",
+          "expectation_authority": "provisional-agent-assessment",
+          "expectation_basis": "The explicit commercial meal offering narrows the parent business-establishment alternative; unrelated commercial businesses remain outside restaurants.",
+          "user_gold": false,
+          "qualification": "Check scope compatibility, whole-child restrictions and every parent alternative/connection; no label is transferred to the original unresolved restaurant pair."
+        }
+      }
+    },
+    {
+      "id": "commerce-commercial-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"A\": {\"subject\": \"Chinese takeout restaurants\", \"meaning\": \"Chinese takeout restaurants are restaurants serving Chinese cuisine that offer prepared meals for customers to take away. These restaurants operate commercially, selling the prepared meals to customers.\"}, \"B\": {\"subject\": \"Commercial entities\", \"meaning\": \"Commercial entities are businesses and business establishments that offer goods or services commercially, and brands that identify the commercial source of goods or services, including but not limited to design brands and coffee shops.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Separately constructed diagnostic variants of a saved HR05 wording. These additions are not Bootstrap outputs or replacements for original fixed meanings; no generated producer receipt is asserted.",
+        "panel": "explicit-commerce-boundaries",
+        "orientation": "reverse",
+        "reversal_pair": "commerce-commercial",
+        "application_allowed": false,
+        "review": {
+          "expected_relation": "B_contains_A",
+          "expectation_authority": "provisional-agent-assessment",
+          "expectation_basis": "The explicit commercial meal offering narrows the parent business-establishment alternative; unrelated commercial businesses remain outside restaurants.",
+          "user_gold": false,
+          "qualification": "Check scope compatibility, whole-child restrictions and every parent alternative/connection; no label is transferred to the original unresolved restaurant pair."
+        }
+      }
+    },
+    {
+      "id": "commerce-noncommercial-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"A\": {\"subject\": \"Commercial entities\", \"meaning\": \"Commercial entities are businesses and business establishments that offer goods or services commercially, and brands that identify the commercial source of goods or services, including but not limited to design brands and coffee shops.\"}, \"B\": {\"subject\": \"Chinese takeout restaurants\", \"meaning\": \"Chinese takeout restaurants are restaurants serving Chinese cuisine that offer prepared meals for customers to take away. These restaurants operate entirely noncommercially, offering only free meals and identifying no commercial source.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Separately constructed diagnostic variants of a saved HR05 wording. These additions are not Bootstrap outputs or replacements for original fixed meanings; no generated producer receipt is asserted.",
+        "panel": "explicit-commerce-boundaries",
+        "orientation": "forward",
+        "reversal_pair": "commerce-noncommercial",
+        "application_allowed": false,
+        "review": {
+          "expected_relation": "neither",
+          "expectation_authority": "provisional-agent-assessment",
+          "expectation_basis": "The child explicitly admits no commercial operation or commercial source; the parent also admits unrelated commercial businesses.",
+          "user_gold": false,
+          "qualification": "Check scope compatibility, whole-child restrictions and every parent alternative/connection; no label is transferred to the original unresolved restaurant pair."
+        }
+      }
+    },
+    {
+      "id": "commerce-noncommercial-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"A\": {\"subject\": \"Chinese takeout restaurants\", \"meaning\": \"Chinese takeout restaurants are restaurants serving Chinese cuisine that offer prepared meals for customers to take away. These restaurants operate entirely noncommercially, offering only free meals and identifying no commercial source.\"}, \"B\": {\"subject\": \"Commercial entities\", \"meaning\": \"Commercial entities are businesses and business establishments that offer goods or services commercially, and brands that identify the commercial source of goods or services, including but not limited to design brands and coffee shops.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Separately constructed diagnostic variants of a saved HR05 wording. These additions are not Bootstrap outputs or replacements for original fixed meanings; no generated producer receipt is asserted.",
+        "panel": "explicit-commerce-boundaries",
+        "orientation": "reverse",
+        "reversal_pair": "commerce-noncommercial",
+        "application_allowed": false,
+        "review": {
+          "expected_relation": "neither",
+          "expectation_authority": "provisional-agent-assessment",
+          "expectation_basis": "The child explicitly admits no commercial operation or commercial source; the parent also admits unrelated commercial businesses.",
+          "user_gold": false,
+          "qualification": "Check scope compatibility, whole-child restrictions and every parent alternative/connection; no label is transferred to the original unresolved restaurant pair."
+        }
+      }
+    },
+    {
+      "id": "commerce-mixed-forward",
+      "inputs": {
+        "INPUT_JSON": "{\"A\": {\"subject\": \"Commercial entities\", \"meaning\": \"Commercial entities are businesses and business establishments that offer goods or services commercially, and brands that identify the commercial source of goods or services, including but not limited to design brands and coffee shops.\"}, \"B\": {\"subject\": \"Chinese takeout restaurants\", \"meaning\": \"Chinese takeout restaurants are restaurants serving Chinese cuisine that offer prepared meals for customers to take away. This scope includes both restaurants operating commercially and restaurants operating entirely noncommercially that offer only free meals and identify no commercial source.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Separately constructed diagnostic variants of a saved HR05 wording. These additions are not Bootstrap outputs or replacements for original fixed meanings; no generated producer receipt is asserted.",
+        "panel": "explicit-commerce-boundaries",
+        "orientation": "forward",
+        "reversal_pair": "commerce-mixed",
+        "application_allowed": false,
+        "review": {
+          "expected_relation": "neither",
+          "expectation_authority": "provisional-agent-assessment",
+          "expectation_basis": "The child expressly admits a noncommercial alternative outside the parent, while the parent also admits unrelated commercial businesses.",
+          "user_gold": false,
+          "qualification": "Check scope compatibility, whole-child restrictions and every parent alternative/connection; no label is transferred to the original unresolved restaurant pair."
+        }
+      }
+    },
+    {
+      "id": "commerce-mixed-reverse",
+      "inputs": {
+        "INPUT_JSON": "{\"A\": {\"subject\": \"Chinese takeout restaurants\", \"meaning\": \"Chinese takeout restaurants are restaurants serving Chinese cuisine that offer prepared meals for customers to take away. This scope includes both restaurants operating commercially and restaurants operating entirely noncommercially that offer only free meals and identify no commercial source.\"}, \"B\": {\"subject\": \"Commercial entities\", \"meaning\": \"Commercial entities are businesses and business establishments that offer goods or services commercially, and brands that identify the commercial source of goods or services, including but not limited to design brands and coffee shops.\"}}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "origin": "Separately constructed diagnostic variants of a saved HR05 wording. These additions are not Bootstrap outputs or replacements for original fixed meanings; no generated producer receipt is asserted.",
+        "panel": "explicit-commerce-boundaries",
+        "orientation": "reverse",
+        "reversal_pair": "commerce-mixed",
+        "application_allowed": false,
+        "review": {
+          "expected_relation": "neither",
+          "expectation_authority": "provisional-agent-assessment",
+          "expectation_basis": "The child expressly admits a noncommercial alternative outside the parent, while the parent also admits unrelated commercial businesses.",
+          "user_gold": false,
+          "qualification": "Check scope compatibility, whole-child restrictions and every parent alternative/connection; no label is transferred to the original unresolved restaurant pair."
+        }
+      }
+    }
+  ]
+}

@@ -345,3 +345,9 @@ exactly 22 original producers and excludes the repeat directory. No cache file
 or receipt is manually rewritten. This preserves the frozen first-draw cohort
 while retaining exact-request reuse; full-run checks must verify those producer
 bindings again after execution.
+
+The [completed V122 full qualification](bootstrap-v122-full-qualification-v1.md)
+records all 346 definitions and 384 selected ancestor checks, paired repeats,
+fixed-output scope conflicts and the partial native comment-persistence policy.
+The shared counter is exhausted at 20,000; further model work is stopped.
+V122 remains a tested candidate, not an activated prompt or solved invariant.
