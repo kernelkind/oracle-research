@@ -8117,3 +8117,25 @@ eight-case screen and both physical six-case panels: twenty valid comparisons,
 twenty-three fresh attempts including three warmups, no exact reuse, retry,
 failure or missing usage, and $0.117908 API-equivalent catalog cost. This is not
 a subscription charge. Preserve all original source fixtures and native exports.
+
+### V207: particular aspect-owner qualification example
+
+V207 retains V202's instructions and Hair-cutting example byte for byte. It
+replaces only the complete second example with fictional Birds and the physical
+wing appearance of one particular warm-blooded winged vertebrate, Neri. Feathers
+remain unstated. The example requires establishing the same owner's qualifying
+kind before using its properties connection, and refuses to assign the missing
+condition either way. The inverse counterexample uses a separate bird's beak,
+not an invented fact about Neri. No regression subjects or producer data enter
+this example; the four-field output and A/B input contracts are unchanged.
+
+This differs from V206's direct elevation membership example by exercising
+qualification of the owner of a bounded physical aspect. The causal hypothesis
+is not established. First test only the six-case physical matrix: retain all four
+known-material answers and their supporting proofs, and recognize the two
+omitted-material cases without assigning particular facts. A failed screen ends
+expansion; any positive requires a fresh draw plus original aspect, resolved
+controls, complete chains and producer qualification before adoption. Replacing
+an entire example also removes the Watch-repair demonstration, so do not report
+a word-level causal attribution. Independent reviewers retain provisional
+synthetic labels separately from original data and human decisions.
