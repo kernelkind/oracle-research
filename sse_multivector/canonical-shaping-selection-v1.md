@@ -2,9 +2,12 @@
 
 The newest user-authorized candidate is
 [Hierarchy-consolidation-v18](shr_single_pair/Hierarchy-consolidation-v18.md),
-prepared for testing with direct coverage conditions for every admitted child
+tested with direct coverage conditions for every admitted child
 alternative. Shared meaning writing, synthetic example and output remain
-byte-identical to v17. See [the conditions screen](#consolidation-v18-alternative-coverage-conditions).
+byte-identical to v17. The fixed Food C009 decision is corrected in this draw,
+but Beets and Material scope problems remain; both heating controls pass.
+V18 remains experimental and unapplied. See
+[the conditions screen](#consolidation-v18-alternative-coverage-conditions).
 
 The preceding user-authorized tested candidate is
 [Hierarchy-consolidation-v17](shr_single_pair/Hierarchy-consolidation-v17.md).
@@ -5141,3 +5144,89 @@ No verdict, expectation or diagnostic answer enters generation input. This
 bounded prompt-development screen adds no production per-node step and scans
 no corpus. Main is synchronized at `d48e0de5`; work remains in the expressly
 isolated worktree, with no graph, UI, Bootstrap or Compare edits or messages.
+
+### Completed v18 conditions screen
+
+Six case responses and three native warmups complete without failures, retries
+or answer reuse. Main generations and fixed-proposal diagnostics remain separate.
+
+| Group | V18 generated proposal | Agent assessment |
+|---|---|---|
+| Food | Food resources: materials intended to be eaten/drunk and plants grown to produce them; C003/C006/C007/C009 | Uncertain: the human restriction is gone, but stock consumption intention and the plant food-purpose interpretation remain qualified |
+| Material | Physical articles, substances and organisms intended or suitable as means/inputs in practical activities or nourishment; C028/C034 | Reject under the bounded literal suitability reading: the broad organism alternative still omits MrBeast C025; the resource-role interpretation remains qualified |
+| Heating | Devices producing heat for cooking or heating; C001/C012 | Qualified accept under the functional-kind reading; the five other siblings are excluded |
+
+These are single draws. The saved v17 first-generation draws have one reject and
+two qualified accepts; the three v18 draws have one reject, one qualified accept
+and one uncertainty. That does not demonstrate an overall generation accuracy
+gain. V17's six-draw distribution is a different sample size and is not used as
+an equal-sized baseline here. A generated definition without the human condition
+does not itself prove that the fixed people-only coverage mistake is corrected.
+
+Audit-v5 retains the three original proposed definitions unchanged and returns
+all nineteen sibling assessments exactly once, in supplied order:
+
+| Fixed proposal | Included | Result |
+|---|---|---|
+| People-only Food resources | C003/C006/C007 | Target C009 corrected; complete list still rejected for C007's missing human destination; stock remains qualified |
+| Broad Material resources | C028/C034 | C025 omission remains under the preregistered literal capability reading |
+| Cooking and heating appliances | C001/C012 | Qualified positive-control accept; all five other siblings excluded |
+
+Food C009's decisive justification is now:
+
+> Its meaning requires intended eating but does not require human consumers, allowing food for other organisms outside the proposal.
+
+That explicitly identifies the previously missed consumer condition. Beets C007
+still receives:
+
+> Both beet plants grown for edible roots and the roots themselves are expressly covered by the proposal.
+
+The latter justification relies on the listed kinds without establishing the
+human destination inherited by producer organisms. The Material C025
+justification is unchanged from Audit-v4: the creator occupation does not entail
+practical use or nourishment capability. The literal human-organism implication
+and competing information-topic interpretation remain a qualification, not new
+human gold. Both complete problem-group answers receive attributed agent rejects;
+the heating answer receives a qualified agent accept. No internal-causality or
+reliability claim follows from one observation per version.
+
+Actual generation requests differ from their saved v17 counterparts only in
+coverage text and the identity fields recomputed for the changed cache prefix:
+developer content ID, cache key and client session/thread metadata. Inputs,
+roles, schema and model/reasoning settings match. The two paired fixed-proposal
+requests differ from Audit-v4 only in coverage text; schema, inputs and nominal
+proposal/sibling meanings are unchanged. Opaque account/scope metadata match
+each available counterpart. All nine retained raw HTTP 200 responses report
+GPT-6.1 Sol with requested medium effort, distinct upstream references and one
+HTTP attempt each. No previous response or conversation linkage is supplied.
+Warmup answers never enter generation inputs.
+
+The counter and claim ledger reconcile at **9/12 actual attempts**: three
+generation answers, three prefix warmups and three diagnostic answers. The
+unused allowance was reserved for recovery and is not consumed by extra tests.
+The [fresh-work selection](shr_single_pair/hierarchy-consolidation-v18-hr05-fresh-usage-v1.json)
+records **$0.041062 complete API-equivalent catalog cost**, with **11,586 input
+tokens**, zero cached reads/writes, and **1,789 output tokens including 958
+reasoning tokens** already counted in output. No failed usage is missing. Its
+ignored native report is
+`target/canonical-shaping-selection-v1/consolidation-v18-hr05-fresh-reviewed-v1.json`.
+The separate compared report retains six saved v17 attempts alongside the nine
+new attempts; its 15-call total is not new work. Those historical cached reads
+are not v18 cache hits. Caching is not diagnosed or changed in this task.
+
+All 73 relevant production-path checks pass, including the unchanged shared
+definition/example/output contract and exact generation/diagnostic coverage
+wording. Source checkpoint is `214f4a8a`; all native reviews remain attributed
+to the agent. Historical prompt bytes, producer receipts and canonical meanings
+stay fixed. V18 is not adopted, and no hierarchy, UI or external agent is changed.
+
+The next suggested diagnostic isolates the illustrative sentence in the fixed
+Food proposal: compare the original text with a source-bound synthetic variant
+that omits that sentence, retaining the defining sentence, sibling meanings,
+prompt, schema and settings. This tests the concrete interpretation visible in
+the Beets justification before adding another coverage instruction. It must
+preserve the original receipt and label the edited proposal as synthetic; it
+does not repair a canonical meaning or assume that the model already interprets
+both texts equivalently. The existing source-bound adapter has no proposal-edit
+option, so minimal tested preparation support would be needed after approval.
+No such option, variant or additional inference is implemented in this screen.
