@@ -375,6 +375,31 @@ class PromptAssemblyTests(unittest.TestCase):
                 self.assertEqual(Path(revision['base_path']).name, baseline.name)
                 self.assertEqual(revision['prompt_sha256'], current['output']['sha256'])
 
+    def test_counterexample_revision_preserves_other_prompt_sections(self):
+        spec = PROMPTS / 'Hierarchy-consolidation-v19.assembly.json'
+        result = self.invoke('check', spec)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        current = json.loads(spec.read_text())
+        previous = json.loads((PROMPTS / 'Hierarchy-consolidation-v18.assembly.json').read_text())
+        self.assertEqual(current['parts'][:-1], previous['parts'][:-1])
+        prompt = (PROMPTS / current['output']['path']).read_bytes()
+        old_prompt = (PROMPTS / previous['output']['path']).read_bytes()
+        begin = b'\n# Identify the children\n'
+        end = b'\n\n`children` must contain'
+        self.assertEqual(prompt.split(begin, 1)[0], old_prompt.split(begin, 1)[0])
+        self.assertEqual(prompt.split(end, 1)[1], old_prompt.split(end, 1)[1])
+        check = prompt.split(begin, 1)[1].split(end, 1)[0]
+        self.assertIn(b'look for a case admitted by its fixed meaning', check)
+        self.assertIn(b'Check that the case satisfies the sibling', check)
+        self.assertIn(b'failure to find a counterexample alone does not establish coverage', check)
+        self.assertEqual(check.count(b'If such a case is possible, exclude that sibling.'), 1)
+        self.assertNotIn(b'Exclude a sibling if its meaning allows a case outside', check)
+        self.assertEqual(sha256(old_prompt),
+                         '3d01c0854762ca6e4baa8fe752fd1b409334cfb874a360da61543e38c0bdf9fd')
+        revision = json.loads((PROMPTS / 'Hierarchy-consolidation-v19.md.revision.json').read_text())
+        self.assertEqual(revision['base_sha256'], sha256((PROMPTS / 'Hierarchy-consolidation-v3.md').read_bytes()))
+        self.assertEqual(revision['prompt_sha256'], current['output']['sha256'])
+
     def test_shared_runner_freezes_the_complete_assembled_prompt_without_inference(self):
         runner_root = CLI.resolve().parents[2] / 'experiment-runner'
         launcher = runner_root / 'bin' / 'experiment-runner'
@@ -393,7 +418,8 @@ class PromptAssemblyTests(unittest.TestCase):
                         'Hierarchy-consolidation-v11', 'Hierarchy-consolidation-v12',
                         'Hierarchy-consolidation-v13', 'Hierarchy-consolidation-v14',
                         'Hierarchy-consolidation-v15', 'Hierarchy-consolidation-v16',
-                        'Hierarchy-consolidation-v17', 'Hierarchy-consolidation-v18'):
+                        'Hierarchy-consolidation-v17', 'Hierarchy-consolidation-v18',
+                        'Hierarchy-consolidation-v19'):
             with self.subTest(version=version):
                 inputs = json.dumps({key: value for key, value in data.items()
                                      if version not in ('Hierarchy-consolidation-v3', 'Hierarchy-consolidation-v4',

@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "v19_first_draw": [
+      "../../target/canonical-shaping-selection-v1/consolidation-v19-hr05-food-first-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v19-hr05-material-first-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v19-hr05-heating-first-v1"
+    ],
+    "v19_fresh_repeat": [
+      "../../target/canonical-shaping-selection-v1/consolidation-v19-hr05-food-repeat-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v19-hr05-material-repeat-v1",
+      "../../target/canonical-shaping-selection-v1/consolidation-v19-hr05-heating-repeat-v1"
+    ]
+  }
+}

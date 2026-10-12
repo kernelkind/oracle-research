@@ -7,7 +7,16 @@ not activated, and the last human-approved consolidation wording remains v3.
 Generated inputs, vectors, receipts and review artifacts remain ignored in the
 task worktree; their frozen references must be retained for reproduction.
 
-The newest user-authorized candidate is
+The newest user-authorized draft is
+[Hierarchy-consolidation-v19](shr_single_pair/Hierarchy-consolidation-v19.md).
+It changes only the inclusion-check block to seek and qualify a counterexample
+before including a sibling, without treating failure to find one as proof of
+coverage. Shared definition writing, the synthetic example and output remain
+unchanged. Its authorized actual-generation screen uses the saved Food,
+Material and Heating groups, with two independent fresh draws each. See
+[the v19 screen](#consolidation-v19-counterexample-check).
+
+The preceding user-authorized candidate is
 [Hierarchy-consolidation-v18](shr_single_pair/Hierarchy-consolidation-v18.md),
 tested with direct coverage conditions for every admitted child
 alternative. Shared meaning writing, synthetic example and output remain
@@ -5571,3 +5580,84 @@ preservation rule; keep shared definition writing, example and output fixed.
 Evaluate actual consolidation generation against these saved problem groups
 and positive controls. This is a proposed change requiring the next user
 approval, not a drafted prompt, new inference or a production guard.
+
+## Consolidation-v19 counterexample check
+
+The user approves proceeding with the proposed consolidation prompt change and
+actual-generation test. V19 replaces the two-paragraph inclusion block in v18;
+it does not add a diagnostic output, a reasoning trace, an example tied to the
+regression subjects, or an additional production review step. It asks the model
+to seek a case admitted by the sibling but excluded by every covered kind or
+relationship of the final proposal. That case must satisfy the sibling's
+requirements and necessary implications. Inclusion still requires necessary
+coverage of every admitted alternative; failing to find an escaping case is
+not sufficient. The duplicate exclusion sentence in the following paragraph
+is removed, while its required-condition, completeness and relationship rules
+stay fixed.
+
+The [assembly manifest](shr_single_pair/Hierarchy-consolidation-v19.assembly.json)
+pins the same shared fragment as v18, with a new versioned wrapper. The native
+revision is against last human-approved consolidation v3; the experimental
+behavioral comparator is unchanged v18. All v18 bytes remain unchanged, as do
+Bootstrap-v104, Audit-v5, the synthetic display-panel example and the output
+schema. Counterexample is defined in the new text as an admitted child case
+outside every proposed-parent kind or relationship. The production assembly
+test is written first and fails because the v19 assembly is absent. It then
+checks pinned reconstruction, the exact untouched sections and shared bytes,
+required admission/exclusion checks, absence of the duplicated sentence and
+revision identity. Actual native preparation of the complete v19 prompt is
+also covered. All **71 relevant production-path checks pass** before dispatch.
+
+The user-authorized screen produces actual title/meaning/children proposals
+for the three saved HR05 groups, not comparison-prompt answers or a fixed
+proposal's child list. Native `prepare --from` freezes unchanged v18 Food,
+Material and Heating first-draw inputs, switches to v19 and selects the current
+shared worker. `--repeat` prevents historical exact-answer reuse. A second
+`prepare --from ... --repeat` freezes an independent second draw for each group
+before any response is generated. Both draws share the original sibling
+wording/order and medium/SSE/schema settings, without previous answers or
+reviews in model input. Native caching is inherited: each run has an eligible
+**1,327 estimated-token** v19 prefix, a derived key and automatic warming.
+Expected work is six generation answers plus six native prefix warmups;
+actual retries, warmups and missing usage remain separately reported. No
+retired shared attempt counter is restored.
+
+Pre-call assessment uses each generated final meaning, not an expected title
+or an old selected list. Different coherent proposals are allowed. Check whole
+child coverage, all omitted siblings, consistency of required versus optional
+conditions, useful naming and existing structural output rules. A human-only
+Food proposal may not silently admit unrestricted consumers; its Beets plant
+alternative must meet the stated destination condition. Stock's culinary
+purpose inference remains qualified. In Material, the earlier literal
+organism/capability concern and competing information-topic interpretation
+remain unsettled, not new human gold. If a new proposal actually removes that
+alternative or narrows it coherently, its omitted creator is assessed under
+that new scope rather than forced to match an old list.
+
+The Heating group offers Rocket stoves and Crockpots as useful positive
+coverage controls; food and brand nodes must not acquire appliance roles.
+A different coherent proposal is assessed on its own boundaries and marked as
+not testing that exact heating consolidation, rather than rejected for its
+different title. Null or uncertainty alone does not establish corrected useful
+consolidation. All three inputs are roots with `parent: null`; this screen
+does not qualify containment beneath a supplied parent. The existing parent
+restriction rules stay unchanged.
+
+The [fresh-work selection](shr_single_pair/hierarchy-consolidation-v19-hr05-fresh-usage-v1.json)
+keeps v19 first and repeated generations separate. The
+[compared selection](shr_single_pair/hierarchy-consolidation-v18-v19-hr05-usage-v1.json)
+also preserves saved v18 first draws, with no new v18 calls. Compare the three
+saved v18 first draws with the three fresh v19 first draws as equally sized
+screens; report the new repeats separately. Do not claim reliability or a
+statistical accuracy gain from those samples, nor certify fixed-proposal
+coverage merely because generation chooses another meaning.
+
+This follows official [reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices)
+on direct instructions and avoiding requested reasoning traces, and
+[evaluation guidance](https://developers.openai.com/api/docs/guides/evaluation-best-practices)
+on scoped tests and retaining human calibration. The counterexample instruction
+is an experimental hypothesis, not a documented model guarantee. Runtime work
+and input size depend on these three bounded sibling groups; no corpus-wide
+search or production per-node stage is added. Experimental integration does
+not activate v19. No hierarchy, UI, Bootstrap/Compare file, model evaluator or
+external agent is changed by this screen.
