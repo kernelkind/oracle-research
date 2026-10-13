@@ -16,16 +16,17 @@ Each run's raw build, browsing menu and export share its ID.
 
 The user approved the six-, twelve- and twenty-four-note V3 experiments and
 then added HR14, a fifty-note run with the same frozen settings and code.
-HR11–HR13 completed in that order. HR14 finished Bootstrap and is blocked by
-two null meanings; no canonical hierarchy has been constructed. Every run's
-complete parameter row and generation commits were recorded before inference.
+HR11–HR13 completed in that order. HR14 resumed with the user-approved
+null-handling change after its saved Bootstrap batch returned two null meanings.
+Its initial and continuation parameters and exact source commits are recorded
+before each execution.
 
 | Run | Notes | Definition | Prepared provenance | Status | Review UI | Native usage |
 | --- | --- | --- | --- | --- | --- | --- |
 | HR11 | 6 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr11/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr11-v3/target/hierarchy-hr11-v3-six-note-v1/prepared-provenance.json) | Complete; 17 nodes, 67/1,000 calls | [Launch](../../../oracle-mvp-hierarchy-hr11-v3/target/hr11-review-ui-v1/launch.sh) | [Report](../../../oracle-mvp-hierarchy-hr11-v3/target/hierarchy-hr11-v3-six-note-v1/usage-v1.json) |
 | HR12 | 12 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr12/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr12-v3/target/hierarchy-hr12-v3-twelve-note-v1/prepared-provenance.json) | Complete; 65 nodes, 152/3,000 calls | [Launch](../../../oracle-mvp-hierarchy-hr12-v3/target/hr12-review-ui-v1/launch.sh) | [Report](../../../oracle-mvp-hierarchy-hr12-v3/target/hierarchy-hr12-v3-twelve-note-v1/usage-v1.json) |
 | HR13 | 24 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr13/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr13-v3/target/hierarchy-hr13-v3-twenty-four-note-v1/prepared-provenance.json) | Complete; 107 nodes, 421/5,000 calls | [Launch](../../../oracle-mvp-hierarchy-hr13-v3/target/hr13-review-ui-v1/launch.sh) | [Report](../../../oracle-mvp-hierarchy-hr13-v3/target/hierarchy-hr13-v3-twenty-four-note-v1/usage-v1.json) |
-| HR14 | 50 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr14/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/prepared-provenance.json) | Approved null-skip resume; 177/10,000 calls retained | Pending | Pending |
+| HR14 | 50 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr14/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/prepared-provenance.json) | Running; approved null-skip continuation | Pending | Pending |
 
 HR13 preserves HR05, HR08 and HR09's exact ordered 24-note selection. HR11 and
 HR12 are approved nested subsets, retaining the original relative order.
@@ -87,16 +88,18 @@ skipping these two null entries and resuming from the same saved answers and
 allowance. The tested continuation code is frozen at `c607d6fb`, retaining
 the other seven original generator bindings. The initial source remains
 `d4c55c13`; both exact commits are reachable from local main. The 10,000-call
-allowance remains intact, with 177 calls already used. All 50 notes remain
-represented by the 324 non-null original L1 entries available for construction.
+allowance remains intact, with 177 calls already used. All 50 notes still have
+at least one of the 324 non-null original L1 entries available for construction.
 
 The [blocked snapshot](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/HR14-blocked-bootstrap-v1/state.json),
 [its native accounting](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/usage-blocked-v1.json)
 and exact [TheRogueBatch](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/blockers-v1/L00227.show.json)
 and [coffeechain](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/blockers-v1/L00230.show.json)
 evidence are preserved separately. These are valid null answers, not malformed
-or failed requests. The continuation will report them as skipped without
-changing their original receipts.
+or failed requests. The continuation reports them as skipped without changing their original
+receipts. Its [source review](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/resume-source-v1-provenance.json)
+and [live execution handle](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/execution-handle-resume-v1.json)
+record the separate frozen continuation checkout.
 
 HR11's first preparation attempt stopped before any inference because the new
 isolated runner lacked its locked Node dependencies. The native files were
