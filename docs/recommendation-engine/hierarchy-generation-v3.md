@@ -239,8 +239,98 @@ Ignored evidence is `target/pair-consolidation-v7-root-controls-v1`,
 `target/pair-consolidation-v7-usage-source-v1.json` and
 `target/pair-consolidation-v7-usage-summary-v1.json`. The original HR14 worktree
 continues to supply the unchanged input and baseline receipts. Assembly and all
-26 production-path assembly tests pass. A wider saved-pair screen is the next
-useful qualification before a new hierarchy run; it is not part of this trial.
+26 production-path assembly tests pass. The expanded qualification below extends
+this initial screen without changing V7 or regenerating a hierarchy.
+
+### Expanded saved-input V7 qualification
+
+The user authorized a wider saved-pair test before a new hierarchy run. It
+completed on 2026-10-13 with **65 valid answers: 63 qualified agent accepts,
+two uncertain assessments and no confirmed rejects**. These are attributed
+agent assessments, not independently validated human gold or a reliability
+estimate. Ten answers reuse the initial screen exactly; reuse adds no sample.
+
+The panel inherits root cases F00000-P00000 through F00000-P00059 inclusive
+from HR14 batch-00001, plus five supplied-parent cases from batch-00023:
+F00011-P00000 (Recipes), F00012-P00000 (Breakfast), F00012-P00001 (Food with
+different consumer restrictions), F00012-P00003 (Frying/Forks) and
+F00013-P00000 (Tomatoes). The root selection covers shared names with different
+meanings as well as product/activity, device/function, material/quality
+and other mixed-topic pairs. It is a bounded selection from the first root
+round, not all 834 saved consolidations or a random sample of the hierarchy.
+The original fifty-note corpus retains verified ASv6.100 provenance.
+
+Native preparation preserves each complete INPUT_JSON, the fixed parent where
+present, the saved V6 baseline, model/schema/settings and the isolated worker.
+V7 is byte-identical to the initial screen. Use GPT-6.1 Sol medium subscription
+over SSE, native exact reuse and automatic prefix warming; both ready batches
+were submitted immediately through the shared queue. No baseline was rerun.
+Review checks the final meaning for both full coverage and unnecessary breadth,
+including whether conditions belong to every admitted kind or only one.
+
+The initial identity controls survive exact reuse. New Coffee, Bitcoin, Nostr,
+Breakfast, Dinner and named-hashtag pairs generally retain their identities.
+Food cases explicitly preserve alternatives such as human consumption versus
+animal nourishment, and nourishment versus enjoyment. Mixed-topic outputs
+explicitly cover pancake cakes and dry/wet preparation mixtures, food-smoking
+processes and equipment including cold smoking, lunch meals and containers,
+exercise and unperformed workout plans, and salads including fictional
+personifications. Frozen materials admits whole or partial freezing without
+requiring every kind to be edible or solid water. All five supplied-parent
+proposals receive qualified accepts for coverage and parent fit.
+
+Two requests remain unresolved:
+
+- **F00000-P00013, Coffeechain:** the inputs define the specific #coffeechain
+  sharing tag and the informal Coffeechain community on Nostr. V7's title is
+  *Coffeechain social-media sharing*. Its opening meaning is “Coffeechain
+  social-media sharing is the connection of coffee-related posts in a shared
+  social-media conversation.” Later sentences explicitly include the tag and
+  named community. Both inputs are covered, but the opening could admit an
+  unrelated coffee-post conversation. Whether the named topic itself supplies
+  the required identity boundary is unresolved; this is not a proven failure.
+- **F00000-P00038, Diets:** the first input describes food-consumption patterns
+  characterized by food kinds and amounts or relative proportions. The second
+  describes food-consumption patterns/regimens without explicitly imposing
+  those features. V7 returns “Diets are patterns or regimens of food consumption
+  characterized by the kinds of food eaten and their amounts or relative
+  proportions. They include habitual ways of eating and deliberately followed
+  eating regimens.” A regimen defining only eating times is a plausible
+  counterexample. Whether the characterization is a membership restriction or
+  a necessary description remains unresolved; this is not a proven failure.
+
+These questions should be adjudicated before calling the entire panel a pass.
+No prompt revision, new hierarchy, activation or per-sentence causal claim
+follows from this screen. V7 remains experimental; HR14 and its meanings retain
+V6. A new hierarchy would be a separate end-to-end test rather than certification
+from these pair answers.
+
+Native accounting is complete: **57 fresh attempts**, including two prefix
+warmups and 55 consolidation answers, plus ten exact reuses. There are no
+failed/retried attempts or missing usages. Fresh usage is 17,036 uncached input
+tokens, 61,056 cached input tokens and 10,566 output tokens; 7,028 reasoning
+tokens are already included in output, and reported cache writes are zero.
+Complete fresh API-equivalent catalogue cost is **$0.1458376**. Native original
+generation accounting, tracing reused producers and their warmups once, is
+69 calls and **$0.1703116**. Neither total is an incremental subscription cash
+charge, a policy-savings measurement or a contemporaneous V6 comparison.
+
+The expanded worktree is retained for frozen sources and native receipt/review
+validation:
+
+```text
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp-pair-consolidation-v7-expanded-v1
+```
+
+Ignored evidence is `target/pair-consolidation-v7-expanded-roots-v1`,
+`target/pair-consolidation-v7-expanded-parents-v1`,
+`target/pair-consolidation-v7-expanded-usage-source-v1.json` and
+`target/pair-consolidation-v7-expanded-usage-summary-v1.json`. Reviews use native
+`review` with role `agent`, including exact import of the ten initial reviews.
+Preparation verified exact inherited inputs and isolated source bindings; fresh
+receipts retain HTTP 200, the requested provider/model/effort and raw cache
+usage. Assembly and all 26 production-path assembly tests pass. Historical V6,
+shared-rules-v6 and the Bootstrap companion remain unchanged.
 
 Exact answer reuse must match the complete request, including the optional
 canonical parent. A root-consolidation answer cannot be reused for a request
