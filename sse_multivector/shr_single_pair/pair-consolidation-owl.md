@@ -1,6 +1,11 @@
 # Pair-consolidation-owl: experimental prompt line
 
-`pair-consolidation-owl-v6` is the current experimental draft. The user approved
+`pair-consolidation-owl-v7` is the current experimental draft. The user approved
+making the alternative instruction explicit: every stated alternative must use
+`OR`, directly in `owl.expression` or in a supporting `owl.classes` definition.
+V7 has not yet been model-tested or activated in hierarchy construction.
+
+For `pair-consolidation-owl-v6`, the user approved
 adding the rule that every input restriction and alternative must appear in its
 OWL expression or a supporting formal class definition, rather than only in an
 English glossary. Its [two-order consumer check](pair-consolidation-owl-v6-consumer-v1.md)
@@ -33,8 +38,9 @@ following contract:
 - Every restriction and alternative stated in an input meaning must appear in
   its `owl.expression` or a supporting definition in `owl.classes`. English
   definitions explain basic terms; they must not be the sole representation of
-  those conditions. A class name may abbreviate conditions when its formal
-  definition exposes them.
+  those conditions. Every stated alternative uses `OR`, directly in the
+  expression or a supporting class definition. A class name may abbreviate
+  conditions when its formal definition exposes them.
 - Each `owl` object has `expression` first, for the topic's own expression,
   then `classes`, a JSON object of supporting class definitions. The entrypoint
   is always `owl.expression`; `owl.classes` may be empty. This same layout is
@@ -54,22 +60,22 @@ are omitted from expression strings; nested parentheses preserve grouping.
 
 ## Sources and assembly
 
-The [v6 draft](pair-consolidation-owl-v6.md) is built by its
-[pinned assembly manifest](pair-consolidation-owl-v6.assembly.json). It includes
+The [v7 draft](pair-consolidation-owl-v7.md) is built by its
+[pinned assembly manifest](pair-consolidation-owl-v7.assembly.json). It includes
 [OWL-like guide v5](prompt_parts/owl-reasoning-guide-v5.md) and
 [explicit-meaning rules v6](prompt_parts/explicit-meaning-rules-v6.md)
 byte-for-byte. Its matching definition-writing reference is
 [Bootstrap-v129](Hierarchy-bootstrap-v129.md).
 
-V6 retains the [v5 prompt](pair-consolidation-owl-v5.md)'s one
+V7 retains the [v6 prompt](pair-consolidation-owl-v6.md)'s one
 [complete input/output example](prompt_parts/pair-consolidation-owl-example-v3.md)
 using the same display-panel case, with each entry expression separated from
 its supporting classes. The guide distinguishes exact class definitions from
 one-way containment checks; required membership implications are expressed in
 the formal definitions. It does not encode a containment claim as an exact
 equivalence. The shared meaning-writing rules and consolidated natural-language
-meaning are unchanged. The only compiled-prompt change from v5 is the two
-approved sentences in the node-translation instructions. All earlier published
+meaning are unchanged. The only compiled-prompt change from v6 is the approved
+explicit-`OR` sentence in the node-translation instructions. All earlier published
 prompt and guide files retain their original bytes.
 
 The notation is the simplified OWL-like notation described in the guide. The
@@ -88,7 +94,7 @@ complete saved API-equivalent cost of $0.216726; it did not generate a hierarchy
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
 python3 sse_multivector/prompt_assembly.py check \
-  sse_multivector/shr_single_pair/pair-consolidation-owl-v6.assembly.json
+  sse_multivector/shr_single_pair/pair-consolidation-owl-v7.assembly.json
 ```
 
 Assembly checks establish exact reconstruction and unchanged shared sources.
@@ -96,7 +102,17 @@ They do not establish faithful translation, valid containment or useful
 consolidation. Pilot reviews are manual and separately attributed, with no
 automated reasoner proof or human semantic gold. The completed v6 check made
 two fresh requests with complete saved API-equivalent cost of $0.035414; it
-generated no hierarchy. The proposed next step is a new prompt version that
-explicitly requires stated alternatives to use `OR`, then a matched check of
-both orders. Neither the next revision nor further inference is included in
-these completed findings.
+generated no hierarchy.
+
+## Authorized v7 check
+
+The user authorized the v7 revision and the same human-food comparison in both
+orders. Prepare from the saved v6 forward and reversed experiments, replacing
+only the prompt and retaining their exact inputs and Sol medium settings. Use
+the [same pre-call checks](pair-consolidation-owl-v6-consumer-v1.md#fixed-inputs-and-assessment):
+consumer, nourishment purpose and the eating-or-drinking alternative must be
+formal; evening meals must not borrow the consumer or purpose restriction.
+Allow different names and supporting class definitions. Check JSON structure,
+coverage and English/formal agreement separately. Two passing draws would not
+establish general accuracy or authorize hierarchy activation. No warmup,
+additional baseline calls or paid fallback is added.
