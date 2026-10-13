@@ -3,8 +3,9 @@
 Status: approved canonical generation mechanism, implemented as the sole shared
 CLI constructor in `sse_multivector/hierarchy_generation.py`, replacing V2.
 Offline construction checks pass; model-based hierarchy-quality qualification
-remains pending. Pair-consolidation-v6 is user-approved for the next hierarchy
-run. This document does not authorize model calls. The user's personal outline,
+remains pending. HR11–HR14 used approved Pair-consolidation-v6. The specificity
+revision, Pair-consolidation-v7, is experimental; saved runs and current run
+definitions retain V6. This document does not authorize model calls. The user's personal outline,
 `docs/notes/MY-NOTES_10-12.md`, remains read-only. The preceding mechanisms are
 V2 and V1; earlier variants need no formal naming.
 
@@ -145,7 +146,101 @@ selection; it does not establish measured accuracy. V6 retains V5's minimal
 adaptation of Consolidation-v21 and removes the input-building sentence about
 roots. It uses the exact shared definition-writing rules-v6 from Bootstrap-v129
 and Consolidation-v21 through a pinned assembly; those prompts and shared rules
-are unchanged. Model-based testing of the pair prompt remains pending.
+are unchanged. V6's saved HR14 outputs supply the specificity witnesses examined
+in the experimental V7 screen below.
+
+### Approved specificity objective and experimental V7
+
+The user clarified that every pair uses the same consolidation mechanism:
+choose the most specific coherent topic that covers both complete supplied
+meanings and fits the supplied parent when present. Its meaning may have the
+same scope as a supplied meaning. This introduces no equivalence mode, separate
+comparison or output field. Keep defining conditions wherever complete coverage
+permits them; check whether a more specific coherent meaning still covers both.
+
+The HR14 tomato witness supplies fleshy edible fruits of Solanum lycopersicum
+and edible fruits of that same plant. Under the user's reading, the first is
+narrower and the second already covers both. V6 instead returned Edible fruits
+at the root and Edible plant fruits under an existing parent. The latter survives
+as C00053. Containment alone does not establish that this breadth is useful.
+Other saved pairs lose Nostr, Bitcoin, Breakfast or Dezeen identity. These
+observations motivate a specificity test; they do not establish which old
+sentence caused the results.
+
+[Pair-consolidation-v7](../../sse_multivector/shr_single_pair/Hierarchy-pair-consolidation-v7.md)
+changes only the task wrappers: it requests the most specific coherent topic,
+retains shared identities/conditions, and checks for a more specific proposal
+that still satisfies full coverage and parent fit. It removes “new” from the
+opening parent request. Shared definition-writing rules-v6, the Bootstrap-v129
+companion, the existing example and the title/meaning output contract are exact.
+The approach uses concise constraints and targeted tests, following [official
+OpenAI reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices#how-to-prompt-reasoning-models-effectively);
+that guidance does not certify this semantic objective or its reliability.
+
+The initial screen inherits nine exact HR14 root cases from batch-00001:
+P00000 (Tomatoes), P00002 (Coffee/water extraction), P00004 (Nostr), P00010
+(Cooking with different method scope), P00015 (Coffee shops), P00018 (Breakfast),
+P00022 (Bitcoin), P00029 (Dezeen) and P00046 (Bread/Bread preparation). A second
+batch inherits F00013-P00000 from batch-00023: the same tomato pair with its
+fixed canonical parent. Use unchanged Sol 6.1 medium subscription/SSE settings,
+native exact reuse, prefix warming and shared scheduling. Do not rerun baselines,
+alter meanings or change the hierarchy. Only the assembled prompt changes.
+
+Pre-call review criteria: retain tomato identity without excluding the broader
+supplied meaning; preserve established identity and common conditions in the
+other scope-loss cases; retain genuine method differences and explicitly cover
+both product and activity roles. Preserve fixed-parent containment. A narrower
+title alone is insufficient: independently review the final meaning for complete
+coverage and unnecessary scope. Assessments remain agent-authored except for the
+user's reviewed tomato containment decision. One draw per case cannot establish
+reliability, a unique optimal heading or full hierarchy quality.
+
+The initial screen completed on 2026-10-13: all ten saved-input cases return valid
+title/meaning objects and receive qualified native agent accepts. Both tomato
+requests return exactly the broader supplied meaning, “Tomatoes are the edible
+fruits of the tomato plant, Solanum lycopersicum.” The supplied-parent version
+also fits its unchanged biological-material/food parent. No new relation label,
+equivalence mode or constructor behavior was introduced.
+
+| Control | V7 finding |
+|---|---|
+| Tomatoes, root and supplied parent | Retains named-plant fruit identity; does not require fleshy membership |
+| Coffee | Retains water-based extraction of roasted coffee beans |
+| Nostr / Bitcoin | Retains the specific protocol/network or currency/network identity |
+| Breakfast | Retains beginning the eating day after the main sleep period |
+| Dezeen | Retains the named publication in its credited-original-publisher role |
+| Coffee shops | Retains coffee preparation/service as a principal offering |
+| Cooking | Covers heat-based and wider combining/transforming methods from the two meanings |
+| Bread / Bread preparation | Explicitly covers the food product and partial production activities |
+
+The five observed identity-loss results do not recur in this draw. This supports
+the complete V7 revision; it does not attribute the gain to one sentence, prove
+reliability, or certify every basic concept and necessary implication. The two
+tomato requests differ by supplied parent and are not identical-request repeats.
+No broader hierarchy was regenerated or activated during this screen.
+
+Native accounting is complete: twelve fresh attempts including two prefix
+warmups, ten comparison answers, zero reuses, failures or retries. Saved usage is
+4,806 uncached input tokens, 11,520 cached input tokens and 1,371 output tokens,
+with 677 reasoning tokens already included in output; reported cache-write tokens
+are zero. API-equivalent catalogue cost, including warmups, is **$0.024474**.
+This is comparison accounting, not an incremental subscription cash charge or a
+matched policy-savings claim. V6 baselines were not rerun.
+
+The worktree is retained for frozen prompt/source/code bindings and native
+receipt validation:
+
+```text
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp-pair-consolidation-v7-specificity-v1
+```
+
+Ignored evidence is `target/pair-consolidation-v7-root-controls-v1`,
+`target/pair-consolidation-v7-parent-control-v1`,
+`target/pair-consolidation-v7-usage-source-v1.json` and
+`target/pair-consolidation-v7-usage-summary-v1.json`. The original HR14 worktree
+continues to supply the unchanged input and baseline receipts. Assembly and all
+26 production-path assembly tests pass. A wider saved-pair screen is the next
+useful qualification before a new hierarchy run; it is not part of this trial.
 
 Exact answer reuse must match the complete request, including the optional
 canonical parent. A root-consolidation answer cannot be reused for a request
