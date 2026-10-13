@@ -1,8 +1,14 @@
 # Pair-consolidation-owl: experimental prompt line
 
-`pair-consolidation-owl-v5` is the human-approved wording for this experimental
-line. The user approved it with "OK LGTM." It is not activated or a replacement
-for `Hierarchy-pair-consolidation-v6`. Its [first pilot](pair-consolidation-owl-pilot-v1.md)
+`pair-consolidation-owl-v6` is the current experimental draft. The user approved
+adding the rule that every input restriction and alternative must appear in its
+OWL expression or a supporting formal class definition, rather than only in an
+English glossary. V6 has not been tested with model calls or activated in
+hierarchy construction.
+
+`pair-consolidation-owl-v5` remains the last fully reviewed and piloted reference.
+The user approved its wording with "OK LGTM." This experimental line is not a
+replacement for `Hierarchy-pair-consolidation-v6`. Its [v5 pilot](pair-consolidation-owl-pilot-v1.md)
 completed sixteen GPT-6.1 Sol medium requests: twelve initial cases, two exact
 repeats and two reversed-order cases. All passed structural checks and preserved
 the targeted restrictions under agent review; one review remains uncertain about
@@ -21,6 +27,11 @@ following contract:
 - Reused names preserve their supplied definitions. Required relationships
   must appear in the formal representation rather than being introduced as
   unstated English assumptions.
+- Every restriction and alternative stated in an input meaning must appear in
+  its `owl.expression` or a supporting definition in `owl.classes`. English
+  definitions explain basic terms; they must not be the sole representation of
+  those conditions. A class name may abbreviate conditions when its formal
+  definition exposes them.
 - Each `owl` object has `expression` first, for the topic's own expression,
   then `classes`, a JSON object of supporting class definitions. The entrypoint
   is always `owl.expression`; `owl.classes` may be empty. This same layout is
@@ -40,21 +51,23 @@ are omitted from expression strings; nested parentheses preserve grouping.
 
 ## Sources and assembly
 
-The [v5 prompt](pair-consolidation-owl-v5.md) is built by its
-[pinned assembly manifest](pair-consolidation-owl-v5.assembly.json). It includes
+The [v6 draft](pair-consolidation-owl-v6.md) is built by its
+[pinned assembly manifest](pair-consolidation-owl-v6.assembly.json). It includes
 [OWL-like guide v5](prompt_parts/owl-reasoning-guide-v5.md) and
 [explicit-meaning rules v6](prompt_parts/explicit-meaning-rules-v6.md)
 byte-for-byte. Its matching definition-writing reference is
 [Bootstrap-v129](Hierarchy-bootstrap-v129.md).
 
-V5 keeps one [complete input/output example](prompt_parts/pair-consolidation-owl-example-v3.md)
+V6 retains the [v5 prompt](pair-consolidation-owl-v5.md)'s one
+[complete input/output example](prompt_parts/pair-consolidation-owl-example-v3.md)
 using the same display-panel case, with each entry expression separated from
 its supporting classes. The guide distinguishes exact class definitions from
 one-way containment checks; required membership implications are expressed in
 the formal definitions. It does not encode a containment claim as an exact
 equivalence. The shared meaning-writing rules and consolidated natural-language
-meaning are unchanged. All earlier published prompt and guide files retain
-their original bytes.
+meaning are unchanged. The only compiled-prompt change from v5 is the two
+approved sentences in the node-translation instructions. All earlier published
+prompt and guide files retain their original bytes.
 
 The notation is the simplified OWL-like notation described in the guide. The
 model supplies formal definitions, not an executable OWL document or a
@@ -72,12 +85,14 @@ complete saved API-equivalent cost of $0.216726; it did not generate a hierarchy
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
 python3 sse_multivector/prompt_assembly.py check \
-  sse_multivector/shr_single_pair/pair-consolidation-owl-v5.assembly.json
+  sse_multivector/shr_single_pair/pair-consolidation-owl-v6.assembly.json
 ```
 
 Assembly checks establish exact reconstruction and unchanged shared sources.
 They do not establish faithful translation, valid containment or useful
 consolidation. Pilot reviews are manual and separately attributed, with no
 automated reasoner proof or human semantic gold. The proposed next step is to
-settle which explicit conditions require formal structure, then test a new
-prompt version against the saved controls; neither is implemented or activated.
+test v6 against the saved human-food forward/reversed controls and check that
+the consumer and purpose conditions appear formally. The wording change does
+not establish that the model follows it; further inference remains separate
+from this draft and its offline assembly checks.
