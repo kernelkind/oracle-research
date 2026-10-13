@@ -2328,8 +2328,11 @@ establishes compatibility with the same teacher meaning. Coverage is rebuilt
 after matching changes. A coverage conflict receives one fresh unchanged
 DCSv1 call at xhigh, including disputed candidates; its final whole-search
 decision cannot be reopened by a DSL verifier. Missing judgments run
-automatically with existing bounded provider retries. Technical exhaustion
-fails the run rather than giving the distilled model zero. A successful run
+automatically. The user subsequently authorizes exponential backoff and
+continued retries for temporary runner/provider failures in this workflow,
+resuming the same native experiment and retaining all attempts. Permanent
+source, receipt or output-schema failures fail the run rather than giving the
+distilled model zero. A successful run
 requires both grades for every selected answer, excludes agent corrections
 and audit vetoes, and leaves no manual review queue. Implementation, the nine
 conflict answers and the saved sixty-answer replay are authorized; the native
@@ -2350,7 +2353,7 @@ collection; the saved initial report is hash-bound, and zero-call completion
 rechecks its sources. Existing original experiments remain unchanged. Eligible
 shared prefixes use native prompt caching; final decisions
 are fresh xhigh calls, while ordinary missing checks retain their configured
-reasoning settings. An exhausted technical failure produces a failed run.
+reasoning settings. Permanent technical failures produce a failed run.
 `compare-distillation-grades --automated-report DIR/grades.json` compares those
 collected grades directly with the bound development reference without another
 collection or inference pass. This entry point currently starts from a frozen

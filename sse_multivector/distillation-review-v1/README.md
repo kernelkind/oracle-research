@@ -67,9 +67,12 @@ Matching changes require rebuilding the dependent coverage questions. A
 coverage conflict receives one fresh unchanged DCSv1 call at xhigh on the
 rebuilt candidate list, including disputed candidates. Its whole-search
 decision is final and cannot be reopened by another DSL verifier. Missing
-judgments run automatically with the existing bounded provider retries.
-Exhausted technical failures fail the run rather than assigning the distilled
-model zero. Agent corrections and audit vetoes are development evidence only.
+judgments run automatically. The user subsequently approved exponential backoff
+and continued retries for temporary runner/provider failures in this workflow,
+resuming the same native experiment and retaining every attempt. Successful
+semantic decisions are retained. Permanent source, receipt or output-schema
+failures fail the run rather than assigning the distilled model zero. Agent
+corrections and audit vetoes are development evidence only.
 The native automatic completion workflow is implemented. Its nine-conflict
 check finishes with both grades for all nine answers and zero manual reviews:
 eight final DSM questions, four final DCS questions and four missing judgments
@@ -77,6 +80,17 @@ make sixteen calls. All seventy initial regression and integration tests pass.
 The sixty-answer replay and eight-hour runtime target remain to be verified.
 This decision accepts residual reviewer error rather than requiring agreement
 between fresh calls.
+
+The first sixty-answer replay starts with fifty-six complete grades and four
+missing judgments. Provider termination followed by overload exhausts the
+original two-attempt rule for one relationship request. The run correctly
+fails without assigning zero; the subsequent continued-retry authorization
+above applies to its recovery. The replay also exposes a conflict-detection
+bug: a newly generated DCS positive followed by a negative DSL verifier
+produces a narrower ordinary search. The fix retains all exact completed DCS
+questions when detecting disagreement, so a narrower negative cannot remove
+the disputed witness from the required final search. Its regression fails
+before the fix and the coverage/automatic suites pass 72 tests afterward.
 
 **Current score-impact result:** the approved
 [offline comparison](#offline-grade-comparison-october-13) measures the effect

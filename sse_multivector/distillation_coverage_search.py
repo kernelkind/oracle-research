@@ -950,17 +950,31 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
                 answer["checks"]["relationship"] = relationships
     final_groups, matching_conflict_answers = set(), set()
     if automatic:
+        # Retain every exact completed question. A narrower negative question
+        # does not resolve a disputed positive witness from an earlier search.
+        search_history = {}
+        for row in list(searches.values()) + list(required_index.values()):
+            if row["evidence"]["check"] == "coverage_search":
+                identity = row["evidence"]["answer_id"], tuple(row["evidence"]["teacher_numbers"])
+                search_history.setdefault(identity, []).append(row)
         # Detect disagreements before candidate exclusions remove a disputed witness.
         for cohort in ("random", "challenge"):
             for answer in baseline[cohort]["answers"]:
                 teacher = review._TeacherIndex(answer["teacher"])
                 matches_by_number = {row["evidence"]["student_number"]: row
                     for row in answer["checks"]["matching"] if row["status"] == "valid"}
+                students = {row["number"]: row["subject"] for row in answer["student"]}
+                group_matches = {}
                 for pair in answer["checks"]["relationship"]:
                     if pair["evidence"]["role"] != "compatibility":
                         continue
                     key = answer["id"], tuple(pair["evidence"]["teacher_numbers"])
-                    search = searches.get(key)
+                    if key not in group_matches:
+                        identifiers = {teacher.by_number[number] for number in key[1]}
+                        matched = [number for number, row in matches_by_number.items()
+                            if row["parsed"]["teacher_id"] in identifiers]
+                        group_matches[key] = matched, review._matched_headings(matched)
+                    matched, covered = group_matches[key]
                     compatible_rows = ([pair] if pair.get("origin") == "mechanical"
                         or pair.get("automatic_equivalence_premise") else
                         [pair] + verifiers.get((pair["input_sha256"], pair["prompt"]), []))
@@ -973,9 +987,25 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
                             and not pair.get("automatic_equivalence_premise") and False in values):
                         matching_conflict_answers.add(answer["id"])
                         request(match, "final_matching")
-                    if len(values) > 1 or (search is not None and search["status"] == "valid"
-                            and search["parsed"]["witness_student_number"] == pair["evidence"]["heading_number"]
-                            and False in values):
+                    witness = pair["evidence"]["heading_number"]
+                    disputed_search = False
+                    witness_searches = [search for search in search_history.get(key, [])
+                        if search["status"] == "valid" and search["parsed"]["witness_student_number"] == witness
+                        and search["inputs"].get("POST") == answer["post"]]
+                    if matched and witness not in covered and False in values and witness_searches:
+                        child_number = pair["evidence"]["teacher_representative_number"]
+                        child = teacher.subjects[child_number]
+                        contexts = [{name: row[name] for name in ("subject", "context")}
+                            for row in teacher.interpretation_entries(students[witness], child,
+                                                                     child_number=child_number)]
+                        candidate = dict(student_number=witness, student_subject=students[witness],
+                                         teacher_contexts=contexts)
+                        for search in witness_searches:
+                            question = json.loads(search["inputs"]["COVERAGE_INPUT"])
+                            if question["teacher_subject"] == child and candidate in question["candidates"]:
+                                disputed_search = True
+                                break
+                    if len(values) > 1 or disputed_search:
                         final_groups.add(key)
         for row in final_index.values():
             if row["evidence"]["check"] == "coverage_search":
@@ -996,6 +1026,9 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
         template = (Path(__file__).parent / "distillation-review-v1/coverage-search-prompt-v1.md").read_text()
         negative_sources = list(searches.values()) + [row for row in corrections
             if row["evidence"]["check"] == "coverage_search"]
+        if automatic:
+            negative_sources.extend(row for row in required_index.values()
+                if row["evidence"]["check"] == "coverage_search")
         current_searches = {}
         for case in current_cases:
             key = case["evidence"]["answer_id"], tuple(case["evidence"]["teacher_numbers"])
