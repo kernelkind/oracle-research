@@ -339,6 +339,35 @@ receipts retain HTTP 200, the requested provider/model/effort and raw cache
 usage. Assembly and all 26 production-path assembly tests pass. Historical V6,
 shared-rules-v6 and the Bootstrap companion remain unchanged.
 
+### Additional V7 Coffee supplied-parent regression
+
+The user authorized HR14 F00015-P00000 from batch-00023 after inspecting its
+V6 over-broadening. Both inputs define Coffee as a beverage made from a water
+extract of roasted coffee beans. The supplied parent is Beverage and drinking
+systems. V6 returned Plant-extract beverages, unnecessarily admitting beverages
+from other plants while still fitting that parent.
+
+On 2026-10-13, unchanged V7 returns **Coffee**, with the exact second supplied
+meaning: **“Coffee is a beverage made from a water-based extract of roasted
+coffee beans.”** Native agent review accepts full coverage, retained identity
+and fixed-parent fit. This is one additional saved-input request, separate from
+the 65-case panel above; the parent makes it a different complete request from
+the previously tested root Coffee pair. No exact answer was available for reuse.
+
+Native preparation inherits the exact inputs, parent, V6 baseline and Sol 6.1
+medium subscription/SSE settings. Two fresh attempts include one prefix warmup
+and one valid consolidation, with no failures, retries or missing usage. Usage
+is 439 uncached input, 2,304 cached input and 225 output tokens; 152 reasoning
+tokens are included in output, and reported cache writes are zero. Complete
+API-equivalent catalogue cost is **$0.0033584**, not subscription cash billing.
+One draw does not establish reliability or tighten the broad parent itself.
+
+Evidence remains in the retained expanded worktree under
+`target/pair-consolidation-v7-coffee-parent-v1`,
+`target/pair-consolidation-v7-coffee-parent-usage-source-v1.json` and
+`target/pair-consolidation-v7-coffee-parent-usage-summary-v1.json`. No prompt,
+Bootstrap meaning or hierarchy was changed.
+
 Exact answer reuse must match the complete request, including the optional
 canonical parent. A root-consolidation answer cannot be reused for a request
 with a supplied canonical parent merely because its two input nodes match.
