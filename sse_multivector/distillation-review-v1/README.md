@@ -233,11 +233,12 @@ the saved result files remain present; no final grades file exists. The
 automatic state still describes interrupted processes as running, so that
 saved status is not evidence of a live run.
 
-`RequestHistory` scans the shared automatic directory for manifests with
-receipts and retains parsed manifests in each process's `ReceiptFiles` cache.
-That directory now contains 252 such manifests totaling 197.8 MiB on disk.
-Replicating this cache across processes is a concrete memory amplifier; the
-precise contribution requires bounded profiling. The earlier eight-hour
+Before the memory repair, `RequestHistory` scanned the shared automatic directory
+for manifests with receipts and retained parsed manifests in each process's
+`ReceiptFiles` cache.
+At that inspection, the directory contained 252 such manifests totaling
+197.8 MiB on disk. Replicating this cache across processes was a concrete
+memory amplifier; its contribution required bounded profiling. The eight-hour
 scenario remains unverified and does not authorize an unchanged restart.
 
 **Memory containment and repair:** runner `e897461` releases discovery
@@ -264,10 +265,51 @@ At 13:12:39 EDT the runtime reaches the 32 GiB limit and systemd kills the
 grading unit. This second failure is confined to that workload, with no
 automatic restart; saved valid model receipts remain reusable. Thirty shared
 slots are reserved, but observations find approximately fifteen authenticated
-model workers and substantial launch/admission overhead. The job is stopped
-pending a full native-runtime memory/concurrency test and elimination of
-unnecessary warmup work and scheduling-lock contention. The load-only test
+model workers and substantial launch/admission overhead. The job was stopped
+at that point pending a full native-runtime memory/concurrency test and
+elimination of unnecessary warmup work and scheduling-lock contention. The load-only test
 does not establish runtime readiness.
+
+Runner `b36cd79` removes two unused warmup operations: intentional-repeat
+execution skips historical-source discovery, and warmup preparation does not
+build the discarded parent baseline report. Frozen prefix eligibility,
+request locks, receipts and current-manifest validation remain intact. Both
+production regressions fail before the fix; 84 relevant checks and three
+combined-main checks pass afterward. Tokenizer recount was investigated and
+ruled out: warmups already inherit the sealed prefix policy.
+
+Runner `1f3db0b` removes exclusive admission-lock reads from idle capacity
+polling, healthy pause checks and progress observations. Validated atomic
+state reads supply advisory hints; admission, reservation adoption, fairness,
+backoff and attempt claims remain locked. Capacity waiters periodically enter
+the locked path to clean stale owners. Seventy-four regression checks and five
+combined-main checks pass.
+
+The protected full-queue synthetic test retains and queues all 36,359 cases
+across 128 concurrent native groups, with four attempts allowed per group.
+It reaches thirty simultaneous workers, each holding a physically touched
+512 MiB buffer, and peaks at 26.41 GiB with zero memory-limit or OOM events
+and no swap. All 125 warmups and 380 ordinary receipts are schema-valid;
+three deliberately injected HTTP 500 failures exercise retry/allowance
+handling. The 222.48-second execution ends with 126 expected allowance exits
+and two completed small groups; there are no unexpected exits. The completed
+groups resume with zero new calls. Admission averages 29.60/30, while fake
+inference overlap averages 16.58/30 during its four-second simulated calls.
+This proves bounded native setup, warmups and pending-job queues; it does not
+simulate all successful outputs accumulating or final automatic collection.
+Artifacts are preserved in `runtime-memory-probe-1f3db0b/` alongside the
+full-grading artifacts, with original input and result files untouched.
+
+The same real grading directory resumes with all three reviewed runner fixes
+under the enforced 32 GiB, zero-swap service. At 17:47 UTC on October 13 it
+is active with thirty admitted slots and 28–29 authenticated model workers.
+For 341 successful new ordinary calls, native overhead averages 1.29 seconds
+above 11.95 seconds of model execution, versus approximately 9.25 seconds of
+overhead before the queue fix. Current memory is approximately 29 GiB; the
+32 GiB limit triggers reclamation, with zero OOM/kill events and no swap.
+Saved completed calls are reused; an interrupted call without a durable
+receipt may repeat. The workload has no automatic OOM restart. Full grading
+and the eight-hour estimate remain unverified until execution finishes.
 
 The saved ordinary DSL manifest contains 30,713 prompts and occupies 242 MB.
 Production parsing takes about 1.49 seconds alone; four concurrent reads finish
