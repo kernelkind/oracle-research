@@ -56,6 +56,27 @@
       "artifact_path": "target/hierarchy-hr10-v2-50-note-v1/HR10-resumed-v1/state.json",
       "sha256": "22b4669c2243dd08e2228835096714b6b6ffe17cafa6ead2b0a1707ed6a5731e",
       "family": "Canonical"
+    },
+    {
+      "version_id": "HR11",
+      "identity": "d72e24a6d5f78f0ae0328032e634581b9995079339fa98f0c1ad9e375c6e302a",
+      "artifact_path": "target/hierarchy-hr11-v3-six-note-v1/HR11/state.json",
+      "sha256": "4515cea1d5589086c76c34d9ef37198aa00e9409fe4c6ee5248a99abb425cf1e",
+      "family": "Hierarchy"
+    },
+    {
+      "version_id": "HR12",
+      "identity": "922e48e1f8f7b425c8c6343f1d02bd6d6922a26aad2d91343cedb0262e0a2fd0",
+      "artifact_path": "target/hierarchy-hr12-v3-twelve-note-v1/HR12/state.json",
+      "sha256": "b5609bc273ff00ccf2b96a870809b6f81f2119391cb20ffcf6f22a2da0a910c4",
+      "family": "Hierarchy"
+    },
+    {
+      "version_id": "HR13",
+      "identity": "3a016a78f93a6771645e6e5e00fdd5cf8e9707fdbac222fdaaf07b9601004b65",
+      "artifact_path": "target/hierarchy-hr13-v3-twenty-four-note-v1/HR13/state.json",
+      "sha256": "40296bd7f383c02e5b4459f8bbce30fa8c55d4fd81e6f55e827eea8291f7dd96",
+      "family": "Hierarchy"
     }
   ]
 }
