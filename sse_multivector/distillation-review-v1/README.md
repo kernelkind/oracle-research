@@ -70,10 +70,13 @@ decision is final and cannot be reopened by another DSL verifier. Missing
 judgments run automatically with the existing bounded provider retries.
 Exhausted technical failures fail the run rather than assigning the distilled
 model zero. Agent corrections and audit vetoes are development evidence only.
-Implementation, the nine-conflict check and the sixty-answer replay are
-authorized; their completion and the eight-hour runtime target remain to be
-verified. This decision accepts residual reviewer error rather than requiring
-agreement between fresh calls.
+The native automatic completion workflow is implemented. Its nine-conflict
+check finishes with both grades for all nine answers and zero manual reviews:
+eight final DSM questions, four final DCS questions and four missing judgments
+make sixteen calls. All seventy initial regression and integration tests pass.
+The sixty-answer replay and eight-hour runtime target remain to be verified.
+This decision accepts residual reviewer error rather than requiring agreement
+between fresh calls.
 
 **Current score-impact result:** the approved
 [offline comparison](#offline-grade-comparison-october-13) measures the effect

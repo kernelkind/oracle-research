@@ -6,6 +6,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from sse_multivector import test_distillation_coverage_search as fixtures
 
@@ -41,6 +42,52 @@ class DistillationAutomaticTests(unittest.TestCase):
         fixture = fixtures.DistillationCoverageSearchTests()
         fixture.root = self.root
         return fixture.collection_fixture(name, witness="2", policy="grading", audit_prerequisites=False)
+
+    def test_ready_batches_execute_before_first_collection(self):
+        from sse_multivector import distillation_review_automatic as automatic
+        _, _, coverage, _, _ = self.fixture("ready-before-collection")
+        directory = self.root / "automatic"
+        self.native("prepare-distillation-automatic-grading", coverage, "--output", directory,
+            "--runner-binary", self.root / "fake-runner")
+        native_collect = automatic._collect
+        def collect_after_execution(destination, state, context):
+            self.assertTrue(any(entry["status"] == "complete" for entry in state["experiments"]),
+                "ready native work must execute before the first full collection")
+            return native_collect(destination, state, context)
+        with patch.dict(os.environ, FAKE_RUNNER_LOG=str(self.root / "calls.json")):
+            with patch.object(automatic, "_collect", side_effect=collect_after_execution):
+                result = automatic.run(directory)
+        self.assertEqual(result["status"], "complete")
+
+    def test_changed_prepared_report_is_rejected_without_calls(self):
+        _, _, coverage, _, _ = self.fixture("changed-prepared-report")
+        directory = self.root / "automatic"
+        preparation = json.loads(self.native("prepare-distillation-automatic-grading", coverage,
+            "--output", directory, "--runner-binary", self.root / "fake-runner").stdout)
+        report = Path(preparation["report"])
+        report.write_bytes(report.read_bytes() + b"\n")
+        calls = (self.root / "calls.json").read_bytes()
+        failed = self.native("run-distillation-automatic-grading", directory, success=False)
+        self.assertIn("automatic grading collection changed", failed.stderr)
+        self.assertEqual((self.root / "calls.json").read_bytes(), calls)
+
+    def test_zero_call_completion_rechecks_saved_sources(self):
+        fixture = fixtures.DistillationCoverageSearchTests()
+        fixture.root = self.root
+        _, _, coverage, original, _ = fixture.collection_fixture("zero-call", policy="grading",
+            audit_prerequisites=False)
+        directory = self.root / "automatic"
+        preparation = json.loads(self.native("prepare-distillation-automatic-grading", coverage,
+            "--output", directory).stdout)
+        self.assertEqual(preparation["experiments"], [])
+        source = original / "run/results.jsonl"
+        source.write_bytes(source.read_bytes() + b"\n")
+        calls = (self.root / "calls.json").read_bytes()
+        result = json.loads(self.native("run-distillation-automatic-grading", directory, success=False).stdout)
+        self.assertEqual(result["status"], "failed")
+        self.assertIn("automatic grading collection source changed", result["error"])
+        self.assertEqual((self.root / "calls.json").read_bytes(), calls)
+        self.assertFalse((directory / "grades.json").exists())
 
     def test_native_run_completes_missing_witness_and_resume_adds_no_calls(self):
         _, _, coverage, original, _ = self.fixture("automatic-complete")

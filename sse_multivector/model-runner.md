@@ -2333,8 +2333,11 @@ fails the run rather than giving the distilled model zero. A successful run
 requires both grades for every selected answer, excludes agent corrections
 and audit vetoes, and leaves no manual review queue. Implementation, the nine
 conflict answers and the saved sixty-answer replay are authorized; the native
-workflow and measured result are pending verification. This is a fixed
-authority policy, not evidence that repeated reviewers are independent.
+workflow completes the nine-conflict check with both grades for all nine
+answers and zero manual reviews. Eight final DSM calls, four final DCS calls
+and four missing judgments make sixteen calls; all seventy initial regression
+and integration tests pass. The sixty-answer replay remains pending. This is
+a fixed authority policy, not evidence that repeated reviewers are independent.
 
 `prepare-distillation-automatic-grading COVERAGE --output DIR` freezes the
 needed native batches without inference. Repeated `--verification-experiment`
@@ -2342,8 +2345,10 @@ flags supply original witness groups; `--answer-id` selects a bounded subset.
 `run-distillation-automatic-grading DIR` submits all ready independent batches
 through the shared launcher, advances dependent work and writes `grades.json`
 only after both grades are complete for every selected answer. Repeating the
-command after completion adds no calls. Existing original experiments remain
-unchanged. Eligible shared prefixes use native prompt caching; final decisions
+command after completion adds no calls. Prepared batches submit before a full
+collection; the saved initial report is hash-bound, and zero-call completion
+rechecks its sources. Existing original experiments remain unchanged. Eligible
+shared prefixes use native prompt caching; final decisions
 are fresh xhigh calls, while ordinary missing checks retain their configured
 reasoning settings. An exhausted technical failure produces a failed run.
 `compare-distillation-grades --automated-report DIR/grades.json` compares those

@@ -148,7 +148,8 @@ def _collect(directory, state, context):
         final_experiments=state["final_experiments"] +
             [entry["path"] for entry in completed if entry["role"] != "required"],
         collection_context=context, answer_ids=state.get("answer_ids"))
-    state.update(collections=state["collections"] + 1, report=str(output))
+    state.update(collections=state["collections"] + 1, report=str(output),
+        report_sha256=engine._sha256_file(output))
     return result
 
 
@@ -178,6 +179,7 @@ def prepare(coverage_directory, output, *, verification_experiments=None, requir
     context = {}
     result = _collect(directory, state, context)
     _prepare_groups(result["automatic_requests"], directory, state, result, context)
+    state["initial_report"] = dict(path=state["report"], sha256=state["report_sha256"])
     experiment.write(directory / "automatic.json", state)
     experiment.write(directory / "automatic.complete.json", {
         "automatic.json": engine._sha256_file(directory / "automatic.json")})
@@ -210,8 +212,19 @@ def run(directory):
         if state["status"] in {"complete", "failed"}:
             return dict(status=state["status"], report=state["report"], experiments=state["experiments"],
                 **({"error": state["error"]} if state.get("error") else {}))
+        if not frozen.get("initial_report") or state.get("initial_report") != frozen["initial_report"]:
+            raise ValueError("automatic grading initial collection binding changed")
+        report_path = Path(state["report"])
+        expected = state.get("report_sha256")
+        if str(report_path) == frozen["initial_report"]["path"]:
+            expected = frozen["initial_report"]["sha256"]
+        if not expected or engine._sha256_file(report_path) != expected:
+            raise ValueError("automatic grading collection changed")
         active, context = {}, {}
-        result = _collect(directory, state, context)
+        # Prepared dependencies are already validated and native run rechecks
+        # their bindings. Dispatch them before recomputing the whole collection.
+        result = experiment.read(report_path)
+        collected = False
         try:
             while True:
                 if result["automatic_status"] == "failed":
@@ -234,9 +247,14 @@ def run(directory):
                     experiment.write(directory / "state.json", state)
                 if not active:
                     if result["automatic_status"] == "complete":
+                        if not collected:
+                            for path, checksum in result["sources"].items():
+                                if engine._sha256_file(Path(path)) != checksum:
+                                    raise ValueError("automatic grading collection source changed: " + path)
                         state["status"] = "complete"
                         experiment.write(directory / "grades.json", result)
                         state["report"] = str(directory / "grades.json")
+                        state["report_sha256"] = engine._sha256_file(directory / "grades.json")
                         break
                     raise ValueError("automatic grading cannot finish every selected answer")
                 finished = [path for path, process in active.items() if process.poll() is not None]
@@ -255,6 +273,7 @@ def run(directory):
                         raise ValueError("native grading batch lacks valid judgments: " + path)
                     entry["status"] = "complete"
                 result = _collect(directory, state, context)
+                collected = True
                 _prepare_groups(result["automatic_requests"], directory, state, result, context)
                 experiment.write(directory / "state.json", state)
         except Exception as error:
