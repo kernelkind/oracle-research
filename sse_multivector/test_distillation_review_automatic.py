@@ -71,6 +71,77 @@ class DistillationAutomaticTests(unittest.TestCase):
         self.assertIn("automatic grading collection changed", failed.stderr)
         self.assertEqual((self.root / "calls.json").read_bytes(), calls)
 
+    def test_native_process_crashes_retry_same_experiment_until_complete(self):
+        from sse_multivector import distillation_review_automatic as automatic
+        _, _, coverage, _, _ = self.fixture("retry-native-process")
+        directory = self.root / "automatic"
+        preparation = json.loads(self.native("prepare-distillation-automatic-grading", coverage,
+            "--output", directory, "--runner-binary", self.root / "fake-runner").stdout)
+        native_path = preparation["experiments"][0]["path"]
+        prepared_manifest = (Path(native_path) / "experiment.json").read_bytes()
+        subprocess_popen = subprocess.Popen
+        starts = []
+        class FailedProcess:
+            pid = -1
+            returncode = 1
+            def poll(self):
+                return self.returncode
+            def wait(self):
+                return self.returncode
+        def crash_twice(arguments, **kwargs):
+            if len(arguments) > 4 and arguments[1] == str(LAUNCHER) and arguments[4] == "run":
+                starts.append(arguments)
+                if len(starts) <= 2:
+                    kwargs["stdout"].write("runner process terminated before writing a receipt\n")
+                    return FailedProcess()
+            return subprocess_popen(arguments, **kwargs)
+        calls = len(json.loads((self.root / "calls.json").read_text()))
+        with patch.dict(os.environ, FAKE_RUNNER_LOG=str(self.root / "calls.json")):
+            with patch.object(subprocess, "Popen", side_effect=crash_twice):
+                result = automatic.run(directory)
+        self.assertEqual(result["status"], "complete")
+        self.assertEqual(len(starts), 3)
+        self.assertTrue(all(arguments[5] == native_path for arguments in starts))
+        self.assertEqual((Path(native_path) / "experiment.json").read_bytes(), prepared_manifest)
+        self.assertEqual(len(json.loads((self.root / "calls.json").read_text())) - calls, 1)
+
+    def test_permanent_failure_pauses_retrying_native_sibling(self):
+        from sse_multivector import distillation_review_automatic as automatic
+        _, _, coverage, _, _ = self.fixture("pause-retrying-sibling")
+        directory = self.root / "automatic"
+        preparation = json.loads(self.native("prepare-distillation-automatic-grading", coverage,
+            "--output", directory, "--runner-binary", self.root / "fake-runner").stdout)
+        original = preparation["experiments"][0]["path"]
+        sibling = directory / "experiments/sibling"
+        self.native("prepare", sibling, "--from", original, "--repeat")
+        state_path = directory / "state.json"
+        state = json.loads(state_path.read_text())
+        state["experiments"].append(dict(state["experiments"][0], path=str(sibling)))
+        state_path.write_text(json.dumps(state))
+        subprocess_popen = subprocess.Popen
+        class PermanentFailure:
+            pid = -1
+            returncode = 1
+            def poll(self):
+                return self.returncode if (sibling / "run/results.jsonl").exists() else None
+            def wait(self):
+                return self.returncode
+        def fail_original(arguments, **kwargs):
+            if len(arguments) > 5 and arguments[4:6] == ["run", original]:
+                kwargs["stdout"].write("Experiment failed: malformed grader output\n")
+                return PermanentFailure()
+            return subprocess_popen(arguments, **kwargs)
+        failures = json.dumps({"DSLv2": dict(attempts=1, error="Service temporarily unavailable",
+            metadata=dict(http_status=503))})
+        with patch.dict(os.environ, FAKE_RUNNER_LOG=str(self.root / "calls.json"),
+                FAKE_RUNNER_FAILURES=failures):
+            with patch.object(subprocess, "Popen", side_effect=fail_original):
+                result = automatic.run(directory)
+        self.assertEqual(result["status"], "failed")
+        native = json.loads(self.native("show", sibling, "--json").stdout)
+        self.assertEqual(native["scheduling"]["state"], "paused")
+        self.assertEqual(len((sibling / "run/results.jsonl").read_text().splitlines()), 1)
+
     def test_zero_call_completion_rechecks_saved_sources(self):
         fixture = fixtures.DistillationCoverageSearchTests()
         fixture.root = self.root

@@ -689,6 +689,7 @@ def add_commands(commands):
     p.add_argument('--history-root', type=Path)
     p = commands.add_parser('run-distillation-automatic-grading', help='finish every selected answer without manual review')
     p.add_argument('directory', type=Path)
+    p.add_argument('--runner-upgrade-reason', help='record an explicitly reviewed code update when resuming native groups')
     p = commands.add_parser('compare-distillation-grades', help='compare original automated saved grades with agent-audited grades; no inference')
     p.add_argument('coverage', type=Path)
     p.add_argument('--reference', type=Path, required=True)
@@ -898,7 +899,7 @@ def handle_command(args):
                 required_experiments=args.required_experiment, final_experiments=args.final_experiment,
                 answer_ids=args.answer_id, runner_binary=args.runner_binary, history_root=args.history_root)
         else:
-            result = distillation_review_automatic.run(args.directory)
+            result = distillation_review_automatic.run(args.directory, runner_upgrade_reason=args.runner_upgrade_reason)
         print(json.dumps(result, ensure_ascii=False, indent=2))
         return int(result['status'] == 'failed')
     elif args.command == 'adjudicate-distillation-review':

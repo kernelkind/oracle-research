@@ -188,7 +188,46 @@ def prepare(coverage_directory, output, *, verification_experiments=None, requir
         experiments=state["experiments"], report=state["report"])
 
 
-def run(directory):
+def _retryable_native(entry, returncode):
+    """Use native failure classifications; invalid source/output remains final."""
+    from experiment_runner import experiment
+    native = experiment.report(Path(entry["path"]), include_request_preview=False)
+    if any(row["status"] in {"malformed", "invalid_receipt"} for row in native["cases"]):
+        return False
+    logfile = Path(entry.get("log", ""))
+    message = (logfile.read_bytes()[entry.get("log_offset", 0):].decode(errors="replace").lower()
+        if logfile.is_file() else "")
+    if any(text in message for text in ("source changed", "source hash", "code changed", "hash differs",
+            "invalid receipt", "malformed", "unrecognized arguments", "invalid choice",
+            "changed since preparation", "prepared experiment changed", "invalid execution",
+            "attempt budget", "budget exhausted", "cost ceiling")):
+        return False
+    failed = [row for row in native["cases"] if row["status"] == "failed"]
+    if failed:
+        for row in failed:
+            if row.get("failure_kind") != "provider_transient" or not row.get("receipt"):
+                return False
+            receipt = row["receipt"]
+            record = experiment.result_records(Path(receipt["results_path"]))[receipt["record_sha256"]]
+            if engine.provider_retry_delay(record, keep_retrying=True) is None:
+                return False
+        return True
+    if returncode is not None and returncode < 0:
+        return True
+    logfile = Path(entry.get("log", ""))
+    return any(text in message for text in ("runner process terminated", "killed by signal",
+        "resource temporarily unavailable", "experiment is already active", "brokenpipeerror",
+        "connectionreseterror"))
+
+
+def _schedule_retry(entry, error):
+    count = entry.get("retry_count", 0) + 1
+    delay = min(60, 2 ** min(count - 1, 6))
+    entry.update(status="retry_wait", retry_count=count, retry_delay_seconds=delay,
+        next_retry_at=time.time() + delay, retry_error=str(error))
+
+
+def run(directory, *, runner_upgrade_reason=None):
     """Submit all ready batches, advance dependencies, and require final grades."""
     from experiment_runner import experiment, project
     project.configure(PROJECT)
@@ -209,6 +248,13 @@ def run(directory):
             raise ValueError("automatic grading is bound to a different task checkout")
         if engine._sha256_file(Path(state["coverage_reference"]["path"])) != state["coverage_reference"]["sha256"]:
             raise ValueError("automatic grading coverage preparation changed")
+        if state["status"] == "failed":
+            failed = [entry for entry in state["experiments"] if entry["status"] == "failed"]
+            if failed and all(_retryable_native(entry, entry.get("returncode")) for entry in failed):
+                for entry in failed:
+                    _schedule_retry(entry, state.get("error", "retry native grading batch"))
+                state["status"] = "prepared"
+                state.pop("error", None)
         if state["status"] in {"complete", "failed"}:
             return dict(status=state["status"], report=state["report"], experiments=state["experiments"],
                 **({"error": state["error"]} if state.get("error") else {}))
@@ -225,6 +271,7 @@ def run(directory):
         # their bindings. Dispatch them before recomputing the whole collection.
         result = experiment.read(report_path)
         collected = False
+        experiment.write(directory / "state.json", state)
         try:
             while True:
                 if result["automatic_status"] == "failed":
@@ -233,13 +280,24 @@ def run(directory):
                 # the shared runner immediately, before waiting for any completion.
                 submitted = False
                 for entry in state["experiments"]:
-                    if entry["status"] in {"prepared", "running"} and entry["path"] not in active:
+                    ready = entry["status"] in {"prepared", "running"} or (
+                        entry["status"] == "retry_wait" and entry["next_retry_at"] <= time.time())
+                    if ready and entry["path"] not in active:
                         logfile = directory / "logs" / (Path(entry["path"]).name + ".log")
                         logfile.parent.mkdir(exist_ok=True)
                         with logfile.open("a") as log:
-                            process = subprocess.Popen([sys.executable, str(LAUNCHER),
-                                "--project-root", str(PROJECT), "run", entry["path"]],
-                                cwd=PROJECT, stdout=log, stderr=subprocess.STDOUT)
+                            entry["log_offset"] = log.tell()
+                            arguments = [sys.executable, str(LAUNCHER), "--project-root", str(PROJECT),
+                                "run", entry["path"], "--keep-retrying-provider-errors"]
+                            if runner_upgrade_reason:
+                                arguments.extend(["--runner-upgrade-reason", runner_upgrade_reason])
+                            try:
+                                process = subprocess.Popen(arguments, cwd=PROJECT,
+                                    stdout=log, stderr=subprocess.STDOUT)
+                            except OSError as error:
+                                _schedule_retry(entry, error)
+                                submitted = True
+                                continue
                         entry.update(status="running", pid=process.pid, log=str(logfile))
                         active[entry["path"]] = process
                         submitted = True
@@ -256,34 +314,55 @@ def run(directory):
                         state["report"] = str(directory / "grades.json")
                         state["report_sha256"] = engine._sha256_file(directory / "grades.json")
                         break
+                    if any(entry["status"] == "retry_wait" for entry in state["experiments"]):
+                        time.sleep(0.1)
+                        continue
                     raise ValueError("automatic grading cannot finish every selected answer")
                 finished = [path for path, process in active.items() if process.poll() is not None]
                 if not finished:
                     time.sleep(0.1)
                     continue
+                completed = False
                 for path in finished:
                     process = active.pop(path)
                     entry = next(row for row in state["experiments"] if row["path"] == path)
                     if process.returncode:
-                        entry.update(status="failed", returncode=process.returncode)
+                        entry["returncode"] = process.returncode
+                        if _retryable_native(entry, process.returncode):
+                            _schedule_retry(entry, "native grading batch failed; see " + entry["log"])
+                            continue
+                        entry["status"] = "failed"
                         raise ValueError("native grading batch failed; see " + entry["log"])
                     native = experiment.report(Path(path), include_request_preview=False)
                     if any(row["status"] not in {"valid", "empty"} for row in native["cases"]):
                         entry["status"] = "failed"
                         raise ValueError("native grading batch lacks valid judgments: " + path)
                     entry["status"] = "complete"
-                result = _collect(directory, state, context)
-                collected = True
-                _prepare_groups(result["automatic_requests"], directory, state, result, context)
+                    completed = True
+                if completed:
+                    result = _collect(directory, state, context)
+                    collected = True
+                    _prepare_groups(result["automatic_requests"], directory, state, result, context)
                 experiment.write(directory / "state.json", state)
         except Exception as error:
-            # Already submitted independent groups keep their bounded native runs;
-            # no new semantic draws are dispatched to disguise a technical failure.
+            # Stop new admissions before draining in-flight requests. A sibling's
+            # unlimited provider retries must not keep a failed overall run alive.
+            pauses = []
+            for path, process in active.items():
+                if process.poll() is None:
+                    entry = next(row for row in state["experiments"] if row["path"] == path)
+                    with Path(entry["log"]).open("a") as log:
+                        pauses.append(subprocess.Popen([sys.executable, str(LAUNCHER),
+                            "--project-root", str(PROJECT), "pause", path], cwd=PROJECT,
+                            stdout=log, stderr=subprocess.STDOUT))
+            for pause in pauses:
+                pause.wait()
             for path, process in active.items():
                 process.wait()
                 entry = next(row for row in state["experiments"] if row["path"] == path)
-                entry.update(status="complete" if process.returncode == 0 else "failed",
-                    returncode=process.returncode)
+                native = experiment.report(Path(path), include_request_preview=False)
+                entry.update(status="paused" if native.get("scheduling", {}).get("state") == "paused"
+                    else "complete" if process.returncode == 0 else "failed", returncode=process.returncode)
             state.update(status="failed", error=str(error))
         experiment.write(directory / "state.json", state)
         return dict(status=state["status"], report=state["report"], experiments=state["experiments"],

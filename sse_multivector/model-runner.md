@@ -1353,8 +1353,13 @@ Failed/incomplete provider terminals need their own explicit temporary provider 
 a later socket error cannot grant that case a retry. Confirmed interrupted
 transport retries require `state=unknown`, no terminal event and SDK stop reason
 `error`; output-length/validation failures retain their existing rules.
-Each case has at most two total
-attempts across resumes, with a two-second minimum delay. `Retry-After` is
+By default, each case has at most two total
+attempts across resumes, with a two-second minimum delay. The explicitly
+authorized automatic distillation grading workflow passes native
+`run --keep-retrying-provider-errors`: eligible temporary failures continue
+in the same experiment with 2/4/8/.../60-second delays, retaining every attempt
+and every completed answer. Other experiments retain the default limit.
+`Retry-After` is
 honored; invalid values or waits above 60 seconds leave the case unresolved
 rather than retrying early. Local aborts override provider metadata. Our own
 timeouts, validation/parsing errors and unknown transport failures are never
@@ -1373,7 +1378,7 @@ provider backoff.
 Once the shared wait expires, eligible retries run before untouched cases, ordered by
 retry deadline. Already-running calls are not interrupted. Resuming also applies
 the shared wait from saved transient failures, without changing retry eligibility
-or the two-total-attempts limit. The executor keeps this batch wait and retry
+or the default two-total-attempts limit. The executor keeps this batch wait and retry
 ordering. Native experiment workers additionally share admission across processes
 on this host, after resolving the already-selected local Pi route. Account errors
 pause that account; connection-wide upstream errors pause experiment traffic
@@ -2354,6 +2359,11 @@ rechecks its sources. Existing original experiments remain unchanged. Eligible
 shared prefixes use native prompt caching; final decisions
 are fresh xhigh calls, while ordinary missing checks retain their configured
 reasoning settings. Permanent technical failures produce a failed run.
+Temporary native process failures retry the same batch with persisted
+1/2/4/.../60-second delays while independent ready batches continue. The
+provider retry opt-in preserves the failed request's existing attempt history.
+`--runner-upgrade-reason TEXT` records a reviewed code update when resuming
+already prepared groups; it cannot override changed inputs or request bodies.
 `compare-distillation-grades --automated-report DIR/grades.json` compares those
 collected grades directly with the bound development reference without another
 collection or inference pass. This entry point currently starts from a frozen
