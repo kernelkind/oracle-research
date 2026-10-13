@@ -12,6 +12,28 @@ commands. **HR05** is the completed 24-note rerun with a review UI.
 **HR04** is the completed 12-note run; **HR03** is the completed 50-note baseline.
 Each run's raw build, browsing menu and export share its ID.
 
+## HR11–HR13 — approved V3 round
+
+The user approved these three official experiments, run sequentially. Their
+definitions and parameter rows are recorded before inference. Native preparation
+and source freezing are pending; no calls have been dispatched for this round.
+
+| Run | Notes | Definition | Status |
+| --- | --- | --- | --- |
+| HR11 | 6 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr11/hierarchy.spec.json) | Approved; awaiting preparation |
+| HR12 | 12 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr12/hierarchy.spec.json) | Approved; awaiting preparation |
+| HR13 | 24 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr13/hierarchy.spec.json) | Approved; awaiting preparation |
+
+HR13 preserves HR05, HR08 and HR09's exact ordered 24-note selection. HR11 and
+HR12 are approved nested subsets, retaining the original relative order.
+All parameters, persistent call allowances and generator versions belong in the
+[CSV ledger](hierarchy-parameters.csv). Native snapshots, usage reports and
+checked review UIs will be linked here as each run finishes. The earlier
+three-note V3 qualification remains diagnostic evidence and is not an official
+run or part of this round's answer history.
+
+## Previous official runs
+
 **HR08** has finished with a partial result: 23 of 24 notes, after eligible
 selection was exhausted. **HR09** completed with all 24 notes. **HR10** was
 stopped by the user on October 12, 2026 at 20:16 UTC after its authorized resume.
