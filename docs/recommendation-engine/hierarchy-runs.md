@@ -17,11 +17,12 @@ Each run's raw build, browsing menu and export share its ID.
 The user approved these three official experiments, run sequentially. All three
 are natively prepared in isolated worktrees with frozen source and input bindings.
 Their complete parameter rows and generation commits are recorded before
-inference; no calls have been dispatched for this round yet.
+inference. HR11 is executing; HR12 and HR13 remain prepared for sequential
+execution after their preceding run finishes.
 
 | Run | Notes | Definition | Prepared provenance | Status |
 | --- | --- | --- | --- | --- |
-| HR11 | 6 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr11/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr11-v3/target/hierarchy-hr11-v3-six-note-v1/prepared-provenance.json) | Prepared; first to execute |
+| HR11 | 6 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr11/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr11-v3/target/hierarchy-hr11-v3-six-note-v1/prepared-provenance.json) | Running; native Bootstrap |
 | HR12 | 12 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr12/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr12-v3/target/hierarchy-hr12-v3-twelve-note-v1/prepared-provenance.json) | Prepared; awaits HR11 |
 | HR13 | 24 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr13/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr13-v3/target/hierarchy-hr13-v3-twenty-four-note-v1/prepared-provenance.json) | Prepared; awaits HR12 |
 
