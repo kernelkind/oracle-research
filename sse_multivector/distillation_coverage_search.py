@@ -702,7 +702,7 @@ def prepare(evaluation_path, output, *, answer_ids=None, runner_binary=None, his
 
 
 def collect(coverage_directory, output, *, verification_experiments=None, premise_audits=None, correction_experiments=None,
-            correction_case_ids=None, adjudications=None):
+            correction_case_ids=None, adjudications=None, automated_analysis=False):
     """Score accepted native checks and searches without running the old matrix."""
     from experiment_runner import experiment, inputs, project
     project.configure(Path(__file__).resolve().parents[1])
@@ -716,6 +716,10 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
         raise ValueError("coverage search preparation changed")
     frozen = experiment.read(frozen_path)
     policy = _policy(frozen.get("policy", "audited"))
+    if automated_analysis:
+        if premise_audits or correction_experiments or correction_case_ids or adjudications:
+            raise ValueError("automated analysis excludes agent audits, corrections and adjudications")
+        policy = "grading"
     if adjudications and policy != "grading":
         raise ValueError("adjudications require grading policy")
     protected = dict(frozen["sources"])
@@ -738,6 +742,18 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
     # Preparation audits remain part of the immutable native source definition.
     preparation_references = list(frozen.get("premise_audits", []))
     searches, verifiers = {}, {}
+    audit_diagnostics = []
+
+    def original(row):
+        if not automated_analysis:
+            return row
+        diagnostics = [item for item in row.get("reviews", []) if item.get("current") is True]
+        diagnostics += _bound_premise_audits(row, audits)[1] if row.get("output") is not None else []
+        audit_diagnostics.extend(dict(item, check=row["evidence"]["check"], case_id=row["id"],
+            answer_id=row["evidence"].get("answer_id"), input_sha256=row["input_sha256"],
+            output_sha256=hashlib.sha256(row["output"].encode()).hexdigest() if row.get("output") else None)
+            for item in diagnostics)
+        return dict(row, reviews=[])
 
     def native(path):
         path = Path(path).expanduser().resolve()
@@ -764,7 +780,13 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
                 raise ValueError("duplicate coverage search teacher group")
             searches[key] = row
     audits = _premise_audits(preparation_references + audit_references, directory, protected)
-    corrections = _correction_rows(list(frozen.get("correction_experiments", [])) +
+    if automated_analysis:
+        baseline = dict(baseline, **{cohort: dict(baseline[cohort], answers=[dict(answer,
+            checks={check: [original(row) for row in rows] for check, rows in answer["checks"].items()})
+            for answer in baseline[cohort]["answers"]]) for cohort in ("random", "challenge")})
+        searches = {key: original(row) for key, row in searches.items()}
+        audits = {}
+    corrections = _correction_rows(([] if automated_analysis else list(frozen.get("correction_experiments", []))) +
         _correction_references(correction_experiments or [], correction_case_ids), directory, protected)
     audits = _native_correction_audits(audits, corrections, protected, policy)
     correction_index = _correction_index(corrections)
@@ -788,7 +810,13 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
     if policy == "grading":
         # Core corrections can change which headings still need a search. Saved
         # decisions remain usable only for the newly derived complete question.
-        current_cases, current_settlements, _ = _cases(baseline, assessments, audits, policy)
+        question_baseline = baseline
+        if automated_analysis:
+            question_baseline = dict(baseline, **{cohort: dict(baseline[cohort], answers=[answer
+                for answer in baseline[cohort]["answers"] if answer["errors"] or all(
+                    row["status"] == "valid" for row in answer["checks"]["matching"])])
+                for cohort in ("random", "challenge")})
+        current_cases, current_settlements, _ = _cases(question_baseline, assessments, audits, policy)
         template = (Path(__file__).parent / "distillation-review-v1/coverage-search-prompt-v1.md").read_text()
         negative_sources = list(searches.values()) + [row for row in corrections
             if row["evidence"]["check"] == "coverage_search"]
@@ -812,7 +840,7 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
         for row in result["cases"]:
             if row["evidence"].get("check") != "relationship":
                 raise ValueError("coverage verification requires native relationship checks")
-            verifiers.setdefault((row["input_sha256"], row["prompt"]), []).append(row)
+            verifiers.setdefault((row["input_sha256"], row["prompt"]), []).append(original(row))
     for row in corrections:
         if row["evidence"]["check"] == "relationship":
             verifiers.setdefault((row["input_sha256"], row["prompt"]), []).append(row)
@@ -967,6 +995,10 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
             raise ValueError("coverage collection source changed: " + path)
     result = dict(schema_version=1, coverage=str(directory), output=str(output), sources=protected,
         policy=policy, inference_calls=0, **cohorts)
+    if automated_analysis:
+        result.update(analysis_only=True, semantic_audits_applied=False, corrections_applied=False,
+            saved_response_selection="Native per-plan saved response and receipt; no fallback experiment selection.",
+            audit_diagnostics=list({json.dumps(row, sort_keys=True): row for row in audit_diagnostics}.values()))
     if adjudication_records:
         classifications = {(record["check"], record["original"]["input_sha256"], record["original_prompt_sha256"], record["original_output_sha256"],
             record["original_decision_classification"]) for record in adjudication_records}

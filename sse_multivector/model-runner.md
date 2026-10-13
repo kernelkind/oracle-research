@@ -2302,6 +2302,27 @@ No new inference or prompt changes are
 used, every historical source hash verifies, and all 56 targeted regressions
 pass. Agent adjudications do not establish independent human reference labels
 or unseen accuracy.
+The approved [offline grade comparison](distillation-review-v1/README.md#offline-grade-comparison-october-13)
+adds `compare-distillation-grades COVERAGE --reference REPORT --output DIR`.
+It reuses original saved responses through the production collector while
+excluding agent audit vetoes, correction experiments and adjudications. Supply
+only original fixed positive-witness groups through `--verification-experiment`;
+audit-triggered verifiers and later fallbacks would contaminate this baseline.
+Mechanical checks, exact witness requirements and contradictions remain active;
+newly needed unsaved questions remain pending. The analysis does not change
+production grading policy or choose a better saved model draw.
+The fifty random answers have mean absolute changes of 1.1823 correctness
+points over 47 paired scores and 0.1938 coverage points over 43 pairs. The
+difficult cohort has 0.2155 points over eight correctness pairs and 2.0833 over
+four coverage pairs. Original responses yield forty-seven complete grades;
+thirteen are blocked: nine reviewer disagreements and four unavailable saved
+results. One short answer changes by fifty correctness points. Reference
+uncertainties, missing scores and small per-version cells remain explicit; these changes
+measure known correction impact, not independently established absolute error
+or stable model rankings. User-approved tolerance of inevitable error replaces
+any requirement to correct every mistake. No new inference is used; all 59
+targeted regressions pass. Handling blocked grades remains an operational
+decision before the full run.
 Full grading concerns the 1,800 saved
 validation answers; eight-hour readiness and reserved final-test review remain
 open.

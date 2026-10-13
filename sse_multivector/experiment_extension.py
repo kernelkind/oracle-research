@@ -675,6 +675,12 @@ def add_commands(commands):
                    help='existing exact complete-output audit JSONL; repeat for multiple audits')
     p.add_argument('--adjudication', type=Path, action='append',
                    help='immutable source-bound agent verdict; requires frozen grading policy')
+    p = commands.add_parser('compare-distillation-grades', help='compare original automated saved grades with agent-audited grades; no inference')
+    p.add_argument('coverage', type=Path)
+    p.add_argument('--reference', type=Path, required=True)
+    p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--verification-experiment', type=Path, action='append',
+                   help='original fixed native DSL witness group; excludes audit-selected fallbacks')
     p = commands.add_parser('adjudicate-distillation-review', help='record an immutable source-bound agent decision; no inference')
     p.add_argument('experiment', type=Path)
     p.add_argument('--case', required=True)
@@ -874,6 +880,11 @@ def handle_command(args):
                     if args.teacher_id is not None else dict(valid=args.valid == 'true') if args.valid is not None else None)
         result = distillation_review_adjudication.record(args.experiment, args.case, args.output,
             decision=decision, classification=args.classification, rule=args.rule, reason=args.reason)
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+    elif args.command == 'compare-distillation-grades':
+        from . import distillation_grade_comparison
+        result = distillation_grade_comparison.compare(args.coverage, args.reference, args.output,
+            verification_experiments=args.verification_experiment)
         print(json.dumps(result, ensure_ascii=False, indent=2))
     elif args.command in {'prepare-distillation-review-evaluation', 'show-distillation-review-evaluation', 'run-distillation-review-evaluation'}:
         from . import distillation_review_evaluation as evaluation
