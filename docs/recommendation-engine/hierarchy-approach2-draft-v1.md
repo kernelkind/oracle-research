@@ -93,6 +93,11 @@ covers both supplied meanings. Return only its subject and explicit meaning;
 `null` is not an allowed semantic result. This rule is approved. Transport or
 invalid-output failures remain separate, unresolved operational cases.
 
+Use this same consolidation rule for every selected pair. Do not add a
+separate equivalence judgment, comparison call or equivalent-pair branch.
+The proposed special case of recognizing equivalence and copying one supplied
+meaning was withdrawn; it is not part of this design.
+
 Hierarchy-pair-consolidation-v1 was presented in chat, but the user deferred
 review. [Hierarchy-pair-consolidation-v2](../../sse_multivector/shr_single_pair/Hierarchy-pair-consolidation-v2.md)
 records the no-`null` change. Its overall wording remains an unreviewed,
@@ -179,7 +184,7 @@ each note once even when multiple associated local L1 entries come from it.
 
 ## Details still to settle
 
-- Handling similarity ties, equivalence and failed/invalid consolidation calls.
+- Handling similarity ties and failed/invalid consolidation calls.
 - Exact consolidation wording/output and meaning validation.
 - One-note stopping cases and cases where further grouping does not provide
   useful refinement.
