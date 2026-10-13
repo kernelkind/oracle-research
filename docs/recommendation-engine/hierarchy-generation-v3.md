@@ -246,9 +246,12 @@ this initial screen without changing V7 or regenerating a hierarchy.
 
 The user authorized a wider saved-pair test before a new hierarchy run. It
 completed on 2026-10-13 with **65 valid answers: 63 qualified agent accepts,
-two uncertain assessments and no confirmed rejects**. These are attributed
-agent assessments, not independently validated human gold or a reliability
-estimate. Ten answers reuse the initial screen exactly; reuse adds no sample.
+two uncertain assessments and no confirmed rejects**. The user subsequently
+accepted both uncertain outputs, so all 65 cases are accepted across the agent
+reviews and those two user adjudications. The other 63 cases remain qualified
+agent assessments, not independently validated human gold; this is not a
+reliability estimate. Ten answers reuse the initial screen exactly; reuse adds
+no sample.
 
 The panel inherits root cases F00000-P00000 through F00000-P00059 inclusive
 from HR14 batch-00001, plus five supplied-parent cases from batch-00023:
@@ -279,27 +282,31 @@ personifications. Frozen materials admits whole or partial freezing without
 requiring every kind to be edible or solid water. All five supplied-parent
 proposals receive qualified accepts for coverage and parent fit.
 
-Two requests remain unresolved:
+The two initial uncertainties were subsequently accepted by the user:
 
 - **F00000-P00013, Coffeechain:** the inputs define the specific #coffeechain
   sharing tag and the informal Coffeechain community on Nostr. V7's title is
   *Coffeechain social-media sharing*. Its opening meaning is “Coffeechain
   social-media sharing is the connection of coffee-related posts in a shared
   social-media conversation.” Later sentences explicitly include the tag and
-  named community. Both inputs are covered, but the opening could admit an
-  unrelated coffee-post conversation. Whether the named topic itself supplies
-  the required identity boundary is unresolved; this is not a proven failure.
+  named community. The agent questioned whether the opening could admit an
+  unrelated coffee-post conversation. After seeing both inputs, the complete
+  output and that concern, the user accepted it, verbatim: **“i think it's fine”**.
+  This saved output is accepted; the concern is not a failure.
 - **F00000-P00038, Diets:** the first input describes food-consumption patterns
   characterized by food kinds and amounts or relative proportions. The second
   describes food-consumption patterns/regimens without explicitly imposing
   those features. V7 returns “Diets are patterns or regimens of food consumption
   characterized by the kinds of food eaten and their amounts or relative
   proportions. They include habitual ways of eating and deliberately followed
-  eating regimens.” A regimen defining only eating times is a plausible
-  counterexample. Whether the characterization is a membership restriction or
-  a necessary description remains unresolved; this is not a proven failure.
+  eating regimens.” The agent questioned whether a regimen defining only eating
+  times would be excluded. After seeing both inputs, the complete output and
+  that concern, the user accepted it, verbatim: **“i think it's fine”**. This
+  saved output is accepted; the concern is not a failure.
 
-These questions should be adjudicated before calling the entire panel a pass.
+Both decisions are recorded through native `review` with role `user`, preserving
+the earlier agent assessments and exact input/output bindings. No additional
+rationale or general rule was supplied; acceptance applies to these outputs.
 No prompt revision, new hierarchy, activation or per-sentence causal claim
 follows from this screen. V7 remains experimental; HR14 and its meanings retain
 V6. A new hierarchy would be a separate end-to-end test rather than certification
