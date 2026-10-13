@@ -1,0 +1,38 @@
+{
+  "cases": [
+    {
+      "id": "02-planned-and-completed-painting-reversed",
+      "inputs": {
+        "INPUT_JSON": "{\"parent\": {\"owl\": {\"expression\": \"PaintingActivity OR (plansToPerform SOME PaintingActivity)\", \"classes\": {}}, \"definitions\": {\"PaintingActivity\": \"Applying paint to a surface or fixture.\", \"plansToPerform\": \"A relation from a plan to the activity it proposes performing.\"}}, \"nodes\": [{\"title\": \"Plans to paint cabinets\", \"meaning\": \"Plans to paint cabinets are plans to apply paint to cabinets in a home, whether or not the painting is carried out.\"}, {\"title\": \"Completed interior wall painting\", \"meaning\": \"Completed interior wall painting is applying paint to interior walls of a home, with the painting finished.\"}]}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "reversal_of": "02-planned-and-completed-painting",
+        "expectation_authority": "pre-call agent restrictions, not a unique expected title",
+        "expected_restrictions": [
+          "Second translation retains completion.",
+          "First retains a plan to paint cabinets, without requiring execution or completion.",
+          "Do not transfer completion from the second node to the first."
+        ],
+        "application_allowed": false
+      }
+    },
+    {
+      "id": "11-consumer-boundary-reversed",
+      "inputs": {
+        "INPUT_JSON": "{\"nodes\": [{\"title\": \"Evening meals\", \"meaning\": \"Meals served in the evening.\"}, {\"title\": \"Human food\", \"meaning\": \"Substances intended to be eaten or drunk by people for nourishment.\"}]}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "reversal_of": "11-consumer-boundary",
+        "expectation_authority": "pre-call agent restrictions, not a unique expected title",
+        "expected_restrictions": [
+          "Second retains intended human nourishment, without requiring actual consumption.",
+          "First retains a meal served in the evening and does not acquire a human-consumer restriction.",
+          "A shared consumer restriction cannot be justified by only the second node."
+        ],
+        "application_allowed": false
+      }
+    }
+  ]
+}
