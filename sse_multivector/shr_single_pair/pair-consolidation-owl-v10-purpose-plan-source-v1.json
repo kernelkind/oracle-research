@@ -1,0 +1,52 @@
+{
+  "cases": [
+    {
+      "id": "13-designed-washing-brushes",
+      "inputs": {
+        "INPUT_JSON": "{\"nodes\": [{\"title\": \"Brushes designed for washing bottles\", \"meaning\": \"Brushes designed for washing bottles.\"}, {\"title\": \"Brushes designed for washing jars\", \"meaning\": \"Brushes designed for washing jars.\"}]}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "application_allowed": false,
+        "expectation_authority": "pre-call agent conditions, not human gold or a unique expected consolidation",
+        "expected_restrictions": [
+          "Each brush retains design purpose, a formal Washing action and its Bottle or Jar object.",
+          "Design purpose must not require actual washing, or admit planning as a second purpose."
+        ]
+      }
+    },
+    {
+      "id": "14-used-washing-and-soaking-items",
+      "inputs": {
+        "INPUT_JSON": "{\"nodes\": [{\"title\": \"Brushes used to wash bottles\", \"meaning\": \"Brushes that have been used to wash bottles.\"}, {\"title\": \"Basins used to soak bottles\", \"meaning\": \"Basins that have been used to soak bottles.\"}]}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "application_allowed": false,
+        "expectation_authority": "pre-call agent conditions, not human gold or a unique expected consolidation",
+        "expected_restrictions": [
+          "Each item retains its explicitly stated actual past use, with formal Washing or Soaking and its Bottle object.",
+          "Actual use must not become only a design purpose or an intended use.",
+          "Past use does not require the whole washing or soaking task to be completed."
+        ]
+      }
+    },
+    {
+      "id": "15-bottle-washing-and-plans",
+      "inputs": {
+        "INPUT_JSON": "{\"nodes\": [{\"title\": \"Bottle washing\", \"meaning\": \"The activity of washing bottles.\"}, {\"title\": \"Plans to wash bottles\", \"meaning\": \"Plans to wash bottles.\"}]}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "application_allowed": false,
+        "expectation_authority": "pre-call agent conditions, not human gold or a unique expected consolidation",
+        "expected_restrictions": [
+          "The first translation is an activity with a formal Washing action and Bottle object.",
+          "The second translation retains a plan as a distinct kind, with a formal relation to the proposed Washing activity and Bottle object.",
+          "The plan does not require washing to occur.",
+          "If a consolidation admits both kinds, its formal expression or supporting classes exposes the alternatives with OR, rather than widening the Washing primitive to include plan objects."
+        ]
+      }
+    }
+  ]
+}
