@@ -2372,7 +2372,19 @@ flags supply original witness groups; `--answer-id` selects a bounded subset.
 `run-distillation-automatic-grading DIR` submits all ready independent batches
 through the shared launcher, advances dependent work and writes `grades.json`
 only after both grades are complete for every selected answer. Repeating the
-command after completion adds no calls. Prepared batches submit before a full
+command after completion adds no calls. Automatic grading saves the shared
+`scheduling_group: distillation` in its parent preparation and gives every child
+batch that same scheduling group. Required checks, final decisions, retries and
+warmups therefore share one allocation with other overall experiments; creating
+more grading batches does not increase its share. `--scheduling-group ID` on
+preparation selects another explicitly identified effort; related workflows
+must reuse the same ID. Legacy automatic preparations retain their frozen
+inputs and bind older ungrouped child batches to `distillation` on resume.
+Already-loaded parent and batch coordinators need individual drain/resume to
+adopt the updated code; merging it does not change their live allocation.
+The runner's `show --json` exposes per-group counts. All ready batches still
+submit immediately; no outer concurrency cap is added.
+Prepared batches submit before a full
 collection; the saved initial report is hash-bound, and zero-call completion
 rechecks its sources. Existing original experiments remain unchanged. Eligible
 shared prefixes use native prompt caching; final decisions

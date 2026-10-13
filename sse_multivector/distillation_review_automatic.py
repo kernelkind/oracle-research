@@ -17,6 +17,7 @@ from . import extraction_pipeline as engine
 PROJECT = Path(__file__).resolve().parents[1]
 LAUNCHER = PROJECT.parent / "experiment-runner/bin/experiment-runner"
 ROLES = {"required", "final_matching", "final_coverage"}
+DEFAULT_SCHEDULING_GROUP = 'distillation'
 
 
 def prepare_source(source, base, *, preparation_context=None):
@@ -152,7 +153,8 @@ def _prepare_groups(requests, directory, state, report, context):
             dataset=dict(adapter=group["adapter"], path=str(source_path)), runner=group["runner"]))
         destination = directory / "experiments" / name
         arguments = ["prepare", str(destination), "--spec", str(spec), "--history-root",
-            state.get("history_root") or str(directory)]
+            state.get("history_root") or str(directory), '--scheduling-group',
+            state.get('scheduling_group', DEFAULT_SCHEDULING_GROUP)]
         # A final decision must be fresh; ordinary missing checks may reuse exact receipts.
         if group["role"] != "required":
             arguments.append("--repeat")
@@ -194,9 +196,13 @@ def _collect(directory, state, context):
 
 def prepare(coverage_directory, output, *, verification_experiments=None, required_experiments=None,
             final_experiments=None, answer_ids=None, runner_binary=None, history_root=None,
-            evaluation_path=None, coverage_reasoning_effort="high"):
+            evaluation_path=None, coverage_reasoning_effort="high",
+            scheduling_group=DEFAULT_SCHEDULING_GROUP):
     """Freeze ready native batches without inference or changing historical groups."""
-    from experiment_runner import experiment, project
+    from experiment_runner import experiment, project, scheduling
+    scheduling_group = scheduling.validate_group(scheduling_group)
+    if scheduling_group is None:
+        raise ValueError('automatic grading requires a scheduling group')
     project.configure(PROJECT)
     directory = Path(output).expanduser().resolve()
     if directory.exists():
@@ -217,6 +223,7 @@ def prepare(coverage_directory, output, *, verification_experiments=None, requir
     directory.mkdir(parents=True, exist_ok=True)
     (directory / ".gitignore").write_text("*\n")
     state = dict(schema_version=1, coverage=str(coverage_directory), coverage_reference=reference,
+        scheduling_group=scheduling_group,
         project_root=str(PROJECT), launcher=str(LAUNCHER), answer_ids=answer_ids,
         verification_experiments=[str(Path(p).resolve()) for p in verification_experiments or []],
         required_experiments=[str(Path(p).resolve()) for p in required_experiments or []],
@@ -277,7 +284,7 @@ def _schedule_retry(entry, error):
 
 def run(directory, *, runner_upgrade_reason=None):
     """Submit all ready batches, advance dependencies, and require final grades."""
-    from experiment_runner import experiment, project
+    from experiment_runner import experiment, project, scheduling
     project.configure(PROJECT)
     directory = Path(directory).expanduser().resolve()
     with experiment.locked(directory):
@@ -287,6 +294,10 @@ def run(directory, *, runner_upgrade_reason=None):
             raise ValueError("automatic grading preparation changed")
         frozen = experiment.read(frozen_path)
         state = experiment.read(directory / "state.json")
+        group = scheduling.validate_group(frozen.get('scheduling_group', DEFAULT_SCHEDULING_GROUP))
+        if group is None or state.get('scheduling_group', group) != group:
+            raise ValueError('automatic grading execution binding changed: scheduling group')
+        state['scheduling_group'] = group
         for key in ("coverage", "coverage_reference", "project_root", "launcher", "answer_ids",
                 "verification_experiments", "required_experiments", "final_experiments",
                 "runner_binary", "history_root"):
@@ -340,7 +351,8 @@ def run(directory, *, runner_upgrade_reason=None):
                         with logfile.open("a") as log:
                             entry["log_offset"] = log.tell()
                             arguments = [sys.executable, str(LAUNCHER), "--project-root", str(PROJECT),
-                                "run", entry["path"], "--keep-retrying-provider-errors"]
+                                "run", entry["path"], "--keep-retrying-provider-errors",
+                                '--scheduling-group', group]
                             if runner_upgrade_reason:
                                 arguments.extend(["--runner-upgrade-reason", runner_upgrade_reason])
                             try:

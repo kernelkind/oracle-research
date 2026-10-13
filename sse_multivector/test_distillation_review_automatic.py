@@ -7,6 +7,7 @@ import sys
 import tempfile
 import unittest
 import weakref
+import types
 from unittest.mock import patch
 
 from sse_multivector import test_distillation_coverage_search as fixtures
@@ -21,6 +22,10 @@ class DistillationAutomaticTests(unittest.TestCase):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
         self.root = Path(temporary.name)
+        environment = patch.dict(os.environ, {
+            'ORACLE_EXPERIMENT_BACKOFF_DIRECTORY': str(self.root / 'admission')})
+        environment.start()
+        self.addCleanup(environment.stop)
 
     def native(self, *arguments, success=True, extra_env=None):
         result = subprocess.run([sys.executable, str(LAUNCHER), "--project-root", str(PROJECT),
@@ -37,6 +42,8 @@ class DistillationAutomaticTests(unittest.TestCase):
         prepared = self.native("prepare-distillation-automatic-grading", "--help")
         self.assertIn("--answer-id", prepared.stdout)
         self.assertIn("--verification-experiment", prepared.stdout)
+        self.assertIn('--scheduling-group', prepared.stdout)
+        self.assertIn('distillation', prepared.stdout)
         self.native("run-distillation-automatic-grading", "--help")
 
     def test_source_configuration_reuses_immutable_native_plan_per_operation(self):
@@ -92,8 +99,16 @@ class DistillationAutomaticTests(unittest.TestCase):
             "--evaluation", source, "--output", directory, "--runner-binary", worker).stdout)
         self.assertFalse((self.root / "calls.json").exists())
         self.assertEqual(preparation["inference_calls"], 0)
+        frozen = json.loads((directory / 'automatic.json').read_text())
+        self.assertEqual(frozen['scheduling_group'], 'distillation')
+        for entry in preparation['experiments']:
+            plan = json.loads((Path(entry['path']) / 'experiment.json').read_text())['plan']
+            self.assertEqual(plan['scheduling_group'], 'distillation')
         result = json.loads(self.native("run-distillation-automatic-grading", directory).stdout)
         self.assertEqual(result["status"], "complete")
+        for entry in result['experiments']:
+            membership = json.loads((Path(entry['path']) / 'run/scheduling-group.json').read_text())
+            self.assertEqual(membership['scheduling_group'], 'distillation')
         grades = json.loads(Path(result["report"]).read_text())
         row = grades["random"]["answers"][0]
         self.assertEqual(row["scoring"]["scores"]["correctness"]["value"], 1)
@@ -131,6 +146,56 @@ class DistillationAutomaticTests(unittest.TestCase):
         self.assertEqual(len(matching), 1)
         self.assertTrue(matching[0]["prefix_cached"])
         self.assertFalse((self.root / "calls.json").exists())
+
+    def test_legacy_workflow_adopts_one_group_without_rewriting_prepared_batches(self):
+        from sse_multivector import distillation_review_automatic as automatic
+        _, _, coverage, _, _ = self.fixture('legacy-group')
+        old_source = subprocess.check_output(['git', 'show',
+            '808f8bfc:sse_multivector/distillation_review_automatic.py'], cwd=PROJECT, text=True)
+        legacy = types.ModuleType('sse_multivector.legacy_automatic')
+        legacy.__package__ = 'sse_multivector'
+        legacy.__file__ = automatic.__file__
+        exec(compile(old_source, automatic.__file__, 'exec'), legacy.__dict__)
+        directory = self.root / 'legacy-automatic'
+        with patch.dict(os.environ, FAKE_RUNNER_LOG=str(self.root / 'calls.json')):
+            prepared = legacy.prepare(coverage, directory, runner_binary=self.root / 'fake-runner')
+        frozen = (directory / 'automatic.json').read_bytes()
+        self.assertNotIn('scheduling_group', json.loads(frozen))
+        original_plans = {entry['path']: (Path(entry['path']) / 'experiment.json').read_bytes()
+                          for entry in prepared['experiments']}
+        self.assertTrue(original_plans)
+        result = json.loads(self.native('run-distillation-automatic-grading', directory).stdout)
+        self.assertEqual(result['status'], 'complete')
+        self.assertEqual((directory / 'automatic.json').read_bytes(), frozen)
+        for path, expected in original_plans.items():
+            self.assertEqual((Path(path) / 'experiment.json').read_bytes(), expected)
+        for entry in result['experiments']:
+            saved = json.loads((Path(entry['path']) / 'run/scheduling-group.json').read_text())
+            self.assertEqual(saved['scheduling_group'], 'distillation')
+        calls = (self.root / 'calls.json').read_bytes()
+        self.native('run-distillation-automatic-grading', directory)
+        self.assertEqual((self.root / 'calls.json').read_bytes(), calls)
+
+    def test_explicit_group_is_frozen_and_rejects_state_drift(self):
+        _, _, coverage, _, _ = self.fixture('explicit-group')
+        directory = self.root / 'explicit-automatic'
+        self.native('prepare-distillation-automatic-grading', coverage, '--output', directory,
+            '--runner-binary', self.root / 'fake-runner', '--scheduling-group', 'distillation-controls')
+        result = json.loads(self.native('run-distillation-automatic-grading', directory).stdout)
+        self.assertEqual(result['status'], 'complete')
+        for entry in result['experiments']:
+            plan = json.loads((Path(entry['path']) / 'experiment.json').read_text())['plan']
+            self.assertEqual(plan['scheduling_group'], 'distillation-controls')
+            membership = json.loads((Path(entry['path']) / 'run/scheduling-group.json').read_text())
+            self.assertEqual(membership['scheduling_group'], 'distillation-controls')
+        calls = (self.root / 'calls.json').read_bytes()
+        state_path = directory / 'state.json'
+        state = json.loads(state_path.read_text())
+        state['scheduling_group'] = 'different'
+        state_path.write_text(json.dumps(state))
+        rejected = self.native('run-distillation-automatic-grading', directory, success=False)
+        self.assertIn('scheduling group', rejected.stderr)
+        self.assertEqual((self.root / 'calls.json').read_bytes(), calls)
 
     def fixture(self, name):
         fixture = fixtures.DistillationCoverageSearchTests()
@@ -435,14 +500,20 @@ class DistillationAutomaticTests(unittest.TestCase):
         count = len(json.loads((self.root / "calls.json").read_text()))
         directory = self.root / "automatic-final-match-run"
         preparation = json.loads(self.native("prepare-distillation-automatic-grading", coverage,
-            "--output", directory, "--runner-binary", worker).stdout)
+            "--output", directory, "--runner-binary", worker,
+            '--scheduling-group', 'distillation-final-controls').stdout)
         self.assertEqual(len(preparation["experiments"]), 1)
         self.assertEqual(preparation["experiments"][0]["role"], "final_matching")
+        batch = Path(preparation['experiments'][0]['path'])
+        self.assertEqual(json.loads((batch / 'experiment.json').read_text())['plan']['scheduling_group'],
+                         'distillation-final-controls')
         result = json.loads(self.native("run-distillation-automatic-grading", directory).stdout)
         self.assertEqual(result["status"], "complete")
         calls = json.loads((self.root / "calls.json").read_text())
         self.assertEqual(len(calls) - count, 1)
         self.assertEqual(calls[-1]["request"]["reasoning"], "xhigh")
+        self.assertEqual(json.loads((batch / 'run/scheduling-group.json').read_text())['scheduling_group'],
+                         'distillation-final-controls')
         self.assertEqual(original.read_bytes(), frozen)
 
     def test_all_independent_native_batches_start_before_waiting(self):

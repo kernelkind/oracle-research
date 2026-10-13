@@ -684,6 +684,8 @@ def add_commands(commands):
     p.add_argument('--required-experiment', type=Path, action='append', help='native missing-check judgments')
     p.add_argument('--final-experiment', type=Path, action='append', help='fresh native final DSM or DCS decisions')
     p = commands.add_parser('prepare-distillation-automatic-grading', help='freeze automatic grading batches; no inference')
+    p.add_argument('--scheduling-group', default='distillation',
+                   help='shared allocation for the whole distillation effort (default: distillation); retained by all child batches and resumes')
     p.add_argument('coverage', type=Path, nargs='?')
     p.add_argument('--evaluation', type=Path, help='start from an unrun sparse evaluation')
     p.add_argument('--coverage-reasoning-effort', choices=('xhigh', 'high', 'medium', 'low'), default='high')
@@ -908,7 +910,8 @@ def handle_command(args):
                 verification_experiments=args.verification_experiment,
                 required_experiments=args.required_experiment, final_experiments=args.final_experiment,
                 answer_ids=args.answer_id, runner_binary=args.runner_binary, history_root=args.history_root,
-                evaluation_path=args.evaluation, coverage_reasoning_effort=args.coverage_reasoning_effort)
+                evaluation_path=args.evaluation, coverage_reasoning_effort=args.coverage_reasoning_effort,
+                scheduling_group=args.scheduling_group)
         else:
             result = distillation_review_automatic.run(args.directory, runner_upgrade_reason=args.runner_upgrade_reason)
         print(json.dumps(result, ensure_ascii=False, indent=2))

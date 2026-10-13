@@ -171,6 +171,15 @@ candidate expectations, and reports missing contexts without defaults.
 then freezes core requests directly from unrun evaluations; the existing single
 `run-distillation-automatic-grading DIR` advances every dependency. Ordinary
 DCS effort is separately frozen; final conflict decisions remain xhigh.
+Automatic grading records one `scheduling_group`, defaulting to `distillation`,
+and passes it to all child batches, including later dependent batches. Related
+grading workflows use the same ID, so their combined batch count does not buy
+more shared-runner slots. Preparation accepts `--scheduling-group ID` for another
+explicit effort; resume preserves the saved ID. Legacy workflows bind their
+ungrouped children to `distillation` on the next resume without rewriting old
+inputs or receipts. Already-loaded coordinators need drain/resume before group
+fairness applies. Submit every ready batch immediately; the shared queue owns
+both group and batch allocation.
 Eligible repeated natural prefixes retain native warming, while short or
 single-use prefixes receive no warmup. Native fixture tests cover fresh
 completion, sparse semantic guards, positive-witness disagreement and final
