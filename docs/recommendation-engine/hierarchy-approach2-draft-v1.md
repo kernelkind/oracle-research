@@ -42,6 +42,9 @@ candidate shortlist. Rank those pairs from highest similarity to lowest and
 select non-overlapping pairs in that order: once a vector has been selected,
 skip subsequent pairs containing it. Continue selecting pairs until no pair of
 unused vectors remains. With ten nodes this selects five pairs, not four.
+When the node count is odd, carry the one unpaired node forward unchanged,
+including its subject, explicit meaning, SSE vector and associated original
+local L1 entries.
 
 Families are separate. Do not pair entries belonging to different canonical
 parents merely because their intended children are at the same depth. Root
@@ -123,10 +126,27 @@ nodes. Five is within the maximum, so no further consolidation is needed for
 that family. These final nodes become canonical; intermediate synthetic nodes
 remain outside the canonical hierarchy.
 
+If construction starts with more than six nodes and each consolidation
+successfully returns one parent for its pair, the final node count is four,
+five or six. The last consolidation starts with seven to twelve nodes: seven
+or eight become four; nine or ten become five; eleven or twelve become six.
+For seven nodes, three pairs produce three synthetic parents and the unpaired
+node carries forward, giving four nodes total. This range is acceptable.
+
+If the starting set already has six or fewer nodes, no consolidation is needed;
+the final count can be below four.
+
+## Step 1.9: make the final nodes canonical
+
+Only the final nodes become canonical roots. Each retains all original local
+L1 entries associated with it through the consolidations. Intermediate
+synthetic nodes do not enter the canonical hierarchy. The same construction
+is repeated separately for each canonical parent's next level, using that
+parent's associated original local L1 entries.
+
 ## Details still to settle
 
-- Handling odd leftovers, similarity ties, equivalence and failed/null
-  consolidation results.
+- Handling similarity ties, equivalence and failed/null consolidation results.
 - Exact consolidation wording/output, meaning validation and final canonical
   promotion.
 - Complete distinct-note stopping behavior and cases where further grouping
