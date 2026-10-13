@@ -184,6 +184,71 @@ class DistillationCoverageSearchTests(unittest.TestCase):
         self.assertEqual(result["automatic_status"], "pending")
         self.assertEqual([row["role"] for row in result["automatic_requests"]], ["final_matching"])
 
+    def test_missing_search_positive_and_false_required_witness_escalate_the_complete_question(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        from sse_multivector import distillation_review_evaluation as evaluation
+        from sse_multivector import test_distillation_review_evaluation as fixtures
+        teacher = fixtures.subjects(("1", "Fruits"), ("2", "Cable A"))
+        student = fixtures.subjects(("1", "Fruits"), ("2", "Cables"), ("3", "Cable A"))
+        fixture, baseline, worker = self.baseline("missing-search-conflict", teacher=teacher, student=student)
+        positive = dict(evidence=[dict(student_number="2", reason="Fixture complete candidate assessment.")],
+                        witness_student_number="2")
+        worker.write_text(worker.read_text().replace('("DSMv3", "DSSv2", "DSLv2", "DSLv4")',
+            '("DSMv3", "DSSv2", "DSLv2", "DSLv4", "DCSv1")').replace(
+            'else {"valid": True, "reason": "Fixture semantic verdict."}',
+            'else (' + repr(positive) + ' if prompt.startswith("DCSv1") else '
+            '{"valid": False, "reason": "Fixture semantic verdict."})'))
+        output = self.root / "missing-search-conflict-coverage"
+        prepared = coverage.prepare(baseline, output, runner_binary=worker, policy="grading")
+        original_search = Path(prepared["experiments"][0]["path"])
+        initial = coverage.collect(output, self.root / "missing-search-initial.json", automatic=True)
+        self.assertEqual([row["role"] for row in initial["automatic_requests"]], ["required"])
+        self.assertEqual(initial["automatic_requests"][0]["case"]["evidence"]["check"], "coverage_search")
+        completed_search = self.root / "missing-search-completed"
+        fixture.native("prepare", completed_search, "--from", original_search,
+            "--reasoning-effort", "xhigh", "--repeat")
+        fixture.native("run", completed_search, "--max-new-attempts", 2)
+        positive_report = coverage.collect(output, self.root / "missing-search-positive.json", automatic=True,
+            required_experiments=[completed_search])
+        self.assertEqual([row["role"] for row in positive_report["automatic_requests"]], ["required"])
+        requested_pair = positive_report["automatic_requests"][0]["case"]
+        source = next(group["experiment"] for group in evaluation.report(baseline)["experiments"]
+            if any(row["id"] == requested_pair["id"] and row["evidence"]["check"] == "relationship"
+                   for row in group["cases"]))
+        completed_pair = self.root / "missing-search-false-witness"
+        fixture.native("prepare", completed_pair, "--from", source, "--only", requested_pair["id"],
+            "--reasoning-effort", "xhigh", "--repeat")
+        fixture.native("run", completed_pair, "--max-new-attempts", 2)
+        paths = [completed_search, completed_pair]
+        conflict = coverage.collect(output, self.root / "missing-search-conflict.json", automatic=True,
+            required_experiments=paths)
+        self.assertEqual([row["role"] for row in conflict["automatic_requests"]], ["final_coverage"])
+        self.assertEqual(conflict["automatic_requests"][0]["case"]["evidence"]["candidate_student_numbers"], ["1", "2"])
+        # A saved narrower negative cannot erase the earlier full-question conflict.
+        narrow_result = dict(evidence=[dict(student_number="1", reason="Fixture complete negative assessment.")],
+                             witness_student_number=None)
+        worker.write_text(worker.read_text().replace(repr(positive), repr(narrow_result)))
+        narrowed = coverage.prepare(baseline, self.root / "missing-search-narrowed", runner_binary=worker,
+            policy="grading", correction_experiments=[completed_pair])
+        narrowed_search = Path(narrowed["experiments"][0]["path"])
+        fixture.native("run", narrowed_search, "--max-new-attempts", 2)
+        paths.append(narrowed_search)
+        retained = coverage.collect(output, self.root / "missing-search-retained-conflict.json", automatic=True,
+            required_experiments=paths)
+        self.assertEqual([row["role"] for row in retained["automatic_requests"]], ["final_coverage"])
+        self.assertEqual(retained["automatic_requests"][0]["case"]["inputs"], conflict["automatic_requests"][0]["case"]["inputs"])
+        full_negative = dict(evidence=[dict(student_number=number, reason="Fixture complete negative assessment.")
+                                      for number in ("1", "2")], witness_student_number=None)
+        worker.write_text(worker.read_text().replace(repr(narrow_result), repr(full_negative)))
+        final = self.root / "missing-search-final"
+        fixture.native("prepare", final, "--from", original_search, "--reasoning-effort", "xhigh", "--repeat")
+        fixture.native("run", final, "--max-new-attempts", 2)
+        settled = coverage.collect(output, self.root / "missing-search-settled.json", automatic=True,
+            required_experiments=paths, final_experiments=[final])
+        self.assertEqual(settled["automatic_status"], "complete")
+        self.assertEqual(settled["automatic_requests"], [])
+        self.assertEqual(settled["automatic_summary"]["final_coverage_questions"], 1)
+
     def test_automatic_invalid_required_receipt_fails_without_assigning_zero_or_repeating(self):
         from sse_multivector import distillation_coverage_search as coverage
         from sse_multivector import distillation_review_evaluation as evaluation
