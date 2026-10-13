@@ -77,7 +77,9 @@ The native automatic completion workflow is implemented. Its nine-conflict
 check finishes with both grades for all nine answers and zero manual reviews:
 eight final DSM questions, four final DCS questions and four missing judgments
 make sixteen calls. All seventy initial regression and integration tests pass.
-The sixty-answer replay and eight-hour runtime target remain to be verified.
+The sixty-answer replay now completes all fifty random and ten challenge
+answers with both numeric grades and zero manual reviews. The eight-hour
+full-run target remains to be verified.
 This decision accepts residual reviewer error rather than requiring agreement
 between fresh calls.
 
@@ -91,6 +93,45 @@ produces a narrower ordinary search. The fix retains all exact completed DCS
 questions when detecting disagreement, so a narrower negative cannot remove
 the disputed witness from the required final search. Its regression fails
 before the fix and the coverage/automatic suites pass 72 tests afterward.
+
+**Completed automatic replay:** the failed relationship request succeeds on
+attempt three in the same native experiment after the authorized recovery
+change. The corrected whole-search conflict receives one final xhigh DCS
+decision with the disputed candidate restored. All sixty answers finish; a
+second native run adds no calls. The nine-answer test and full replay together
+contain 23 completed reviewer questions and 26 attempts, including three
+recovered provider failures. Original and earlier completed receipts remain
+unchanged; there are no agent adjudications or audit vetoes in the grading path.
+
+Native comparison against the audited development reference gives mean
+absolute correctness/coverage changes of **1.1340/2.2865 percentage points**
+on 49 paired random answers and **0.1724/1.9729 points** on ten challenge
+answers. One random answer changes coverage from 0% to 100%; an unrelated
+reference ambiguity exists in that answer, so excluding all uncertain answers
+would hide this outlier. The comparison retains every available pair and
+reports sensitivity separately. The reference leaves one random answer
+ungraded and marks ambiguities in 27 random and seven challenge answers.
+These are development-reference score differences, not established unseen
+accuracy or a comparison against an independently correct xhigh grader.
+
+No explicit warmup is sent: the matching prefix is below the token threshold,
+and eligible coverage prefixes each serve only one new call. All 59,017 known
+input tokens are uncached; there are 49,206 known output tokens, including
+43,072 reasoning tokens. Known API-equivalent cost is $0.610094, with complete
+cost unavailable because the three failed attempts lack usage. Subscription
+incremental cash remains zero. Recovery, startup ordering, report tampering,
+source verification and sibling-pause checks pass through native production
+fixtures. The generic runner retains its default two-attempt rule outside the
+explicit opt-in; its one archived-coordinator regression failure is reproduced
+on unchanged main.
+
+Cold legacy-baseline reconstruction takes about 45 seconds and retains about
+3.67 GB even for nine selected answers; subsequent collection takes roughly
+0.54–1.02 seconds. Prepared batches now submit before that reconstruction.
+Full readiness still requires an entry point from an unrun evaluation and
+removal of unused compatibility-matrix preparation. The prior 6.03–6.77-hour
+model-work forecast excludes these costs and additional final decisions;
+this replay does not establish a full-run upper bound.
 
 **Current score-impact result:** the approved
 [offline comparison](#offline-grade-comparison-october-13) measures the effect

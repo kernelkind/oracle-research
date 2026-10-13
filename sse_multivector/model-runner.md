@@ -2346,7 +2346,18 @@ conflict answers and the saved sixty-answer replay are authorized; the native
 workflow completes the nine-conflict check with both grades for all nine
 answers and zero manual reviews. Eight final DSM calls, four final DCS calls
 and four missing judgments make sixteen calls; all seventy initial regression
-and integration tests pass. The sixty-answer replay remains pending. This is
+and integration tests pass. The sixty-answer replay subsequently completes
+all sixty answers with both grades and zero manual reviews. The recovered
+relationship request succeeds on attempt three in its original experiment;
+newly generated DCS positives participate in conflict detection, and the
+last conflict receives one final xhigh search retaining the disputed witness.
+The two trials contain 23 completed reviewer questions and 26 attempts,
+including three recovered failures. Repeating the completed run adds no calls.
+Mean absolute correctness/coverage changes versus the audited development
+reference are 1.1340/2.2865 points for 49 paired random answers and
+0.1724/1.9729 for ten challenge answers. The random coverage average includes
+one 100-point difference. Reference ambiguities and the one missing reference
+grade remain explicit; these are not unseen accuracy measurements. This is
 a fixed authority policy, not evidence that repeated reviewers are independent.
 
 `prepare-distillation-automatic-grading COVERAGE --output DIR` freezes the
