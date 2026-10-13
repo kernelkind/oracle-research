@@ -72,6 +72,18 @@ def summary(state):
         ],
         encodings=[r["config"] for r in state["encodings"] if not r.get("complete")],
         unresolved=unresolved,
+        skipped_bootstrap=[
+            dict(
+                local=original["local"],
+                case=original["id"],
+                experiment=state["experiments"][0]["experiment"],
+                reason="null Bootstrap meaning",
+            )
+            for original in state["originals"]
+            if state["families"]
+            and "meaning" in original
+            and original["meaning"] is None
+        ],
     )
 
 
@@ -567,6 +579,7 @@ def _schedule(directory, state):
         for original in state["originals"]:
             answer = bootstrap["answers"][original["id"]]
             meaning = answer["output"]["meaning"]
+            original["meaning"] = meaning
             if meaning is None:
                 unresolved.append(
                     dict(
@@ -576,20 +589,30 @@ def _schedule(directory, state):
                         reason="null Bootstrap meaning",
                     )
                 )
-            else:
-                original["meaning"] = meaning
-        if unresolved:
-            state.update(status="blocked_bootstrap", unresolved=unresolved)
+        represented = {
+            original["local"]["note_id"]
+            for original in state["originals"]
+            if original["meaning"] is not None
+        }
+        if set(state["note_ids"]) - represented:
+            state.update(
+                status="blocked_bootstrap",
+                unresolved=[
+                    row for row in unresolved if row["local"]["note_id"] not in represented
+                ],
+            )
             return
         for original in state["originals"]:
+            if original["meaning"] is None:
+                continue
             state["items"][original["id"]] = dict(
                 subject=original["subject"],
                 meaning=original["meaning"],
                 original_ids=[original["id"]],
                 producer=dict(experiment=0, case=original["id"]),
             )
-        _new_family(state, None, [row["id"] for row in state["originals"]])
-        state["status"] = "constructing"
+        _new_family(state, None, list(state["items"]))
+        state.update(status="constructing", unresolved=[])
         # Original vectors are frozen once, even if a small initial set needs no consolidation.
         _prepare_encoding(directory, state, list(state["items"]))
     while True:
@@ -751,6 +774,13 @@ def check_state(state, *, verify_receipts=True):
     if state["roots"] != [row["local"] for row in state["originals"]]:
         raise ValueError("original root references changed")
     for row in state["originals"]:
+        if state["families"] and "meaning" not in row:
+            raise ValueError("original meaning missing after Bootstrap")
+        if state["families"] and (
+            state["experiments"][0].get("answers", {}).get(row["id"], {}).get("status")
+            != "valid"
+        ):
+            raise ValueError("original Bootstrap answer is not valid")
         if "meaning" in row and row["meaning"] != (
             state["experiments"][0].get("answers", {}).get(row["id"], {}).get("output")
             or {}
@@ -807,7 +837,11 @@ def check_state(state, *, verify_receipts=True):
     by_id = {n["id"]: n for n in state["nodes"]}
     for family in state["families"]:
         expected = (
-            list(originals)
+            [
+                identifier
+                for identifier, row in originals.items()
+                if row.get("meaning") is not None
+            ]
             if family["parent"] is None
             else by_id[family["parent"]]["original_ids"]
         )
@@ -825,6 +859,10 @@ def check_state(state, *, verify_receipts=True):
         if family["complete"] and len(family["current"]) > state["max_siblings"]:
             raise ValueError("canonical family exceeds maximum siblings")
     if state["status"] == "complete":
+        if {
+            entry["note_id"] for node in state["nodes"] for entry in node["entries"]
+        } != set(state["note_ids"]):
+            raise ValueError("completed hierarchy omits selected notes")
         parents = {p for node in state["nodes"] for p in node["parents"]}
         if not all(f["complete"] for f in state["families"]) or any(
             len({e["note_id"] for e in node["entries"]}) > state["min_notes"]
