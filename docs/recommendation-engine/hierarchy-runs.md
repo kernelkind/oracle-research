@@ -16,16 +16,16 @@ Each run's raw build, browsing menu and export share its ID.
 
 The user approved the six-, twelve- and twenty-four-note V3 experiments and
 then added HR14, a fifty-note run with the same frozen settings and code.
-HR11–HR13 completed in that order. HR14 passed its independent pre-inference
-review and is executing in its frozen isolated worktree. Every run's complete
-parameter row and generation commits were recorded before inference.
+HR11–HR13 completed in that order. HR14 finished Bootstrap and is blocked by
+two null meanings; no canonical hierarchy has been constructed. Every run's
+complete parameter row and generation commits were recorded before inference.
 
 | Run | Notes | Definition | Prepared provenance | Status | Review UI | Native usage |
 | --- | --- | --- | --- | --- | --- | --- |
 | HR11 | 6 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr11/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr11-v3/target/hierarchy-hr11-v3-six-note-v1/prepared-provenance.json) | Complete; 17 nodes, 67/1,000 calls | [Launch](../../../oracle-mvp-hierarchy-hr11-v3/target/hr11-review-ui-v1/launch.sh) | [Report](../../../oracle-mvp-hierarchy-hr11-v3/target/hierarchy-hr11-v3-six-note-v1/usage-v1.json) |
 | HR12 | 12 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr12/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr12-v3/target/hierarchy-hr12-v3-twelve-note-v1/prepared-provenance.json) | Complete; 65 nodes, 152/3,000 calls | [Launch](../../../oracle-mvp-hierarchy-hr12-v3/target/hr12-review-ui-v1/launch.sh) | [Report](../../../oracle-mvp-hierarchy-hr12-v3/target/hierarchy-hr12-v3-twelve-note-v1/usage-v1.json) |
 | HR13 | 24 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr13/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr13-v3/target/hierarchy-hr13-v3-twenty-four-note-v1/prepared-provenance.json) | Complete; 107 nodes, 421/5,000 calls | [Launch](../../../oracle-mvp-hierarchy-hr13-v3/target/hr13-review-ui-v1/launch.sh) | [Report](../../../oracle-mvp-hierarchy-hr13-v3/target/hierarchy-hr13-v3-twenty-four-note-v1/usage-v1.json) |
-| HR14 | 50 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr14/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/prepared-provenance.json) | Running; native V3 | Pending | Pending |
+| HR14 | 50 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr14/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/prepared-provenance.json) | Blocked Bootstrap; 177/10,000 calls, two null meanings | Pending | Pending |
 
 HR13 preserves HR05, HR08 and HR09's exact ordered 24-note selection. HR11 and
 HR12 are approved nested subsets, retaining the original relative order.
@@ -73,6 +73,17 @@ estimates. API-equivalent cost is **$2.0719332 fresh**, or **$2.7032276 includin
 original producers behind reuse**. Generation input is 269,085 tokens, cached
 input 1,058,176 and output 205,924, including reasoning. Provider-reported cash
 charges are unavailable; API-equivalent estimates are comparison evidence.
+
+HR14's native driver exited after all 326 Bootstrap cases finished: 176 fresh
+answers, 150 exact reuses and one warmup. Cases `L00227` (**TheRogueBatch**,
+local entry 1) and `L00230` (**coffeechain**, local entry 4) returned null
+meanings for the same original post at selection position 29. Both responses
+are schema-valid and retain their unresolved ambiguity evidence; there were
+no provider failures or malformed outputs. V3 blocks root construction while
+any original L1 meaning is null, so the saved graph has zero canonical nodes.
+The post still has valid Nostr, Bitcoin and Coffee entries. The user asked
+whether null entries can be skipped; changing that policy and resuming remains
+pending explicit approval. The 10,000-call allowance remains intact.
 
 HR11's first preparation attempt stopped before any inference because the new
 isolated runner lacked its locked Node dependencies. The native files were
