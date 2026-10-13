@@ -7270,6 +7270,46 @@ start**. Final collection/source verification is complete by 01:32:24 UTC,
 follow. Brief initial orientation predates the recorded start. Model-active
 time alone is not the total task time.
 
+### Grading saved validation answers (October 12)
+
+The approved grading work reuses the existing sixty answers and saved semantic
+decisions. The immediate full target is **1,800 validation answers**: one hundred
+posts across eighteen model versions. The trusted ASv6.100 corpus contains 1,300
+notes split into 1,000 training, 100 validation and 200 reserved test notes.
+Reserved test answers remain sealed; this work does not rerun the Vast pilot.
+
+`prepare-distillation-coverage-search --policy grading` freezes the operational
+grading policy. Valid native model decisions need no additional independent
+ACCEPT assessment. Uncertain source audits remain diagnostic; known rejected
+outputs and conflicting decisions remain unusable. The default `audited` policy
+retains the earlier acceptance requirements and historical sixty-answer report.
+Preparation, candidate pruning and collection use the same frozen policy.
+
+Repeat `--correction-experiment` and `--correction-case` to bind saved native
+fallback decisions to their exact check, complete input and prompt. Corrections
+repair missing or unusable decisions and retain the original output, receipt
+and reviews. Usable decisions are not replaced just because another draw differs;
+conflicting usable corrections remain explicit. A positive DCS witness still
+needs its exact DSL placement proof.
+
+The case selection applies to every correction experiment in that invocation.
+For separate historical and fresh selections, freeze the explicitly selected
+historical corrections during preparation, then supply the fresh selection at
+collection. Do not combine a broad historical group with unrelated target IDs:
+that can admit an older wrong decision whose separate explanation has no bound
+rejection. Native reassessments must preserve original ledgers and bind the
+specific full output being rejected.
+
+Full-scale production counting finds 9,820 distinct matching inputs, 9,820
+support inputs and 16,702 actual parent-child inputs. After saved sixty-answer
+reuse, remaining model service projects 5.49–6.15 hours at continuously occupied
+concurrency thirty, or 6.03–6.77 hours with ten-percent execution headroom.
+Preparation, collection, extra fallback calls and lower worker occupancy still
+need headroom. **Eight-hour readiness is not established.** Current preparation
+also materializes approximately 608,039 teacher/student compatibility rows,
+mostly unrequested. Preparing actual edges first and constructing only reached
+self-guards and witness pairs remains necessary before full-scale preparation.
+
 ## Actual distilled wording: offline preview (October 8)
 
 The original actual-wording preview prepared saved validation wording with

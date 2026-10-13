@@ -69,6 +69,9 @@ def _source_key(source, base):
     if "premise_audits" in source:
         resolved["premise_audits"] = [dict(row, path=str(engine._resolve_path(
             row["path"], "coverage premise audit", Path(base)))) for row in source["premise_audits"]]
+    if "correction_experiments" in source:
+        resolved["correction_experiments"] = [dict(row, path=str(engine._resolve_path(
+            row["path"], "coverage correction experiment", Path(base)))) for row in source["correction_experiments"]]
     return json.dumps(resolved, sort_keys=True)
 
 
@@ -123,27 +126,177 @@ def _premise_audits(references, base, protected):
 def _bound_premise_audits(row, audits):
     """Return external assessments bound to this exact input and output."""
     output_hash = hashlib.sha256(row["output"].encode()).hexdigest()
-    bound = audits.get((row["evidence"]["check"], row["input_sha256"], output_hash), [])
+    bound = [item for item in audits.get((row["evidence"]["check"], row["input_sha256"], output_hash), [])
+             if "prompt" not in item or item["prompt"] == row["prompt"]]
     return output_hash, bound
 
 
-def _accepted_premise(row, audits):
-    if row["status"] != "valid":
+def _policy(value):
+    if value not in {"audited", "grading"}:
+        raise ValueError("coverage policy must be audited or grading")
+    return value
+
+
+def _accepted_premise(row, audits, policy="audited"):
+    if row["status"] != "valid" or row.get("decision_conflicts"):
         return None
     output_hash, bound = _bound_premise_audits(row, audits)
     reviews = [item for item in row.get("reviews", []) if item.get("current") is True]
-    if any(item.get("verdict") in {"reject", "uncertain"} for item in reviews + bound):
+    assessments = reviews
+    if policy == "grading":
+        latest = {}
+        for item in reviews:
+            if item.get("verdict") in {"accept", "reject", "uncertain"}:
+                latest[item.get("role")] = item
+        assessments = list(latest.values())
+    if any(item.get("verdict") in ({"reject", "uncertain"} if policy == "audited" else {"reject"})
+           for item in assessments + bound):
         return None
-    if row.get("origin") != "mechanical" and not any(item.get("verdict") == "accept" for item in reviews + bound):
+    if policy == "audited" and row.get("origin") != "mechanical" and not any(
+            item.get("verdict") == "accept" for item in reviews + bound):
         return None
     premise = dict(case_id=row["id"], input_sha256=row["input_sha256"], output_sha256=output_hash,
         origin=row.get("origin"), receipt=row.get("receipt"), reviews=reviews, audits=bound)
     if row.get("origin") == "mechanical":
         premise.update(mechanical_evidence=row["mechanical_evidence"], mechanical_sha256=row["mechanical_sha256"])
+    if row.get("correction"):
+        premise["correction"] = row["correction"]
     return premise
 
 
-def _accepted_matching(teacher, matching, relationships, audits):
+def _correction_references(paths, case_ids=None):
+    if case_ids is not None:
+        engine._validate_string_array(case_ids, "coverage correction selection", allow_empty=False)
+        if not paths:
+            raise ValueError("coverage correction selection requires correction experiments")
+    return [dict(path=str(Path(path).expanduser().resolve()),
+        sha256=engine._sha256_file(Path(path).expanduser().resolve() / "experiment.json"),
+        **({"case_ids": list(case_ids)} if case_ids is not None else {})) for path in paths]
+
+
+def _correction_rows(references, base, protected):
+    """Read native fallback decisions, retaining their exact source and receipt bindings."""
+    from experiment_runner import experiment
+    if not isinstance(references, list):
+        raise ValueError("coverage correction experiments must be an array")
+    rows, seen, requested, known = [], set(), set(), set()
+    for reference in references:
+        review._fields(reference, {"path", "sha256"} | ({"case_ids"} & reference.keys()), "coverage correction experiment")
+        selection = reference.get("case_ids")
+        if selection is not None:
+            engine._validate_string_array(selection, "coverage correction selection", allow_empty=False)
+            requested.update(selection)
+        path = engine._resolve_path(reference["path"], "coverage correction experiment", Path(base))
+        identity = str(path), None if selection is None else tuple(selection)
+        if identity in seen:
+            continue
+        seen.add(identity)
+        manifest = path / "experiment.json"
+        if engine._sha256_file(manifest) != reference["sha256"]:
+            raise ValueError("coverage correction preparation changed")
+        plan, _, _ = experiment.load(path)
+        sources = dict(plan["sources"], **{str(manifest): reference["sha256"]})
+        for name, checksum in plan["files"].items():
+            sources[str(path / name)] = checksum
+        ledger = path / "reviews.jsonl"
+        if ledger.exists():
+            sources[str(ledger)] = engine._sha256_file(ledger)
+        for filename in ("results.jsonl", "manifest.json"):
+            source = Path(plan["run_directory"]) / filename
+            if source.exists():
+                sources[str(source)] = engine._sha256_file(source)
+        result = experiment.report(path, include_request_preview=False)
+        for row in result["cases"]:
+            known.add(row["id"])
+            if selection is not None and row["id"] not in selection:
+                continue
+            if row["evidence"].get("check") not in {"matching", "support", "relationship", "coverage_search"}:
+                raise ValueError("coverage correction requires native distillation review checks")
+            receipt = row.get("receipt")
+            if receipt:
+                results = Path(receipt["results_path"])
+                for source in (results, results.parent / "manifest.json"):
+                    if str(source) not in sources:
+                        sources[str(source)] = engine._sha256_file(source)
+            rows.append(dict(row, correction_experiment=str(path)))
+        for filename, checksum in sources.items():
+            if filename in protected and protected[filename] != checksum:
+                raise ValueError("coverage correction source changed: " + filename)
+            protected[filename] = checksum
+    if requested - known:
+        raise ValueError("unknown coverage correction selection")
+    return rows
+
+
+def _correction_index(rows):
+    index = {}
+    for row in rows:
+        index.setdefault((row["evidence"]["check"], row["input_sha256"], row["prompt"]), []).append(row)
+    return index
+
+
+def _native_correction_audits(audits, rows, protected, policy):
+    """Propagate exact native rejections without changing historical review ledgers."""
+    result = {key: list(value) for key, value in audits.items()}
+    for row in rows:
+        if row["status"] != "valid":
+            continue
+        reviews = [item for item in row.get("reviews", []) if item.get("current") is True]
+        if policy == "grading":
+            latest = {}
+            for item in reviews:
+                if item.get("verdict") in {"accept", "reject", "uncertain"}:
+                    latest[item.get("role")] = item
+            reviews = list(latest.values())
+        key = (row["evidence"]["check"], row["input_sha256"], hashlib.sha256(row["output"].encode()).hexdigest())
+        ledger = str(Path(row["correction_experiment"]) / "reviews.jsonl")
+        for item in reviews:
+            if item.get("verdict") == "reject":
+                result.setdefault(key, []).append(dict(verdict="reject", reason=item["comment"],
+                    path=ledger, sha256=protected[ledger], prompt=row["prompt"],
+                    native_experiment=row["correction_experiment"], native_review=item,
+                    receipt=row.get("receipt")))
+    return result
+
+
+def _corrected_row(row, index, audits, policy):
+    # A fallback repairs a missing or rejected decision; it never replaces a usable
+    # decision merely because another model draw has different wording or a verdict.
+    if _accepted_premise(row, audits, policy) is not None:
+        return row
+    candidates = index.get((row["evidence"]["check"], row["input_sha256"], row["prompt"]), [])
+    usable = [item for item in candidates if _accepted_premise(item, audits, policy) is not None]
+    field = {"matching": "teacher_id", "coverage_search": "witness_student_number"}.get(
+        row["evidence"]["check"], "valid")
+    verdicts = {item["parsed"][field] is not None if field == "witness_student_number"
+                else item["parsed"][field] for item in usable}
+    if len(verdicts) > 1:
+        return dict(row, decision_conflicts=[dict(experiment=item["correction_experiment"],
+            case_id=item["id"], verdict=item["parsed"][field], receipt=item.get("receipt")) for item in usable])
+    if not usable:
+        return row
+    chosen = usable[0]
+    return dict(chosen, id=row["id"], evidence=row["evidence"], correction=dict(
+        experiment=chosen["correction_experiment"], case_id=chosen["id"],
+        original_case_id=row["id"], original_status=row["status"],
+        original_output_sha256=(hashlib.sha256(row["output"].encode()).hexdigest()
+                                if row.get("output") is not None else None),
+        original_receipt=row.get("receipt"), original_reviews=row.get("reviews", [])))
+
+
+def _corrected_report(report, corrections, audits, policy):
+    if not corrections:
+        return report
+    index = _correction_index(corrections)
+    result = dict(report)
+    for cohort in ("random", "challenge"):
+        result[cohort] = dict(report[cohort], answers=[dict(answer, checks={
+            check: [_corrected_row(row, index, audits, policy) for row in rows]
+            for check, rows in answer["checks"].items()}) for answer in report[cohort]["answers"]])
+    return result
+
+
+def _accepted_matching(teacher, matching, relationships, audits, policy="audited"):
     """Index accepted matches and their available self guards once per answer."""
     by_number = {row["evidence"]["student_number"]: row for row in matching}
     guards, identifiers = {}, {}
@@ -161,9 +314,9 @@ def _accepted_matching(teacher, matching, relationships, audits):
         identifier = row["parsed"]["teacher_id"]
         if identifier is None:
             continue
-        premise = _accepted_premise(row, audits)
+        premise = _accepted_premise(row, audits, policy)
         own_guards = guards.get(number, [])
-        guard_premises = [_accepted_premise(guard, audits) for guard in own_guards]
+        guard_premises = [_accepted_premise(guard, audits, policy) for guard in own_guards]
         if (premise is not None
                 and all(guard["status"] == "valid" and guard["parsed"]["valid"] is True for guard in own_guards)
                 and all(guard is not None for guard in guard_premises)):
@@ -171,9 +324,9 @@ def _accepted_matching(teacher, matching, relationships, audits):
     return accepted
 
 
-def _matching_path_settlement(identity, teacher, group, matching, accepted, uncovered, guards, audits):
+def _matching_path_settlement(identity, teacher, group, matching, accepted, uncovered, guards, audits, policy="audited"):
     """Substitute an accepted equivalent parent into an actual trusted path."""
-    target_guards = [_accepted_premise(row, audits) for row in guards]
+    target_guards = [_accepted_premise(row, audits, policy) for row in guards]
     if any(row["status"] != "valid" or row["parsed"]["valid"] is not True for row in guards) \
             or any(premise is None for premise in target_guards):
         return None
@@ -204,7 +357,7 @@ def _matching_path_settlement(identity, teacher, group, matching, accepted, unco
         semantic_status="Conditional on the accepted ancestor match, saved coverage matches and fixed interpretations of the trusted teacher path; separate matching uncertainties remain unresolved.")
 
 
-def _cases(report, assessments, audits=None):
+def _cases(report, assessments, audits=None, policy="audited"):
     audits = {} if audits is None else audits
     cases, settlements, guards = [], [], []
     for cohort in ("random", "challenge"):
@@ -225,9 +378,10 @@ def _cases(report, assessments, audits=None):
                 if row["evidence"]["role"] == "actual_relationship"}
             disputed_actual = {number for number, row in actual.items()
                 if row["status"] == "valid" and row["parsed"]["valid"] is True
-                and any(item.get("verdict") in {"reject", "uncertain"}
-                    for item in row.get("reviews", []) + _bound_premise_audits(row, audits)[1])}
-            accepted_matching = _accepted_matching(teacher, matching, answer["checks"]["relationship"], audits)
+                and (any(item.get("verdict") in {"reject", "uncertain"}
+                    for item in row.get("reviews", []) + _bound_premise_audits(row, audits)[1])
+                    if policy == "audited" else _accepted_premise(row, audits, policy) is None)}
+            accepted_matching = _accepted_matching(teacher, matching, answer["checks"]["relationship"], audits, policy)
             for ordinal, group in enumerate(groups, 1):
                 if not group["required"]:
                     continue
@@ -245,7 +399,9 @@ def _cases(report, assessments, audits=None):
                     case_id=row["id"], status=row["status"],
                     valid=row["parsed"]["valid"] if row["status"] == "valid" else None)
                     for row in guard_rows)
-                if any(row["status"] == "valid" and row["parsed"]["valid"] is False for row in guard_rows):
+                if any(row["status"] == "valid" and row["parsed"]["valid"] is False
+                       and (policy == "audited" or _accepted_premise(row, audits, policy) is not None)
+                       for row in guard_rows):
                     settlements.append(dict(identity, rule="inconsistent_matching_self_guard", covered=None))
                     continue
                 if not matches:
@@ -271,14 +427,14 @@ def _cases(report, assessments, audits=None):
                     and row["evidence"]["teacher_numbers"] == group["teacher_numbers"]
                     and row["evidence"]["heading_number"] in uncovered
                     and row["status"] == "valid" and row["parsed"]["valid"] is True
-                    and _accepted_premise(row, audits) is not None), None)
+                    and _accepted_premise(row, audits, policy) is not None), None)
                 if accepted_pair is not None:
                     settlements.append(dict(identity, rule="accepted_uncovered_compatible_heading", covered=False,
                         witness_student_number=accepted_pair["evidence"]["heading_number"],
-                        compatibility_premise=_accepted_premise(accepted_pair, audits)))
+                        compatibility_premise=_accepted_premise(accepted_pair, audits, policy)))
                     continue
                 derived = _matching_path_settlement(identity, teacher, group, matching,
-                    accepted_matching, uncovered, guard_rows, audits)
+                    accepted_matching, uncovered, guard_rows, audits, policy)
                 if derived is not None:
                     settlements.append(derived)
                     continue
@@ -302,7 +458,7 @@ def _cases(report, assessments, audits=None):
                 for number in roots:
                     pair = baseline_pairs[number]
                     if pair["status"] == "valid" and pair["parsed"]["valid"] is False:
-                        premise = _accepted_premise(pair, audits)
+                        premise = _accepted_premise(pair, audits, policy)
                         if premise is not None:
                             excluded.append(dict(student_number=number, compatibility_premise=premise))
                 excluded_numbers = {row["student_number"] for row in excluded}
@@ -349,7 +505,8 @@ def _cases(report, assessments, audits=None):
 
 def prepare_source(source, base, selected=None, *, preparation_context=None):
     fields = {"schema_version", "evaluation", "answer_ids"}
-    review._fields(source, fields | ({"premise_audits"} if "premise_audits" in source else set()), "coverage search source")
+    review._fields(source, fields | ({"premise_audits", "policy", "correction_experiments"} & source.keys()), "coverage search source")
+    policy = _policy(source.get("policy", "audited"))
     if type(source["schema_version"]) is not int or source["schema_version"] != 1:
         raise ValueError("coverage search source schema_version must be 1")
     key = _source_key(source, base)
@@ -369,7 +526,11 @@ def prepare_source(source, base, selected=None, *, preparation_context=None):
         report = evaluation._answer_subset(report, source["answer_ids"])
         audits = _premise_audits(source.get("premise_audits", []), base, protected)
         state = {**state, **{path: _file_state(path) for path in protected if path not in state}}
-        cases, settlements, guards = _cases(report, assessments, audits)
+        corrections = _correction_rows(source.get("correction_experiments", []), base, protected)
+        state = {**state, **{path: _file_state(path) for path in protected if path not in state}}
+        audits = _native_correction_audits(audits, corrections, protected, policy)
+        report = _corrected_report(report, corrections, audits, policy)
+        cases, settlements, guards = _cases(report, assessments, audits, policy)
         _check_preparation_state(state)
         preparation = dict(settlements=settlements, matching_self_guards=guards,
             semantic_status="Experimental, unqualified searches.")
@@ -425,10 +586,11 @@ def validate(case, raw):
 
 
 def prepare(evaluation_path, output, *, answer_ids=None, runner_binary=None, history_root=None, premise_audits=None,
-            reasoning_effort="xhigh"):
+            reasoning_effort="xhigh", policy="audited", correction_experiments=None, correction_case_ids=None):
     """Prepare native search experiments; never performs inference."""
     from experiment_runner import experiment, inputs, project, prompt_cache
     project.configure(Path(__file__).resolve().parents[1])
+    policy = _policy(policy)
     if reasoning_effort not in ("xhigh", "high", "medium", "low"):
         raise ValueError("reasoning_effort must be xhigh, high, medium or low")
     path = Path(evaluation_path).expanduser().resolve()
@@ -442,7 +604,10 @@ def prepare(evaluation_path, output, *, answer_ids=None, runner_binary=None, his
     if answer_ids is None:
         baseline = snapshot[0]
         answer_ids = [answer["id"] for cohort in ("random", "challenge") for answer in baseline[cohort]["answers"]]
-    source = dict(schema_version=1, evaluation=reference, answer_ids=answer_ids)
+    source = dict(schema_version=1, evaluation=reference, answer_ids=answer_ids, policy=policy)
+    correction_references = _correction_references(correction_experiments or [], correction_case_ids)
+    if correction_references:
+        source["correction_experiments"] = correction_references
     if premise_audits is not None:
         source["premise_audits"] = [dict(path=str(Path(audit).expanduser().resolve()),
             sha256=engine._sha256_file(Path(audit).expanduser().resolve())) for audit in premise_audits]
@@ -493,6 +658,7 @@ def prepare(evaluation_path, output, *, answer_ids=None, runner_binary=None, his
         if engine._sha256_file(Path(filename)) != checksum:
             raise ValueError("coverage premise changed while preparing: " + filename)
     frozen = dict(schema_version=1, evaluation=reference, answer_ids=answer_ids, sources=protected,
+        policy=policy, correction_experiments=source.get("correction_experiments", []),
         premise_audits=source.get("premise_audits", []),
         experiments=experiments, inference_calls=0, preparation=preparation,
         semantic_status="Experimental. DCS-returned positive witnesses require separate unchanged DSL verification; conditional teacher-path settlements retain their accepted premises.")
@@ -502,9 +668,10 @@ def prepare(evaluation_path, output, *, answer_ids=None, runner_binary=None, his
     return dict(frozen, output=str(output), search_cases=len(cases))
 
 
-def collect(coverage_directory, output, *, verification_experiments=None, premise_audits=None):
+def collect(coverage_directory, output, *, verification_experiments=None, premise_audits=None, correction_experiments=None,
+            correction_case_ids=None):
     """Score accepted native checks and searches without running the old matrix."""
-    from experiment_runner import experiment, project
+    from experiment_runner import experiment, inputs, project
     project.configure(Path(__file__).resolve().parents[1])
     directory = Path(coverage_directory).expanduser().resolve()
     output = Path(output).expanduser().resolve()
@@ -515,6 +682,7 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
             "coverage-search.json": engine._sha256_file(frozen_path)}:
         raise ValueError("coverage search preparation changed")
     frozen = experiment.read(frozen_path)
+    policy = _policy(frozen.get("policy", "audited"))
     protected = dict(frozen["sources"])
     for path, checksum in protected.items():
         if engine._sha256_file(Path(path)) != checksum:
@@ -561,14 +729,39 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
                 raise ValueError("duplicate coverage search teacher group")
             searches[key] = row
     audits = _premise_audits(preparation_references + audit_references, directory, protected)
+    corrections = _correction_rows(list(frozen.get("correction_experiments", [])) +
+        _correction_references(correction_experiments or [], correction_case_ids), directory, protected)
+    audits = _native_correction_audits(audits, corrections, protected, policy)
+    correction_index = _correction_index(corrections)
+    baseline = _corrected_report(baseline, corrections, audits, policy)
+    searches = {key: _corrected_row(row, correction_index, audits, policy) for key, row in searches.items()}
+    current_settlements = frozen["preparation"]["settlements"]
+    if policy == "grading":
+        # Core corrections can change which headings still need a search. Saved
+        # decisions remain usable only for the newly derived complete question.
+        current_cases, current_settlements, _ = _cases(baseline, assessments, audits, policy)
+        template = (Path(__file__).parent / "distillation-review-v1/coverage-search-prompt-v1.md").read_text()
+        current_searches = {}
+        for case in current_cases:
+            key = case["evidence"]["answer_id"], tuple(case["evidence"]["teacher_numbers"])
+            checksum, prompt = inputs.digest(case["inputs"]), inputs.render(template, case["inputs"])
+            saved = searches.get(key)
+            if saved is None or saved["input_sha256"] != checksum or saved["prompt"] != prompt:
+                saved = dict(case, input_sha256=checksum, prompt=prompt, status="unrun", output=None,
+                    parsed=None, origin=None, receipt=None, reviews=[])
+            current_searches[key] = _corrected_row(saved, correction_index, audits, policy)
+        searches = current_searches
     for path in verification_experiments or []:
         _, result = native(path)
         for row in result["cases"]:
             if row["evidence"].get("check") != "relationship":
                 raise ValueError("coverage verification requires native relationship checks")
             verifiers.setdefault((row["input_sha256"], row["prompt"]), []).append(row)
+    for row in corrections:
+        if row["evidence"]["check"] == "relationship":
+            verifiers.setdefault((row["input_sha256"], row["prompt"]), []).append(row)
     settlements = {(row["answer_id"], tuple(row["teacher_numbers"])): row
-        for row in frozen["preparation"]["settlements"] if "teacher_numbers" in row}
+        for row in current_settlements if "teacher_numbers" in row}
     cohorts = {}
     for cohort in ("random", "challenge"):
         answers = []
@@ -589,20 +782,20 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
                 for premise in stored:
                     key = premise["case_id"], premise["input_sha256"], premise["output_sha256"]
                     row = source_rows.get(key)
-                    if row is None or _accepted_premise(row, audits) is None:
+                    if row is None or _accepted_premise(row, audits, policy) is None:
                         dependencies.append(dict(check="relationship", case_id=premise["case_id"],
                             reason="Previously accepted settlement premise is now absent or disputed."))
                         return False
                 return True
 
             def accepted(row):
-                premise = _accepted_premise(row, audits)
+                premise = _accepted_premise(row, audits, policy)
                 if premise is not None:
                     premises.append(premise)
                     return True
                 dependencies.append(dict(check=row["evidence"]["check"], case_id=row["id"],
                     status=row["status"], reason="No accepted complete input/output-bound assessment.",
-                    reviews=row.get("reviews", [])))
+                    reviews=row.get("reviews", []), decision_conflicts=row.get("decision_conflicts", [])))
                 return False
 
             subjects = {row["evidence"]["student_number"]: row["parsed"]["valid"]
@@ -639,9 +832,9 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
                         candidates = verifiers.get((pair["input_sha256"], pair["prompt"]), [])
                         if number in matches:
                             candidates = [pair] + candidates
-                        accepted_pairs = [row for row in candidates if _accepted_premise(row, audits) is not None]
+                        accepted_pairs = [row for row in candidates if _accepted_premise(row, audits, policy) is not None]
                         verdicts = {row["parsed"]["valid"] for row in accepted_pairs}
-                        premises.extend(_accepted_premise(row, audits) for row in accepted_pairs)
+                        premises.extend(_accepted_premise(row, audits, policy) for row in accepted_pairs)
                         if len(verdicts) == 1:
                             assign(number, verdicts.pop(), pair["id"])
                         elif len(verdicts) > 1:
@@ -714,7 +907,7 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
         if engine._sha256_file(Path(path)) != checksum:
             raise ValueError("coverage collection source changed: " + path)
     result = dict(schema_version=1, coverage=str(directory), output=str(output), sources=protected,
-        inference_calls=0, **cohorts)
+        policy=policy, inference_calls=0, **cohorts)
     output.parent.mkdir(parents=True, exist_ok=True)
     experiment.write(output, result)
     return result

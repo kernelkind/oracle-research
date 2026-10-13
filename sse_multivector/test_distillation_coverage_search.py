@@ -498,7 +498,7 @@ class DistillationCoverageSearchTests(unittest.TestCase):
                 self.assertEqual(prepared["experiments"], [])
                 self.assertEqual(prepared["preparation"]["settlements"][0]["rule"], rule)
 
-    def collection_fixture(self, name, *, witness=None):
+    def collection_fixture(self, name, *, witness=None, policy="audited", audit_prerequisites=True):
         from sse_multivector import distillation_coverage_search as coverage
         from sse_multivector import test_distillation_review_evaluation as fixtures
         teacher = fixtures.subjects(("1", "Fruits"), ("2", "Cable A"), ("3", "Vehicles"))
@@ -510,7 +510,7 @@ class DistillationCoverageSearchTests(unittest.TestCase):
         from sse_multivector import distillation_review_evaluation as evaluation
         for group in evaluation.report(baseline)["experiments"]:
             for row in group["cases"]:
-                if row["status"] == "valid" and row.get("origin") != "mechanical":
+                if audit_prerequisites and row["status"] == "valid" and row.get("origin") != "mechanical":
                     fixture.native("review", group["experiment"], "--case", row["id"], "--role", "agent",
                         "--verdict", "accept", "--comment", "Complete source prerequisite independently audited.")
         result = dict(evidence=[dict(student_number=number, reason="Fixture complete candidate assessment.")
@@ -523,11 +523,200 @@ class DistillationCoverageSearchTests(unittest.TestCase):
             'else (' + repr(result) + ' if prompt.startswith("DCSv1") else '
             '{"valid": True, "reason": "Fixture semantic verdict."})'))
         output = self.root / (name + "-coverage")
-        prepared = coverage.prepare(baseline, output, runner_binary=worker)
+        prepared = coverage.prepare(baseline, output, runner_binary=worker, policy=policy)
         native = Path(prepared["experiments"][0]["path"])
         fixture.native("run", native, "--max-new-attempts", 10)
         row = json.loads(fixture.native("show", native, "--json"))["cases"][0]
         return fixture, baseline, output, native, row
+
+    def test_grading_policy_reuses_valid_native_checks_without_an_independent_accept(self):
+        fixture, baseline, worker, _, _ = self.path_baseline("grading-path")
+        prepared = json.loads(fixture.native("prepare-distillation-coverage-search", baseline,
+            "--output", self.root / "grading-path-coverage", "--runner-binary", worker, "--policy", "grading"))
+        self.assertEqual(prepared["policy"], "grading")
+        self.assertEqual(prepared["search_cases"], 0)
+        premise = prepared["preparation"]["settlements"][0]["compatibility_premise"]
+        self.assertEqual(premise["reviews"], [])
+        self.assertEqual(premise["audits"], [])
+
+    def test_grading_policy_scores_native_verdicts_and_retains_uncertain_audit_diagnostics(self):
+        fixture, _, output, native, row = self.collection_fixture("grading-null", policy="grading",
+            audit_prerequisites=False)
+        fixture.native("review", native, "--case", row["id"], "--role", "agent", "--verdict", "uncertain",
+            "--comment", "Audit uncertainty is diagnostic, not a missing model decision.")
+        result = json.loads(fixture.native("collect-distillation-coverage-search", output,
+            "--output", self.root / "grading-null-collected.json"))
+        self.assertEqual(result["policy"], "grading")
+        answer = result["random"]["answers"][0]
+        self.assertEqual(answer["scoring"]["status"], "valid")
+        self.assertEqual(answer["scoring"]["scores"]["coverage"]["value"], 1)
+        self.assertTrue(any(review["verdict"] == "uncertain" for premise in answer["premises"]
+            for review in premise["reviews"]))
+
+    def test_grading_policy_still_withholds_a_known_wrong_native_decision(self):
+        fixture, _, output, native, row = self.collection_fixture("grading-reject", policy="grading",
+            audit_prerequisites=False)
+        fixture.native("review", native, "--case", row["id"], "--role", "agent", "--verdict", "reject",
+            "--comment", "This saved model decision is known to be wrong.")
+        result = json.loads(fixture.native("collect-distillation-coverage-search", output,
+            "--output", self.root / "grading-reject-collected.json"))
+        self.assertNotIn("coverage", result["random"]["answers"][0]["scoring"].get("scores", {}))
+
+    def test_grading_preserves_a_superseded_reject_without_treating_it_as_current(self):
+        fixture, _, output, native, row = self.collection_fixture("grading-corrected-audit", policy="grading",
+            audit_prerequisites=False)
+        for verdict in ("reject", "uncertain"):
+            fixture.native("review", native, "--case", row["id"], "--role", "agent", "--verdict", verdict,
+                "--comment", "Later exact source assessment corrects the earlier mistaken audit.")
+        result = json.loads(fixture.native("collect-distillation-coverage-search", output,
+            "--output", self.root / "grading-corrected-audit.json"))
+        answer = result["random"]["answers"][0]
+        self.assertEqual(answer["scoring"]["status"], "valid")
+        history = next(premise["reviews"] for premise in answer["premises"] if premise["case_id"] == row["id"])
+        self.assertEqual([item["verdict"] for item in history], ["reject", "uncertain"])
+
+    def correction_search(self, fixture, native, row, name, *, witness=None):
+        original = dict(evidence=[dict(student_number=number, reason="Fixture complete candidate assessment.")
+            for number in ["1", "2"]], witness_student_number=None)
+        replacement = dict(evidence=[dict(student_number=number, reason="Corrected source-bound candidate assessment.")
+            for number in ([witness] if witness else ["1", "2"])], witness_student_number=witness)
+        worker = self.root / (name + "-worker")
+        worker.write_text((self.root / "fake-runner").read_text().replace(repr(original), repr(replacement)))
+        worker.chmod(0o755)
+        destination = self.root / name
+        fixture.native("prepare", destination, "--from", native, "--only", row["id"],
+            "--runner-binary", worker, "--repeat")
+        fixture.native("run", destination, "--max-new-attempts", 2)
+        return destination
+
+    def test_grading_uses_an_exact_selected_native_correction_and_preserves_the_original(self):
+        fixture, _, output, native, row = self.collection_fixture("grading-correction", policy="grading",
+            audit_prerequisites=False)
+        fixture.native("review", native, "--case", row["id"], "--role", "agent", "--verdict", "reject",
+            "--comment", "Known explanation error requires a new complete native output.")
+        original = (native / "run/results.jsonl").read_bytes()
+        correction = self.correction_search(fixture, native, row, "corrected-search")
+        result = json.loads(fixture.native("collect-distillation-coverage-search", output,
+            "--output", self.root / "grading-correction.json", "--correction-experiment", correction,
+            "--correction-case", row["id"]))
+        answer = result["random"]["answers"][0]
+        self.assertEqual(answer["scoring"]["status"], "valid")
+        proof = next(premise for premise in answer["premises"] if premise["case_id"] == row["id"])
+        self.assertEqual(proof["correction"]["experiment"], str(correction))
+        self.assertEqual(proof["correction"]["original_output_sha256"], hashlib.sha256(row["output"].encode()).hexdigest())
+        self.assertEqual((native / "run/results.jsonl").read_bytes(), original)
+
+    def test_grading_fills_an_unrun_native_check_without_inventing_an_original_output_hash(self):
+        from sse_multivector import distillation_review_evaluation as evaluation
+        fixture, baseline, worker = self.baseline("unrun-correction")
+        original = evaluation.report(baseline)
+        pair = next(case for case in original["random"]["answers"][0]["checks"]["relationship"]
+            if case["evidence"].get("teacher_numbers") == ["2"]
+            and case["evidence"].get("heading_number") == "1.1")
+        self.assertEqual(pair["status"], "unrun")
+        self.assertIsNone(pair["output"])
+        group = next(native["experiment"] for native in original["experiments"]
+            if any(case["id"] == pair["id"] for case in native["cases"]))
+        correction = self.root / "filled-unrun-native-check"
+        fixture.native("prepare", correction, "--from", group, "--only", pair["id"], "--reasoning-effort", "high")
+        fixture.native("run", correction, "--max-new-attempts", 2)
+        prepared = json.loads(fixture.native("prepare-distillation-coverage-search", baseline,
+            "--output", self.root / "filled-unrun-coverage", "--runner-binary", worker, "--policy", "grading",
+            "--correction-experiment", correction, "--correction-case", pair["id"]))
+        proof = prepared["preparation"]["settlements"][0]["compatibility_premise"]["correction"]
+        self.assertEqual(proof["original_status"], "unrun")
+        self.assertIsNone(proof["original_output_sha256"])
+        self.assertIsNone(proof["original_receipt"])
+
+    def test_native_correction_rejection_excludes_only_the_exact_held_verifier_output(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        from sse_multivector import distillation_review_evaluation as evaluation
+        fixture, baseline, output, _, _ = self.collection_fixture("rejected-held-verifier", witness="2",
+            policy="grading", audit_prerequisites=False)
+        original = evaluation.report(baseline)
+        pair = next(row for row in original["random"]["answers"][0]["checks"]["relationship"]
+            if row["evidence"].get("teacher_numbers") == ["2"]
+            and row["evidence"].get("heading_number") == "2")
+        group = next(native["experiment"] for native in original["experiments"]
+            if any(row["id"] == pair["id"] for row in native["cases"]))
+        false_worker = self.root / "historical-false-worker"
+        false_worker.write_text((self.root / "fake-runner").read_text().replace(
+            '{"valid": True, "reason": "Fixture semantic verdict."}',
+            '{"valid": False, "reason": "Historical held interpretation."}'))
+        false_worker.chmod(0o755)
+        old = self.root / "old-held-verifier"
+        fixture.native("prepare", old, "--from", group, "--only", pair["id"], "--reasoning-effort", "high",
+            "--runner-binary", false_worker, "--history-root", self.root)
+        fixture.native("run", old, "--max-new-attempts", 2)
+        fixture.native("review", old, "--case", pair["id"], "--role", "agent", "--verdict", "uncertain",
+            "--comment", "Historical FALSE complete output held for source interpretation.")
+        fresh = self.root / "fresh-positive-verifier"
+        fixture.native("prepare", fresh, "--from", group, "--only", pair["id"], "--reasoning-effort", "medium",
+            "--runner-binary", self.root / "fake-runner", "--history-root", self.root)
+        fixture.native("run", fresh, "--max-new-attempts", 2)
+        pending = coverage.collect(output, self.root / "held-conflict.json", verification_experiments=[old, fresh])
+        self.assertTrue(pending["random"]["answers"][0]["coverage_inconsistencies"])
+        old_reviews = (old / "reviews.jsonl").read_bytes()
+        correction = self.root / "source-reassessed-old-verifier"
+        fixture.native("prepare", correction, "--from", old, "--only", pair["id"], "--history-root", self.root)
+        fixture.native("run", correction, "--max-new-attempts", 2)
+        self.assertEqual(json.loads(fixture.native("show", old, "--json"))["cases"][0]["output"],
+            json.loads(fixture.native("show", correction, "--json"))["cases"][0]["output"])
+        fixture.native("review", correction, "--case", pair["id"], "--role", "agent", "--verdict", "reject",
+            "--comment", "Exact old FALSE output is now source-resolved as incorrect; TRUE is preserved.")
+        result = coverage.collect(output, self.root / "held-resolved.json", verification_experiments=[old, fresh],
+            correction_experiments=[correction])
+        answer = result["random"]["answers"][0]
+        self.assertFalse(answer["coverage_inconsistencies"])
+        self.assertEqual(answer["scoring"]["scores"]["coverage"]["value"], 0)
+        self.assertEqual((old / "reviews.jsonl").read_bytes(), old_reviews)
+
+    def test_grading_rederives_changed_search_inputs_and_reuses_only_an_exact_native_donor(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        from sse_multivector import distillation_review_evaluation as evaluation
+        fixture, baseline, worker, pairs = self.negative_pair_fixture("rederived-search", ["1", "2"])
+        output = self.root / "original-no-search"
+        prepared = coverage.prepare(baseline, output, runner_binary=worker, policy="grading")
+        self.assertEqual(prepared["search_cases"], 0)
+        native = next(group["experiment"] for group in evaluation.report(baseline)["experiments"]
+            if any(row["id"] == pairs["1"]["id"] for row in group["cases"]))
+        rejection = self.root / "rejected-core-proof"
+        fixture.native("prepare", rejection, "--from", native, "--only", pairs["1"]["id"])
+        fixture.native("run", rejection, "--max-new-attempts", 2)
+        fixture.native("review", rejection, "--case", pairs["1"]["id"], "--role", "agent", "--verdict", "reject",
+            "--comment", "Old complete negative output has an incorrect explanation; derive a new search.")
+        donor_worker = self.root / "rederived-donor-worker"
+        donor_result = dict(evidence=[dict(student_number="1", reason="Independent complete negative search.")],
+            witness_student_number=None)
+        donor_worker.write_text(worker.read_text().replace('("DSMv3", "DSSv2", "DSLv2", "DSLv4")',
+            '("DSMv3", "DSSv2", "DSLv2", "DSLv4", "DCSv1")').replace(
+            'else {"valid": not prompt.startswith("DSLv2"), "reason": "Fixture semantic verdict."}',
+            'else (' + repr(donor_result) + ' if prompt.startswith("DCSv1") else '
+            '{"valid": not prompt.startswith("DSLv2"), "reason": "Fixture semantic verdict."})'))
+        donor_worker.chmod(0o755)
+        donor = coverage.prepare(baseline, self.root / "current-derived-donor", runner_binary=donor_worker,
+            policy="grading", correction_experiments=[rejection])
+        self.assertEqual(donor["search_cases"], 1)
+        search = Path(donor["experiments"][0]["path"])
+        fixture.native("run", search, "--max-new-attempts", 2)
+        missing = coverage.collect(output, self.root / "missing-derived-search.json", correction_experiments=[rejection])
+        self.assertNotIn("coverage", missing["random"]["answers"][0]["scoring"].get("scores", {}))
+        result = coverage.collect(output, self.root / "exact-derived-search.json", correction_experiments=[rejection, search])
+        self.assertEqual(result["random"]["answers"][0]["scoring"]["scores"]["coverage"]["value"], 1)
+
+    def test_grading_does_not_choose_between_contradictory_native_corrections(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        fixture, _, output, native, row = self.collection_fixture("grading-conflict", policy="grading",
+            audit_prerequisites=False)
+        fixture.native("review", native, "--case", row["id"], "--role", "agent", "--verdict", "reject",
+            "--comment", "Saved output rejected before conflicting fallback draws.")
+        corrections = [self.correction_search(fixture, native, row, "negative-correction"),
+            self.correction_search(fixture, native, row, "positive-correction", witness="1")]
+        result = coverage.collect(output, self.root / "grading-conflict.json", correction_experiments=corrections)
+        answer = result["random"]["answers"][0]
+        self.assertNotIn("coverage", answer["scoring"].get("scores", {}))
+        self.assertTrue(any(dependency["decision_conflicts"] for dependency in answer["dependencies"]
+            if "decision_conflicts" in dependency))
 
     def test_native_collector_scores_only_accepted_complete_search_outputs(self):
         fixture, _, output, native, row = self.collection_fixture("collect-null")

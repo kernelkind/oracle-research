@@ -2215,7 +2215,7 @@ replay reduces 24-group, 109-case preparation from at least 397.35 seconds to
 26.93 seconds, with exact case, prompt, evidence and cache-setting parity.
 No model calls or frozen producer changes are involved.
 
-Before freezing coverage, run
+For the independently audited qualification workflow, before freezing coverage, run
 `show-distillation-review-evaluation EVALUATION --unreviewed --output INVENTORY`.
 Repeat `--premise-audit PATH` to recognize existing exact complete-output audits;
 that flag requires `--unreviewed`. The inventory separates new output versions
@@ -2247,15 +2247,30 @@ input/prompt parity and 308 settlements. An obsolete donor binding cannot suppor
 through native review after comparing complete input, prompt and output.
 Production prompts/defaults are not changed. Prepared unused compatibility
 rows remain a scalability issue rather than required inference.
-Native collection returns twenty-two complete student scores and thirty-eight
-partial scores, preserving uncertainty and rejected-review proof gaps.
+The historical audited collection returns twenty-two complete student scores
+and thirty-eight partial scores, preserving uncertainty and rejected-review
+proof gaps.
 All 1,887 bound source hashes verify. Local accounting reports 1,442 attempts
 and $6.3851408 known API-equivalent cost; complete cost remains unknown because
 failed and interrupted calls lack usage. Reported input is 26.106% cached;
 known warming-inclusive savings are $0.3384832. Closed active worker windows
 total 26 minutes 3.827 seconds, while recorded preparation through collection
 verification takes 102 minutes 42 seconds, before final documentation/integration.
-The turnaround and eight-hour full-evaluation target remain unresolved.
+
+The approved [saved-answer grading workflow](distillation-review-v1/README.md#grading-saved-validation-answers-october-12)
+instead freezes `prepare-distillation-coverage-search --policy grading`.
+It consumes valid native decisions without another independent ACCEPT gate,
+retains uncertainty as diagnostic evidence, and withholds known wrong or
+conflicting decisions. The default audited policy and original reports remain
+available. Native exact-input fallback groups are selected through repeated
+`--correction-experiment` and `--correction-case` flags during preparation or
+collection. Each invocation applies its selected IDs to all supplied groups;
+keep historical and fresh selections separate when their scopes differ.
+Exact native REJECT reassessments bind the complete old input, prompt and output
+across aliases without changing original ledgers. Positive search witnesses
+still require unchanged DSL verification. Full grading concerns the 1,800 saved
+validation answers; eight-hour readiness and reserved final-test review remain
+open.
 
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,
