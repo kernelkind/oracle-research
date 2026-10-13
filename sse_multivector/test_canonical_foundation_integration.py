@@ -30,7 +30,7 @@ class CanonicalFoundationIntegrationTests(unittest.TestCase):
         return result
 
     def test_canonical_preparation_command_checks_source_without_inference(self):
-        result = self.cli('prepare-canonical-traversal', 'trial',
+        result = self.cli('prepare-hierarchy', 'trial',
                           '--spec', 'missing-trial.json', ok=False)
         self.assertNotIn('invalid choice', result.stderr)
         self.assertIn('missing-trial.json', result.stderr)

@@ -65,6 +65,21 @@ def prepare_file(dataset, path, template, load_report=None, *, preparation_conte
 
     source = read(path)
     preparation = None
+    if dataset['adapter'] == 'hierarchy_pair_consolidation':
+        engine._expect_fields(source,'pair consolidation source',{'cases'})
+        if not isinstance(source['cases'],list):
+            raise ValueError('pair consolidation cases must be an array')
+        for case in source['cases']:
+            payload=json.loads(case['inputs']['INPUT_JSON'])
+            fields={'nodes'} | ({'parent'} if isinstance(payload,dict) and 'parent' in payload else set())
+            engine._expect_fields(payload,'pair consolidation input',fields)
+            if not isinstance(payload['nodes'],list) or len(payload['nodes'])!=2:
+                raise ValueError('pair consolidation requires exactly two nodes')
+            for node in [*payload['nodes'],*([payload['parent']] if 'parent' in payload else [])]:
+                engine._expect_fields(node,'pair consolidation node',{'title','meaning'})
+                if any(not isinstance(node[key],str) or not node[key].strip() for key in node):
+                    raise ValueError('pair consolidation nodes require nonempty title and meaning')
+        return prepare({**dataset, 'adapter':'generic'}, source, template), sources, None
     if dataset['adapter'] == 'canonical_consolidation':
         prepared = source if 'cases' in source else dict(
             cases=prepare_consolidations(source, path.parent, read))
@@ -1667,12 +1682,36 @@ def prepare(dataset, source, template):
     return cases
 
 
+def validate_consolidation(raw, payload):
+    """Validate existing sibling-proposal experiments, independently of construction."""
+    value=json.loads(raw,object_pairs_hook=engine._position_decoder().unique_object)
+    if value is None:
+        return None
+    if not isinstance(value,dict) or set(value)!={'title','meaning','children'}:
+        raise ValueError('consolidation must return null or title, meaning and children')
+    for field in ('title','meaning'):
+        if not isinstance(value[field],str) or not value[field].strip():
+            raise ValueError('consolidation '+field+' must be nonempty text')
+    children=value['children']
+    offered={n['id'] for n in payload['siblings']}
+    if (not isinstance(children,list) or any(not isinstance(c,str) for c in children)
+            or len(set(children))!=len(children) or not 2<=len(children)<len(offered)
+            or not set(children)<=offered):
+        raise ValueError('consolidation children must be a proper subset of at least two offered siblings')
+    return value
+
+
 def validate(dataset, case, raw, schema):
     """Check output mechanics, never semantic correctness."""
     adapter = dataset["adapter"]
     result = {"status": "valid", "output": raw}
+    if adapter == 'hierarchy_pair_consolidation':
+        value=json.loads(raw,object_pairs_hook=engine._position_decoder().unique_object)
+        if (not isinstance(value,dict) or set(value)!={'title','meaning'}
+                or any(not isinstance(value[k],str) or not value[k].strip() for k in value)):
+            raise ValueError('pair consolidation requires nonempty title and meaning; null is invalid')
+        result['parsed']=value
     if adapter == 'canonical_consolidation':
-        from .canonical_traversal import validate_consolidation
         result['parsed'] = validate_consolidation(raw, json.loads(case['inputs']['INPUT_JSON']))
     if adapter == 'canonical_consolidation_pairs':
         from . import hierarchy_node_pairs

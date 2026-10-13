@@ -60,7 +60,7 @@ def audit_trial(directory, output, max_choices=6, work_budget=200000):
         if not isinstance(row['entries'], list) or not row['entries'] and not row.get('synthetic'):
             raise ValueError('canonical node requires supporting entries')
         if row.get('synthetic'):
-            from .canonical_traversal import check_synthetic
+            from .canonical_receipts import check_synthetic
             check_synthetic(row)
         seen = set()
         for entry in row['entries']:

@@ -1,4 +1,4 @@
-"""Canonical graph checks shared by traversal construction and saved-data tools."""
+"""Canonical graph checks shared by construction and saved-data tools."""
 from copy import deepcopy
 from graphlib import TopologicalSorter, CycleError
 import hashlib
@@ -11,8 +11,8 @@ except ImportError:
 
 
 def _check(state):
-    if state.get('traversal_policy'):
-        from .canonical_traversal import check_state
+    if state.get('generation_policy'):
+        from .hierarchy_generation import check_state
         check_state(state)
         return
     for path, digest in state['sources'].items():

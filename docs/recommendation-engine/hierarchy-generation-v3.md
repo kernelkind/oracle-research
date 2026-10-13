@@ -1,10 +1,10 @@
 # Hierarchy generation V3
 
-Status: approved canonical generation mechanism, replacing V2. Constructor
-implementation and hierarchy-quality qualification remain pending; the current
-constructor still implements V2. Pair-consolidation-v6 is user-approved for the
-next hierarchy run; model-based qualification remains pending. This document
-does not authorize model calls. The user's personal outline,
+Status: approved canonical generation mechanism, implemented as the sole shared
+CLI constructor in `sse_multivector/hierarchy_generation.py`, replacing V2.
+Offline construction checks pass; model-based hierarchy-quality qualification
+remains pending. Pair-consolidation-v6 is user-approved for the next hierarchy
+run. This document does not authorize model calls. The user's personal outline,
 `docs/notes/MY-NOTES_10-12.md`, remains read-only. The preceding mechanisms are
 V2 and V1; earlier variants need no formal naming.
 
@@ -208,9 +208,65 @@ from it. A node already containing one note is finished and is not expanded.
 
 ## Details still to settle
 
-- Handling similarity ties and failed/invalid consolidation calls.
 - Model-based consolidation qualification and meaning validation.
 - Cases where further grouping does not provide useful refinement despite
   a node containing more than two distinct notes.
 
 These open details are not implementation decisions.
+
+## Implementation and native workflow
+
+Use the shared stable launcher from an isolated task worktree. V3 has three
+commands: `prepare-hierarchy`, `advance-hierarchy` and `run-hierarchy`. V2's
+constructor and its commands are removed; their source remains in Git history.
+Historical traversal research and saved-data readers remain available.
+
+The schema-1 construction definition contains `corpus`, `note_ids`,
+`local_schema_version` (4), `bootstrap_spec`, `consolidation_spec` and
+`worker_config`. Teacher specifications use the existing native prompt/runner
+format. `worker_config` is an ordinary pinned SSE worker configuration used as
+a template; each encoding gets its own frozen request and output paths. Run
+the automatic command in the SSE worker's Python environment with its required
+packages and local model artifacts available. Prompt versions are deliberate
+configuration, not selected by latest filename.
+
+Preparation validates settings and prompt assemblies and prepares all original
+L1 Bootstrap cases without inference. Advancement collects native answers and
+SSE receipts, preserves their identities, and prepares the next work without
+inference. Automatic execution runs those ordinary native batches and SSE
+jobs, then advances after completions. The shared runner controls provider
+concurrency, retries, cache warming, exact answer reuse and usage accounting.
+The constructor overlaps up to four batch coordinators, with at most one SSE
+job running at a time; this is not a separate provider concurrency limit.
+
+Each unchanged subject/meaning encoding is reused within the construction.
+SSE text contains the subject, two newlines, then the explicit meaning. Only
+the subject's UTF-8 byte span is selected for pooling. The input brackets in
+this document are notation, not encoded characters. Worker identities,
+selected spans, receipt hashes and raw vector hashes are checked before use.
+
+Every distinct cosine pair is scored. Equal scores use the saved family order
+of the two nodes for deterministic ties. Sorted pair data spills into bounded
+chunks and is merged with bounded open files, preserving exact global ordering
+without a candidate shortlist. This bounds sort memory; total cosine work and
+temporary pair storage remain quadratic in family size. State preserves the
+selected pairs, scores, total comparison count and original L1 associations.
+
+Progress is saved atomically. A completed resume dispatches no new work;
+unfinished native requests follow the runner's existing resume/retry policy.
+Failed or malformed results remain unresolved with case-level diagnostics and
+retain all original entries; independent families continue. Null pair outputs
+are malformed. A null Bootstrap meaning blocks root construction after the
+other Bootstrap cases finish. The constructor does not repeatedly resample it.
+
+There is no default model-attempt cap. `--attempt-budget` is available only for
+an explicitly supplied allowance, and the same allowance is retained across
+resumes. A reviewed `--runner-upgrade-reason` records permitted constructor-code
+changes while retaining frozen inputs and producer receipts. Finish active work
+before editing or rebinding its source. The saved `run-summary.json` separates
+construction status from execution status and lists unresolved cases and errors.
+
+The existing original-note hierarchy viewer can export a completed or partial
+saved V3 graph when requested; construction does not refresh a UI automatically.
+Inspection retains the fixed definitions and supporting original L1 references.
+Offline fixture results test this workflow, not semantic accuracy or optimality.

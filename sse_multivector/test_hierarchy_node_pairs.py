@@ -9,6 +9,69 @@ from sse_multivector import experiment_inputs
 from sse_multivector import test_experiment as fixtures
 
 
+def saved_graph_fixture(test, *, equivalent=False):
+    """Controlled historical review inputs with native meanings and comparisons.
+
+    This is adapter evidence, not a V3-generated hierarchy or semantic gold.
+    """
+    from copy import deepcopy
+    from sse_multivector import canonical_trial as trial
+    notes=[dict(note_id='n1',text='First post',subjects=[
+        dict(number='1',subject='Cooking',context='Using heat'),
+        dict(number='1.1',subject='EXCLUDED CHILD',context='Child')]),
+        dict(note_id='n2',text='Second post',subjects=[
+            dict(number='2',subject='Food',context='Intended for cooking')]),
+        dict(note_id='n3',text='Third post',subjects=[
+            dict(number='3',subject='Ingredients',context='Cooking role')])]
+    corpus=test.write('notes.json',dict(schema_version=1,notes=notes))
+    test.prompt.write_text('GENERIC PROMPT {INPUT_JSON}')
+    base=json.loads(test.spec.read_text())
+    bootstrap={**base,'runner':{**base['runner'],'output_schema':{
+        'type':'object','properties':{'meaning':{'type':['string','null']}},
+        'required':['meaning'],'additionalProperties':False}}}
+    comparison={**base,'runner':{**base['runner'],'output_schema':json.loads(
+        Path(__file__).with_name('shr_single_pair').joinpath(
+            'Hierarchy-compare-v4.output.schema.json').read_text())}}
+    test.write('bootstrap.json',bootstrap)
+    test.write('comparison.json',comparison)
+    state=dict(schema_version=2,corpus=str(corpus),nodes=[],steps=[],index=0,
+        roots=[dict(note_id=n['note_id'],number=n['subjects'][0]['number']) for n in notes],
+        sources={str(corpus):trial._hash(corpus)},status='complete')
+    meanings=['Fixed cooking meaning','Fixed food meaning','Independent meaning']
+    for index,(local,meaning) in enumerate(zip(state['roots'],meanings,strict=True)):
+        source=test.write(f'meaning-source-{index}.json',dict(schema_version=4,corpus=str(corpus),
+            nodes=[dict(id='meaning',local=local,review={})]))
+        spec=test.write(f'meaning-spec-{index}.json',{**bootstrap,
+            'dataset':dict(adapter='hierarchy_local_nodes',path=str(source))})
+        experiment=f'meaning-{index}'
+        test.cli('prepare',experiment,'--spec',spec)
+        test.cli('run',experiment,env={'FAKE_RUNNER_PROMPT_RESPONSE':json.dumps(dict(meaning=meaning))})
+        before=deepcopy(state['nodes'])
+        values={}
+        if before:
+            source=test.write(f'pair-source-{index}.json',dict(schema_version=2,corpus=str(corpus),
+                canonical_states=dict(current=before),pairs=[dict(id=n['id'],local=local,
+                    local_meaning_from=dict(experiment=experiment,case='meaning'),
+                    canonical=dict(state='current',id=n['id']),review={}) for n in before]))
+            spec=test.write(f'pair-spec-{index}.json',{**comparison,
+                'dataset':dict(adapter='hierarchy_node_pairs',path=str(source))})
+            comparison_experiment=f'comparison-{index}'
+            test.cli('prepare',comparison_experiment,'--spec',spec)
+            relation=('equivalent' if equivalent else 'canonical_contains_local') if index==1 else 'neither'
+            test.cli('run',comparison_experiment,env={'FAKE_RUNNER_PROMPT_RESPONSE':json.dumps(
+                dict(meaning=meaning,relation=relation,reason='Controlled adapter fixture'))})
+            values={c['id']:c['parsed'] for c in test.show(comparison_experiment)['cases']}
+        nodes,identifier,error,witness=trial._placement(state,local,meaning,values)
+        test.assertIsNone(error)
+        state['nodes']=nodes
+        state['steps'].append(dict(index=index,local=local,before=before,after=deepcopy(nodes),
+            canonical_id=identifier,status='equivalent' if equivalent and index==1 else 'added'))
+        state['index']+=1
+    (test.root/'trial').mkdir()
+    test.write('trial/state.json',state)
+    return state
+
+
 class HierarchyNodePairsTests(unittest.TestCase):
     setUp = fixtures.ExperimentTests.setUp
     write = fixtures.ExperimentTests.write
@@ -398,8 +461,7 @@ class HierarchyNodePairsTests(unittest.TestCase):
         return source
 
     def saved_trial_source(self):
-        from sse_multivector.test_canonical_traversal import saved_traversal_fixture
-        saved_traversal_fixture(self)
+        saved_graph_fixture(self)
         source = {'schema_version': 2, 'corpus': 'notes.json',
                   'canonical_states': {'current': {'trial': 'trial/state.json'}},
                   'pairs': [{'id': 'one', 'local': {'note_id': 'n1', 'number': '1.1'},

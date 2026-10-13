@@ -1,10 +1,10 @@
 # Three-note automatic traversal trial — historical baseline
 
 This record preserves the saved Bootstrap-v109 / Compare-v179 trial and its
-limitations. It used the former `traversal-v24` selection policy, not
-[hierarchy generation V2](hierarchy-generation-draft-v2.md). Its frozen source
-worktree and native receipts remain required for reproduction. The current
-constructor replaces that policy; these measurements do not qualify V2.
+limitations. It used the former `traversal-v24` selection policy, predating V2
+and [hierarchy generation V3](../docs/recommendation-engine/hierarchy-generation-v3.md).
+Its frozen source worktree and native receipts remain required for reproduction. The current
+constructor replaces those policies; these measurements do not qualify V3.
 
 ## Three-note automatic trial with Bootstrap-v109 and Compare-v179
 

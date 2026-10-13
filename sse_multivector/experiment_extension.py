@@ -589,18 +589,18 @@ def add_commands(commands):
     p.add_argument('--registry', type=Path, required=True)
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--saved-only', action='store_true', help='rebuild the catalogue from retained records without discovering new outputs')
-    p = commands.add_parser('prepare-canonical-traversal', help='prepare V2 prominence selection and traversal; no inference')
+    p = commands.add_parser('prepare-hierarchy', help='prepare V3 Bootstrap and SSE pair consolidation; no inference')
     p.add_argument('directory', type=Path)
     p.add_argument('--spec', type=Path, required=True)
     p.add_argument('--history-root', type=Path)
-    p = commands.add_parser('advance-canonical-traversal', help='collect native answers, apply guarded placements and prepare reached comparisons; no inference')
+    p = commands.add_parser('advance-hierarchy', help='collect V3 meanings and vectors and prepare the next consolidation; no inference')
     p.add_argument('directory', type=Path)
     p.add_argument('--comment', required=True)
-    p = commands.add_parser('run-canonical-traversal', help='run native experiments and advance construction automatically until complete or blocked')
+    p = commands.add_parser('run-hierarchy', help='run V3 construction automatically until complete or blocked')
     p.add_argument('directory', type=Path)
-    p.add_argument('--attempt-budget', type=Path, required=True,
-                   help='existing persistent attempt allowance shared by every batch and resume')
-    p.add_argument('--comment', default='Automated traversal construction')
+    p.add_argument('--attempt-budget', type=Path,
+                   help='optional explicitly supplied persistent attempt allowance')
+    p.add_argument('--comment', default='Automated hierarchy generation V3')
     p.add_argument('--runner-upgrade-reason',
                    help='record an explicitly reviewed construction/adapter code fix; frozen data stays unchanged')
     p = commands.add_parser('summarize-experiments', help='summarize native saved usage across experiments; no inference')
@@ -792,18 +792,17 @@ def handle_command(args):
         from .hierarchy_catalogue import catalogue
         print(json.dumps(catalogue(args.source, args.registry, args.output, saved_only=args.saved_only), indent=2))
         return 0
-    if args.command in ('prepare-canonical-traversal', 'advance-canonical-traversal',
-                        'run-canonical-traversal'):
-        from . import canonical_traversal
-        if args.command == 'prepare-canonical-traversal':
-            result = canonical_traversal.prepare(args.spec, args.directory, args.history_root)
-        elif args.command == 'run-canonical-traversal':
-            result = canonical_traversal.run(args.directory, args.attempt_budget, args.comment,
-                                            args.runner_upgrade_reason)
+    if args.command in ('prepare-hierarchy', 'advance-hierarchy', 'run-hierarchy'):
+        from . import hierarchy_generation
+        if args.command == 'prepare-hierarchy':
+            result = hierarchy_generation.prepare(args.spec, args.directory, args.history_root)
+        elif args.command == 'run-hierarchy':
+            result = hierarchy_generation.run(args.directory, args.attempt_budget, args.comment,
+                                             args.runner_upgrade_reason)
         else:
-            result = canonical_traversal.advance(args.directory, args.comment)
+            result = hierarchy_generation.advance(args.directory, args.comment)
         print(json.dumps(result, ensure_ascii=False, indent=2))
-        return int(args.command == 'run-canonical-traversal' and result['status'] != 'complete')
+        return int(args.command == 'run-hierarchy' and result['status'] != 'complete')
     if args.command == 'summarize-experiments':
         from .experiment_usage_summary import summarize_experiments, compact_summary
         output = args.output.expanduser().resolve()
@@ -1039,8 +1038,9 @@ def prompt_sources(prompt):
     import re
     from . import prompt_assembly
     path = Path(prompt['source_path']).resolve()
-    match = re.fullmatch(r'Hierarchy-(bootstrap|consolidation)-v([0-9]+)', prompt['id'])
-    managed = bool(match and int(match[2]) >= (129 if match[1] == 'bootstrap' else 21))
+    match = re.fullmatch(r'Hierarchy-(bootstrap|consolidation|pair-consolidation)-v([0-9]+)', prompt['id'])
+    minimum={'bootstrap':129,'consolidation':21,'pair-consolidation':2}
+    managed = bool(match and int(match[2]) >= minimum[match[1]])
     spec_path = path.with_suffix('.assembly.json')
     if not spec_path.exists():
         if managed:
@@ -1082,7 +1082,7 @@ def code_files(dataset):
         names += ['bootstrap_student_inputs.py', 'compare_student_inputs.py']
     if dataset['adapter'] == 'hierarchy_node_pairs':
         names += ['hierarchy_node_pair_consistency.py']
-    names += ['canonical_trial.py', 'canonical_receipts.py', 'hierarchy_node_pairs.py', 'canonical_graph_search.py', 'canonical_traversal.py']
+    names += ['canonical_trial.py', 'canonical_receipts.py', 'hierarchy_node_pairs.py', 'canonical_graph_search.py', 'hierarchy_generation.py']
     names += ['corpus_inputs.py', 'canonical_candidate_selection.py', 'canonical_candidate_measurement.py', 'canonical_comparison_policy.py', 'canonical_selection_ranking.py', 'canonical_hierarchy_audit.py', 'canonical_hierarchy_shape.py', 'canonical_hierarchy_viewer.py', 'canonical_policy_evaluation.py', 'subject_matching_probe.py']
     if dataset['adapter'] in {'bounded_parent_guides', 'bounded_parent_comparisons'}:
         names += ['parent_guide_measurement.py', 'parent_guide_workflow.py', 'ancestor_cosine_probe.py']
