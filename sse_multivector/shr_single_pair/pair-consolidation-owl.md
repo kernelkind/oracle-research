@@ -5,8 +5,10 @@ exposing an activity's stated action and required objects or participants in
 its formal expression or supporting class definitions. English glossaries
 retain basic concepts whose internal structure the supplied meaning does not
 specify. This is a wrapper-only change; the shared meaning-writing text,
-Bootstrap companion, guide and worked example are unchanged. V8 is not yet
-tested and is not activated in hierarchy construction.
+Bootstrap companion, guide and worked example are unchanged. The matched
+twelve-case panel is complete: all saved targeted checks pass under qualified
+agent review, and the opaque coffee-drinking activity does not recur in this
+draw. V8 remains experimental and is not activated in hierarchy construction.
 
 V7's two-order consumer check passes the targeted formal conditions. Its broader
 twelve-case panel exposes one remaining representation failure:
@@ -95,8 +97,8 @@ experiment adapter or activated configuration in this task.
 
 Only two input nodes and an optional parent are supplied per call. The shared
 guide adds fixed input text; formal definitions and their English definitions
-add output tokens. No call reduction, token saving or correctness gain has yet
-been measured against another prompt. The pilot used sixteen fresh calls with
+add output tokens. No call reduction, token saving or general semantic
+correctness gain has been measured against another prompt. The pilot used sixteen fresh calls with
 complete saved API-equivalent cost of $0.216726; it did not generate a hierarchy.
 
 ## Offline checks
@@ -285,3 +287,111 @@ relationship. Accept equivalent relation names; do not require unstated internal
 structure for basic terms such as Coffee. Review the other activity cases for
 lost completion, plan or target conditions. These are agent checks, not human
 gold or a machine-reasoner proof. No unique grouping is predetermined.
+
+## V8 matched panel: completed findings — 2026-10-13
+
+All twelve cases completed with GPT-6.1 Sol medium. Native preparation preserves
+every input and runner setting from the v7 panel; no prior answer is reused
+because the prompt changed. The twelve successful HTTP 200 requests have one
+fresh user message each, no previous-response reference, and identical non-input
+request-body fields relative to v7. Frozen assembly/source hashes remain exact.
+No extra baseline requests, warmups or paid fallback were used.
+
+All outputs pass JSON field ordering, expression formatting, vocabulary closure
+and unchanged reused-definition checks. Qualified manual review finds the saved
+conditions preserved and both translations covered by their consolidation;
+where supplied, the fixed parent is respected through the printed definitions.
+These are twelve qualified native agent accepts, including the trained format
+case, not an accuracy estimate, human gold or a machine-reasoner proof.
+
+### Coffee action and object now exposed
+
+Case `10-coffee-equipment-roles` still uses the exact original cup and shelf
+meanings. V8 supplies this supporting class definition in all three returned
+objects:
+
+```json
+{
+  "CoffeeDrinking": "Drinking AND (hasBeverage SOME Coffee)"
+}
+```
+
+The cup retains `Cup AND (designedFor SOME CoffeeDrinking)`. The shelf retains
+`Shelf AND (designedFor SOME CoffeeCupStorage)`, with:
+
+```json
+{
+  "CoffeeCupStorage": "Storage AND (hasStoredObject SOME (Cup AND (usedFor SOME CoffeeDrinking)))"
+}
+```
+
+The consolidation is `designedFor SOME (CoffeeDrinking OR CoffeeCupStorage)`.
+The drinking action, coffee object and storage-to-cup-to-coffee relationship are
+now formal; Coffee's unspecified internal structure remains in its English
+basic-term definition. Design purpose is not replaced with actual use. This
+resolves the observed v7 opaque-action failure in this draw, without proving a
+reliable wording effect from one matched sample.
+
+### Other saved controls and limits
+
+| Saved control | Targeted result under qualified agent review |
+|---|---|
+| Known panel example | Requested structure and fixed vocabulary; format evidence only |
+| Completed wall/ceiling painting | Painting action, home/interior targets and completion remain formal within the supplied parent |
+| Completed painting versus cabinet plans | Plans retain their painting action and target without requiring execution |
+| Lamps emitting red/blue light | `SOME` permits additional emitted colours; supporting definitions derive the chosen broader light class |
+| Bead-only containers | `ONLY` without `SOME` admits empty containers and both allowed colours |
+| Lamp/sign alternatives | `OR` retains correct emission/background attachment; supplied definitions derive Device containment |
+| Never-painted walls/ceilings | Explicit historical absence uses `NOT`, without inferring absence from silence |
+| Rosemary roles | Culinary-leaf and garden-plant roles remain distinct |
+| Material versus product | Designated-making role and product's made-from relation remain distinct |
+| Identical boiling meanings | Heating target and reached-boiling state remain formal, including the supplied parent |
+| Human food versus evening meals | Human consumer, nourishment purpose and eating-or-drinking alternative remain specific to human food |
+
+This small authored panel does not establish full semantic fidelity or
+browsing usefulness. Rosemary's `partOf` origin versus present-attachment interpretation,
+primitive Food/Garden and Bead scopes, the supplied Material wording about actual
+use, and Meal's food/occasion interpretation remain explicit qualifications.
+V8 has not independently resolved these ordinary-language interpretations, and
+they are not assigned new human-gold labels or counted as demonstrated semantic
+failures. The notation is still not executable OWL and no reasoner was used.
+
+The next useful check is an independent repeat and reversed-order draw of the
+coffee case, plus an unseen activity/object control, before another wording
+change or hierarchy integration. Those additional calls are not part of this
+completed panel.
+
+### Accounting and retained evidence
+
+The native `experiment-usage-summary-v3` report records fifteen fresh provider
+attempts for twelve successful answers: three first attempts returned the
+provider's "servers are currently overloaded" error, each recovered on its one
+allowed retry. There are zero terminal failures, reuses and warmups. The failed
+attempts supplied no raw token usage, so the complete API-equivalent cost is
+unknown rather than zero for those attempts.
+
+| Known subtotal | Value |
+|---|---:|
+| Input tokens | 38,705 |
+| Output tokens, including reasoning | 9,585 |
+| Reasoning tokens already included in output | 3,798 |
+| Reported cached input / cache-write tokens | 0 / 0 |
+| API-equivalent catalogue estimate | $0.173260 |
+| Attempts with missing usage/cost | 3 |
+
+The native summary warns that these are known subtotals. This is not subscription
+billing, complete trial cost, or a savings claim. All actual attempts remain in
+the original receipts; no receipt or historical prompt has been modified.
+
+The retained source/evidence worktree is:
+
+```text
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp-pair-consolidation-owl-v8-panel-v1
+```
+
+Its ignored evidence is `target/pair-consolidation-owl-v8-panel-v1`,
+`target/pair-consolidation-owl-v8-panel-checks-v1.json`,
+`target/pair-consolidation-owl-v8-panel-usage-source-v1.json` and
+`target/pair-consolidation-owl-v8-panel-usage-summary-v1.json`. This worktree and
+the retained v7/v6/v5 source worktrees remain necessary for native frozen-source,
+baseline and receipt validation at their absolute paths.
