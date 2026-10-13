@@ -2,8 +2,9 @@
 
 Status: approved canonical generation mechanism, replacing V2. Constructor
 implementation and hierarchy-quality qualification remain pending; the current
-constructor still implements V2. Pair-consolidation wording remains an unreviewed
-draft. This document does not authorize model calls. The user's personal outline,
+constructor still implements V2. Pair-consolidation-v6 is user-approved for the
+next hierarchy run; model-based qualification remains pending. This document
+does not authorize model calls. The user's personal outline,
 `docs/notes/MY-NOTES_10-12.md`, remains read-only. The preceding mechanisms are
 V2 and V1; earlier variants need no formal naming.
 
@@ -113,15 +114,14 @@ separate equivalence judgment, comparison call or equivalent-pair branch.
 The proposed special case of recognizing equivalence and copying one supplied
 meaning was withdrawn; it is not part of this design.
 
-The user deferred full prompt review.
 [Hierarchy-pair-consolidation-v6](../../sse_multivector/shr_single_pair/Hierarchy-pair-consolidation-v6.md)
-records the approved mandatory-output and optional-parent rules. Its overall
-wording remains an unreviewed, untested draft. V6 retains V5's minimal adaptation of
-Consolidation-v21: it keeps the existing wording and adapts the example to two
-inputs, removing only the input-building sentence about roots. It uses the
-exact shared definition-writing rules-v6 from
-Bootstrap-v129 and Consolidation-v21 through a pinned assembly; those prompts
-and shared rules are unchanged. No prompt is activated by this draft.
+is approved for the next hierarchy run. The user's decision was: "OK lgtm. we
+will use this for the next hierarchy run". This approves the wording and next-run
+selection; it does not establish measured accuracy. V6 retains V5's minimal
+adaptation of Consolidation-v21 and removes the input-building sentence about
+roots. It uses the exact shared definition-writing rules-v6 from Bootstrap-v129
+and Consolidation-v21 through a pinned assembly; those prompts and shared rules
+are unchanged. Model-based testing of the pair prompt remains pending.
 
 Exact answer reuse must match the complete request, including the optional
 canonical parent. A root-consolidation answer cannot be reused for a request
@@ -209,7 +209,7 @@ from it. A node already containing one note is finished and is not expanded.
 ## Details still to settle
 
 - Handling similarity ties and failed/invalid consolidation calls.
-- Exact consolidation wording/output and meaning validation.
+- Model-based consolidation qualification and meaning validation.
 - Cases where further grouping does not provide useful refinement despite
   a node containing more than two distinct notes.
 
