@@ -2,7 +2,11 @@
 
 `pair-consolidation-owl-v5` is the human-approved wording for this experimental
 line. The user approved it with "OK LGTM." It is not activated or a replacement
-for `Hierarchy-pair-consolidation-v6`. No model tests have been run for this line.
+for `Hierarchy-pair-consolidation-v6`. Its [first pilot](pair-consolidation-owl-pilot-v1.md)
+completed sixteen GPT-6.1 Sol medium requests: twelve initial cases, two exact
+repeats and two reversed-order cases. All passed structural checks and preserved
+the targeted restrictions under agent review; one review remains uncertain about
+how much meaning must be represented formally rather than in English glossaries.
 
 The user approved proceeding with this separate experimental line and the
 following contract:
@@ -30,9 +34,9 @@ following contract:
   entry expressions, not additional class definitions. The consolidated
   natural-language title and meaning remain separate final outputs.
 
-The wording approval does not establish semantic correctness or authorize
-inference. Outermost parentheses are omitted from expression strings; nested
-parentheses preserve grouping.
+Wording approval and this bounded pilot do not establish general semantic
+correctness or authorize activation or further inference. Outermost parentheses
+are omitted from expression strings; nested parentheses preserve grouping.
 
 ## Sources and assembly
 
@@ -60,7 +64,8 @@ experiment adapter or activated configuration in this task.
 Only two input nodes and an optional parent are supplied per call. The shared
 guide adds fixed input text; formal definitions and their English definitions
 add output tokens. No call reduction, token saving or correctness gain has yet
-been measured.
+been measured against another prompt. The pilot used sixteen fresh calls with
+complete saved API-equivalent cost of $0.216726; it did not generate a hierarchy.
 
 ## Offline checks
 
@@ -72,4 +77,7 @@ python3 sse_multivector/prompt_assembly.py check \
 
 Assembly checks establish exact reconstruction and unchanged shared sources.
 They do not establish faithful translation, valid containment or useful
-consolidation. The next step is a separately authorized model trial.
+consolidation. Pilot reviews are manual and separately attributed, with no
+automated reasoner proof or human semantic gold. The proposed next step is to
+settle which explicit conditions require formal structure, then test a new
+prompt version against the saved controls; neither is implemented or activated.
