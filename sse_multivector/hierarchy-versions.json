@@ -84,6 +84,13 @@
       "artifact_path": "target/hierarchy-hr14-v3-fifty-note-v1/HR14/state.json",
       "sha256": "5496b3b1e339dd67cd995efa87d277582f9b1a48a27ac64af8ef0dca8ff66956",
       "family": "Hierarchy"
+    },
+    {
+      "version_id": "HR15",
+      "identity": "13808385a83aca3ac922cf61eed8971b8fa15746783e4b62f524bd93586afa9b",
+      "artifact_path": "target/hierarchy-hr15-v3-twenty-four-note-v1/HR15/state.json",
+      "sha256": "5d03c850943a312b912163556f8320ef396a9d1349bce89a4eaf4de2bfa4983a",
+      "family": "Hierarchy"
     }
   ]
 }
