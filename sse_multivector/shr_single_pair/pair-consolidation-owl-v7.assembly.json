@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "prompt_id": "pair-consolidation-owl-v7",
+  "output": {
+    "path": "pair-consolidation-owl-v7.md",
+    "sha256": "ecc546259f1b4cf00dfa1746d45307d7f6b88ee0d1bd75860c3a5ad19e1c1882"
+  },
+  "parts": [
+    {
+      "path": "prompt_sources/pair-consolidation-owl-v7.before.md",
+      "sha256": "f31327889d99ee7acd7ffcd34bcaec9a6207b337d376ab5aa08f0ed672f645a1"
+    },
+    {
+      "text": "\n"
+    },
+    {
+      "path": "prompt_parts/explicit-meaning-rules-v6.md",
+      "sha256": "475cb81dfc7d40756505c73034e34bfdf3242835d0913a777056460d15a15114"
+    },
+    {
+      "text": "\n"
+    },
+    {
+      "path": "prompt_parts/owl-reasoning-guide-v5.md",
+      "sha256": "0c902a78ae29cdf5781c18220a3fd28396f13d7d69736648a63c4b6876052925"
+    },
+    {
+      "text": "\n"
+    },
+    {
+      "path": "prompt_sources/pair-consolidation-owl-v5.after.md",
+      "sha256": "12c12f6fe29a0c0e10a24e5463674087d149c403f6f158298d7acb603504b2e1"
+    },
+    {
+      "text": "\n"
+    },
+    {
+      "path": "prompt_parts/pair-consolidation-owl-example-v3.md",
+      "sha256": "c7afeddf9f1064233b981341673e344ebddf670f7c95f2df6523f0ac7c136b2b"
+    },
+    {
+      "text": "\n<input>\n{INPUT_JSON}\n</input>\n"
+    }
+  ],
+  "shared": {
+    "path": "prompt_parts/explicit-meaning-rules-v6.md",
+    "sha256": "475cb81dfc7d40756505c73034e34bfdf3242835d0913a777056460d15a15114"
+  },
+  "companion": "Hierarchy-bootstrap-v129.assembly.json"
+}
