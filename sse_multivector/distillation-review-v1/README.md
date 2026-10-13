@@ -237,9 +237,37 @@ saved status is not evidence of a live run.
 receipts and retains parsed manifests in each process's `ReceiptFiles` cache.
 That directory now contains 252 such manifests totaling 197.8 MiB on disk.
 Replicating this cache across processes is a concrete memory amplifier; the
-precise contribution requires bounded profiling. The run must remain stopped
-pending a memory-safe execution design and workload containment. The earlier
-eight-hour scenario is unverified and must not authorize an unchanged restart.
+precise contribution requires bounded profiling. The earlier eight-hour
+scenario remains unverified and does not authorize an unchanged restart.
+
+**Memory containment and repair:** runner `e897461` releases discovery
+manifests after building compact request/receipt references, streams ledger
+indexing without retaining receipt bodies, and bounds the verification cache
+to 16 MiB of historical source-file bytes plus the executing manifest. Source
+and receipt hashes still validate every reuse. Ninety relevant regression
+checks pass after installing the pinned test dependencies; seven focused
+checks pass on combined main. The model-free concurrent load of all 128
+prepared batches finishes in 14.84 seconds, peaks at 21.94 GiB and holds
+14.16 GiB, with no OOM events or swap. Its preserved artifacts live under
+`target/distillation-review-v1/grading/full-1800/memory-probe-e897461/` in the
+grading worktree. This load test excludes cache-warmup execution and model
+workers.
+
+Runner `6ad11b6` documents the existing systemd transient-service launch:
+`MemoryMax=32G`, `MemorySwapMax=0`, `OOMPolicy=kill`,
+`KillMode=control-group` and `Restart=no`. A real 128 MiB containment test kills
+the over-limit workload and its children while preserving an unrelated peer.
+The resumed full run uses that containment and the same frozen directory;
+its worker identity and admission metadata pass a service preflight.
+
+At 13:12:39 EDT the runtime reaches the 32 GiB limit and systemd kills the
+grading unit. This second failure is confined to that workload, with no
+automatic restart; saved valid model receipts remain reusable. Thirty shared
+slots are reserved, but observations find approximately fifteen authenticated
+model workers and substantial launch/admission overhead. The job is stopped
+pending a full native-runtime memory/concurrency test and elimination of
+unnecessary warmup work and scheduling-lock contention. The load-only test
+does not establish runtime readiness.
 
 The saved ordinary DSL manifest contains 30,713 prompts and occupies 242 MB.
 Production parsing takes about 1.49 seconds alone; four concurrent reads finish
