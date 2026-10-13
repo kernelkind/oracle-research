@@ -1,13 +1,18 @@
 # Pair-consolidation-owl: experimental prompt line
 
-`pair-consolidation-owl-v7` is the current experimental draft. The user approved
-making the alternative instruction explicit: every stated alternative must use
-`OR`, directly in `owl.expression` or in a supporting `owl.classes` definition.
-Its two-order consumer check passes the targeted formal conditions. The broader
-twelve-case panel is also complete and exposes one remaining representation
-failure: `CoffeeDrinking` leaves the drinking action and required coffee object
-only in an English glossary. V7 remains experimental and is not activated in
-hierarchy construction. These are agent assessments, not human semantic gold.
+`pair-consolidation-owl-v8` is the current experimental draft. The user approved
+exposing an activity's stated action and required objects or participants in
+its formal expression or supporting class definitions. English glossaries
+retain basic concepts whose internal structure the supplied meaning does not
+specify. This is a wrapper-only change; the shared meaning-writing text,
+Bootstrap companion, guide and worked example are unchanged. V8 is not yet
+tested and is not activated in hierarchy construction.
+
+V7's two-order consumer check passes the targeted formal conditions. Its broader
+twelve-case panel exposes one remaining representation failure:
+`CoffeeDrinking` leaves the drinking action and required coffee object only in
+an English glossary. The fixed twelve-case inputs and agent assessments remain
+evidence, not independent human semantic gold.
 
 For `pair-consolidation-owl-v6`, the user approved
 adding the rule that every input restriction and alternative must appear in its
@@ -64,22 +69,23 @@ are omitted from expression strings; nested parentheses preserve grouping.
 
 ## Sources and assembly
 
-The [v7 draft](pair-consolidation-owl-v7.md) is built by its
-[pinned assembly manifest](pair-consolidation-owl-v7.assembly.json). It includes
+The [v8 draft](pair-consolidation-owl-v8.md) is built by its
+[pinned assembly manifest](pair-consolidation-owl-v8.assembly.json). It includes
 [OWL-like guide v5](prompt_parts/owl-reasoning-guide-v5.md) and
 [explicit-meaning rules v6](prompt_parts/explicit-meaning-rules-v6.md)
 byte-for-byte. Its matching definition-writing reference is
 [Bootstrap-v129](Hierarchy-bootstrap-v129.md).
 
-V7 retains the [v6 prompt](pair-consolidation-owl-v6.md)'s one
+V8 retains the [v7 prompt](pair-consolidation-owl-v7.md)'s one
 [complete input/output example](prompt_parts/pair-consolidation-owl-example-v3.md)
 using the same display-panel case, with each entry expression separated from
 its supporting classes. The guide distinguishes exact class definitions from
 one-way containment checks; required membership implications are expressed in
 the formal definitions. It does not encode a containment claim as an exact
 equivalence. The shared meaning-writing rules and consolidated natural-language
-meaning are unchanged. The only compiled-prompt change from v6 is the approved
-explicit-`OR` sentence in the node-translation instructions. All earlier published
+meaning-writing instructions are unchanged. The only compiled-prompt change
+from v7 clarifies formal activity decomposition and the boundary of basic
+English definitions in the node-translation instructions. All earlier published
 prompt and guide files retain their original bytes.
 
 The notation is the simplified OWL-like notation described in the guide. The
@@ -98,7 +104,7 @@ complete saved API-equivalent cost of $0.216726; it did not generate a hierarchy
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
 python3 sse_multivector/prompt_assembly.py check \
-  sse_multivector/shr_single_pair/pair-consolidation-owl-v7.assembly.json
+  sse_multivector/shr_single_pair/pair-consolidation-owl-v8.assembly.json
 ```
 
 Assembly checks establish exact reconstruction and unchanged shared sources.
@@ -226,13 +232,14 @@ The same opaque activity class occurs in the saved v5 answer: this is a remainin
 representation problem, not a newly demonstrated semantic regression or loss of
 the English meaning.
 
-The recommended next revision should clarify the boundary for basic terms:
+The user approved a v8 revision to clarify the boundary for basic terms:
 decompose the action and required objects, participants, purposes and states
 explicitly specified in a supplied meaning; allow a name to abbreviate that
 expression through `owl.classes`. Primitive English definitions can explain
 concepts whose internal structure the supplied meaning does not specify. This
 avoids requiring recursive technical definitions of every mentioned concept.
-No next prompt version, extra inference or hierarchy change is part of this panel.
+The v7 panel itself generated no next prompt version or hierarchy change.
+The separately authorized v8 revision and matched test are recorded below.
 
 ### Accounting and retained panel evidence
 
@@ -261,3 +268,20 @@ Its ignored native evidence is `target/pair-consolidation-owl-v7-panel-v1`,
 `target/pair-consolidation-owl-v7-panel-usage-summary-v1.json`. Frozen source,
 baseline and exact-reuse validation also require the retained earlier task
 worktrees. All prompt bytes, original inputs and prior receipts remain unchanged.
+
+## V8 matched panel: pre-call method
+
+Prepare from the completed v7 broader panel, replacing only the prompt. Retain
+all twelve exact inputs, authored expectations outside model input, model,
+medium reasoning, SSE settings and ordinary native reuse. No intentional
+repeats, extra baseline requests, warmup or paid fallback are included.
+
+Assess the same structure, fixed vocabulary, full input fidelity, two-node
+coverage, supplied-parent containment and English/formal agreement separately.
+In case 10, the coffee-drinking activity must expose the drinking action and its
+required coffee object in `owl.expression` or a supporting `owl.classes`
+definition. Preserve the cup's design purpose and the shelf's storage-to-cup
+relationship. Accept equivalent relation names; do not require unstated internal
+structure for basic terms such as Coffee. Review the other activity cases for
+lost completion, plan or target conditions. These are agent checks, not human
+gold or a machine-reasoner proof. No unique grouping is predetermined.
