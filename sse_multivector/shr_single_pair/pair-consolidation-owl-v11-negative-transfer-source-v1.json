@@ -1,0 +1,22 @@
+{
+  "cases": [
+    {
+      "id": "16-never-detergent-washed-containers",
+      "inputs": {
+        "INPUT_JSON": "{\"nodes\": [{\"title\": \"Bottles never washed with detergent\", \"meaning\": \"Bottles that have never been washed using detergent.\"}, {\"title\": \"Jars never washed with detergent\", \"meaning\": \"Jars that have never been washed using detergent.\"}]}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "application_allowed": false,
+        "expectation_authority": "pre-call agent conditions, not human gold or a unique expected consolidation",
+        "expected_restrictions": [
+          "Each node retains its Bottle or Jar identity and the absence of actual detergent-assisted washing at any time.",
+          "Washing must appear as an activity class; detergent must appear as an explicit participant or material condition in the activity expression.",
+          "Only washing that uses detergent is negated. Water-only washing remains compatible; detergent-and-water washing is excluded.",
+          "Do not introduce a completion requirement, or treat a design purpose or a plan as an activity that actually occurred.",
+          "Consolidation must cover both entire translated meanings; class names, helper definitions and the broader heading are not predetermined."
+        ]
+      }
+    }
+  ]
+}
