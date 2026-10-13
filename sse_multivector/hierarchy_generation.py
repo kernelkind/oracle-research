@@ -719,13 +719,19 @@ def _schedule(directory, state):
         state["status"] = "complete"
 
 
-def check_state(state, *, verify_receipts=True):
+def check_state(state, *, verify_receipts=True, verify_current_code=True):
     if state.get("generation_policy") != POLICY or state.get("schema_version") != 3:
         raise ValueError("unknown hierarchy generation policy")
     for path, digest in state["sources"].items():
         if trial._hash(path) != digest:
             raise ValueError("hierarchy source changed: " + path)
-    if any(
+    if not verify_current_code and any(
+        sum(Path(path).name == name and Path(path).parent.name == "sse_multivector"
+            for path in state["sources"]) != 1
+        for name in CODE_FILES
+    ):
+        raise ValueError("invalid hierarchy construction source bindings")
+    if verify_current_code and any(
         str(Path(__file__).with_name(name).resolve()) not in state["sources"]
         for name in CODE_FILES
     ):

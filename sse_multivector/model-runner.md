@@ -1746,6 +1746,9 @@ Inspect saved results with the existing `export-canonical-viewer` command only
 when requested. Exported headings show the topic and canonical node ID; the
 navigation menu shows note counts. Supporting note IDs remain available for
 note browsing without being enumerated in headings or details.
+Offline export verifies the saved constructor sources and receipts and may run
+from a different checkout; advancing construction still requires its bound
+checkout or a reviewed source upgrade.
 Source-bound Compare preparation remains available for evaluating
 fixed V3 definitions independently. Historical `audit-canonical-trial`,
 `shape-canonical-trial`, candidate measurements and policy-cost comparisons are

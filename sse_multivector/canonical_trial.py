@@ -10,10 +10,10 @@ except ImportError:
     import experiment as workflow
 
 
-def _check(state):
+def _check(state, *, verify_current_code=True):
     if state.get('generation_policy'):
         from .hierarchy_generation import check_state
-        check_state(state)
+        check_state(state, verify_current_code=verify_current_code)
         return
     for path, digest in state['sources'].items():
         if _hash(path) != digest:

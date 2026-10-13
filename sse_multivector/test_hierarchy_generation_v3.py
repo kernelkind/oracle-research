@@ -1021,6 +1021,47 @@ class HierarchyGenerationV3Tests(unittest.TestCase):
         self.assertEqual((self.root / "trial/state.json").read_bytes(), original)
         self.assertEqual(self.calls(), [])
 
+    def test_viewer_reads_frozen_constructor_sources_without_allowing_advancement(self):
+        from sse_multivector import hierarchy_generation as generation
+
+        self.cli("prepare-hierarchy", "trial", "--spec", self.configure(count=3))
+        self.bootstrap()
+        self.encode_pending()
+        state = self.state()
+        frozen = self.root / "frozen-constructor/sse_multivector"
+        frozen.mkdir(parents=True)
+        for name in generation.CODE_FILES:
+            old = str(PROJECT / "sse_multivector" / name)
+            new = frozen / name
+            new.write_bytes(Path(old).read_bytes())
+            state["sources"][str(new)] = state["sources"].pop(old)
+        self.write("trial/state.json", state)
+        before = (self.root / "trial/state.json").read_bytes()
+        calls = self.calls()
+
+        self.cli("export-canonical-viewer", "trial", "--output", "view")
+        view = json.loads((self.root / "view/hierarchy.json").read_text())
+        self.assertEqual(len(view["notes"]), 3)
+        rejected = self.cli("advance-hierarchy", "trial", "--comment", "wrong checkout", ok=False)
+        self.assertIn("construction source binding changed", rejected.stderr)
+        self.assertEqual((self.root / "trial/state.json").read_bytes(), before)
+
+        missing = str(frozen / "worker.py")
+        digest = state["sources"].pop(missing)
+        self.write("trial/state.json", state)
+        rejected = self.cli("export-canonical-viewer", "trial", "--output", "missing", ok=False)
+        self.assertIn("invalid hierarchy construction source bindings", rejected.stderr)
+        self.assertFalse((self.root / "missing").exists())
+        state["sources"][missing] = digest
+        (self.root / "trial/state.json").write_bytes(before)
+
+        with (frozen / "worker.py").open("a") as stream:
+            stream.write("\n# Changed frozen source\n")
+        rejected = self.cli("export-canonical-viewer", "trial", "--output", "changed", ok=False)
+        self.assertIn("hierarchy source changed", rejected.stderr)
+        self.assertFalse((self.root / "changed").exists())
+        self.assertEqual(self.calls(), calls)
+
     def test_existing_viewer_and_compare_preparation_accept_completed_v3_nodes(self):
         self.cli("prepare-hierarchy", "trial", "--spec", self.configure(count=3))
         self.bootstrap()

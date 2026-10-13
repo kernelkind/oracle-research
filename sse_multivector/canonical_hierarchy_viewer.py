@@ -18,7 +18,7 @@ def export_viewer(directory, output):
     state_path = directory / 'state.json'
     state_bytes = state_path.read_bytes()
     state = json.loads(state_bytes)
-    canonical_trial._check(state)
+    canonical_trial._check(state, verify_current_code=False)
     rows = state.get('menu', {}).get('nodes', state['nodes'])
     nodes = {node['id']: node for node in rows}
     if not nodes or len(nodes) != len(rows) or 'VIEW_ROOT' in nodes:
