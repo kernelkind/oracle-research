@@ -1666,146 +1666,74 @@ HTML viewer with the offline
 browsing exports do not establish official status. The previous `H0001`–`H0701`
 diagnostic inventory IDs are withdrawn and must not be reused.
 
-The standalone canonical constructor is available through the shared launcher.
-Oracle owns construction, comparison selection, consolidation and inspection;
-the experiment runner owns execution, retries, caching and provider transport.
-There is one construction algorithm, with no legacy policy switch. Read help
-from a task worktree:
+The sole canonical constructor implements
+[hierarchy generation V3](../docs/recommendation-engine/hierarchy-generation-v3.md):
+Bootstrap all original local L1s, encode each subject with its explicit meaning
+as context, select the highest-scoring unique cosine pairs, and consolidate each
+pair. Repeat until six or fewer nodes remain, then promote only those final
+nodes. Build each next canonical level from its parent's associated original
+local L1s, stopping at two or fewer distinct notes. No prominence or traversal
+comparison phase is used. The former V2 constructor is preserved in Git history.
+
+Read help through the shared stable launcher from the task worktree:
 
 ```bash
-../experiment-runner/bin/experiment-runner prepare-canonical-traversal --help
-../experiment-runner/bin/experiment-runner run-canonical-traversal --help
-../experiment-runner/bin/experiment-runner advance-canonical-traversal --help
+../experiment-runner/bin/experiment-runner prepare-hierarchy --help
+../experiment-runner/bin/experiment-runner run-hierarchy --help
+../experiment-runner/bin/experiment-runner advance-hierarchy --help
 ```
 
-`prepare-canonical-traversal` accepts a schema-1 definition containing `corpus`,
-saved `note_ids`, `local_schema_version`, `bootstrap_spec`, `comparison_spec`
-and `consolidation_spec`. Current data must originate from ASv6.100 or an
-explicitly approved later AS version. Prompt/schema files, corpus and constructor
-source are frozen. After preparation, `run-canonical-traversal DIRECTORY
---attempt-budget PATH` runs construction unattended: it executes prepared native
-experiments, collects their validated receipts, applies placements and prepares
-the next work until stopping conditions pass or execution is blocked. Use an
-existing persistent attempt allowance; every batch, warmup, retry and resume
-shares that counter. Preparation and explicit advancement remain offline. The
-automatic command calls the ordinary runner execution path under the task's
-authorization and existing budget admission.
+`prepare-hierarchy DIRECTORY --spec SPEC` takes a schema-1 definition containing
+`corpus`, `note_ids`, `local_schema_version` (4), `bootstrap_spec`,
+`consolidation_spec` and `worker_config`. Current data must originate from
+ASv6.100 or an explicitly approved later AS version. The teacher specs retain
+ordinary native runner settings, schemas and versioned prompt paths. The SSE
+config is a pinned worker template; generated jobs replace only its request
+and output paths. Use the worker's Python environment and local model artifacts
+when running the automatic constructor.
 
-Compare-v179 uses symmetric fixed meanings: A is the incoming node and B is the
-selected canonical node. The constructor supplies only subject and meaning to
-this prompt, translates the two containment labels for traversal, and preserves
-native answers and receipts unchanged. The existing local/canonical schema is
-also supported. Graph contradiction checks apply to both formats; canonical
-branches do not become extra fields in v179's model input.
+`run-hierarchy DIRECTORY` runs ordinary native teacher batches and SSE workers
+until completion or blockage. Preparation and `advance-hierarchy DIRECTORY
+--comment TEXT` make no model or encoder calls. The shared runner owns provider
+concurrency, retries, caching, exact answer reuse and usage accounting. Up to
+four batch coordinators overlap; at most one SSE job runs at a time. No external
+provider-concurrency option is introduced. There is no default attempt cap;
+`--attempt-budget PATH` accepts an explicitly requested persistent allowance.
 
-Up to three local searches and a consolidation batch execute concurrently;
-provider concurrency is controlled by the shared runner. Advance after each
-batch finishes, without waiting for unrelated batches. Serialize placements and
-permit only one automatic driver per construction directory. Resume by running
-the same command with the same attempt-budget path. Exact saved results are
-reused. The latest `run-summary.json` distinguishes graph status from execution
-status and records blocked experiment paths and execution errors.
+Root consolidation receives exactly two `nodes` with `title` and `meaning`.
+For deeper levels it also receives the enclosing canonical `parent`, with its
+fixed title/meaning, throughout that family's consolidation. Pair output must
+have nonempty `title` and `meaning`; null is invalid. Native schema checks do
+not establish semantic coverage. Shared definition-writing assemblies are
+validated and frozen at preparation, including the pair-consolidation family.
 
-Native provider retries finish before their answers become construction results.
-If allowance or pause interrupts an eligible retry, keep that case unresolved
-for resume. Terminal failed or malformed answers hold the affected local entry;
-other independent work continues. Failed and interrupted reservations remain
-charged to the counter. An unfinished batch is never repeatedly relaunched by
-the same invocation. Budget exhaustion, pause or infrastructure blockage drains
-active work and returns a nonzero status with preserved partial results. Local
-inventory exhaustion without the required note access and strict narrowing also
-returns nonzero; it is not successful completion. Neither automatic execution
-nor holds introduce an approval step for individual placements.
+All distinct cosine pairs are scored; exact ties follow saved family order.
+Sorting uses bounded chunks and a bounded merge fan-in instead of retaining
+an unbounded Python pair list. This preserves the full comparison set and
+ranking. Cosine work and temporary pair storage remain quadratic. Encodings
+reuse unchanged subject/meaning text and exact selected spans within a build.
 
-Graph state is saved atomically between advancements; each native receipt is
-saved independently. After a process crash, rerun the same command: continue
-from the saved graph and reuse completed requests. An interrupted request with
-no saved result may need another attempt, without refunding its earlier
-reservation. For an explicitly reviewed code fix, pass the existing
-`--runner-upgrade-reason TEXT` option. It records old/new constructor source
-hashes and the preserved graph hash, and forwards the reason to the native
-runner's code-upgrade audit. It cannot authorize changing the corpus, prompts,
-schemas or frozen experiment inputs. Finish active experiments before changing
-their bound source. Saved meanings, decisions and native receipts are retained.
+State is saved atomically. Resume reuses completed native answers and SSE jobs,
+including after interrupted runs. A null Bootstrap meaning retains its entry,
+finishes other independent Bootstrap work and blocks root construction until
+resolved. Failed or malformed cases retain their inputs and diagnostic evidence;
+independent families continue. A native batch is launched at most once per
+automatic invocation, allowing the shared retry policy to govern subsequent
+resume. `run-summary.json` reports execution status separately from graph status.
+A reviewed `--runner-upgrade-reason TEXT` can record permitted constructor-code
+changes while preserving data, meanings and receipts. Finish active work before
+editing or rebinding its sources.
 
-The current standalone constructor implements
-[hierarchy generation V2](hierarchy-generation-draft-v2.md). It independently
-establishes every original L1 meaning, then uses the unchanged PPv35 prompt to
-score each meaning against its full post. PPv35 inherits Bootstrap runner
-settings. All L1s scoring at least 50 are guaranteed; when none qualifies, only
-the highest is guaranteed, with saved order resolving ties. Rotate across notes
-and finish every guaranteed entry before considering completion. Failed scoring
-is unresolved evidence, never zero or permission for a partial fallback.
+Inspect saved results with the existing `export-canonical-viewer` command only
+when requested. Source-bound Compare preparation remains available for evaluating
+fixed V3 definitions independently. Historical `audit-canonical-trial`,
+`shape-canonical-trial`, candidate measurements and policy-cost comparisons are
+saved-data tools; their older singleton-leaf and strict-note-set criteria do not
+define V3's stopping rule. V3's offline tests verify native orchestration,
+association preservation, pair ordering, recursion, leaf counts and resume.
+Real-model hierarchy quality remains unqualified.
 
-For uncovered notes, process remaining L1s by prominence until each note is
-admitted; permit only one such fallback search per note in flight. Next give
-eligible local children matching existing canonical headings priority, including
-children of one-note parents. Their original immediate parent must be admitted
-and the matching canonical node must not yet represent that note. A heading
-match is eligibility only; every selected child follows ordinary traversal.
-When none qualifies, refine the largest unfinished multi-note canonical leaf
-from the immediate children of its original supporting entries, then nearer
-original descendants before farther ones. Use prominence within each note and
-rotate across notes, without a deeper 50-point cutoff. Reassess after placement
-and consolidation; process each original local entry at most once.
-
-Up to three local searches can overlap on fixed graph snapshots; placements
-follow selection order. Before placement, account for graph changes and reuse
-only exact unchanged comparisons. Sharing a note does not exclude a canonical
-comparison. An unchecked or contradicted mapped original-parent relationship
-holds the entry without reopening a pruned branch.
-
-The saved `menu` is separate from the raw comparison graph. For an equal-set
-single-child parent, retain the deeper heading. For a parent with multiple
-children, retain the parent and bypass equal-set children only on that browsing
-branch, exposing their children through transitive containment. Display-only
-`note_ids` preserve access through bypassed leaves without changing canonical
-`entries`. The audit and requested viewer use the menu. No equal-note-set check
-rejects an otherwise valid consolidation. Rebuild the menu from the original
-graph as support grows.
-
-Each selected local node receives an independently generated immutable meaning.
-Every comparison is local versus canonical with fixed meanings; its input
-fields follow the configured Compare contract. `neither` stops that branch; `uncertain` holds the
-local entry. Containment and equivalence reuse established ancestor/descendant
-relationships. Prospective placement retains cycle, returned-relation and
-settled-answer checks. A canonical addition leaving six or more siblings triggers
-consolidation. A proposed synthetic title/meaning must pass ordinary traversal
-and grouping checks; null or rejection leaves the triggering placement intact.
-Complete triggered consolidation before applying the next local placement.
-
-Producer reviews remain bound to native input/output hashes. The latest user
-verdict takes precedence over the latest agent verdict. A current rejection or
-uncertainty at a receiving experiment or an exact reused producer holds the
-entry. Output mechanics and graph checks do not establish semantic accuracy.
-See the [V2 algorithm and preparation contract](hierarchy-generation-draft-v2.md).
-
-Use these offline commands after construction:
-
-| Command | Purpose |
-|---|---|
-| `audit-canonical-trial` | Check recursive distinct-note sets, coverage, note access, strict narrowing and sibling choices, with a finite work budget. |
-| `shape-canonical-trial` | Retain selected saved nodes and witnessed ancestry, preserving meanings and supports in a fresh finished menu. |
-| `export-canonical-viewer` | Export the saved menu and full original notes for the existing hierarchy review UI, only when requested. |
-| `measure-canonical-candidates` | Evaluate comparison selection against validated saved construction snapshots. |
-| `evaluate-canonical-policy-trial` | Compare bound native trials, generation usage and actual finished menus without repairing the candidate. |
-
-Shaping can bypass redundant intermediates through witnessed transitive
-ancestry. Omission is not a negative relationship or an equivalence merge.
-Count original supporting notes plus recursive descendants, deduplicating note
-IDs. V2 finishes after all guaranteed L1s and coverage work, eligible heading
-matches, relevant multi-note-leaf descendants, placements and triggered
-consolidations are settled. Every note must remain individually accessible and
-every displayed edge must strictly narrow its distinct-note set. Exhausted
-multi-note leaves may remain with direct note access; separate singleton
-canonical nodes are not required. Unresolved scoring or missing coverage returns
-an unresolved outcome, not successful completion.
-
-Six siblings is a best-effort consolidation trigger, not a hard maximum. Null
-or a semantically invalid proposal leaves the triggering placement intact;
-an accepted synthetic addition can trigger another sibling check. There is no
-additional requirement to find every possible regrouping or prove globally
-minimal browsing depth. Offline tests exercise V2 through the native workflow.
+The following evidence describes historical V2 runs, not the V3 constructor.
 The user-authorized [HR08–HR10 provider trials](../docs/recommendation-engine/hierarchy-runs.md)
 have saved their initial L1 meanings. HR08 has exhausted eligible selection at
 2,603/3,000 attempts, retaining a partial 23/24-note hierarchy and a review UI;
@@ -7576,12 +7504,13 @@ fixtures. Do not rerun model calls merely to add a preparation capability.
 
 ### Canonical graph-search comparisons
 
-`GraphSearch(nodes)` implements the agreed traversal directly, with no legacy
-mode, same-note filter, ranking shortlist or forced mapped-parent comparison.
-The [V2 standalone constructor](hierarchy-generation-draft-v2.md) uses it for ordinary
-local nodes and synthetic consolidation proposals. Historical scalability
-measurements remain in [the graph-search findings](canonical-graph-search-v1.md);
-they used the former traversal and do not measure the current constructor.
+`GraphSearch(nodes)` retains the former traversal for read-only saved-answer
+selection studies. It has no same-note filter, ranking shortlist or forced
+mapped-parent comparison.
+This is retained for historical selection-regression analysis. The current
+[V3 constructor](../docs/recommendation-engine/hierarchy-generation-v3.md) uses SSE
+pair consolidation instead. Historical scalability measurements remain in
+[the graph-search findings](canonical-graph-search-v1.md); they do not measure V3.
 
 ### Fixed-meaning Compare qualification
 

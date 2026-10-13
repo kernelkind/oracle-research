@@ -472,6 +472,10 @@ def create_source(source, *, base, read, local_only=False, load_report=None):
                 state_provenance[state]['before_step'] = index
             else:
                 rows = trials[trial_path]['nodes']
+            if trials[trial_path].get('generation_policy')=='hierarchy-generation-v3':
+                # Construction provenance stays in the bound state, outside model input.
+                rows=[{key:node[key] for key in ('id','subject','meaning','entries','parents')}
+                      for node in rows]
         if not isinstance(rows, list) or not rows:
             raise ValueError('canonical state requires nodes')
         nodes, producers = {}, {}

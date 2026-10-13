@@ -72,12 +72,12 @@ class CanonicalHierarchyViewerTests(unittest.TestCase):
         self.assertEqual(fixtures.ExperimentTests.calls(self), [])
 
     def test_export_uses_the_finished_menu_and_preserves_the_raw_graph(self):
-        from sse_multivector.canonical_traversal import _stopping
+        from sse_multivector.canonical_hierarchy_shape import finish_nodes
         path = self.source()
         state = json.loads(path.read_text())
         state.pop('shape')
         state['note_ids'] = ['n1', 'n3']
-        _stopping(state)
+        state['menu']={'nodes':finish_nodes(state['nodes'])}
         path.write_text(json.dumps(state))
         original = path.read_bytes()
         self.cli('export-canonical-viewer', 'trial', '--output', 'viewer')

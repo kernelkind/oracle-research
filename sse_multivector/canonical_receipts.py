@@ -53,6 +53,20 @@ def _failure_receipts(experiment, cases):
     return verified
 
 
+def check_synthetic(node):
+    """Verify a synthetic definition against its native producer receipt."""
+    reference=node['synthetic']
+    if not isinstance(reference,dict) or set(reference)!={'experiment','case','receipt'}:
+        raise ValueError('invalid synthetic producer reference')
+    cases=workflow.report(reference['experiment'],only=[reference['case']],
+                          include_request_preview=False)['cases']
+    if (len(cases)!=1 or cases[0]['status']!='valid'
+            or cases[0].get('receipt')!=reference['receipt']
+            or (cases[0].get('parsed') or {}).get('title')!=node['subject']
+            or (cases[0].get('parsed') or {}).get('meaning')!=node['meaning']):
+        raise ValueError('synthetic meaning does not match native producer evidence')
+
+
 def _producer_hold(experiment, cases):
     """Use bound native reviews, including the exact receipt behind reuse."""
     with workflow.report_scope() as files:

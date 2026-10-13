@@ -10,9 +10,9 @@ The incomplete fifty-note test did not establish lower cost or preserved
 hierarchy quality. Its scheduling remained dependent on the chat session,
 causing avoidable idle gaps. The user rejected that process and the duplicate
 baseline, then ended the work. No construction or automation work remains
-active. The measured implementation has been replaced by the
-[standalone V2 constructor](hierarchy-generation-draft-v2.md). The measurements
-below describe that saved experiment, not the current traversal rules. Its
+active. The measured implementation was replaced by V2, which is now replaced by
+[hierarchy generation V3](../docs/recommendation-engine/hierarchy-generation-v3.md).
+The measurements below describe that saved experiment, not V3. Its
 source and construction commands remain in Git history; this document retains
 native cost and saved-graph evidence used by the selection studies.
 

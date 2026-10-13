@@ -142,8 +142,7 @@ class HierarchyNodePairSnapshotTests(unittest.TestCase):
         self.assertFalse((self.root / 'bad-history').exists())
 
     def test_before_step_excludes_support_from_later_equivalence(self):
-        from sse_multivector.test_canonical_traversal import saved_traversal_fixture
-        saved_traversal_fixture(self, equivalent=True)
+        fixtures.saved_graph_fixture(self, equivalent=True)
         self.write('source.json', {'schema_version': 2, 'corpus': 'notes.json',
                    'canonical_states': {'before': {'trial': 'trial/state.json', 'before_step': 1},
                                         'final': {'trial': 'trial/state.json'}},
