@@ -10,7 +10,10 @@ V2 and V1; earlier variants need no formal naming.
 
 ## Construction outline
 
-Bootstrap establishes an explicit meaning for every original local L1 entry.
+Bootstrap requests an explicit meaning for every original local L1 entry.
+Construction uses entries with non-null meanings, retaining null answers and
+their original entries as audit evidence. Every selected note must still have
+at least one entry available for construction.
 Pairing and consolidation then repeatedly form temporary synthetic grouping
 nodes. Only the final groups become nodes in one canonical level. Intermediate
 synthetic nodes do not become canonical nodes or browsing steps.
@@ -26,10 +29,15 @@ Other unresolved details are listed below.
 ## Step 1.1: establish the original local L1 meanings
 
 Run Bootstrap independently for every original local L1 entry and preserve its
-answer and producer evidence. If an answer has a null meaning, record that
-entry as unresolved and continue the other Bootstrap requests. Wait to
-construct the roots until every original local L1 has an established meaning.
-Do not silently omit an unresolved entry or encode a null meaning.
+answer and producer evidence. Finish the other Bootstrap requests when an
+answer has a null meaning. After Bootstrap completes, omit null-meaning entries
+from construction and report them as `skipped_bootstrap`; preserve their original
+IDs, inputs, null answers and receipts. Do not encode null meanings or resample
+them. If a selected note has no non-null L1 meaning, root construction remains
+blocked so that the hierarchy cannot silently lose that note.
+
+The user approved this change while continuing HR14 after two null meanings.
+Earlier frozen runs retain their original generator commits and null policy.
 
 ## Step 1.2: SSE encoding of original local L1 entries
 
@@ -59,7 +67,7 @@ local L1 entries.
 
 Families are separate. Do not pair entries belonging to different canonical
 parents merely because their intended children are at the same depth. Root
-construction has one pool containing the original local L1 entries from the
+construction has one pool containing the non-null original local L1 entries from the
 whole selected corpus. Subsequent construction uses a separate pool for each
 parent, containing its associated original local L1 entries. Later temporary
 consolidation rounds stay within that same family.
@@ -262,8 +270,10 @@ Progress is saved atomically. A completed resume dispatches no new work;
 unfinished native requests follow the runner's existing resume/retry policy.
 Failed or malformed results remain unresolved with case-level diagnostics and
 retain all original entries; independent families continue. Null pair outputs
-are malformed. A null Bootstrap meaning blocks root construction after the
-other Bootstrap cases finish. The constructor does not repeatedly resample it.
+are malformed. Null Bootstrap meanings are retained and reported separately
+from the non-null entries used for construction. A selected note with no
+non-null L1 meaning still blocks root construction. The constructor does not
+repeatedly resample null answers.
 
 Runner failures during advancement retry only after checking the existing frozen
 state and receipts. Failed execution invocations retry when unsent cases remain
@@ -281,7 +291,8 @@ an explicitly supplied allowance, and the same allowance is retained across
 resumes. A reviewed `--runner-upgrade-reason` records permitted constructor-code
 changes while retaining frozen inputs and producer receipts. Finish active work
 before editing or rebinding its source. The saved `run-summary.json` separates
-construction status from execution status and lists unresolved cases and errors.
+construction status from execution status and lists unresolved cases, skipped
+Bootstrap entries and errors.
 
 The existing original-note hierarchy viewer can export a completed or partial
 saved V3 graph when requested; construction does not refresh a UI automatically.

@@ -1724,8 +1724,10 @@ reuse unchanged subject/meaning text and exact selected spans within a build.
 
 State is saved atomically. Resume reuses completed native answers and SSE jobs,
 including after interrupted runs. A null Bootstrap meaning retains its entry,
-finishes other independent Bootstrap work and blocks root construction until
-resolved. Failed or malformed cases retain their inputs and diagnostic evidence;
+answer and receipt, finishes other independent Bootstrap work and is skipped
+from construction. `skipped_bootstrap` reports these entries. Root construction
+remains blocked if any selected note has no non-null L1 meaning, preserving
+selected-note coverage. Failed or malformed cases retain their inputs and diagnostic evidence;
 independent families continue. Advancement and teacher execution use fresh
 shared-launcher processes. Runner failures back off for 5, 10, 20, 40, then
 60 seconds, repeating at 60 seconds until recovery or interruption. Advancement

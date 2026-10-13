@@ -155,6 +155,34 @@ class HierarchyGenerationV3Tests(unittest.TestCase):
     def state(self):
         return json.loads((self.root / "trial/state.json").read_text())
 
+    def prepare_mixed_bootstrap(self):
+        self.configure(
+            notes=[
+                dict(
+                    note_id="n0",
+                    text="An unidentified name and two established topics.",
+                    origin=dict(prompt_version="ASv6.100"),
+                    subjects=[
+                        dict(number="1", subject="Unknown", context="Unidentified"),
+                        dict(number="2", subject="Known A", context="Established"),
+                        dict(number="3", subject="Known B", context="Established"),
+                    ],
+                )
+            ]
+        )
+        self.automatic_runner()
+        needle = 'value={"meaning":"Definition of "+subject}'
+        text = self.runner.read_text()
+        self.assertIn(needle, text)
+        self.runner.write_text(
+            text.replace(
+                needle,
+                'value={"meaning":None if subject=="Unknown" else "Definition of "+subject}',
+            )
+        )
+        self.cli("prepare-hierarchy", "trial", "--spec", self.root / "hierarchy.json")
+        return Path(self.state()["experiments"][0]["experiment"])
+
     def bootstrap(self, meaning="Established meaning"):
         experiment = self.state()["experiments"][0]["experiment"]
         self.cli(
@@ -250,6 +278,53 @@ class HierarchyGenerationV3Tests(unittest.TestCase):
         )
         self.assertEqual((self.root / "trial/state.json").read_bytes(), before)
 
+    def test_null_bootstrap_is_omitted_when_note_has_a_defined_l1(self):
+        notes = [
+            dict(
+                note_id="n0",
+                text="An unidentified name and an established topic.",
+                origin=dict(prompt_version="ASv6.100"),
+                subjects=[
+                    dict(number="1", subject="Unknown", context="Unidentified"),
+                    dict(number="2", subject="Known", context="Established"),
+                ],
+            )
+        ]
+        self.cli("prepare-hierarchy", "trial", "--spec", self.configure(notes=notes))
+        self.automatic_runner()
+        text = self.runner.read_text()
+        needle = 'value={"meaning":"Definition of "+subject}'
+        self.assertIn(needle, text)
+        self.runner.write_text(
+            text.replace(
+                needle,
+                'value={"meaning":None if subject=="Unknown" else "Definition of "+subject}',
+            )
+        )
+        experiment = self.state()["experiments"][0]["experiment"]
+        self.cli("run", experiment, env={"FAKE_V3": "1"})
+        answers = (Path(experiment) / "run/results.jsonl").read_bytes()
+        calls = self.calls()
+        result = self.cli("advance-hierarchy", "trial", "--comment", "Omit null L1")
+        state = self.state()
+        self.assertEqual(state["status"], "constructing")
+        self.assertEqual(len(state["originals"]), 2)
+        self.assertIsNone(state["originals"][0]["meaning"])
+        self.assertEqual(state["families"][0]["original_ids"], ["L00002"])
+        self.assertEqual(set(state["items"]), {"L00002"})
+        self.assertEqual(state.get("unresolved", []), [])
+        self.assertEqual(
+            [row["case"] for row in json.loads(result.stdout)["skipped_bootstrap"]],
+            ["L00001"],
+        )
+        self.encode_pending()
+        state = self.state()
+        self.assertEqual(state["status"], "complete")
+        self.assertEqual(state["note_ids"], ["n0"])
+        self.assertEqual(state["nodes"][0]["original_ids"], ["L00002"])
+        self.assertEqual((Path(experiment) / "run/results.jsonl").read_bytes(), answers)
+        self.assertEqual(self.calls(), calls)
+
     def test_null_bootstrap_keeps_all_entries_and_prevents_root_construction(self):
         self.cli("prepare-hierarchy", "trial", "--spec", self.configure(count=3))
         self.bootstrap(meaning=None)
@@ -259,6 +334,125 @@ class HierarchyGenerationV3Tests(unittest.TestCase):
         self.assertEqual(len(state["unresolved"]), 3)
         self.assertEqual(state["encodings"], [])
         self.assertEqual(state["nodes"], [])
+
+    def test_legacy_null_blocked_checkpoint_resumes_without_new_calls_or_budget_reset(self):
+        from sse_multivector import hierarchy_generation as generation
+
+        experiment = self.prepare_mixed_bootstrap()
+        budget = self.root / "allowance.json"
+        generation.workflow.engine.PersistentAttemptBudget(budget).initialize(100)
+        self.cli("run", experiment, "--attempt-budget", budget, env={"FAKE_V3": "1"})
+        state = self.state()
+        record = state["experiments"][0]
+        generation._collect_experiment(record)
+        self.assertTrue(record["complete"])
+
+        # Former V3 saved only established meanings before blocking on any null.
+        for original in state["originals"]:
+            meaning = record["answers"][original["id"]]["output"]["meaning"]
+            if meaning is not None:
+                original["meaning"] = meaning
+        state.update(
+            status="blocked_bootstrap",
+            unresolved=[
+                dict(
+                    local=state["originals"][0]["local"],
+                    case="L00001",
+                    experiment=str(experiment),
+                    reason="null Bootstrap meaning",
+                )
+            ],
+        )
+        self.write("trial/state.json", state)
+        generation.check_state(state)
+        receipts = (experiment / "run/results.jsonl").read_bytes()
+        allowance = budget.read_bytes()
+        calls = self.calls()
+        self.assertEqual(json.loads(allowance)["used"], 3)
+
+        with (
+            patch.dict(os.environ, FAKE_RUNNER_LOG=str(self.log), FAKE_V3="1"),
+            patch(
+                "sse_multivector.worker.OfficialSseEncoder",
+                return_value=FixtureEncoder(),
+            ),
+        ):
+            result = generation.run(self.root / "trial", budget)
+        self.assertEqual(result["status"], "complete")
+        self.assertEqual(result["execution_status"], "complete")
+        self.assertEqual([row["case"] for row in result["skipped_bootstrap"]], ["L00001"])
+        state = self.state()
+        self.assertEqual(state["note_ids"], ["n0"])
+        self.assertEqual(len(state["originals"]), 3)
+        self.assertEqual(state["families"][0]["original_ids"], ["L00002", "L00003"])
+        self.assertEqual(result["unresolved"], [])
+        self.assertEqual((experiment / "run/results.jsonl").read_bytes(), receipts)
+        self.assertEqual(budget.read_bytes(), allowance)
+        self.assertEqual(self.calls(), calls)
+
+        completed = (self.root / "trial/state.json").read_bytes()
+        self.assertEqual(generation.run(self.root / "trial", budget)["status"], "complete")
+        self.assertEqual((self.root / "trial/state.json").read_bytes(), completed)
+        self.assertEqual((experiment / "run/results.jsonl").read_bytes(), receipts)
+        self.assertEqual(budget.read_bytes(), allowance)
+        self.assertEqual(self.calls(), calls)
+
+    def test_missing_defined_original_cannot_be_omitted_like_a_null_bootstrap(self):
+        from sse_multivector import hierarchy_generation as generation
+
+        experiment = self.prepare_mixed_bootstrap()
+        self.cli("run", experiment, env={"FAKE_V3": "1"})
+        self.cli("advance-hierarchy", "trial", "--comment", "Collect mixed meanings")
+        self.encode_pending()
+        state = self.state()
+        self.assertEqual(state["status"], "complete")
+        self.assertEqual(state["families"][0]["original_ids"], ["L00002", "L00003"])
+
+        del state["originals"][1]["meaning"]
+        item = state["items"].pop("L00002")
+        state["vectors"].pop(item["vector_key"])
+        state["nodes"] = [node for node in state["nodes"] if node["item"] != "L00002"]
+        state["families"][0]["original_ids"].remove("L00002")
+        state["families"][0]["current"].remove("L00002")
+        self.write("trial/state.json", state)
+        before = (self.root / "trial/state.json").read_bytes()
+        calls = self.calls()
+
+        with self.subTest(check="state validation"):
+            with self.assertRaises(ValueError):
+                generation.check_state(state)
+        with self.subTest(check="native advancement"):
+            result = self.cli(
+                "advance-hierarchy", "trial", "--comment", "Reject missing meaning", ok=False
+            )
+            self.assertIn("meaning", result.stderr)
+        self.assertEqual((self.root / "trial/state.json").read_bytes(), before)
+        self.assertEqual(self.calls(), calls)
+
+    def test_nonnull_bootstrap_cannot_be_marked_null_to_remove_its_original(self):
+        from sse_multivector import hierarchy_generation as generation
+
+        experiment = self.prepare_mixed_bootstrap()
+        self.cli("run", experiment, env={"FAKE_V3": "1"})
+        self.cli("advance-hierarchy", "trial", "--comment", "Collect mixed meanings")
+        self.encode_pending()
+        state = self.state()
+        state["originals"][1]["meaning"] = None
+        item = state["items"].pop("L00002")
+        state["vectors"].pop(item["vector_key"])
+        state["nodes"] = [node for node in state["nodes"] if node["item"] != "L00002"]
+        state["families"][0]["original_ids"].remove("L00002")
+        state["families"][0]["current"].remove("L00002")
+        self.write("trial/state.json", state)
+        before = (self.root / "trial/state.json").read_bytes()
+
+        with self.assertRaisesRegex(ValueError, "original meaning differs from native Bootstrap"):
+            generation.check_state(state)
+        result = self.cli(
+            "advance-hierarchy", "trial", "--comment", "Reject forged null", ok=False
+        )
+        self.assertIn("original meaning differs from native Bootstrap", result.stderr)
+        self.assertEqual((self.root / "trial/state.json").read_bytes(), before)
 
     def test_automatic_recursion_restarts_original_l1s_and_supplies_canonical_parent(
         self,
