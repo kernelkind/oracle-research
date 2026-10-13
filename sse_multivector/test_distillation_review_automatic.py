@@ -153,6 +153,38 @@ class DistillationAutomaticTests(unittest.TestCase):
                 result = automatic.run(directory)
         self.assertEqual(result["status"], "complete")
 
+    def test_explicit_resume_starts_paused_native_groups(self):
+        from experiment_runner import experiment
+        from sse_multivector import distillation_review_automatic as automatic
+        _, _, coverage, _, _ = self.fixture("paused-resume")
+        directory = self.root / "automatic"
+        automatic.prepare(coverage, directory, runner_binary=self.root / "fake-runner")
+        state = experiment.read(directory / "state.json")
+        self.assertTrue(state["experiments"])
+        for entry in state["experiments"]:
+            entry["status"] = "paused"
+        experiment.write(directory / "state.json", state)
+        with patch.dict(os.environ, FAKE_RUNNER_LOG=str(self.root / "calls.json")):
+            result = automatic.run(directory)
+        self.assertEqual(result["status"], "complete", result.get("error"))
+
+    def test_unrelated_saved_failure_does_not_resume_paused_native_groups(self):
+        from experiment_runner import experiment
+        from sse_multivector import distillation_review_automatic as automatic
+        _, _, coverage, _, _ = self.fixture("failed-source-paused")
+        directory = self.root / "automatic"
+        automatic.prepare(coverage, directory, runner_binary=self.root / "fake-runner")
+        state = experiment.read(directory / "state.json")
+        for entry in state["experiments"]:
+            entry["status"] = "paused"
+        state.update(status="failed", error="automatic grading collection source changed: original")
+        experiment.write(directory / "state.json", state)
+        calls = (self.root / "calls.json").read_bytes()
+        result = automatic.run(directory)
+        self.assertEqual(result["status"], "failed")
+        self.assertEqual(result["error"], state["error"])
+        self.assertEqual((self.root / "calls.json").read_bytes(), calls)
+
     def test_dispatched_requests_are_not_embedded_again_while_scores_stay_pending(self):
         from experiment_runner import experiment
         from sse_multivector import distillation_review_automatic as automatic
@@ -332,6 +364,10 @@ class DistillationAutomaticTests(unittest.TestCase):
         native = json.loads(self.native("show", sibling, "--json").stdout)
         self.assertEqual(native["scheduling"]["state"], "paused")
         self.assertEqual(len((sibling / "run/results.jsonl").read_text().splitlines()), 1)
+        calls = (self.root / "calls.json").read_bytes()
+        resumed = automatic.run(directory)
+        self.assertEqual(resumed["status"], "failed")
+        self.assertEqual((self.root / "calls.json").read_bytes(), calls)
 
     def test_zero_call_completion_rechecks_saved_sources(self):
         fixture = fixtures.DistillationCoverageSearchTests()
@@ -442,13 +478,22 @@ class DistillationAutomaticTests(unittest.TestCase):
                 fixture.native("run", entry["path"])
         coverage = self.root / "coverage"
         coverage_module.prepare(baseline, coverage, runner_binary=worker, policy="grading")
-        directory = self.root / "automatic"
-        prepared = json.loads(self.native("prepare-distillation-automatic-grading", coverage,
-            "--output", directory, "--runner-binary", worker).stdout)
-        self.assertGreaterEqual(len(prepared["experiments"]), 2)
-        barrier = self.root / "barrier"
-        barrier.mkdir()
-        result = json.loads(self.native("run-distillation-automatic-grading", directory,
-            extra_env={"FAKE_RUNNER_BARRIER": str(barrier),
-                "FAKE_RUNNER_BARRIER_COUNT": str(len(prepared["experiments"]))}).stdout)
-        self.assertEqual(result["status"], "complete")
+        for resume in (False, True):
+            with self.subTest(resume=resume):
+                directory = self.root / ("automatic-resume" if resume else "automatic-fresh")
+                prepared = json.loads(self.native("prepare-distillation-automatic-grading", coverage,
+                    "--output", directory, "--runner-binary", worker).stdout)
+                self.assertGreaterEqual(len(prepared["experiments"]), 2)
+                if resume:
+                    state_path = directory / "state.json"
+                    state = json.loads(state_path.read_text())
+                    for entry in state["experiments"]:
+                        entry["status"] = "paused"
+                    state.update(status="failed", error="automatic grading cannot finish every selected answer")
+                    state_path.write_text(json.dumps(state))
+                barrier = directory / "barrier"
+                barrier.mkdir()
+                result = json.loads(self.native("run-distillation-automatic-grading", directory,
+                    extra_env={"FAKE_RUNNER_BARRIER": str(barrier),
+                        "FAKE_RUNNER_BARRIER_COUNT": str(len(prepared["experiments"]))}).stdout)
+                self.assertEqual(result["status"], "complete")

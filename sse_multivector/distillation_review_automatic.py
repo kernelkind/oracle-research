@@ -298,7 +298,9 @@ def run(directory, *, runner_upgrade_reason=None):
             raise ValueError("automatic grading coverage preparation changed")
         if state["status"] == "failed":
             failed = [entry for entry in state["experiments"] if entry["status"] == "failed"]
-            if failed and all(_retryable_native(entry, entry.get("returncode")) for entry in failed):
+            if ((failed and all(_retryable_native(entry, entry.get("returncode")) for entry in failed))
+                    or (not failed and state.get("error") == "automatic grading cannot finish every selected answer"
+                        and any(entry["status"] == "paused" for entry in state["experiments"]))):
                 for entry in failed:
                     _schedule_retry(entry, state.get("error", "retry native grading batch"))
                 state["status"] = "prepared"
@@ -330,7 +332,7 @@ def run(directory, *, runner_upgrade_reason=None):
                 # the shared runner immediately, before waiting for any completion.
                 submitted = False
                 for entry in state["experiments"]:
-                    ready = entry["status"] in {"prepared", "running"} or (
+                    ready = entry["status"] in {"prepared", "running", "paused"} or (
                         entry["status"] == "retry_wait" and entry["next_retry_at"] <= time.time())
                     if ready and entry["path"] not in active:
                         logfile = directory / "logs" / (Path(entry["path"]).name + ".log")
