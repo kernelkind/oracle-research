@@ -20,6 +20,16 @@ _DEFINITIONS = dict(
     relationship=("DSLv2", "relationship-prompt-v2.md", "boolean-response-schema.json", "RELATIONSHIP_INPUT", "child_subject"))
 
 
+def review_prefix(template, variables, payload, field, render):
+    """Share relationship instructions and post across different parent wordings."""
+    if field == "child_subject" and "{POST}" in template:
+        boundary = "{TEACHER_CONTEXTS}" if "{TEACHER_CONTEXTS}" in template else "{" + payload + "}"
+        head = template[:template.index(boundary)]
+        fixed = {key: value for key, value in variables.items() if "{" + key + "}" in head}
+        return render(head, fixed)
+    return preview._natural_prefix(template, variables, payload, field, render)
+
+
 def _selection(reference, base):
     from .distillation_review_trial import load_trial
     review._fields(reference, {"path", "sha256"}, "review evaluation selection")
@@ -243,7 +253,7 @@ def prepare(selection_path, output, *, runner_binary=None, history_root=None, as
                 ordinary.append(case["id"])
                 continue
             text = inputs.render(template, case["inputs"])
-            prefix = preview._natural_prefix(template, case["inputs"], payload, field, inputs.render)
+            prefix = review_prefix(template, case["inputs"], payload, field, inputs.render)
             if not text.startswith(prefix):
                 raise ValueError("review evaluation natural prefix differs from rendered prompt")
             group = prefixes.setdefault(prefix, dict(cases=[], inputs=set()))

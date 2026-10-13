@@ -38,6 +38,35 @@ class DistillationAutomaticTests(unittest.TestCase):
         self.assertIn("--verification-experiment", prepared.stdout)
         self.native("run-distillation-automatic-grading", "--help")
 
+    def test_source_configuration_reuses_immutable_native_plan_per_operation(self):
+        from experiment_runner import experiment
+        from sse_multivector import distillation_review_automatic as automatic
+        from sse_multivector import distillation_review_evaluation as evaluation
+        from sse_multivector import test_distillation_review_evaluation as source_fixtures
+        fixture = source_fixtures.DistillationReviewEvaluationTests()
+        fixture.root = self.root
+        prepared = evaluation.prepare(fixture.selection(), self.root / "evaluation",
+            runner_binary=fixture.worker(), reasoning_effort="medium")
+        source = prepared["experiments"][0]["path"]
+        request = dict(source_experiment=source, role="required")
+        expected = automatic._configuration(request, None)
+        context = {}
+        with patch.object(experiment, "load", wraps=experiment.load) as loading:
+            self.assertEqual(automatic._configuration(request, None, context), expected)
+            self.assertEqual(automatic._configuration(request, None, context), expected)
+            alternate = automatic._configuration(request, self.root / "alternate-worker", context)
+            self.assertEqual(alternate[1]["runner_binary"], str(self.root / "alternate-worker"))
+            final = automatic._configuration(dict(request, role="final_matching"), None, context)
+            self.assertEqual(final[1]["reasoning_effort"], "xhigh")
+            self.assertEqual(expected[1]["reasoning_effort"], "medium")
+            self.assertEqual(loading.call_count, 1)
+            path = Path(source) / "experiment.json"
+            path.write_bytes(path.read_bytes() + b"\n")
+            with self.assertRaisesRegex(ValueError, "changed"):
+                automatic._configuration(request, None, context)
+            self.assertEqual(loading.call_count, 1)
+        self.assertFalse((self.root / "calls.json").exists())
+
     def test_fresh_evaluation_finishes_with_one_native_run_and_no_matrix(self):
         from sse_multivector import distillation_review_evaluation as evaluation
         from sse_multivector import distillation_review_assessment as assessment

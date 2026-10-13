@@ -2399,6 +2399,15 @@ automatic preparation. Supply the complete inventory directory as
 `--assessments` when preparing the evaluation. Neither preparation command
 performs inference. Eligible repeated natural prefixes retain native cache
 warming; short and single-use prefixes do not add warmups.
+Relationship preparation shares the fixed rules and original post before the
+varying teacher context and parent/child fields. This preserves the full prompt
+body while avoiding a separate coordinator for each varying parent/context
+prefix. Automatic preparation loads each original native configuration once
+per operation, caches only prompt/settings/adapter metadata and rejects changed
+configuration manifests. The complete 1,800-answer preparation freezes 128
+ready batches in about eight minutes including its core/inventory preparation,
+with no model calls. The exact initial questions total 36,359; later questions
+remain conditional on matching and coverage outputs.
 Full grading concerns the 1,800 saved
 validation answers; eight-hour readiness and reserved final-test review remain
 open.

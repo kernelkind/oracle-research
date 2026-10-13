@@ -11,7 +11,6 @@ import time
 
 from . import distillation_coverage_search as coverage
 from . import distillation_review_evaluation as evaluation
-from . import distillation_review_preview as preview
 from . import extraction_pipeline as engine
 
 
@@ -44,14 +43,24 @@ def prepare_source(source, base, *, preparation_context=None):
     return cases, protected, dict(automatic_role=source["role"], application_allowed=False)
 
 
-def _configuration(request, runner_binary):
+def _configuration(request, runner_binary, context=None):
     from experiment_runner import experiment
     source = request.get("source_experiment")
     if source:
-        plan, _, _ = experiment.load(Path(source))
-        template = plan["prompt"]
-        runner = dict(plan["runner"])
-        adapter = plan["dataset"]["adapter"]
+        path = Path(source).expanduser().resolve()
+        stamp = coverage._file_state(path / "experiment.json")
+        cache = {} if context is None else context.setdefault("automatic_configuration_plans", {})
+        cached = cache.get(str(path))
+        if cached is None:
+            plan, _, _ = experiment.load(path)
+            if coverage._file_state(path / "experiment.json") != stamp:
+                raise ValueError("automatic grading source experiment changed: " + str(path))
+            # Only immutable configuration is needed; retain no large case inventory.
+            cached = stamp, dict(plan["prompt"]), dict(plan["runner"]), plan["dataset"]["adapter"]
+            cache[str(path)] = cached
+        elif cached[0] != stamp:
+            raise ValueError("automatic grading source experiment changed: " + str(path))
+        template, runner, adapter = dict(cached[1]), dict(cached[2]), cached[3]
     else:
         directory = PROJECT / "sse_multivector/distillation-review-v1"
         identifier = request["prompt_id"]
@@ -102,7 +111,7 @@ def _prepare_groups(requests, directory, state, report, context):
     for request in requests:
         if _request_key(request) in already:
             continue
-        template, runner, adapter = _configuration(request, state.get("runner_binary"))
+        template, runner, adapter = _configuration(request, state.get("runner_binary"), context)
         # Preserve the original exact question; no prompt-development overrides.
         rendered = inputs.render(experiment.without_cache_marker(template["text"]), request["case"]["inputs"])
         if rendered != request["case"]["prompt"]:
@@ -110,7 +119,7 @@ def _prepare_groups(requests, directory, state, report, context):
         check = request["case"]["evidence"]["check"]
         if check in evaluation._DEFINITIONS:
             payload, field = evaluation._DEFINITIONS[check][3:]
-            prefix = preview._natural_prefix(template["text"], request["case"]["inputs"],
+            prefix = evaluation.review_prefix(template["text"], request["case"]["inputs"],
                 payload, field, inputs.render)
         else:
             prefix, _ = inputs.template_prefix(template["text"], request["case"]["inputs"])

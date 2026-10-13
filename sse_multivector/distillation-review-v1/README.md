@@ -178,9 +178,35 @@ whole search, and zero-call resume. These tests verify orchestration, not
 additional semantic accuracy.
 
 The frozen full selection includes all 1,800 validation answers across 18
-versions, including invalid outputs. The remaining full preparation and
-runtime measurements are recorded before launch. There are no new reviewer
-calls or reserved-test accesses in this preparation step.
+versions, including invalid outputs. Its complete inventory reuses the prior
+54 teacher contexts and adds 46 source-only, agent-assessed policies under the
+same ASv6.100 distinctions. Every optional group has an explicit generalization
+justification; uncertain exemptions retain the trusted teacher requirement.
+All 100 contexts cover 1,800 answers with zero candidate expectations. Two
+unsealed drafts corrected before final inventory preparation remain preserved
+separately; no original frozen context or reviewer result changes.
+
+The first model-free preparation profile is stopped after 1,851 native groups:
+relationship prefixes unnecessarily include varying teacher context and parent
+wording. Final preparation instead shares the unchanged relationship
+instructions and post across those comparisons, leaving case-specific rows
+and both compared subjects in the original prompt body. This yields 124 frozen
+core groups in 3 minutes 34 seconds. Automatic preparation then produces 128
+ready groups in 4 minutes 13 seconds. With the 5.7-second inventory preparation,
+the final path takes about eight minutes, excluding the interrupted diagnostic.
+Source configurations are loaded once per experiment in the operation's existing
+preparation context, retaining only prompt/settings rather than case inventories.
+Changed configuration manifests are rejected. There are no new reviewer calls
+or reserved-test accesses in this preparation step.
+
+The exact initial work is 9,820 matching inputs, 9,820 support inputs, 16,702
+actual-edge inputs and 17 already-ready coverage searches: 36,359 semantic
+questions. Later guards, searches, verifiers and final decisions depend on
+those outputs. Native warming is eligible for 125 repeated prefixes; three
+groups receive no warmup. The largest execution manifest is 39,577,767 bytes.
+The full prepared experiment remains unrun. The final regression executes
+135 tests: 134 pass, with the same legacy attempt-budget failure reproduced
+on unchanged code; focused native checks also pass on combined main.
 
 The saved ordinary DSL manifest contains 30,713 prompts and occupies 242 MB.
 Production parsing takes about 1.49 seconds alone; four concurrent reads finish
@@ -200,6 +226,17 @@ continuously occupied workers. The resulting model-work scenario is roughly
 uncertainty. In its upper scenario, allowing thirty minutes for local work
 requires about 28.34 average occupied workers. Eight-hour readiness remains
 conditional on measured local costs and sustained throughput.
+
+The fresh full preparation does not assume reuse of earlier reviewer receipts.
+Keeping all initial requests and the same guard/search/verifier scenarios,
+ten-percent allowance and observed final-decision frequency gives a more
+conservative **6.80–7.54-hour** model-work scenario at thirty continuously
+occupied workers. The approximately eight-minute preparation is measured;
+collection and provider tails remain uncertain. Native manifest reuse removes
+the demonstrated repeated parsing without assuming an additional cache speedup.
+Earlier reviewer results remain intact as development evidence. Full-run
+generation has not been launched, and this arithmetic is not a measured
+eight-hour upper bound.
 
 **Current score-impact result:** the approved
 [offline comparison](#offline-grade-comparison-october-13) measures the effect
@@ -429,7 +466,9 @@ This package preserves [DSRv1](prompt.md), drafts [DSRv2](prompt-v2.md), and
 specifies their [report schema](response-schema.json) and qualification cases.
 Offline source preparation, report validation, scoring
 and qualification checks are implemented in the shared experiment workflow.
-The full semantic reviewer has not been qualified; bulk pilot grading is not implemented here.
+The whole-answer DSR prompts remain unqualified. The native per-check automatic
+workflow described above is implemented and prepared for the complete pilot
+validation population; bulk semantic grading has not run.
 
 ## Mechanical decisions for all three checks (October 9)
 
