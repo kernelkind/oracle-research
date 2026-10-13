@@ -7,7 +7,10 @@ action's identity; plans relate separately to their proposed activities. A
 purpose or intended use alone does not establish occurrence, while explicit
 actual use remains supplied evidence. Its six-case check is complete: six
 qualified agent accepts, with activity/plan identity and stated actual use
-preserved. V10 remains experimental and is not activated in hierarchy generation.
+preserved. Its subsequent twelve-case panel records nine qualified agent accepts,
+one action-representation failure for a negated condition, and two input/contract
+scope uncertainties. V10 remains experimental and is not activated in hierarchy
+generation.
 The shared meaning-writing text, Bootstrap companion, guide and example are
 unchanged; no new example or production code is introduced.
 
@@ -710,13 +713,11 @@ the replacement, but does not prove the old sentence caused the earlier wording:
 V10 removes that sentence and supplies a positive representation rule, with one
 sample per case and no deletion-only ablation. Primitive vocabulary and
 intensional purpose/proposal interpretation remain unvalidated by independent
-human gold. All six inputs are roots, so supplied-parent fit still needs the
-existing broader panel. No new example is warranted from this passing screen.
-
-The next useful check is the saved twelve-case panel against V10, reusing the
-matching coffee answer. That adds supplied-parent, completion, absence,
-alternative and role controls before broader qualification. Those further calls
-are not part of this completed trial, and no hierarchy activation is authorized.
+human gold. All six inputs are roots, so this screen did not test supplied-parent
+fit. No new example is warranted from this passing screen. The user then
+authorized the existing twelve-case panel, reported below; those calls are
+accounted separately from this six-case trial. No hierarchy activation is
+authorized.
 
 Native `experiment-usage-summary-v3` accounting is complete without warnings:
 six fresh attempts, zero failures, retries, reuses or warmups; 19,446 input
@@ -740,3 +741,115 @@ Its ignored evidence is `target/pair-consolidation-owl-v10-coffee-forward-v1`,
 `target/pair-consolidation-owl-v10-purpose-plan-usage-summary-v1.json`. Earlier
 retained worktrees still supply exact baseline/source bindings. Historical
 prompts, source inputs and original receipts remain unchanged.
+
+## V10 twelve-case panel: pre-call method
+
+The user authorized the existing twelve-case panel against unchanged V10. Native
+preparation inherits the V7 panel's exact case IDs, input bytes and Sol 6.1 medium
+subscription/SSE settings, with V10 replacing only the prompt. The V10 coffee
+answer is an exact native reuse; eleven cases require fresh answers. No baseline
+rerun, intentional repeat, warmup, extra example or hierarchy activation is
+included. All preparation and execution bindings point to isolated worktrees.
+
+Review the supplied-parent cases as well as completion, plans, `SOME` versus
+`ONLY`, explicit absence, alternatives and material/ingredient roles. Check
+independent input fidelity, coverage, parent containment and English/formal scope
+separately. Do not infer relationships from class names alone or introduce
+unstated conditions to make containment pass. Retain the material-use and basic
+concept scope qualifications; these authored inputs do not establish human gold.
+The worked-example case tests formatting, not unseen semantic generalization.
+
+## V10 twelve-case panel: completed findings — 2026-10-13
+
+All twelve cases completed: eleven fresh GPT-6.1 Sol medium calls and one exact
+native reuse of the V10 coffee answer. There were no failures, retries, warmups
+or baseline reruns. Each fresh receipt reports HTTP 200 and GPT-6.1 Sol; each
+request uses one user message, without a prior-response reference. Inputs and
+settings match the frozen V7 panel, and all source hashes remain exact. The
+initial delay was shared queue admission, followed by reported recovery limits;
+it was not a failure of this batch's requests.
+
+All twelve outputs pass JSON layout, expression formatting, vocabulary closure
+and unchanged-definition checks. Native manual reviews record **nine qualified
+agent accepts, one formal-rule reject and two uncertainties**. These are agent
+assessments of authored controls, not user gold or automatic reasoner proofs.
+
+| Case | Assessment | Finding |
+|---|---|---|
+| Worked example | Format-only accept | Blue background and installed-component roles fit the supplied parent |
+| Completed painting | Qualified accept | Completion, interior targets and supplied parent are retained |
+| Completed activity / painting plans | Qualified accept | Activities and plans remain separate `OR` alternatives |
+| Lamps emitting coloured light | Qualified accept | `SOME` permits other emitted light; no `ONLY` added |
+| Containers restricted to beads | Qualified accept | `ONLY` retains empty containers; consolidation permits mixed red/blue contents |
+| Lamp / sign alternatives | Qualified accept | Both input alternatives stay explicit; fixed definitions establish Device containment |
+| Never-painted walls / ceilings | Formal-rule reject | Paint application is represented only through a relation and its glossary, without an activity class |
+| Rosemary roles | Qualified accept | Ingredient Flavouring/Food and plant Cultivation/Garden are formal; consolidation covers plants and parts |
+| Material / product | Uncertain | Formal coverage holds, but supplied Material wording versus intended designation remains ambiguous |
+| Equivalent boiling | Uncertain | State/equivalence/parent checks pass; the fixed WaterHeating primitive leaves its object in a supplied glossary |
+| Coffee equipment | Qualified accept, reused | Drinking/Coffee and Storage/cup-role conditions remain formal; no new draw |
+| Human food / evening meals | Qualified accept | Consumer, purpose, alternatives and evening serving remain explicit; no human restriction transferred to meals |
+
+### Negated activity representation
+
+The never-painted wall translation is:
+
+```text
+Wall AND InteriorConstructionElement AND NOT (hasEverReceivedApplicationOf SOME Paint)
+```
+
+The ceiling substitutes `Ceiling` for `Wall`. The relation glossary says it
+connects a physical element to material applied to it at any time. Thus the
+negative condition is preserved, and both translations are covered by the
+returned never-painted interior-element consolidation. However, there is no
+paint-application activity class or formal activity/participant representation.
+The current rule requires every stated activity to have that representation.
+This is a rule-compliance failure, not a demonstrated wrong absence judgment or
+containment result. A plausible explanation is that the model treated the
+negative condition solely as a property of the wall; this draw does not establish
+the cause or frequency. It is not established as a V10 regression: the earlier
+panel assessments were targeted screens, not independent negative-action audits.
+
+The supplied-parent conclusions hold through the printed definitions in all
+eight parent cases. That is separate from independent input fidelity. The
+material case retains the supplied `Material` definition, "A substance used to
+make things," while translating designated material with an explicit Making/
+Cookware purpose. Actual-use versus generic material-kind interpretation remains
+unsettled; it is not new model-error gold. The boiling case preserves the exact
+`WaterHeating AND BoilingReached` parent for both equivalent nodes. Its supplied
+WaterHeating glossary says "Heating liquid water," so this does not independently
+test formal action/object decomposition. The compatibility of that supplied
+primitive with the decomposition requirement remains a contract qualification.
+
+Basic Bead, Food, Garden and Meal interpretations remain qualified vocabulary,
+without independent human validation. Rosemary's "whether still attached or
+removed" wording is also a writing qualification under the preference for
+positively stated optional variations; no changed membership condition is shown.
+These qualifications must not be silently converted into full semantic passes.
+
+The next useful revision is to clarify that the action-as-class rule also applies
+inside negative conditions, then test the negative case alongside positive-action
+controls. No V11 edit or further inference is part of this completed panel.
+
+### Accounting and retained evidence
+
+Native `experiment-usage-summary-v3` accounting is complete without warnings:
+eleven fresh attempts, one exact reuse and zero failures/retries/warmups; 36,241
+fresh input tokens, 7,759 output tokens and 2,820 reasoning tokens already included
+in output. Reported cache read/write tokens are zero. Fresh API-equivalent
+catalogue cost is **$0.150072**. Original generation of all twelve answers,
+including the coffee producer once, is **$0.168030**. Reuse is not a cache hit,
+independent draw or measured policy saving; catalogue estimates are not
+subscription billing.
+
+The worktree remains necessary for frozen source/code and receipt validation:
+
+```text
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp-pair-consolidation-owl-v10-panel-v1
+```
+
+Ignored evidence is `target/pair-consolidation-owl-v10-panel-v1`,
+`target/pair-consolidation-owl-v10-panel-checks-v1.json`,
+`target/pair-consolidation-owl-v10-panel-usage-source-v1.json` and
+`target/pair-consolidation-owl-v10-panel-usage-summary-v1.json`. Earlier retained
+worktrees provide frozen inputs, baselines and the exact reused coffee producer.
+Prompt bytes, old assessments and original receipts are unchanged.
