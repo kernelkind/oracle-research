@@ -1,6 +1,22 @@
 # Pair-consolidation-owl: experimental prompt line
 
-`pair-consolidation-owl-v11` is the current experimental version. The user approved
+`pair-consolidation-owl-v12` is the current experimental version. It ports the
+normal V7 specificity objective into the OWL task wrappers: retain shared
+identities and defining conditions, choose the most specific coherent covered
+topic, and allow the same scope as a supplied node. Common writing rules, the
+Bootstrap companion, reasoning guide, example and output format remain exact.
+
+The matched nine-pair screen corrects four clear V11 specificity losses: water
+in Coffee, the day-starting role in Breakfast, BTC identity and Dezeen identity.
+Tomatoes was already retained by V11 and remains retained by V12. Five independent
+V12 repeats preserve those targeted conditions, but the Coffee repeat exposes
+a separate roasting condition represented only in English. Beets/MrBeast also
+loses the stated content-attribution link in logic. Across nineteen V12 answers,
+native agent reviews record fourteen qualified accepts, two representation
+rejections and three uncertainties. V12 remains experimental and is not activated
+in hierarchy generation. Full method and limits are recorded below.
+
+`pair-consolidation-owl-v11` is the preceding tested version. The user approved
 making negated activities explicit as activity classes. Its three-case targeted
 check records three qualified agent accepts: never-painted surfaces now retain
 the paint-application class and participant, while completed painting and coffee
@@ -1206,10 +1222,10 @@ results do not show that adding logic alone will repair HR14's final hierarchy.
 They also do not prove every historical broad parent false. No selected pair
 has a supplied parent, so deeper parent-fit failures remain untested here.
 
-The next useful prompt work is to isolate the English-only human restriction
-and the formal/glossary duplication with these saved real inputs before another
-revision. Browsing usefulness must stay a separate assessment. No prompt change
-or further inference is included in this task.
+That HR14 screen identified the English-only human restriction and the
+formal/glossary duplication as controls for subsequent prompt work. Both are
+included in the V12 screen below. Browsing usefulness remains a separate
+assessment. No prompt change or further inference was included in that HR14 task.
 
 Native `experiment-usage-summary-v3` accounting is complete without warnings:
 26,434 input tokens, 14,450 output tokens and 6,586 reasoning tokens already
@@ -1230,3 +1246,172 @@ Ignored evidence is `target/pair-consolidation-owl-v11-hr14-v1`,
 `target/pair-consolidation-owl-v11-hr14-usage-summary-v1.json`. Original HR14
 answers, construction state and reviews remain unchanged in their retained
 source worktree.
+
+## V12 specificity port and matched checks — 2026-10-13
+
+The user authorized porting the normal pair-consolidation prompt's tested
+specificity change into this OWL line and requested current prompting practices.
+[Normal V7](Hierarchy-pair-consolidation-v7.md) had already retained Tomatoes
+in both its root and supplied-parent controls. This task changes only the OWL
+wrappers, publishes [OWL V12](pair-consolidation-owl-v12.md), and tests the same
+nine saved HR14 root controls against unchanged V11.
+
+The opening no longer requires a **new** parent. The selection paragraphs copy
+V7's objective, identity/condition retention and useful-heading preference
+verbatim. A final specificity check uses the already-defined OWL expressions:
+choose a more specific coherent expression when it still covers both fixed
+node expressions and fits the supplied parent; an expression may have the same
+scope as an input. There is no equivalence mode, new output field or constructor
+change. The checked assembly pins unchanged shared-rules-v6, Bootstrap-v129,
+guide-v5 and example-v3. Historical prompt bytes remain unchanged.
+
+The wording follows official guidance to use direct instructions, explicit
+success criteria and clear delimiters without requesting a reasoning narrative.
+[Reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices#how-to-prompt-reasoning-models-effectively)
+supports those practices; it does not certify this semantic objective. The
+[current model-family guide](https://developers.openai.com/api/docs/guides/latest-model#prompting-best-practices)
+recommends evaluating its starting guidance on the chosen model/workload, and
+[evaluation guidance](https://developers.openai.com/api/docs/guides/evaluation-best-practices)
+supports task-specific cases, fixed criteria and checking variability. The
+selected model remains GPT-6.1 Sol medium.
+
+### Method and unchanged controls
+
+The [V11 baseline spec](pair-consolidation-owl-v11-close-baseline-v1.spec.json)
+selects nine exact ASv6.100-derived HR14 root inputs using the existing native
+prepared-experiment adapter. The first V11 Tomato answer already retained
+Tomatoes. Coffee and Dezeen then reproduced unnecessary scope loss before V12
+was drafted: Coffee removed water and Dezeen lost publication identity from
+both its translations and consolidation. These are the observed failing
+controls, not an invented claim that OWL V11 had failed Tomatoes.
+
+The [V12 source reference](pair-consolidation-owl-v12-close-source-v1.json) and
+[close-pair spec](pair-consolidation-owl-v12-close-v1.spec.json) freeze those
+same inputs. Criteria inherited from the normal V7 screen require retaining
+named identities and defining conditions without excluding either complete
+meaning. Cooking's different method scopes and Bread's product/activity kinds
+prevent treating identical titles as automatic equivalence. The reviewed
+Tomato interpretation is user evidence; the other assessments are agent checks,
+not independent human gold. No exact output heading was prescribed.
+
+The [regression source](pair-consolidation-owl-v12-regression-source-v1.json) and
+[spec](pair-consolidation-owl-v12-regression-v1.spec.json) preserve the prior
+completed-painting parent, never-painted wall/ceiling and coffee-equipment cases.
+The [HR14 control spec](pair-consolidation-owl-v12-hr14-controls-v1.spec.json)
+retains Beets/MrBeast and pressure canning/extractor fans. All three ready V12
+batches were submitted before waiting; the shared runner owns scheduling.
+
+After the first draw, native `prepare --from ... --only ... --repeat` selected
+Tomatoes, Coffee, Breakfast, Bitcoin and Dezeen for five independent V12 draws.
+Inputs, schema, reasoning, provider, transport and complete request bodies are
+exactly preserved between each first draw and repeat. Distinct upstream response
+IDs establish fresh calls rather than answer reuse. Each request has one user
+message and no previous-response reference. All nine matched V11/V12 bodies
+have identical non-input fields; only the configured prompt text changes.
+
+### Matched root findings
+
+| Pair | V11 observation | V12 observation |
+|---|---|---|
+| Tomatoes / Tomatoes | Already retains tomato-species fruit identity. | Retains the same broader supplied scope, without first-only Fleshy; repeat agrees. |
+| Coffee / Coffee | Removes both extraction-with-water and water-based-extract conditions. | Retains those distinct water conditions as OR alternatives; repeat retains water, with a separate representation failure below. |
+| Nostr / Nostr | Retains identity but relaxes receiving/retrieval and social-use conditions. | Retains identity, protocol/network kinds, signed-event publication/reception and shared social communication. |
+| Cooking / Cooking | Covers heat-based and wider ingredient preparation through broad preparation/constituent-activity scope. | Covers both under Food preparation for eating; most-specific method scope remains uncertain. |
+| Coffee shops / Coffee shops | Retains café-style business and principal coffee preparation/service. | Retains those conditions, with separate preparing/serving activity classes. |
+| Breakfast / Breakfast | Admits any meal after main sleep, dropping the day-starting condition. | Retains actual eating-day beginning OR intended day beginning after main sleep; repeat agrees. |
+| Bitcoin / Bitcoin | Generalizes to proof-of-work networks and currencies, losing BTC identity. | Retains BTC currency/network identity with appropriate alternatives; repeat agrees. |
+| Dezeen / Dezeen | Becomes generic architecture/design original article sources; translations also omit Dezeen. | Retains Dezeen and original-publication credit role; repeat agrees. |
+| Bread / Bread preparation | Retains products and preparation activities; production occurrence remains qualified. | Retains both kinds; one-versus-multiple-step activity and production occurrence remain qualified. |
+
+The first V12 Coffee expression keeps water at the two different locations:
+water used in extraction versus water forming the extract's base. It does not
+require an implication between those locations merely to make the grouping fit.
+The first Breakfast result similarly retains actual beginning and intended
+beginning as alternatives, rather than replacing both with the broad sleep
+condition. These are improvements in conditions and scope, not just narrower
+titles.
+
+Native agent reviews for the matched roots are V11: two qualified accepts, four
+rejections under the approved specificity objective and three uncertainties;
+V12: seven qualified accepts and two uncertainties. The four clear scope-loss
+controls do not recur in this first V12 draw or their repeats. Nostr strengthens
+its retained conditions, but its prior uncertain finding is not relabeled as
+independent human error. One draw per matched case and one repeat of five cases
+do not establish a reliability rate, a unique optimum or full hierarchy quality.
+This tests the complete wrapper revision, not the causal effect of one sentence.
+
+### Remaining formal failures and qualifications
+
+**MrBeast content attribution is missing from the logic.** The old extra-human
+condition in Beets does not recur. However, the MrBeast translation's `knownFor`
+filler is merely Content hosted on YouTube. Its separate VideoCreator definition
+connects Jimmy Donaldson to a video-creation output, without linking that output
+or the known-for content to each other. The input and final English both say
+**his YouTube content**. The formal representation therefore does not preserve
+the stated association with Jimmy Donaldson. Do not turn this into an assumed
+sole-authorship requirement; the actual stated attribution must be represented.
+Copying both translated expressions into a union establishes coverage of those
+translations, not faithful translation of the fixed input.
+
+**The Coffee repeat hides roasting in an English-defined class.** Water remains
+formal in both branches, but the repeat defines `RoastedCoffeeBeans` only as
+"Coffee beans that have been roasted." Neither CoffeeBean nor Roasting has a
+formal supporting definition exposing the stated roasting condition/activity.
+V12 says a class may abbreviate stated conditions only through `owl.classes`.
+This is a representation-rule failure; it is not recurrence of the missing-water
+failure. The first V12 Coffee draw had formally represented the roasting state.
+
+Three other findings remain uncertain: Cooking's broad preparation scope, the
+Bread translation's single-step versus one-or-more-step activity scope and
+possible completed-product requirement, and the very broad Material treatment
+processes and equipment consolidation. The latter fixes the specific duplicate
+FanDevice glossary problem but does not establish useful specificity. The
+literal Beets/MrBeast union is also weak for browsing; no synthetic shared
+relationship was invented to conceal that limitation.
+
+The three established OWL controls receive qualified accepts: completion and
+home-surface conditions fit the unchanged painting parent; negated paint
+application retains its activity, paint participant and history scope; cup
+drinking and shelf storage retain their separate purpose/actual-use conditions.
+Only the painting fixture supplies an OWL parent. No natural-language HR14 parent
+was silently removed or converted, and actual HR14 parent-fit cases remain
+untested in this screen.
+
+Across all nineteen V12 answers, native reviews are fourteen qualified accepts,
+two representation rejections and three uncertainties. Mechanical field order,
+expression format, vocabulary closure and definition-consistency checks pass for
+all twenty-eight receipts, including the nine V11 answers. These checks do not
+certify fidelity or execute an OWL reasoner. All reviews are attributed separately
+from user decisions and model input.
+
+The next useful OWL work is a focused test of named-entity attribution and prior
+activity/state representation before another prompt revision. Keep the observed
+specificity gains as regression controls; a successful narrow heading must not
+conceal missing conditions in the logic. No V13, hierarchy activation or further
+inference is included here.
+
+### Accounting and retained evidence
+
+Native accounting reports **28 fresh attempts**: nine V11 baseline answers,
+fourteen first-draw V12 answers and five independent V12 repeats. There are no
+warmups, answer reuses, failures, retries, invalid receipts or missing usages.
+The historical control baselines were read without rerunning them. Native
+`experiment-usage-summary-v3` totals are 79,103 uncached input tokens, 15,616
+cached input tokens, zero cache-write tokens and 49,732 output tokens; 18,475
+reasoning tokens are already included in output. Complete catalogue
+API-equivalent cost is **$0.6570876**, not subscription billing or a savings claim.
+
+Retained worktrees preserve frozen inputs, source/code bindings and receipts:
+
+```text
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp-pair-consolidation-owl-v11-close-baseline-v1
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp-pair-consolidation-owl-v12-specificity-v1
+```
+
+The first retains `target/pair-consolidation-owl-v11-close-baseline-v1`. The second
+retains `target/pair-consolidation-owl-v12-{close,regression,hr14-controls,close-repeat}-v1`,
+native agent reviews, `target/pair-consolidation-owl-v12-specificity-checks-v1.json`,
+and `target/pair-consolidation-owl-v12-usage-{source,summary}-v1.json`. These ignored
+artifacts remain separate from the reusable prompt/assembly/spec definitions and
+maintained findings. Earlier retained worktrees supply unchanged historical
+baselines; their receipts and source inputs are preserved.
