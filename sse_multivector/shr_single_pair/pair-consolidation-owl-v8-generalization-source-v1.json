@@ -1,0 +1,42 @@
+{
+  "cases": [
+    {
+      "id": "10-coffee-equipment-roles-reversed",
+      "inputs": {
+        "INPUT_JSON": "{\"nodes\": [{\"title\": \"Shelves for storing coffee cups\", \"meaning\": \"Shelves designed to store cups used for drinking coffee.\"}, {\"title\": \"Cups for drinking coffee\", \"meaning\": \"Cups designed for drinking coffee.\"}]}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "application_allowed": false,
+        "reversal_of": "10-coffee-equipment-roles",
+        "original_source": "pair-consolidation-owl-pilot-source-v1.json",
+        "original_input_sha256": "68b413fa3af87bbbe729848a2a8503cf406bb2b9df08b3b9bc15e1e4d8251333",
+        "expectation_authority": "pre-call agent conditions, not human gold or a unique expected title",
+        "expected_restrictions": [
+          "Both coffee-drinking activities expose Drinking and the required Coffee object, inline or through owl.classes.",
+          "The shelf retains design purpose, storage and cups used for coffee drinking.",
+          "The cup retains design purpose rather than requiring actual use.",
+          "Neither translation may change scope to match the proposed consolidation."
+        ]
+      }
+    },
+    {
+      "id": "12-bottle-washing-and-soaking-designs",
+      "inputs": {
+        "INPUT_JSON": "{\"nodes\": [{\"title\": \"Bottle-washing brushes\", \"meaning\": \"Brushes designed for washing bottles.\"}, {\"title\": \"Bottle-soaking basins\", \"meaning\": \"Basins designed for soaking bottles.\"}]}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "application_allowed": false,
+        "expectation_authority": "pre-call agent conditions, not human gold or a unique expected title",
+        "expected_restrictions": [
+          "The brush retains its design-for-washing purpose; Washing and its Bottle object must be formally represented.",
+          "The basin retains its design-for-soaking purpose; Soaking and its Bottle object must be formally represented.",
+          "Do not replace design purpose with actual washing or soaking.",
+          "Do not add an unstated purpose such as cleaning to the soaking activity.",
+          "The consolidated expression covers both full fixed translations, and its English meaning matches that expression."
+        ]
+      }
+    }
+  ]
+}

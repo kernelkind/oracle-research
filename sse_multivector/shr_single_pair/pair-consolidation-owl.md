@@ -356,10 +356,9 @@ V8 has not independently resolved these ordinary-language interpretations, and
 they are not assigned new human-gold labels or counted as demonstrated semantic
 failures. The notation is still not executable OWL and no reasoner was used.
 
-The next useful check is an independent repeat and reversed-order draw of the
-coffee case, plus an unseen activity/object control, before another wording
-change or hierarchy integration. Those additional calls are not part of this
-completed panel.
+The user separately authorized the independent repeat, reversed-order coffee
+draw and unseen activity/object control recorded below. They are not part of
+the completed twelve-case panel or authorization for hierarchy integration.
 
 ### Accounting and retained evidence
 
@@ -395,3 +394,29 @@ Its ignored evidence is `target/pair-consolidation-owl-v8-panel-v1`,
 `target/pair-consolidation-owl-v8-panel-usage-summary-v1.json`. This worktree and
 the retained v7/v6/v5 source worktrees remain necessary for native frozen-source,
 baseline and receipt validation at their absolute paths.
+
+## V8 independent follow-ups: pre-call method
+
+The user authorized three follow-up cases without changing any V8 prompt bytes:
+
+- Prepare case `10-coffee-equipment-roles` from the saved V8 panel with native
+  `--only` and `--repeat`, forcing one independent answer rather than reuse.
+- Use the [follow-up source](pair-consolidation-owl-v8-generalization-source-v1.json)
+  for the exact coffee input with only its two-node order reversed, and one
+  unseen authored pair: "Brushes designed for washing bottles" versus "Basins
+  designed for soaking bottles." No parent is supplied in either case.
+- Use the [native spec](pair-consolidation-owl-v8-generalization-v1.spec.json)
+  with the same Sol medium, subscription and SSE settings. Start both ready
+  native batches immediately; let the shared runner own scheduling and retries.
+  No warmup, extra baseline request, paid fallback or hierarchy change is added.
+
+Freeze assessment before inference: both coffee orientations must expose the
+Drinking action and Coffee object, the shelf's storage-to-cup relationship, and
+design purpose rather than required actual use. The unseen pair must expose
+Washing and Soaking with each activity's required Bottle object, while retaining
+the equipment's design purpose. Do not infer a cleaning purpose for soaking.
+Accept equivalent relation names and supporting classes; no unique consolidated
+title or unnecessary internal structure of basic concepts is prescribed. Check
+structure, independently faithful node translations, coverage and English/formal
+agreement separately. Preserve unresolved interpretations instead of assigning
+new human-gold labels. Expectations remain outside the model input.
