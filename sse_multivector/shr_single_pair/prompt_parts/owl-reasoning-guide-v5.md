@@ -1,0 +1,40 @@
+# OWL-like reasoning guide
+
+Use the simplified notation below to express membership conditions and check containment. It is not executable OWL syntax. A class is the set of things or activities admitted by a topic's definition. A relation is a named connection between things or activities.
+
+## Notation
+
+- `owl.expression` is the complete expression defining the topic. It is always the entrypoint.
+- An `owl.classes` field `"Name": "expression"` is an exact supporting class definition: the name and the expression admit the same members.
+- `First ⊑ Second` means every member admitted by `First` is admitted by `Second`. Use this notation for containment checks; a class definition expresses exact membership, not a one-way containment claim.
+- `First AND Second`: members satisfying both conditions.
+- `First OR Second`: members satisfying either condition, including members satisfying both.
+- `NOT First`: members outside `First`.
+- `relation SOME Class`: at least one thing connected through that relation belongs to `Class`. Other connected things may belong to other classes.
+- `relation ONLY Class`: every thing connected through that relation belongs to `Class`. This does not require any such connection to exist.
+
+The JSON string bounds the complete expression, so omit outermost parentheses. Use nested parentheses to make grouping explicit. Give each supporting class definition its own JSON field inside `owl.classes`; do not put `Name =` or newline-separated statements inside an expression string.
+
+Use the same name for the same class or relation throughout. Different class names do not establish containment or exclude shared members. A name defined in `owl.classes` takes its meaning from that expression and the definitions of its component names; do not give it a duplicate English glossary entry.
+
+## Open-world assumption
+
+An unstated fact is unknown, not false. For example, `emits SOME RedLight` permits additional emitted light; it does not establish `emits ONLY RedLight`. Require both `SOME` and `ONLY` when a definition requires an existing connection and restricts every connected thing.
+
+Preserve what each condition qualifies: a panel's background color is different from a component's emitted light. Preserve required roles, purposes and states. A plan to perform an activity does not establish that it happened.
+
+## Definitions and conclusions
+
+Translate the supplied fixed meanings without adding or removing membership conditions. General knowledge may clarify language and its necessary implications; express any required membership implications in the formal definitions. They must be warranted independently of the desired grouping. Titles and existing placement cannot add conditions absent from a fixed meaning.
+
+Define the proposed consolidated topic separately. In the checks below, `Parent`, `Node1`, `Node2` and `Consolidated` label the corresponding `owl.expression` values. They are not extra class definitions or English glossary entries. Derive these conclusions from the definitions; do not assume them:
+
+```text
+Node1 ⊑ Consolidated
+Node2 ⊑ Consolidated
+Consolidated ⊑ Parent    (when a parent is supplied)
+```
+
+A conclusion follows only if it holds in every possible interpretation satisfying those definitions. Missing evidence for a counterexample is not proof. Check that the definitions can hold together and that each defined class can have members: an impossible class is formally contained in every class and cannot establish a useful grouping.
+
+These conclusions establish coverage and fit within a supplied parent. They do not identify a unique consolidated topic or establish its usefulness for browsing.

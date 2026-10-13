@@ -1,6 +1,6 @@
 # Pair-consolidation-owl: experimental prompt line
 
-`pair-consolidation-owl-v4` is a draft for review, not an activated prompt or a
+`pair-consolidation-owl-v5` is a draft for review, not an activated prompt or a
 replacement for the approved `Hierarchy-pair-consolidation-v6`. No model tests
 have been run for this line.
 
@@ -17,29 +17,34 @@ following contract:
 - Reused names preserve their supplied definitions. Required relationships
   must appear in the formal representation rather than being introduced as
   unstated English assumptions.
-- `owl` is a JSON object mapping class names to expression strings. Expressions
-  retain the OWL-like operators; definitions are separate JSON fields rather
-  than newline-separated `Name = expression` statements in one string.
+- Each `owl` object has `expression` first, for the topic's own expression,
+  then `classes`, a JSON object of supporting class definitions. The entrypoint
+  is always `owl.expression`; `owl.classes` may be empty. This same layout is
+  used by the supplied parent and all three returned formal representations.
+- Expressions retain the OWL-like operators. Each expression is one string;
+  supporting definitions are separate JSON fields rather than newline-separated
+  `Name = expression` statements in one string.
 - English glossaries cover referenced names that lack a formal definition.
-  They do not duplicate formal definitions of `Parent`, `Node1`, `Node2`,
-  `Consolidated` or helper classes. The consolidated natural-language title
-  and meaning remain separate final outputs.
+  They do not duplicate supporting class definitions or the topic's entry
+  expression. `Parent`, `Node1`, `Node2` and `Consolidated` are guide labels for
+  entry expressions, not additional class definitions. The consolidated
+  natural-language title and meaning remain separate final outputs.
 
-The full v4 wording remains a draft for review. Outermost parentheses are
+The full v5 wording remains a draft for review. Outermost parentheses are
 omitted from expression strings; nested parentheses preserve grouping.
 
 ## Sources and assembly
 
-The [v4 prompt](pair-consolidation-owl-v4.md) is built by its
-[pinned assembly manifest](pair-consolidation-owl-v4.assembly.json). It includes
-[OWL-like guide v4](prompt_parts/owl-reasoning-guide-v4.md) and
+The [v5 prompt](pair-consolidation-owl-v5.md) is built by its
+[pinned assembly manifest](pair-consolidation-owl-v5.assembly.json). It includes
+[OWL-like guide v5](prompt_parts/owl-reasoning-guide-v5.md) and
 [explicit-meaning rules v6](prompt_parts/explicit-meaning-rules-v6.md)
 byte-for-byte. Its matching definition-writing reference is
 [Bootstrap-v129](Hierarchy-bootstrap-v129.md).
 
-V4 keeps one [complete input/output example](prompt_parts/pair-consolidation-owl-example-v2.md)
-using the same display-panel case, updated to the JSON format and reduced
-English glossaries. The guide distinguishes exact class definitions from
+V5 keeps one [complete input/output example](prompt_parts/pair-consolidation-owl-example-v3.md)
+using the same display-panel case, with each entry expression separated from
+its supporting classes. The guide distinguishes exact class definitions from
 one-way containment checks; required membership implications are expressed in
 the formal definitions. It does not encode a containment claim as an exact
 equivalence. The shared meaning-writing rules and consolidated natural-language
@@ -61,7 +66,7 @@ been measured.
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
 python3 sse_multivector/prompt_assembly.py check \
-  sse_multivector/shr_single_pair/pair-consolidation-owl-v4.assembly.json
+  sse_multivector/shr_single_pair/pair-consolidation-owl-v5.assembly.json
 ```
 
 Assembly checks establish exact reconstruction and unchanged shared sources.
