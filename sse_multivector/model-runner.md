@@ -2298,6 +2298,37 @@ proofs first, audit new versions as outputs arrive with one ledger writer, and
 check that all three inventories are empty before freezing and preparing once.
 The existing report command without `--unreviewed` retains its normal behavior.
 
+The [sixty-answer mixed-effort completion](distillation-review-v1/README.md#sixty-answer-mixed-effort-completion-october-12)
+retains high DSMv3/DSLv10/DCSv1, medium DSSv2 and queue capacity thirty. It finishes
+the original fifty-random/ten-challenge development-exposed selection. Current
+source audits find matching 7/573 errors, support 5/585, actual-edge/self-guard
+DSL 0/827 and coverage 3/174, with respectively 42, 30, 24 and 35 uncertain
+inputs excluded. Separate positive-witness checks have one error and one
+uncertainty among twenty valid outputs. Added resolved matching pairs lose
+0.637 percentage points versus historical xhigh; support has no net loss.
+Inputs/prompts are matched, but legacy request-code provenance prevents a claim
+of a fresh identical-runtime control. Conditional verdict bounds and full
+limitations are recorded with the results; unseen accuracy and eight-hour
+full-evaluation runtime remain open.
+
+Final audit corrects two misselected core review records through attributed
+native uncertainty entries, preserving earlier records. Reprepare source-bound
+coverage after any such correction. The replacement retains exact 209-case
+input/prompt parity and 308 settlements. An obsolete donor binding cannot support
+`review --from-experiment`: existing source judgments are instead recorded
+through native review after comparing complete input, prompt and output.
+Production prompts/defaults are not changed. Prepared unused compatibility
+rows remain a scalability issue rather than required inference.
+Native collection returns twenty-two complete student scores and thirty-eight
+partial scores, preserving uncertainty and rejected-review proof gaps.
+All 1,887 bound source hashes verify. Local accounting reports 1,442 attempts
+and $6.3851408 known API-equivalent cost; complete cost remains unknown because
+failed and interrupted calls lack usage. Reported input is 26.106% cached;
+known warming-inclusive savings are $0.3384832. Closed active worker windows
+total 26 minutes 3.827 seconds, while recorded preparation through collection
+verification takes 102 minutes 42 seconds, before final documentation/integration.
+The turnaround and eight-hour full-evaluation target remain unresolved.
+
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,
 `show-distillation-review-trial`, `assess-distillation-review`,
@@ -2391,7 +2422,8 @@ concurrency, retries and eligible prefix policy stay fixed. See the
 The approved prompt-development loop uses 12–16 distinct complete review inputs
 for the changed check, then further regression cases and the [four-note
 workflow](distillation-review-v1/README.md#regression-scope-reduced-to-four-notes-october-11)
-after that set passes. The full 60 remains very final validation.
+after that set passes. At that stage, the full 60 was reserved for final
+validation; the completed exposed panel is recorded above.
 Lower-effort testing remains paused during DSLv4 development; the current
 ten-note xhigh run has finished generation unchanged at concurrency 16, with
 its raw native report preserved before audit reviews. The

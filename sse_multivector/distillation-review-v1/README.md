@@ -58,17 +58,16 @@ baseline already passed the same six cases, so no benefit was demonstrated.
 The frozen trial is retained as regression evidence, not as the current prompt
 direction or an independent accuracy test.
 
-**Current mixed-effort result:** the [thirty-two-answer expansion](#thirty-two-answer-mixed-effort-expansion-october-12)
-uses high matching, relationships and coverage with medium post support. Source
-audits find seven errors among 984 resolved reviewer decisions (0.71%); sixty-nine
-interpretations remain unscored. These counts cover matching, support,
+**Current mixed-effort result:** the [sixty-answer completion](#sixty-answer-mixed-effort-completion-october-12)
+uses high matching, relationships and coverage with medium post support. Full
+source audits find fifteen errors among 2,159 resolved reviewer inputs (0.69%);
+131 interpretations remain unscored. These counts cover matching, support,
 actual-edge/self-guard checks and coverage searches, excluding separate witness
-verifiers. On the added sixteen answers, the worst observed paired loss versus
-xhigh is 0.88 percentage points for matching; support and relationships improve
-slightly. All 93 resolved coverage searches are source-correct; sixteen remain
-uncertain. Prompts and defaults remain unchanged; these exposed agent assessments
-do not establish unseen accuracy, the general two-point loss bound or final
-sixty-answer qualification.
+verifiers. One separate positive-witness verifier is wrong. Added resolved
+matching pairs lose 0.637 percentage points versus historical xhigh; support has
+no net loss. These exposed agent assessments support the mixed-effort candidate
+without establishing unseen accuracy, a universal two-point loss bound or
+full-evaluation runtime.
 
 **Earlier development result:** xhigh generation finishes on
 [24 notes from the frozen sixty](#dslv10-twenty-four-note-regression-october-11),
@@ -111,14 +110,14 @@ completes: all eight clear authored controls pass, the simple original remains
 sound false, and the rich original repeats true but remains disputed. No prompt
 change is justified by that disputed case alone.
 
-**Current development process:** revise one prompt using
+**Earlier development process:** revise one prompt using
 [12–16 distinct review cases](#case-level-prompt-development-approved-october-10),
 then run broader regression checks once that set passes. The earlier
 [four-note scope](#regression-scope-reduced-to-four-notes-october-11) is subsequently
 expanded to [eight](#dslv10-eight-note-regression-october-11) and then
 [24 notes at xhigh](#dslv10-twenty-four-note-regression-october-11).
-The agreed **50 random plus ten challenge answers** remain the very
-final validation. The bounded
+The agreed **50 random plus ten challenge answers** are now completed as exposed
+development/regression and workload evidence, as recorded above. The bounded
 [ten-note iteration](#iteration-scope-limited-to-ten-notes-october-10) is now
 finished generating with unchanged DSLv4 at Sol/xhigh and **concurrency 16**.
 Its raw native report is preserved before formal audit reviews. Definition and
@@ -7108,6 +7107,168 @@ Replay artifacts are ignored beneath
 `preflight-verified.json` and `preflight-verified-timing.json`. This producer and
 the pinned `experiment-runner-review-mixed-thirty-two` runtime remain necessary
 for the replay's absolute source bindings.
+
+### Sixty-answer mixed-effort completion (October 12)
+
+The authorized completion retains the thirty-two reviewed answers and adds the
+remaining eighteen random and ten challenge answers from the original frozen
+fifty-random/ten-challenge selection. Four added random answers retain their
+saved output-limit failures and receive mechanical failure treatment; the other
+twenty-four enter semantic review. The selection represents fifty-four distinct
+validation posts and remains development-exposed. ASv6.100 is trusted; teacher
+answers, meaning groups, required flags and original assessment files are not
+revised. Reserved pilot test data remains unopened.
+
+The unchanged configuration is gpt-6.1-sol high for DSMv3, DSLv10 and DCSv1,
+medium for DSSv2, shared queue capacity thirty and eligible natural-prefix
+warming. Project and runtime code are pinned in separate worktrees. Native
+exact-proof imports precede new full-output audits; one agent owns each journal.
+Current complete explanations are assessed, and any definite erroneous version
+counts against its distinct input. Mechanical outcomes and separate positive
+witness verifiers are excluded from reviewer-error denominators.
+
+| Check on added valid answers | Resolved inputs | Current errors | Historical xhigh errors | Uncertain inputs |
+| --- | ---: | ---: | ---: | ---: |
+| Matching, high | 314 | 4 | 2 | 22 |
+| Post support, medium | 323 | 1 | 1 | 13 |
+| Actual-edge and matching-self-guard checks, high | 458 | 0 | Not newly regenerated | 9 |
+
+Matching loses 0.637 percentage points on resolved pairs; support has no net
+loss. All 336 matching inputs and all 336 support inputs have byte-identical
+complete inputs and rendered prompts in the original xhigh experiments. Those
+legacy manifests omit the request-code hash now required for automatic reuse:
+this is a historical matched-input comparison, not a fresh controlled trial
+under identical runtime code. Unused prepared xhigh copies make no calls.
+
+On the twenty-two uncertain matching inputs, twenty-one decisions agree and one
+selects a different teacher group. The worst possible relative verdict loss
+including that disagreement is 3/336, or 0.893 percentage points. Four of the
+thirteen uncertain support verdicts differ; its corresponding worst relative
+loss is 4/336, or 1.190 percentage points. These are verdict bounds conditional
+on the source assessments, not certificates for diagnostic explanations.
+High DSL has no established errors on the 458 resolved added inputs. Even
+against a perfect xhigh baseline, treating all nine uncertain inputs as errors
+would lose 9/467, or 1.927 percentage points; new xhigh controls are therefore
+unnecessary for this particular bound. No gain on another check cancels a loss.
+
+Added matching errors omit brand ownership, the electricity object or shared
+research-line ownership, or confuse a question with the underlying topic.
+Medium support's one error attaches co-listed body hashtags to a specific
+subgroup of mothers. Historical xhigh shares one matching error and has its own
+cost-structure and breakout-question errors. No prompt change is made to fit
+these examples. Source ambiguities remain unscored at both reasoning levels.
+
+Native core preflight finds 2,106 required complete-output versions, zero
+pending required outputs and zero unreviewed or reusable-review gaps. Coverage
+preparation makes no calls: 308 conditional settlements and 581 matching guards
+leave 37 native groups containing 209 search occurrences. Only required DSL
+cases run; the unused compatibility matrix remains prepared but unrequested.
+The frozen evaluation still contains 30,713 ordinary relationship cases,
+including 28,617 unrun rows. Eliminating that unused preparation and repeated
+metadata is a remaining scalability opportunity, not a change made here.
+
+All 914 source hashes protected by the prior thirty-two-answer collection
+remain unchanged. New ignored artifacts live beneath
+`oracle-mvp-review-mixed-sixty/target/distillation-review-v1/mixed-sixty/`.
+The copied original selection and assessments, native evaluation, audited
+coverage preparation and attributed journals preserve their source bindings.
+The project and `experiment-runner-review-mixed-sixty` runtime worktrees must
+remain available for those absolute paths. These exposed agent assessments
+support the current mixed-effort candidate; they do not establish unseen-note
+accuracy, a universal two-point loss bound or the eight-hour full-evaluation
+target.
+
+The full current required scope deduplicates complete inputs and rendered
+prompts, rather than adding panel denominators that overlap:
+
+| Reviewer check across all sixty answers | Errors / resolved inputs | Uncertain inputs |
+| --- | ---: | ---: |
+| Matching, high | 7/573 (1.22%) | 42 |
+| Post support, medium | 5/585 (0.85%) | 30 |
+| Actual-edge and matching-self-guard checks, high | 0/827 | 24 |
+| Coverage searches, high | 3/174 (1.72%) | 35 |
+
+These are 2,290 distinct tasks and 2,315 complete-output versions. Separate
+positive-witness verification prepares twenty-four cases and dispatches twenty:
+eighteen complete outputs are source-correct, one remains uncertain and one is
+wrong. Seventeen calls are fresh and three reuse saved results. Four held
+source-uncertain placements remain intentionally unrun. Four existing native
+verifier experiments supply fourteen other exact positive-placement proofs.
+
+Coverage errors include an invalid Incest witness and two false negatives that
+deny Market movements as a generic heading for Bitcoin's volatility reaching
+an eight-month low. The latter reasons require an actual movement or import
+major-move/breakout restrictions from context. The erroneous Monty Hall DSL
+verifier treats the fixed problem's defining switching-advantage inquiry as an
+incidental attribution. All erroneous records retain rejected judgments and
+proof gaps; none is silently repaired into an accepted score.
+
+Final counting detects two wrongly selected core matching reviews: an
+electricity-object rejection attached to a different Bitcoin-network input,
+and an acceptance on the preserved Girls/Women ambiguity. Native uncertain
+corrections retain the original rows. Replacement coverage preparation binds
+the corrected journals with exact 209-case input/prompt parity and unchanged
+308 settlements. The earlier coverage snapshot remains a superseded artifact.
+Its prior binding cannot pass native review import after those corrections;
+replacement reviews are attributed native recordings of already completed
+source audits, after exact input/prompt/output comparison, not claims of
+validated import from that obsolete binding.
+
+Native request discovery initially misses one successful retry whose receipt
+is outside the shared history root: the retry dispatch path did not register a
+history pointer. Two file symlinks beneath that existing shared root expose the
+original manifest and results to supported native scanning. Original bytes and
+request identity stay unchanged. Native preview then reports eleven reusable
+requests and zero new requests for the affected group; every replacement group
+joins existing results without inference. This artifact discovery step does not
+fix the underlying shared-runner retry-registration issue.
+
+Known local native accounting records 1,442 attempts, with forty-three failed
+receipt-bearing attempts recovered and fifty-two retry attempts. Forty-two
+failed comparison receipts and one failed warmup receipt lack usage. One other
+warmup admission has neither release nor receipt; its occupancy and usage remain
+unknown. It is not treated as a free call. No nine-unknown-warmup claim is
+supported by the final artifacts.
+
+The known API-equivalent subtotal is **$6.3851408**; complete cost is unknown.
+Known input contains 1,386,199 uncached and 489,728 cached tokens: **26.106%** of
+reported input volume is cached. Output has 356,377 tokens, including 169,341
+reasoning tokens. Among 1,295 comparison calls with known statistics, 372 have
+cache hits (28.726%). Known warming-inclusive cache benefit is **$0.3384832
+(5.034%)** against the same observed comparisons priced uncached at $6.723624.
+Complete net savings remain unknown because failed and receiptless calls lack
+usage. These are catalog estimates, not subscription cash charges; historical
+reused generation is accounted separately.
+
+Closed native admission/release windows total **26 minutes 3.827 seconds**.
+First admission at 23:52:34.394 UTC to final release at 01:13:37.378 UTC spans
+**81 minutes 2.985 seconds**. Recorded task preparation begins at 23:49:42 UTC,
+before that model span; initial orientation, final audit corrections, receipt
+discovery, collection and documentation add further elapsed time. The incomplete
+warmup admission prevents an exact claim about all worker occupancy. These
+measurements do not show that overall qualification turnaround is fixed or that
+the full evaluation fits eight hours. Preparation, source audits and review
+recording outside active model windows remain material costs.
+
+Final native collection returns **twenty-two complete distilled-model scores
+and thirty-eight partial scores**, including pending self-guard inconsistencies.
+Completion of review calls and source audits does not mean every student score
+is complete. Source uncertainties and rejected reviewer outputs retain pending
+status. The report `final-reviewed-collected-review.json`, SHA256
+`61d707847c7404194282bf340d144b77ac0e7a851f5dbe9ad4c2bccd0cf7f58b`, binds
+1,887 source files; every hash verifies and all 914 earlier protected sources
+still match. Collection performs no inference.
+
+Final native accounting is `final-native-accounting-with-reuse.json`, SHA256
+`e2d947529c2e0617cd37c8e865885e5675159fba0cc033a38220969bbf8d100a`.
+It includes 201 materialized native experiment groups and deduplicates original
+receipt identities across the two coverage snapshots: all thirty-seven
+replacement groups reuse 209 results with zero fresh attempts. Accounting ends
+at 01:30:52.187 UTC, **101 minutes 10.187 seconds after recorded preparation
+start**. Final collection/source verification is complete by 01:32:24 UTC,
+**102 minutes 42 seconds** after that start; documentation and integration
+follow. Brief initial orientation predates the recorded start. Model-active
+time alone is not the total task time.
 
 ## Actual distilled wording: offline preview (October 8)
 
