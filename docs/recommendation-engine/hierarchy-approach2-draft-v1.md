@@ -17,8 +17,8 @@ L1 entries associated with that node, reusing their meanings and vectors. Do not
 expose the temporary binary grouping tree as the next canonical level.
 
 Six is the maximum number of nodes per sibling family, not an exact required
-count. The outline stops expansion when a node has two distinct notes (rule
-3.2). Detailed boundary cases remain open.
+count. Stop expansion when a node has two or fewer distinct notes (rule 3.2).
+Other unresolved details are listed below.
 
 ## Step 1.2: SSE encoding of original local L1 entries
 
@@ -170,7 +170,7 @@ consolidate each pair. Generate SSE vectors for the resulting synthetic nodes
 and repeat pairing and consolidation until six or fewer nodes remain. Only
 those final nodes become the root's canonical L2 children. Each retains the
 original local L1 entries associated with it. Process each root separately,
-subject to the two-note stopping rule below.
+subject to the stopping rule below.
 
 ## Steps 3.1–3.2: repeat for deeper canonical levels
 
@@ -179,14 +179,15 @@ and continue recursively. At each canonical node, start from its associated
 original local L1 entries and reuse their original meanings and SSE vectors.
 The local input remains L1 even as canonical depth increases.
 
-Stop expanding a canonical node once it contains two distinct notes, counting
-each note once even when multiple associated local L1 entries come from it.
+Stop expanding a canonical node once it contains two or fewer distinct notes,
+counting each note once even when multiple associated local L1 entries come
+from it. A node already containing one note is finished and is not expanded.
 
 ## Details still to settle
 
 - Handling similarity ties and failed/invalid consolidation calls.
 - Exact consolidation wording/output and meaning validation.
-- One-note stopping cases and cases where further grouping does not provide
-  useful refinement.
+- Cases where further grouping does not provide useful refinement despite
+  a node containing more than two distinct notes.
 
 These open details are not implementation decisions.
