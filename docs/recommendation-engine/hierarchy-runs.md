@@ -12,22 +12,30 @@ commands. **HR05** is the completed 24-note rerun with a review UI.
 **HR04** is the completed 12-note run; **HR03** is the completed 50-note baseline.
 Each run's raw build, browsing menu and export share its ID.
 
-## HR11–HR13 — approved V3 round
+## HR11–HR14 — approved V3 round
 
-The user approved these three official experiments, run sequentially. All three
-are natively prepared in isolated worktrees with frozen source and input bindings.
-Their complete parameter rows and generation commits are recorded before
-inference. All three completed. Execution followed the
-approved six-note, twelve-note, then twenty-four-note sequence.
+The user approved the six-, twelve- and twenty-four-note V3 experiments and
+then added HR14, a fifty-note run with the same frozen settings and code.
+HR11–HR13 completed in that order. HR14 is natively prepared in its own isolated
+worktree and awaits its pre-inference review. Every run's complete parameter row
+and generation commits are recorded before inference.
 
 | Run | Notes | Definition | Prepared provenance | Status | Review UI | Native usage |
 | --- | --- | --- | --- | --- | --- | --- |
 | HR11 | 6 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr11/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr11-v3/target/hierarchy-hr11-v3-six-note-v1/prepared-provenance.json) | Complete; 17 nodes, 67/1,000 calls | [Launch](../../../oracle-mvp-hierarchy-hr11-v3/target/hr11-review-ui-v1/launch.sh) | [Report](../../../oracle-mvp-hierarchy-hr11-v3/target/hierarchy-hr11-v3-six-note-v1/usage-v1.json) |
 | HR12 | 12 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr12/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr12-v3/target/hierarchy-hr12-v3-twelve-note-v1/prepared-provenance.json) | Complete; 65 nodes, 152/3,000 calls | [Launch](../../../oracle-mvp-hierarchy-hr12-v3/target/hr12-review-ui-v1/launch.sh) | [Report](../../../oracle-mvp-hierarchy-hr12-v3/target/hierarchy-hr12-v3-twelve-note-v1/usage-v1.json) |
 | HR13 | 24 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr13/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr13-v3/target/hierarchy-hr13-v3-twenty-four-note-v1/prepared-provenance.json) | Complete; 107 nodes, 421/5,000 calls | [Launch](../../../oracle-mvp-hierarchy-hr13-v3/target/hr13-review-ui-v1/launch.sh) | [Report](../../../oracle-mvp-hierarchy-hr13-v3/target/hierarchy-hr13-v3-twenty-four-note-v1/usage-v1.json) |
+| HR14 | 50 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr14/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/prepared-provenance.json) | Prepared; 0/10,000 calls | Pending | Pending |
 
 HR13 preserves HR05, HR08 and HR09's exact ordered 24-note selection. HR11 and
 HR12 are approved nested subsets, retaining the original relative order.
+HR14 uses HR03/HR10's exact original fifty-note selection, whose first 24 are
+HR13's notes, and extends the same official answer history. Its four maintained
+definition files have byte-identical frozen copies under its ignored run root;
+absolute prompt and corpus paths bind only its isolated execution checkout.
+That checkout was created from local main, then frozen at the explicitly
+approved generation commit before preparation. Its generation source stays at
+the same Git commit as HR11–HR13 while maintained records land separately.
 All parameters, persistent call allowances and generator versions belong in the
 [CSV ledger](hierarchy-parameters.csv). Native snapshots, usage reports and
 checked review UIs will be linked here as each run finishes. The earlier
