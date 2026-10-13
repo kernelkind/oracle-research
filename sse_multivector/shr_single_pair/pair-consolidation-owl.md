@@ -5,7 +5,9 @@ replacing the inherited rule that activity topics automatically include plans
 with explicit purpose/use and plan representation. Activity classes retain the
 action's identity; plans relate separately to their proposed activities. A
 purpose or intended use alone does not establish occurrence, while explicit
-actual use remains supplied evidence. V10 has not yet been tested or activated.
+actual use remains supplied evidence. Its six-case check is complete: six
+qualified agent accepts, with activity/plan identity and stated actual use
+preserved. V10 remains experimental and is not activated in hierarchy generation.
 The shared meaning-writing text, Bootstrap companion, guide and example are
 unchanged; no new example or production code is introduced.
 
@@ -656,3 +658,85 @@ one consolidated title. Frozen expectations stay outside model input; assessment
 are agent-authored, not human gold or automated reasoner certification. A passing
 screen would not establish reliability or prove the old sentence caused the V9
 wording. Test this replacement before deciding whether another example is needed.
+
+## V10 purpose/use/plan check: completed findings — 2026-10-13
+
+All six authorized cases completed with one fresh GPT-6.1 Sol medium attempt
+each. The three V9 control inputs/settings are exact; the other three use the
+pre-call authored source above. Only the prompt changes for matched controls.
+All requests have one fresh user message, no prior-response reference and the
+same non-input request-body fields. Frozen sources remain exact. No baseline
+was rerun, old output supplied, example added or hierarchy changed.
+
+All six outputs pass JSON layout, expression formatting, vocabulary closure and
+unchanged-definition checks. Manual targeted review records six qualified native
+agent accepts, without user gold or machine-reasoner proof. Both translations
+are covered by their chosen consolidation and its English under the printed
+definitions. Coherent broader scopes may differ between draws; no unique
+consolidated title or scope was predetermined.
+
+| Case | Targeted finding |
+|---|---|
+| Coffee forward | Drinking/Coffee and Storage/coffee-use cups remain formal; activity glossaries no longer include plans |
+| Coffee reversed | Storing, cup role and Drinking/Coffee remain formal; design purpose does not assert occurrence |
+| Bottle design roles | Washing/Soaking and Bottle remain formal; no cleaning purpose is imposed on Soaking |
+| Designed washing brushes | Designed-for Washing with Bottle/Jar objects retained; no actual-use or planning-purpose requirement |
+| Actual past use | `hasBeenUsedIn` retains explicitly stated actual use, without requiring whole-task completion |
+| Washing versus plans | Activity and Plan remain distinct; the consolidation exposes their alternatives with `OR` |
+
+The explicit-plan result separates the two kinds:
+
+```json
+{
+  "activity": "Washing AND (hasObject SOME Bottle)",
+  "plan": "Plan AND (proposes SOME BottleWashing)",
+  "consolidated": "BottleWashing OR (Plan AND (proposes SOME BottleWashing))",
+  "classes": {
+    "BottleWashing": "Washing AND (hasObject SOME Bottle)"
+  }
+}
+```
+
+These fields excerpt the returned expressions; they are not a new output schema.
+Its English meaning covers washing activities and plans to carry them out.
+The purpose-bearing coffee expressions keep Drinking and Storage/Storing as
+activity classes; their English definitions do not include plans. The actual-use
+control keeps `hasBeenUsedIn`, defined as a relation to an activity that has
+actually occurred and in which the item was used. Thus removing automatic plan
+inclusion did not erase explicit past use in this screen.
+
+The V9 plan-membership wording does not recur in these six draws. This supports
+the replacement, but does not prove the old sentence caused the earlier wording:
+V10 removes that sentence and supplies a positive representation rule, with one
+sample per case and no deletion-only ablation. Primitive vocabulary and
+intensional purpose/proposal interpretation remain unvalidated by independent
+human gold. All six inputs are roots, so supplied-parent fit still needs the
+existing broader panel. No new example is warranted from this passing screen.
+
+The next useful check is the saved twelve-case panel against V10, reusing the
+matching coffee answer. That adds supplied-parent, completion, absence,
+alternative and role controls before broader qualification. Those further calls
+are not part of this completed trial, and no hierarchy activation is authorized.
+
+Native `experiment-usage-summary-v3` accounting is complete without warnings:
+six fresh attempts, zero failures, retries, reuses or warmups; 19,446 input
+tokens, 5,185 output tokens and 2,049 reasoning tokens already included in output.
+Reported cache read/write tokens are zero. Complete saved API-equivalent cost is
+**$0.090742**, a catalogue estimate rather than subscription billing or a savings
+claim. The V9 baseline generation and its missing failed usage are not charged
+again as new work in this trial.
+
+The worktree is retained for frozen code/source and native receipt validation:
+
+```text
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp-pair-consolidation-owl-v10-purpose-plan-v1
+```
+
+Its ignored evidence is `target/pair-consolidation-owl-v10-coffee-forward-v1`,
+`target/pair-consolidation-owl-v10-reversed-and-bottle-v1`,
+`target/pair-consolidation-owl-v10-purpose-plan-v1`,
+`target/pair-consolidation-owl-v10-purpose-plan-checks-v1.json`,
+`target/pair-consolidation-owl-v10-purpose-plan-usage-source-v1.json` and
+`target/pair-consolidation-owl-v10-purpose-plan-usage-summary-v1.json`. Earlier
+retained worktrees still supply exact baseline/source bindings. Historical
+prompts, source inputs and original receipts remain unchanged.
