@@ -341,8 +341,59 @@ combined-main checks pass. Read-only verification covers 571 real saved
 manifests and 254 wrapper transitions. Required parsed report evidence still
 consumes memory, so the protected workload boundary remains necessary.
 
-The run remains stopped pending the repaired full-size collection and
-completed-output memory checks. Reviewer prompts, teacher policies, saved
+The repaired real-data replay performs four complete collections of all 1,800
+answers, first with twelve completed native groups and then with all 128 saved
+partial reports, each repeated. Peak process RSS falls from 10.53 to 4.60 GiB;
+cgroup peak falls from 15.2 to 4.62 GiB, with zero swap and OOM events.
+Retained RSS is stable at 3.34 and 3.84 GiB for those two scenarios. Every
+grading answer, premise, pending status, technical failure, summary and source
+hash matches the original collector. Only the output path and omission of
+already prepared request bodies differ; 195 newly reached dependencies remain
+dispatchable.
+
+Full-output testing identifies two further repeated operations. Runner
+`f017040` indexes the first receipt hash/line offset once and advances it on
+verified local appends, rereading exact bytes before saving each reference.
+Unexpected file changes rebuild the index. The production test that previously
+read 235 MiB from a 9.6 MiB ledger now passes a linear byte-read bound; 97
+relevant checks and independent review pass. The largest synthetic group
+resumes 6,134 saved successes and finishes its remaining cases at roughly
+155 per second, versus thirteen per second before removing the repeated scans.
+
+Runner `7eacc8c` separates compact file-stamp/digest metadata from the bounded
+parsed-JSON cache. Receipt validation previously reparsed the same 39.6 MB
+manifest for each of 9,438 cases because it exceeded the cache size. Unchanged
+hash checks now stream once without parsing; changed/replaced sources and
+changes during hashing remain rejected or reverified. Source prompt lookup
+also uses its already loaded manifest. Sixty-two relevant checks and an
+independent audit pass. The completed largest native report validates all
+9,438 saved synthetic successes, reuses them with zero new calls and finishes
+in 17.2 seconds. Its 329 MB ledger averages 34.9 KiB per receipt, above the
+32 KiB mean in the stopped real run. Synthetic outputs test resource handling,
+not semantic reviewer accuracy.
+
+The complete-output probe validates and imports all 36,359 synthetic core
+cases across 128 successful native groups and all 1,800 answers. Two production
+collections succeed at 4.63 GiB peak process RSS and 4.66 GiB cgroup memory,
+with zero memory-limit, OOM or swap events. Returned RSS is 4.267 and 4.268 GiB
+(less than 2 MiB growth). Each report occupies 170.8 MB; the deliberately
+unmatched synthetic verdicts expose 2,952 new coverage searches. Those outputs
+establish resource handling, not semantic accuracy. One malformed six-case
+DCS fixture is preserved separately and excluded; its correctly shaped,
+versioned replacement is included among the 128 verified groups.
+
+The same real grading directory resumes at 19:30 UTC on October 13 under the
+32 GiB, zero-swap boundary, preserving its 3,241 saved valid judgments. The
+transient service appends logs directly and runs independently of an
+interactive command; an OOM cannot trigger an automatic restart. The Oracle
+checks include eighteen automatic regressions, nine combined-source checks
+and three canonical-main checks. The broader run passes 127 of 128 checks;
+the known legacy attempt-budget error also reproduces on unchanged grading
+source and does not affect the uncapped automatic path. Artifacts remain in
+the `oracle-mvp-grading-memory-profile` and `oracle-mvp-grading-memory-verify`
+worktrees to preserve their sealed source and native receipt paths.
+
+Reviewer prompts, teacher policies, saved
 receipts, the 30-request cap and immediate submission of all ready groups
 remain unchanged. Full grading and eight-hour readiness are still unverified.
 
