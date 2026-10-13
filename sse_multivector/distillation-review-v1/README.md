@@ -58,7 +58,14 @@ baseline already passed the same six cases, so no benefit was demonstrated.
 The frozen trial is retained as regression evidence, not as the current prompt
 direction or an independent accuracy test.
 
-**Current mixed-effort result:** the [sixty-answer completion](#sixty-answer-mixed-effort-completion-october-12)
+**Current grading status:** the approved
+[source-bound exception review](#source-bound-grading-exceptions-october-13)
+corrects the blocked saved judgments without rerunning the sixty answers.
+There are **59 complete grades and one pending grade**. The Friday wording
+boundary remains unresolved. Original reviewer errors and
+agent intervention are reported separately from corrected student grades.
+
+**Earlier mixed-effort result:** the [sixty-answer completion](#sixty-answer-mixed-effort-completion-october-12)
 uses high matching, relationships and coverage with medium post support. Full
 source audits find fifteen errors among 2,159 resolved reviewer inputs (0.69%);
 131 interpretations remain unscored. These counts cover matching, support,
@@ -7308,7 +7315,7 @@ unchanged. The proof preserves the provider's original input, prompt, output
 and receipt and separately records the current question and removed candidates.
 Positive, rejected, expanded or changed-context searches cannot qualify.
 
-The final native readiness check produces **53 complete grades, five pending
+The earlier native readiness check produces **53 complete grades, five pending
 grades and two inconsistent verdicts** across the existing sixty answers.
 The seven incomplete answers retain known matching/support errors or conflicting
 matching and DSL judgments; fresh xhigh calls repeated several wrong matches.
@@ -7322,8 +7329,9 @@ Ignored artifacts remain beneath
 original audited report and all 1,887 original source hashes remain unchanged.
 Its N0043 grade uses the negative-subset proof without the two fresh confirmation
 outputs. The grading worktree remains necessary for absolute prompt, schema and
-experiment paths. Current error exceptions still need a defined resolution;
-no broader prompt change or full validation run is authorized by these results.
+experiment paths. The subsequently approved exception workflow is recorded
+below; no broader prompt change or full validation run is authorized by these
+results.
 
 Full-scale production counting finds 9,820 distinct matching inputs, 9,820
 support inputs and 16,702 actual parent-child inputs. After saved sixty-answer
@@ -7334,6 +7342,64 @@ need headroom. **Eight-hour readiness is not established.** Current preparation
 also materializes approximately 608,039 teacher/student compatibility rows,
 mostly unrequested. Preparing actual edges first and constructing only reached
 self-guards and witness pairs remains necessary before full-scale preparation.
+
+### Source-bound grading exceptions (October 13)
+
+The user approved resolving only the blocked judgments in the seven existing
+answers, independently reassessing earlier rejections before accepting them.
+ASv6.100 remains trusted. The original teacher answers, model responses,
+receipts and review ledgers are preserved. This work makes no model calls,
+changes no prompt and leaves the reserved test set sealed.
+
+`adjudicate-distillation-review EXPERIMENT --case CASE --output FILE` records
+an explicit agent decision against the complete native source. Supply
+`--teacher-id Txx|null` for matching or `--valid true|false` for support and
+relationships, plus `--classification correct|incorrect|uncertain`, an exact
+saved-prompt excerpt through `--rule`, and the decisive source evidence through
+`--reason`. For an unresolved interpretation, use `--classification uncertain`
+without either verdict flag. A matching verdict with `teacher_id:null` means
+no complete match; an unresolved record instead has `decision:null`.
+
+The immutable record binds the native experiment, complete input and prompt,
+original output and receipt, original reviews and source hashes. Repeat
+`--adjudication FILE` during grading collection. An explicit decision replaces
+only the same check, input SHA and full prompt, including identical aliases.
+The grading proof identifies agent origin and retains the replaced provider
+evidence without claiming a provider receipt for the correction. Conflicting
+or unresolved records remain blocked. Audited policy cannot consume these
+grading adjudications. Collection rederives coverage from the corrected core
+decisions and reports original classifications, affected questions, occurrences
+and answers separately from student grades.
+
+Independent agent reviews agree on nine wrong original questions: two support
+judgments join independent design/desktop-setup/ideas tags; seven matching
+judgments lose an attribution, causal relationship, visual restriction, inquiry
+meaning, review relationship or explicit economic-regime qualification. Each
+matching correction exhausts the complete teacher catalog before recording
+no match. These are source-based agent assessments of selected failures, not
+human reference labels or an estimate of the overall reviewer error rate.
+
+The tenth question remains uncertain: student `Almost Friday` versus teacher
+`Approach of Friday`. One interpretation accepts a contextual paraphrase;
+another treats `almost` as an additional temporal-proximity restriction.
+The independent reviews do not establish one reference verdict, so this
+answer remains pending rather than forcing a grade. Earlier claims that it
+was a known matching failure are superseded by this uncertainty.
+
+Ten immutable records and the fresh collection are retained under
+`oracle-mvp-grading/target/distillation-review-v1/grading/adjudication/`.
+`collected-final.json` produces **59 complete grades and one pending grade**,
+up from 53 complete, five pending and two inconsistent. No inconsistent grade
+remains. Its native summary records nine resolved questions and one unresolved
+question, affecting 41 subject occurrences in seven answers. Seven of sixty
+answers required exception handling (**11.7%**); six are now completely graded.
+That intervention burden remains visible even though the corrected grades
+are usable. This failure-selected review supplies no new overall error-rate
+estimate and does not replace the earlier full-source audit denominators.
+The historical 53-grade report and its 2,003 source hashes, and the original
+audited report with its 1,887 source hashes, verify unchanged. All **56**
+coverage and assessment production-path regressions pass. Full automation,
+unseen reviewer accuracy and eight-hour full-evaluation readiness remain open.
 
 ## Actual distilled wording: offline preview (October 8)
 

@@ -2279,9 +2279,25 @@ still require unchanged DSL verification. Collection recomputes current coverage
 after core corrections. A usable negative search can settle an identical subset
 of its candidates, with original provider provenance and separate current-input
 proof; changed wording, context, instructions or expanded candidates cannot.
-The final native check produces 53 complete grades and seven unresolved answers,
+The earlier native check produces 53 complete grades and seven unresolved answers,
 with all 51 targeted regressions passing and every original source hash unchanged.
 Repeated xhigh matching failures remain a readiness blocker.
+The approved [source-bound exception workflow](distillation-review-v1/README.md#source-bound-grading-exceptions-october-13)
+adds `adjudicate-distillation-review` and repeated collector `--adjudication`
+flags. It binds an explicit agent decision to preserved complete native
+evidence, applies only to identical check/input/prompt aliases, and keeps
+original model classifications separate from corrected grades. Matching
+`--teacher-id null` is a resolved no-match decision; classification `uncertain`
+without a verdict records an unresolved interpretation and withholds its grade.
+Conflicts remain blocked, and audited policy rejects grading adjudications.
+The bounded review agrees on nine incorrect original questions. Recollection
+produces 59 complete grades and one pending grade; the Friday wording boundary
+remains uncertain. Ten records affect 41 subject occurrences in seven answers,
+preserving the 7/60 (11.7%) exception burden separately from corrected grades.
+No new inference or prompt changes are
+used, every historical source hash verifies, and all 56 targeted regressions
+pass. Agent adjudications do not establish independent human reference labels
+or unseen accuracy.
 Full grading concerns the 1,800 saved
 validation answers; eight-hour readiness and reserved final-test review remain
 open.

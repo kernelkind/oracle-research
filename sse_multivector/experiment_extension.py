@@ -673,6 +673,18 @@ def add_commands(commands):
                    help='use only these saved native correction case IDs; repeat for multiple cases')
     p.add_argument('--premise-audit', type=Path, action='append',
                    help='existing exact complete-output audit JSONL; repeat for multiple audits')
+    p.add_argument('--adjudication', type=Path, action='append',
+                   help='immutable source-bound agent verdict; requires frozen grading policy')
+    p = commands.add_parser('adjudicate-distillation-review', help='record an immutable source-bound agent decision; no inference')
+    p.add_argument('experiment', type=Path)
+    p.add_argument('--case', required=True)
+    p.add_argument('--output', type=Path, required=True)
+    decision = p.add_mutually_exclusive_group()
+    decision.add_argument('--teacher-id', help='matching teacher ID or literal null')
+    decision.add_argument('--valid', choices=('true', 'false'), help='support or relationship verdict')
+    p.add_argument('--classification', choices=('correct', 'incorrect', 'uncertain'), required=True)
+    p.add_argument('--rule', required=True, help='exact approved rule excerpt from the saved prompt')
+    p.add_argument('--reason', required=True)
     p = commands.add_parser('show-distillation-review-evaluation', help='collect native trial results; no inference')
     p.add_argument('evaluation', type=Path)
     p.add_argument('--output', type=Path)
@@ -853,7 +865,15 @@ def handle_command(args):
         from . import distillation_coverage_search
         result = distillation_coverage_search.collect(args.coverage, args.output,
             verification_experiments=args.verification_experiment, premise_audits=args.premise_audit,
-            correction_experiments=args.correction_experiment, correction_case_ids=args.correction_case)
+            correction_experiments=args.correction_experiment, correction_case_ids=args.correction_case,
+            adjudications=args.adjudication)
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+    elif args.command == 'adjudicate-distillation-review':
+        from . import distillation_review_adjudication
+        decision = (dict(teacher_id=None if args.teacher_id == 'null' else args.teacher_id)
+                    if args.teacher_id is not None else dict(valid=args.valid == 'true') if args.valid is not None else None)
+        result = distillation_review_adjudication.record(args.experiment, args.case, args.output,
+            decision=decision, classification=args.classification, rule=args.rule, reason=args.reason)
         print(json.dumps(result, ensure_ascii=False, indent=2))
     elif args.command in {'prepare-distillation-review-evaluation', 'show-distillation-review-evaluation', 'run-distillation-review-evaluation'}:
         from . import distillation_review_evaluation as evaluation
@@ -1097,7 +1117,7 @@ def code_files(dataset):
                   'distillation_review_trial.py', 'distillation_review_preview.py',
                   'distillation_matching.py', 'distillation_verdict.py']
     if dataset['adapter'] == 'distillation_coverage_search':
-        names += ['distillation_coverage_search.py']
+        names += ['distillation_coverage_search.py', 'distillation_review_adjudication.py']
     return {name: directory / name for name in names if (directory / name).exists()}
 
 def consolidation_shapes(plan, cases):

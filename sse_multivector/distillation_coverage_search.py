@@ -149,6 +149,10 @@ def _accepted_premise(row, audits, policy="audited"):
             if item.get("verdict") in {"accept", "reject", "uncertain"}:
                 latest[item.get("role")] = item
         assessments = list(latest.values())
+    if row.get("origin") == "adjudicated":
+        if policy != "grading" or row.get("adjudication", {}).get("actor") != "agent":
+            return None
+        assessments, bound = [], []
     if any(item.get("verdict") in ({"reject", "uncertain"} if policy == "audited" else {"reject"})
            for item in assessments + bound):
         return None
@@ -163,6 +167,8 @@ def _accepted_premise(row, audits, policy="audited"):
         premise["correction"] = row["correction"]
     if row.get("coverage_subset"):
         premise["coverage_subset"] = row["coverage_subset"]
+    if row.get("adjudication"):
+        premise["adjudication"] = row["adjudication"]
     return premise
 
 
@@ -696,7 +702,7 @@ def prepare(evaluation_path, output, *, answer_ids=None, runner_binary=None, his
 
 
 def collect(coverage_directory, output, *, verification_experiments=None, premise_audits=None, correction_experiments=None,
-            correction_case_ids=None):
+            correction_case_ids=None, adjudications=None):
     """Score accepted native checks and searches without running the old matrix."""
     from experiment_runner import experiment, inputs, project
     project.configure(Path(__file__).resolve().parents[1])
@@ -710,6 +716,8 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
         raise ValueError("coverage search preparation changed")
     frozen = experiment.read(frozen_path)
     policy = _policy(frozen.get("policy", "audited"))
+    if adjudications and policy != "grading":
+        raise ValueError("adjudications require grading policy")
     protected = dict(frozen["sources"])
     for path, checksum in protected.items():
         if engine._sha256_file(Path(path)) != checksum:
@@ -761,6 +769,20 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
     audits = _native_correction_audits(audits, corrections, protected, policy)
     correction_index = _correction_index(corrections)
     baseline = _corrected_report(baseline, corrections, audits, policy)
+    from . import distillation_review_adjudication as adjudication
+    adjudication_records = adjudication.load(adjudications or [], protected)
+    adjudicated = adjudication.index(adjudication_records)
+    adjudicated_occurrences = {(row["evidence"]["check"], row["id"]) for cohort in ("random", "challenge")
+        for answer in baseline[cohort]["answers"] for rows in answer["checks"].values() for row in rows
+        if (row["evidence"]["check"], row["input_sha256"], row["prompt"]) in adjudicated}
+    adjudicated_answers = {answer["id"] for cohort in ("random", "challenge") for answer in baseline[cohort]["answers"]
+        if any((row["evidence"]["check"], row["id"]) in adjudicated_occurrences
+               for rows in answer["checks"].values() for row in rows)}
+    if adjudicated:
+        baseline = dict(baseline, **{cohort: dict(baseline[cohort], answers=[dict(answer,
+            checks={check: [adjudication.apply(row, adjudicated) for row in rows]
+                for check, rows in answer["checks"].items()}) for answer in baseline[cohort]["answers"]])
+            for cohort in ("random", "challenge")})
     searches = {key: _corrected_row(row, correction_index, audits, policy) for key, row in searches.items()}
     current_settlements = frozen["preparation"]["settlements"]
     if policy == "grading":
@@ -794,6 +816,9 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
     for row in corrections:
         if row["evidence"]["check"] == "relationship":
             verifiers.setdefault((row["input_sha256"], row["prompt"]), []).append(row)
+    if adjudicated:
+        verifiers = {key: [adjudication.apply(row, adjudicated) for row in rows]
+            for key, rows in verifiers.items()}
     settlements = {(row["answer_id"], tuple(row["teacher_numbers"])): row
         for row in current_settlements if "teacher_numbers" in row}
     cohorts = {}
@@ -942,6 +967,17 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
             raise ValueError("coverage collection source changed: " + path)
     result = dict(schema_version=1, coverage=str(directory), output=str(output), sources=protected,
         policy=policy, inference_calls=0, **cohorts)
+    if adjudication_records:
+        classifications = {(record["check"], record["original"]["input_sha256"], record["original_prompt_sha256"], record["original_output_sha256"],
+            record["original_decision_classification"]) for record in adjudication_records}
+        unresolved = sum(any(record["decision"] is None for record in records)
+            or len({json.dumps(record["decision"], sort_keys=True) for record in records}) != 1
+            for records in adjudicated.values())
+        result["adjudication_summary"] = dict(actor="agent", records=len(adjudication_records),
+            distinct_questions=len(adjudicated), resolved_questions=len(adjudicated) - unresolved,
+            unresolved_questions=unresolved, affected_occurrences=len(adjudicated_occurrences),
+            affected_answers=len(adjudicated_answers), original_decision_classifications={label:
+                sum(row[-1] == label for row in classifications) for label in ("correct", "incorrect", "uncertain")})
     output.parent.mkdir(parents=True, exist_ok=True)
     experiment.write(output, result)
     return result

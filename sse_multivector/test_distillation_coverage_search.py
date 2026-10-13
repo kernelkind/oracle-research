@@ -765,6 +765,117 @@ class DistillationCoverageSearchTests(unittest.TestCase):
         rejected = json.loads(fixture.native("show", search, "--json"))["cases"][0]
         self.assertIsNone(coverage._negative_subset(current, [rejected], {}, template))
 
+    def adjudication_fixture(self, name):
+        from sse_multivector import distillation_review_evaluation as evaluation
+        from sse_multivector import test_distillation_review_evaluation as fixtures
+        fixture, baseline, worker = self.baseline(name, student=fixtures.subjects(
+            ("1", "Fruits"), ("2", "Flying elephants on Mars"), ("2.1", "Flying elephants on Mars")))
+        report = evaluation.report(baseline)
+        group = next(row for row in report["experiments"] if row["cases"][0]["evidence"]["check"] == "support")
+        row = next(row for row in group["cases"] if row["evidence"]["student_number"] == "2")
+        return fixture, baseline, worker, group["experiment"], row
+
+    def test_native_adjudication_grades_identical_aliases_without_rewriting_provider_outputs(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        fixture, baseline, worker, group, row = self.adjudication_fixture("source-adjudication")
+        receipt = Path(row["receipt"]["results_path"])
+        original = receipt.read_bytes()
+        adjudication = self.root / "unsupported-subject-adjudication.json"
+        record = json.loads(fixture.native("adjudicate-distillation-review", group, "--case", row["id"],
+            "--output", adjudication, "--valid", "false", "--classification", "incorrect",
+            "--rule", "Judge what the post expresses, not whether its claims are true in the world.",
+            "--reason", "The complete original post mentions Cable A and fruit; it never expresses flying elephants on Mars."))
+        self.assertEqual(record["actor"], "agent")
+        self.assertEqual(record["decision"]["valid"], False)
+        self.assertEqual(record["original"]["receipt"], row["receipt"])
+        output = self.root / "source-adjudication-coverage"
+        coverage.prepare(baseline, output, runner_binary=worker, policy="grading")
+        result = json.loads(fixture.native("collect-distillation-coverage-search", output,
+            "--output", self.root / "source-adjudication-grades.json", "--adjudication", adjudication))
+        answer = result["random"]["answers"][0]
+        self.assertEqual(answer["scoring"]["findings"]["incorrect_subjects"], ["2", "2.1"])
+        adjudicated = [proof for proof in answer["premises"] if proof["origin"] == "adjudicated"]
+        self.assertEqual(len(adjudicated), 2)
+        self.assertTrue(all(proof["receipt"] is None for proof in adjudicated))
+        self.assertTrue(all(proof["adjudication"]["actor"] == "agent" for proof in adjudicated))
+        self.assertEqual(receipt.read_bytes(), original)
+        overwritten = subprocess.run([sys.executable, str(Path(__file__).resolve().parents[2] /
+            "experiment-runner/bin/experiment-runner"), "--project-root", str(Path(__file__).resolve().parents[1]),
+            "adjudicate-distillation-review", group, "--case", row["id"], "--output", str(adjudication),
+            "--valid", "false", "--classification", "incorrect", "--rule", "Judge what the post expresses, not whether its claims are true in the world.",
+            "--reason", "Repeated immutable write."], capture_output=True, text=True)
+        self.assertNotEqual(overwritten.returncode, 0)
+        self.assertIn("already exists", overwritten.stderr)
+
+    def test_native_adjudication_refuses_a_verdict_of_the_wrong_check_type(self):
+        fixture, _, _, group, row = self.adjudication_fixture("wrong-adjudication-type")
+        destination = self.root / "wrong-type.json"
+        result = subprocess.run([sys.executable, str(Path(__file__).resolve().parents[2] /
+            "experiment-runner/bin/experiment-runner"), "--project-root", str(Path(__file__).resolve().parents[1]),
+            "adjudicate-distillation-review", group, "--case", row["id"], "--output", str(destination),
+            "--teacher-id", "null", "--classification", "incorrect", "--rule", "Judge what the post expresses, not whether its claims are true in the world.",
+            "--reason", "Wrong verdict shape must be rejected."], capture_output=True, text=True)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("support", result.stderr)
+        self.assertFalse(destination.exists())
+
+    def test_native_unresolved_adjudication_withholds_a_grade_and_reports_alias_counts(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        fixture, baseline, worker, group, row = self.adjudication_fixture("uncertain-source-adjudication")
+        path = self.root / "unresolved-source.json"
+        recorded = json.loads(fixture.native("adjudicate-distillation-review", group, "--case", row["id"],
+            "--output", path, "--classification", "uncertain",
+            "--rule", "Judge what the post expresses, not whether its claims are true in the world.",
+            "--reason", "Source interpretation remains unresolved; no semantic verdict is being supplied."))
+        self.assertIsNone(recorded["decision"])
+        output = self.root / "unresolved-source-coverage"
+        coverage.prepare(baseline, output, runner_binary=worker, policy="grading")
+        result = coverage.collect(output, self.root / "unresolved-source-grades.json", adjudications=[path])
+        self.assertEqual(result["random"]["answers"][0]["scoring"]["status"], "pending")
+        summary = result["adjudication_summary"]
+        self.assertEqual(summary["unresolved_questions"], 1)
+        self.assertEqual(summary["affected_occurrences"], 2)
+        self.assertEqual(summary["affected_answers"], 1)
+        self.assertEqual(summary["original_decision_classifications"]["uncertain"], 1)
+
+    def test_conflicting_native_adjudications_remain_pending(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        fixture, baseline, worker, group, row = self.adjudication_fixture("conflicting-source-adjudications")
+        paths = []
+        for value, classification in (("false", "incorrect"), ("true", "correct")):
+            path = self.root / (value + "-source.json")
+            fixture.native("adjudicate-distillation-review", group, "--case", row["id"], "--output", path,
+                "--valid", value, "--classification", classification,
+                "--rule", "Judge what the post expresses, not whether its claims are true in the world.",
+                "--reason", "Explicit conflicting source assessment retained as a separate immutable record.")
+            paths.append(path)
+        output = self.root / "conflicting-source-coverage"
+        coverage.prepare(baseline, output, runner_binary=worker, policy="grading")
+        result = coverage.collect(output, self.root / "conflicting-source-grades.json", adjudications=paths)
+        self.assertEqual(result["random"]["answers"][0]["scoring"]["status"], "pending")
+        self.assertEqual(result["adjudication_summary"]["unresolved_questions"], 1)
+
+    def test_native_same_verdict_adjudication_corrects_a_mistaken_rejection(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        from sse_multivector import distillation_review_evaluation as evaluation
+        fixture, baseline, worker, parent, matching_group = self.path_baseline("correct-source-adjudication")
+        fixture.native("review", matching_group["experiment"], "--case", parent["id"], "--role", "agent",
+            "--verdict", "reject", "--comment", "Mistaken old matching audit retained as history.")
+        record = self.root / "correct-matching-source.json"
+        fixture.native("adjudicate-distillation-review", matching_group["experiment"], "--case", parent["id"],
+            "--output", record, "--teacher-id", parent["parsed"]["teacher_id"], "--classification", "correct",
+            "--rule", "The teacher wording is authoritative.", "--reason", parent["parsed"]["reason"])
+        output = self.root / "correct-source-coverage"
+        coverage.prepare(baseline, output, runner_binary=worker, policy="grading")
+        result = coverage.collect(output, self.root / "correct-source-grades.json", adjudications=[record])
+        answer = result["random"]["answers"][0]
+        self.assertEqual(answer["scoring"]["status"], "valid")
+        proof = next(row for row in answer["premises"] if row["case_id"] == parent["id"]
+            and row["input_sha256"] == parent["input_sha256"])
+        self.assertEqual(proof["origin"], "adjudicated")
+        self.assertEqual(proof["adjudication"]["original_decision_classification"], "correct")
+        self.assertEqual(evaluation.report(baseline)["random"]["answers"][0]["checks"]["matching"][0]["output"], parent["output"])
+
     def test_grading_does_not_choose_between_contradictory_native_corrections(self):
         from sse_multivector import distillation_coverage_search as coverage
         fixture, _, output, native, row = self.collection_fixture("grading-conflict", policy="grading",
