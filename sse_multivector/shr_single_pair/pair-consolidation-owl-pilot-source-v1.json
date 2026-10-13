@@ -1,0 +1,218 @@
+{
+  "cases": [
+    {
+      "id": "00-format-example",
+      "inputs": {
+        "INPUT_JSON": "{\"parent\": {\"owl\": {\"expression\": \"DisplayPanel OR (installedAsComponentIn SOME DisplayPanel)\", \"classes\": {}}, \"definitions\": {\"DisplayPanel\": \"A device that presents visual information.\", \"installedAsComponentIn\": \"A relation from a component to the thing in which it is installed in that role.\"}}, \"nodes\": [{\"title\": \"Blue text panels\", \"meaning\": \"Blue text panels are display panels that show text against a uniformly blue background.\"}, {\"title\": \"Red indicator lights in blue display panels\", \"meaning\": \"Red indicator lights in blue display panels are lights that emit red light and are installed as components in display panels with uniformly blue backgrounds.\"}]}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "trained_example": true,
+        "expectation_authority": "pre-call agent restrictions, not a unique expected title",
+        "origin": "Exact input from the prompt example; format control only",
+        "expected_restrictions": [
+          "Match the prescribed structure; preserve installed-component role and blue-background versus red-emission distinction."
+        ],
+        "application_allowed": false
+      }
+    },
+    {
+      "id": "01-completed-painting",
+      "inputs": {
+        "INPUT_JSON": "{\"parent\": {\"owl\": {\"expression\": \"PaintingActivity AND Completed AND (hasTarget SOME HomeSurface)\", \"classes\": {}}, \"definitions\": {\"PaintingActivity\": \"Applying paint to a surface or fixture.\", \"Completed\": \"An activity whose performance is finished.\", \"HomeSurface\": \"A surface or fixture of a home.\", \"hasTarget\": \"A relation from an activity to a surface or fixture to which it applies paint.\"}}, \"nodes\": [{\"title\": \"Completed interior wall painting\", \"meaning\": \"Completed interior wall painting is applying paint to interior walls of a home, with the painting finished.\"}, {\"title\": \"Completed interior ceiling painting\", \"meaning\": \"Completed interior ceiling painting is applying paint to ceilings inside a home, with the painting finished.\"}]}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "trained_example": false,
+        "expectation_authority": "pre-call agent restrictions, not a unique expected title",
+        "origin": "Exact first two nodes of tracked authored completed-activity control; source SHA256 705b22b8ea3a2220aeaa8c9385eeadc0b04237382a49197af6b1016359b74fc9",
+        "expected_restrictions": [
+          "Both translations require the painting to be finished.",
+          "Both retain interior location and wall versus ceiling identity.",
+          "Consolidation remains finished home painting; neither plans nor unfinished work satisfy the parent."
+        ],
+        "application_allowed": false
+      }
+    },
+    {
+      "id": "02-planned-and-completed-painting",
+      "inputs": {
+        "INPUT_JSON": "{\"parent\": {\"owl\": {\"expression\": \"PaintingActivity OR (plansToPerform SOME PaintingActivity)\", \"classes\": {}}, \"definitions\": {\"PaintingActivity\": \"Applying paint to a surface or fixture.\", \"plansToPerform\": \"A relation from a plan to the activity it proposes performing.\"}}, \"nodes\": [{\"title\": \"Completed interior wall painting\", \"meaning\": \"Completed interior wall painting is applying paint to interior walls of a home, with the painting finished.\"}, {\"title\": \"Plans to paint cabinets\", \"meaning\": \"Plans to paint cabinets are plans to apply paint to cabinets in a home, whether or not the painting is carried out.\"}]}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "trained_example": false,
+        "expectation_authority": "pre-call agent restrictions, not a unique expected title",
+        "origin": "Exact first and third nodes of tracked authored completed-activity control; broader supplied parent is a new synthetic control",
+        "expected_restrictions": [
+          "First translation retains completion.",
+          "Second retains a plan to paint cabinets, without requiring execution or completion.",
+          "Do not transfer completion from the first node to the second."
+        ],
+        "application_allowed": false
+      }
+    },
+    {
+      "id": "03-some-coloured-light",
+      "inputs": {
+        "INPUT_JSON": "{\"parent\": {\"owl\": {\"expression\": \"Lamp\", \"classes\": {}}, \"definitions\": {\"Lamp\": \"A device that emits light.\"}}, \"nodes\": [{\"title\": \"Red-emitting lamps\", \"meaning\": \"Lamps that emit red light.\"}, {\"title\": \"Blue-emitting lamps\", \"meaning\": \"Lamps that emit blue light.\"}]}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "trained_example": false,
+        "expectation_authority": "pre-call agent restrictions, not a unique expected title",
+        "origin": "Authored synthetic control; not AS data or human semantic gold",
+        "expected_restrictions": [
+          "Each translation requires some corresponding light emission.",
+          "Neither forbids emitting additional colours; do not replace SOME with ONLY.",
+          "The consolidation remains within lamps."
+        ],
+        "application_allowed": false
+      }
+    },
+    {
+      "id": "04-only-beads-with-empty-containers",
+      "inputs": {
+        "INPUT_JSON": "{\"parent\": {\"owl\": {\"expression\": \"Container\", \"classes\": {}}, \"definitions\": {\"Container\": \"A vessel for holding things.\"}}, \"nodes\": [{\"title\": \"Containers restricted to red beads\", \"meaning\": \"Containers whose contents, if any, consist only of red beads, including empty containers.\"}, {\"title\": \"Containers restricted to blue beads\", \"meaning\": \"Containers whose contents, if any, consist only of blue beads, including empty containers.\"}]}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "trained_example": false,
+        "expectation_authority": "pre-call agent restrictions, not a unique expected title",
+        "origin": "Authored synthetic control; not AS data or human semantic gold",
+        "expected_restrictions": [
+          "Every held item has the stated bead kind in each translation.",
+          "Neither translation requires any contents to exist.",
+          "The consolidation also admits empty containers; no new SOME condition."
+        ],
+        "application_allowed": false
+      }
+    },
+    {
+      "id": "05-or-alternatives",
+      "inputs": {
+        "INPUT_JSON": "{\"parent\": {\"owl\": {\"expression\": \"Device\", \"classes\": {\"Lamp\": \"Device AND LampKind\", \"Sign\": \"Device AND SignKind\"}}, \"definitions\": {\"Device\": \"A manufactured object designed to perform a function.\", \"LampKind\": \"The kind of device that emits light.\", \"SignKind\": \"The kind of device that presents a message.\"}}, \"nodes\": [{\"title\": \"Red lamps or blue signs\", \"meaning\": \"Lamps that emit red light, or signs with a uniformly blue background.\"}, {\"title\": \"Green lamps or yellow signs\", \"meaning\": \"Lamps that emit green light, or signs with a uniformly yellow background.\"}]}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "trained_example": false,
+        "expectation_authority": "pre-call agent restrictions, not a unique expected title",
+        "origin": "Authored synthetic control; not AS data or human semantic gold",
+        "expected_restrictions": [
+          "Retain both alternatives of each node.",
+          "Emission colour qualifies lamps; background colour qualifies signs.",
+          "No emission requirement transfers to signs or background requirement to lamps."
+        ],
+        "application_allowed": false
+      }
+    },
+    {
+      "id": "06-explicit-absence",
+      "inputs": {
+        "INPUT_JSON": "{\"nodes\": [{\"title\": \"Unpainted interior walls\", \"meaning\": \"Interior walls to which paint has never been applied.\"}, {\"title\": \"Unpainted interior ceilings\", \"meaning\": \"Interior ceilings to which paint has never been applied.\"}]}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "trained_example": false,
+        "expectation_authority": "pre-call agent restrictions, not a unique expected title",
+        "origin": "Authored synthetic control; not AS data or human semantic gold",
+        "expected_restrictions": [
+          "Never-painted absence is explicit, not a conclusion from missing facts.",
+          "Retain interior location and wall versus ceiling identity.",
+          "Do not introduce painting or planned painting as a defining activity."
+        ],
+        "application_allowed": false
+      }
+    },
+    {
+      "id": "07-rosemary-roles",
+      "inputs": {
+        "INPUT_JSON": "{\"nodes\": [{\"title\": \"Culinary rosemary leaves\", \"meaning\": \"Leaves of a rosemary plant used as an ingredient to flavour food.\"}, {\"title\": \"Garden rosemary plants\", \"meaning\": \"Rosemary plants cultivated in a garden.\"}]}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "trained_example": false,
+        "expectation_authority": "pre-call agent restrictions, not a unique expected title",
+        "origin": "Synthetic contrast based on the discussed culinary/botanical Rosemary failure mechanism; not an original-post or human-gold claim",
+        "expected_restrictions": [
+          "First is leaves in an ingredient role; retain plant origin and use in food.",
+          "Second is a cultivated plant; ingredient use is not required.",
+          "No culinary restriction transfers to the garden plant or cultivation requirement to the ingredient."
+        ],
+        "application_allowed": false
+      }
+    },
+    {
+      "id": "08-material-and-product",
+      "inputs": {
+        "INPUT_JSON": "{\"parent\": {\"owl\": {\"expression\": \"Material OR (madeFrom SOME Material)\", \"classes\": {\"CastIron\": \"Material AND CastIronKind\"}}, \"definitions\": {\"Material\": \"A substance used to make things.\", \"CastIronKind\": \"Cast iron.\", \"madeFrom\": \"A relation from a product to a material from which it is made.\"}}, \"nodes\": [{\"title\": \"Cast iron for making cookware\", \"meaning\": \"Cast iron designated as material for making cookware.\"}, {\"title\": \"Cast-iron skillets\", \"meaning\": \"Skillets made from cast iron.\"}]}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "trained_example": false,
+        "expectation_authority": "pre-call agent restrictions, not a unique expected title",
+        "origin": "Authored synthetic control; not AS data or human semantic gold",
+        "expected_restrictions": [
+          "Retain material designation in the first and actual made-from relationship in the second.",
+          "The product is not the material itself.",
+          "A consolidated material/product topic states the relationship admitting each kind."
+        ],
+        "application_allowed": false
+      }
+    },
+    {
+      "id": "09-equivalent-boiling-with-fixed-parent",
+      "inputs": {
+        "INPUT_JSON": "{\"parent\": {\"owl\": {\"expression\": \"WaterHeating AND BoilingReached\", \"classes\": {}}, \"definitions\": {\"WaterHeating\": \"Heating liquid water.\", \"BoilingReached\": \"The heated liquid water has reached the state of boiling.\"}}, \"nodes\": [{\"title\": \"Heating water to boiling\", \"meaning\": \"Heating liquid water until it has reached boiling.\"}, {\"title\": \"Bringing water to a boil\", \"meaning\": \"Heating liquid water until it has reached boiling.\"}]}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "trained_example": false,
+        "expectation_authority": "pre-call agent restrictions, not a unique expected title",
+        "origin": "Authored synthetic control; not AS data or human semantic gold",
+        "expected_restrictions": [
+          "Identical fixed meanings should have equivalent translations.",
+          "Retain liquid water, heating and the achieved boiling state.",
+          "Within the supplied parent there is no room to add another restriction or drop boiling; no equality-classifier output is requested."
+        ],
+        "application_allowed": false
+      }
+    },
+    {
+      "id": "10-coffee-equipment-roles",
+      "inputs": {
+        "INPUT_JSON": "{\"nodes\": [{\"title\": \"Cups for drinking coffee\", \"meaning\": \"Cups designed for drinking coffee.\"}, {\"title\": \"Shelves for storing coffee cups\", \"meaning\": \"Shelves designed to store cups used for drinking coffee.\"}]}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "trained_example": false,
+        "expectation_authority": "pre-call agent restrictions, not a unique expected title",
+        "origin": "Authored synthetic control; not AS data or human semantic gold",
+        "expected_restrictions": [
+          "Retain design purpose without requiring that use actually happens.",
+          "Second concerns storing cups; do not turn it into drinking coffee or require cups to contain coffee.",
+          "Keep the relation chain from shelf to coffee-drinking cup."
+        ],
+        "application_allowed": false
+      }
+    },
+    {
+      "id": "11-consumer-boundary",
+      "inputs": {
+        "INPUT_JSON": "{\"nodes\": [{\"title\": \"Human food\", \"meaning\": \"Substances intended to be eaten or drunk by people for nourishment.\"}, {\"title\": \"Evening meals\", \"meaning\": \"Meals served in the evening.\"}]}"
+      },
+      "evidence": {
+        "synthetic": true,
+        "trained_example": false,
+        "expectation_authority": "pre-call agent restrictions, not a unique expected title",
+        "origin": "Synthetic consumer-boundary control based on the Food/Dinner discussion; no historical label or human-gold claim",
+        "expected_restrictions": [
+          "First retains intended human nourishment, without requiring actual consumption.",
+          "Second retains a meal served in the evening and does not acquire a human-consumer restriction.",
+          "A shared consumer restriction cannot be justified by only the first node."
+        ],
+        "application_allowed": false
+      }
+    }
+  ]
+}
