@@ -720,14 +720,9 @@ def catalogue(source, registry, output, *, saved_only=False):
                     refs = [prior.get(e['path'], e) for e in refs]
                     refs += [e for e in previous['evidence'] if e['path'] not in {n['path'] for n in refs}]
                     direct = {**previous['parameters'], **direct}
-                documents = [json.loads((output / e['file']).read_text()) for e in refs]
-                subject_versions = sorted(set(re.findall(r'ASv\d+\.\d+', json.dumps([direct, documents]))))
-                older = any(tuple(map(int, v[3:].split('.'))) < (6, 100) for v in subject_versions)
-                status = ('historical/deprecated' if older else
-                          'source recorded: ' + ', '.join(subject_versions) if subject_versions else 'subject version unknown')
                 row = {'version_id': version, 'identity': identity, 'artifact_path': relative,
-                       'sha256': expected, 'family': family, 'source_status': status,
-                       'subject_versions': subject_versions, 'run_status': data.get('status', 'saved'),
+                       'sha256': expected, 'family': family,
+                       'run_status': data.get('status', 'saved'),
                        'output': str(snapshot_path.relative_to(output)), 'locations': [str(path)],
                        'generation_time': timing, 'parameters': direct, 'evidence': refs,
                        'bindings': bindings, 'unknown': sorted(set(unknown))}
@@ -739,6 +734,18 @@ def catalogue(source, registry, output, *, saved_only=False):
                     row[key] = parameters(entry[key])
                 else:
                     row.pop(key, None)
+            documents = [json.loads((output / e['file']).read_text()) for e in row['evidence']]
+            subject_versions = set(re.findall(r'ASv\d+\.\d+', json.dumps([row['parameters'], documents])))
+            metadata = row.get('experimental_parameters')
+            dataset = metadata.get('dataset') if isinstance(metadata, dict) else None
+            subject_prompt = dataset.get('subject_prompt') if isinstance(dataset, dict) else None
+            if isinstance(subject_prompt, str) and re.fullmatch(r'ASv\d+\.\d+', subject_prompt):
+                subject_versions.add(subject_prompt)
+            row['subject_versions'] = sorted(subject_versions)
+            older = any(tuple(map(int, v[3:].split('.'))) < (6, 100) for v in subject_versions)
+            row['source_status'] = ('historical/deprecated' if older else
+                                   'source recorded: ' + ', '.join(row['subject_versions'])
+                                   if subject_versions else 'subject version unknown')
             related = []
             prior_related = {r['path']: r for r in previous.get('related_outputs', [])} if previous else {}
             for index, item in enumerate(entry.get('related_outputs', []), 1):

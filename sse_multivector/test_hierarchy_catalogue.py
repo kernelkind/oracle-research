@@ -33,6 +33,71 @@ class HierarchyCatalogue(unittest.TestCase):
             self.assertEqual(row['name'], 'Official test run')
             self.assertEqual(diagnostic.read_bytes(), artifact.read_bytes())
 
+    def test_official_subject_prompt_refreshes_unknown_version_without_rebinding(self):
+        for saved_only in (False, True):
+            with self.subTest(saved_only=saved_only), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                artifact, _, source = self.fixture(root)
+                original = artifact.read_bytes()
+                before, = self.run_catalogue(root, source)['hierarchies']
+                self.assertEqual(before['subject_versions'], [])
+                self.assertEqual(before['source_status'], 'subject version unknown')
+                registry = (root / 'versions.json').read_bytes()
+                snapshot = root / 'catalogue' / before['output']
+                snapshot_modified = snapshot.stat().st_mtime_ns
+
+                spec = json.loads(source.read_text())
+                spec['official_runs'][0]['experimental_parameters'] = {
+                    'dataset': {'subject_prompt': 'ASv6.100'}}
+                source.write_text(json.dumps(spec))
+                row, = self.run_catalogue(root, source, ['--saved-only'] if saved_only else ())['hierarchies']
+
+                self.assertEqual(row['subject_versions'], ['ASv6.100'])
+                self.assertEqual(row['source_status'], 'source recorded: ASv6.100')
+                for field in ('version_id', 'identity', 'artifact_path', 'sha256', 'output'):
+                    self.assertEqual(row[field], before[field])
+                self.assertEqual((root / 'versions.json').read_bytes(), registry)
+                self.assertEqual(artifact.read_bytes(), original)
+                self.assertEqual(snapshot.read_bytes(), original)
+                self.assertEqual(snapshot.stat().st_mtime_ns, snapshot_modified)
+
+                del spec['official_runs'][0]['experimental_parameters']
+                source.write_text(json.dumps(spec))
+                row, = self.run_catalogue(root, source, ['--saved-only'] if saved_only else ())['hierarchies']
+                self.assertEqual(row['subject_versions'], [])
+                self.assertEqual(row['source_status'], 'subject version unknown')
+                self.assertEqual((root / 'versions.json').read_bytes(), registry)
+                self.assertEqual(snapshot.read_bytes(), original)
+                self.assertEqual(snapshot.stat().st_mtime_ns, snapshot_modified)
+
+    def test_official_subject_prompt_preserves_artifact_and_evidence_versions(self):
+        for saved_only in (False, True):
+            with self.subTest(saved_only=saved_only), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                artifact, payload, source = self.fixture(root)
+                payload['subject_prompt'] = 'ASv6.72'
+                configuration = artifact.with_name('configuration.json')
+                configuration.write_text(json.dumps({'subject_prompt': 'ASv6.48'}))
+                payload['sources'] = {str(configuration): hashlib.sha256(configuration.read_bytes()).hexdigest()}
+                artifact.write_text(json.dumps(payload))
+                self.official_selection(source, artifact, 'H0001')
+                before, = self.run_catalogue(root, source)['hierarchies']
+                self.assertEqual(before['subject_versions'], ['ASv6.48', 'ASv6.72'])
+                registry = (root / 'versions.json').read_bytes()
+
+                spec = json.loads(source.read_text())
+                spec['official_runs'][0]['experimental_parameters'] = {
+                    'dataset': {'subject_prompt': 'ASv6.100'},
+                    'historical_reference': 'Unrelated ASv1.1 mention'}
+                source.write_text(json.dumps(spec))
+                row, = self.run_catalogue(root, source, ['--saved-only'] if saved_only else ())['hierarchies']
+
+                self.assertEqual(row['subject_versions'], ['ASv6.100', 'ASv6.48', 'ASv6.72'])
+                self.assertEqual(row['source_status'], 'historical/deprecated')
+                self.assertEqual((root / 'versions.json').read_bytes(), registry)
+                self.assertEqual(row['identity'], before['identity'])
+                self.assertEqual(row['sha256'], before['sha256'])
+
     def test_source_without_explicit_official_selection_is_rejected(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
