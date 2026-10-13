@@ -1,6 +1,7 @@
 import hashlib
 import json
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -213,6 +214,23 @@ class PromptAssemblyTests(unittest.TestCase):
                          '85dbf0b23de1dd085cdd7519650d0e9bcf9bd7264e4d517b1a1f461c436e3f30')
         self.assertEqual(sha256((PROMPTS / 'Hierarchy-consolidation-v20.md').read_bytes()),
                          '07b87f7f54ca079564228c067a40f7ec3655388763aa4796bdd7bbbff79a21be')
+
+    def test_bootstrap_title_examples_validate_with_native_schema(self):
+        from sse_multivector import experiment_inputs
+
+        prompt = (PROMPTS / 'Hierarchy-bootstrap-v130.md').read_text()
+        schema = json.loads((PROMPTS / 'Hierarchy-bootstrap-v130.output.schema.json').read_text())
+        examples = re.findall(r'<example>\s*<input>\s*(.*?)\s*</input>\s*'
+                              r'<output>\s*(.*?)\s*</output>\s*</example>', prompt, re.S)
+        self.assertEqual(len(examples), 2)
+        for input_json, output in examples:
+            case = {'inputs': {'INPUT_JSON': input_json}}
+            value = experiment_inputs.validate({'adapter': 'hierarchy_local_nodes'},
+                                               case, output, schema)['parsed']
+            self.assertIsInstance(value['title'], str)
+        historical = (PROMPTS / 'Hierarchy-bootstrap-v129.md').read_bytes()
+        self.assertEqual(sha256(historical),
+                         '1ea170044a0daf63916e576df68e932b50ade5b3f8adec6a47fae5a420e8765e')
 
     def test_manifest_rejects_unversioned_output_and_output_as_its_own_source(self):
         self.manifest['output']['path'] = 'different-name.md'

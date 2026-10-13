@@ -887,20 +887,30 @@ def validate(raw, *, diagnostics=False, meaning=None, symmetric=False):
     return value
 
 
-def validate_meaning(raw, *, post=None, diagnostic=False, ambiguity_diagnostics=False):
+def validate_meaning(raw, *, post=None, diagnostic=False, ambiguity_diagnostics=False, with_title=False):
     """Validate a standalone local meaning without judging its semantics."""
     value = json.loads(raw, object_pairs_hook=engine._position_decoder().unique_object)
     diagnostic = diagnostic or ambiguity_diagnostics
     fields = {'meaning', 'evidence'} if diagnostic else {'meaning'}
     if ambiguity_diagnostics:
         fields.update({'ambiguities', 'resolutions'})
+    if with_title:
+        fields.add('title')
     if not isinstance(value, dict) or set(value) != fields:
+        if with_title:
+            raise ValueError('expected ' + ', '.join(sorted(fields)))
         if ambiguity_diagnostics:
             raise ValueError('expected ambiguities, resolutions, meaning and evidence')
         raise ValueError('expected meaning and evidence' if diagnostic else 'expected only meaning')
     if value['meaning'] is not None and (
             not isinstance(value['meaning'], str) or not value['meaning'].strip()):
         raise ValueError('meaning must be nonempty text or null')
+    if with_title:
+        if value['title'] is not None and (
+                not isinstance(value['title'], str) or not value['title'].strip()):
+            raise ValueError('title must be nonempty text or null')
+        if (value['meaning'] is None) != (value['title'] is None):
+            raise ValueError('title must be null exactly when meaning is null')
     if ambiguity_diagnostics:
         if not isinstance(value['ambiguities'], list) or not isinstance(value['resolutions'], list):
             raise ValueError('ambiguities and resolutions must be arrays')

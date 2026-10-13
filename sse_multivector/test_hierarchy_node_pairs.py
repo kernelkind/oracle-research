@@ -868,6 +868,51 @@ class HierarchyNodePairsTests(unittest.TestCase):
         collected = json.loads(self.show('collection')['cases'][0]['inputs']['INPUT_JSON'])['local']
         self.assertEqual(collected, current)
 
+    def test_bootstrap_title_uses_native_validation(self):
+        self.local_source()
+        spec = json.loads(self.spec.read_text())
+        prompts = Path(__file__).with_name('shr_single_pair')
+        identifier = 'Hierarchy-bootstrap-v130'
+        spec['runner']['output_schema'] = json.loads(
+            (prompts / (identifier + '.output.schema.json')).read_text())
+        self.write('spec.json', spec)
+        self.prepare()
+        value = {'ambiguities': [], 'resolutions': [], 'meaning': 'Selected scope',
+                 'title': 'Selected scope', 'evidence': [
+                     {'quote': 'FULL LOCAL POST', 'supports': 'Selected scope', 'inference': None}]}
+        case = self.show()['cases'][0]
+        self.assertEqual(experiment_inputs.validate({'adapter': 'hierarchy_local_nodes'}, case,
+                         json.dumps(value), spec['runner']['output_schema'])['parsed'], value)
+        self.cli('run', 'E1', env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(value)})
+        case = self.show()['cases'][0]
+        self.assertEqual(case['status'], 'valid')
+        self.assertEqual(case['parsed'], value)
+        spec['prompt'] = {'id': identifier, 'path': str(prompts / (identifier + '.md'))}
+        self.write('spec.json', spec)
+        self.prepare('titled')
+        sources = json.loads((self.root / 'titled/experiment.json').read_text())['plan']['sources']
+        wrapper = prompts / 'prompt_sources/Hierarchy-bootstrap-v130.after.md'
+        self.assertEqual(sources[str(wrapper)], hashlib.sha256(wrapper.read_bytes()).hexdigest())
+        schema = spec['runner']['output_schema']
+        unresolved = {**value, 'meaning': None, 'title': None}
+        self.assertEqual(experiment_inputs.validate({'adapter': 'hierarchy_local_nodes'}, case,
+                         json.dumps(unresolved), schema)['parsed'], unresolved)
+        for title in ('', ' ', 42, [], {}):
+            with self.subTest(title=title), self.assertRaisesRegex(ValueError, 'title must be nonempty'):
+                experiment_inputs.validate({'adapter': 'hierarchy_local_nodes'}, case,
+                                           json.dumps({**value, 'title': title}), schema)
+        for invalid in ({**value, 'title': None}, {**value, 'meaning': None}):
+            with self.subTest(answer=invalid), self.assertRaisesRegex(ValueError, 'title must be null'):
+                experiment_inputs.validate({'adapter': 'hierarchy_local_nodes'}, case,
+                                           json.dumps(invalid), schema)
+        with self.assertRaises(ValueError):
+            experiment_inputs.validate({'adapter': 'hierarchy_local_nodes'}, case,
+                                       json.dumps({k: v for k, v in value.items() if k != 'title'}), schema)
+        historical = json.loads((prompts / 'Hierarchy-bootstrap-v79.output.schema.json').read_text())
+        with self.assertRaises(ValueError):
+            experiment_inputs.validate({'adapter': 'hierarchy_local_nodes'}, case,
+                                       json.dumps(value), historical)
+
     def test_bootstrap_ambiguity_diagnostics_use_native_validation(self):
         self.local_source()
         spec = json.loads(self.spec.read_text())

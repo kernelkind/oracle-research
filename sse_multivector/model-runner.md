@@ -59,6 +59,22 @@ task rules, immutable historical files, collision refusal, failure cleanup and
 native CLI source binding. Semantic qualification of the synchronized pair is
 separate from these mechanical checks.
 
+## Bootstrap titles derived from explicit meanings
+
+Experimental [Bootstrap-v130](shr_single_pair/Hierarchy-bootstrap-v130.md)
+returns a concise `title` derived solely from its finalized `meaning`.
+New specifications using this prompt must select its
+[five-field output schema](shr_single_pair/Hierarchy-bootstrap-v130.output.schema.json).
+Native `hierarchy_local_nodes` validation requires a nonempty title for a
+non-null meaning and a null title for a null meaning. Earlier schemas retain
+their original exact fields; frozen experiments are unchanged.
+
+The new title instructions live in the Bootstrap wrapper. Its checked assembly
+reuses explicit-meaning-rules-v6 and Consolidation-v21, with no common
+definition-writing change. The existing two examples include titles consistent
+with the new output contract. Mechanical checks do not establish title quality;
+no model evaluation or prompt activation accompanies this publication.
+
 ## Current Bootstrap, Compare and hierarchy attempt policy
 
 The user permanently removed the shared **20,000 model-attempt cap**. For

@@ -29,6 +29,28 @@ or activation from this mechanical change; v126 remains the working experimental
 baseline described below. Future common writing changes must publish both new
 prompt versions together. See [the native workflow](../model-runner.md#synchronized-bootstrap-and-consolidation-definition-writing).
 
+## Meaning-derived titles: Bootstrap-v130
+
+The user requested a concise title based solely on the explicit meaning.
+[Bootstrap-v130](Hierarchy-bootstrap-v130.md) adds `title` after `meaning` in
+the response. It instructs the model to finalize the meaning first, then name
+that topic with the shortest clear phrase supported entirely by the meaning,
+preserving its identity and the qualifiers needed to distinguish its scope.
+Input and diagnostics supply no additional title details. A null meaning
+requires a null title; a non-null meaning requires a nonempty title.
+
+The new [output schema](Hierarchy-bootstrap-v130.output.schema.json) and native
+local-node validation support the five-field response. Historical schemas remain
+strict. Both existing prompt examples include titles while retaining their
+original inputs, meanings and diagnostics. This wrapper-only revision retains
+explicit-meaning-rules-v6 and the Consolidation-v21 companion; definition-writing
+rules are unchanged. Native revision provenance uses last approved v104 as its
+base, while the title addition preserves v129's definition instructions.
+
+V130 is an experimental prompt with mechanical contract checks, not a model
+quality result or activation. No new inference or hierarchy build is part of
+this change; fresh title evaluation remains open.
+
 ## Current model-attempt policy
 
 The user permanently removed the shared **20,000 model-attempt cap** for
@@ -729,7 +751,8 @@ the selected entry's root, and its selected number. There are no generated
 parent meanings, expected labels or preferred outputs in the model input.
 The post supplies factual evidence; the selected subject, contexts and original
 tree guide category interpretation. Output schema 79 supplies ambiguities,
-resolutions, a nullable final meaning and exact contiguous evidence quotes.
+resolutions, a nullable final meaning and exact contiguous evidence quotes;
+Bootstrap-v130's schema adds the meaning-derived nullable title.
 
 Review final meanings for supported identity, abstraction and explicit material
 boundaries. General categories are broader than their illustrated instances.
