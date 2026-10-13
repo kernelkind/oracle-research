@@ -81,14 +81,15 @@ answers, 150 exact reuses and one warmup. Cases `L00227` (**TheRogueBatch**,
 local entry 1) and `L00230` (**coffeechain**, local entry 4) returned null
 meanings for the same original post at selection position 29. Both responses
 are schema-valid and retain their unresolved ambiguity evidence; there were
-no provider failures or malformed outputs. V3 blocks root construction while
-any original L1 meaning is null, so the saved graph has zero canonical nodes.
+no provider failures or malformed outputs. The initial frozen V3 constructor
+blocked root construction while any original L1 meaning was null, leaving that
+checkpoint with zero canonical nodes.
 The post still has valid Nostr, Bitcoin and Coffee entries. The user approved
 skipping these two null entries and resuming from the same saved answers and
 allowance. The tested continuation code is frozen at `c607d6fb`, retaining
 the other seven original generator bindings. The initial source remains
 `d4c55c13`; both exact commits are reachable from local main. The 10,000-call
-allowance remains intact, with 177 calls already used. All 50 notes still have
+allowance had 177 calls used before the continuation. All 50 notes still have
 at least one of the 324 non-null original L1 entries available for construction.
 
 The [blocked snapshot](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/HR14-blocked-bootstrap-v1/state.json),
@@ -98,7 +99,7 @@ and [coffeechain](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3
 evidence are preserved separately. These are valid null answers, not malformed
 or failed requests. The continuation reports them as skipped without changing their original
 receipts. Its [source review](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/resume-source-v1-provenance.json)
-and [live execution handle](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/execution-handle-resume-v1.json)
+and [execution handle](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/execution-handle-resume-v1.json)
 record the separate frozen continuation checkout.
 
 HR14's continuation stopped at 06:50:57 UTC on October 13, 2026. The first
@@ -121,6 +122,14 @@ recovered failures. Known API-equivalent subtotals are **$2.1192816 fresh**
 and **$3.425476 including original producers behind reuse**; complete totals
 remain unknown. Its 568 valid cases describe prompt outputs, not a completed
 hierarchy.
+
+The [combined native report through HR14's provider-blocked checkpoint](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/usage-round-through-provider-block-v1.json)
+counts **1,035 unique provider attempts** across HR11–HR14 and **307 answer
+reuses**, retaining each original producer once. The known API-equivalent
+subtotal is **$5.4456776**; the full cost and token totals remain unknown because
+five failed attempts lack usage and cost estimates. This is a partial round
+snapshot, not final accounting. Per-run costs that include reused producers
+must not be summed.
 
 HR11's first preparation attempt stopped before any inference because the new
 isolated runner lacked its locked Node dependencies. The native files were
