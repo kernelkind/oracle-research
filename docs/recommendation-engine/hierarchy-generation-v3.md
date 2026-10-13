@@ -303,8 +303,9 @@ five final root proposals and three SSE encoding jobs. The resulting graph
 has five roots, 17 nodes and 12 edges; all three notes are represented, every
 leaf represents at most two distinct notes, and no family exceeds six nodes.
 Native sources, model receipts, vector receipts and fixed definitions passed
-the constructor's offline validation. No UI was refreshed and no human quality
-approval is recorded.
+the constructor's offline validation. Construction did not refresh a UI; the
+user subsequently requested the review export below. No human quality approval
+is recorded.
 
 The native usage summary records 35 valid cases and 36 fresh attempts including
 one Bootstrap prefix warmup: zero failures, retries, missing usage or answer
@@ -334,3 +335,16 @@ and model-artifact bindings. Two earlier preparation-only directories failed
 before state creation because the supplied history directory did not yet exist;
 they made no model calls and are retained separately. This diagnostic has no
 official HR identifier.
+
+### Requested review UI
+
+The existing terminal hierarchy viewer was exported on user request. It retains
+all 17 canonical nodes, one display-only root and the three full original notes.
+The HR05 viewer binary was copied unchanged; its production `--check` passed.
+The ignored export includes the checked files and their SHA-256 provenance.
+
+```bash
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-v3-three-note-v1/target/hierarchy-v3-three-note-v1/review-ui-v1/launch.sh
+```
+
+Use `j` / `k` to select, `l` or Enter to open, `?` for definitions and `q` to exit.
