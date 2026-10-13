@@ -1,9 +1,11 @@
-# Hierarchy Approach 2 — draft v1
+# Hierarchy generation V3
 
-Status: future design under discussion. This document records the agreed details
-below; it does not replace the current hierarchy implementation or authorize
-experiments. The user's personal outline, `docs/notes/MY-NOTES_10-12.md`, remains
-read-only. No code or prompt changes have been made for this design.
+Status: approved canonical generation mechanism, replacing V2. Constructor
+implementation and hierarchy-quality qualification remain pending; the current
+constructor still implements V2. Pair-consolidation wording remains an unreviewed
+draft. This document does not authorize model calls. The user's personal outline,
+`docs/notes/MY-NOTES_10-12.md`, remains read-only. The preceding mechanisms are
+V2 and V1; earlier variants need no formal naming.
 
 ## Construction outline
 
@@ -19,6 +21,14 @@ expose the temporary binary grouping tree as the next canonical level.
 Six is the maximum number of nodes per sibling family, not an exact required
 count. Stop expansion when a node has two or fewer distinct notes (rule 3.2).
 Other unresolved details are listed below.
+
+## Step 1.1: establish the original local L1 meanings
+
+Run Bootstrap independently for every original local L1 entry and preserve its
+answer and producer evidence. If an answer has a null meaning, record that
+entry as unresolved and continue the other Bootstrap requests. Wait to
+construct the roots until every original local L1 has an established meaning.
+Do not silently omit an unresolved entry or encode a null meaning.
 
 ## Step 1.2: SSE encoding of original local L1 entries
 
@@ -83,10 +93,15 @@ two supplied nodes, each with its subject and explicit meaning. Generate a
 synthetic parent for that pair rather than selecting two or more nodes from a
 larger supplied group.
 
-There is no supplied parent or ancestor input at any consolidation round. Do
-not include the current prompt's parent-relative restrictions or its instruction
-to select two or more siblings. Family separation is handled by construction
-as specified above, not by providing a parent to the consolidation prompt.
+For root construction, supply no parent. For deeper canonical levels, supply
+the current canonical parent's subject and fixed explicit meaning. Use that
+same canonical parent throughout the temporary consolidation steps constructing
+its children. Do not supply recursive ancestors or use a temporary synthetic
+node as the enclosing canonical parent.
+
+The proposed synthetic meaning must cover both supplied meanings and fit wholly
+within the supplied canonical parent's fixed meaning when one is present.
+There is no selection of a subset from a larger supplied sibling group.
 
 The pair prompt must always generate a synthetic parent whose explicit meaning
 covers both supplied meanings. Return only its subject and explicit meaning;
@@ -98,12 +113,18 @@ separate equivalence judgment, comparison call or equivalent-pair branch.
 The proposed special case of recognizing equivalence and copying one supplied
 meaning was withdrawn; it is not part of this design.
 
-Hierarchy-pair-consolidation-v1 was presented in chat, but the user deferred
-review. [Hierarchy-pair-consolidation-v2](../../sse_multivector/shr_single_pair/Hierarchy-pair-consolidation-v2.md)
-records the no-`null` change. Its overall wording remains an unreviewed,
-untested draft. It uses the exact shared definition-writing rules-v6 from
+The user deferred full prompt review.
+[Hierarchy-pair-consolidation-v4](../../sse_multivector/shr_single_pair/Hierarchy-pair-consolidation-v4.md)
+records the approved mandatory-output and optional-parent rules. Its overall
+wording remains an unreviewed, untested draft. V3 added the optional parent;
+V4 defines that input directly without relying on the term "canonical node"
+inside the prompt. It uses the exact shared definition-writing rules-v6 from
 Bootstrap-v129 and Consolidation-v21 through a pinned assembly; those prompts
 and shared rules are unchanged. No prompt is activated by this draft.
+
+Exact answer reuse must match the complete request, including the optional
+canonical parent. A root-consolidation answer cannot be reused for a request
+with a supplied canonical parent merely because its two input nodes match.
 
 ## Step 1.5: SSE encoding of temporary synthetic nodes
 
@@ -125,7 +146,8 @@ Use cosine similarity across all the synthetic nodes' SSE vectors within the
 same sibling family to select the highest-scoring unique pairs, following the
 non-overlapping selection in step 1.3. Consolidation generates a synthetic
 parent for each selected pair, following step 1.4. Its inputs are the two
-synthetic nodes' subjects and explicit meanings, without a supplied parent.
+synthetic nodes' subjects and explicit meanings, plus the current canonical
+parent when constructing a deeper level. Root construction has no parent.
 
 ## Step 1.8: repeat until at most six nodes remain
 
