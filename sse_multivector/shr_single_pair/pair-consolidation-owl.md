@@ -1,18 +1,19 @@
 # Pair-consolidation-owl: experimental prompt line
 
-`pair-consolidation-owl-v8` is the current experimental draft. The user approved
-exposing an activity's stated action and required objects or participants in
-its formal expression or supporting class definitions. English glossaries
-retain basic concepts whose internal structure the supplied meaning does not
-specify. This is a wrapper-only change; the shared meaning-writing text,
-Bootstrap companion, guide and worked example are unchanged. The matched
-twelve-case panel is complete: all saved targeted checks pass under qualified
-agent review. The independent follow-ups preserve explicit coffee drinking
-and pass the unseen bottle-activity control, but the reversed shelf translation
-compresses storage into `designedToStore`, without an activity class. This is a
-remaining formal-representation failure under the requested action-as-class
-rule, not demonstrated wrong containment. V8 remains experimental and is not
-activated in hierarchy construction.
+`pair-consolidation-owl-v9` is the current experimental draft. The user approved
+explicitly applying activity decomposition inside stated purposes or uses.
+This changes one wrapper sentence; the shared meaning-writing text, Bootstrap
+companion, guide, example and all historical prompt bytes remain unchanged.
+The matched three-case check is not yet run. V9 is not activated in hierarchy
+construction and no general semantic accuracy is established.
+
+V8's twelve-case panel passed its targeted checks under qualified agent review.
+Its independent follow-ups preserved explicit coffee drinking and passed the
+unseen bottle-activity control, but the reversed shelf translation compressed
+storage into `designedToStore`, without an activity class. This remains a
+formal-representation failure under the requested action-as-class rule, not
+demonstrated wrong containment. These saved inputs and assessments remain
+evidence, not independent human semantic gold.
 
 V7's two-order consumer check passes the targeted formal conditions. Its broader
 twelve-case panel exposes one remaining representation failure:
@@ -55,7 +56,9 @@ following contract:
   definitions explain basic terms; they must not be the sole representation of
   those conditions. Every stated alternative uses `OR`, directly in the
   expression or a supporting class definition. A class name may abbreviate
-  conditions when its formal definition exposes them.
+  conditions when its formal definition exposes them. Every activity stated
+  inside a purpose or use retains its action as a class and relations to its
+  required objects or participants.
 - Each `owl` object has `expression` first, for the topic's own expression,
   then `classes`, a JSON object of supporting class definitions. The entrypoint
   is always `owl.expression`; `owl.classes` may be empty. This same layout is
@@ -75,14 +78,14 @@ are omitted from expression strings; nested parentheses preserve grouping.
 
 ## Sources and assembly
 
-The [v8 draft](pair-consolidation-owl-v8.md) is built by its
-[pinned assembly manifest](pair-consolidation-owl-v8.assembly.json). It includes
+The [v9 draft](pair-consolidation-owl-v9.md) is built by its
+[pinned assembly manifest](pair-consolidation-owl-v9.assembly.json). It includes
 [OWL-like guide v5](prompt_parts/owl-reasoning-guide-v5.md) and
 [explicit-meaning rules v6](prompt_parts/explicit-meaning-rules-v6.md)
 byte-for-byte. Its matching definition-writing reference is
 [Bootstrap-v129](Hierarchy-bootstrap-v129.md).
 
-V8 retains the [v7 prompt](pair-consolidation-owl-v7.md)'s one
+V9 retains the [v8 prompt](pair-consolidation-owl-v8.md)'s one
 [complete input/output example](prompt_parts/pair-consolidation-owl-example-v3.md)
 using the same display-panel case, with each entry expression separated from
 its supporting classes. The guide distinguishes exact class definitions from
@@ -90,8 +93,8 @@ one-way containment checks; required membership implications are expressed in
 the formal definitions. It does not encode a containment claim as an exact
 equivalence. The shared meaning-writing rules and consolidated natural-language
 meaning-writing instructions are unchanged. The only compiled-prompt change
-from v7 clarifies formal activity decomposition and the boundary of basic
-English definitions in the node-translation instructions. All earlier published
+from v8 explicitly applies activity decomposition inside stated purposes or
+uses, in the node-translation instructions. All earlier published
 prompt and guide files retain their original bytes.
 
 The notation is the simplified OWL-like notation described in the guide. The
@@ -110,7 +113,7 @@ complete saved API-equivalent cost of $0.216726; it did not generate a hierarchy
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
 python3 sse_multivector/prompt_assembly.py check \
-  sse_multivector/shr_single_pair/pair-consolidation-owl-v8.assembly.json
+  sse_multivector/shr_single_pair/pair-consolidation-owl-v9.assembly.json
 ```
 
 Assembly checks establish exact reconstruction and unchanged shared sources.
@@ -478,12 +481,11 @@ gold or automated satisfiability/fidelity certification. No machine reasoner
 was used. Two coffee follow-ups support the targeted drinking/object fix; the
 storage compression shows the general representation rule still needs clarity.
 
-The next useful revision should explicitly apply action-as-class decomposition
-to activities nested inside stated purposes or uses, while retaining basic
-concepts whose internal structure the supplied meaning does not specify. Replace
-the ambiguous activity sentence rather than add a shelf-specific example.
-Evaluate against the saved reversed witness and independent passing controls.
-No V9 prompt, additional calls or hierarchy activation is included in this trial.
+The user separately authorized V9 to explicitly apply action-as-class
+decomposition inside stated purposes or uses, retaining basic concepts whose
+internal structure the supplied meaning does not specify. That revision and
+its matched test are recorded below; they were not part of this completed V8
+trial. No hierarchy activation was authorized.
 
 Native `experiment-usage-summary-v3` accounting is complete, without warnings:
 three attempts, zero failures, retries, reuses and warmups; 9,531 input tokens,
@@ -505,3 +507,24 @@ Its ignored evidence is `target/pair-consolidation-owl-v8-coffee-repeat-v1`,
 `target/pair-consolidation-owl-v8-generalization-usage-summary-v1.json`. The
 retained earlier worktrees still supply the exact native panel baseline/source
 bindings. Original receipts, historical prompts and inputs remain unchanged.
+
+## V9 matched controls: pre-call method
+
+Prepare two native batches from the completed V8 follow-ups, replacing only the
+prompt: the exact forward coffee case, and the saved reversed coffee plus
+washing/soaking cases. Retain their inputs, model, medium reasoning, subscription
+route, SSE settings and pre-call authored checks. No baseline is rerun, no
+intentional repeat flag is needed for the changed prompt, and exact native reuse
+remains available. Launch both ready batches without an outer concurrency limit.
+No warmup, paid fallback or hierarchy edit is added.
+
+In both coffee orientations, Drinking and its Coffee object must be formal; the
+shelf's storage purpose must include a storage activity class and its required
+cup object, inline or through `owl.classes`. A compound relation alone does not
+meet that requested representation. Preserve design purpose, cups used for
+coffee drinking and the separate fixed cup meaning. In the bottle case, preserve
+formal Washing/Soaking actions with their Bottle objects, without requiring
+actual activity or adding a cleaning purpose to Soaking. Retain the same JSON,
+vocabulary, coverage and English/formal checks. Relation names and coherent
+broader topics may vary. No model answer or expectation enters model input;
+these are agent assessments, not human gold or an automated reasoner proof.
