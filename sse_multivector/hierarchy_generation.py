@@ -17,6 +17,9 @@ from pathlib import Path
 import struct
 import sys
 import tempfile
+import subprocess
+from datetime import datetime, timezone
+from threading import Event
 
 from . import canonical_trial as trial
 from . import experiment as workflow
@@ -29,6 +32,8 @@ MAX_SIBLINGS = 6
 MIN_NOTES = 2
 PAIR_CHUNK_ROWS = 50000
 PAIR_MERGE_FANIN = 32
+RUNNER_BACKOFF_SECONDS = 5
+RUNNER_BACKOFF_MAX_SECONDS = 60
 CODE_FILES = (
     "hierarchy_generation.py",
     "worker.py",
@@ -189,7 +194,7 @@ def prepare(spec_path, directory, history_root=None):
             if "." not in number:
                 originals.append(
                     dict(
-                        id=f"L{len(originals)+1:05d}",
+                        id=f"L{len(originals) + 1:05d}",
                         local=dict(note_id=note_id, number=number),
                         subject=entry["subject"],
                     )
@@ -527,7 +532,7 @@ def _promote(state, family):
     for identifier in family["current"]:
         item = state["items"][identifier]
         node = dict(
-            id=f"C{len(state['nodes'])+1:05d}",
+            id=f"C{len(state['nodes']) + 1:05d}",
             subject=item["subject"],
             meaning=item["meaning"],
             item=identifier,
@@ -717,7 +722,7 @@ def check_state(state, *, verify_receipts=True):
     notes = {n["note_id"]: n for n in workflow.read(state["corpus"])["notes"]}
     expected = [
         dict(
-            id=f"L{index+1:05d}",
+            id=f"L{index + 1:05d}",
             local=dict(note_id=note_id, number=entry["number"]),
             subject=entry["subject"],
         )
@@ -905,6 +910,109 @@ def _pause_experiments(state):
             pause(config.run_directory, reason="hierarchy execution interrupted")
 
 
+def _native_command(
+    directory, arguments, stop, *, pending_experiment=None, budget=None
+):
+    """Restart the shared CLI on recoverable failures, preserving its own retries."""
+    launcher = Path(workflow.__file__).resolve().parents[1] / "bin/experiment-runner"
+    project = Path(__file__).resolve().parents[1]
+    logs = directory / "runner-invocations"
+    logs.mkdir(exist_ok=True)
+    delay = RUNNER_BACKOFF_SECONDS
+    failures = 0
+    while not stop.is_set():
+        invocation = Path(tempfile.mkdtemp(prefix=arguments[0] + "-", dir=logs))
+        with (
+            (invocation / "stdout.log").open("wb") as out,
+            (invocation / "stderr.log").open("wb") as err,
+        ):
+            process = subprocess.run(
+                [
+                    sys.executable,
+                    str(launcher),
+                    "--project-root",
+                    str(project),
+                    *arguments,
+                ],
+                cwd=project,
+                stdout=out,
+                stderr=err,
+            )
+        event = dict(
+            command=arguments[0],
+            invocation=str(invocation),
+            exit_code=process.returncode,
+            observed_at_utc=datetime.now(timezone.utc).isoformat(),
+        )
+        if process.returncode == 0:
+            if failures:
+                workflow.engine._append_json_line(
+                    directory / "runner-backoff.jsonl",
+                    dict(event, event="recovered", failures=failures),
+                )
+            return invocation
+        retry = True
+        if pending_experiment is not None:
+            report = workflow.report(pending_experiment, include_request_preview=False)
+            warmups = report.get("cache_warmup", {}).get("sources", [])
+            retry = (
+                any(c["status"] == "unrun" for c in report["cases"])
+                and all(c["status"] in ("valid", "unrun") for c in report["cases"])
+                and (not warmups or warmups[-1].get("status") != "failed")
+            )
+        else:
+            # Advancement makes no model calls. Retry the runner only after
+            # checking that its frozen inputs and existing evidence remain valid.
+            check_state(workflow.read(directory / "state.json"))
+        if (
+            budget is not None
+            and workflow.engine.PersistentAttemptBudget(budget).remaining() <= 0
+        ):
+            retry = False
+        with (invocation / "stderr.log").open("rb") as stream:
+            stream.seek(max(0, (invocation / "stderr.log").stat().st_size - 4096))
+            error = stream.read().decode("utf-8", errors="replace").strip()
+        event.update(error=error, event="backoff" if retry else "blocked")
+        if not retry:
+            workflow.engine._append_json_line(directory / "runner-backoff.jsonl", event)
+            raise workflow.engine.RunnerError(
+                f"shared runner exited {process.returncode}; diagnostics: {invocation}"
+            )
+        failures += 1
+        event.update(delay_seconds=delay, failures=failures)
+        workflow.engine._append_json_line(directory / "runner-backoff.jsonl", event)
+        print(
+            f"Hierarchy V3: shared runner failed; retrying in {delay:g}s; diagnostics: {invocation}",
+            file=sys.stderr,
+        )
+        if stop.wait(delay):
+            return None
+        delay = min(delay * 2, RUNNER_BACKOFF_MAX_SECONDS)
+    return None
+
+
+def _native_advance(directory, comment, stop):
+    invocation = _native_command(
+        directory, ["advance-hierarchy", str(directory), "--comment", comment], stop
+    )
+    return (
+        json.loads((invocation / "stdout.log").read_text())
+        if invocation is not None
+        else summary(workflow.read(directory / "state.json"))
+    )
+
+
+def _native_teacher(directory, experiment, budget, upgrade_reason, stop):
+    arguments = ["run", str(experiment)]
+    if budget is not None:
+        arguments.extend(["--attempt-budget", str(budget)])
+    if upgrade_reason is not None:
+        arguments.extend(["--runner-upgrade-reason", upgrade_reason])
+    return _native_command(
+        directory, arguments, stop, pending_experiment=experiment, budget=budget
+    )
+
+
 def run(
     directory,
     attempt_budget=None,
@@ -927,7 +1035,8 @@ def run(
         )
         _resume_sources(directory, runner_upgrade_reason)
         active, attempted, errors = {}, set(), []
-        result = advance(directory, comment)
+        stop = Event()
+        result = _native_advance(directory, comment, stop)
         with ThreadPoolExecutor(max_workers=4) as pool:
             try:
                 while True:
@@ -946,11 +1055,12 @@ def run(
                             if kind == "teacher":
                                 future = pool.submit(
                                     context.run,
-                                    workflow.run,
+                                    _native_teacher,
+                                    directory,
                                     Path(path),
-                                    attempt_budget_path=budget,
-                                    include_request_preview=False,
-                                    runner_upgrade_reason=runner_upgrade_reason,
+                                    budget,
+                                    runner_upgrade_reason,
+                                    stop,
                                 )
                             else:
                                 future = pool.submit(
@@ -973,7 +1083,7 @@ def run(
                             ImportError,
                         ) as error:
                             errors.append(dict(kind=kind, path=path, error=str(error)))
-                    result = advance(directory, comment)
+                    result = _native_advance(directory, comment, stop)
                     print(
                         "Hierarchy V3: "
                         + json.dumps(
@@ -985,11 +1095,12 @@ def run(
                         file=sys.stderr,
                     )
             except BaseException:
+                stop.set()
                 for future in active:
                     future.cancel()
                 _pause_experiments(workflow.read(directory / "state.json"))
                 raise
-        result = advance(directory, comment)
+        result = _native_advance(directory, comment, stop)
         result["execution_status"] = (
             result["status"] if result["status"] == "complete" else "blocked"
         )

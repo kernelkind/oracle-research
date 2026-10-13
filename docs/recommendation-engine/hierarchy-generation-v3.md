@@ -238,6 +238,8 @@ jobs, then advances after completions. The shared runner controls provider
 concurrency, retries, cache warming, exact answer reuse and usage accounting.
 The constructor overlaps up to four batch coordinators, with at most one SSE
 job running at a time; this is not a separate provider concurrency limit.
+Advancement and teacher execution invoke fresh processes through the shared
+stable launcher, so compatible runner repairs are picked up on the next attempt.
 
 Each unchanged subject/meaning encoding is reused within the construction.
 SSE text contains the subject, two newlines, then the explicit meaning. Only
@@ -258,6 +260,17 @@ Failed or malformed results remain unresolved with case-level diagnostics and
 retain all original entries; independent families continue. Null pair outputs
 are malformed. A null Bootstrap meaning blocks root construction after the
 other Bootstrap cases finish. The constructor does not repeatedly resample it.
+
+Runner failures during advancement retry only after checking the existing frozen
+state and receipts. Failed execution invocations retry when unsent cases remain
+and existing case and latest warmup receipts contain no terminal model failure.
+Restarts wait 5, 10, 20, 40, then 60 seconds, continuing at 60 seconds until
+recovery or interruption. The same native experiment resumes; successful answers
+are reused, and provider/model retry limits are not reset. Invalid evidence,
+malformed answers, failed warmups and exhausted explicitly supplied allowances
+remain blocked. `runner-backoff.jsonl` records errors, delays and recoveries;
+`runner-invocations/` retains each CLI process's stdout and stderr. Cancellation
+interrupts the backoff wait; admitted native work follows the existing pause rules.
 
 There is no default model-attempt cap. `--attempt-budget` is available only for
 an explicitly supplied allowance, and the same allowance is retained across

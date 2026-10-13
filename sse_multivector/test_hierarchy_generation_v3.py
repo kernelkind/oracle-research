@@ -268,8 +268,12 @@ class HierarchyGenerationV3Tests(unittest.TestCase):
         self.configure(count=28)
         self.automatic_runner()
         self.cli("prepare-hierarchy", "trial", "--spec", self.root / "hierarchy.json")
-        with patch.dict(os.environ, FAKE_RUNNER_LOG=str(self.log), FAKE_V3="1"), patch(
-            "sse_multivector.worker.OfficialSseEncoder", return_value=FixtureEncoder()
+        with (
+            patch.dict(os.environ, FAKE_RUNNER_LOG=str(self.log), FAKE_V3="1"),
+            patch(
+                "sse_multivector.worker.OfficialSseEncoder",
+                return_value=FixtureEncoder(),
+            ),
         ):
             result = generation.run(self.root / "trial", None)
         self.assertEqual(result["status"], "complete")
@@ -314,9 +318,13 @@ class HierarchyGenerationV3Tests(unittest.TestCase):
                     set(node["original_ids"]),
                 )
         count = len(self.calls())
-        with patch.dict(os.environ, FAKE_RUNNER_LOG=str(self.log), FAKE_V3="1"), patch(
-            "sse_multivector.worker.OfficialSseEncoder", return_value=FixtureEncoder()
-        ) as encoder:
+        with (
+            patch.dict(os.environ, FAKE_RUNNER_LOG=str(self.log), FAKE_V3="1"),
+            patch(
+                "sse_multivector.worker.OfficialSseEncoder",
+                return_value=FixtureEncoder(),
+            ) as encoder,
+        ):
             self.assertEqual(
                 generation.run(self.root / "trial", None)["status"], "complete"
             )
@@ -374,8 +382,12 @@ class HierarchyGenerationV3Tests(unittest.TestCase):
         self.configure(notes=notes)
         self.automatic_runner()
         self.cli("prepare-hierarchy", "trial", "--spec", self.root / "hierarchy.json")
-        with patch.dict(os.environ, FAKE_RUNNER_LOG=str(self.log), FAKE_V3="1"), patch(
-            "sse_multivector.worker.OfficialSseEncoder", return_value=FixtureEncoder()
+        with (
+            patch.dict(os.environ, FAKE_RUNNER_LOG=str(self.log), FAKE_V3="1"),
+            patch(
+                "sse_multivector.worker.OfficialSseEncoder",
+                return_value=FixtureEncoder(),
+            ),
         ):
             generation.run(self.root / "trial")
         state = self.state()
@@ -396,11 +408,12 @@ class HierarchyGenerationV3Tests(unittest.TestCase):
             self.cli(
                 "prepare-hierarchy", directory, "--spec", self.root / "hierarchy.json"
             )
-            with patch.dict(
-                os.environ, FAKE_RUNNER_LOG=str(self.log), FAKE_V3="1"
-            ), patch(
-                "sse_multivector.worker.OfficialSseEncoder",
-                return_value=FixtureEncoder(),
+            with (
+                patch.dict(os.environ, FAKE_RUNNER_LOG=str(self.log), FAKE_V3="1"),
+                patch(
+                    "sse_multivector.worker.OfficialSseEncoder",
+                    return_value=FixtureEncoder(),
+                ),
             ):
                 result = generation.run(self.root / directory)
             self.assertEqual(result["status"], "complete")
@@ -419,8 +432,12 @@ class HierarchyGenerationV3Tests(unittest.TestCase):
         self.automatic_runner()
         self.cli("prepare-hierarchy", "trial", "--spec", self.root / "hierarchy.json")
         budget = self.write("allowance.json", dict(schema_version=1, limit=10, used=0))
-        with patch.dict(os.environ, FAKE_RUNNER_LOG=str(self.log), FAKE_V3="1"), patch(
-            "sse_multivector.worker.OfficialSseEncoder", return_value=FixtureEncoder()
+        with (
+            patch.dict(os.environ, FAKE_RUNNER_LOG=str(self.log), FAKE_V3="1"),
+            patch(
+                "sse_multivector.worker.OfficialSseEncoder",
+                return_value=FixtureEncoder(),
+            ),
         ):
             self.assertEqual(
                 generation.run(self.root / "trial", budget)["execution_status"],
@@ -439,6 +456,158 @@ class HierarchyGenerationV3Tests(unittest.TestCase):
             )
         self.assertEqual(producer.read_bytes(), receipt)
         self.assertEqual(len(self.calls()), 15)
+
+    def runner_outage_fixture(self, *, count=7, after_calls=7, remaining=2):
+        self.configure(count=count)
+        self.automatic_runner()
+        needle = 'if "--version" in sys.argv:\n'
+        code = """if os.environ.get("FAKE_RUNNER_OUTAGE") and ("--version" in sys.argv or "--identity" in sys.argv):
+    outage=Path(os.environ["FAKE_RUNNER_OUTAGE"])
+    settings=json.loads(outage.read_text())
+    log=Path(os.environ["FAKE_RUNNER_LOG"])
+    calls=json.loads(log.read_text()) if log.exists() else []
+    if len(calls)>=settings["after_calls"] and settings["remaining"]:
+        settings["remaining"]-=1
+        settings["parents"].append(os.getppid())
+        outage.write_text(json.dumps(settings))
+        raise SystemExit("temporary experiment runner outage")
+"""
+        self.runner.write_text(self.runner.read_text().replace(needle, code + needle))
+        self.cli("prepare-hierarchy", "trial", "--spec", self.root / "hierarchy.json")
+        return self.write(
+            "outage.json",
+            dict(remaining=remaining, after_calls=after_calls, parents=[]),
+        )
+
+    def test_runner_outage_backs_off_and_restarts_without_repeating_saved_calls(self):
+        from sse_multivector import hierarchy_generation as generation
+
+        outage = self.runner_outage_fixture()
+        with (
+            patch.dict(
+                os.environ,
+                FAKE_RUNNER_LOG=str(self.log),
+                FAKE_V3="1",
+                FAKE_RUNNER_OUTAGE=str(outage),
+            ),
+            patch(
+                "sse_multivector.worker.OfficialSseEncoder",
+                return_value=FixtureEncoder(),
+            ),
+            patch.object(generation, "RUNNER_BACKOFF_SECONDS", 0.001, create=True),
+        ):
+            result = generation.run(self.root / "trial")
+        self.assertEqual(result["status"], "complete")
+        self.assertEqual(len(self.calls()), 10)
+        failure = json.loads(outage.read_text())
+        self.assertEqual(failure["remaining"], 0)
+        self.assertEqual(len(set(failure["parents"])), 2)
+        events = [
+            json.loads(line)
+            for line in (self.root / "trial/runner-backoff.jsonl")
+            .read_text()
+            .splitlines()
+        ]
+        self.assertEqual(
+            [r["delay_seconds"] for r in events if r["event"] == "backoff"],
+            [0.001, 0.002],
+        )
+        self.assertEqual(events[-1]["event"], "recovered")
+
+    def test_runner_execution_outage_has_capped_backoff_and_no_model_resampling(self):
+        from sse_multivector import hierarchy_generation as generation
+
+        outage = self.runner_outage_fixture(after_calls=0, remaining=4)
+        with (
+            patch.dict(
+                os.environ,
+                FAKE_RUNNER_LOG=str(self.log),
+                FAKE_V3="1",
+                FAKE_RUNNER_OUTAGE=str(outage),
+            ),
+            patch(
+                "sse_multivector.worker.OfficialSseEncoder",
+                return_value=FixtureEncoder(),
+            ),
+            patch.object(generation, "RUNNER_BACKOFF_SECONDS", 0.001),
+            patch.object(generation, "RUNNER_BACKOFF_MAX_SECONDS", 0.002),
+        ):
+            result = generation.run(self.root / "trial")
+        self.assertEqual(result["status"], "complete")
+        self.assertEqual(len(self.calls()), 10)
+        events = [
+            json.loads(line)
+            for line in (self.root / "trial/runner-backoff.jsonl")
+            .read_text()
+            .splitlines()
+        ]
+        retries = [row for row in events if row["event"] == "backoff"]
+        self.assertEqual(
+            [r["delay_seconds"] for r in retries], [0.001, 0.002, 0.002, 0.002]
+        )
+        self.assertEqual({r["command"] for r in retries}, {"run"})
+        self.assertEqual(len(set(json.loads(outage.read_text())["parents"])), 4)
+
+    def test_runner_backoff_can_be_interrupted_without_dispatching_a_model_call(self):
+        from threading import Event
+        from sse_multivector import hierarchy_generation as generation
+
+        outage = self.runner_outage_fixture(count=3, after_calls=0, remaining=100)
+        stop = Event()
+
+        def interrupt(delay):
+            stop.set()
+            return True
+
+        with (
+            patch.dict(
+                os.environ,
+                FAKE_RUNNER_LOG=str(self.log),
+                FAKE_V3="1",
+                FAKE_RUNNER_OUTAGE=str(outage),
+            ),
+            patch.object(stop, "wait", side_effect=interrupt) as wait,
+        ):
+            self.assertIsNone(
+                generation._native_teacher(
+                    self.root / "trial",
+                    Path(self.state()["experiments"][0]["experiment"]),
+                    None,
+                    None,
+                    stop,
+                )
+            )
+        wait.assert_called_once_with(5)
+        self.assertEqual(len(self.calls()), 0)
+        self.assertEqual(json.loads(outage.read_text())["remaining"], 99)
+
+    def test_malformed_model_answers_block_instead_of_entering_runner_backoff(self):
+        from sse_multivector import hierarchy_generation as generation
+
+        self.configure(count=7)
+        self.automatic_runner()
+        script = self.runner.read_text()
+        needle = 'value={"title":title,"meaning":"Definition of "+title}'
+        self.assertIn(needle, script)
+        self.runner.write_text(script.replace(needle, "value=None"))
+        self.cli("prepare-hierarchy", "trial", "--spec", self.root / "hierarchy.json")
+        with (
+            patch.dict(os.environ, FAKE_RUNNER_LOG=str(self.log), FAKE_V3="1"),
+            patch(
+                "sse_multivector.worker.OfficialSseEncoder",
+                return_value=FixtureEncoder(),
+            ),
+        ):
+            result = generation.run(self.root / "trial")
+        self.assertEqual(result["execution_status"], "blocked")
+        self.assertEqual(len(self.calls()), 10)
+        events = [
+            json.loads(line)
+            for line in (self.root / "trial/runner-backoff.jsonl")
+            .read_text()
+            .splitlines()
+        ]
+        self.assertEqual([row["event"] for row in events], ["blocked"])
 
     def test_invalid_pair_output_is_reported_and_does_not_drop_originals(self):
         self.cli("prepare-hierarchy", "trial", "--spec", self.configure())
@@ -509,8 +678,9 @@ class HierarchyGenerationV3Tests(unittest.TestCase):
         pairs = generation._rank_pairs(vectors, self.root)
         self.assertEqual([(a, b) for a, b, score in pairs], [(0, 3), (1, 2)])
         self.assertEqual([score for a, b, score in pairs], [1.0, 1.0])
-        with patch.object(generation, "PAIR_CHUNK_ROWS", 1), patch.object(
-            generation, "PAIR_MERGE_FANIN", 2
+        with (
+            patch.object(generation, "PAIR_CHUNK_ROWS", 1),
+            patch.object(generation, "PAIR_MERGE_FANIN", 2),
         ):
             self.assertEqual(generation._rank_pairs(vectors, self.root), pairs)
         self.assertFalse(list(self.root.glob(".cosine-pairs-*")))
