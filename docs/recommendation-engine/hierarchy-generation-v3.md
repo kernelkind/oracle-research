@@ -114,11 +114,12 @@ The proposed special case of recognizing equivalence and copying one supplied
 meaning was withdrawn; it is not part of this design.
 
 The user deferred full prompt review.
-[Hierarchy-pair-consolidation-v5](../../sse_multivector/shr_single_pair/Hierarchy-pair-consolidation-v5.md)
+[Hierarchy-pair-consolidation-v6](../../sse_multivector/shr_single_pair/Hierarchy-pair-consolidation-v6.md)
 records the approved mandatory-output and optional-parent rules. Its overall
-wording remains an unreviewed, untested draft. V5 is a minimal adaptation of
+wording remains an unreviewed, untested draft. V6 retains V5's minimal adaptation of
 Consolidation-v21: it keeps the existing wording and adapts the example to two
-inputs. It uses the exact shared definition-writing rules-v6 from
+inputs, removing only the input-building sentence about roots. It uses the
+exact shared definition-writing rules-v6 from
 Bootstrap-v129 and Consolidation-v21 through a pinned assembly; those prompts
 and shared rules are unchanged. No prompt is activated by this draft.
 
