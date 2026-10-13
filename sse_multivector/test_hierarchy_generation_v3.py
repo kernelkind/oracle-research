@@ -295,7 +295,8 @@ class HierarchyGenerationV3Tests(unittest.TestCase):
                 )
                 for round_ in family["rounds"]:
                     inputs = state["experiments"][round_["experiment"]]["inputs"]
-                    for case in inputs.values():
+                    for identifier in round_["cases"]:
+                        case = inputs[identifier]
                         self.assertEqual(
                             json.loads(case["INPUT_JSON"])["parent"],
                             dict(title=parent["subject"], meaning=parent["meaning"]),
@@ -364,6 +365,87 @@ class HierarchyGenerationV3Tests(unittest.TestCase):
         self.assertEqual(carried["subject"], "Topic 6")
         self.assertIn("bootstrap", carried)
 
+    def test_all_ready_families_share_one_native_batch_with_their_own_parents(self):
+        from sse_multivector import hierarchy_generation as generation
+
+        self.configure(count=84)
+        self.automatic_runner()
+        self.cli("prepare-hierarchy", "trial", "--spec", self.root / "hierarchy.json")
+        with (
+            patch.dict(os.environ, FAKE_RUNNER_LOG=str(self.log), FAKE_V3="1"),
+            patch(
+                "sse_multivector.worker.OfficialSseEncoder",
+                return_value=FixtureEncoder(),
+            ),
+        ):
+            result = generation.run(self.root / "trial")
+        self.assertEqual(result["status"], "complete")
+        state = self.state()
+        groups = []
+        for record in state["experiments"]:
+            if record["role"] != "consolidation":
+                continue
+            inputs = [json.loads(v["INPUT_JSON"]) for v in record["inputs"].values()]
+            parents = {
+                json.dumps(v["parent"], sort_keys=True) for v in inputs if "parent" in v
+            }
+            groups.append(len(parents))
+        self.assertGreaterEqual(
+            max(groups),
+            5,
+            "all five ready families must be submitted together, not capped or split by family",
+        )
+
+    def test_bad_family_does_not_hold_healthy_families_in_a_shared_batch(self):
+        from sse_multivector import hierarchy_generation as generation
+
+        self.configure(count=56)
+        self.automatic_runner()
+        needle = 'os.environ["FAKE_RUNNER_PROMPT_RESPONSE"]=json.dumps(value)'
+        code = """if "parent" in payload and os.environ.get("FAKE_BAD_PARENT"):
+        marker=Path(os.environ["FAKE_BAD_PARENT"])
+        with marker.open("a+") as stream:
+            fcntl.flock(stream,fcntl.LOCK_EX)
+            stream.seek(0)
+            title=stream.read()
+            if not title:
+                title=payload["parent"]["title"]
+                stream.write(title)
+            if title==payload["parent"]["title"]:
+                value=None
+    """
+        self.runner.write_text(self.runner.read_text().replace(needle, code + needle))
+        self.cli("prepare-hierarchy", "trial", "--spec", self.root / "hierarchy.json")
+        marker = self.root / "bad-parent.txt"
+        with (
+            patch.dict(
+                os.environ,
+                FAKE_RUNNER_LOG=str(self.log),
+                FAKE_V3="1",
+                FAKE_BAD_PARENT=str(marker),
+            ),
+            patch(
+                "sse_multivector.worker.OfficialSseEncoder",
+                return_value=FixtureEncoder(),
+            ),
+        ):
+            result = generation.run(self.root / "trial")
+        self.assertEqual(result["execution_status"], "blocked")
+        state = self.state()
+        roots = [n for n in state["nodes"] if not n["parents"]]
+        bad = next(n for n in roots if n["subject"] == marker.read_text())
+        self.assertFalse(any(bad["id"] in n["parents"] for n in state["nodes"]))
+        for root in roots:
+            if root != bad:
+                self.assertTrue(any(root["id"] in n["parents"] for n in state["nodes"]))
+        self.assertTrue(
+            any(
+                not record.get("complete")
+                and {answer["status"] for answer in record.get("answers", {}).values()}
+                >= {"valid", "malformed"}
+                for record in state["experiments"]
+            )
+        )
     def test_distinct_notes_not_entry_count_controls_expansion(self):
         from sse_multivector import hierarchy_generation as generation
 

@@ -236,8 +236,12 @@ SSE receipts, preserves their identities, and prepares the next work without
 inference. Automatic execution runs those ordinary native batches and SSE
 jobs, then advances after completions. The shared runner controls provider
 concurrency, retries, cache warming, exact answer reuse and usage accounting.
-The constructor overlaps up to four batch coordinators, with at most one SSE
-job running at a time; this is not a separate provider concurrency limit.
+The constructor submits every ready model batch immediately; the shared runner
+queues and admits individual model requests. There is no constructor batch cap.
+All consolidation pairs ready in one advancement are prepared together, with
+each request retaining its own family's pair and enclosing parent. A failed
+family does not prevent other families' valid answers from advancing. At most
+one local SSE job runs at a time; graph updates remain serialized.
 Advancement and teacher execution invoke fresh processes through the shared
 stable launcher, so compatible runner repairs are picked up on the next attempt.
 

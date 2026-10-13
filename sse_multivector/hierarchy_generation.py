@@ -6,7 +6,7 @@ Preparation and advancement only freeze inputs and collect saved results.
 
 from copy import deepcopy
 from contextlib import ExitStack
-from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
+from concurrent.futures import FIRST_COMPLETED, Future, wait
 from contextvars import copy_context
 import fcntl
 import heapq
@@ -19,7 +19,7 @@ import sys
 import tempfile
 import subprocess
 from datetime import datetime, timezone
-from threading import Event
+from threading import Event, Thread
 
 from . import canonical_trial as trial
 from . import experiment as workflow
@@ -594,12 +594,17 @@ def _schedule(directory, state):
         _prepare_encoding(directory, state, list(state["items"]))
     while True:
         changed = False
+        ready = []
+        requests = []
         for family in list(state["families"]):
             if family["complete"]:
                 continue
             if family.get("pending") is not None:
                 record = state["experiments"][family["pending"]]
-                if not record.get("complete"):
+                if not all(
+                    record.get("answers", {}).get(case, {}).get("status") == "valid"
+                    for case in family["rounds"][-1]["cases"]
+                ):
                     continue
                 current = []
                 for case, pair in family["rounds"][-1]["cases"].items():
@@ -635,50 +640,56 @@ def _schedule(directory, state):
                 continue
             pairs = _pairs(state, ids, directory)
             cases = {
-                f"P{index:05d}": [a, b] for index, (a, b, score) in enumerate(pairs)
+                f"{family['id']}-P{index:05d}": [a, b]
+                for index, (a, b, score) in enumerate(pairs)
             }
             paired = {i for pair in cases.values() for i in pair}
-            source = dict(
-                cases=[
-                    dict(
-                        id=case,
-                        inputs={
-                            "INPUT_JSON": json.dumps(
-                                _payload(state, pair, family["parent"]),
-                                ensure_ascii=False,
-                            )
-                        },
-                        evidence=dict(
-                            family=family["id"],
-                            original_ids=sorted(
-                                i
-                                for child in pair
-                                for i in state["items"][child]["original_ids"]
-                            ),
+            requests.extend(
+                dict(
+                    id=case,
+                    inputs={
+                        "INPUT_JSON": json.dumps(
+                            _payload(state, pair, family["parent"]),
+                            ensure_ascii=False,
+                        )
+                    },
+                    evidence=dict(
+                        family=family["id"],
+                        original_ids=sorted(
+                            i
+                            for child in pair
+                            for i in state["items"][child]["original_ids"]
                         ),
-                    )
-                    for case, pair in cases.items()
-                ]
+                    ),
+                )
+                for case, pair in cases.items()
             )
+            ready.append(
+                (
+                    family,
+                    dict(
+                        current=list(ids),
+                        comparisons=len(ids) * (len(ids) - 1) // 2,
+                        pairs=[
+                            dict(nodes=[a, b], cosine=score) for a, b, score in pairs
+                        ],
+                        cases=cases,
+                        unpaired=[i for i in ids if i not in paired],
+                    ),
+                )
+            )
+        if ready:
             producer = _experiment(
                 directory,
                 state,
                 "consolidation",
                 state["consolidation_spec"],
-                source,
+                dict(cases=requests),
                 "hierarchy_pair_consolidation",
             )
-            family["rounds"].append(
-                dict(
-                    current=list(ids),
-                    comparisons=len(ids) * (len(ids) - 1) // 2,
-                    pairs=[dict(nodes=[a, b], cosine=score) for a, b, score in pairs],
-                    cases=cases,
-                    unpaired=[i for i in ids if i not in paired],
-                    experiment=producer,
-                )
-            )
-            family["pending"] = producer
+            for family, round_ in ready:
+                family["rounds"].append(dict(round_, experiment=producer))
+                family["pending"] = producer
         if not changed:
             break
     if all(family["complete"] for family in state["families"]):
@@ -1013,6 +1024,24 @@ def _native_teacher(directory, experiment, budget, upgrade_reason, stop):
     )
 
 
+def _start_job(function, arguments):
+    """Submit ready native work immediately; the shared runner queues model calls."""
+    future = Future()
+    context = copy_context()
+
+    def execute():
+        if not future.set_running_or_notify_cancel():
+            return
+        try:
+            future.set_result(context.run(function, *arguments))
+        except BaseException as error:
+            future.set_exception(error)
+
+    thread = Thread(target=execute)
+    thread.start()
+    return future, thread
+
+
 def run(
     directory,
     attempt_budget=None,
@@ -1037,69 +1066,72 @@ def run(
         active, attempted, errors = {}, set(), []
         stop = Event()
         result = _native_advance(directory, comment, stop)
-        with ThreadPoolExecutor(max_workers=4) as pool:
-            try:
-                while True:
-                    jobs = [("teacher", p) for p in result["experiments"]]
-                    jobs.extend(("encoder", p) for p in result["encodings"])
-                    encoding_active = any(
-                        kind == "encoder" for kind, path in active.values()
-                    )
-                    if result["status"] not in ("complete", "blocked_bootstrap"):
-                        for kind, path in jobs:
-                            if (kind, path) in attempted or len(active) >= 4:
-                                continue
-                            if kind == "encoder" and encoding_active:
-                                continue
-                            context = copy_context()
-                            if kind == "teacher":
-                                future = pool.submit(
-                                    context.run,
-                                    _native_teacher,
+        try:
+            while True:
+                jobs = [("teacher", p) for p in result["experiments"]]
+                jobs.extend(("encoder", p) for p in result["encodings"])
+                encoding_active = any(
+                    kind == "encoder" for kind, path, thread in active.values()
+                )
+                if result["status"] not in ("complete", "blocked_bootstrap"):
+                    for kind, path in jobs:
+                        if (kind, path) in attempted:
+                            continue
+                        if kind == "encoder" and encoding_active:
+                            continue
+                        if kind == "teacher":
+                            future, thread = _start_job(
+                                _native_teacher,
+                                (
                                     directory,
                                     Path(path),
                                     budget,
                                     runner_upgrade_reason,
                                     stop,
-                                )
-                            else:
-                                future = pool.submit(
-                                    context.run, worker.run_worker, Path(path)
-                                )
-                                encoding_active = True
-                            active[future] = (kind, path)
-                            attempted.add((kind, path))
-                    if not active:
-                        break
-                    finished, _ = wait(active, return_when=FIRST_COMPLETED)
-                    for future in finished:
-                        kind, path = active.pop(future)
-                        try:
-                            future.result()
-                        except (
-                            workflow.engine.RunnerError,
-                            ValueError,
-                            OSError,
-                            ImportError,
-                        ) as error:
-                            errors.append(dict(kind=kind, path=path, error=str(error)))
-                    result = _native_advance(directory, comment, stop)
-                    print(
-                        "Hierarchy V3: "
-                        + json.dumps(
-                            {
-                                k: result[k]
-                                for k in ("status", "canonical_nodes", "original_l1s")
-                            }
-                        ),
-                        file=sys.stderr,
-                    )
-            except BaseException:
-                stop.set()
-                for future in active:
-                    future.cancel()
-                _pause_experiments(workflow.read(directory / "state.json"))
-                raise
+                                ),
+                            )
+                        else:
+                            future, thread = _start_job(
+                                worker.run_worker, (Path(path),)
+                            )
+                            encoding_active = True
+                        active[future] = (kind, path, thread)
+                        attempted.add((kind, path))
+                if not active:
+                    break
+                finished, _ = wait(active, return_when=FIRST_COMPLETED)
+                for future in finished:
+                    kind, path, thread = active.pop(future)
+                    thread.join()
+                    try:
+                        future.result()
+                    except (
+                        workflow.engine.RunnerError,
+                        ValueError,
+                        OSError,
+                        ImportError,
+                    ) as error:
+                        errors.append(dict(kind=kind, path=path, error=str(error)))
+                result = _native_advance(directory, comment, stop)
+                print(
+                    "Hierarchy V3: "
+                    + json.dumps(
+                        {
+                            k: result[k]
+                            for k in ("status", "canonical_nodes", "original_l1s")
+                        }
+                    ),
+                    file=sys.stderr,
+                )
+        except BaseException:
+            stop.set()
+            for future in active:
+                future.cancel()
+            _pause_experiments(workflow.read(directory / "state.json"))
+            raise
+        finally:
+            for future, (kind, path, thread) in active.items():
+                thread.join()
         result = _native_advance(directory, comment, stop)
         result["execution_status"] = (
             result["status"] if result["status"] == "complete" else "blocked"

@@ -1695,9 +1695,13 @@ when running the automatic constructor.
 `run-hierarchy DIRECTORY` runs ordinary native teacher batches and SSE workers
 until completion or blockage. Preparation and `advance-hierarchy DIRECTORY
 --comment TEXT` make no model or encoder calls. The shared runner owns provider
-concurrency, retries, caching, exact answer reuse and usage accounting. Up to
-four batch coordinators overlap; at most one SSE job runs at a time. No external
-provider-concurrency option is introduced. There is no default attempt cap;
+concurrency, retries, caching, exact answer reuse and usage accounting. All ready
+consolidation pairs are prepared together, retaining each family's own pair and
+parent, and every ready model batch is submitted immediately. The constructor
+adds no model-batch cap. Valid families can advance despite another family's
+failed answers in the same batch. At most one local SSE job runs at a time;
+graph updates remain serialized. No external provider-concurrency option is
+introduced. There is no default attempt cap;
 `--attempt-budget PATH` accepts an explicitly requested persistent allowance.
 
 Root consolidation receives exactly two `nodes` with `title` and `meaning`.
