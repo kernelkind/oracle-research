@@ -28,7 +28,7 @@ are recorded before each execution.
 | HR11 | 6 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr11/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr11-v3/target/hierarchy-hr11-v3-six-note-v1/prepared-provenance.json) | Complete; 17 nodes, 67/1,000 calls | [Launch](../../../oracle-mvp-hierarchy-hr11-v3/target/hr11-review-ui-v1/launch.sh) | [Report](../../../oracle-mvp-hierarchy-hr11-v3/target/hierarchy-hr11-v3-six-note-v1/usage-v1.json) |
 | HR12 | 12 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr12/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr12-v3/target/hierarchy-hr12-v3-twelve-note-v1/prepared-provenance.json) | Complete; 65 nodes, 152/3,000 calls | [Launch](../../../oracle-mvp-hierarchy-hr12-v3/target/hr12-review-ui-v1/launch.sh) | [Report](../../../oracle-mvp-hierarchy-hr12-v3/target/hierarchy-hr12-v3-twelve-note-v1/usage-v1.json) |
 | HR13 | 24 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr13/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr13-v3/target/hierarchy-hr13-v3-twenty-four-note-v1/prepared-provenance.json) | Complete; 107 nodes, 421/5,000 calls | [Launch](../../../oracle-mvp-hierarchy-hr13-v3/target/hr13-review-ui-v1/launch.sh) | [Report](../../../oracle-mvp-hierarchy-hr13-v3/target/hierarchy-hr13-v3-twenty-four-note-v1/usage-v1.json) |
-| HR14 | 50 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr14/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/prepared-provenance.json) | Provider recovery approved; starting 395/10,000 calls | Pending | [Partial report](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/usage-provider-block-v1.json) |
+| HR14 | 50 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr14/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/prepared-provenance.json) | Constructing after provider recovery; 10,000-call allowance | Pending | [Partial report](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/usage-provider-block-v1.json) |
 
 HR13 preserves HR05, HR08 and HR09's exact ordered 24-note selection. HR11 and
 HR12 are approved nested subsets, retaining the original relative order.
@@ -125,6 +125,14 @@ and honoring longer valid `Retry-After` deadlines. Recovery starts from
 **395/10,000** calls. The generator remains at `c607d6fb`; all 50 selected notes,
 inputs, saved answers, the skipped nulls `L00227` and `L00230`, and their original
 receipts remain preserved. Semantic and schema failures are not resampled.
+
+The failed case recovered on native attempt 3 at 14:18:59 UTC. All 80 previously
+valid answers, the prior receipt prefix and Bootstrap receipts are unchanged.
+The counter was 397/10,000 after recovery, including its new warmup.
+Construction resumed through the frozen recovery runner. Its
+[pre-call provenance](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/provider-recovery-v1-provenance.json)
+and [execution handle](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/execution-handle-provider-resume-v1.json)
+retain the parameter-registration commit, saved-answer hashes and driver identity.
 
 The native partial usage report reconciles 395 calls and 181 answer reuses.
 Five failed dispatched attempts have unknown usage and cost, including three
