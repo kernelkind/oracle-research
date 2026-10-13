@@ -17,16 +17,16 @@ Each run's raw build, browsing menu and export share its ID.
 The user approved the six-, twelve- and twenty-four-note V3 experiments and
 then added HR14, a fifty-note run with the same frozen settings and code.
 HR11–HR13 completed in that order. HR14 resumed with the user-approved
-null-handling change after its saved Bootstrap batch returned two null meanings.
-Its initial and continuation parameters and exact source commits are recorded
-before each execution.
+null-handling change, then stopped after a consolidation case exhausted its
+two provider attempts. Its initial and continuation parameters and exact source
+commits were recorded before each execution.
 
 | Run | Notes | Definition | Prepared provenance | Status | Review UI | Native usage |
 | --- | --- | --- | --- | --- | --- | --- |
 | HR11 | 6 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr11/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr11-v3/target/hierarchy-hr11-v3-six-note-v1/prepared-provenance.json) | Complete; 17 nodes, 67/1,000 calls | [Launch](../../../oracle-mvp-hierarchy-hr11-v3/target/hr11-review-ui-v1/launch.sh) | [Report](../../../oracle-mvp-hierarchy-hr11-v3/target/hierarchy-hr11-v3-six-note-v1/usage-v1.json) |
 | HR12 | 12 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr12/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr12-v3/target/hierarchy-hr12-v3-twelve-note-v1/prepared-provenance.json) | Complete; 65 nodes, 152/3,000 calls | [Launch](../../../oracle-mvp-hierarchy-hr12-v3/target/hr12-review-ui-v1/launch.sh) | [Report](../../../oracle-mvp-hierarchy-hr12-v3/target/hierarchy-hr12-v3-twelve-note-v1/usage-v1.json) |
 | HR13 | 24 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr13/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr13-v3/target/hierarchy-hr13-v3-twenty-four-note-v1/prepared-provenance.json) | Complete; 107 nodes, 421/5,000 calls | [Launch](../../../oracle-mvp-hierarchy-hr13-v3/target/hr13-review-ui-v1/launch.sh) | [Report](../../../oracle-mvp-hierarchy-hr13-v3/target/hierarchy-hr13-v3-twenty-four-note-v1/usage-v1.json) |
-| HR14 | 50 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr14/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/prepared-provenance.json) | Running; approved null-skip continuation | Pending | Pending |
+| HR14 | 50 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr14/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/prepared-provenance.json) | Blocked provider retry; 395/10,000 calls | Pending | Pending |
 
 HR13 preserves HR05, HR08 and HR09's exact ordered 24-note selection. HR11 and
 HR12 are approved nested subsets, retaining the original relative order.
@@ -100,6 +100,17 @@ or failed requests. The continuation reports them as skipped without changing th
 receipts. Its [source review](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/resume-source-v1-provenance.json)
 and [live execution handle](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/execution-handle-resume-v1.json)
 record the separate frozen continuation checkout.
+
+HR14's continuation stopped at 06:50:57 UTC on October 13, 2026. The first
+162-case consolidation round completed; the next round has 80 valid answers
+and one failed case, `F00000-P00002`. Its first attempt received HTTP 503 and
+its second lost the SSE connection (`UND_ERR_SOCKET`); both are classified
+`provider_transient` and neither produced a completed answer. The native
+two-attempt limit is exhausted for that case. Its original counter is now
+**395/10,000**, including all failed and retried calls. The graph remains
+constructing with zero canonical nodes; the driver exited and execution is
+blocked. A further provider-attempt exception is pending the user's decision.
+The skipped nulls and unchanged Bootstrap receipts remain preserved.
 
 HR11's first preparation attempt stopped before any inference because the new
 isolated runner lacked its locked Node dependencies. The native files were
