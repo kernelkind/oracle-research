@@ -161,6 +161,8 @@ def _accepted_premise(row, audits, policy="audited"):
         premise.update(mechanical_evidence=row["mechanical_evidence"], mechanical_sha256=row["mechanical_sha256"])
     if row.get("correction"):
         premise["correction"] = row["correction"]
+    if row.get("coverage_subset"):
+        premise["coverage_subset"] = row["coverage_subset"]
     return premise
 
 
@@ -294,6 +296,31 @@ def _corrected_report(report, corrections, audits, policy):
             check: [_corrected_row(row, index, audits, policy) for row in rows]
             for check, rows in answer["checks"].items()}) for answer in report[cohort]["answers"]])
     return result
+
+
+def _negative_subset(case, candidates, audits, template):
+    """Derive a narrower negative question without rewriting its provider receipt."""
+    from experiment_runner import inputs
+    current = json.loads(case["inputs"]["COVERAGE_INPUT"])
+    for row in candidates:
+        if (_accepted_premise(row, audits, "grading") is None
+                or row["parsed"]["witness_student_number"] is not None
+                or row["inputs"].get("POST") != case["inputs"]["POST"]
+                or inputs.render(template, row["inputs"]) != row["prompt"]):
+            continue
+        previous = json.loads(row["inputs"]["COVERAGE_INPUT"])
+        if (previous["teacher_subject"] != current["teacher_subject"]
+                or len(current["candidates"]) >= len(previous["candidates"])
+                or any(candidate not in previous["candidates"] for candidate in current["candidates"])):
+            continue
+        retained = [candidate["student_number"] for candidate in current["candidates"]]
+        return dict(row, id=case["id"], evidence=case["evidence"], coverage_subset=dict(
+            rule="negative_search_candidate_subset", source_case_id=row["id"],
+            current_inputs=case["inputs"], current_input_sha256=inputs.digest(case["inputs"]),
+            current_prompt_sha256=hashlib.sha256(inputs.render(template, case["inputs"]).encode()).hexdigest(),
+            retained_student_numbers=retained, removed_student_numbers=[candidate["student_number"]
+                for candidate in previous["candidates"] if candidate["student_number"] not in retained]))
+    return None
 
 
 def _accepted_matching(teacher, matching, relationships, audits, policy="audited"):
@@ -741,6 +768,8 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
         # decisions remain usable only for the newly derived complete question.
         current_cases, current_settlements, _ = _cases(baseline, assessments, audits, policy)
         template = (Path(__file__).parent / "distillation-review-v1/coverage-search-prompt-v1.md").read_text()
+        negative_sources = list(searches.values()) + [row for row in corrections
+            if row["evidence"]["check"] == "coverage_search"]
         current_searches = {}
         for case in current_cases:
             key = case["evidence"]["answer_id"], tuple(case["evidence"]["teacher_numbers"])
@@ -749,7 +778,12 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
             if saved is None or saved["input_sha256"] != checksum or saved["prompt"] != prompt:
                 saved = dict(case, input_sha256=checksum, prompt=prompt, status="unrun", output=None,
                     parsed=None, origin=None, receipt=None, reviews=[])
-            current_searches[key] = _corrected_row(saved, correction_index, audits, policy)
+            else:
+                saved = dict(saved, id=case["id"], inputs=case["inputs"], evidence=case["evidence"])
+            saved = _corrected_row(saved, correction_index, audits, policy)
+            if _accepted_premise(saved, audits, policy) is None:
+                saved = _negative_subset(case, negative_sources, audits, template) or saved
+            current_searches[key] = saved
         searches = current_searches
     for path in verification_experiments or []:
         _, result = native(path)

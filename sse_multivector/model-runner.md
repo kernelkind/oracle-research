@@ -2340,7 +2340,14 @@ collection. Each invocation applies its selected IDs to all supplied groups;
 keep historical and fresh selections separate when their scopes differ.
 Exact native REJECT reassessments bind the complete old input, prompt and output
 across aliases without changing original ledgers. Positive search witnesses
-still require unchanged DSL verification. Full grading concerns the 1,800 saved
+still require unchanged DSL verification. Collection recomputes current coverage
+after core corrections. A usable negative search can settle an identical subset
+of its candidates, with original provider provenance and separate current-input
+proof; changed wording, context, instructions or expanded candidates cannot.
+The final native check produces 53 complete grades and seven unresolved answers,
+with all 51 targeted regressions passing and every original source hash unchanged.
+Repeated xhigh matching failures remain a readiness blocker.
+Full grading concerns the 1,800 saved
 validation answers; eight-hour readiness and reserved final-test review remain
 open.
 

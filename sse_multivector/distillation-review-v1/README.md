@@ -7300,6 +7300,31 @@ that can admit an older wrong decision whose separate explanation has no bound
 rejection. Native reassessments must preserve original ledgers and bind the
 specific full output being rejected.
 
+Collection recomputes coverage after corrected core decisions and refreshes
+structural evidence even when the rendered question stays identical. A usable
+negative DCS decision also covers a strict subset of its candidates when the
+post, teacher subject, instructions and every retained complete candidate are
+unchanged. The proof preserves the provider's original input, prompt, output
+and receipt and separately records the current question and removed candidates.
+Positive, rejected, expanded or changed-context searches cannot qualify.
+
+The final native readiness check produces **53 complete grades, five pending
+grades and two inconsistent verdicts** across the existing sixty answers.
+The seven incomplete answers retain known matching/support errors or conflicting
+matching and DSL judgments; fresh xhigh calls repeated several wrong matches.
+All requested calls have finished. This does not clear full grading readiness.
+The 51 coverage and assessment production-path regressions pass. Three broader
+runner-compatibility failures previously reproduced on the unchanged baseline.
+
+Ignored artifacts remain beneath
+`oracle-mvp-grading/target/distillation-review-v1/grading/`.
+`collected-grading-ready-check.json` binds 2,003 unchanged source files; the
+original audited report and all 1,887 original source hashes remain unchanged.
+Its N0043 grade uses the negative-subset proof without the two fresh confirmation
+outputs. The grading worktree remains necessary for absolute prompt, schema and
+experiment paths. Current error exceptions still need a defined resolution;
+no broader prompt change or full validation run is authorized by these results.
+
 Full-scale production counting finds 9,820 distinct matching inputs, 9,820
 support inputs and 16,702 actual parent-child inputs. After saved sixty-answer
 reuse, remaining model service projects 5.49–6.15 hours at continuously occupied

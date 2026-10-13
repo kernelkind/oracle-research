@@ -704,6 +704,67 @@ class DistillationCoverageSearchTests(unittest.TestCase):
         result = coverage.collect(output, self.root / "exact-derived-search.json", correction_experiments=[rejection, search])
         self.assertEqual(result["random"]["answers"][0]["scoring"]["scores"]["coverage"]["value"], 1)
 
+    def test_grading_reuses_a_negative_search_for_an_identical_candidate_subset(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        from sse_multivector import distillation_review_evaluation as evaluation
+        from sse_multivector import test_distillation_review_evaluation as fixtures
+        fixture, baseline, worker = self.baseline("negative-subset", student=fixtures.subjects(
+            ("1", "Fruit varieties"), ("1.1", "Apples"), ("2", "Cable A")))
+        response = dict(evidence=[dict(student_number=number, reason="Fruit restrictions are absent.")
+            for number in ["1", "1.1"]], witness_student_number=None)
+        search_worker = self.root / "subset-search-worker"
+        search_worker.write_text(worker.read_text().replace('("DSMv3", "DSSv2", "DSLv2", "DSLv4")',
+            '("DSMv3", "DSSv2", "DSLv2", "DSLv4", "DCSv1")').replace(
+            'else {"valid": True, "reason": "Fixture semantic verdict."}',
+            'else (' + repr(response) + ' if prompt.startswith("DCSv1") else '
+            '{"valid": True, "reason": "Fixture semantic verdict."})'))
+        search_worker.chmod(0o755)
+        output = self.root / "negative-subset-coverage"
+        prepared = coverage.prepare(baseline, output, runner_binary=search_worker, policy="grading")
+        search = Path(prepared["experiments"][0]["path"])
+        fixture.native("run", search, "--max-new-attempts", 2)
+        original = json.loads(fixture.native("show", search, "--json"))["cases"][0]
+        self.assertEqual(original["evidence"]["candidate_student_numbers"], ["1", "1.1"])
+        native = evaluation.report(baseline)
+        edge = next(row for row in native["random"]["answers"][0]["checks"]["relationship"]
+            if row["evidence"].get("role") == "actual_relationship")
+        group = next(row["experiment"] for row in native["experiments"]
+            if any(case["id"] == edge["id"] and case["evidence"]["check"] == "relationship"
+                   for case in row["cases"]))
+        correction = self.root / "now-valid-actual-edge"
+        fixture.native("prepare", correction, "--from", group, "--only", edge["id"], "--reasoning-effort", "high")
+        fixture.native("run", correction, "--max-new-attempts", 2)
+        result = coverage.collect(output, self.root / "negative-subset-collected.json", correction_experiments=[correction])
+        answer = result["random"]["answers"][0]
+        self.assertEqual(answer["scoring"]["scores"]["coverage"]["value"], 1)
+        proof = next(row for row in answer["premises"] if "coverage_subset" in row)
+        self.assertEqual(proof["input_sha256"], original["input_sha256"])
+        self.assertEqual(proof["receipt"], original["receipt"])
+        self.assertEqual(proof["coverage_subset"]["retained_student_numbers"], ["1"])
+        self.assertEqual(proof["coverage_subset"]["removed_student_numbers"], ["1.1"])
+        template = (Path(__file__).parent / "distillation-review-v1/coverage-search-prompt-v1.md").read_text()
+        current = dict(original, inputs=proof["coverage_subset"]["current_inputs"])
+        for change in ("expanded", "post", "teacher", "contexts"):
+            with self.subTest(change=change):
+                altered = dict(current, inputs=dict(current["inputs"]))
+                payload = json.loads(altered["inputs"]["COVERAGE_INPUT"])
+                if change == "expanded":
+                    payload["candidates"].append(dict(payload["candidates"][0], student_number="99"))
+                elif change == "post":
+                    altered["inputs"]["POST"] += " Different source context."
+                elif change == "teacher":
+                    payload["teacher_subject"] = "Different teacher meaning"
+                else:
+                    payload["candidates"][0]["teacher_contexts"] = []
+                altered["inputs"]["COVERAGE_INPUT"] = json.dumps(payload)
+                self.assertIsNone(coverage._negative_subset(altered, [original], {}, template))
+        positive = dict(original, parsed=dict(original["parsed"], witness_student_number="1"))
+        self.assertIsNone(coverage._negative_subset(current, [positive], {}, template))
+        fixture.native("review", search, "--case", original["id"], "--role", "agent", "--verdict", "reject",
+            "--comment", "Rejected complete source decision cannot justify any derived subset.")
+        rejected = json.loads(fixture.native("show", search, "--json"))["cases"][0]
+        self.assertIsNone(coverage._negative_subset(current, [rejected], {}, template))
+
     def test_grading_does_not_choose_between_contradictory_native_corrections(self):
         from sse_multivector import distillation_coverage_search as coverage
         fixture, _, output, native, row = self.collection_fixture("grading-conflict", policy="grading",
