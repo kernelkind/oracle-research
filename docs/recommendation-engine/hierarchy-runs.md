@@ -16,19 +16,17 @@ Each run's raw build, browsing menu and export share its ID.
 
 The user approved the six-, twelve- and twenty-four-note V3 experiments and
 then added HR14, a fifty-note run with the same frozen settings and code.
-HR11–HR13 completed in that order. HR14 resumed with the user-approved
-null-handling change, then stopped after a consolidation case exhausted its
-two provider attempts. The user approved extended native transient-provider
-retries from that checkpoint, preserving the saved answers and 10,000-call
-allowance. Its initial and continuation parameters and exact source commits
-are recorded before each execution.
+HR11–HR13 completed in that order. HR14 completed after the user-approved
+null-handling change and extended native transient-provider recovery, preserving
+saved answers and its 10,000-call allowance. Initial and continuation parameters
+and exact source commits were recorded before each execution.
 
 | Run | Notes | Definition | Prepared provenance | Status | Review UI | Native usage |
 | --- | --- | --- | --- | --- | --- | --- |
 | HR11 | 6 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr11/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr11-v3/target/hierarchy-hr11-v3-six-note-v1/prepared-provenance.json) | Complete; 17 nodes, 67/1,000 calls | [Launch](../../../oracle-mvp-hierarchy-hr11-v3/target/hr11-review-ui-v1/launch.sh) | [Report](../../../oracle-mvp-hierarchy-hr11-v3/target/hierarchy-hr11-v3-six-note-v1/usage-v1.json) |
 | HR12 | 12 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr12/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr12-v3/target/hierarchy-hr12-v3-twelve-note-v1/prepared-provenance.json) | Complete; 65 nodes, 152/3,000 calls | [Launch](../../../oracle-mvp-hierarchy-hr12-v3/target/hr12-review-ui-v1/launch.sh) | [Report](../../../oracle-mvp-hierarchy-hr12-v3/target/hierarchy-hr12-v3-twelve-note-v1/usage-v1.json) |
 | HR13 | 24 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr13/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr13-v3/target/hierarchy-hr13-v3-twenty-four-note-v1/prepared-provenance.json) | Complete; 107 nodes, 421/5,000 calls | [Launch](../../../oracle-mvp-hierarchy-hr13-v3/target/hr13-review-ui-v1/launch.sh) | [Report](../../../oracle-mvp-hierarchy-hr13-v3/target/hierarchy-hr13-v3-twenty-four-note-v1/usage-v1.json) |
-| HR14 | 50 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr14/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/prepared-provenance.json) | Constructing after provider recovery; 10,000-call allowance | Pending | [Partial report](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/usage-provider-block-v1.json) |
+| HR14 | 50 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr14/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/prepared-provenance.json) | Complete; 354 nodes, 1,030/10,000 calls | [Launch](../../../oracle-mvp-hierarchy-hr14-v3/target/hr14-review-ui-v1/launch.sh) | [Report](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/usage-v1.json) |
 
 HR13 preserves HR05, HR08 and HR09's exact ordered 24-note selection. HR11 and
 HR12 are approved nested subsets, retaining the original relative order.
@@ -78,76 +76,65 @@ original producers behind reuse**. Generation input is 269,085 tokens, cached
 input 1,058,176 and output 205,924, including reasoning. Provider-reported cash
 charges are unavailable; API-equivalent estimates are comparison evidence.
 
-HR14's native driver exited after all 326 Bootstrap cases finished: 176 fresh
-answers, 150 exact reuses and one warmup. Cases `L00227` (**TheRogueBatch**,
-local entry 1) and `L00230` (**coffeechain**, local entry 4) returned null
-meanings for the same original post at selection position 29. Both responses
-are schema-valid and retain their unresolved ambiguity evidence; there were
-no provider failures or malformed outputs. The initial frozen V3 constructor
-blocked root construction while any original L1 meaning was null, leaving that
-checkpoint with zero canonical nodes.
-The post still has valid Nostr, Bitcoin and Coffee entries. The user approved
-skipping these two null entries and resuming from the same saved answers and
-allowance. The tested continuation code is frozen at `c607d6fb`, retaining
-the other seven original generator bindings. The initial source remains
-`d4c55c13`; both exact commits are reachable from local main. The 10,000-call
-allowance had 177 calls used before the continuation. All 50 notes still have
-at least one of the 324 non-null original L1 entries available for construction.
+HR14's [immutable native snapshot](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/HR14/state.json)
+represents all 50 notes in 354 canonical nodes, six roots and 348 edges. All 87
+families are complete; maximum siblings is six and every leaf represents one
+or two distinct notes. All 326 original inputs are retained, with 324 non-null
+L1 associations in the graph and two user-approved null skips in the audit.
+The [checked UI](../../../oracle-mvp-hierarchy-hr14-v3/target/hr14-review-ui-v1/validation.json)
+preserves all 50 full original bodies, fixed meanings, parent edges and
+associations. Launch it from the workspace:
 
-The [blocked snapshot](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/HR14-blocked-bootstrap-v1/state.json),
-[its native accounting](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/usage-blocked-v1.json)
-and exact [TheRogueBatch](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/blockers-v1/L00227.show.json)
-and [coffeechain](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/blockers-v1/L00230.show.json)
-evidence are preserved separately. These are valid null answers, not malformed
-or failed requests. The continuation reports them as skipped without changing their original
-receipts. Its [source review](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/resume-source-v1-provenance.json)
-and [execution handle](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/execution-handle-resume-v1.json)
-record the separate frozen continuation checkout.
+```bash
+cd /home/dev/src/notedeck_worktrees/algos
+./oracle-mvp-hierarchy-hr14-v3/target/hr14-review-ui-v1/launch.sh
+```
 
-HR14's continuation stopped at 06:50:57 UTC on October 13, 2026. The first
-162-case consolidation round completed; the next round has 80 valid answers
-and one failed case, `F00000-P00002`. Its first attempt received HTTP 503 and
-its second lost the SSE connection (`UND_ERR_SOCKET`); both are classified
-`provider_transient` and neither produced a completed answer. The native
-two-attempt limit was exhausted for that case. At the checkpoint its original
-counter was **395/10,000**, including all failed and retried calls. The graph
-was constructing with zero canonical nodes; the driver exited with execution
-blocked. Its [provider-blocked snapshot](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/HR14-provider-block-v1/state.json)
-and [exact failed-case evidence](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/blockers-provider-v1/F00000-P00002.show.json)
-are preserved with source and receipt hashes. The user approved recovery
-with the native `--keep-retrying-provider-errors` option. The initial runner
-remains frozen at `b03251cca40edd703c95047bdd84d56db5f1a54c`; the provider-recovery
-runner is frozen separately at `ef3e68281395b0732804530fb445d9e4f826304c`.
-Its request-worker and frontier code matches the initial runner. Recognized
-transient failures may now retry beyond two attempts until recovery or the
-existing allowance is exhausted, using exponential backoff up to 60 seconds
-and honoring longer valid `Retry-After` deadlines. Recovery starts from
-**395/10,000** calls. The generator remains at `c607d6fb`; all 50 selected notes,
-inputs, saved answers, the skipped nulls `L00227` and `L00230`, and their original
-receipts remain preserved. Semantic and schema failures are not resampled.
+[Final native accounting](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/usage-v1.json)
+reconciles **1,030/10,000 fresh calls**, **181 answer reuses** and 1,160 valid
+cases. All six failed attempts recovered; seven retry attempts are retained.
+Those six failed attempts lack usage and API-cost estimates, so full token and
+cost totals remain unknown. Known API-equivalent subtotals are **$5.2232656
+fresh** and **$6.52946 including original producers behind reuse**. Known fresh
+token subtotals are 679,805 input, 1,456,256 cached input and 371,803 output,
+with reasoning included in output. There are no malformed outputs, unresolved
+cases or unrun requests.
 
-The failed case recovered on native attempt 3 at 14:18:59 UTC. All 80 previously
-valid answers, the prior receipt prefix and Bootstrap receipts are unchanged.
-The counter was 397/10,000 after recovery, including its new warmup.
-Construction resumed through the frozen recovery runner. Its
-[pre-call provenance](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/provider-recovery-v1-provenance.json)
-and [execution handle](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/execution-handle-provider-resume-v1.json)
-retain the parameter-registration commit, saved-answer hashes and driver identity.
+The [final combined native report](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/combined-round-final-v1.json)
+counts **1,670 unique provider attempts** across HR11–HR14 and **307 answer
+reuses**, retaining each original producer once. Its known API-equivalent
+subtotal is **$8.5496616**; full cost and token totals remain unknown because
+the six recovered failures lack estimates. Per-run costs that include reused
+producers must not be summed.
 
-The native partial usage report reconciles 395 calls and 181 answer reuses.
-Five failed dispatched attempts have unknown usage and cost, including three
-recovered failures. Known API-equivalent subtotals are **$2.1192816 fresh**
-and **$3.425476 including original producers behind reuse**; complete totals
-remain unknown. Its 568 valid cases describe prompt outputs, not a completed
-hierarchy.
+HR14's initial Bootstrap checkpoint had two schema-valid null meanings:
+`L00227` ([TheRogueBatch](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/blockers-v1/L00227.show.json),
+local entry 1) and `L00230` ([coffeechain](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/blockers-v1/L00230.show.json),
+local entry 4), both from source-corpus note N029, at position 34 in this run’s
+selection. The user approved skipping
+these two entries while retaining their original inputs, answers and receipts;
+the post's remaining valid entries preserve its representation. The initial
+source is `d4c55c13`; the reviewed null-handling continuation is `c607d6fb`.
+The [null checkpoint](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/HR14-blocked-bootstrap-v1/state.json),
+[historical accounting](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/usage-blocked-v1.json)
+and [source review](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/resume-source-v1-provenance.json)
+preserve that transition.
 
-The [combined native report through HR14's provider-blocked checkpoint](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/usage-round-through-provider-block-v1.json)
-counts **1,035 unique provider attempts** across HR11–HR14 and **307 answer
-reuses**, retaining each original producer once. The known API-equivalent
-subtotal is **$5.4456776**; the full cost and token totals remain unknown because
-five failed attempts lack usage and cost estimates. This is a partial round
-snapshot, not final accounting. Per-run costs that include reused producers
-must not be summed.
+At the [historical provider checkpoint](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/HR14-provider-block-v1/state.json),
+case [F00000-P00002](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/blockers-provider-v1/F00000-P00002.show.json)
+had exhausted two transient attempts and the allowance stood at 395/10,000.
+The user approved native `--keep-retrying-provider-errors`; it recovered on
+attempt 3, preserving earlier valid answers and receipt prefixes. The initial
+runner is `b03251cca40edd703c95047bdd84d56db5f1a54c`; recovery used
+`ef3e68281395b0732804530fb445d9e4f826304c` with unchanged request-worker and
+frontier code. [Pre-call provenance](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/provider-recovery-v1-provenance.json)
+and the [execution handle](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/execution-handle-provider-resume-v1.json)
+retain the recorded approval, source bindings and driver identity. All retries
+count against the original allowance; semantic and schema failures were not
+resampled. The [provider-checkpoint accounting](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/usage-provider-block-v1.json)
+and [combined checkpoint report](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/usage-round-through-provider-block-v1.json)
+are historical partial reports, superseded for final comparisons by the reports
+above.
 
 HR11's first preparation attempt stopped before any inference because the new
 isolated runner lacked its locked Node dependencies. The native files were
