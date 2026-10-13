@@ -26,7 +26,7 @@ and exact source commits were recorded before each execution.
 | HR11 | 6 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr11/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr11-v3/target/hierarchy-hr11-v3-six-note-v1/prepared-provenance.json) | Complete; 17 nodes, 67/1,000 calls | [Launch](../../../oracle-mvp-hierarchy-hr11-v3/target/hr11-review-ui-v1/launch.sh) | [Report](../../../oracle-mvp-hierarchy-hr11-v3/target/hierarchy-hr11-v3-six-note-v1/usage-v1.json) |
 | HR12 | 12 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr12/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr12-v3/target/hierarchy-hr12-v3-twelve-note-v1/prepared-provenance.json) | Complete; 65 nodes, 152/3,000 calls | [Launch](../../../oracle-mvp-hierarchy-hr12-v3/target/hr12-review-ui-v1/launch.sh) | [Report](../../../oracle-mvp-hierarchy-hr12-v3/target/hierarchy-hr12-v3-twelve-note-v1/usage-v1.json) |
 | HR13 | 24 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr13/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr13-v3/target/hierarchy-hr13-v3-twenty-four-note-v1/prepared-provenance.json) | Complete; 107 nodes, 421/5,000 calls | [Launch](../../../oracle-mvp-hierarchy-hr13-v3/target/hr13-review-ui-v1/launch.sh) | [Report](../../../oracle-mvp-hierarchy-hr13-v3/target/hierarchy-hr13-v3-twenty-four-note-v1/usage-v1.json) |
-| HR14 | 50 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr14/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/prepared-provenance.json) | Complete; 354 nodes, 1,030/10,000 calls | [Launch](../../../oracle-mvp-hierarchy-hr14-v3/target/hr14-review-ui-v1/launch.sh) | [Report](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/usage-v1.json) |
+| HR14 | 50 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr14/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/prepared-provenance.json) | Complete; 354 nodes, 1,030/10,000 calls | [Launch](../../../oracle-mvp-hierarchy-hr14-v3/target/hr14-review-ui-v2/launch.sh) | [Report](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/usage-v1.json) |
 
 HR13 preserves HR05, HR08 and HR09's exact ordered 24-note selection. HR11 and
 HR12 are approved nested subsets, retaining the original relative order.
@@ -81,13 +81,15 @@ represents all 50 notes in 354 canonical nodes, six roots and 348 edges. All 87
 families are complete; maximum siblings is six and every leaf represents one
 or two distinct notes. All 326 original inputs are retained, with 324 non-null
 L1 associations in the graph and two user-approved null skips in the audit.
-The [checked UI](../../../oracle-mvp-hierarchy-hr14-v3/target/hr14-review-ui-v1/validation.json)
+The [checked UI](../../../oracle-mvp-hierarchy-hr14-v3/target/hr14-review-ui-v2/validation.json)
 preserves all 50 full original bodies, fixed meanings, parent edges and
-associations. Launch it from the workspace:
+associations. Headings show the topic and canonical node ID, with note counts
+in the navigation menu. Supporting note IDs are kept out of headings and
+details; press `N` to browse notes. Launch it from the workspace:
 
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos
-./oracle-mvp-hierarchy-hr14-v3/target/hr14-review-ui-v1/launch.sh
+./oracle-mvp-hierarchy-hr14-v3/target/hr14-review-ui-v2/launch.sh
 ```
 
 [Final native accounting](../../../oracle-mvp-hierarchy-hr14-v3/target/hierarchy-hr14-v3-fifty-note-v1/usage-v1.json)

@@ -4184,6 +4184,11 @@
           "label": "Provider-blocked checkpoint before approved extended transient retries",
           "path": "target/hierarchy-hr14-v3-fifty-note-v1/HR14-provider-block-v1/state.json",
           "sha256": "9954be2a17cdaaf0f8a196575433e9a68d94bb6c2a6b7f8b6bda8777467e3b3b"
+        },
+        {
+          "label": "Checked review UI with concise headings and no supporting-note ID lists",
+          "path": "target/hr14-review-ui-v2/hierarchy.json",
+          "sha256": "bcb78a20b5347a7f23a39a2cfcf916c0190e86bca9a49da780500b902ab45f68"
         }
       ],
       "code_provenance": {
@@ -4497,19 +4502,19 @@
         },
         "review_ui": {
           "provenance": {
-            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr14-v3/target/hr14-review-ui-v1/provenance.json",
-            "sha256": "6069badd754684a5ed56fdc06df6d88681819529d3d9f3e3efca89762a5d9629"
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr14-v3/target/hr14-review-ui-v2/provenance.json",
+            "sha256": "1bfa2211dc278d3b662f68c7fdd7da36f40303a0e8d4e879c305cc2c3b994fc0"
           },
           "validation": {
-            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr14-v3/target/hr14-review-ui-v1/validation.json",
-            "sha256": "fd0cc4f1ca406406ce04ff3965e6ae750aaf76c319e8eaa612b3f9d5a4df3021"
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr14-v3/target/hr14-review-ui-v2/validation.json",
+            "sha256": "66a646fe5a42afc32a76a30d77e4da2399fc22ca2fee9a5e1d24c19073ea51af"
           },
           "launcher": {
-            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr14-v3/target/hr14-review-ui-v1/launch.sh",
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr14-v3/target/hr14-review-ui-v2/launch.sh",
             "sha256": "4da411c31db7d82448e6243fb06e2de4f5b9afe1bfc4b2a60689a30f09f4b360"
           },
           "notes": {
-            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr14-v3/target/hr14-review-ui-v1/notes.json",
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr14-v3/target/hr14-review-ui-v2/notes.json",
             "sha256": "d434f78645d94c972755e930c8ae6bee79f6d25d54c7e8a4aaac8dac436e61d6"
           },
           "canonical_nodes": 354,
@@ -4517,7 +4522,10 @@
           "full_original_note_bodies": 50,
           "viewer_check_passed": true,
           "construction_note_order": "Exact native prepared note_ids",
-          "viewer_note_order": "Source corpus order, as emitted by existing native export-canonical-viewer"
+          "viewer_note_order": "Source corpus order, as emitted by existing native export-canonical-viewer",
+          "review_ui_version": 2,
+          "note_id_lists_displayed": false,
+          "exporter_git_commit": "58b9ceab81b4aac99c827a20221d94f51730f1a6"
         },
         "parameter_ledger": {
           "path": "docs/recommendation-engine/hierarchy-parameters.csv",
