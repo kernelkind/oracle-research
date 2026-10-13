@@ -4,8 +4,11 @@
 explicitly applying activity decomposition inside stated purposes or uses.
 This changes one wrapper sentence; the shared meaning-writing text, Bootstrap
 companion, guide, example and all historical prompt bytes remain unchanged.
-The matched three-case check is not yet run. V9 is not activated in hierarchy
-construction and no general semantic accuracy is established.
+The matched three-case check is complete: all three retain the required formal
+actions and objects, including the shelf storage action in both coffee orders.
+Two qualified agent accepts and one separate scope uncertainty are recorded.
+V9 is not activated in hierarchy construction and no general semantic accuracy
+is established.
 
 V8's twelve-case panel passed its targeted checks under qualified agent review.
 Its independent follow-ups preserved explicit coffee drinking and passed the
@@ -528,3 +531,85 @@ actual activity or adding a cleaning purpose to Soaking. Retain the same JSON,
 vocabulary, coverage and English/formal checks. Relation names and coherent
 broader topics may vary. No model answer or expectation enters model input;
 these are agent assessments, not human gold or an automated reasoner proof.
+
+## V9 matched controls: completed findings — 2026-10-13
+
+All three controls completed on GPT-6.1 Sol medium. The inputs and settings
+exactly match their corresponding V8 follow-ups; only the prompt changed.
+Successful requests contain one fresh user message, no previous-response
+reference and unchanged non-input request-body fields. All source/assembly
+hashes remain fixed. No old answer or authored expectation entered model input.
+
+All three pass JSON layout, expression formatting, vocabulary closure and
+unchanged-definition checks. The targeted activity decomposition passes in
+both coffee orders and the bottle control. Native reviews contain two qualified
+agent accepts and one independent scope uncertainty, with no user gold labels
+or machine-reasoner proof.
+
+| Saved control | Targeted result | Separate qualification |
+|---|---|---|
+| Coffee forward | Drinking/Coffee and Storing/required cups are formal; printed coverage passes | Action glossaries include "plans to perform" the activity; full fidelity remains uncertain |
+| Coffee reversed | Shelf now has Storing and its required cup object; Drinking/Coffee remains formal | "Planned instances" wording remains an ordinary-language interpretation qualification |
+| Bottle washing/soaking | Both activities and Bottle objects are formal; design purpose and English coverage pass | Primitive concepts are not independently human-validated |
+
+The reversed shelf now starts:
+
+```text
+Shelf AND (designedFor SOME (Storing AND (storedObject SOME CoffeeCupInUse)))
+```
+
+`CoffeeCupInUse` is `Cup AND (usedFor SOME CoffeeDrinking)`;
+`CoffeeDrinking` is `Drinking AND (consumedBeverage SOME Coffee)`. Storage is no
+longer represented solely by `designedToStore`. The forward answer also exposes
+Storing through `CoffeeCupStorage`. This corrects the observed representation
+failure in this matched draw, not a proven reliable wording effect.
+
+### Separate plan/activity scope uncertainty
+
+The forward answer defines Drinking as "The activity of drinking a beverage,
+including plans to perform that activity." Storing likewise includes "plans to
+perform that activity." The fixed node meanings instead supply items designed
+for drinking coffee or storing cups used for drinking coffee. They do not name
+planning as an additional design purpose. The final English consolidation also
+names drinking and storing, without a separate planning alternative.
+
+If the primitive classes admit plans themselves, design-for-planning can be
+admitted where the supplied meaning requires design-for-the-activity. If the
+wording only denotes prospective, unperformed activities, that counterexample
+does not follow. Record this as unresolved scope interpretation rather than
+asserting a new semantic failure or silently calling the whole answer faithful.
+The reversed answer's "planned instances" wording does not explicitly say
+plans themselves are members, and is retained as a qualification. Both printed
+consolidations still cover their translated nodes.
+
+The most useful next clarification is to separate an unperformed activity from
+a plan to perform it: design purpose can refer to the former without making the
+latter a member of the activity class. Check that boundary with matched purpose
+and explicit-plan controls before qualifying the prompt more broadly. No V10
+prompt, extra calls or hierarchy activation is included in this completed trial.
+
+### Accounting and retained evidence
+
+Native `experiment-usage-summary-v3` records four fresh attempts for three
+answers. The forward first attempt returned "Our servers are currently
+overloaded" and recovered on its one allowed retry. There are zero terminal
+failures, reuses and warmups. Known usage is 9,552 input tokens, 3,348 output
+tokens and 1,338 reasoning tokens already included in output. Reported cache
+read/write tokens are zero. Known API-equivalent catalogue subtotal is
+**$0.052584**; the complete cost is unknown because the failed attempt supplied
+no usage. Native accounting retains that warning. This is not subscription
+billing or a savings claim; the V8 baselines were not rerun.
+
+The worktree is retained for frozen-source and receipt validation:
+
+```text
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp-pair-consolidation-owl-v9-controls-v1
+```
+
+Ignored evidence is `target/pair-consolidation-owl-v9-coffee-forward-v1`,
+`target/pair-consolidation-owl-v9-reversed-and-bottle-v1`,
+`target/pair-consolidation-owl-v9-controls-checks-v1.json`,
+`target/pair-consolidation-owl-v9-controls-usage-source-v1.json` and
+`target/pair-consolidation-owl-v9-controls-usage-summary-v1.json`. Earlier
+retained worktrees still supply exact baseline/source bindings. Historical
+prompts, fixed inputs and original receipts remain unchanged.
