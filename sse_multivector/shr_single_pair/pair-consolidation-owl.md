@@ -1,6 +1,16 @@
 # Pair-consolidation-owl: experimental prompt line
 
-`pair-consolidation-owl-v12` is the current experimental version. It ports the
+[Pair-consolidation-owl V13](pair-consolidation-owl-v13.md) is the current tested
+experimental version. It makes completed-activity modifiers and stated
+attribution connections explicit in the translation instructions. The two
+original target conditions survive first draws and independent repeats, but
+those repeats reveal disconnected extraction conditions and loss of the
+specific MrBeast name. Two other controls retain composite conditions only
+in English. Across twelve complete V13 answers, native agent reviews record
+eight qualified accepts and four rejects. V13 is not qualified for hierarchy
+activation; its focused findings and accounting are recorded below.
+
+`pair-consolidation-owl-v12` is the preceding experimental version. It ports the
 normal V7 specificity objective into the OWL task wrappers: retain shared
 identities and defining conditions, choose the most specific coherent covered
 topic, and allow the same scope as a supplied node. Common writing rules, the
@@ -1415,3 +1425,130 @@ and `target/pair-consolidation-owl-v12-usage-{source,summary}-v1.json`. These ig
 artifacts remain separate from the reusable prompt/assembly/spec definitions and
 maintained findings. Earlier retained worktrees supply unchanged historical
 baselines; their receipts and source inputs are preserved.
+
+
+## V13 translation fidelity checks — 2026-10-13
+
+The user authorized the focused next test after V12. Before editing, native
+`show` revalidated the two saved failing receipts: the Coffee repeat defines
+`RoastedCoffeeBeans` only in English, and Beets/MrBeast connects Jimmy Donaldson
+to generic known-for content without attributing that content to him. Their
+input hashes, output hashes and the failed criteria are retained separately in
+`target/pair-consolidation-owl-v13-baseline-checks-v1.json`. Existing receipts
+and historical reviews were not rewritten.
+
+[V13](pair-consolidation-owl-v13.md) replaces one translation paragraph and adds
+one relationship paragraph. Completed activities described by modifiers must
+be represented formally. Class names abbreviating stated processes, purposes,
+states or relationships require formal supporting definitions. Attribution,
+ownership and association remain explicit connections with the stated
+participants; association alone does not establish ownership or creation.
+Conditions on one thing must share a `SOME` expression rather than use separate
+existential connections that could refer to different things. These rules
+follow the [official reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices#how-to-prompt-reasoning-models-effectively)
+for direct constraints and explicit success criteria without a reasoning
+narrative. They remain hypotheses tested on GPT-6.1 Sol medium.
+
+Only [the translation wrapper](prompt_sources/pair-consolidation-owl-v13.before.md)
+changes. The [assembly manifest](pair-consolidation-owl-v13.assembly.json) pins
+the unchanged V12 specificity wording, after-wrapper, shared-rules-v6,
+Bootstrap-v129 companion, guide-v5, example-v3 and output fields. No constructor,
+ordinary pair-consolidation prompt or hierarchy artifact changes.
+
+### Fixed cases and independent draws
+
+Three independent native batches were submitted immediately through the shared
+launcher, in one scheduling group:
+
+- [Close controls](pair-consolidation-owl-v13-close-v1.spec.json): the five exact
+  HR14 Tomatoes, Coffee, Breakfast, Bitcoin and Dezeen pairs, with saved V12
+  repeat answers as the baseline.
+- [HR14 controls](pair-consolidation-owl-v13-hr14-controls-v1.spec.json): the exact
+  Beets/MrBeast and pressure-canning/extractor-fan pairs, with their V12 answers
+  as the baseline.
+- [Prior controls](pair-consolidation-owl-v13-regression-v1.spec.json): completed
+  painting with a supplied OWL parent, never-painted surfaces, and cups versus
+  shelves with distinct purposes.
+
+Original inputs, ASv6.100 source references, model, medium effort, schema and
+transport remain unchanged. No expected answer or earlier output enters the
+model input. Native `prepare --repeat` then dispatches one independent Coffee
+and one independent Beets/MrBeast draw. The two complete repeat prompts equal
+their first V13 prompts; retained upstream response references differ. These
+are new samples, not answer reuses.
+
+### Observations and limits
+
+| Case | First V13 answer | Independent repeat |
+|---|---|---|
+| Coffee | Roasting is formal; the bean source and water condition share an extraction expression. | Roasting remains formal, but source and water use attach to separate extraction activities. |
+| Beets / MrBeast | Known-for YouTube content is explicitly attributed to Jimmy Donaldson; the particular MrBeast name remains. | Attribution remains, but the translation and consolidation broaden to any public online name of Jimmy Donaldson. |
+| Tomatoes | Tomato species and edible-fruit identity remain; first-only fleshiness is not imposed on the other meaning. | Not repeated here. |
+| Breakfast | Actual beginning of the eating day or its stated day-starting purpose remains, after the eater's main sleep. | Not repeated here. |
+| Bitcoin | BTC identity remains; public-blockchain conditions stay on the network alternative. | Not repeated here. |
+| Dezeen | Named publication identity and credit remain; cast-iron cookware is still only an English-defined composite class. | Not repeated here. |
+| Pressure canning / extractor fans | Literal alternatives cover both translations, but pressurized steam and unwanted airborne substances remain English-only composites. | Not repeated here. |
+| Three prior controls | Completion, explicit absence and distinct equipment purposes remain; the supplied painting parent is preserved. | Not repeated here. |
+
+The Coffee repeat expands to two separate `producedBy SOME Extraction`
+conditions: one extraction has roasted beans as its source, another uses water.
+Under the open-world rules they can be different activities. Thus the logic
+has not established that the extraction from the roasted beans uses water.
+The final English nevertheless connects them. The original English-only
+roasting failure is corrected in this draw, but full translation fidelity is
+not established.
+
+The MrBeast repeat keeps `attributedTo SOME JimmyDonaldson`, without imposing
+sole authorship, but has no MrBeast identity or text condition. Its title and
+meaning now describe Jimmy Donaldson's public online names. A different public
+alias can satisfy that expression while failing the specific source identity.
+`YouTubeContent` also remains an English-only composite platform restriction.
+
+The fuller translation audit flags cast-iron cookware and pressurized steam
+as separate conditions hidden in composite English glossary entries. Inspection
+of the matched saved V12 answers finds those same abbreviations there. These
+are not demonstrated V13 regressions; the old targeted identity acceptance
+and grouping uncertainty did not certify every source-to-logic condition.
+Historical reviews are preserved, and no case becomes human gold through this
+agent review.
+
+Native reviews record eight qualified accepts and four rejects: two first-draw
+composite-representation failures and both repeats. All twelve answers pass the
+mechanical format, parentheses, symbol closure, consistent reused-definition,
+parent-definition and raw receipt checks. These checks are not an executable
+OWL proof or a semantic acceptance. No separate reasoner was introduced.
+The forced unrelated pairs remain qualified for browsing usefulness.
+
+The next useful test should check each fully expanded node translation in both
+directions against its fixed meaning before consolidation: can it admit an
+unstated alias or disconnected activity, or exclude a case the source admits?
+This is a recommendation, not an activated prompt revision or further inference.
+
+### Native accounting and retained evidence
+
+The five experiments finish with twelve valid answers, twenty fresh provider
+attempts, eight recovered failed attempts and zero answer reuses. All eight
+interruptions retain HTTP/2 `enhance_your_calm` body-closure evidence; native
+retries account for them. Their usage is absent, so the complete cost remains
+unknown. Known subtotals are 41,809 uncached input tokens, zero cache-read/write
+tokens and 20,735 output tokens, already including 7,541 reasoning tokens. The
+known catalogue API-equivalent subtotal is **$0.290968**, not subscription
+billing or a complete total. No cache warmups or paid fallback were used.
+
+Source and ignored artifacts remain in:
+
+```text
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp-pair-consolidation-owl-v13-fidelity-v1
+```
+
+Its `target/pair-consolidation-owl-v13-{close,hr14-controls,regression,coffee-repeat,attribution-repeat}-v1`
+directories retain frozen native plans, receipts and attributed reviews. Separate
+ignored artifacts contain the baseline failures, structural checks, native usage
+source and native usage summary. The worktree remains because those saved
+experiments and source bindings require its paths. The earlier V12/V11 source
+worktrees remain referenced by the inherited input specifications.
+
+Verification: all 26 production prompt-assembly tests pass, the paired V13
+assembly checks, matched input/settings checks and the twelve-response structural
+checks pass. Historical/shared sources remain byte-identical. No model output,
+rendered batch, usage artifact or source post is committed.
