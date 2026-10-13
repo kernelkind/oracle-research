@@ -3,8 +3,11 @@
 `pair-consolidation-owl-v6` is the current experimental draft. The user approved
 adding the rule that every input restriction and alternative must appear in its
 OWL expression or a supporting formal class definition, rather than only in an
-English glossary. V6 has not been tested with model calls or activated in
-hierarchy construction.
+English glossary. Its [two-order consumer check](pair-consolidation-owl-v6-consumer-v1.md)
+is complete: both answers expose human consumer and nourishment purpose, but
+the forward answer still hides the eating-or-drinking alternative in English.
+V6 therefore has a demonstrated formal-rule compliance failure and remains
+experimental, without activation in hierarchy construction.
 
 `pair-consolidation-owl-v5` remains the last fully reviewed and piloted reference.
 The user approved its wording with "OK LGTM." This experimental line is not a
@@ -91,8 +94,9 @@ python3 sse_multivector/prompt_assembly.py check \
 Assembly checks establish exact reconstruction and unchanged shared sources.
 They do not establish faithful translation, valid containment or useful
 consolidation. Pilot reviews are manual and separately attributed, with no
-automated reasoner proof or human semantic gold. The proposed next step is to
-test v6 against the saved human-food forward/reversed controls and check that
-the consumer and purpose conditions appear formally. The wording change does
-not establish that the model follows it; further inference remains separate
-from this draft and its offline assembly checks.
+automated reasoner proof or human semantic gold. The completed v6 check made
+two fresh requests with complete saved API-equivalent cost of $0.035414; it
+generated no hierarchy. The proposed next step is a new prompt version that
+explicitly requires stated alternatives to use `OR`, then a matched check of
+both orders. Neither the next revision nor further inference is included in
+these completed findings.
