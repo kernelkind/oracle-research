@@ -3,7 +3,9 @@
 `pair-consolidation-owl-v7` is the current experimental draft. The user approved
 making the alternative instruction explicit: every stated alternative must use
 `OR`, directly in `owl.expression` or in a supporting `owl.classes` definition.
-V7 has not yet been model-tested or activated in hierarchy construction.
+Its two-order consumer check is complete: both answers expose the consumer,
+nourishment purpose and eating-or-drinking alternative formally. This is a
+targeted agent-reviewed result, not general accuracy or hierarchy activation.
 
 For `pair-consolidation-owl-v6`, the user approved
 adding the rule that every input restriction and alternative must appear in its
@@ -104,7 +106,7 @@ automated reasoner proof or human semantic gold. The completed v6 check made
 two fresh requests with complete saved API-equivalent cost of $0.035414; it
 generated no hierarchy.
 
-## Authorized v7 check
+## V7 check: method and completed findings
 
 The user authorized the v7 revision and the same human-food comparison in both
 orders. Prepare from the saved v6 forward and reversed experiments, replacing
@@ -116,3 +118,63 @@ Allow different names and supporting class definitions. Check JSON structure,
 coverage and English/formal agreement separately. Two passing draws would not
 establish general accuracy or authorize hierarchy activation. No warmup,
 additional baseline calls or paid fallback is added.
+
+Both authorized requests completed on 2026-10-13, with one fresh Sol medium
+attempt per orientation. Native inputs exactly match their v6 baselines, and
+all non-input request-body fields remain identical. Both use fresh single-user
+messages without a previous response reference or prior model output in the
+input. All JSON layout, vocabulary, expression-formatting and unchanged reused
+definition checks pass. Native attributed reviews contain two qualified agent
+accepts and no user judgments.
+
+| Human-food condition | Human food first | Human food second |
+|---|---|---|
+| Intended consumption | Formal | Formal |
+| Human consumer/performer | Formal | Formal |
+| Nourishment purpose | Formal | Formal |
+| Eating-or-drinking alternative | `Eating OR Drinking` | `Eating OR Drinking` |
+
+The forward translation is:
+
+```text
+Substance AND (intendedFor SOME ((Eating OR Drinking) AND (performedBy SOME Person) AND (hasPurpose SOME Nourishment)))
+```
+
+The reversed translation uses `hasConsumer SOME Person` in place of
+`performedBy SOME Person`, with a corresponding English relation definition.
+Evening meals retain `Meal AND (servedDuring SOME Evening)` without borrowing
+human-food consumer or purpose restrictions. Both consolidations are unions of
+Meal and substances intended for eating or drinking, so coverage follows from
+the returned expressions; their English meanings preserve that scope.
+
+The targeted alternative failure observed in v6 does not recur in either v7
+draw. This does not establish a reliable wording effect: there is only one
+sample per orientation. Ordinary Meal food/occasion interpretation and the
+Substance glossary's consumability wording remain scope qualifications. They
+are not independently validated human gold or demonstrated semantic failures;
+these checks do not certify complete translation fidelity or browsing quality.
+No machine reasoner was used. The recommended next step is the existing broader
+pilot panel, including supplied-parent, `SOME`/`ONLY`, completion-state and role
+controls, before considering hierarchy integration. It has not been run for v7.
+
+The native `experiment-usage-summary-v3` report is complete, with no accounting
+warnings: two fresh attempts, zero failures, retries, reuses or warmups, 6,250
+input tokens and 1,939 output tokens. The 988 reasoning tokens are already
+included in output. Cached input and reported cache-write tokens are zero.
+Saved API-equivalent cost is **$0.031890**, a catalogue estimate rather than
+subscription billing. The saved v6 baselines were not rerun.
+
+The worktree is retained because native plans, frozen sources and receipt
+validation require its absolute paths:
+
+```text
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp-pair-consolidation-owl-v7-consumer-v1
+```
+
+Its ignored evidence is `target/pair-consolidation-owl-v7-consumer-forward-v1`,
+`target/pair-consolidation-owl-v7-consumer-reversed-v1`,
+`target/pair-consolidation-owl-v7-consumer-checks-v1.json`,
+`target/pair-consolidation-owl-v7-consumer-usage-source-v1.json` and
+`target/pair-consolidation-owl-v7-consumer-usage-summary-v1.json`. The earlier
+v6 and v5 worktrees retain their original baseline/input bindings. All prompts,
+source inputs and earlier receipts remain unchanged after preparation.
