@@ -169,6 +169,10 @@ def _accepted_premise(row, audits, policy="audited"):
         premise["coverage_subset"] = row["coverage_subset"]
     if row.get("adjudication"):
         premise["adjudication"] = row["adjudication"]
+    if row.get("automatic_decision"):
+        premise["automatic_decision"] = row["automatic_decision"]
+    if row.get("automatic_equivalence_premise"):
+        premise["automatic_equivalence_premise"] = row["automatic_equivalence_premise"]
     return premise
 
 
@@ -390,7 +394,7 @@ def _matching_path_settlement(identity, teacher, group, matching, accepted, unco
         semantic_status="Conditional on the accepted ancestor match, saved coverage matches and fixed interpretations of the trusted teacher path; separate matching uncertainties remain unresolved.")
 
 
-def _cases(report, assessments, audits=None, policy="audited"):
+def _cases(report, assessments, audits=None, policy="audited", *, final_groups=None):
     audits = {} if audits is None else audits
     cases, settlements, guards = [], [], []
     for cohort in ("random", "challenge"):
@@ -419,6 +423,7 @@ def _cases(report, assessments, audits=None, policy="audited"):
                 if not group["required"]:
                     continue
                 identity = dict(answer_id=answer["id"], teacher_numbers=group["teacher_numbers"])
+                final_search = (answer["id"], tuple(group["teacher_numbers"])) in (final_groups or set())
                 teacher_ids = {teacher.by_number[number] for number in group["teacher_numbers"]}
                 matches = [row["evidence"]["student_number"] for row in matching
                            if row["parsed"]["teacher_id"] in teacher_ids]
@@ -461,14 +466,14 @@ def _cases(report, assessments, audits=None, policy="audited"):
                     and row["evidence"]["heading_number"] in uncovered
                     and row["status"] == "valid" and row["parsed"]["valid"] is True
                     and _accepted_premise(row, audits, policy) is not None), None)
-                if accepted_pair is not None:
+                if accepted_pair is not None and not final_search:
                     settlements.append(dict(identity, rule="accepted_uncovered_compatible_heading", covered=False,
                         witness_student_number=accepted_pair["evidence"]["heading_number"],
                         compatibility_premise=_accepted_premise(accepted_pair, audits, policy)))
                     continue
                 derived = _matching_path_settlement(identity, teacher, group, matching,
                     accepted_matching, uncovered, guard_rows, audits, policy)
-                if derived is not None:
+                if derived is not None and not final_search:
                     settlements.append(derived)
                     continue
                 roots, omitted = [], []
@@ -490,7 +495,7 @@ def _cases(report, assessments, audits=None, policy="audited"):
                 excluded = []
                 for number in roots:
                     pair = baseline_pairs[number]
-                    if pair["status"] == "valid" and pair["parsed"]["valid"] is False:
+                    if not final_search and pair["status"] == "valid" and pair["parsed"]["valid"] is False:
                         premise = _accepted_premise(pair, audits, policy)
                         if premise is not None:
                             excluded.append(dict(student_number=number, compatibility_premise=premise))
@@ -702,7 +707,8 @@ def prepare(evaluation_path, output, *, answer_ids=None, runner_binary=None, his
 
 
 def collect(coverage_directory, output, *, verification_experiments=None, premise_audits=None, correction_experiments=None,
-            correction_case_ids=None, adjudications=None, automated_analysis=False):
+            correction_case_ids=None, adjudications=None, automated_analysis=False, automatic=False,
+            final_experiments=None, required_experiments=None, collection_context=None, answer_ids=None):
     """Score accepted native checks and searches without running the old matrix."""
     from experiment_runner import experiment, inputs, project
     project.configure(Path(__file__).resolve().parents[1])
@@ -715,6 +721,10 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
             "coverage-search.json": engine._sha256_file(frozen_path)}:
         raise ValueError("coverage search preparation changed")
     frozen = experiment.read(frozen_path)
+    if automatic:
+        automated_analysis = True
+    elif final_experiments or required_experiments:
+        raise ValueError("automatic decision experiments require automatic collection")
     policy = _policy(frozen.get("policy", "audited"))
     if automated_analysis:
         if premise_audits or correction_experiments or correction_case_ids or adjudications:
@@ -723,9 +733,17 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
     if adjudications and policy != "grading":
         raise ValueError("adjudications require grading policy")
     protected = dict(frozen["sources"])
-    for path, checksum in protected.items():
-        if engine._sha256_file(Path(path)) != checksum:
-            raise ValueError("coverage collection source changed: " + path)
+
+    def verify_sources(sources):
+        verified = {} if collection_context is None else collection_context.setdefault("verified_sources", {})
+        for path, checksum in sources.items():
+            stamp = _file_state(path)
+            if verified.get(path) != (checksum, stamp):
+                if engine._sha256_file(Path(path)) != checksum:
+                    raise ValueError("coverage collection source changed: " + path)
+                verified[path] = checksum, stamp
+
+    verify_sources(protected)
 
     def protect(sources):
         for path, checksum in sources.items():
@@ -734,15 +752,54 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
             protected[path] = checksum
 
     protected[str(frozen_path)] = engine._sha256_file(frozen_path)
-    baseline, assessments, snapshot_sources = _snapshot(frozen["evaluation"], directory)
+    snapshot_key = json.dumps(frozen["evaluation"], sort_keys=True)
+    cached = (collection_context or {}).get("snapshots", {}).get(snapshot_key)
+    if cached is None:
+        observed = {}
+        baseline, assessments, snapshot_sources = _snapshot(frozen["evaluation"], directory, observed_paths=observed)
+        if collection_context is not None:
+            collection_context.setdefault("snapshots", {})[snapshot_key] = (
+                baseline, assessments, snapshot_sources,
+                {**{name: _file_state(name) for name in snapshot_sources}, **observed})
+    else:
+        baseline, assessments, snapshot_sources, snapshot_state = cached
+        _check_preparation_state(snapshot_state)
     protect(snapshot_sources)
     baseline = evaluation._answer_subset(baseline, frozen["answer_ids"])
+    if answer_ids is not None:
+        if not automatic:
+            raise ValueError("answer selection requires automatic collection")
+        baseline = evaluation._answer_subset(baseline, answer_ids)
     audit_references = [dict(path=str(Path(path).expanduser().resolve()),
         sha256=engine._sha256_file(Path(path).expanduser().resolve())) for path in premise_audits or []]
     # Preparation audits remain part of the immutable native source definition.
     preparation_references = list(frozen.get("premise_audits", []))
     searches, verifiers = {}, {}
     audit_diagnostics = []
+    automatic_requests, automatic_failures = [], []
+    request_keys = set()
+    configurations = {}
+    final_matching_keys, final_coverage_keys = set(), set()
+
+    def request(row, role="required"):
+        if not automatic:
+            return
+        if row["status"] in {"failed", "malformed", "invalid_receipt"}:
+            automatic_failures.append(dict(case_id=row["id"], check=row["evidence"]["check"],
+                status=row["status"], receipt=row.get("receipt"), error=row.get("error")))
+            return
+        key = role, row["evidence"]["check"], row["input_sha256"], row["prompt"]
+        if key in request_keys:
+            return
+        request_keys.add(key)
+        identity = row["evidence"]["check"], row["input_sha256"], row["prompt"]
+        configuration = configurations.get(identity, {})
+        automatic_requests.append(dict(role=role, case={name: row[name] for name in
+            ("id", "inputs", "evidence", "prompt", "input_sha256", "mechanical") if name in row},
+            prompt_id=row["prompt"].split(None, 1)[0],
+            adapter="distillation_coverage_search" if row["evidence"]["check"] == "coverage_search"
+                else "distillation_review_evaluation", configuration=configuration.get("settings", {}),
+            source_experiment=configuration.get("experiment")))
 
     def original(row):
         if not automated_analysis:
@@ -757,15 +814,28 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
 
     def native(path):
         path = Path(path).expanduser().resolve()
-        plan, _, _ = experiment.load(path)
+        cache = None if collection_context is None else collection_context.setdefault("native", {}).get(str(path))
+        state = {str(path / name): _file_state(path / name) for name in
+            ("experiment.json", "reviews.jsonl", "run/results.jsonl", "run/manifest.json")}
+        if cache is not None and cache[0] == state:
+            _, plan, result = cache
+        else:
+            plan, _, _ = experiment.load(path)
+            result = experiment.report(path, include_request_preview=False)
+            if collection_context is not None:
+                collection_context.setdefault("native", {})[str(path)] = (state, plan, result)
         protect(plan["sources"])
         protected[str(path / "experiment.json")] = engine._sha256_file(path / "experiment.json")
-        result = experiment.report(path, include_request_preview=False)
         for name in ("reviews.jsonl", "run/results.jsonl", "run/manifest.json"):
             source = path / name
             if source.exists():
                 protected[str(source)] = engine._sha256_file(source)
         return plan, result
+
+    for native_report in baseline["experiments"]:
+        for row in native_report["cases"]:
+            configurations[(row["evidence"]["check"], row["input_sha256"], row["prompt"])] = dict(
+                experiment=native_report["experiment"], settings=native_report["settings"])
 
     for entry in frozen["experiments"]:
         path = Path(entry["path"])
@@ -775,6 +845,8 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
         definition = experiment.read(Path(plan["dataset"]["path"]))
         preparation_references.extend(definition.get("premise_audits", []))
         for row in result["cases"]:
+            configurations[(row["evidence"]["check"], row["input_sha256"], row["prompt"])] = dict(
+                experiment=str(path), settings=result["settings"])
             key = row["evidence"]["answer_id"], tuple(row["evidence"]["teacher_numbers"])
             if key in searches:
                 raise ValueError("duplicate coverage search teacher group")
@@ -806,6 +878,108 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
                 for check, rows in answer["checks"].items()}) for answer in baseline[cohort]["answers"]])
             for cohort in ("random", "challenge")})
     searches = {key: _corrected_row(row, correction_index, audits, policy) for key, row in searches.items()}
+    for path in verification_experiments or []:
+        _, result = native(path)
+        for row in result["cases"]:
+            if row["evidence"].get("check") != "relationship":
+                raise ValueError("coverage verification requires native relationship checks")
+            verifiers.setdefault((row["input_sha256"], row["prompt"]), []).append(original(row))
+            configurations[("relationship", row["input_sha256"], row["prompt"])] = dict(
+                experiment=str(Path(path).resolve()), settings=result["settings"])
+    required_index, final_index = {}, {}
+    if automatic:
+        for role, paths, index in (("required", required_experiments or [], required_index),
+                                   ("final", final_experiments or [], final_index)):
+            for path in paths:
+                _, result = native(path)
+                if role == "final" and (result["settings"]["model"] != "gpt-6.1-sol"
+                        or result["settings"]["reasoning_effort"] != "xhigh"):
+                    raise ValueError("automatic final decisions require gpt-6.1-sol/xhigh")
+                for saved in result["cases"]:
+                    row = original(saved)
+                    check = row["evidence"].get("check")
+                    if check not in {"matching", "support", "relationship", "coverage_search"}:
+                        raise ValueError("automatic decisions require native distillation checks")
+                    if role == "final" and check not in {"matching", "coverage_search"}:
+                        raise ValueError("automatic final decisions require matching or coverage search")
+                    identity = check, row["input_sha256"], row["prompt"]
+                    if identity in index and index[identity].get("receipt") != row.get("receipt"):
+                        raise ValueError("automatic decision has more than one final native response")
+                    index[identity] = dict(row, automatic_decision=dict(role=role,
+                        experiment=str(Path(path).resolve()), case_id=row["id"]))
+                    configurations[identity] = dict(experiment=str(Path(path).resolve()), settings=result["settings"])
+                    if role == "required" and check == "relationship":
+                        verifiers.setdefault((row["input_sha256"], row["prompt"]), []).append(row)
+
+        def automatic_row(row):
+            identity = row["evidence"]["check"], row["input_sha256"], row["prompt"]
+            # A trusted teacher proof cannot be replaced by a model response.
+            if row.get("origin") == "mechanical":
+                return row
+            chosen = final_index.get(identity)
+            if chosen is None and _accepted_premise(row, {}, "grading") is None:
+                chosen = required_index.get(identity)
+            if chosen is None:
+                return row
+            if chosen["status"] != "valid":
+                request(chosen)
+            if identity in final_index and row["evidence"]["check"] == "matching":
+                final_matching_keys.add(identity)
+            return dict(chosen, id=row["id"], evidence=row["evidence"])
+
+        baseline = dict(baseline, **{cohort: dict(baseline[cohort], answers=[dict(answer,
+            checks={check: [automatic_row(row) for row in rows] for check, rows in answer["checks"].items()})
+            for answer in baseline[cohort]["answers"]]) for cohort in ("random", "challenge")})
+        # A final complete equivalence decision entails its own compatibility.
+        # Keep the final DSM receipt as the premise instead of inventing a DSL receipt.
+        for cohort in ("random", "challenge"):
+            for answer in baseline[cohort]["answers"]:
+                teacher = review._TeacherIndex(answer["teacher"])
+                matching_by_number = {row["evidence"]["student_number"]: row for row in answer["checks"]["matching"]}
+                relationships = []
+                for row in answer["checks"]["relationship"]:
+                    if row["evidence"]["role"] == "compatibility" and row.get("origin") != "mechanical":
+                        match = matching_by_number[row["evidence"]["heading_number"]]
+                        if (match.get("automatic_decision", {}).get("role") == "final"
+                                and match["status"] == "valid" and match["parsed"]["teacher_id"] in
+                                {teacher.by_number[number] for number in row["evidence"]["teacher_numbers"]}):
+                            parsed = dict(valid=True, reason="The final complete-equivalence verdict entails compatibility with the same teacher meaning.")
+                            row = dict(row, status="valid", parsed=parsed, output=json.dumps(parsed), reviews=[],
+                                origin="derived", receipt=None, automatic_equivalence_premise=_accepted_premise(match, {}, "grading"))
+                    relationships.append(row)
+                answer["checks"]["relationship"] = relationships
+    final_groups, matching_conflict_answers = set(), set()
+    if automatic:
+        # Detect disagreements before candidate exclusions remove a disputed witness.
+        for cohort in ("random", "challenge"):
+            for answer in baseline[cohort]["answers"]:
+                teacher = review._TeacherIndex(answer["teacher"])
+                matches_by_number = {row["evidence"]["student_number"]: row
+                    for row in answer["checks"]["matching"] if row["status"] == "valid"}
+                for pair in answer["checks"]["relationship"]:
+                    if pair["evidence"]["role"] != "compatibility":
+                        continue
+                    key = answer["id"], tuple(pair["evidence"]["teacher_numbers"])
+                    search = searches.get(key)
+                    compatible_rows = ([pair] if pair.get("origin") == "mechanical"
+                        or pair.get("automatic_equivalence_premise") else
+                        [pair] + verifiers.get((pair["input_sha256"], pair["prompt"]), []))
+                    values = {row["parsed"]["valid"] for row in compatible_rows
+                        if _accepted_premise(row, {}, "grading") is not None}
+                    match = matches_by_number.get(pair["evidence"]["heading_number"])
+                    if (match is not None and match["parsed"]["teacher_id"] in
+                            {teacher.by_number[number] for number in pair["evidence"]["teacher_numbers"]}
+                            and pair.get("origin") != "mechanical"
+                            and not pair.get("automatic_equivalence_premise") and False in values):
+                        matching_conflict_answers.add(answer["id"])
+                        request(match, "final_matching")
+                    if len(values) > 1 or (search is not None and search["status"] == "valid"
+                            and search["parsed"]["witness_student_number"] == pair["evidence"]["heading_number"]
+                            and False in values):
+                        final_groups.add(key)
+        for row in final_index.values():
+            if row["evidence"]["check"] == "coverage_search":
+                final_groups.add((row["evidence"]["answer_id"], tuple(row["evidence"]["teacher_numbers"])))
     current_settlements = frozen["preparation"]["settlements"]
     if policy == "grading":
         # Core corrections can change which headings still need a search. Saved
@@ -813,10 +987,12 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
         question_baseline = baseline
         if automated_analysis:
             question_baseline = dict(baseline, **{cohort: dict(baseline[cohort], answers=[answer
-                for answer in baseline[cohort]["answers"] if answer["errors"] or all(
-                    row["status"] == "valid" for row in answer["checks"]["matching"])])
+                for answer in baseline[cohort]["answers"] if answer["errors"] or
+                    (answer["id"] not in matching_conflict_answers and all(
+                        row["status"] == "valid" for row in answer["checks"]["matching"]))])
                 for cohort in ("random", "challenge")})
-        current_cases, current_settlements, _ = _cases(question_baseline, assessments, audits, policy)
+        current_cases, current_settlements, _ = _cases(question_baseline, assessments, audits, policy,
+                                                       final_groups=final_groups)
         template = (Path(__file__).parent / "distillation-review-v1/coverage-search-prompt-v1.md").read_text()
         negative_sources = list(searches.values()) + [row for row in corrections
             if row["evidence"]["check"] == "coverage_search"]
@@ -831,16 +1007,14 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
             else:
                 saved = dict(saved, id=case["id"], inputs=case["inputs"], evidence=case["evidence"])
             saved = _corrected_row(saved, correction_index, audits, policy)
-            if _accepted_premise(saved, audits, policy) is None:
+            if automatic:
+                saved = automatic_row(saved)
+                if saved.get("automatic_decision", {}).get("role") == "final":
+                    final_coverage_keys.add(("coverage_search", checksum, prompt))
+            if _accepted_premise(saved, audits, policy) is None and key not in final_groups:
                 saved = _negative_subset(case, negative_sources, audits, template) or saved
             current_searches[key] = saved
         searches = current_searches
-    for path in verification_experiments or []:
-        _, result = native(path)
-        for row in result["cases"]:
-            if row["evidence"].get("check") != "relationship":
-                raise ValueError("coverage verification requires native relationship checks")
-            verifiers.setdefault((row["input_sha256"], row["prompt"]), []).append(original(row))
     for row in corrections:
         if row["evidence"]["check"] == "relationship":
             verifiers.setdefault((row["input_sha256"], row["prompt"]), []).append(row)
@@ -875,7 +1049,7 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
                         return False
                 return True
 
-            def accepted(row):
+            def accepted(row, request_role="required"):
                 premise = _accepted_premise(row, audits, policy)
                 if premise is not None:
                     premises.append(premise)
@@ -883,14 +1057,23 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
                 dependencies.append(dict(check=row["evidence"]["check"], case_id=row["id"],
                     status=row["status"], reason="No accepted complete input/output-bound assessment.",
                     reviews=row.get("reviews", []), decision_conflicts=row.get("decision_conflicts", [])))
+                request(row, request_role)
                 return False
 
             subjects = {row["evidence"]["student_number"]: row["parsed"]["valid"]
                 for row in checks["support"] if row["status"] == "valid" and accepted(row)}
+            if automatic:
+                for row in checks["support"]:
+                    if row["status"] != "valid":
+                        request(row)
             actual = {row["evidence"]["student_number"]: row for row in checks["relationship"]
                 if row["evidence"]["role"] == "actual_relationship"}
             relationships = {number: row["parsed"]["valid"] if row["status"] == "valid" and accepted(row)
                 else None for number, row in actual.items()}
+            if automatic:
+                for number, row in actual.items():
+                    if subjects.get(number) is not False and row["status"] != "valid":
+                        request(row)
             matching_pending = [row["id"] for row in checks["matching"] if not accepted(row)]
             teacher = review._TeacherIndex(answer["teacher"])
             matching = {row["evidence"]["student_number"]: row["parsed"]["teacher_id"]
@@ -913,6 +1096,9 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
 
                 pairs = [row for row in checks["relationship"] if row["evidence"]["role"] == "compatibility"
                     and row["evidence"]["teacher_numbers"] == group["teacher_numbers"]]
+                search = searches.get(key)
+                final_search = (automatic and search is not None
+                    and search.get("automatic_decision", {}).get("role") == "final")
                 if group["required"]:
                     for pair in pairs:
                         number = pair["evidence"]["heading_number"]
@@ -920,6 +1106,12 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
                         if number in matches:
                             candidates = [pair] + candidates
                         accepted_pairs = [row for row in candidates if _accepted_premise(row, audits, policy) is not None]
+                        if automatic and pair.get("origin") == "mechanical":
+                            accepted_pairs = [pair]
+                        elif automatic and pair.get("automatic_equivalence_premise"):
+                            accepted_pairs = [pair]
+                        elif final_search and number not in matches:
+                            accepted_pairs = []
                         verdicts = {row["parsed"]["valid"] for row in accepted_pairs}
                         premises.extend(_accepted_premise(row, audits, policy) for row in accepted_pairs)
                         if len(verdicts) == 1:
@@ -930,11 +1122,18 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
                         elif candidates:
                             dependencies.append(dict(check="relationship", case_id=pair["id"],
                                 reason="Exact verification is disputed, unaudited or contradictory."))
+                        if automatic and number in matches and not final_search:
+                            if any(row["parsed"]["valid"] is False for row in accepted_pairs):
+                                match = next(row for row in checks["matching"]
+                                    if row["evidence"]["student_number"] == number)
+                                if match.get("automatic_decision", {}).get("role") != "final":
+                                    request(match, "final_matching")
+                            elif not accepted_pairs:
+                                request(pair)
                     settlement = settlements.get(key)
                     if (settlement is not None and settlement.get("covered") is False
                             and settlement.get("witness_student_number") and settlement_accepted(settlement)):
                         assign(settlement["witness_student_number"], True, settlement["rule"])
-                    search = searches.get(key)
                     exclusions = []
                     omitted = []
                     for evidence in (settlement, search["evidence"] if search is not None else None):
@@ -946,7 +1145,8 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
                         if settlement_accepted(proof):
                             assign(excluded["student_number"], False, excluded["compatibility_premise"]["case_id"])
                             premises.append(excluded["compatibility_premise"])
-                    if search is not None and accepted(search):
+                    if search is not None and accepted(search,
+                            "final_coverage" if automatic and key in final_groups else "required"):
                         witness = search["parsed"]["witness_student_number"]
                         if witness is None:
                             for number in search["evidence"]["candidate_student_numbers"]:
@@ -954,9 +1154,23 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
                             for alias in search["evidence"]["candidate_aliases"]:
                                 for number in alias["student_numbers"]:
                                     assign(number, False, search["id"])
+                        elif final_search:
+                            assign(witness, True, search["id"])
+                            for alias in search["evidence"]["candidate_aliases"]:
+                                if alias["representative_student_number"] == witness:
+                                    for number in alias["student_numbers"]:
+                                        assign(number, True, search["id"])
                         elif known.get(witness) is not True:
                             dependencies.append(dict(check="coverage_search", case_id=search["id"],
                                 reason="Positive search lacks an accepted exact positive DSL witness."))
+                            if automatic:
+                                if key in final_groups:
+                                    request(search, "final_coverage")
+                                else:
+                                    pair = next(row for row in pairs if row["evidence"]["heading_number"] == witness)
+                                    request(pair)
+                        if automatic and key in final_groups and not final_search:
+                            request(search, "final_coverage")
                     changed = True
                     while changed:
                         changed = False
@@ -990,15 +1204,22 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
             answers.append(dict(id=answer["id"], note_id=answer["note_id"], scoring=scored,
                 dependencies=dependencies, premises=premises, coverage_inconsistencies=inconsistencies))
         cohorts[cohort] = dict(answers=answers)
-    for path, checksum in protected.items():
-        if engine._sha256_file(Path(path)) != checksum:
-            raise ValueError("coverage collection source changed: " + path)
+    verify_sources(protected)
     result = dict(schema_version=1, coverage=str(directory), output=str(output), sources=protected,
         policy=policy, inference_calls=0, **cohorts)
     if automated_analysis:
         result.update(analysis_only=True, semantic_audits_applied=False, corrections_applied=False,
             saved_response_selection="Native per-plan saved response and receipt; no fallback experiment selection.",
             audit_diagnostics=list({json.dumps(row, sort_keys=True): row for row in audit_diagnostics}.values()))
+    if automatic:
+        complete = all(answer["scoring"]["status"] == "valid"
+            and set(answer["scoring"].get("scores", {})) == {"correctness", "coverage"}
+            for cohort in ("random", "challenge") for answer in result[cohort]["answers"])
+        result.update(analysis_only=False, automatic_status="failed" if automatic_failures else
+            "complete" if complete and not automatic_requests else "pending",
+            automatic_requests=automatic_requests, automatic_failures=automatic_failures,
+            automatic_summary=dict(final_matching_questions=len(final_matching_keys),
+                final_coverage_questions=len(final_coverage_keys), manual_reviews=0))
     if adjudication_records:
         classifications = {(record["check"], record["original"]["input_sha256"], record["original_prompt_sha256"], record["original_output_sha256"],
             record["original_decision_classification"]) for record in adjudication_records}

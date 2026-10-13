@@ -58,7 +58,7 @@ def _summary(answers):
         metrics=_metrics(answers), metrics_without_uncertain_references=_metrics(answers, exclude_uncertain=True))
 
 
-def compare(coverage_directory, reference_path, output, *, verification_experiments=None):
+def compare(coverage_directory, reference_path, output, *, verification_experiments=None, automated_report=None):
     """Use the production collector without agent interventions, then compare paired answers."""
     from experiment_runner import experiment
     reference_path = Path(reference_path).expanduser().resolve()
@@ -75,8 +75,23 @@ def compare(coverage_directory, reference_path, output, *, verification_experime
     for path, checksum in protected.items():
         if engine._sha256_file(Path(path)) != checksum:
             raise ValueError("grade comparison reference source changed: " + path)
-    automated = coverage.collect(coverage_directory, output / "automated.json",
-        verification_experiments=verification_experiments, automated_analysis=True)
+    if automated_report is None:
+        automated_path = output / "automated.json"
+        automated = coverage.collect(coverage_directory, automated_path,
+            verification_experiments=verification_experiments, automated_analysis=True)
+    else:
+        if verification_experiments:
+            raise ValueError("collected grade comparison cannot add verification experiments")
+        automated_path = Path(automated_report).expanduser().resolve()
+        automated = experiment.read(automated_path)
+        if (automated.get("policy") != "grading"
+                or not (automated.get("analysis_only") or automated.get("automatic_status") == "complete")
+                or automated.get("semantic_audits_applied") is not False
+                or automated.get("corrections_applied") is not False
+                or automated.get("adjudication_summary")):
+            raise ValueError("collected grade comparison requires original or complete automatic grades without agent corrections")
+        if Path(automated["coverage"]).resolve() != Path(coverage_directory).expanduser().resolve():
+            raise ValueError("collected grade comparison requires the same frozen coverage preparation")
     cohorts, summaries = {}, {}
     for cohort in ("random", "challenge"):
         expected = {answer["id"]: answer for answer in reference[cohort]["answers"]}
@@ -108,17 +123,17 @@ def compare(coverage_directory, reference_path, output, *, verification_experime
         if path in protected and protected[path] != checksum:
             raise ValueError("grade comparison shared source changed: " + path)
         protected[path] = checksum
-    protected[str(output / "automated.json")] = engine._sha256_file(output / "automated.json")
+    protected[str(automated_path)] = engine._sha256_file(automated_path)
     for path, checksum in protected.items():
         if engine._sha256_file(Path(path)) != checksum:
             raise ValueError("grade comparison source changed: " + path)
     result = dict(schema_version=1, analysis_only=True, inference_calls=0, reference=str(reference_path),
         reference_basis="Agent-audited development grades; not human-certified ground truth.",
-        automated=str(output / "automated.json"), sources=protected,
+        automated=str(automated_path), sources=protected,
         qualification="Known correction impact on paired available scores, not absolute grading error against gold. "
             "Missing grades are not zero. Random and challenge cohorts stay separate. "
             "Version cells contain different notes and few answers; these summaries do not establish model rankings.",
         score_units="Values are fractions; aggregate changes are percentage points.",
-        audit_diagnostics=automated["audit_diagnostics"], **summaries, paired_answers=cohorts)
+        audit_diagnostics=automated.get("audit_diagnostics", []), **summaries, paired_answers=cohorts)
     experiment.write(output / "comparison.json", result)
     return result

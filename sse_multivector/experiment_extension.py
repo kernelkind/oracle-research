@@ -675,9 +675,24 @@ def add_commands(commands):
                    help='existing exact complete-output audit JSONL; repeat for multiple audits')
     p.add_argument('--adjudication', type=Path, action='append',
                    help='immutable source-bound agent verdict; requires frozen grading policy')
+    p.add_argument('--automatic', action='store_true', help='produce automatic grades with bounded final decisions')
+    p.add_argument('--required-experiment', type=Path, action='append', help='native missing-check judgments')
+    p.add_argument('--final-experiment', type=Path, action='append', help='fresh native final DSM or DCS decisions')
+    p = commands.add_parser('prepare-distillation-automatic-grading', help='freeze automatic grading batches; no inference')
+    p.add_argument('coverage', type=Path)
+    p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--verification-experiment', type=Path, action='append')
+    p.add_argument('--required-experiment', type=Path, action='append')
+    p.add_argument('--final-experiment', type=Path, action='append')
+    p.add_argument('--answer-id', action='append')
+    p.add_argument('--runner-binary', type=Path)
+    p.add_argument('--history-root', type=Path)
+    p = commands.add_parser('run-distillation-automatic-grading', help='finish every selected answer without manual review')
+    p.add_argument('directory', type=Path)
     p = commands.add_parser('compare-distillation-grades', help='compare original automated saved grades with agent-audited grades; no inference')
     p.add_argument('coverage', type=Path)
     p.add_argument('--reference', type=Path, required=True)
+    p.add_argument('--automated-report', type=Path, help='compare an existing native automatic final report')
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--verification-experiment', type=Path, action='append',
                    help='original fixed native DSL witness group; excludes audit-selected fallbacks')
@@ -872,8 +887,20 @@ def handle_command(args):
         result = distillation_coverage_search.collect(args.coverage, args.output,
             verification_experiments=args.verification_experiment, premise_audits=args.premise_audit,
             correction_experiments=args.correction_experiment, correction_case_ids=args.correction_case,
-            adjudications=args.adjudication)
+            adjudications=args.adjudication, automatic=args.automatic,
+            required_experiments=args.required_experiment, final_experiments=args.final_experiment)
         print(json.dumps(result, ensure_ascii=False, indent=2))
+    elif args.command in {'prepare-distillation-automatic-grading', 'run-distillation-automatic-grading'}:
+        from . import distillation_review_automatic
+        if args.command == 'prepare-distillation-automatic-grading':
+            result = distillation_review_automatic.prepare(args.coverage, args.output,
+                verification_experiments=args.verification_experiment,
+                required_experiments=args.required_experiment, final_experiments=args.final_experiment,
+                answer_ids=args.answer_id, runner_binary=args.runner_binary, history_root=args.history_root)
+        else:
+            result = distillation_review_automatic.run(args.directory)
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+        return int(result['status'] == 'failed')
     elif args.command == 'adjudicate-distillation-review':
         from . import distillation_review_adjudication
         decision = (dict(teacher_id=None if args.teacher_id == 'null' else args.teacher_id)
@@ -884,7 +911,7 @@ def handle_command(args):
     elif args.command == 'compare-distillation-grades':
         from . import distillation_grade_comparison
         result = distillation_grade_comparison.compare(args.coverage, args.reference, args.output,
-            verification_experiments=args.verification_experiment)
+            verification_experiments=args.verification_experiment, automated_report=args.automated_report)
         print(json.dumps(result, ensure_ascii=False, indent=2))
     elif args.command in {'prepare-distillation-review-evaluation', 'show-distillation-review-evaluation', 'run-distillation-review-evaluation'}:
         from . import distillation_review_evaluation as evaluation
@@ -1118,7 +1145,7 @@ def code_files(dataset):
     if dataset['adapter'] in {'bounded_parent_guides', 'bounded_parent_comparisons'}:
         names += ['parent_guide_measurement.py', 'parent_guide_workflow.py', 'ancestor_cosine_probe.py']
     if dataset['adapter'] in {'distillation_review', 'distillation_matching', 'distillation_verdict', 'distillation_review_evaluation', 'distillation_coverage_search'}:
-        names += ['distillation_review.py', 'distillation_run.py']
+        names += ['distillation_review.py', 'distillation_run.py', 'distillation_review_automatic.py']
     if dataset['adapter'] == 'distillation_matching':
         names += ['distillation_matching.py']
     if dataset['adapter'] == 'distillation_verdict':

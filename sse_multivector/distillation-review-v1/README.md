@@ -58,6 +58,23 @@ baseline already passed the same six cases, so no benefit was demonstrated.
 The frozen trial is retained as regression evidence, not as the current prompt
 direction or an independent accuracy test.
 
+**Approved automatic grading protocol:** the 1,800-answer run must finish with
+both numeric grades for every selected answer and no manual review queue.
+Trusted mechanical results take precedence. A matching conflict receives one
+fresh unchanged DSMv3 call at gpt-6.1-sol/xhigh; its decision is final, and a
+complete match establishes compatibility with that same teacher meaning.
+Matching changes require rebuilding the dependent coverage questions. A
+coverage conflict receives one fresh unchanged DCSv1 call at xhigh on the
+rebuilt candidate list, including disputed candidates. Its whole-search
+decision is final and cannot be reopened by another DSL verifier. Missing
+judgments run automatically with the existing bounded provider retries.
+Exhausted technical failures fail the run rather than assigning the distilled
+model zero. Agent corrections and audit vetoes are development evidence only.
+Implementation, the nine-conflict check and the sixty-answer replay are
+authorized; their completion and the eight-hour runtime target remain to be
+verified. This decision accepts residual reviewer error rather than requiring
+agreement between fresh calls.
+
 **Current score-impact result:** the approved
 [offline comparison](#offline-grade-comparison-october-13) measures the effect
 of known reviewer errors using the saved sixty answers. Available random-answer

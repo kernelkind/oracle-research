@@ -65,6 +65,14 @@ def prepare_file(dataset, path, template, load_report=None, *, preparation_conte
 
     source = read(path)
     preparation = None
+    if 'automatic_requests' in source and dataset['adapter'] in {
+            'distillation_matching', 'distillation_verdict', 'distillation_review_evaluation',
+            'distillation_coverage_search'}:
+        from . import distillation_review_automatic
+        cases, protected, preparation = distillation_review_automatic.prepare_source(
+            source, path.parent, preparation_context=preparation_context)
+        sources.update(protected)
+        return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, preparation
     if dataset['adapter'] == 'hierarchy_pair_consolidation':
         engine._expect_fields(source,'pair consolidation source',{'cases'})
         if not isinstance(source['cases'],list):

@@ -37,6 +37,195 @@ class DistillationCoverageSearchTests(unittest.TestCase):
         self.assertIn("--verification-experiment", result.stdout)
         self.assertIn("--premise-audit", result.stdout)
 
+    def test_native_automatic_collection_ignores_agent_veto_without_changing_responses(self):
+        fixture, _, output, native, row = self.collection_fixture("automatic-agent-veto", policy="grading",
+            audit_prerequisites=False)
+        fixture.native("review", native, "--case", row["id"], "--role", "agent", "--verdict", "reject",
+            "--comment", "Development audit is not a runtime grading dependency.")
+        frozen = {path: path.read_bytes() for path in (native / "reviews.jsonl", native / "run/results.jsonl")}
+        calls = (self.root / "calls.json").read_bytes()
+        result = json.loads(fixture.native("collect-distillation-coverage-search", output,
+            "--output", self.root / "automatic-agent-veto.json", "--automatic"))
+        self.assertEqual(result["automatic_status"], "complete")
+        self.assertFalse(result["analysis_only"])
+        self.assertEqual(result["random"]["answers"][0]["scoring"]["status"], "valid")
+        self.assertEqual(result["random"]["answers"][0]["scoring"]["scores"]["coverage"]["value"], 1)
+        self.assertEqual(result["automatic_requests"], [])
+        self.assertEqual((self.root / "calls.json").read_bytes(), calls)
+        self.assertTrue(all(path.read_bytes() == contents for path, contents in frozen.items()))
+
+    def test_native_automatic_final_matching_settles_guard_conflict_once(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        fixture, baseline, worker, parent, native = self.path_baseline("automatic-matching-final",
+            edge_valid=False, required_subjects=("Cables", "Cable A"))
+        output = self.root / "automatic-matching-coverage"
+        coverage.prepare(baseline, output, runner_binary=worker, policy="grading")
+        original = Path(native["experiment"]) / "run/results.jsonl"
+        saved = original.read_bytes()
+        final = self.root / "automatic-matching-fresh"
+        fixture.native("prepare", final, "--from", native["experiment"], "--only", parent["id"],
+            "--runner-binary", worker, "--reasoning-effort", "xhigh", "--repeat")
+        fixture.native("run", final, "--max-new-attempts", 2)
+        result = json.loads(fixture.native("collect-distillation-coverage-search", output,
+            "--output", self.root / "automatic-matching-collected.json", "--automatic",
+            "--final-experiment", final))
+        self.assertEqual(result["automatic_status"], "complete")
+        self.assertEqual(result["automatic_requests"], [])
+        answer = result["random"]["answers"][0]
+        self.assertEqual(answer["scoring"]["status"], "valid")
+        self.assertEqual(set(answer["scoring"]["scores"]), {"correctness", "coverage"})
+        self.assertEqual(result["automatic_summary"]["final_matching_questions"], 1)
+        self.assertEqual(original.read_bytes(), saved)
+
+    def test_native_automatic_missing_check_requests_execution_without_zero_credit(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        fixture, baseline, worker = self.baseline("automatic-missing-edge")
+        output = self.root / "automatic-missing-coverage"
+        coverage.prepare(baseline, output, runner_binary=worker, policy="grading")
+        result = json.loads(fixture.native("collect-distillation-coverage-search", output,
+            "--output", self.root / "automatic-missing-collected.json", "--automatic"))
+        self.assertEqual(result["automatic_status"], "pending")
+        requests = result["automatic_requests"]
+        self.assertTrue(requests)
+        self.assertTrue(all(row["role"] == "required" for row in requests))
+        self.assertTrue(any(row["case"]["evidence"].get("role") == "actual_relationship" for row in requests))
+        self.assertNotIn("correctness", result["random"]["answers"][0]["scoring"].get("scores", {}))
+
+    def test_automatic_final_null_rebuilds_matching_coverage_without_preserving_old_match(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        fixture, baseline, worker, parent, native = self.path_baseline("automatic-final-null",
+            edge_valid=False, required_subjects=("Cables", "Cable A"))
+        output = self.root / "automatic-final-null-coverage"
+        coverage.prepare(baseline, output, runner_binary=worker, policy="grading")
+        worker.write_text(worker.read_text().replace('{"teacher_id": "T01",', '{"teacher_id": None,'))
+        final = self.root / "automatic-final-null-matching"
+        fixture.native("prepare", final, "--from", native["experiment"], "--only", parent["id"],
+            "--runner-binary", worker, "--reasoning-effort", "xhigh", "--repeat")
+        fixture.native("run", final, "--max-new-attempts", 2)
+        result = coverage.collect(output, self.root / "automatic-final-null.json", automatic=True,
+            final_experiments=[final])
+        self.assertEqual(result["automatic_status"], "complete")
+        answer = result["random"]["answers"][0]
+        root = next(row for row in answer["scoring"]["findings"]["coverage"] if row["teacher_numbers"] == ["1"])
+        self.assertEqual(root["matched_student_numbers"], [])
+        self.assertFalse(root["covered"])
+
+    def test_automatic_final_search_settles_positive_and_negative_without_another_verifier(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        from sse_multivector import distillation_review_evaluation as evaluation
+        for negative in (False, True):
+            with self.subTest(negative=negative):
+                name = "automatic-final-search-" + str(negative)
+                fixture, baseline, output, native, search = self.collection_fixture(name, witness="2",
+                    policy="grading", audit_prerequisites=False)
+                primary = evaluation.report(baseline)
+                pair = next(row for row in primary["random"]["answers"][0]["checks"]["relationship"]
+                    if row["evidence"].get("teacher_numbers") == ["2"]
+                    and row["evidence"].get("heading_number") == "2")
+                source = next(row["experiment"] for row in primary["experiments"]
+                    if any(case["id"] == pair["id"] for case in row["cases"]))
+                worker = self.root / "fake-runner"
+                worker.write_text(worker.read_text().replace('{"valid": True, "reason": "Fixture semantic verdict."}',
+                    '{"valid": False, "reason": "Fixture semantic verdict."}'))
+                verifier = self.root / (name + "-verifier")
+                fixture.native("prepare", verifier, "--from", source, "--only", pair["id"], "--repeat",
+                    "--runner-binary", worker, "--reasoning-effort", "xhigh")
+                fixture.native("run", verifier, "--max-new-attempts", 2)
+                pending = coverage.collect(output, self.root / (name + "-pending.json"), automatic=True,
+                    verification_experiments=[verifier])
+                requests = pending["automatic_requests"]
+                self.assertEqual([row["role"] for row in requests], ["final_coverage"])
+                self.assertEqual(requests[0]["case"]["evidence"]["candidate_student_numbers"], ["1", "2"])
+                if negative:
+                    old = dict(evidence=[dict(student_number="2", reason="Fixture complete candidate assessment.")],
+                               witness_student_number="2")
+                    new = dict(evidence=[dict(student_number=number, reason="Fixture complete candidate assessment.")
+                                         for number in ("1", "2")], witness_student_number=None)
+                    worker.write_text(worker.read_text().replace(repr(old), repr(new)))
+                final = self.root / (name + "-fresh")
+                fixture.native("prepare", final, "--from", native, "--only", search["id"], "--repeat",
+                    "--runner-binary", worker, "--reasoning-effort", "xhigh")
+                fixture.native("run", final, "--max-new-attempts", 2)
+                result = coverage.collect(output, self.root / (name + "-final.json"), automatic=True,
+                    verification_experiments=[verifier], final_experiments=[final])
+                self.assertEqual(result["automatic_status"], "complete")
+                self.assertEqual(result["automatic_requests"], [])
+                self.assertEqual(result["automatic_summary"]["final_coverage_questions"], 1)
+                self.assertEqual(result["random"]["answers"][0]["scoring"]["scores"]["coverage"]["value"],
+                                 1 if negative else 0)
+
+    def test_automatic_final_model_response_cannot_replace_trusted_exact_match(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        from sse_multivector import distillation_review_evaluation as evaluation
+        fixture, baseline, output, _, _ = self.collection_fixture("automatic-trusted-match", policy="grading",
+            audit_prerequisites=False)
+        primary = evaluation.report(baseline)
+        match = primary["random"]["answers"][0]["checks"]["matching"][-1]
+        self.assertEqual(match["origin"], "mechanical")
+        source = next(row["experiment"] for row in primary["experiments"]
+            if any(case["id"] == match["id"] for case in row["cases"]))
+        final = self.root / "automatic-trusted-match-fresh"
+        fixture.native("prepare", final, "--from", source, "--only", match["id"], "--repeat",
+            "--reasoning-effort", "xhigh")
+        fixture.native("run", final, "--max-new-attempts", 2)
+        result = coverage.collect(output, self.root / "automatic-trusted-match.json", automatic=True,
+            final_experiments=[final])
+        self.assertEqual(result["automatic_status"], "complete")
+        self.assertEqual(result["automatic_summary"]["final_matching_questions"], 0)
+        self.assertEqual(result["random"]["answers"][0]["scoring"]["scores"]["coverage"]["value"], 1)
+
+    def test_automatic_matching_conflict_holds_dependent_searches_until_final_match(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        _, baseline, worker, _, _ = self.path_baseline("automatic-matching-dependency",
+            edge_valid=False, required_subjects=("Cables", "Cable A"))
+        output = self.root / "automatic-matching-dependency-coverage"
+        coverage.prepare(baseline, output, runner_binary=worker, policy="grading")
+        result = coverage.collect(output, self.root / "automatic-matching-dependency.json", automatic=True)
+        self.assertEqual(result["automatic_status"], "pending")
+        self.assertEqual([row["role"] for row in result["automatic_requests"]], ["final_matching"])
+
+    def test_automatic_invalid_required_receipt_fails_without_assigning_zero_or_repeating(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        from sse_multivector import distillation_review_evaluation as evaluation
+        fixture, baseline, worker = self.baseline("automatic-technical-failure")
+        output = self.root / "automatic-technical-failure-coverage"
+        coverage.prepare(baseline, output, runner_binary=worker, policy="grading")
+        primary = evaluation.report(baseline)
+        row = next(row for row in primary["random"]["answers"][0]["checks"]["relationship"]
+            if row["evidence"]["role"] == "actual_relationship")
+        source = next(group["experiment"] for group in primary["experiments"]
+            if any(case["id"] == row["id"] and case["evidence"]["check"] == "relationship"
+                   for case in group["cases"]))
+        worker.write_text(worker.read_text().replace('{"valid": True, "reason": "Fixture semantic verdict."}',
+            '{"valid": "invalid", "reason": "Fixture malformed verdict."}'))
+        required = self.root / "automatic-technical-required"
+        fixture.native("prepare", required, "--from", source, "--only", row["id"],
+            "--runner-binary", worker, "--reasoning-effort", "xhigh", "--repeat")
+        with self.assertRaises(AssertionError):
+            fixture.native("run", required, "--max-new-attempts", 2)
+        result = coverage.collect(output, self.root / "automatic-technical-failed.json", automatic=True,
+            required_experiments=[required])
+        self.assertEqual(result["automatic_status"], "failed")
+        self.assertTrue(result["automatic_failures"])
+        self.assertFalse(any(request["case"]["id"] == row["id"] for request in result["automatic_requests"]))
+        self.assertNotIn("correctness", result["random"]["answers"][0]["scoring"].get("scores", {}))
+
+    def test_automatic_collection_cache_still_rejects_a_new_original_review_ledger(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        from sse_multivector import distillation_review_evaluation as evaluation
+        fixture, baseline, output, _, _ = self.collection_fixture("automatic-source-cache", policy="grading",
+            audit_prerequisites=False)
+        context = {}
+        coverage.collect(output, self.root / "automatic-source-cache-before.json", automatic=True,
+            collection_context=context)
+        primary = evaluation.report(baseline)
+        group = primary["experiments"][0]
+        fixture.native("review", group["experiment"], "--case", group["cases"][0]["id"], "--role", "agent",
+            "--verdict", "accept", "--comment", "Immutable original source changed after caching.")
+        with self.assertRaisesRegex(ValueError, "coverage premise changed while preparing"):
+            coverage.collect(output, self.root / "automatic-source-cache-after.json", automatic=True,
+                collection_context=context)
+
     def test_native_cli_prepares_medium_searches_without_running_premises(self):
         from sse_multivector import distillation_review_assessment as assessment
         from sse_multivector import distillation_review_evaluation as evaluation

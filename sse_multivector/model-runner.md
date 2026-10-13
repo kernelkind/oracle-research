@@ -2321,8 +2321,35 @@ uncertainties, missing scores and small per-version cells remain explicit; these
 measure known correction impact, not independently established absolute error
 or stable model rankings. User-approved tolerance of inevitable error replaces
 any requirement to correct every mistake. No new inference is used; all 59
-targeted regressions pass. Handling blocked grades remains an operational
-decision before the full run.
+targeted regressions pass. The user subsequently approved automatic completion:
+trusted mechanical facts take precedence; a matching conflict receives one
+fresh unchanged DSMv3 call at gpt-6.1-sol/xhigh, whose final complete match also
+establishes compatibility with the same teacher meaning. Coverage is rebuilt
+after matching changes. A coverage conflict receives one fresh unchanged
+DCSv1 call at xhigh, including disputed candidates; its final whole-search
+decision cannot be reopened by a DSL verifier. Missing judgments run
+automatically with existing bounded provider retries. Technical exhaustion
+fails the run rather than giving the distilled model zero. A successful run
+requires both grades for every selected answer, excludes agent corrections
+and audit vetoes, and leaves no manual review queue. Implementation, the nine
+conflict answers and the saved sixty-answer replay are authorized; the native
+workflow and measured result are pending verification. This is a fixed
+authority policy, not evidence that repeated reviewers are independent.
+
+`prepare-distillation-automatic-grading COVERAGE --output DIR` freezes the
+needed native batches without inference. Repeated `--verification-experiment`
+flags supply original witness groups; `--answer-id` selects a bounded subset.
+`run-distillation-automatic-grading DIR` submits all ready independent batches
+through the shared launcher, advances dependent work and writes `grades.json`
+only after both grades are complete for every selected answer. Repeating the
+command after completion adds no calls. Existing original experiments remain
+unchanged. Eligible shared prefixes use native prompt caching; final decisions
+are fresh xhigh calls, while ordinary missing checks retain their configured
+reasoning settings. An exhausted technical failure produces a failed run.
+`compare-distillation-grades --automated-report DIR/grades.json` compares those
+collected grades directly with the bound development reference without another
+collection or inference pass. This entry point currently starts from a frozen
+coverage preparation, rather than constructing the initial full evaluation.
 Full grading concerns the 1,800 saved
 validation answers; eight-hour readiness and reserved final-test review remain
 open.
