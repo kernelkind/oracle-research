@@ -3,9 +3,11 @@
 `pair-consolidation-owl-v7` is the current experimental draft. The user approved
 making the alternative instruction explicit: every stated alternative must use
 `OR`, directly in `owl.expression` or in a supporting `owl.classes` definition.
-Its two-order consumer check is complete: both answers expose the consumer,
-nourishment purpose and eating-or-drinking alternative formally. This is a
-targeted agent-reviewed result, not general accuracy or hierarchy activation.
+Its two-order consumer check passes the targeted formal conditions. The broader
+twelve-case panel is also complete and exposes one remaining representation
+failure: `CoffeeDrinking` leaves the drinking action and required coffee object
+only in an English glossary. V7 remains experimental and is not activated in
+hierarchy construction. These are agent assessments, not human semantic gold.
 
 For `pair-consolidation-owl-v6`, the user approved
 adding the rule that every input restriction and alternative must appear in its
@@ -153,9 +155,9 @@ sample per orientation. Ordinary Meal food/occasion interpretation and the
 Substance glossary's consumability wording remain scope qualifications. They
 are not independently validated human gold or demonstrated semantic failures;
 these checks do not certify complete translation fidelity or browsing quality.
-No machine reasoner was used. The recommended next step is the existing broader
-pilot panel, including supplied-parent, `SOME`/`ONLY`, completion-state and role
-controls, before considering hierarchy integration. It has not been run for v7.
+No machine reasoner was used. These targeted results motivated the broader
+panel below, including supplied-parent, `SOME`/`ONLY`, completion-state and role
+controls; they did not themselves qualify hierarchy integration.
 
 The native `experiment-usage-summary-v3` report is complete, with no accounting
 warnings: two fresh attempts, zero failures, retries, reuses or warmups, 6,250
@@ -178,3 +180,84 @@ Its ignored evidence is `target/pair-consolidation-owl-v7-consumer-forward-v1`,
 `target/pair-consolidation-owl-v7-consumer-usage-summary-v1.json`. The earlier
 v6 and v5 worktrees retain their original baseline/input bindings. All prompts,
 source inputs and earlier receipts remain unchanged after preparation.
+
+## V7 broader panel — 2026-10-13
+
+The user authorized the existing [twelve-case panel](pair-consolidation-owl-pilot-v1.md#frozen-inputs-and-expectations),
+using the same native v5 inputs/settings with only the prompt replaced. Its
+frozen restrictions remain outside the model input. One case is the prompt's
+worked example, assessed only for format; eleven are authored synthetic controls,
+not original-post hierarchy evidence or independent human gold. Native history
+lookup exactly reuses the earlier v7 human-food forward answer; it is not a new
+sample. The other eleven cases completed with fresh Sol medium requests.
+
+All twelve outputs pass JSON layout, expression-formatting, vocabulary closure
+and unchanged reused-definition checks, including supplied parent definitions.
+Manual review finds both translated inputs covered by each consolidation and
+each supplied parent respected through the printed class definitions. `SOME`
+permits additional emitted colours; `ONLY` admits empty containers. Completed
+painting and reached boiling retain their state requirements, plans do not
+require execution, and explicit never-painted absence uses `NOT` rather than
+assuming missing facts false. The lamp/sign alternatives remain formal `OR`
+branches with correctly attached colour conditions.
+
+Native reviews record eleven qualified agent accepts, including the trained
+format case and reused answer, and one formal-rule reject. These counts are not
+an accuracy estimate or machine-reasoner proof. Rosemary's `partOf` timing and
+primitive Food/Garden scope, Bead interpretation, and the supplied Material
+role-versus-performed-use definition remain fidelity qualifications. No new
+incorrect consolidation is established from those unresolved interpretations.
+
+### Remaining action/object representation failure
+
+Case `10-coffee-equipment-roles` supplies "Cups designed for drinking coffee"
+and "Shelves designed to store cups used for drinking coffee." The first
+translation is:
+
+```text
+Cup AND (designedFor SOME CoffeeDrinking)
+```
+
+`CoffeeDrinking` has no formal class definition. Its English glossary says "The
+activity of drinking coffee." The shelf's formal storage-to-cup chain is present,
+and both translations are formally covered by the consolidation, but neither
+the drinking action nor its required coffee object is exposed inside that class.
+The same opaque activity class occurs in the saved v5 answer: this is a remaining
+representation problem, not a newly demonstrated semantic regression or loss of
+the English meaning.
+
+The recommended next revision should clarify the boundary for basic terms:
+decompose the action and required objects, participants, purposes and states
+explicitly specified in a supplied meaning; allow a name to abbreviate that
+expression through `owl.classes`. Primitive English definitions can explain
+concepts whose internal structure the supplied meaning does not specify. This
+avoids requiring recursive technical definitions of every mentioned concept.
+No next prompt version, extra inference or hierarchy change is part of this panel.
+
+### Accounting and retained panel evidence
+
+Native `experiment-usage-summary-v3` accounting is complete, with no warnings:
+
+| Accounting basis | Requests | Input tokens | Output tokens | API-equivalent cost |
+|---|---:|---:|---:|---:|
+| Fresh execution | 11 | 34,992 | 8,223 | $0.152214 |
+| Original generation of all panel answers, including reuse source | 12 | 38,117 | 9,223 | $0.168464 |
+
+There are no provider failures, retries or warmups. Cached input and reported
+cache-write tokens are zero. The 3,170 fresh reasoning tokens are already included
+in output; they are not charged twice. The reused source cost is counted once in
+original generation and not as fresh spending or a cache hit. These are saved
+catalogue estimates, not subscription invoices or measured policy savings.
+
+The retained worktree is:
+
+```text
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp-pair-consolidation-owl-v7-panel-v1
+```
+
+Its ignored native evidence is `target/pair-consolidation-owl-v7-panel-v1`,
+`target/pair-consolidation-owl-v7-panel-checks-v1.json`,
+`target/pair-consolidation-owl-v7-panel-usage-source-v1.json` and
+`target/pair-consolidation-owl-v7-panel-usage-summary-v1.json`. Frozen source,
+baseline and exact-reuse validation also require the retained earlier task
+worktrees. All prompt bytes, original inputs and prior receipts remain unchanged.
