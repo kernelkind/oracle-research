@@ -4,8 +4,11 @@
 making negated activities explicit as activity classes. Its three-case targeted
 check records three qualified agent accepts: never-painted surfaces now retain
 the paint-application class and participant, while completed painting and coffee
-equipment preserve their targeted conditions. This is one draw per case, not
-broader qualification or activation in hierarchy generation.
+equipment preserve their targeted conditions. An independent painting repeat and
+an unseen detergent-washing case also retain explicit negative activities. The
+repeat introduces a possible building-only restriction, recorded as a separate
+scope uncertainty. V11 remains experimental, without broader qualification or
+activation in hierarchy generation.
 
 `pair-consolidation-owl-v10` is the preceding tested version. The user approved
 replacing the inherited rule that activity topics automatically include plans
@@ -940,9 +943,9 @@ heading; retain this as a writing qualification, not a containment failure.
 The observed missing-activity-class defect is absent in this draw. Three targeted
 answers do not establish reliability, broader-panel success or unique correct
 primitive vocabulary. V10's material-use and supplied-WaterHeating qualifications
-were not tested or resolved here. The next useful check is an independent repeat
-of the negative case and an unseen negative-action control, to test whether the
-rule holds beyond one painting answer; no further inference is included here.
+were not tested or resolved here. The user subsequently authorized the independent
+repeat and unseen negative-action control reported below; their inference is
+separate from this initial three-case screen.
 
 Native `experiment-usage-summary-v3` accounting is complete without warnings:
 three fresh attempts, 9,919 input tokens, 2,628 output tokens and 868 reasoning
@@ -961,3 +964,96 @@ Ignored evidence is `target/pair-consolidation-owl-v11-negative-action-v1`,
 `target/pair-consolidation-owl-v11-negative-action-usage-source-v1.json` and
 `target/pair-consolidation-owl-v11-negative-action-usage-summary-v1.json`.
 Earlier worktrees retain the unchanged V10 baselines and source bindings.
+
+## V11 negative-action follow-ups — 2026-10-13
+
+The user authorized one intentional fresh repeat of the never-painted case and
+one unseen negative-action case against unchanged V11. Native `prepare --from
+--only 06-explicit-absence --repeat` preserves the first case's complete prompt,
+input and settings while bypassing answer reuse. The
+[authored transfer source](pair-consolidation-owl-v11-negative-transfer-source-v1.json)
+and [native spec](pair-consolidation-owl-v11-negative-transfer-v1.spec.json) provide
+bottles and jars that have never been washed using detergent. Pre-call conditions
+require Washing and Detergent to be formal, preserving actual-history scope and
+allowing washing without detergent. Expectations remain outside model input;
+they are agent-authored conditions, not human gold or a prescribed grouping.
+Both independent batches were submitted before waiting. No prompt edit,
+additional example, warmup, paid fallback or hierarchy change is included.
+
+Both cases completed with one fresh Sol 6.1 medium attempt each, without failures,
+retries or reuses. All structural/vocabulary/definition checks pass. Raw receipts
+report HTTP 200 and GPT-6.1 Sol. The repeat's complete request body exactly matches
+the first V11 painting request and has a different upstream response reference.
+Both requests have one user message and no prior-response reference; the unseen
+case changes input data only. Frozen sources remain exact. Native reviews record
+one qualified accept and one scope uncertainty, rather than two full semantic
+passes.
+
+The painting repeat retains the explicit activity inline:
+
+```text
+InteriorBuildingElement AND Wall
+AND NOT (hasEverBeenTargetOf SOME (Application AND (appliesMaterial SOME Paint)))
+```
+
+The ceiling substitutes `Ceiling`; the consolidation drops the individual kind
+while keeping the same interior and negative conditions. Application is an
+activity of applying material, and the history relation covers any time up to
+the present. The representation fix therefore survives this repeat. However,
+`InteriorBuildingElement` is defined as "A physical element forming part of a
+building's interior." The fixed inputs say only interior walls/ceilings. An
+unpainted interior wall or ceiling of a ship is a plausible excluded case under
+a broader reading of those inputs. Record this as an independent fidelity
+uncertainty, not recurrence of the missing activity class or independently
+validated semantic failure. Coverage of the translated nodes alone cannot
+establish that the input meanings were translated faithfully.
+
+The unseen washing case returns:
+
+```json
+{
+  "node1": "Bottle AND NOT (hasEverUndergone SOME DetergentWashing)",
+  "node2": "Jar AND NOT (hasEverUndergone SOME DetergentWashing)",
+  "consolidated": "Container AND NOT (hasEverUndergone SOME DetergentWashing)",
+  "classes": {
+    "Bottle": "Container AND BottleKind",
+    "Jar": "Container AND JarKind",
+    "DetergentWashing": "Washing AND (uses SOME Detergent)"
+  }
+}
+```
+
+This excerpts expressions and supporting classes, not a new response schema.
+`hasEverUndergone` connects the object to an activity performed on it at any time
+up to the present. Only detergent washing is negated. Washing without detergent
+is compatible, while detergent-and-water washing still satisfies the excluded
+`SOME Detergent` condition. No `ONLY` or completion condition is added. Explicit
+Bottle/Jar definitions establish containment under Container; the final English
+preserves the same negative condition. This is one qualified authored transfer
+control, not broad semantic certification.
+
+The action-representation rule holds in both follow-ups. A useful next check is
+to state building-or-ship interiors explicitly in a controlled definition, then
+check preservation of both alternatives before proposing another prompt change.
+That avoids grading an ambiguous unqualified noun as new human gold. No further
+case, inference or prompt revision was prepared in this task.
+
+Native `experiment-usage-summary-v3` accounting is complete without warnings:
+two fresh attempts, 6,548 input tokens, 1,700 output tokens and 625 reasoning
+tokens already included in output. Cache read/write tokens are zero. Complete
+fresh API-equivalent catalogue cost is **$0.030096**; this is not subscription
+billing or a savings claim. The intentional repeat is a new draw, not a retry.
+
+The worktree is retained for frozen source/code bindings and native receipts:
+
+```text
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp-pair-consolidation-owl-v11-generalization-v1
+```
+
+Ignored evidence is `target/pair-consolidation-owl-v11-negative-repeat-v1`,
+`target/pair-consolidation-owl-v11-negative-transfer-v1`,
+`target/pair-consolidation-owl-v11-generalization-checks-v1.json`,
+`target/pair-consolidation-owl-v11-generalization-usage-source-v1.json` and
+`target/pair-consolidation-owl-v11-generalization-usage-summary-v1.json`.
+Earlier retained worktrees supply the unchanged first V11 answer and historical
+source bindings; old outputs and assessments remain unchanged.
