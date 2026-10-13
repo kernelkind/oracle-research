@@ -64,10 +64,10 @@ def export_viewer(directory, output):
         support = list(dict.fromkeys(short_ids[entry['note_id']] for entry in node['entries']))
         direct = list(dict.fromkeys([*support, *(short_ids[n] for n in node.get('note_ids', []))]))
         view_nodes.append({'node_id': node['id'],
-            'label': f"{node['subject']} ({node['id']}; {', '.join(direct)})",
+            'label': f"{node['subject']} ({node['id']})",
             'children': children[node['id']], 'note_ids': direct, 'analysis':
             f"Canonical ID: {node['id']}\nHeading: {node['subject']}\n"
-            f"Fixed meaning: {node['meaning']}\nDirect supporting notes: {', '.join(support)}\n"
+            f"Fixed meaning: {node['meaning']}\n"
             f"Canonical parents: {', '.join(node['parents']) or '(root)'}"})
     hierarchy = {'schema_version': 2, 'hierarchy_id': directory.name,
         'source_sha256': hashlib.sha256(notes_bytes).hexdigest(), 'root_node_id': 'VIEW_ROOT',

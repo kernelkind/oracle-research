@@ -57,7 +57,7 @@ class CanonicalHierarchyViewerTests(unittest.TestCase):
         self.assertEqual(nodes['C001']['children'], ['C003'])
         self.assertEqual(nodes['C002']['children'], ['C003'])
         self.assertEqual(nodes['C003']['note_ids'], ['N001'])
-        self.assertEqual(nodes['C003']['label'], 'Shared heading (C003; N001)')
+        self.assertEqual(nodes['C003']['label'], 'Shared heading (C003)')
         self.assertIn('Fixed meaning: Shared fixed meaning', nodes['C003']['analysis'])
         self.assertIn('Canonical parents: C001, C002', nodes['C003']['analysis'])
         self.assertEqual(path.read_bytes(), original)
@@ -87,5 +87,22 @@ class CanonicalHierarchyViewerTests(unittest.TestCase):
         self.assertEqual(nodes['VIEW_ROOT']['children'], ['C002'])
         self.assertEqual(nodes['C003']['note_ids'], ['N001'])
         self.assertEqual(nodes['C003']['children'], [])
+        self.assertEqual(path.read_bytes(), original)
+        self.assertEqual(fixtures.ExperimentTests.calls(self), [])
+
+    def test_note_memberships_are_available_without_displaying_note_id_lists(self):
+        path = self.source()
+        original = path.read_bytes()
+        self.cli('export-canonical-viewer', 'trial', '--output', 'viewer')
+        view = json.loads((self.root / 'viewer/hierarchy.json').read_text())
+        nodes = {node['node_id']: node for node in view['nodes']}
+        self.assertEqual(nodes['C001']['label'], 'First heading (C001)')
+        self.assertEqual(nodes['C003']['label'], 'Shared heading (C003)')
+        for node in nodes.values():
+            self.assertNotIn('N001', node['label'])
+            self.assertNotIn('N003', node['label'])
+            self.assertNotIn('Direct supporting notes:', node['analysis'])
+        self.assertEqual(nodes['C001']['note_ids'], ['N001'])
+        self.assertEqual(nodes['C003']['note_ids'], ['N001'])
         self.assertEqual(path.read_bytes(), original)
         self.assertEqual(fixtures.ExperimentTests.calls(self), [])

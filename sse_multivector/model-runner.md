@@ -1743,7 +1743,10 @@ changes while preserving data, meanings and receipts. Finish active work before
 editing or rebinding its sources.
 
 Inspect saved results with the existing `export-canonical-viewer` command only
-when requested. Source-bound Compare preparation remains available for evaluating
+when requested. Exported headings show the topic and canonical node ID; the
+navigation menu shows note counts. Supporting note IDs remain available for
+note browsing without being enumerated in headings or details.
+Source-bound Compare preparation remains available for evaluating
 fixed V3 definitions independently. Historical `audit-canonical-trial`,
 `shape-canonical-trial`, candidate measurements and policy-cost comparisons are
 saved-data tools; their older singleton-leaf and strict-note-set criteria do not
