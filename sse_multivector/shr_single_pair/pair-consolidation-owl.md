@@ -1,6 +1,13 @@
 # Pair-consolidation-owl: experimental prompt line
 
-`pair-consolidation-owl-v10` is the current experimental draft. The user approved
+`pair-consolidation-owl-v11` is the current experimental version. The user approved
+making negated activities explicit as activity classes. Its three-case targeted
+check records three qualified agent accepts: never-painted surfaces now retain
+the paint-application class and participant, while completed painting and coffee
+equipment preserve their targeted conditions. This is one draw per case, not
+broader qualification or activation in hierarchy generation.
+
+`pair-consolidation-owl-v10` is the preceding tested version. The user approved
 replacing the inherited rule that activity topics automatically include plans
 with explicit purpose/use and plan representation. Activity classes retain the
 action's identity; plans relate separately to their proposed activities. A
@@ -826,9 +833,9 @@ removed" wording is also a writing qualification under the preference for
 positively stated optional variations; no changed membership condition is shown.
 These qualifications must not be silently converted into full semantic passes.
 
-The next useful revision is to clarify that the action-as-class rule also applies
-inside negative conditions, then test the negative case alongside positive-action
-controls. No V11 edit or further inference is part of this completed panel.
+The user subsequently approved an explicit activity representation for the
+negative condition and authorized V11, documented below. No V11 edit or further
+inference is part of this completed V10 panel.
 
 ### Accounting and retained evidence
 
@@ -853,3 +860,104 @@ Ignored evidence is `target/pair-consolidation-owl-v10-panel-v1`,
 `target/pair-consolidation-owl-v10-panel-usage-summary-v1.json`. Earlier retained
 worktrees provide frozen inputs, baselines and the exact reused coffee producer.
 Prompt bytes, old assessments and original receipts are unchanged.
+
+## V11 negated-activity check: pre-call method
+
+The user reviewed the V10 never-painted answer and approved an explicit
+paint-application activity representation inside the negative condition, then
+authorized the fix. The saved V10 `06-explicit-absence` answer supplies the
+before-change failure; it is not rerun. Publish
+[pair-consolidation-owl-v11](pair-consolidation-owl-v11.md) with one paragraph
+changed: the existing activity rule explicitly includes negative conditions,
+and non-occurrence negates a `SOME` connection to the activity expression while
+preserving stated time scope. Shared rules, Bootstrap companion, guide, example,
+output contract and historical prompt bytes remain unchanged.
+
+Native preparation selects three exact V10 panel inputs: never-painted
+walls/ceilings, completed interior painting and coffee equipment. Preserve their
+Sol 6.1 medium subscription/SSE settings; change only the prompt. All three
+require fresh calls, with native exact reuse available if a matching answer
+exists. No intentional repeat, warmup, baseline rerun or hierarchy activation
+is included.
+
+Assess the negative case for an activity class and explicit paint participant,
+an actual-occurrence relation to the stated surface, and the full never-applied
+time scope. Do not introduce a completed-painting requirement. Accept equivalent
+names and inline or supporting expressions rather than requiring the proposed
+example verbatim. Check coverage and English/formal agreement separately. The
+positive controls must preserve the supplied completed-painting parent and
+coffee design/use roles without asserting occurrence from purpose alone.
+
+This is a targeted representation check, not broader semantic certification or
+proof of reliability. The short direct clarification follows [official reasoning
+guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices#how-to-prompt-reasoning-models-effectively);
+no new worked example or reasoning narrative is requested.
+
+## V11 negated-activity check: completed findings — 2026-10-13
+
+All three cases completed with one fresh GPT-6.1 Sol medium attempt each, without
+failures, retries, reuses or warmups. Exact inputs/settings remain bound to the
+V10 panel; no old answer appears in model input. Raw receipts report HTTP 200
+and GPT-6.1 Sol. All requests have one user message, identical non-input body
+fields and no prior-response reference. Frozen source hashes remain unchanged.
+
+All three outputs pass JSON layout, expression formatting, vocabulary closure
+and unchanged-definition checks. Native reviews record three qualified agent
+accepts. Names and grouping scopes were not prescribed. No executable reasoner
+or independent human semantic gold is used.
+
+The negative wall expression now uses:
+
+```json
+{
+  "expression": "InteriorWall AND NOT (hasEverBeenTargetOf SOME PaintApplication)",
+  "classes": {
+    "InteriorWall": "InteriorArchitecturalElement AND Wall",
+    "PaintApplication": "MaterialApplication AND (appliesMaterial SOME Paint)"
+  }
+}
+```
+
+The ceiling substitutes its own formally defined `InteriorCeiling`. The
+consolidation retains `InteriorArchitecturalElement` and the identical negative
+condition. `hasEverBeenTargetOf` connects a thing to an application activity
+directed onto it at any time up to the present; `MaterialApplication` is the
+activity of applying material onto a target; `appliesMaterial` connects that
+activity to its material. The action and Paint participant are thus explicit.
+No completion condition is introduced, so partial application still excludes
+membership. Plans are not made members of the activity class. The final English
+retains never-applied paint and covers the translated walls and ceilings.
+
+The completed-painting control keeps `PaintingActivity`, `Completed` and its
+target relation; formal interior classes inherit `HomeSurface`, establishing
+the supplied-parent conclusion. The coffee control retains Drinking/Coffee and
+Storage/cup-role conditions. Its broader CoffeeCup supporting definition admits
+designed-for or used-for cups; its shelf alternative keeps the storage-design
+relationship, covering both fixed inputs. English preserves those alternatives.
+The coffee title lists cups and shelves rather than selecting a shared-category
+heading; retain this as a writing qualification, not a containment failure.
+
+The observed missing-activity-class defect is absent in this draw. Three targeted
+answers do not establish reliability, broader-panel success or unique correct
+primitive vocabulary. V10's material-use and supplied-WaterHeating qualifications
+were not tested or resolved here. The next useful check is an independent repeat
+of the negative case and an unseen negative-action control, to test whether the
+rule holds beyond one painting answer; no further inference is included here.
+
+Native `experiment-usage-summary-v3` accounting is complete without warnings:
+three fresh attempts, 9,919 input tokens, 2,628 output tokens and 868 reasoning
+tokens already included in output. Reported cache read/write tokens are zero.
+Complete fresh API-equivalent catalogue cost is **$0.046118**; this is not
+subscription billing or a savings claim. No baseline generation is charged again.
+
+The worktree is retained for its frozen source/code bindings and saved receipts:
+
+```text
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp-pair-consolidation-owl-v11-negative-action-v1
+```
+
+Ignored evidence is `target/pair-consolidation-owl-v11-negative-action-v1`,
+`target/pair-consolidation-owl-v11-negative-action-checks-v1.json`,
+`target/pair-consolidation-owl-v11-negative-action-usage-source-v1.json` and
+`target/pair-consolidation-owl-v11-negative-action-usage-summary-v1.json`.
+Earlier worktrees retain the unchanged V10 baselines and source bindings.
