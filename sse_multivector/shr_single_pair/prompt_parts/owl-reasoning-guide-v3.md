@@ -35,4 +35,3 @@ Consolidated ⊑ Parent    (when a parent is supplied)
 A conclusion follows only if it holds in every possible interpretation satisfying those definitions and claims. Missing evidence for a counterexample is not proof. Check that the definitions can hold together and that each defined class can have members: an impossible class is formally contained in every class and cannot establish a useful grouping.
 
 These conclusions establish coverage and fit within a supplied parent. They do not identify a unique consolidated topic or establish its usefulness for browsing.
-

@@ -1,6 +1,6 @@
 # Pair-consolidation-owl: experimental prompt line
 
-`pair-consolidation-owl-v2` is a draft for review, not an activated prompt or a
+`pair-consolidation-owl-v3` is a draft for review, not an activated prompt or a
 replacement for the approved `Hierarchy-pair-consolidation-v6`. No model tests
 have been run for this line.
 
@@ -18,21 +18,21 @@ following contract:
   must appear in the formal representation rather than being introduced as
   unstated English assumptions.
 
-The exact JSON field names and the full v2 wording are draft implementation
+The exact JSON field names and the full v3 wording are draft implementation
 choices for review, not independently approved decisions.
 
 ## Sources and assembly
 
-The [v2 prompt](pair-consolidation-owl-v2.md) is built by its
-[pinned assembly manifest](pair-consolidation-owl-v2.assembly.json). It includes
-[OWL-like guide v2](prompt_parts/owl-reasoning-guide-v2.md) and
+The [v3 prompt](pair-consolidation-owl-v3.md) is built by its
+[pinned assembly manifest](pair-consolidation-owl-v3.assembly.json). It includes
+[OWL-like guide v3](prompt_parts/owl-reasoning-guide-v3.md) and
 [explicit-meaning rules v6](prompt_parts/explicit-meaning-rules-v6.md)
 byte-for-byte. Its matching definition-writing reference is
 [Bootstrap-v129](Hierarchy-bootstrap-v129.md).
 
-V2 replaces the guide's partial worked example with one
+V3 replaces the guide's partial worked example with one
 [complete input/output example](prompt_parts/pair-consolidation-owl-example-v1.md)
-using the same display-panel case. Guide v2 preserves all of guide v1's
+using the same display-panel case. Guide v3 preserves all of guide v1's
 instructions before that worked example. The task instructions, shared
 definition-writing rules and output contract are unchanged. The v1 prompt,
 guide v1 and all other existing prompts retain their original bytes.
@@ -52,7 +52,7 @@ been measured.
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
 python3 sse_multivector/prompt_assembly.py check \
-  sse_multivector/shr_single_pair/pair-consolidation-owl-v2.assembly.json
+  sse_multivector/shr_single_pair/pair-consolidation-owl-v3.assembly.json
 ```
 
 Assembly checks establish exact reconstruction and unchanged shared sources.

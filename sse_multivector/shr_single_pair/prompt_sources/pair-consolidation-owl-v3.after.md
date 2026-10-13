@@ -22,4 +22,3 @@ Return only one JSON object with exactly these fields, in this order:
 Each `owl` value is a string containing the named topic definition (`Node1`, `Node2` or `Consolidated`) and any additional formal definitions or background relationships it needs. Use newlines between statements. Each `definitions` value is a JSON object mapping every named class and relation used in that `owl` string to an English definition, including the named topic itself. Repeated names must have identical definitions across the supplied parent and all returned objects.
 
 Return the formal definitions and final title and meaning without a reasoning narrative. Do not return a parent object.
-
