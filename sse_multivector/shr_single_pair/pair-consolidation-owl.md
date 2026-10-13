@@ -10,6 +10,14 @@ repeat introduces a possible building-only restriction, recorded as a separate
 scope uncertainty. V11 remains experimental, without broader qualification or
 activation in hierarchy generation.
 
+An unchanged-V11 screen of eight exact HR14 root pairs records three qualified
+agent accepts, two concrete rejections and three uncertainties. The rejections
+are an English/formal scope mismatch and a duplicate formal/English definition.
+Several unrelated pairs still produce headings that list disconnected kinds.
+Formal coverage alone does not repair those browsing groupings. This screen
+does not regenerate HR14 or test fit within a supplied canonical parent; see
+the HR14 findings below.
+
 `pair-consolidation-owl-v10` is the preceding tested version. The user approved
 replacing the inherited rule that activity topics automatically include plans
 with explicit purpose/use and plan representation. Activity classes retain the
@@ -1032,11 +1040,11 @@ Bottle/Jar definitions establish containment under Container; the final English
 preserves the same negative condition. This is one qualified authored transfer
 control, not broad semantic certification.
 
-The action-representation rule holds in both follow-ups. A useful next check is
-to state building-or-ship interiors explicitly in a controlled definition, then
-check preservation of both alternatives before proposing another prompt change.
-That avoids grading an ambiguous unqualified noun as new human gold. No further
-case, inference or prompt revision was prepared in this task.
+The action-representation rule holds in both follow-ups. Preservation of an
+explicit building-or-ship alternative remains untested; the unqualified noun
+must not become new human gold. No further case, inference or prompt revision
+was prepared in that follow-up task. The subsequent user-requested HR14 screen
+below tests different real pairs against unchanged V11.
 
 Native `experiment-usage-summary-v3` accounting is complete without warnings:
 two fresh attempts, 6,548 input tokens, 1,700 output tokens and 625 reasoning
@@ -1057,3 +1065,168 @@ Ignored evidence is `target/pair-consolidation-owl-v11-negative-repeat-v1`,
 `target/pair-consolidation-owl-v11-generalization-usage-summary-v1.json`.
 Earlier retained worktrees supply the unchanged first V11 answer and historical
 source bindings; old outputs and assessments remain unchanged.
+
+## V11 on HR14 real pair consolidations — 2026-10-13
+
+The user requested viewing the fifty-note HR14 hierarchy, observing pair
+consolidation failures, and testing how the current prompt handles them. The
+existing review UI's exported tree and the immutable construction state were
+inspected read-only. No UI refresh, hierarchy regeneration, prompt edit or
+activation was performed.
+
+### What HR14 shows
+
+The saved hierarchy has 354 canonical nodes, 348 edges and six roots. Its roots
+are Concrete and abstract entities and phenomena; Food, drink, and related
+matters; Subjects and their relationships; The world and lived experience;
+Biological materials and food-and-drink systems; and Activities, resources, and
+outcomes. Several give little guidance about which branch to browse. The
+construction repeatedly consolidates all selected pairs, including weakly
+related pairs, into at most six nodes. The first family alone contains 162 pair
+consolidations from 324 nonnull original L1 meanings.
+
+Concrete saved branches include:
+
+- C00003 → C00067 Semantic and functional relationships → C00215 Designation
+  and reference → C00219 Beets, C00220 MrBeast, C00221 Calendar dates and
+  C00222 BitcoinDayOfTheYear.
+- C00003 → C00068 Life and activity in context → C00278 Communication and
+  context → C00291 Greetings, C00292 Greetings, C00293 Time after 9 a.m. and
+  C00294 Kings.
+
+These are browsing-quality witnesses, not automatically false containment.
+For example, HR14's initial Beets/MrBeast parent is General reference, explicitly
+covering edible plant parts and public names. Its Time after 9 a.m./Kings parent
+is Entities and circumstances, explicitly covering scene times and people with
+social titles. Such broad coverage can be defensible while remaining unhelpful.
+Likewise, an input's related actor, product or name must not be declared excluded
+without reading the complete proposed meaning.
+
+The frozen source is:
+
+```text
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr14-v3
+```
+
+Its `target/hierarchy-hr14-v3-fifty-note-v1/HR14/state.json` SHA256 is
+`5496b3b1e339dd67cd995efa87d277582f9b1a48a27ac64af8ef0dca8ff66956`.
+The viewed artifact is `target/hr14-review-ui-v2/hierarchy.json`; its provenance
+and validation files identify the saved construction. All fifty source notes
+report ASv6.100 provenance. No deprecated extraction data was used.
+
+### Frozen native test
+
+The [source reference](pair-consolidation-owl-v11-hr14-source-v1.json) points to
+the original native `trial/batch-00001/experiment`, pinning its manifest SHA256.
+The [spec](pair-consolidation-owl-v11-hr14-v1.spec.json) selects eight exact cases
+through the production generic prepared-experiment adapter. All eight are root
+pairs: their original inputs have no parent. No natural-language parent was
+silently omitted or converted to unvalidated logic.
+
+Before dispatch, the original and prepared inputs were checked byte-for-byte,
+the compiled V11 prompt was checked against its assembly, and source bindings
+were verified to use isolated worktrees. The planned assessment distinguishes
+fixed-meaning fidelity, coverage of both translations, unchanged definitions,
+English/formal agreement and browsing usefulness. Two coherent product/role
+pairs are controls; six probe weak grouping or association/identity boundaries.
+No output title or unique consolidated scope was prescribed. Agent assessments
+remain outside model input and are not human gold.
+
+All eight new requests used GPT-6.1 Sol medium through the shared native runner,
+subscription provider and SSE. The original HR14 answers are saved baselines,
+not rerun calls. HR14 used Hierarchy-pair-consolidation-v6, a title/meaning output
+schema and cached-prefix configuration. V11 uses the richer formal output
+without that old strict schema or cache configuration. Therefore this is a
+real-input diagnostic, not a prompt-only causal comparison or matched
+cost-savings trial.
+
+### Results
+
+All eight requests completed, with eight fresh attempts, zero reuses, failures
+or retries. Raw receipts report HTTP 200, GPT-6.1 Sol and medium reasoning; each
+has one user message, no prior-response reference and a distinct upstream
+response ID. Native text validity is separate from the assessments below.
+
+| Case | Exact input pair | V11 title | Agent assessment |
+|---|---|---|---|
+| F00000-P00039 | Pancakes / Pancake mixtures | Pancake foods and preparations | Qualified accept: product and formulated-mixture kinds remain distinct and covered. |
+| F00000-P00066 | Raw meat / Meat eaters | Meat in diets | Uncertain: the raw-meat translation requires an eating activity; the final meaning says consumed. Whether this narrows the supplied food-use role remains unresolved. |
+| F00000-P00070 | coffeechain / Caffeine | Coffeehouse-chain hashtags and central nervous system stimulants | Uncertain: both translated kinds are covered, but the heading lists disconnected kinds. |
+| F00000-P00106 | Beets / MrBeast | Cultivated vegetables and YouTube creator names | Reject: final English adds a human-consumption condition absent from its logic. Grouping also remains disconnected. |
+| F00000-P00119 | Satoshi Nakamoto / Nostr | Digital technologies and creator pseudonyms | Qualified accept: preserves pseudonym/creator and protocol identities; explicit broader alternatives cover both. |
+| F00000-P00134 | Pressure canning / Extractor fans | Food and air treatment processes and equipment | Reject: FanDevice is both a formal class and an English glossary entry. This is an output-contract failure. |
+| F00000-P00140 | Lamb / wolf.0313 | Food and drink resources | Qualified accept: food and the credited source retain their separate kinds and source/video relationship. |
+| F00000-P00161 | Time after 9 a.m. / Kings | Scene times and monarchs | Uncertain: translations are covered, but the union remains an unhelpful browsing group. |
+
+Mechanical field-order, expression formatting, vocabulary closure and reused
+definition checks pass for seven outputs. The eighth has the duplicate
+FanDevice definition described below. Manual reading establishes coverage of
+the returned translations in all eight, using their final definitions; this is
+not executable reasoner certification and does not establish input fidelity.
+
+**Beets/MrBeast: added condition in English.** The consolidation's plant
+alternative is:
+
+```text
+EdiblePlantPart AND (cultivatedFor SOME VegetableConsumption)
+VegetableConsumption = Consumption AND (consumesAsVegetable SOME EdiblePlantPart)
+```
+
+These are excerpts of the expression and supporting class, not new prompt
+syntax. Consumption is defined as eating; neither its expression nor the
+relation definitions require a human participant. The final English instead
+says edible plant parts cultivated "for people to eat as vegetables." The
+original Beets meaning says cultivated for consumption as vegetables, without
+the added people condition. The English therefore fails the unchanged formal
+scope requirement. The separate public-name/YouTube-creator alternative is
+represented explicitly, but still does not make this a useful common category.
+
+**Pressure canning/extractor fans: duplicate definition.** The node translation
+includes:
+
+```json
+{
+  "node2.definitions.FanDevice": "A device with a fan that moves air.",
+  "consolidated.owl.classes.FanDevice": "Device AND FanMechanismDevice"
+}
+```
+
+This shows the two saved paths, not the response schema. V11 explicitly forbids
+an English glossary entry for a class formally defined anywhere in the returned
+objects. The definitions can otherwise warrant the device membership needed by
+the consolidated expression. Do not misreport this duplication as proof that
+semantic containment fails.
+
+**Forced unrelated pairs remain weak groups.** Beets/MrBeast, scene times/kings
+and coffeechain/caffeine become explicit unions instead of opaque umbrella
+headings. This makes their memberships clearer but still supplies little shared
+topic guidance. The prompt itself states that its formal conclusions establish
+coverage and parent fit, not a unique topic or usefulness for browsing. These
+results do not show that adding logic alone will repair HR14's final hierarchy.
+They also do not prove every historical broad parent false. No selected pair
+has a supplied parent, so deeper parent-fit failures remain untested here.
+
+The next useful prompt work is to isolate the English-only human restriction
+and the formal/glossary duplication with these saved real inputs before another
+revision. Browsing usefulness must stay a separate assessment. No prompt change
+or further inference is included in this task.
+
+Native `experiment-usage-summary-v3` accounting is complete without warnings:
+26,434 input tokens, 14,450 output tokens and 6,586 reasoning tokens already
+included in output. Cache read/write counts are zero. Complete fresh catalogue
+API-equivalent cost is **$0.197368**; this is not subscription billing or a
+savings claim. Agent reviews are three qualified accepts, two rejects and three
+uncertainties, with distinct reasons rather than a generalized accuracy score.
+
+The task worktree is retained for frozen source/code bindings and native receipts:
+
+```text
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp-pair-consolidation-owl-v11-hr14-v1
+```
+
+Ignored evidence is `target/pair-consolidation-owl-v11-hr14-v1`,
+`target/pair-consolidation-owl-v11-hr14-checks-v1.json`,
+`target/pair-consolidation-owl-v11-hr14-usage-source-v1.json` and
+`target/pair-consolidation-owl-v11-hr14-usage-summary-v1.json`. Original HR14
+answers, construction state and reviews remain unchanged in their retained
+source worktree.
