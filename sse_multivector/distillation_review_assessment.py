@@ -130,7 +130,8 @@ def record(selection_path, answer_id, directory, *, teacher_meanings=None, expec
     bundle = trial.load_trial(selection_path)
     row = _answer(bundle, answer_id)
     directory = Path(directory).expanduser().resolve()
-    if (directory / "assessment.complete.json").exists():
+    if any((directory / filename).exists() for filename in
+           ("assessment.complete.json", "inventory.complete.json")):
         raise ValueError("trial assessments are frozen")
     if (teacher_meanings is None) == (expectations is None) or not isinstance(reason, str) or not reason.strip():
         raise ValueError("supply one teacher context or expectations and an assessment reason")
@@ -219,8 +220,140 @@ def record_wording_expectations(selection_path, answer_id, directory, value, *, 
     return record(selection_path, answer_id, directory, expectations=expanded, reason=reason)
 
 
+def _inventory_rows(bundle):
+    result = {}
+    for _, row in answers(bundle):
+        result.setdefault(_context_key(row), []).append(row)
+    return result
+
+
+def _inventory_teacher(path, selected, checked_selections, sources):
+    """Verify an original teacher-only record against its sealed source selection."""
+    data = run.read_json(path)
+    if (type(data["schema_version"]) is not int or data["schema_version"] not in (1, 2)
+            or data["origin"] != "agent_assessed" or data["context_key"] != _context_key(selected)):
+        raise ValueError("teacher inventory source differs")
+    review._fields(data["selection"], {"path", "sha256"}, "teacher inventory selection")
+    selection = Path(data["selection"]["path"]).expanduser().resolve()
+    binding = (str(selection), data["selection"]["sha256"])
+    if binding not in checked_selections:
+        if run.sha256(selection) != binding[1]:
+            raise ValueError("teacher inventory original selection hash differs")
+        bundle = trial.load_trial(selection)
+        checked_selections[binding] = (_inventory_rows(bundle), bundle["sources"])
+    original_rows, original_sources = checked_selections[binding]
+    sources.update(original_sources)
+    sources[str(selection)] = binding[1]
+    seal = selection.parent / "selection.complete.json"
+    sources[str(seal)] = run.sha256(seal)
+    originals = original_rows.get(data["context_key"], [])
+    if not originals or any(original[key] != selected[key] for key in
+            ("note_id", "post", "teacher", "task_prompt") for original in originals):
+        raise ValueError("teacher inventory context differs from its original selection")
+    for group in data["teacher_meanings"]:
+        review._fields(group, {"teacher_numbers", "required"}, "inventoried teacher meaning")
+    review._groups(data["teacher_meanings"], selected["teacher"])
+    checksum = run.sha256(path)
+    assessment_seal = path.parent / "assessment.complete.json"
+    if assessment_seal.is_file():
+        if run.read_json(assessment_seal).get(str(path)) != checksum:
+            raise ValueError("frozen teacher inventory source hash differs")
+        sources[str(assessment_seal)] = run.sha256(assessment_seal)
+    sources[str(path)] = checksum
+    return data["teacher_meanings"]
+
+
+def prepare_inventory(selection_path, output, source_directories=()):
+    """Freeze reusable teacher contexts only; missing policies stay explicit."""
+    selection_path = Path(selection_path).expanduser().resolve()
+    bundle = trial.load_trial(selection_path)
+    directory = Path(output).expanduser().resolve()
+    if directory.exists():
+        raise ValueError("teacher inventory output already exists and cannot overwrite frozen contexts")
+    wanted = _inventory_rows(bundle)
+    sources = {str(selection_path): run.sha256(selection_path),
+        str(selection_path.parent / "selection.complete.json"):
+            run.sha256(selection_path.parent / "selection.complete.json")}
+    imported, checked = {}, {}
+    for source in source_directories:
+        source = Path(source).expanduser().resolve()
+        if not source.is_dir():
+            raise ValueError("teacher inventory assessment directory is missing")
+        for key, rows in wanted.items():
+            path = source / ("teacher-" + key + ".json")
+            if not path.is_file():
+                continue
+            candidate_sources = {}
+            groups = _inventory_teacher(path, rows[0], checked, candidate_sources)
+            if key in imported and imported[key]["teacher_meanings"] != groups:
+                raise ValueError("conflicting teacher inventory policies for the same source context")
+            if key not in imported:
+                sources.update(candidate_sources)
+                imported[key] = dict(context_key=key, teacher_meanings=groups,
+                    source=dict(path=str(path), sha256=run.sha256(path)))
+    missing = [dict(context_key=key, note_id=rows[0]["note_id"],
+        answer_ids=[row["id"] for row in rows]) for key, rows in wanted.items() if key not in imported]
+    value = dict(schema_version=1, origin="teacher_inventory", inference_calls=0,
+        selection=dict(path=str(selection_path), sha256=run.sha256(selection_path)),
+        contexts=list(imported.values()), missing_contexts=missing, sources=sources)
+    path = directory / "inventory.json"
+    run.write_json(path, value)
+    run.write_json(directory / "inventory.complete.json", {path.name: run.sha256(path)})
+    return dict(inference_calls=0, inventory_path=str(path), sha256=run.sha256(path),
+        context_count=len(imported), total_contexts=len(wanted),
+        answer_count=sum(len(rows) for rows in wanted.values()), missing_contexts=missing)
+
+
+def _load_inventory(directory, selection_bundle):
+    path = directory / "inventory.json"
+    seal = directory / "inventory.complete.json"
+    if run.read_json(seal) != {path.name: run.sha256(path)}:
+        raise ValueError("teacher inventory hash differs")
+    data = run.read_json(path)
+    review._fields(data, {"schema_version", "origin", "inference_calls", "selection",
+                         "contexts", "missing_contexts", "sources"}, "teacher inventory")
+    if (type(data["schema_version"]) is not int or data["schema_version"] != 1
+            or data["origin"] != "teacher_inventory" or data["inference_calls"] != 0):
+        raise ValueError("teacher inventory schema differs")
+    review._fields(data["selection"], {"path", "sha256"}, "teacher inventory selection")
+    selection = Path(data["selection"]["path"])
+    if (run.sha256(selection) != data["selection"]["sha256"]
+            or run.read_json(selection) != selection_bundle):
+        raise ValueError("teacher inventory selection differs")
+    for filename, checksum in data["sources"].items():
+        if run.sha256(filename) != checksum:
+            raise ValueError("teacher inventory source hash differs: " + filename)
+    wanted = _inventory_rows(selection_bundle)
+    contexts, checked = {}, {}
+    sources = {str(selection): data["selection"]["sha256"],
+        str(selection.parent / "selection.complete.json"):
+            run.sha256(selection.parent / "selection.complete.json")}
+    for item in data["contexts"]:
+        review._fields(item, {"context_key", "teacher_meanings", "source"}, "teacher inventory context")
+        review._fields(item["source"], {"path", "sha256"}, "teacher inventory context source")
+        key = item["context_key"]
+        if key not in wanted or key in contexts:
+            raise ValueError("unknown or duplicate teacher inventory context")
+        source = Path(item["source"]["path"])
+        if run.sha256(source) != item["source"]["sha256"]:
+            raise ValueError("teacher inventory context source hash differs")
+        groups = _inventory_teacher(source, wanted[key][0], checked, sources)
+        if groups != item["teacher_meanings"]:
+            raise ValueError("teacher inventory policy differs from original source")
+        contexts[key] = groups
+    missing = [dict(context_key=key, note_id=rows[0]["note_id"],
+        answer_ids=[row["id"] for row in rows]) for key, rows in wanted.items() if key not in contexts]
+    if missing != data["missing_contexts"] or sources != data["sources"]:
+        raise ValueError("teacher inventory source or missing-context inventory differs")
+    sources.update({str(path): run.sha256(path), str(seal): run.sha256(seal)})
+    return dict(contexts={row["id"]: contexts[key] for key, rows in wanted.items()
+                         if key in contexts for row in rows}, expectations={}, sources=sources)
+
+
 def load_assessments(directory, selection_bundle):
     directory = Path(directory).expanduser().resolve()
+    if (directory / "inventory.json").is_file():
+        return _load_inventory(directory, selection_bundle)
     contexts, expectations, sources = {}, {}, {}
     checked_selections = set()
     def check_selection(bound):

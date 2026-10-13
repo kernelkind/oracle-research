@@ -37,10 +37,43 @@ def _assessments(directory, bundle):
     return load_assessments(directory, bundle)
 
 
-def _cases(bundle, check, assessments, *, include_post=False, include_teacher_contexts=False):
+def compatibility_case(answer, group, ordinal, number, assessments=None, *, include_post=False,
+                       include_teacher_contexts=False, teacher=None, students=None):
+    """Construct one reached teacher/student comparison using the native contract."""
+    teacher = review._TeacherIndex(answer["teacher"]) if teacher is None else teacher
+    students = {row["number"]: row["subject"] for row in answer["student"]} if students is None else students
+    representative = group["teacher_numbers"][0]
+    child, heading = teacher.subjects[representative], students[number]
+    expected = {} if assessments is None else assessments["expectations"].get(answer["id"], {})
+    label = next((row for row in expected.get("compatibility", [])
+                  if frozenset(row["teacher_numbers"]) == frozenset(group["teacher_numbers"])), None)
+    headings = None if label is None else label["compatible_heading_numbers"]
+    expected_valid = None if headings is None else number in headings
+    evidence = dict(check="relationship", role="compatibility", answer_id=answer["id"], cohort=answer["cohort"],
+        note_id=answer["note_id"], generation=answer["generation"], heading_number=number,
+        teacher_numbers=group["teacher_numbers"], teacher_representative_number=representative,
+        expectation_status="unresolved" if expected_valid is None else "agent_assessed",
+        expected_valid=expected_valid, expected_reason="Not independently assessed." if label is None else label["reason"])
+    contexts = (teacher.interpretation_entries(heading, child, child_number=representative)
+                if include_teacher_contexts else None)
+    if contexts is not None:
+        evidence["teacher_context_numbers"] = [row["number"] for row in contexts]
+    case = dict(id=answer["id"] + f":compatibility:{ordinal:03}:" + number,
+        inputs=verdict._relationship_inputs(answer["task_prompt"], heading, child,
+            post=answer["post"] if include_post else None, teacher_contexts=contexts), evidence=evidence)
+    mechanical = teacher.relationship(heading, child)
+    if mechanical is not None:
+        case["mechanical"] = mechanical
+    return case
+
+
+def _cases(bundle, check, assessments, *, include_post=False, include_teacher_contexts=False,
+           actual_edges_only=False, selected=None):
     cases = []
+    wanted = None if selected is None else set(selected)
+    wanted_answers = None if wanted is None else {identifier.split(":", 1)[0] for identifier in wanted}
     for answer in bundle["random"]["answers"] + bundle["challenge"]["answers"]:
-        if answer["errors"]:
+        if answer["errors"] or (wanted_answers is not None and answer["id"] not in wanted_answers):
             continue
         teacher = review._TeacherIndex(answer["teacher"])
         students = {row["number"]: row["subject"] for row in answer["student"]}
@@ -52,6 +85,8 @@ def _cases(bundle, check, assessments, *, include_post=False, include_teacher_co
             if check == "relationship" and not number.rpartition(".")[0]:
                 continue
             identifier = answer["id"] + ":" + number
+            if wanted is not None and identifier not in wanted:
+                continue
             evidence = dict(check=check, answer_id=answer["id"], cohort=answer["cohort"],
                 note_id=answer["note_id"], generation=answer["generation"], student_number=number,
                 student_entries=len(students), expectation_status="unresolved",
@@ -73,61 +108,72 @@ def _cases(bundle, check, assessments, *, include_post=False, include_teacher_co
                     answer["task_prompt"], evidence, None if label is None else label["valid"], teacher,
                     include_post=include_post, include_teacher_contexts=include_teacher_contexts)
             cases.append(case)
-        if check == "relationship":
-            compatibility_labels = {frozenset(row["teacher_numbers"]): row
-                                    for row in expected.get("compatibility", [])}
-            by_number = {row["number"]: row["subject"] for row in answer["teacher"]}
+        if check == "relationship" and not actual_edges_only:
             for ordinal, group in enumerate(assessments["contexts"].get(answer["id"], []), 1):
                 if not group["required"]:
                     continue
-                representative = group["teacher_numbers"][0]
-                child = by_number[representative]
-                label = compatibility_labels.get(frozenset(group["teacher_numbers"]))
-                headings = None if label is None else label["compatible_heading_numbers"]
-                for number, heading in students.items():
-                    expected_valid = None if headings is None else number in headings
-                    evidence = dict(check=check, role="compatibility", answer_id=answer["id"], cohort=answer["cohort"],
-                        note_id=answer["note_id"], generation=answer["generation"], heading_number=number,
-                        teacher_numbers=group["teacher_numbers"], teacher_representative_number=representative,
-                        expectation_status="unresolved" if expected_valid is None else "agent_assessed",
-                        expected_valid=expected_valid, expected_reason="Not independently assessed." if label is None else label["reason"])
-                    contexts = (teacher.interpretation_entries(heading, child, child_number=representative)
-                                if include_teacher_contexts else None)
-                    if contexts is not None:
-                        evidence["teacher_context_numbers"] = [row["number"] for row in contexts]
-                    case = dict(id=answer["id"] + f":compatibility:{ordinal:03}:" + number,
-                        inputs=verdict._relationship_inputs(answer["task_prompt"], heading, child,
-                            post=answer["post"] if include_post else None, teacher_contexts=contexts), evidence=evidence)
-                    mechanical = teacher.relationship(heading, child)
-                    if mechanical is not None:
-                        case["mechanical"] = mechanical
-                    cases.append(case)
+                for number in students:
+                    if wanted is not None and answer["id"] + f":compatibility:{ordinal:03}:" + number not in wanted:
+                        continue
+                    cases.append(compatibility_case(answer, group, ordinal, number, assessments,
+                        include_post=include_post, include_teacher_contexts=include_teacher_contexts,
+                        teacher=teacher, students=students))
     return cases
 
 
-def prepare_source(source, base, selected=None, *, include_post=False, include_teacher_contexts=False):
+def _source_state(path):
+    try:
+        stamp = Path(path).stat()
+    except FileNotFoundError:
+        return None
+    return stamp.st_dev, stamp.st_ino, stamp.st_size, stamp.st_mtime_ns, stamp.st_ctime_ns
+
+
+def prepare_source(source, base, selected=None, *, include_post=False, include_teacher_contexts=False,
+                   preparation_context=None):
     """Turn a verified trial selection into existing matching/verdict cases."""
-    review._fields(source, {"schema_version", "selection", "check", "assessment_directory"},
+    review._fields(source, {"schema_version", "selection", "check", "assessment_directory"}
+                   | ({"actual_edges_only"} & source.keys()),
                    "review evaluation source")
     if type(source["schema_version"]) is not int or source["schema_version"] != 1:
         raise ValueError("expected review evaluation source schema_version 1")
     check = source["check"]
     if check not in _DEFINITIONS:
         raise ValueError("unknown review evaluation check")
-    bundle, sources = _selection(source["selection"], base)
+    actual_edges_only = source.get("actual_edges_only", False)
+    if type(actual_edges_only) is not bool:
+        raise ValueError("actual_edges_only must be a Boolean")
+    if selected is not None:
+        engine._validate_string_array(selected, "review evaluation case selection", allow_empty=False)
+        if len(selected) != len(set(selected)):
+            raise ValueError("unknown or duplicate review evaluation case selection")
     directory = source["assessment_directory"]
     if directory is not None:
         directory = engine._resolve_path(directory, "review assessment directory", Path(base))
-    assessments = _assessments(directory, bundle)
-    sources.update(assessments["sources"])
+    selection_path = engine._resolve_path(source["selection"]["path"], "review evaluation selection", Path(base))
+    key = (str(selection_path), source["selection"]["sha256"], str(directory))
+    cache = {} if preparation_context is None else preparation_context.setdefault("review_evaluation_sources", {})
+    cached = cache.get(key)
+    if cached is None:
+        bundle, sources = _selection(source["selection"], base)
+        assessments = _assessments(directory, bundle)
+        sources.update(assessments["sources"])
+        state = {path: _source_state(path) for path in sources}
+        if directory is not None:
+            state[str(directory)] = _source_state(directory)
+        cache[key] = bundle, assessments, sources, state
+    else:
+        bundle, assessments, sources, state = cached
+        for path, stamp in state.items():
+            if _source_state(path) != stamp:
+                raise ValueError("review evaluation source changed: " + path)
     cases = _cases(bundle, check, assessments, include_post=include_post,
-                   include_teacher_contexts=include_teacher_contexts)
+                   include_teacher_contexts=include_teacher_contexts, actual_edges_only=actual_edges_only,
+                   selected=selected)
     identifiers = [case["id"] for case in cases]
     if selected is not None:
-        engine._validate_string_array(selected, "review evaluation case selection", allow_empty=False)
-        if len(selected) != len(set(selected)) or set(selected) - set(identifiers):
+        if set(selected) - set(identifiers):
             raise ValueError("unknown or duplicate review evaluation case selection")
-        cases = [case for case in cases if case["id"] in selected]
     return cases, sources, dict(check=check, qualification_case_ids=[case["id"] for case in cases])
 
 
@@ -155,10 +201,13 @@ def _answer_subset(bundle, answer_ids):
 def prepare(selection_path, output, *, runner_binary=None, history_root=None, assessment_directory=None,
             reasoning_effort=None, matching_reasoning_effort=None, support_reasoning_effort=None,
             relationship_prompt=None, relationship_prompt_id=None,
-            relationship_runner_binary=None, answer_ids=None, relationship_history_root=None):
+            relationship_runner_binary=None, answer_ids=None, relationship_history_root=None,
+            actual_edges_only=False):
     """Freeze native check groups; preparation never performs inference."""
     from experiment_runner import experiment, inputs, project, prompt_cache
     project.configure(Path(__file__).resolve().parents[1])
+    if type(actual_edges_only) is not bool:
+        raise ValueError("actual_edges_only must be a Boolean")
     if reasoning_effort is not None and reasoning_effort not in ("xhigh", "high", "medium", "low"):
         raise ValueError("reasoning_effort must be xhigh, high, medium or low")
     if matching_reasoning_effort is not None and matching_reasoning_effort not in ("xhigh", "high", "medium", "low"):
@@ -188,7 +237,8 @@ def prepare(selection_path, output, *, runner_binary=None, history_root=None, as
         template = (directory / filename).read_text()
         ordinary, prefixes = [], {}
         for case in _cases(scoped, check, assessments, include_post='{POST}' in template,
-                           include_teacher_contexts='{TEACHER_CONTEXTS}' in template):
+                           include_teacher_contexts='{TEACHER_CONTEXTS}' in template,
+                           actual_edges_only=actual_edges_only):
             if "mechanical" in case:
                 ordinary.append(case["id"])
                 continue
@@ -210,12 +260,10 @@ def prepare(selection_path, output, *, runner_binary=None, history_root=None, as
     output.mkdir(parents=True)
     (output / ".gitignore").write_text("*\n")
     experiments = []
-    for group in groups:
-        check = group["check"]
+    preparation_context = {}
+    configurations = {}
+    for check in definitions:
         identifier, filename, schema = definitions[check][:3]
-        source = output / "sources" / (group["name"] + ".json")
-        experiment.write(source, dict(schema_version=1, selection=reference, check=check,
-                                      assessment_directory=assessment_directory))
         runner = {key: bundle["settings"][key] for key in (
             "provider", "model", "reasoning_effort", "transport")}
         if reasoning_effort is not None:
@@ -232,10 +280,19 @@ def prepare(selection_path, output, *, runner_binary=None, history_root=None, as
             binary = relationship_runner_binary
         if binary is not None:
             runner["runner_binary"] = str(Path(binary).expanduser().resolve())
+        configurations[check] = dict(prompt=dict(id=identifier, path=str(directory / filename),
+            sha256=engine._sha256_file(directory / filename)), runner=runner)
+    for group in groups:
+        check = group["check"]
+        source = output / "sources" / (group["name"] + ".json")
+        experiment.write(source, dict(schema_version=1, selection=reference, check=check,
+                                      assessment_directory=assessment_directory,
+                                      **({"actual_edges_only": True} if actual_edges_only else {})))
+        configuration = configurations[check]
         spec = output / "specs" / (group["name"] + ".json")
-        experiment.write(spec, dict(schema_version=1, prompt=dict(id=identifier, path=str(directory / filename)),
+        experiment.write(spec, dict(schema_version=1, prompt={key: configuration["prompt"][key] for key in ("id", "path")},
             dataset=dict(adapter="distillation_review_evaluation", path=str(source), select=group["cases"]),
-            runner=runner))
+            runner=configuration["runner"]))
         destination = output / "experiments" / group["name"]
         history = history_root
         if check == "relationship" and relationship_history_root is not None:
@@ -247,15 +304,23 @@ def prepare(selection_path, output, *, runner_binary=None, history_root=None, as
             prefix_path.parent.mkdir(exist_ok=True)
             prefix_path.write_text(group["prefix"])
             arguments.extend(["--prompt-cache-prefix", str(prefix_path)])
-        experiment.prepare(experiment.parser().parse_args(arguments), include_request_preview=False)
+        experiment.prepare(experiment.parser().parse_args(arguments), include_request_preview=False,
+                           preparation_context=preparation_context)
         experiments.append(dict(check=check, path=str(destination),
             sha256=engine._sha256_file(destination / "experiment.json"), occurrences=len(group["cases"]),
             prefix_cached=group["prefix"] is not None))
     if _assessments(assessment_directory, bundle)["sources"] != assessments["sources"]:
         raise ValueError("review assessments changed while preparing")
-    frozen = dict(schema_version=2, selection=reference, assessment_directory=assessment_directory,
+    frozen = dict(schema_version=3 if actual_edges_only else 2, selection=reference, assessment_directory=assessment_directory,
                   assessment_sources=assessments["sources"],
                   experiments=experiments, inference_calls=0)
+    if actual_edges_only:
+        configured = configurations["relationship"]
+        paths = [configured["prompt"]["path"], configured["runner"]["output_schema_path"]]
+        if configured["runner"].get("runner_binary"):
+            paths.append(configured["runner"]["runner_binary"])
+        frozen.update(relationship_configuration=configured,
+            configuration_sources={path: engine._sha256_file(Path(path)) for path in paths})
     if answer_ids is not None:
         frozen["answer_ids"] = answer_ids
     experiment.write(output / "evaluation.json", frozen)
@@ -269,7 +334,7 @@ def report(output, *, include_request_summary=True):
     project.configure(Path(__file__).resolve().parents[1])
     output = Path(output).expanduser().resolve()
     frozen = experiment.read(output / "evaluation.json")
-    if type(frozen["schema_version"]) is not int or frozen["schema_version"] not in {1, 2}:
+    if type(frozen["schema_version"]) is not int or frozen["schema_version"] not in {1, 2, 3}:
         raise ValueError("unknown review evaluation schema_version")
     if experiment.read(output / "evaluation.complete.json") != {
             "evaluation.json": engine._sha256_file(output / "evaluation.json")}:
@@ -279,8 +344,13 @@ def report(output, *, include_request_summary=True):
     if assessments["sources"] != frozen["assessment_sources"]:
         raise ValueError("review assessment snapshot changed")
     sources.update(assessments["sources"])
+    if frozen["schema_version"] >= 3:
+        for path, checksum in frozen["configuration_sources"].items():
+            if engine._sha256_file(Path(path)) != checksum:
+                raise ValueError("review evaluation relationship configuration changed: " + path)
+            sources[path] = checksum
     bundle = _answer_subset(bundle, frozen.get("answer_ids"))
-    cases, experiments = {}, []
+    cases, experiments, by_answer = {}, [], {}
     for entry in frozen["experiments"]:
         path = Path(entry["path"])
         if engine._sha256_file(path / "experiment.json") != entry["sha256"]:
@@ -292,16 +362,17 @@ def report(output, *, include_request_summary=True):
             if key in cases:
                 raise ValueError("duplicate review evaluation occurrence")
             cases[key] = case
-    expected = {(check, case["id"]) for check in _DEFINITIONS for case in _cases(bundle, check, assessments)}
+            by_answer.setdefault(case["evidence"]["answer_id"], {}).setdefault(entry["check"], []).append(case)
+    expected = {(check, case["id"]) for check in _DEFINITIONS for case in _cases(bundle, check, assessments,
+                actual_edges_only=frozen["schema_version"] >= 3)}
     if set(cases) != expected:
         raise ValueError("review evaluation omitted or added numbered occurrences")
     cohorts = {}
     for cohort in ("random", "challenge"):
         answers = []
         for answer in bundle[cohort]["answers"]:
-            checks = {check: [case for (name, _), case in cases.items()
-                              if name == check and case["evidence"]["answer_id"] == answer["id"]]
-                      for check in _DEFINITIONS}
+            answer_cases = by_answer.get(answer["id"], {})
+            checks = {check: answer_cases.get(check, []) for check in _DEFINITIONS}
             context = assessments["contexts"].get(answer["id"])
             if frozen["schema_version"] >= 2:
                 _apply_stopping(answer, checks, context)
@@ -372,7 +443,9 @@ def report(output, *, include_request_summary=True):
                    for check, rows in answer["checks"].items() for case in rows if case["status"] == "skipped"}
         summary["requests"] = _request_summary(experiments, skipped)
     return dict(schema_version=1, output=str(output), selection=frozen["selection"], sources=sources,
-                experiments=experiments, usage=usage, generation_usage=generation_usage, summary=summary, **cohorts)
+                experiments=experiments, usage=usage, generation_usage=generation_usage, summary=summary, **cohorts,
+                **({"actual_edges_only": True, "relationship_configuration": frozen["relationship_configuration"]}
+                   if frozen["schema_version"] >= 3 else {}))
 
 
 def _expected_checks(checks):

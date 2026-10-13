@@ -2379,8 +2379,26 @@ provider retry opt-in preserves the failed request's existing attempt history.
 already prepared groups; it cannot override changed inputs or request bodies.
 `compare-distillation-grades --automated-report DIR/grades.json` compares those
 collected grades directly with the bound development reference without another
-collection or inference pass. This entry point currently starts from a frozen
-coverage preparation, rather than constructing the initial full evaluation.
+collection or inference pass. The entry point accepts either a frozen coverage
+preparation or `--evaluation EVALUATION` for an unrun schema-3 evaluation.
+Prepare those evaluations with `--actual-edges-only`: initial matching, support
+and actual edges preserve their original inputs, while compatibility pairs are
+constructed only for reached matches and positive witnesses. Native preparation
+filters selected case IDs before constructing pairs and reuses verified source
+bundles. Native reports index cases once by answer rather than scanning all
+cases for every answer. `--coverage-reasoning-effort` freezes ordinary DCS effort
+for fresh preparation; final decisions remain Sol/xhigh.
+
+`prepare-distillation-review-inventory SELECTION --output DIR
+--from-assessments ORIGINAL` freezes reusable teacher-only policies for a new
+selection. Original sealed selections and exact note/post/teacher/task-prompt
+contexts establish identity. Existing requirement flags and source hashes
+remain explicit; candidate expectations are excluded. The returned
+`missing_contexts` must be resolved by source-bound teacher policies before
+automatic preparation. Supply the complete inventory directory as
+`--assessments` when preparing the evaluation. Neither preparation command
+performs inference. Eligible repeated natural prefixes retain native cache
+warming; short and single-use prefixes do not add warmups.
 Full grading concerns the 1,800 saved
 validation answers; eight-hour readiness and reserved final-test review remain
 open.

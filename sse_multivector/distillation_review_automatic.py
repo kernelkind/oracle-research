@@ -10,6 +10,8 @@ import sys
 import time
 
 from . import distillation_coverage_search as coverage
+from . import distillation_review_evaluation as evaluation
+from . import distillation_review_preview as preview
 from . import extraction_pipeline as engine
 
 
@@ -58,9 +60,16 @@ def _configuration(request, runner_binary):
             "DSLv2": ("relationship-prompt-v2.md", "boolean-response-schema.json"),
             "DSLv4": ("relationship-prompt-v4.md", "boolean-response-schema.json"),
             "DCSv1": ("coverage-search-prompt-v1.md", "coverage-search-response-schema.json")}
-        filename, schema = files[identifier]
-        template = dict(id=identifier, source_path=str(directory / filename),
-            text=(directory / filename).read_text())
+        definition = request.get("prompt_definition")
+        if definition is not None:
+            template = dict(definition)
+            if template["id"] != identifier:
+                raise ValueError("automatic grading prompt definition differs")
+            schema = "boolean-response-schema.json"
+        else:
+            filename, schema = files[identifier]
+            template = dict(id=identifier, source_path=str(directory / filename),
+                text=(directory / filename).read_text())
         runner = {key: value for key, value in request.get("configuration", {}).items()
             if key in {"provider", "model", "reasoning_effort", "transport", "timeout_seconds",
                 "max_output_tokens", "auth_file", "runner_binary"}}
@@ -98,7 +107,13 @@ def _prepare_groups(requests, directory, state, report, context):
         rendered = inputs.render(experiment.without_cache_marker(template["text"]), request["case"]["inputs"])
         if rendered != request["case"]["prompt"]:
             raise ValueError("automatic grading prompt differs from its native question")
-        prefix, _ = inputs.template_prefix(template["text"], request["case"]["inputs"])
+        check = request["case"]["evidence"]["check"]
+        if check in evaluation._DEFINITIONS:
+            payload, field = evaluation._DEFINITIONS[check][3:]
+            prefix = preview._natural_prefix(template["text"], request["case"]["inputs"],
+                payload, field, inputs.render)
+        else:
+            prefix, _ = inputs.template_prefix(template["text"], request["case"]["inputs"])
         cacheable = prompt_cache.prefix_policy(prefix)["eligible"]
         key = json.dumps([request["role"], template["id"], adapter, runner,
             prefix if cacheable else None], sort_keys=True)
@@ -127,7 +142,10 @@ def _prepare_groups(requests, directory, state, report, context):
             arguments.append("--repeat")
         cached = group["prefix"] is not None and len({r["case"]["input_sha256"] for r in requests}) > 1
         if cached:
-            arguments.append("--prompt-cache")
+            prefix_path = directory / "prefixes" / (name + ".txt")
+            prefix_path.parent.mkdir(exist_ok=True)
+            prefix_path.write_text(group["prefix"])
+            arguments.extend(["--prompt-cache-prefix", str(prefix_path)])
         experiment.prepare(experiment.parser().parse_args(arguments),
             include_request_preview=False, preparation_context=context)
         entry = dict(path=str(destination), role=group["role"], prefix_cached=cached,
@@ -154,19 +172,28 @@ def _collect(directory, state, context):
 
 
 def prepare(coverage_directory, output, *, verification_experiments=None, required_experiments=None,
-            final_experiments=None, answer_ids=None, runner_binary=None, history_root=None):
+            final_experiments=None, answer_ids=None, runner_binary=None, history_root=None,
+            evaluation_path=None, coverage_reasoning_effort="high"):
     """Freeze ready native batches without inference or changing historical groups."""
     from experiment_runner import experiment, project
     project.configure(PROJECT)
     directory = Path(output).expanduser().resolve()
     if directory.exists():
         raise ValueError("automatic grading output already exists")
-    coverage_directory = Path(coverage_directory).expanduser().resolve()
+    if (coverage_directory is None) == (evaluation_path is None):
+        raise ValueError("supply either frozen coverage or --evaluation")
+    if evaluation_path is not None:
+        coverage_directory = directory / "coverage"
+        coverage.prepare(evaluation_path, coverage_directory, answer_ids=answer_ids,
+            runner_binary=runner_binary, history_root=history_root, policy="grading",
+            reasoning_effort=coverage_reasoning_effort, defer_searches=True)
+    else:
+        coverage_directory = Path(coverage_directory).expanduser().resolve()
     frozen_path = coverage_directory / "coverage-search.json"
     reference = dict(path=str(frozen_path), sha256=engine._sha256_file(frozen_path))
     if answer_ids:
         engine._validate_string_array(answer_ids, "automatic answer selection", allow_empty=False)
-    directory.mkdir(parents=True)
+    directory.mkdir(parents=True, exist_ok=True)
     (directory / ".gitignore").write_text("*\n")
     state = dict(schema_version=1, coverage=str(coverage_directory), coverage_reference=reference,
         project_root=str(PROJECT), launcher=str(LAUNCHER), answer_ids=answer_ids,

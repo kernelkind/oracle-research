@@ -631,6 +631,10 @@ def add_commands(commands):
     p = commands.add_parser('freeze-distillation-review-assessments', help='seal complete pre-call judgments; no inference')
     p.add_argument('selection', type=Path)
     p.add_argument('--directory', type=Path, required=True)
+    p = commands.add_parser('prepare-distillation-review-inventory', help='freeze reusable teacher contexts without candidate labels; no inference')
+    p.add_argument('selection', type=Path)
+    p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--from-assessments', type=Path, action='append', default=[])
     p = commands.add_parser('prepare-distillation-review-evaluation', help='prepare the native complete-answer review workflow; no inference')
     p.add_argument('selection', type=Path)
     p.add_argument('--output', type=Path, required=True)
@@ -647,6 +651,7 @@ def add_commands(commands):
     p.add_argument('--relationship-runner-binary', type=Path, help='override the worker for relationship checks only')
     p.add_argument('--relationship-prompt', type=Path, help='bind this relationship prompt; requires --relationship-prompt-id')
     p.add_argument('--relationship-prompt-id', help='version ID for --relationship-prompt; other checks retain their defaults')
+    p.add_argument('--actual-edges-only', action='store_true', help='prepare core checks; compatibility pairs are constructed only when reached')
     p = commands.add_parser('prepare-distillation-coverage-search', help='prepare coverage searches from completed native checks; no inference')
     p.add_argument('evaluation', type=Path)
     p.add_argument('--output', type=Path, required=True)
@@ -679,7 +684,9 @@ def add_commands(commands):
     p.add_argument('--required-experiment', type=Path, action='append', help='native missing-check judgments')
     p.add_argument('--final-experiment', type=Path, action='append', help='fresh native final DSM or DCS decisions')
     p = commands.add_parser('prepare-distillation-automatic-grading', help='freeze automatic grading batches; no inference')
-    p.add_argument('coverage', type=Path)
+    p.add_argument('coverage', type=Path, nargs='?')
+    p.add_argument('--evaluation', type=Path, help='start from an unrun sparse evaluation')
+    p.add_argument('--coverage-reasoning-effort', choices=('xhigh', 'high', 'medium', 'low'), default='high')
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--verification-experiment', type=Path, action='append')
     p.add_argument('--required-experiment', type=Path, action='append')
@@ -850,10 +857,13 @@ def handle_command(args):
         result = distillation_review_trial.prepare_trial(args.manifest, args.model_output, args.output,
             random_count=args.random_count, hard_count=args.hard_count, seed=args.seed)
         print(json.dumps({key: result[key] for key in ('selection_path', 'inference_calls', 'selection_policy')}, indent=2))
-    elif args.command in {'show-distillation-review-trial', 'assess-distillation-review', 'freeze-distillation-review-assessments'}:
+    elif args.command in {'show-distillation-review-trial', 'assess-distillation-review', 'freeze-distillation-review-assessments', 'prepare-distillation-review-inventory'}:
         from . import distillation_review_assessment as assessment
         if args.command == 'show-distillation-review-trial':
             result = assessment.inspect(args.selection, args.answer, teacher_only=args.teacher_only)
+        elif args.command == 'prepare-distillation-review-inventory':
+            result = assessment.prepare_inventory(args.selection, args.output,
+                source_directories=args.from_assessments)
         elif args.command == 'assess-distillation-review':
             if args.wording_expectations is not None:
                 if args.optional_numbers is not None:
@@ -897,7 +907,8 @@ def handle_command(args):
             result = distillation_review_automatic.prepare(args.coverage, args.output,
                 verification_experiments=args.verification_experiment,
                 required_experiments=args.required_experiment, final_experiments=args.final_experiment,
-                answer_ids=args.answer_id, runner_binary=args.runner_binary, history_root=args.history_root)
+                answer_ids=args.answer_id, runner_binary=args.runner_binary, history_root=args.history_root,
+                evaluation_path=args.evaluation, coverage_reasoning_effort=args.coverage_reasoning_effort)
         else:
             result = distillation_review_automatic.run(args.directory, runner_upgrade_reason=args.runner_upgrade_reason)
         print(json.dumps(result, ensure_ascii=False, indent=2))
@@ -924,7 +935,7 @@ def handle_command(args):
                 support_reasoning_effort=args.support_reasoning_effort,
                 relationship_prompt_id=args.relationship_prompt_id,
                 relationship_runner_binary=args.relationship_runner_binary, answer_ids=args.answer_id,
-                relationship_history_root=args.relationship_history_root)
+                relationship_history_root=args.relationship_history_root, actual_edges_only=args.actual_edges_only)
         elif args.command == 'run-distillation-review-evaluation':
             result = evaluation.run(args.evaluation, max_new_attempts=args.max_new_attempts,
                 attempt_budget_path=args.attempt_budget, runner_upgrade_reason=args.runner_upgrade_reason,
