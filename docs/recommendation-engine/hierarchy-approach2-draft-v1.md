@@ -144,12 +144,35 @@ synthetic nodes do not enter the canonical hierarchy. The same construction
 is repeated separately for each canonical parent's next level, using that
 parent's associated original local L1 entries.
 
+## Steps 2.1–2.4: construct canonical L2
+
+For each canonical root, take the exact original local L1 entries associated
+with it through consolidation. Reuse those entries' Bootstrap meanings and
+original SSE vectors. Do not use the intermediate synthetic nodes, original
+local L2 nodes, or every L1 from the notes represented by that root.
+
+Within this separate family, find the highest-scoring unique cosine pairs and
+consolidate each pair. Generate SSE vectors for the resulting synthetic nodes
+and repeat pairing and consolidation until six or fewer nodes remain. Only
+those final nodes become the root's canonical L2 children. Each retains the
+original local L1 entries associated with it. Process each root separately,
+subject to the two-note stopping rule below.
+
+## Steps 3.1–3.2: repeat for deeper canonical levels
+
+Repeat the same construction beneath each canonical L2 node to construct L3,
+and continue recursively. At each canonical node, start from its associated
+original local L1 entries and reuse their original meanings and SSE vectors.
+The local input remains L1 even as canonical depth increases.
+
+Stop expanding a canonical node once it contains two distinct notes, counting
+each note once even when multiple associated local L1 entries come from it.
+
 ## Details still to settle
 
 - Handling similarity ties, equivalence and failed/null consolidation results.
-- Exact consolidation wording/output, meaning validation and final canonical
-  promotion.
-- Complete distinct-note stopping behavior and cases where further grouping
-  does not provide useful refinement.
+- Exact consolidation wording/output and meaning validation.
+- One-note stopping cases and cases where further grouping does not provide
+  useful refinement.
 
 These open details are not implementation decisions.
