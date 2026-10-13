@@ -1,8 +1,8 @@
 # Pair-consolidation-owl: experimental prompt line
 
-`pair-consolidation-owl-v5` is a draft for review, not an activated prompt or a
-replacement for the approved `Hierarchy-pair-consolidation-v6`. No model tests
-have been run for this line.
+`pair-consolidation-owl-v5` is the human-approved wording for this experimental
+line. The user approved it with "OK LGTM." It is not activated or a replacement
+for `Hierarchy-pair-consolidation-v6`. No model tests have been run for this line.
 
 The user approved proceeding with this separate experimental line and the
 following contract:
@@ -30,8 +30,9 @@ following contract:
   entry expressions, not additional class definitions. The consolidated
   natural-language title and meaning remain separate final outputs.
 
-The full v5 wording remains a draft for review. Outermost parentheses are
-omitted from expression strings; nested parentheses preserve grouping.
+The wording approval does not establish semantic correctness or authorize
+inference. Outermost parentheses are omitted from expression strings; nested
+parentheses preserve grouping.
 
 ## Sources and assembly
 
@@ -71,5 +72,4 @@ python3 sse_multivector/prompt_assembly.py check \
 
 Assembly checks establish exact reconstruction and unchanged shared sources.
 They do not establish faithful translation, valid containment or useful
-consolidation. The next step is review of the draft before any separately
-authorized model trial.
+consolidation. The next step is a separately authorized model trial.
