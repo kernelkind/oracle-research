@@ -70,7 +70,14 @@ def summary(state):
         experiments=[
             r["experiment"] for r in state["experiments"] if not r.get("complete")
         ],
-        encodings=[r["config"] for r in state["encodings"] if not r.get("complete")],
+        encodings=[
+            r["config"] for r in state["encodings"]
+            if not r.get("complete") and not r.get("skipped")
+        ],
+        skipped_encodings=[
+            dict(config=r["config"], reason=r["skipped"])
+            for r in state["encodings"] if r.get("skipped")
+        ],
         unresolved=unresolved,
         skipped_bootstrap=[
             dict(
@@ -324,7 +331,10 @@ def _collect_experiment(record):
 
 def _prepare_encoding(directory, state, ids):
     missing = {}
-    assigned = {key for job in state["encodings"] for key in job["keys"]}
+    assigned = {
+        key for job in state["encodings"] if not job.get("skipped")
+        for key in job["keys"]
+    }
     for identifier in ids:
         item = state["items"][identifier]
         key = _vector_key(item)
@@ -438,6 +448,21 @@ def _collect_encodings(state):
                 raise ValueError("conflicting hierarchy vector reference")
             state["vectors"][key] = reference
         job.update(complete=True, receipt_sha256=receipt_hash)
+
+
+def _skip_unused_encodings(state):
+    needed = set()
+    for family in state["families"]:
+        if family["complete"]:
+            continue
+        for identifier in family["current"]:
+            item = state["items"][identifier]
+            if len(family["current"]) > state["max_siblings"] or not item.get("pair"):
+                needed.add(item["vector_key"])
+    needed.difference_update(state["vectors"])
+    for job in state["encodings"]:
+        if not job["complete"] and not needed.intersection(job["keys"]):
+            job["skipped"] = "no further pairing"
 
 
 def _rank_pairs(vectors, directory):
@@ -652,14 +677,18 @@ def _schedule(directory, state):
                 del family["pending"]
                 changed = True
             ids = family["current"]
+            if len(ids) <= state["max_siblings"]:
+                originals = [i for i in ids if not state["items"][i].get("pair")]
+                _prepare_encoding(directory, state, originals)
+                if any(state["items"][i]["vector_key"] not in state["vectors"] for i in originals):
+                    continue
+                _promote(state, family)
+                changed = True
+                continue
             _prepare_encoding(directory, state, ids)
             if any(
                 state["items"][i]["vector_key"] not in state["vectors"] for i in ids
             ):
-                continue
-            if len(ids) <= state["max_siblings"]:
-                _promote(state, family)
-                changed = True
                 continue
             pairs = _pairs(state, ids, directory)
             cases = {
@@ -896,6 +925,7 @@ def advance(directory, comment):
             _collect_experiment(record)
         _collect_encodings(state)
         _schedule(directory, state)
+        _skip_unused_encodings(state)
         check_state(state, verify_receipts=False)
         if state != before:
             workflow.write(directory / "state.json", state)

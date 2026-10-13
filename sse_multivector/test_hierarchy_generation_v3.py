@@ -278,6 +278,94 @@ class HierarchyGenerationV3Tests(unittest.TestCase):
         )
         self.assertEqual((self.root / "trial/state.json").read_bytes(), before)
 
+    def consolidate_long_meaning(self, count=10):
+        self.cli("prepare-hierarchy", "trial", "--spec", self.configure(count=count))
+        self.bootstrap()
+        self.encode_pending()
+        experiment = self.state()["experiments"][-1]["experiment"]
+        self.cli(
+            "run",
+            experiment,
+            env={"FAKE_RUNNER_PROMPT_RESPONSE": json.dumps(
+                dict(title="Combined topic", meaning="word " * 600)
+            )},
+        )
+        self.cli("advance-hierarchy", "trial", "--comment", "Collect long meaning")
+
+    def test_finished_groups_promote_without_encoding_their_meanings(self):
+        self.consolidate_long_meaning()
+        state = self.state()
+        self.assertEqual(state["status"], "complete")
+        self.assertEqual(len(state["nodes"]), 5)
+        self.assertEqual(len(state["encodings"]), 1)
+        self.assertTrue(state["encodings"][0]["complete"])
+        self.assertEqual(state["worker_config"]["model"]["maximum_tokens"], 512)
+        self.assertTrue(all(n["meaning"] == "word " * 600 for n in state["nodes"]))
+
+    def test_resume_skips_unused_queued_encoding_without_repeating_answers(self):
+        from sse_multivector import hierarchy_generation as generation
+
+        self.consolidate_long_meaning()
+        state = self.state()
+        # Older constructors queued this job before promoting the final groups.
+        # The production planner creates its original request and config here.
+        generation._prepare_encoding(
+            self.root / "trial", state, state["families"][0]["current"]
+        )
+        state.update(status="constructing", nodes=[])
+        state["families"][0]["complete"] = False
+        self.write("trial/state.json", state)
+        pending = state["encodings"][-1]
+        files = [Path(pending["config"]), Path(pending["config"]).parent / "request.json"]
+        before = {p: p.read_bytes() for p in files}
+        receipts = {
+            Path(r["experiment"]) / "run/results.jsonl":
+                (Path(r["experiment"]) / "run/results.jsonl").read_bytes()
+            for r in state["experiments"]
+        }
+        calls = self.calls()
+
+        class LengthCheckedEncoder(FixtureEncoder):
+            def encode(self, notes):
+                worker.validate_token_lengths(
+                    [(n.note_id, len(n.text.split())) for n in notes], maximum_tokens=512
+                )
+                return super().encode(notes)
+
+        with patch("sse_multivector.worker.OfficialSseEncoder",
+                   return_value=LengthCheckedEncoder()):
+            result = generation.run(self.root / "trial")
+        self.assertEqual(result["execution_status"], "complete")
+        self.assertEqual(result["errors"], [])
+        self.assertEqual(result["encodings"], [])
+        after = self.state()
+        self.assertEqual(after["encodings"][-1]["skipped"], "no further pairing")
+        self.assertFalse(after["encodings"][-1]["complete"])
+        self.assertEqual(after["vectors"], state["vectors"])
+        self.assertEqual(self.calls(), calls)
+        for p, data in {**before, **receipts}.items():
+            self.assertEqual(p.read_bytes(), data)
+
+    def test_long_meaning_still_requires_encoding_when_more_pairs_are_needed(self):
+        self.consolidate_long_meaning(count=14)
+        state = self.state()
+        self.assertEqual(state["status"], "constructing")
+        self.assertEqual(len(state["families"][0]["current"]), 7)
+        pending = state["encodings"][-1]
+        self.assertFalse(pending.get("skipped"))
+
+        class LengthCheckedEncoder(FixtureEncoder):
+            def encode(self, notes):
+                worker.validate_token_lengths(
+                    [(n.note_id, len(n.text.split())) for n in notes], maximum_tokens=512
+                )
+                return super().encode(notes)
+
+        with patch("sse_multivector.worker.OfficialSseEncoder",
+                   return_value=LengthCheckedEncoder()):
+            with self.assertRaisesRegex(ValueError, "truncation is forbidden"):
+                worker.run_worker(pending["config"])
+
     def test_null_bootstrap_is_omitted_when_note_has_a_defined_l1(self):
         notes = [
             dict(
@@ -543,16 +631,9 @@ class HierarchyGenerationV3Tests(unittest.TestCase):
             },
         )
         self.cli("advance-hierarchy", "trial", "--comment", "Collect odd family")
-        request = json.loads(
-            (
-                Path(self.state()["encodings"][1]["config"]).parent / "request.json"
-            ).read_text()
-        )
-        self.assertEqual(
-            [n["text"] for n in request["notes"]], ["Combined\n\nCombined meaning"]
-        )
-        self.encode_pending()
         state = self.state()
+        self.assertEqual(len(state["encodings"]), 1)
+        self.assertTrue(state["encodings"][0]["complete"])
         self.assertEqual(state["status"], "complete")
         self.assertEqual(len(state["nodes"]), 4)
         carried = next(n for n in state["nodes"] if n["original_ids"] == ["L00007"])
