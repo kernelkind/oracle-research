@@ -311,6 +311,41 @@ Saved completed calls are reused; an interrupted call without a durable
 receipt may repeat. The workload has no automatic OOM restart. Full grading
 and the eight-hour estimate remain unverified until execution finishes.
 
+At 14:06:21 EDT the 32 GiB boundary confines another OOM to the grading
+workload. There are 3,241 distinct saved, schema-valid ordinary judgments.
+The automatic coordinator grows from 6.4 GiB RSS to 10 GiB after a native
+batch finishes. A model-free replay of all 1,800 answers and existing receipts
+reaches 10.53 GiB process RSS and 15.2 GiB cgroup memory: parsing the prior
+512.6 MB collection alone peaks at 4.34 GiB, and retaining all 124 original
+native plans while building their reports adds roughly 3 GiB. The previous
+native-worker test excluded this collection path.
+
+Collection now retains only source/file metadata from original plans and
+source/dataset metadata alongside completed native reports. Exact request
+identities already frozen in automatic state are omitted from subsequent
+request payload lists; their missing judgments still leave scores pending.
+Technical failures are recorded before that omission, while a changed input
+hash or final-decision role still creates new work. Pending collection bodies
+are released before dispatch and rebuilding; source verification and final
+grading remain intact. Resume also selects unused collection and batch paths
+when a kill interrupted publication before the state checkpoint, preserving
+the earlier artifacts. Those newly prepared but uncheckpointed batches have
+not yet been dispatched.
+
+Runner `e756045` streams atomic JSON publication with identical bytes and
+streams receipt history, resume ledgers and both worker/wrapper upgrade
+prefix validation. Successful prompt records are released after execution
+and accounting; failed records remain available for retries. Eight bounded
+memory/integrity tests, 44 runner checks, 13 resume/update checks and three
+combined-main checks pass. Read-only verification covers 571 real saved
+manifests and 254 wrapper transitions. Required parsed report evidence still
+consumes memory, so the protected workload boundary remains necessary.
+
+The run remains stopped pending the repaired full-size collection and
+completed-output memory checks. Reviewer prompts, teacher policies, saved
+receipts, the 30-request cap and immediate submission of all ready groups
+remain unchanged. Full grading and eight-hour readiness are still unverified.
+
 The saved ordinary DSL manifest contains 30,713 prompts and occupies 242 MB.
 Production parsing takes about 1.49 seconds alone; four concurrent reads finish
 in 6.09 seconds and individual calls take up to 5.96 seconds. The runner reads

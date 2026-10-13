@@ -2414,6 +2414,12 @@ configuration manifests. The complete 1,800-answer preparation freezes 128
 ready batches in about eight minutes including its core/inventory preparation,
 with no model calls. The exact initial questions total 36,359; later questions
 remain conditional on matching and coverage outputs.
+Automatic collection keeps compact native source metadata and omits requests
+already frozen in its prepared batches, while unfinished scores remain pending.
+Pending report bodies are released before dispatch and rebuilding. Interrupted
+publication preserves existing collection/batch artifacts and selects unused
+paths on resume. Receipt and report JSON handling streams through the shared
+runner; the full grading workload retains its 32 GiB, zero-swap systemd boundary.
 Full grading concerns the 1,800 saved
 validation answers; eight-hour readiness and reserved final-test review remain
 open.

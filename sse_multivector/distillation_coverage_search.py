@@ -24,12 +24,13 @@ def _snapshot(reference, base, *, observed_paths=None):
     for entry in frozen["experiments"]:
         directory = Path(entry["path"])
         plan, _, _ = experiment.load(directory)
-        plans[directory] = plan
+        plans[directory] = {name: plan[name] for name in ("sources", "files", "run_directory")}
         initial_paths.update(map(Path, plan["sources"]))
         initial_paths.update(directory / filename for filename in plan["files"])
         initial_paths.update((directory / "experiment.json", directory / "reviews.jsonl",
                              Path(plan["run_directory"]) / "results.jsonl",
                              Path(plan["run_directory"]) / "manifest.json"))
+        del plan, _
     state = {str(item): _file_state(item) for item in initial_paths}
     report = evaluation.report(path.parent, include_request_summary=False)
     _check_preparation_state(state)
@@ -780,7 +781,8 @@ def prepare(evaluation_path, output, *, answer_ids=None, runner_binary=None, his
 
 def collect(coverage_directory, output, *, verification_experiments=None, premise_audits=None, correction_experiments=None,
             correction_case_ids=None, adjudications=None, automated_analysis=False, automatic=False,
-            final_experiments=None, required_experiments=None, collection_context=None, answer_ids=None):
+            final_experiments=None, required_experiments=None, collection_context=None, answer_ids=None,
+            prepared_request_keys=()):
     """Score accepted native checks and searches without running the old matrix."""
     from experiment_runner import experiment, inputs, project
     project.configure(Path(__file__).resolve().parents[1])
@@ -797,6 +799,9 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
         automated_analysis = True
     elif final_experiments or required_experiments:
         raise ValueError("automatic decision experiments require automatic collection")
+    if prepared_request_keys and not automatic:
+        raise ValueError("prepared request keys require automatic collection")
+    prepared_request_keys = set(prepared_request_keys)
     policy = _policy(frozen.get("policy", "audited"))
     if automated_analysis:
         if premise_audits or correction_experiments or correction_case_ids or adjudications:
@@ -864,6 +869,9 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
         if key in request_keys:
             return
         request_keys.add(key)
+        if (role, row["prompt"].split(None, 1)[0], row["input_sha256"]) in prepared_request_keys:
+            # Dispatch is already frozen; the unresolved score still stays pending.
+            return
         identity = row["evidence"]["check"], row["input_sha256"], row["prompt"]
         configuration = configurations.get(identity, {})
         settings = configuration.get("settings", {})
@@ -897,6 +905,8 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
             _, plan, result = cache
         else:
             plan, _, _ = experiment.load(path)
+            plan = dict(sources=plan["sources"], dataset=dict(path=plan["dataset"]["path"]))
+            del _
             result = experiment.report(path, include_request_preview=False)
             if collection_context is not None:
                 collection_context.setdefault("native", {})[str(path)] = (state, plan, result)

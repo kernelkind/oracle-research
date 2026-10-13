@@ -132,7 +132,14 @@ def _prepare_groups(requests, directory, state, report, context):
     prepared = []
     for group in groups.values():
         requests = group["requests"]
-        name = f"batch-{len(state['experiments']) + 1:04}-{group['role']}"
+        number = len(state["experiments"]) + 1
+        name = f"batch-{number:04}-{group['role']}"
+        # A killed preparation can publish artifacts before its state checkpoint.
+        while any((directory / child / (name + suffix)).exists() for child, suffix in
+                (("experiments", ""), ("sources", ".json"), ("prompts", ".md"),
+                 ("specs", ".json"), ("prefixes", ".txt"))):
+            number += 1
+            name = f"batch-{number:04}-{group['role']}"
         source_path = directory / "sources" / (name + ".json")
         experiment.write(source_path, dict(automatic_requests=[r["case"] for r in requests],
             sources=report["sources"], role=group["role"]))
@@ -167,15 +174,20 @@ def _prepare_groups(requests, directory, state, report, context):
 def _collect(directory, state, context):
     from experiment_runner import experiment
     completed = [entry for entry in state["experiments"] if entry["status"] == "complete"]
-    output = directory / "collections" / f"collection-{state['collections'] + 1:04}.json"
+    number = state["collections"] + 1
+    output = directory / "collections" / f"collection-{number:04}.json"
+    while output.exists():
+        number += 1
+        output = directory / "collections" / f"collection-{number:04}.json"
     result = coverage.collect(Path(state["coverage"]), output, automatic=True,
         verification_experiments=state["verification_experiments"],
         required_experiments=state["required_experiments"] +
             [entry["path"] for entry in completed if entry["role"] == "required"],
         final_experiments=state["final_experiments"] +
             [entry["path"] for entry in completed if entry["role"] != "required"],
-        collection_context=context, answer_ids=state.get("answer_ids"))
-    state.update(collections=state["collections"] + 1, report=str(output),
+        collection_context=context, answer_ids=state.get("answer_ids"),
+        prepared_request_keys={tuple(key) for entry in state["experiments"] for key in entry["request_keys"]})
+    state.update(collections=number, report=str(output),
         report_sha256=engine._sha256_file(output))
     return result
 
@@ -306,6 +318,8 @@ def run(directory, *, runner_upgrade_reason=None):
         # Prepared dependencies are already validated and native run rechecks
         # their bindings. Dispatch them before recomputing the whole collection.
         result = experiment.read(report_path)
+        if result["automatic_status"] != "complete":
+            result = {key: result[key] for key in ("automatic_status", "sources")}
         collected = False
         experiment.write(directory / "state.json", state)
         try:
@@ -376,9 +390,13 @@ def run(directory, *, runner_upgrade_reason=None):
                     entry["status"] = "complete"
                     completed = True
                 if completed:
+                    # The next collection must not overlap the previous answer inventory.
+                    result = None
                     result = _collect(directory, state, context)
                     collected = True
                     _prepare_groups(result["automatic_requests"], directory, state, result, context)
+                    if result["automatic_status"] != "complete":
+                        result = {key: result[key] for key in ("automatic_status", "sources")}
                 experiment.write(directory / "state.json", state)
         except Exception as error:
             # Stop new admissions before draining in-flight requests. A sibling's

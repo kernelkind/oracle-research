@@ -6,6 +6,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import weakref
 from unittest.mock import patch
 
 from sse_multivector import experiment_inputs
@@ -26,6 +27,33 @@ class DistillationCoverageSearchTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("--answer-id", result.stdout)
         self.assertIn("--premise-audit", result.stdout)
+
+    def test_snapshot_releases_loaded_rendered_cases_before_building_the_report(self):
+        from experiment_runner import experiment
+        from sse_multivector import distillation_coverage_search as coverage
+        fixture, baseline, _, _, _ = self.collection_fixture("snapshot-memory", policy="grading",
+            audit_prerequisites=False)
+        loaded_cases = []
+        class Cases(list):
+            pass
+        load, report = experiment.load, coverage.evaluation.report
+        def loading(path):
+            plan, configuration, manifest = load(path)
+            plan["cases"] = Cases(plan["cases"])
+            loaded_cases.append(weakref.ref(plan["cases"]))
+            return plan, configuration, manifest
+        def reporting(*args, **kwargs):
+            self.assertTrue(loaded_cases)
+            self.assertTrue(all(reference() is None for reference in loaded_cases),
+                "snapshot binding must release rendered cases before native reporting")
+            return report(*args, **kwargs)
+        reference = dict(path=str(baseline / "evaluation.json"),
+            sha256=coverage.engine._sha256_file(baseline / "evaluation.json"))
+        with patch.object(experiment, "load", side_effect=loading):
+            with patch.object(coverage.evaluation, "report", side_effect=reporting):
+                result, _, sources = coverage._snapshot(reference, baseline)
+        self.assertTrue(result["experiments"])
+        self.assertIn(str(baseline / "evaluation.json"), sources)
 
     def test_native_cli_exposes_coverage_collection(self):
         project = Path(__file__).resolve().parents[1]
@@ -269,7 +297,8 @@ class DistillationCoverageSearchTests(unittest.TestCase):
         with self.assertRaises(AssertionError):
             fixture.native("run", required, "--max-new-attempts", 2)
         result = coverage.collect(output, self.root / "automatic-technical-failed.json", automatic=True,
-            required_experiments=[required])
+            required_experiments=[required], prepared_request_keys={
+                ("required", row["prompt"].split(None, 1)[0], row["input_sha256"])})
         self.assertEqual(result["automatic_status"], "failed")
         self.assertTrue(result["automatic_failures"])
         self.assertFalse(any(request["case"]["id"] == row["id"] for request in result["automatic_requests"]))

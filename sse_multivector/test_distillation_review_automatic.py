@@ -6,6 +6,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import weakref
 from unittest.mock import patch
 
 from sse_multivector import test_distillation_coverage_search as fixtures
@@ -151,6 +152,103 @@ class DistillationAutomaticTests(unittest.TestCase):
             with patch.object(automatic, "_collect", side_effect=collect_after_execution):
                 result = automatic.run(directory)
         self.assertEqual(result["status"], "complete")
+
+    def test_dispatched_requests_are_not_embedded_again_while_scores_stay_pending(self):
+        from experiment_runner import experiment
+        from sse_multivector import distillation_review_automatic as automatic
+        _, _, coverage, _, _ = self.fixture("pending-dispatched")
+        directory = self.root / "automatic"
+        automatic.prepare(coverage, directory, runner_binary=self.root / "fake-runner")
+        state = experiment.read(directory / "state.json")
+        self.assertTrue(state["experiments"])
+        calls = (self.root / "calls.json").read_bytes()
+        result = automatic._collect(directory, state, {})
+        self.assertEqual(result["automatic_requests"], [],
+            "already frozen requests must not copy their input bodies into each collection")
+        self.assertEqual(result["automatic_status"], "pending")
+        self.assertEqual(result["random"]["answers"][0]["scoring"]["status"], "pending")
+        self.assertEqual((self.root / "calls.json").read_bytes(), calls)
+
+    def test_ready_resume_releases_previous_bulk_collection_before_dispatch(self):
+        from experiment_runner import experiment
+        from sse_multivector import distillation_review_automatic as automatic
+        _, _, coverage, _, _ = self.fixture("resume-without-bulk-report")
+        directory = self.root / "automatic"
+        prepared = automatic.prepare(coverage, directory, runner_binary=self.root / "fake-runner")
+        report = Path(prepared["report"])
+        reading, launching = experiment.read, subprocess.Popen
+        collections = []
+        class Collection(dict):
+            pass
+        def read_collection(path):
+            result = reading(path)
+            if Path(path) == report:
+                result = Collection(result)
+                collections.append(weakref.ref(result))
+            return result
+        def launch_without_bulk_collection(arguments, **kwargs):
+            if len(arguments) > 4 and arguments[1] == str(LAUNCHER) and arguments[4] == "run":
+                self.assertTrue(collections)
+                self.assertTrue(all(reference() is None for reference in collections),
+                    "pending resume must release old answers and request bodies before dispatch")
+            return launching(arguments, **kwargs)
+        with patch.dict(os.environ, FAKE_RUNNER_LOG=str(self.root / "calls.json")):
+            with patch.object(experiment, "read", side_effect=read_collection), \
+                    patch.object(subprocess, "Popen", side_effect=launch_without_bulk_collection):
+                result = automatic.run(directory)
+        self.assertEqual(result["status"], "complete", result.get("error"))
+
+    def test_prepared_request_filter_preserves_new_roles_and_changed_inputs(self):
+        from experiment_runner import experiment
+        from sse_multivector import distillation_coverage_search as coverage_module
+        from sse_multivector import distillation_review_automatic as automatic
+        _, _, coverage, _, _ = self.fixture("prepared-request-identity")
+        directory = self.root / "automatic"
+        automatic.prepare(coverage, directory, runner_binary=self.root / "fake-runner")
+        state = experiment.read(directory / "state.json")
+        requests = experiment.read(state["report"])["automatic_requests"]
+        expected = {automatic._request_key(row) for row in requests}
+        first = next(iter(expected))
+        for name, changed in (("role", ("final_matching", first[1], first[2])),
+                              ("input", (first[0], first[1], "0" * 64))):
+            with self.subTest(name=name):
+                prepared = (expected - {first}) | {changed}
+                result = coverage_module.collect(coverage, self.root / (name + "-collection.json"),
+                    automatic=True, prepared_request_keys=prepared)
+                self.assertEqual({automatic._request_key(row) for row in result["automatic_requests"]}, {first})
+                self.assertEqual(result["automatic_status"], "pending")
+
+    def test_resume_preserves_a_collection_published_before_state_checkpoint(self):
+        from experiment_runner import experiment
+        from sse_multivector import distillation_review_automatic as automatic
+        _, _, coverage, _, _ = self.fixture("interrupted-collection-checkpoint")
+        directory = self.root / "automatic"
+        automatic.prepare(coverage, directory, runner_binary=self.root / "fake-runner")
+        state = experiment.read(directory / "state.json")
+        first = automatic._collect(directory, state, {})
+        published = Path(first["output"])
+        preserved = published.read_bytes()
+        resumed = experiment.read(directory / "state.json")
+        second = automatic._collect(directory, resumed, {})
+        self.assertNotEqual(first["output"], second["output"])
+        self.assertEqual(published.read_bytes(), preserved)
+        self.assertEqual(second["automatic_status"], "pending")
+
+    def test_resume_preserves_a_batch_prepared_before_state_checkpoint(self):
+        from experiment_runner import experiment
+        from sse_multivector import distillation_review_automatic as automatic
+        _, _, coverage, _, _ = self.fixture("interrupted-batch-checkpoint")
+        directory = self.root / "automatic"
+        automatic.prepare(coverage, directory, runner_binary=self.root / "fake-runner")
+        state = experiment.read(directory / "state.json")
+        report = experiment.read(state["report"])
+        original = Path(state["experiments"][0]["path"])
+        preserved = (original / "experiment.json").read_bytes()
+        state["experiments"] = []
+        prepared = automatic._prepare_groups(report["automatic_requests"], directory, state, report, {})
+        self.assertTrue(prepared)
+        self.assertNotEqual(Path(prepared[0]["path"]), original)
+        self.assertEqual((original / "experiment.json").read_bytes(), preserved)
 
     def test_changed_prepared_report_is_rejected_without_calls(self):
         _, _, coverage, _, _ = self.fixture("changed-prepared-report")
