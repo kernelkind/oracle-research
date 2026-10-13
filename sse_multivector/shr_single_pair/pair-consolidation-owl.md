@@ -7,8 +7,12 @@ retain basic concepts whose internal structure the supplied meaning does not
 specify. This is a wrapper-only change; the shared meaning-writing text,
 Bootstrap companion, guide and worked example are unchanged. The matched
 twelve-case panel is complete: all saved targeted checks pass under qualified
-agent review, and the opaque coffee-drinking activity does not recur in this
-draw. V8 remains experimental and is not activated in hierarchy construction.
+agent review. The independent follow-ups preserve explicit coffee drinking
+and pass the unseen bottle-activity control, but the reversed shelf translation
+compresses storage into `designedToStore`, without an activity class. This is a
+remaining formal-representation failure under the requested action-as-class
+rule, not demonstrated wrong containment. V8 remains experimental and is not
+activated in hierarchy construction.
 
 V7's two-order consumer check passes the targeted formal conditions. Its broader
 twelve-case panel exposes one remaining representation failure:
@@ -420,3 +424,84 @@ title or unnecessary internal structure of basic concepts is prescribed. Check
 structure, independently faithful node translations, coverage and English/formal
 agreement separately. Preserve unresolved interpretations instead of assigning
 new human-gold labels. Expectations remain outside the model input.
+
+## V8 independent follow-ups: completed findings — 2026-10-13
+
+All three authorized requests completed on Sol medium with one fresh attempt
+each. The exact coffee repeat's complete wire request body matches the saved
+panel request; its upstream response identity differs. All three requests have
+one fresh user message, no prior-response reference, and identical non-input
+request-body fields. The reversal changes only the original two-node order;
+the unseen input is the pre-call authored washing/soaking pair. V8 and its shared
+sources remain byte-identical. No earlier answer or expectation entered model
+input, and no paid fallback, hierarchy edit or warmup occurred.
+
+All three outputs pass JSON layout, expression formatting, vocabulary closure
+and unchanged reused-definition checks. Native reviews record two qualified
+agent accepts and one formal-rule reject; there are no user semantic labels.
+
+| Follow-up | Result under agent review |
+|---|---|
+| Exact coffee repeat | Coffee drinking retains formal Drinking and Coffee; Storing and its required cup object are also formal. Design purpose and coverage pass. |
+| Coffee order reversed | Coffee drinking remains formal, but the shelf's storage action is compressed into a primitive relation. Coverage still passes under the printed definitions. |
+| Unseen bottle activities | Washing and Soaking each have a formal Bottle object. Equipment design purpose remains distinct from actual activity; Soaking receives no cleaning-purpose condition. |
+
+The reversed shelf translation is:
+
+```text
+Shelf AND (designedToStore SOME (Cup AND (usedFor SOME CoffeeDrinking)))
+```
+
+Its `owl.classes` defines CoffeeDrinking as `Drinking AND (consumes SOME Coffee)`.
+It does not define a storage activity. The glossary instead defines
+`designedToStore` as "A relation from an item to the kinds of objects it is
+designed to hold in storage." Thus the storage purpose is still represented by
+a relationship, but the storing action is not a class as requested by V8's
+activity decomposition rule. This is a representation-compliance judgment, not
+proof that the translation lost its ordinary English meaning or that the
+consolidation is semantically incorrect.
+
+Both coffee follow-ups choose a union of cups used or designed for coffee
+drinking and items designed to store those cups. Each full printed translation
+is covered. Their union differs from the original panel's broader design-purpose
+union; no unique consolidated scope was prescribed, and this difference alone
+is not an error. The unseen output uses:
+
+```text
+Equipment AND (designedFor SOME ((Washing OR Soaking) AND (hasObject SOME Bottle)))
+```
+
+Both bottle translations fit that expression, and its English meaning retains
+the same design-purpose alternatives. Primitive Brush/Basin/Equipment and
+ordinary activity meanings remain interpretation qualifications, not human
+gold or automated satisfiability/fidelity certification. No machine reasoner
+was used. Two coffee follow-ups support the targeted drinking/object fix; the
+storage compression shows the general representation rule still needs clarity.
+
+The next useful revision should explicitly apply action-as-class decomposition
+to activities nested inside stated purposes or uses, while retaining basic
+concepts whose internal structure the supplied meaning does not specify. Replace
+the ambiguous activity sentence rather than add a shelf-specific example.
+Evaluate against the saved reversed witness and independent passing controls.
+No V9 prompt, additional calls or hierarchy activation is included in this trial.
+
+Native `experiment-usage-summary-v3` accounting is complete, without warnings:
+three attempts, zero failures, retries, reuses and warmups; 9,531 input tokens,
+3,087 output tokens and 1,258 reasoning tokens already included in output.
+Reported cache read/write tokens are zero. Complete saved API-equivalent cost is
+**$0.049932**, a catalogue estimate rather than subscription billing. The old
+panel and its original costs are not counted as new calls in this follow-up.
+
+The worktree is retained for native frozen-source and receipt validation:
+
+```text
+/home/dev/src/notedeck_worktrees/algos/oracle-mvp-pair-consolidation-owl-v8-generalization-v1
+```
+
+Its ignored evidence is `target/pair-consolidation-owl-v8-coffee-repeat-v1`,
+`target/pair-consolidation-owl-v8-generalization-v1`,
+`target/pair-consolidation-owl-v8-generalization-checks-v1.json`,
+`target/pair-consolidation-owl-v8-generalization-usage-source-v1.json` and
+`target/pair-consolidation-owl-v8-generalization-usage-summary-v1.json`. The
+retained earlier worktrees still supply the exact native panel baseline/source
+bindings. Original receipts, historical prompts and inputs remain unchanged.
