@@ -58,7 +58,17 @@ baseline already passed the same six cases, so no benefit was demonstrated.
 The frozen trial is retained as regression evidence, not as the current prompt
 direction or an independent accuracy test.
 
-**Current grading status:** the approved
+**Current score-impact result:** the approved
+[offline comparison](#offline-grade-comparison-october-13) measures the effect
+of known reviewer errors using the saved sixty answers. Available random-answer
+scores change by a mean absolute **1.18 percentage points for correctness**
+and **0.19 for coverage**. One short answer changes by fifty correctness points;
+the original automated responses produce forty-seven complete grades, with
+thirteen blocked. The user accepts inevitable reviewer error: individual
+mistakes do not themselves prohibit scaling. Score distortion and handling of
+blocked judgments, rather than correction of every mistake, govern readiness.
+
+**Corrected grading reference:** the approved
 [source-bound exception review](#source-bound-grading-exceptions-october-13)
 corrects the blocked saved judgments without rerunning the sixty answers.
 There are **59 complete grades and one pending grade**. The Friday wording
@@ -7400,6 +7410,78 @@ The historical 53-grade report and its 2,003 source hashes, and the original
 audited report with its 1,887 source hashes, verify unchanged. All **56**
 coverage and assessment production-path regressions pass. Full automation,
 unseen reviewer accuracy and eight-hour full-evaluation readiness remain open.
+
+### Offline grade comparison (October 13)
+
+The user approved measuring the impact of reviewer errors on final grades,
+accepting small residual error rather than requiring correction of every
+mistake. The native `compare-distillation-grades COVERAGE --reference REPORT
+--output DIR` command compares the original saved decisions with an existing
+agent-audited grading report. Both sides must use the same frozen coverage
+preparation, answer IDs and note IDs. All original and reference source hashes
+are verified before and after comparison.
+
+The analysis invokes the production collector with semantic audit vetoes,
+frozen and later correction experiments, and agent adjudications excluded.
+Pre-call teacher meaning requirements remain fixed. The native runner's
+selected response and receipt per prepared job remain fixed too; the comparison
+does not choose a more favorable draw. It recomputes coverage questions and
+settlements from the original core decisions. Saved searches qualify only for
+the exact complete question or the approved unchanged negative candidate-subset
+proof. Missing questions, contradictory judgments and absent positive witness
+proofs remain blocked; no grade is forced.
+
+Repeat `--verification-experiment` only for original fixed positive-witness
+groups. This comparison uses the mixed-sixteen, mixed-thirty-two, complete-four
+positive and mixed-sixty positive groups. It excludes the audit-triggered
+complete-four failed-search verifier and later grading fallbacks. Every
+verification still requires its exact input and prompt.
+
+The native report retains paired scores, their signed differences, mean
+absolute changes, largest changes, grade availability, current reference
+uncertainties and per-version denominators. Missing grades are not zero.
+Random and difficult cohorts are reported separately. Changes use percentage
+points, while saved score values remain fractions.
+
+| Cohort | Score | Available pairs | Mean absolute change | Largest absolute change |
+| --- | --- | ---: | ---: | ---: |
+| Random | Correctness | 47/50 | 1.1823 pp | 50 pp |
+| Random | Coverage | 43/50 | 0.1938 pp | 8.3333 pp |
+| Difficult | Correctness | 8/10 | 0.2155 pp | 1.7241 pp |
+| Difficult | Coverage | 4/10 | 2.0833 pp | 8.3333 pp |
+
+Only three random correctness scores and one random coverage score change;
+one score of each kind changes in the difficult cohort. The fifty-point
+correctness change is the four-subject N0077 answer: two unsupported compound
+subjects inferred from independent hashtags account for half its answer.
+This is substantial for that answer even though aggregate distortion is small.
+
+Current reference uncertainty is recorded in 27 random answers and seven
+difficult answers. Excluding those leaves 23 random correctness pairs (mean
+absolute change 2.1739 pp) and 22 random coverage pairs (0.3788 pp). Three
+difficult pairs remain for each score, all unchanged. These sensitivity counts
+prevent treating all fifty-nine complete reference grades as verified labels.
+The comparison measures known correction impact on development data, not
+absolute grader error against independently established ground truth. Each
+version has only a few answers on different notes, so the summaries do not
+establish stable rankings of the eighteen versions. The earlier two-point
+reasoning-level loss allowance is not a score-distortion acceptance threshold.
+
+Original automated collection completes 43/50 random answers and 4/10 difficult
+answers; the corrected reference completes 49/50 and 10/10 respectively. The
+thirteen blocked automated answers include five full-match/compatibility
+conflicts and four positive coverage witnesses rejected by saved DSL judgments.
+The remaining four are reconstruction gaps: three missing original verification
+results and one newly needed coverage question without a saved response.
+Those four missing-data cases are not observed reviewer errors. No missing
+result is fabricated or supplied from a later audit-selected fallback.
+
+The ignored `oracle-mvp-grading/target/distillation-review-v1/grading/score-impact/`
+directory contains `automated.json` and `comparison.json`. The comparison binds
+2,025 sources and performs **zero inference calls**. All **59** coverage and
+assessment production-path regressions pass. Production grading policy,
+reviewer prompts and saved judgments remain unchanged. Operational handling
+of blocked grades and eight-hour full-run readiness remain open.
 
 ## Actual distilled wording: offline preview (October 8)
 

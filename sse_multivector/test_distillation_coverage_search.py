@@ -562,6 +562,71 @@ class DistillationCoverageSearchTests(unittest.TestCase):
             "--output", self.root / "grading-reject-collected.json"))
         self.assertNotIn("coverage", result["random"]["answers"][0]["scoring"].get("scores", {}))
 
+    def test_native_grade_comparison_uses_original_decisions_without_agent_intervention(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        fixture, _, output, native, row = self.collection_fixture("automated-comparison", policy="grading",
+            audit_prerequisites=False)
+        fixture.native("review", native, "--case", row["id"], "--role", "agent", "--verdict", "reject",
+            "--comment", "Audited error must remain diagnostic in the automated comparison.")
+        correction = self.correction_search(fixture, native, row, "comparison-correction", witness="1")
+        reference = self.root / "comparison-reference.json"
+        coverage.collect(output, reference, correction_experiments=[correction])
+        saved = {path: path.read_bytes() for path in (native / "reviews.jsonl", native / "run/results.jsonl", reference)}
+        calls = (self.root / "calls.json").read_bytes()
+        destination = self.root / "grade-comparison"
+        summary = json.loads(fixture.native("compare-distillation-grades", output,
+            "--reference", reference, "--output", destination))
+        automated = json.loads((destination / "automated.json").read_text())
+        answer = automated["random"]["answers"][0]
+        self.assertEqual(answer["scoring"]["scores"]["coverage"]["value"], 1)
+        self.assertTrue(automated["analysis_only"])
+        self.assertEqual(summary["inference_calls"], 0)
+        self.assertEqual(summary["random"]["metrics"]["coverage"]["paired_answers"], 0)
+        self.assertEqual(summary["random"]["metrics"]["correctness"]["paired_answers"], 1)
+        self.assertEqual(summary["random"]["statuses"]["reference"], {"pending": 1})
+        self.assertEqual((self.root / "calls.json").read_bytes(), calls)
+        self.assertTrue(all(path.read_bytes() == contents for path, contents in saved.items()))
+        self.assertTrue(any(item["verdict"] == "reject" for item in summary["audit_diagnostics"]))
+
+    def test_native_grade_comparison_measures_correction_impact_without_applying_it(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        fixture, baseline, worker, group, row = self.adjudication_fixture("comparison-score-change")
+        adjudication = self.root / "comparison-support-correction.json"
+        fixture.native("adjudicate-distillation-review", group, "--case", row["id"],
+            "--output", adjudication, "--valid", "false", "--classification", "incorrect",
+            "--rule", "Judge what the post expresses, not whether its claims are true in the world.",
+            "--reason", "The post does not express flying elephants on Mars.")
+        output = self.root / "comparison-score-coverage"
+        coverage.prepare(baseline, output, runner_binary=worker, policy="grading")
+        reference = self.root / "comparison-score-reference.json"
+        coverage.collect(output, reference, adjudications=[adjudication])
+        summary = json.loads(fixture.native("compare-distillation-grades", output,
+            "--reference", reference, "--output", self.root / "comparison-score-results"))
+        pair = summary["paired_answers"]["random"][0]
+        self.assertEqual(pair["automated_scores"]["correctness"]["value"], 1)
+        self.assertAlmostEqual(pair["reference_scores"]["correctness"]["value"], 1 / 3)
+        self.assertAlmostEqual(summary["random"]["metrics"]["correctness"]["mean_signed_change_percentage_points"], 200 / 3)
+        self.assertEqual(summary["random"]["metrics"]["correctness"]["changed_answers"], 1)
+        self.assertEqual(summary["challenge"]["metrics"]["coverage"]["paired_answers"], 0)
+        self.assertIsNone(summary["challenge"]["metrics"]["coverage"]["mean_absolute_change_percentage_points"])
+
+    def test_native_grade_comparison_reports_reference_uncertainty_separately(self):
+        from sse_multivector import distillation_coverage_search as coverage
+        fixture, baseline, worker, group, row = self.adjudication_fixture("comparison-uncertain")
+        fixture.native("review", group, "--case", row["id"], "--role", "agent", "--verdict", "uncertain",
+            "--comment", "Reference uncertainty is separate from a usable typed saved model verdict.")
+        output = self.root / "comparison-uncertain-coverage"
+        coverage.prepare(baseline, output, runner_binary=worker, policy="grading")
+        reference = self.root / "comparison-uncertain-reference.json"
+        coverage.collect(output, reference)
+        summary = json.loads(fixture.native("compare-distillation-grades", output,
+            "--reference", reference, "--output", self.root / "comparison-uncertain-results"))
+        self.assertTrue(summary["paired_answers"]["random"][0]["reference_uncertainty"])
+        self.assertEqual(summary["random"]["reference_uncertain_answers"], 1)
+        self.assertEqual(summary["random"]["metrics"]["correctness"]["paired_answers"], 1)
+        self.assertEqual(summary["random"]["metrics_without_uncertain_references"]["correctness"]["paired_answers"], 0)
+        self.assertIsNone(summary["random"]["metrics_without_uncertain_references"]["correctness"]["mean_signed_change_percentage_points"])
+
     def test_grading_preserves_a_superseded_reject_without_treating_it_as_current(self):
         fixture, _, output, native, row = self.collection_fixture("grading-corrected-audit", policy="grading",
             audit_prerequisites=False)
