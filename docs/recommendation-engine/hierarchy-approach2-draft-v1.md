@@ -16,8 +16,9 @@ To construct children of a canonical node, start again from the original local
 L1 entries associated with that node, reusing their meanings and vectors. Do not
 expose the temporary binary grouping tree as the next canonical level.
 
-The original outline targets six groups per family and stops expansion when a
-node has two distinct notes (rule 3.2). Detailed boundary cases remain open.
+Six is the maximum number of nodes per sibling family, not an exact required
+count. The outline stops expansion when a node has two distinct notes (rule
+3.2). Detailed boundary cases remain open.
 
 ## Step 1.2: SSE encoding of original local L1 entries
 
@@ -39,7 +40,8 @@ Compute cosine similarity for every unordered pair of distinct vectors in the
 current family's construction pool. Use all vectors in that pool, without a
 candidate shortlist. Rank those pairs from highest similarity to lowest and
 select non-overlapping pairs in that order: once a vector has been selected,
-skip subsequent pairs containing it.
+skip subsequent pairs containing it. Continue selecting pairs until no pair of
+unused vectors remains. With ten nodes this selects five pairs, not four.
 
 Families are separate. Do not pair entries belonging to different canonical
 parents merely because their intended children are at the same depth. Root
@@ -108,11 +110,23 @@ non-overlapping selection in step 1.3. Consolidation generates a synthetic
 parent for each selected pair, following step 1.4. Its inputs are the two
 synthetic nodes' subjects and explicit meanings, without a supplied parent.
 
+## Step 1.8: repeat until at most six nodes remain
+
+Repeat steps 1.5–1.7 until there are six or fewer nodes in the sibling family.
+Select all the highest-scoring unique pairs as described in step 1.3; do not
+limit pairing to force exactly six nodes.
+
+With ten nodes, generate ten SSE vectors and calculate cosine similarity for
+all 45 distinct pairs. Select five non-overlapping pairs. If each consolidation
+returns a synthetic parent, five consolidation calls produce five synthetic
+nodes. Five is within the maximum, so no further consolidation is needed for
+that family. These final nodes become canonical; intermediate synthetic nodes
+remain outside the canonical hierarchy.
+
 ## Details still to settle
 
 - Handling odd leftovers, similarity ties, equivalence and failed/null
   consolidation results.
-- How a round reaches the target group count without reducing past it.
 - Exact consolidation wording/output, meaning validation and final canonical
   promotion.
 - Complete distinct-note stopping behavior and cases where further grouping
