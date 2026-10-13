@@ -8,6 +8,22 @@ run. This document does not authorize model calls. The user's personal outline,
 `docs/notes/MY-NOTES_10-12.md`, remains read-only. The preceding mechanisms are
 V2 and V1; earlier variants need no formal naming.
 
+## Approved provisional cutoff for the next run
+
+The user approved a minimum cosine similarity of **0.66** for the next
+hierarchy run. Pair eligibility uses the unrounded score: `cosine >= 0.66`.
+Retain entries that are not paired, with their meanings, vectors and associated
+original local L1 entries, so the cutoff does not silently remove notes.
+
+This is an approved next-run setting. The current constructor has no cosine
+cutoff; its implemented pairing behavior is described below. HR11–HR14 retain
+their frozen settings and saved evidence. The approval does not establish that
+0.66 separates every useful grouping from an unhelpful one.
+
+One decision remains open before implementation: when a family still contains
+more than six nodes and no pair reaches 0.66, whether construction should pause
+for review or permit the larger menu. No below-cutoff fallback is approved.
+
 ## Construction outline
 
 Bootstrap requests an explicit meaning for every original local L1 entry.
