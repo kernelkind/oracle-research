@@ -287,3 +287,50 @@ The existing original-note hierarchy viewer can export a completed or partial
 saved V3 graph when requested; construction does not refresh a UI automatically.
 Inspection retains the fixed definitions and supporting original L1 references.
 Offline fixture results test this workflow, not semantic accuracy or optimality.
+
+## First three-note model trial
+
+The user authorized a three-note V3 test, completed on 2026-10-13. Its
+[configuration](../../sse_multivector/hierarchy-runs/v3-three-note-v1/hierarchy.spec.json)
+selects the ASv6.100 rocket-stove, lamb-dinner and mushroom-risotto notes, with
+9, 8 and 3 original L1 entries respectively. The copied corpus SHA-256 is
+`18370b4772fee22c8d11f49a505f20f781f163e0512a8f32473d487ebdc8849a`.
+The frozen prompts are Bootstrap-v129 and pair-consolidation-v6, using
+GPT-6.1 Sol medium subscription inference and the pinned local CPU SSE model.
+
+Construction completed unattended: 20 original meanings, ten pair proposals,
+five final root proposals and three SSE encoding jobs. The resulting graph
+has five roots, 17 nodes and 12 edges; all three notes are represented, every
+leaf represents at most two distinct notes, and no family exceeds six nodes.
+Native sources, model receipts, vector receipts and fixed definitions passed
+the constructor's offline validation. No UI was refreshed and no human quality
+approval is recorded.
+
+The native usage summary records 35 valid cases and 36 fresh attempts including
+one Bootstrap prefix warmup: zero failures, retries, missing usage or answer
+reuses. It reports 87,268 input tokens, including 47,360 cached input tokens,
+and 18,190 output tokens, including 7,423 reasoning tokens. The complete saved
+API-equivalent catalogue estimate is $0.361172; it is not a subscription cash
+charge. Warmup usage is included.
+
+One concrete grouping merits review. The initial selected pairs include
+Appreciation / Satisfaction at cosine 0.642221 and J-tubes / Enjoyment of
+experimentation at cosine 0.070914. The final C00004 heading is Behavior and
+mental life and its meaning also admits equipment supporting people's actions.
+Its four associated original entries are those two pairs. The low-scoring pair
+was still selected under the approved rule of pairing every available node.
+This records the construction witness; it does not assign a semantic error to
+Bootstrap, SSE, consolidation or the pairing rule. The Food and meals / Food
+roots and the broad Activities and supporting resources root also merit browsing
+review before a quality claim or larger trial.
+
+Retained source worktree:
+`/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-v3-three-note-v1`.
+Ignored evidence under `target/hierarchy-v3-three-note-v1/` includes
+`construction-run-v1/state.json`, native `batch-*/experiment/` receipts,
+`encoding-*/` worker receipts, `usage.json`, `run.log` and the native single-case
+`root-c4-evidence.json`. The worktree remains necessary for these frozen source
+and model-artifact bindings. Two earlier preparation-only directories failed
+before state creation because the supplied history directory did not yet exist;
+they made no model calls and are retained separately. This diagnostic has no
+official HR identifier.
