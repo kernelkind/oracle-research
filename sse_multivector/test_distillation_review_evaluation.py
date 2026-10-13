@@ -112,6 +112,25 @@ class DistillationReviewEvaluationTests(unittest.TestCase):
             self.assertEqual(replacement["checks"][check], expected)
         self.assertFalse((self.root / "calls.json").exists())
 
+    def test_relationship_cache_groups_share_the_post_across_parent_wordings(self):
+        from sse_multivector import distillation_review_evaluation as evaluation
+        selected = self.selection([dict(note_id="shared-post-prefix", post="Cable details.",
+            teacher=subjects(("1", "Cable detail")), answer=answer(subjects(
+                ("1", "Devices"), ("1.1", "Cable alpha"), ("1.2", "Cable beta"),
+                ("2", "Tools"), ("2.1", "Cable gamma"), ("2.2", "Cable delta"))))])
+        directory = self.root / "shared-post"
+        prepared = evaluation.prepare(selected, directory, runner_binary=self.worker(),
+            actual_edges_only=True, relationship_prompt_id="DSLv10",
+            relationship_prompt=PROJECT / "sse_multivector/distillation-review-v1/relationship-prompt-v10.md")
+        relationships = [entry for entry in prepared["experiments"] if entry["check"] == "relationship"]
+        self.assertEqual(len(relationships), 1)
+        self.assertTrue(relationships[0]["prefix_cached"])
+        self.assertEqual(relationships[0]["occurrences"], 4)
+        cases = evaluation.report(directory)["random"]["answers"][0]["checks"]["relationship"]
+        self.assertEqual({json.loads(row["inputs"]["RELATIONSHIP_INPUT"])["parent_subject"]
+                          for row in cases}, {"Devices", "Tools"})
+        self.assertFalse((self.root / "calls.json").exists())
+
     def test_one_selected_compatibility_pair_avoids_unrelated_pairs_and_reuses_verified_source(self):
         from sse_multivector import distillation_review_evaluation as evaluation
         from sse_multivector import distillation_review_assessment as assessment
