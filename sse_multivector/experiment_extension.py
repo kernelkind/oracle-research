@@ -654,6 +654,12 @@ def add_commands(commands):
     p.add_argument('--runner-binary', type=Path)
     p.add_argument('--history-root', type=Path)
     p.add_argument('--reasoning-effort', choices=('xhigh', 'high', 'medium', 'low'), default='xhigh')
+    p.add_argument('--policy', choices=('audited', 'grading'), default='audited',
+                   help='freeze whether grading requires independent complete-output audit acceptance')
+    p.add_argument('--correction-experiment', type=Path, action='append',
+                   help='native exact-input fallback decisions; repeat for multiple groups')
+    p.add_argument('--correction-case', action='append',
+                   help='use only these saved native correction case IDs; repeat for multiple cases')
     p.add_argument('--premise-audit', type=Path, action='append',
                    help='bind an existing complete-output audit JSONL for conditional reuse; repeat for multiple audits')
     p = commands.add_parser('collect-distillation-coverage-search', help='collect audited native coverage results; no inference')
@@ -661,6 +667,10 @@ def add_commands(commands):
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--verification-experiment', type=Path, action='append',
                    help='native DSL witness or fallback experiment; repeat for multiple groups')
+    p.add_argument('--correction-experiment', type=Path, action='append',
+                   help='native exact-input fallback decisions; repeat for multiple groups')
+    p.add_argument('--correction-case', action='append',
+                   help='use only these saved native correction case IDs; repeat for multiple cases')
     p.add_argument('--premise-audit', type=Path, action='append',
                    help='existing exact complete-output audit JSONL; repeat for multiple audits')
     p = commands.add_parser('show-distillation-review-evaluation', help='collect native trial results; no inference')
@@ -836,12 +846,15 @@ def handle_command(args):
         from . import distillation_coverage_search
         result = distillation_coverage_search.prepare(args.evaluation, args.output,
             answer_ids=args.answer_id, runner_binary=args.runner_binary, history_root=args.history_root,
-            premise_audits=args.premise_audit, reasoning_effort=args.reasoning_effort)
+            premise_audits=args.premise_audit, reasoning_effort=args.reasoning_effort,
+            policy=args.policy, correction_experiments=args.correction_experiment,
+            correction_case_ids=args.correction_case)
         print(json.dumps(result, ensure_ascii=False, indent=2))
     elif args.command == 'collect-distillation-coverage-search':
         from . import distillation_coverage_search
         result = distillation_coverage_search.collect(args.coverage, args.output,
-            verification_experiments=args.verification_experiment, premise_audits=args.premise_audit)
+            verification_experiments=args.verification_experiment, premise_audits=args.premise_audit,
+            correction_experiments=args.correction_experiment, correction_case_ids=args.correction_case)
         print(json.dumps(result, ensure_ascii=False, indent=2))
     elif args.command in {'prepare-distillation-review-evaluation', 'show-distillation-review-evaluation', 'run-distillation-review-evaluation'}:
         from . import distillation_review_evaluation as evaluation
