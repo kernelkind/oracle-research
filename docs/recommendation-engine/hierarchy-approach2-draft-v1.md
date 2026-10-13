@@ -83,11 +83,25 @@ not include the current prompt's parent-relative restrictions or its instruction
 to select two or more siblings. Family separation is handled by construction
 as specified above, not by providing a parent to the consolidation prompt.
 
-The exact adapted prompt wording and output contract remain to be drafted.
+Hierarchy-pair-consolidation-v1 was presented in chat, but the user deferred
+review. Its wording and output contract remain unapproved.
+
+## Step 1.5: SSE encoding of temporary synthetic nodes
+
+Use the same layout and pooling boundary as for original local L1 entries:
+
+```text
+[[{synthetic subject}]]
+
+{synthetic explicit meaning}
+```
+
+Pool only the synthetic subject. The synthetic explicit meaning is unselected
+encoder context. As above, the brackets indicate the selected tokens and are
+not literal text to encode.
 
 ## Details still to settle
 
-- Vector text and selected tokens for temporary synthetic nodes (step 1.5).
 - Handling odd leftovers, similarity ties, equivalence and failed/null
   consolidation results.
 - How a round reaches the target group count without reducing past it.
