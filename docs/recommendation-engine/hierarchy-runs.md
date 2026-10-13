@@ -17,14 +17,14 @@ Each run's raw build, browsing menu and export share its ID.
 The user approved these three official experiments, run sequentially. All three
 are natively prepared in isolated worktrees with frozen source and input bindings.
 Their complete parameter rows and generation commits are recorded before
-inference. HR11 is executing; HR12 and HR13 remain prepared for sequential
-execution after their preceding run finishes.
+inference. All three completed. Execution followed the
+approved six-note, twelve-note, then twenty-four-note sequence.
 
-| Run | Notes | Definition | Prepared provenance | Status |
-| --- | --- | --- | --- | --- |
-| HR11 | 6 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr11/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr11-v3/target/hierarchy-hr11-v3-six-note-v1/prepared-provenance.json) | Running; native V3 |
-| HR12 | 12 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr12/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr12-v3/target/hierarchy-hr12-v3-twelve-note-v1/prepared-provenance.json) | Prepared; awaits HR11 |
-| HR13 | 24 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr13/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr13-v3/target/hierarchy-hr13-v3-twenty-four-note-v1/prepared-provenance.json) | Prepared; awaits HR12 |
+| Run | Notes | Definition | Prepared provenance | Status | Review UI | Native usage |
+| --- | --- | --- | --- | --- | --- | --- |
+| HR11 | 6 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr11/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr11-v3/target/hierarchy-hr11-v3-six-note-v1/prepared-provenance.json) | Complete; 17 nodes, 67/1,000 calls | [Launch](../../../oracle-mvp-hierarchy-hr11-v3/target/hr11-review-ui-v1/launch.sh) | [Report](../../../oracle-mvp-hierarchy-hr11-v3/target/hierarchy-hr11-v3-six-note-v1/usage-v1.json) |
+| HR12 | 12 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr12/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr12-v3/target/hierarchy-hr12-v3-twelve-note-v1/prepared-provenance.json) | Complete; 65 nodes, 152/3,000 calls | [Launch](../../../oracle-mvp-hierarchy-hr12-v3/target/hr12-review-ui-v1/launch.sh) | [Report](../../../oracle-mvp-hierarchy-hr12-v3/target/hierarchy-hr12-v3-twelve-note-v1/usage-v1.json) |
+| HR13 | 24 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr13/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr13-v3/target/hierarchy-hr13-v3-twenty-four-note-v1/prepared-provenance.json) | Complete; 107 nodes, 421/5,000 calls | [Launch](../../../oracle-mvp-hierarchy-hr13-v3/target/hr13-review-ui-v1/launch.sh) | [Report](../../../oracle-mvp-hierarchy-hr13-v3/target/hierarchy-hr13-v3-twenty-four-note-v1/usage-v1.json) |
 
 HR13 preserves HR05, HR08 and HR09's exact ordered 24-note selection. HR11 and
 HR12 are approved nested subsets, retaining the original relative order.
@@ -33,6 +33,38 @@ All parameters, persistent call allowances and generator versions belong in the
 checked review UIs will be linked here as each run finishes. The earlier
 three-note V3 qualification remains diagnostic evidence and is not an official
 run or part of this round's answer history.
+
+HR11's [immutable native snapshot](../../../oracle-mvp-hierarchy-hr11-v3/target/hierarchy-hr11-v3-six-note-v1/HR11/state.json)
+preserves all six notes and 29 original L1 entries in 17 canonical nodes, four
+roots and 13 edges. Every family is complete, the largest has five siblings,
+and every leaf represents one or two distinct notes. The checked UI retains the
+original bodies, fixed meanings and associations. Its 67 fresh calls comprise
+62 valid cases and five warmups, with no reuses, failures, retries or unknown
+usage/cost. Native API-equivalent cost is **$0.4186476**; input is 50,217 tokens,
+cached input 161,536 and output 30,206, with reasoning already included in output.
+The incremental cash charge on the existing subscription route is zero.
+
+HR12's [immutable native snapshot](../../../oracle-mvp-hierarchy-hr12-v3/target/hierarchy-hr12-v3-twelve-note-v1/HR12/state.json)
+preserves all twelve notes and 69 original L1 entries in 65 canonical nodes,
+five roots and 60 edges. All 16 families are complete; the largest has five
+siblings and every leaf represents one or two distinct notes. Native accounting
+reconciles **152/3,000 fresh calls** and **40 answer reuses** with zero failures,
+retries or unknown usage/cost. API-equivalent cost is **$0.8358152 fresh**, or
+**$1.1294012 including original producers behind reuse**. Generation input is
+132,045 tokens, cached input 422,912 and output 82,302, including reasoning.
+Use the combined native report when comparing round totals; per-run generation
+costs share producers and must not be added together.
+
+HR13's [immutable native snapshot](../../../oracle-mvp-hierarchy-hr13-v3/target/hierarchy-hr13-v3-twenty-four-note-v1/HR13/state.json)
+preserves all 24 notes and 150 original L1 entries in 107 canonical nodes,
+five roots and 102 edges. All 26 families are complete; maximum siblings is six
+and every leaf represents one or two distinct notes. Its checked UI retains all
+24 full original bodies. Native accounting reconciles **421/5,000 fresh calls**
+and **86 answer reuses**, with zero failures, retries or unknown token/API-cost
+estimates. API-equivalent cost is **$2.0719332 fresh**, or **$2.7032276 including
+original producers behind reuse**. Generation input is 269,085 tokens, cached
+input 1,058,176 and output 205,924, including reasoning. Provider-reported cash
+charges are unavailable; API-equivalent estimates are comparison evidence.
 
 HR11's first preparation attempt stopped before any inference because the new
 isolated runner lacked its locked Node dependencies. The native files were
