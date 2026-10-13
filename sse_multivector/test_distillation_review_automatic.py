@@ -38,6 +38,70 @@ class DistillationAutomaticTests(unittest.TestCase):
         self.assertIn("--verification-experiment", prepared.stdout)
         self.native("run-distillation-automatic-grading", "--help")
 
+    def test_fresh_evaluation_finishes_with_one_native_run_and_no_matrix(self):
+        from sse_multivector import distillation_review_evaluation as evaluation
+        from sse_multivector import distillation_review_assessment as assessment
+        from sse_multivector import test_distillation_review_evaluation as source_fixtures
+        fixture = source_fixtures.DistillationReviewEvaluationTests()
+        fixture.root = self.root
+        selection = fixture.selection([dict(note_id="fresh-auto", post="Cable detail.",
+            teacher=source_fixtures.subjects(("1", "Cable detail")),
+            answer=source_fixtures.answer(source_fixtures.subjects(
+                ("1", "Different cable"), ("1.1", "Different cable detail"))))])
+        identifier = json.loads(selection.read_text())["random"]["answers"][0]["id"]
+        context = self.root / "contexts"
+        assessment.record(selection, identifier, context,
+            teacher_meanings=[dict(teacher_numbers=["1"], required=True)],
+            reason="Complete trusted fixture meaning.")
+        worker = fixture.worker()
+        source = self.root / "fresh-evaluation"
+        evaluation.prepare(selection, source, assessment_directory=context,
+            runner_binary=worker, actual_edges_only=True)
+        directory = self.root / "fresh-automatic"
+        preparation = json.loads(self.native("prepare-distillation-automatic-grading",
+            "--evaluation", source, "--output", directory, "--runner-binary", worker).stdout)
+        self.assertFalse((self.root / "calls.json").exists())
+        self.assertEqual(preparation["inference_calls"], 0)
+        result = json.loads(self.native("run-distillation-automatic-grading", directory).stdout)
+        self.assertEqual(result["status"], "complete")
+        grades = json.loads(Path(result["report"]).read_text())
+        row = grades["random"]["answers"][0]
+        self.assertEqual(row["scoring"]["scores"]["correctness"]["value"], 1)
+        self.assertEqual(row["scoring"]["scores"]["coverage"]["value"], 0)
+        calls = (self.root / "calls.json").read_bytes()
+        self.native("run-distillation-automatic-grading", directory)
+        self.assertEqual((self.root / "calls.json").read_bytes(), calls)
+        for entry in evaluation.report(source)["experiments"]:
+            self.assertTrue(all(row["status"] == "unrun" for row in entry["cases"]))
+
+    def test_fresh_batches_preserve_eligible_shared_context_warming(self):
+        from sse_multivector import distillation_review_evaluation as evaluation
+        from sse_multivector import distillation_review_assessment as assessment
+        from sse_multivector import test_distillation_review_evaluation as source_fixtures
+        fixture = source_fixtures.DistillationReviewEvaluationTests()
+        fixture.root = self.root
+        selection = fixture.selection([dict(note_id="fresh-cache", post="Cable detail. " * 600,
+            teacher=source_fixtures.subjects(("1", "Cable detail")),
+            answer=source_fixtures.answer(source_fixtures.subjects(
+                ("1", "Different cable"), ("2", "Another cable"))))])
+        identifier = json.loads(selection.read_text())["random"]["answers"][0]["id"]
+        context = self.root / "contexts"
+        assessment.record(selection, identifier, context,
+            teacher_meanings=[dict(teacher_numbers=["1"], required=True)],
+            reason="Complete trusted fixture meaning.")
+        worker = fixture.worker()
+        source = self.root / "fresh-evaluation"
+        evaluation.prepare(selection, source, assessment_directory=context,
+            runner_binary=worker, actual_edges_only=True)
+        preparation = json.loads(self.native("prepare-distillation-automatic-grading",
+            "--evaluation", source, "--output", self.root / "automatic",
+            "--runner-binary", worker).stdout)
+        matching = [entry for entry in preparation["experiments"]
+            if entry["request_keys"][0][1] == "DSMv3"]
+        self.assertEqual(len(matching), 1)
+        self.assertTrue(matching[0]["prefix_cached"])
+        self.assertFalse((self.root / "calls.json").exists())
+
     def fixture(self, name):
         fixture = fixtures.DistillationCoverageSearchTests()
         fixture.root = self.root

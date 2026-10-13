@@ -394,6 +394,61 @@ def _matching_path_settlement(identity, teacher, group, matching, accepted, unco
         semantic_status="Conditional on the accepted ancestor match, saved coverage matches and fixed interpretations of the trusted teacher path; separate matching uncertainties remain unresolved.")
 
 
+def _sparse_compatibility(report, assessments, saved_rows=()):
+    """Construct exact checks only for reached matches and positive search witnesses."""
+    if not report.get("actual_edges_only"):
+        return report, {}
+    from experiment_runner import experiment, inputs
+    definition = report["relationship_configuration"]
+    template = Path(definition["prompt"]["path"]).read_text()
+    if hashlib.sha256(template.encode()).hexdigest() != definition["prompt"]["sha256"]:
+        raise ValueError("sparse compatibility prompt changed")
+    reached = {}
+    for row in saved_rows:
+        evidence = row["evidence"]
+        if evidence.get("role") == "compatibility":
+            number = evidence["heading_number"]
+        elif evidence.get("check") == "coverage_search" and row["status"] == "valid":
+            number = row["parsed"]["witness_student_number"]
+        else:
+            continue
+        if number is not None:
+            reached.setdefault((evidence["answer_id"], tuple(evidence["teacher_numbers"])), set()).add(number)
+    configurations, cohorts = {}, {}
+    for cohort in ("random", "challenge"):
+        answers = []
+        for answer in report[cohort]["answers"]:
+            relationships = list(answer["checks"]["relationship"])
+            present = {(tuple(row["evidence"]["teacher_numbers"]), row["evidence"]["heading_number"])
+                for row in relationships if row["evidence"]["role"] == "compatibility"}
+            teacher = review._TeacherIndex(answer["teacher"])
+            students = {row["number"] for row in answer["student"]}
+            for ordinal, group in enumerate(assessments["contexts"].get(answer["id"], []), 1):
+                if not group["required"]:
+                    continue
+                numbers = set(reached.get((answer["id"], tuple(group["teacher_numbers"])), ())) & students
+                identifiers = {teacher.by_number[number] for number in group["teacher_numbers"]}
+                numbers.update(row["evidence"]["student_number"] for row in answer["checks"]["matching"]
+                    if row["status"] == "valid" and row["parsed"]["teacher_id"] in identifiers)
+                for number in (row["number"] for row in answer["student"] if row["number"] in numbers):
+                    if (tuple(group["teacher_numbers"]), number) in present:
+                        continue
+                    case = evaluation.compatibility_case(answer, group, ordinal, number, assessments,
+                        include_post="{POST}" in template, include_teacher_contexts="{TEACHER_CONTEXTS}" in template,
+                        teacher=teacher)
+                    row = dict(case, input_sha256=inputs.digest(case["inputs"]), prompt=inputs.render(template, case["inputs"]),
+                        status="unrun", output=None, parsed=None, origin=None, receipt=None, reviews=[])
+                    if "mechanical" in case:
+                        row.update(experiment.mechanical_result(dict(adapter="distillation_review_evaluation"), case, None))
+                    relationships.append(row)
+                    configurations[("relationship", row["input_sha256"], row["prompt"])] = dict(
+                        settings=definition["runner"], prompt_definition=dict(id=definition["prompt"]["id"],
+                            source_path=definition["prompt"]["path"], text=template))
+            answers.append(dict(answer, checks=dict(answer["checks"], relationship=relationships)))
+        cohorts[cohort] = dict(report[cohort], answers=answers)
+    return dict(report, **cohorts), configurations
+
+
 def _cases(report, assessments, audits=None, policy="audited", *, final_groups=None):
     audits = {} if audits is None else audits
     cases, settlements, guards = [], [], []
@@ -494,8 +549,8 @@ def _cases(report, assessments, audits=None, policy="audited", *, final_groups=N
                     and row["evidence"]["teacher_numbers"] == group["teacher_numbers"]}
                 excluded = []
                 for number in roots:
-                    pair = baseline_pairs[number]
-                    if not final_search and pair["status"] == "valid" and pair["parsed"]["valid"] is False:
+                    pair = baseline_pairs.get(number)
+                    if not final_search and pair is not None and pair["status"] == "valid" and pair["parsed"]["valid"] is False:
                         premise = _accepted_premise(pair, audits, policy)
                         if premise is not None:
                             excluded.append(dict(student_number=number, compatibility_premise=premise))
@@ -531,8 +586,9 @@ def _cases(report, assessments, audits=None, policy="audited", *, final_groups=N
                         for number, numbers in aliases.items() if len(numbers) > 1],
                     matching_case_ids=[row["id"] for row in matching],
                     self_guard_case_ids=[row["id"] for row in guard_rows],
-                    baseline_compatibility=[dict(student_number=number, status=baseline_pairs[number]["status"],
-                        valid=baseline_pairs[number]["parsed"]["valid"] if baseline_pairs[number]["status"] == "valid" else None)
+                    baseline_compatibility=[dict(student_number=number, status=baseline_pairs.get(number, {}).get("status", "unrun"),
+                        valid=baseline_pairs[number]["parsed"]["valid"]
+                            if baseline_pairs.get(number, {}).get("status") == "valid" else None)
                         for number in uncovered],
                     expectation_status="unresolved")
                 cases.append(dict(id=answer["id"] + f":coverage-search:{ordinal:03}",
@@ -568,6 +624,7 @@ def prepare_source(source, base, selected=None, *, preparation_context=None):
         state = {**state, **{path: _file_state(path) for path in protected if path not in state}}
         audits = _native_correction_audits(audits, corrections, protected, policy)
         report = _corrected_report(report, corrections, audits, policy)
+        report, _ = _sparse_compatibility(report, assessments)
         cases, settlements, guards = _cases(report, assessments, audits, policy)
         _check_preparation_state(state)
         preparation = dict(settlements=settlements, matching_self_guards=guards,
@@ -624,7 +681,8 @@ def validate(case, raw):
 
 
 def prepare(evaluation_path, output, *, answer_ids=None, runner_binary=None, history_root=None, premise_audits=None,
-            reasoning_effort="xhigh", policy="audited", correction_experiments=None, correction_case_ids=None):
+            reasoning_effort="xhigh", policy="audited", correction_experiments=None, correction_case_ids=None,
+            defer_searches=False):
     """Prepare native search experiments; never performs inference."""
     from experiment_runner import experiment, inputs, project, prompt_cache
     project.configure(Path(__file__).resolve().parents[1])
@@ -651,7 +709,18 @@ def prepare(evaluation_path, output, *, answer_ids=None, runner_binary=None, his
             sha256=engine._sha256_file(Path(audit).expanduser().resolve())) for audit in premise_audits]
     state = {**{str(item): _file_state(item) for item in snapshot[2]}, **observed}
     context = dict(coverage_snapshot={_source_key(source, path.parent): (*snapshot, observed, state)})
-    cases, protected, preparation = prepare_source(source, path.parent, preparation_context=context)
+    if defer_searches:
+        if premise_audits or correction_experiments or correction_case_ids:
+            raise ValueError("deferred coverage preparation excludes premise audits and corrections")
+        selected = evaluation._answer_subset(snapshot[0], answer_ids)
+        if any(not answer["errors"] and answer["id"] not in snapshot[1]["contexts"]
+                for cohort in ("random", "challenge") for answer in selected[cohort]["answers"]):
+            raise ValueError("coverage search requires frozen teacher meanings")
+        cases, protected = [], snapshot[2]
+        preparation = dict(settlements=[], matching_self_guards=[],
+            semantic_status="Searches wait for complete matching checks in automatic collection.")
+    else:
+        cases, protected, preparation = prepare_source(source, path.parent, preparation_context=context)
     directory = Path(__file__).parent / "distillation-review-v1"
     template = (directory / "coverage-search-prompt-v1.md").read_text()
     by_prefix = {}
@@ -691,7 +760,8 @@ def prepare(evaluation_path, output, *, answer_ids=None, runner_binary=None, his
                            preparation_context=context)
         experiments.append(dict(path=str(destination), sha256=engine._sha256_file(destination / "experiment.json"),
                                 occurrences=len(rows), prefix_cached=cached))
-    _check_preparation_state(context["coverage_source"][_source_key(source, path.parent)]["state"])
+    _check_preparation_state(state if defer_searches else
+        context["coverage_source"][_source_key(source, path.parent)]["state"])
     for filename, checksum in protected.items():
         if engine._sha256_file(Path(filename)) != checksum:
             raise ValueError("coverage premise changed while preparing: " + filename)
@@ -700,6 +770,8 @@ def prepare(evaluation_path, output, *, answer_ids=None, runner_binary=None, his
         premise_audits=source.get("premise_audits", []),
         experiments=experiments, inference_calls=0, preparation=preparation,
         semantic_status="Experimental. DCS-returned positive witnesses require separate unchanged DSL verification; conditional teacher-path settlements retain their accepted premises.")
+    if defer_searches:
+        frozen.update(defer_searches=True, reasoning_effort=reasoning_effort)
     experiment.write(output / "coverage-search.json", frozen)
     experiment.write(output / "coverage-search.complete.json", {
         "coverage-search.json": engine._sha256_file(output / "coverage-search.json")})
@@ -794,12 +866,16 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
         request_keys.add(key)
         identity = row["evidence"]["check"], row["input_sha256"], row["prompt"]
         configuration = configurations.get(identity, {})
+        settings = configuration.get("settings", {})
+        if row["evidence"]["check"] == "coverage_search" and not settings and frozen.get("defer_searches"):
+            settings = dict(reasoning_effort=frozen["reasoning_effort"])
         automatic_requests.append(dict(role=role, case={name: row[name] for name in
             ("id", "inputs", "evidence", "prompt", "input_sha256", "mechanical") if name in row},
             prompt_id=row["prompt"].split(None, 1)[0],
             adapter="distillation_coverage_search" if row["evidence"]["check"] == "coverage_search"
-                else "distillation_review_evaluation", configuration=configuration.get("settings", {}),
-            source_experiment=configuration.get("experiment")))
+                else "distillation_review_evaluation", configuration=settings,
+            source_experiment=configuration.get("experiment"),
+            **({"prompt_definition": configuration["prompt_definition"]} if "prompt_definition" in configuration else {})))
 
     def original(row):
         if not automated_analysis:
@@ -930,6 +1006,14 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
         baseline = dict(baseline, **{cohort: dict(baseline[cohort], answers=[dict(answer,
             checks={check: [automatic_row(row) for row in rows] for check, rows in answer["checks"].items()})
             for answer in baseline[cohort]["answers"]]) for cohort in ("random", "challenge")})
+        baseline, sparse_configurations = _sparse_compatibility(baseline, assessments,
+            list(searches.values()) + list(required_index.values()) +
+            [row for rows in verifiers.values() for row in rows])
+        for identity, configuration in sparse_configurations.items():
+            configurations.setdefault(identity, configuration)
+        baseline = dict(baseline, **{cohort: dict(baseline[cohort], answers=[dict(answer,
+            checks={check: [automatic_row(row) for row in rows] for check, rows in answer["checks"].items()})
+            for answer in baseline[cohort]["answers"]]) for cohort in ("random", "challenge")})
         # A final complete equivalence decision entails its own compatibility.
         # Keep the final DSM receipt as the premise instead of inventing a DSL receipt.
         for cohort in ("random", "challenge"):
@@ -948,6 +1032,9 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
                                 origin="derived", receipt=None, automatic_equivalence_premise=_accepted_premise(match, {}, "grading"))
                     relationships.append(row)
                 answer["checks"]["relationship"] = relationships
+    else:
+        baseline, _ = _sparse_compatibility(baseline, assessments,
+            list(searches.values()) + [row for rows in verifiers.values() for row in rows])
     final_groups, matching_conflict_answers = set(), set()
     if automatic:
         # Retain every exact completed question. A narrower negative question

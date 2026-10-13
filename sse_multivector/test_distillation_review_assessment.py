@@ -14,6 +14,113 @@ LAUNCHER = PROJECT.parent / "experiment-runner/bin/experiment-runner"
 
 
 class DistillationReviewAssessmentTests(unittest.TestCase):
+    def inventory_fixture(self, *, two_notes=False):
+        from sse_multivector import distillation_review_assessment as assessment
+        fixture = fixtures.DistillationReviewPreviewTests()
+        fixture.setUp()
+        self.addCleanup(fixture.doCleanups)
+        teacher = fixtures.subjects(("1", "Cables"))
+        notes = [dict(note_id="validation-a", post="Cables are here.", teacher=teacher,
+                      answer=fixtures.answer(teacher))]
+        if two_notes:
+            notes.append(dict(note_id="validation-b", post="Tools are here.",
+                teacher=fixtures.subjects(("1", "Tools")),
+                answer=fixtures.answer(fixtures.subjects(("1", "Tools")))))
+        manifest, outputs = fixture.fixture(notes)
+        original = trial.prepare_trial(manifest, outputs, fixture.root / "original", random_count=1, hard_count=0)
+        original_path = Path(original["selection_path"])
+        source = fixture.root / "assessments"
+        groups = [dict(teacher_numbers=["1"], required=True)]
+        assessment.record(original_path, "R01", source, teacher_meanings=groups, reason="Explicit fixture policy.")
+        labels = dict(matching=[dict(student_number="1", teacher_number="1", reason="Exact wording.")],
+            support=[dict(student_number="1", valid=True, reason="Trusted wording.")], relationships=[],
+            compatibility=[dict(teacher_numbers=["1"], compatible_heading_numbers=["1"], reason="Equality.")])
+        assessment.record(original_path, "R01", source, expectations=labels, reason="Original answer judgments.")
+        assessment.freeze(original_path, source)
+        expanded = trial.prepare_trial(manifest, outputs, fixture.root / "expanded",
+            random_count=len(notes) * 2, hard_count=0, seed="inventory-expanded")
+        return fixture, source, Path(expanded["selection_path"]), groups
+
+    def test_inventory_reuses_bound_teacher_context_without_answer_expectations(self):
+        from sse_multivector import distillation_review_assessment as assessment
+        from sse_multivector import distillation_run as run
+        fixture, source, selection, groups = self.inventory_fixture()
+        teacher_path = next(source.glob("teacher-*.json"))
+        frozen = teacher_path.read_bytes()
+        output = fixture.root / "inventory"
+        report = assessment.prepare_inventory(selection, output, [source])
+        self.assertEqual(report["inference_calls"], 0)
+        self.assertEqual(report["context_count"], 1)
+        self.assertEqual(report["missing_contexts"], [])
+        loaded = assessment.load_assessments(output, trial.load_trial(selection))
+        self.assertEqual(len(loaded["contexts"]), 2)
+        self.assertTrue(all(value == groups for value in loaded["contexts"].values()))
+        self.assertEqual(loaded["expectations"], {})
+        self.assertEqual(loaded["sources"][str(teacher_path)], run.sha256(teacher_path))
+        self.assertEqual(teacher_path.read_bytes(), frozen)
+        with self.assertRaisesRegex(ValueError, "exists|frozen"):
+            assessment.prepare_inventory(selection, output, [source])
+        with self.assertRaisesRegex(ValueError, "frozen"):
+            assessment.record_exact_groups(selection, "R01", output, ["1"], [],
+                                           reason="A frozen inventory cannot acquire additional records.")
+
+    def test_incomplete_inventory_lists_missing_contexts_without_defaulting_policy(self):
+        from sse_multivector import distillation_review_assessment as assessment
+        fixture, source, selection, _ = self.inventory_fixture(two_notes=True)
+        output = fixture.root / "partial-inventory"
+        report = assessment.prepare_inventory(selection, output, [source])
+        self.assertEqual(len(report["missing_contexts"]), 1)
+        loaded = assessment.load_assessments(output, trial.load_trial(selection))
+        self.assertEqual(len(loaded["contexts"]), 2)
+        self.assertEqual(loaded["expectations"], {})
+        missing = report["missing_contexts"][0]
+        self.assertEqual(len(missing["answer_ids"]), 2)
+        additional = fixture.root / "additional-assessments"
+        assessment.record_exact_groups(selection, missing["answer_ids"][0], additional, [], ["1"],
+                                       reason="Explicit optional fixture policy for the missing context.")
+        complete = fixture.root / "complete-inventory"
+        completed = assessment.prepare_inventory(selection, complete, [source, additional])
+        self.assertEqual(completed["missing_contexts"], [])
+        contexts = assessment.load_assessments(complete, trial.load_trial(selection))["contexts"]
+        self.assertEqual(len(contexts), 4)
+        self.assertFalse(contexts[missing["answer_ids"][0]][0]["required"])
+        self.assertEqual(len(assessment.load_assessments(output, trial.load_trial(selection))["contexts"]), 2)
+
+    def test_inventory_verifies_original_context_and_selection_provenance(self):
+        from sse_multivector import distillation_review_assessment as assessment
+        from sse_multivector import distillation_run as run
+        fixture, source, selection, _ = self.inventory_fixture()
+        output = fixture.root / "inventory"
+        assessment.prepare_inventory(selection, output, [source])
+        teacher_path = next(source.glob("teacher-*.json"))
+        data = run.read_json(teacher_path)
+        data["teacher_meanings"][0]["required"] = False
+        run.write_json(teacher_path, data)
+        with self.assertRaisesRegex(ValueError, "hash|source"):
+            assessment.load_assessments(output, trial.load_trial(selection))
+
+    def test_inventory_rejects_unbound_context_and_conflicting_policy(self):
+        from sse_multivector import distillation_review_assessment as assessment
+        from sse_multivector import distillation_run as run
+        fixture, source, selection, _ = self.inventory_fixture(two_notes=True)
+        selected = trial.load_trial(selection)
+        original = run.read_json(next(source.glob("teacher-*.json")))
+        represented = next(row for _, row in assessment.answers(selected)
+                           if assessment._context_key(row) == original["context_key"])
+        conflicting = fixture.root / "conflicting"
+        assessment.record_exact_groups(selection, represented["id"], conflicting, [], ["1"],
+                                       reason="Conflicting explicit optional policy.")
+        with self.assertRaisesRegex(ValueError, "conflicting"):
+            assessment.prepare_inventory(selection, fixture.root / "conflict-inventory", [source, conflicting])
+        missing = next(row for _, row in assessment.answers(selected)
+                       if assessment._context_key(row) != original["context_key"])
+        unbound = fixture.root / "unbound"
+        path = unbound / ("teacher-" + assessment._context_key(missing) + ".json")
+        original["context_key"] = assessment._context_key(missing)
+        run.write_json(path, original)
+        with self.assertRaisesRegex(ValueError, "original selection"):
+            assessment.prepare_inventory(selection, fixture.root / "unbound-inventory", [unbound])
+
     def test_native_cli_exposes_source_bound_assessment(self):
         result = subprocess.run([sys.executable, str(LAUNCHER), "--project-root", str(PROJECT),
             "assess-distillation-review", "--help"], cwd=PROJECT, capture_output=True, text=True)

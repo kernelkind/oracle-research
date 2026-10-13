@@ -128,10 +128,78 @@ on unchanged main.
 Cold legacy-baseline reconstruction takes about 45 seconds and retains about
 3.67 GB even for nine selected answers; subsequent collection takes roughly
 0.54–1.02 seconds. Prepared batches now submit before that reconstruction.
-Full readiness still requires an entry point from an unrun evaluation and
-removal of unused compatibility-matrix preparation. The prior 6.03–6.77-hour
-model-work forecast excludes these costs and additional final decisions;
-this replay does not establish a full-run upper bound.
+Fresh preparation now accepts an unrun evaluation and omits the unused
+compatibility matrix, as described below. The prior 6.03–6.77-hour model-work
+forecast excludes preparation and additional final decisions; this replay does
+not establish a full-run upper bound.
+
+**Saved coverage outlier audit:** `M02-checkpoint-200-N0021` has one required
+teacher meaning. The teacher says the favorite Nostur feature is "regarded as
+highly underrated"; the student explicitly says the author considers it highly
+underrated. Under the approved rule preserving expressed attributions, naming
+the evaluator adds a restriction. The saved DSL guard explains that other
+people could regard the feature as underrated without the author doing so.
+Both fresh final DSM decisions nevertheless accept the match. The approved
+authority policy then derives own compatibility and grades coverage 1/1,
+against the development reference's 0/1. Correctness remains 13/13. This is a
+known semantic reviewer error, with no receipt or mechanical grading defect;
+the original responses and reference remain unchanged.
+
+Six matched occurrences represent two distinct inputs for one post. The exact
+passive-evaluator pattern appears in one of the 54 posts in the frozen sixty.
+It supplies 89.3% of the random cohort's absolute coverage difference; the
+remaining 48 paired answers average 0.251 percentage points. This is a
+development-reference difference, not certified accuracy. For the full
+100-post, 18-version population, this particular post alone could change mean
+coverage by at most one point, even if all its versions were misgraded by
+100 points. This does not bound other semantic errors.
+
+**Fresh automatic preparation:** evaluation schema 3, selected with
+`prepare-distillation-review-evaluation --actual-edges-only`, freezes matching,
+support and actual edges with the existing prompt/input contracts. Exact
+teacher/student compatibility pairs are constructed only for reached matching
+self guards or positive search witnesses. Selected native preparation prunes
+unrelated cases before constructing pairs and reuses verified source bundles;
+reporting indexes cases by answer once. Schema 1/2 historical evaluations keep
+their original contracts.
+
+`prepare-distillation-review-inventory` imports teacher-only policies by the
+exact note/post/teacher/task-prompt context from their original sealed
+selections. It preserves source hashes and explicit optional flags, imports no
+candidate expectations, and reports missing contexts without defaults.
+`prepare-distillation-automatic-grading --evaluation EVALUATION --output DIR`
+then freezes core requests directly from unrun evaluations; the existing single
+`run-distillation-automatic-grading DIR` advances every dependency. Ordinary
+DCS effort is separately frozen; final conflict decisions remain xhigh.
+Eligible repeated natural prefixes retain native warming, while short or
+single-use prefixes receive no warmup. Native fixture tests cover fresh
+completion, sparse semantic guards, positive-witness disagreement and final
+whole search, and zero-call resume. These tests verify orchestration, not
+additional semantic accuracy.
+
+The frozen full selection includes all 1,800 validation answers across 18
+versions, including invalid outputs. The remaining full preparation and
+runtime measurements are recorded before launch. There are no new reviewer
+calls or reserved-test accesses in this preparation step.
+
+The saved ordinary DSL manifest contains 30,713 prompts and occupies 242 MB.
+Production parsing takes about 1.49 seconds alone; four concurrent reads finish
+in 6.09 seconds and individual calls take up to 5.96 seconds. The runner reads
+the manifest inside the receipt timer and again afterward while holding its
+request slot. This demonstrates avoidable local work and plausibly explains
+part of the historical worker-occupancy excess; it does not attribute all
+overhead to one cause. Actual-edge-only preparation removes the unused rows.
+The shared runner can reuse its existing operation-scoped manifest cache rather
+than reparsing immutable inputs for each request.
+
+Observed final conflict work in the sixty is eight DSM questions totaling
+213.35 worker-seconds and five DCS questions totaling 921.79 worker-seconds.
+Scaling that frequency to 1,800 adds approximately 19 minutes at thirty
+continuously occupied workers. The resulting model-work scenario is roughly
+6.35–7.09 hours before fresh preparation/collection, with retry and tail
+uncertainty. In its upper scenario, allowing thirty minutes for local work
+requires about 28.34 average occupied workers. Eight-hour readiness remains
+conditional on measured local costs and sustained throughput.
 
 **Current score-impact result:** the approved
 [offline comparison](#offline-grade-comparison-october-13) measures the effect

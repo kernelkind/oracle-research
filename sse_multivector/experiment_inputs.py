@@ -254,7 +254,8 @@ def prepare_file(dataset, path, template, load_report=None, *, preparation_conte
         from . import distillation_review_evaluation
         cases, protected, preparation = distillation_review_evaluation.prepare_source(
             source, path.parent, dataset.get('select'), include_post='{POST}' in template,
-            include_teacher_contexts='{TEACHER_CONTEXTS}' in template)
+            include_teacher_contexts='{TEACHER_CONTEXTS}' in template,
+            preparation_context=preparation_context)
         sources.update(protected)
         return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, preparation
     if dataset['adapter'] == 'distillation_review':

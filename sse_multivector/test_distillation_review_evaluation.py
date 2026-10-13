@@ -81,6 +81,94 @@ class DistillationReviewEvaluationTests(unittest.TestCase):
         self.assertNotIn("answer_ids", prepared)
         self.assertFalse((self.root / "calls.json").exists())
 
+    def test_actual_edges_only_preserves_core_inputs_without_compatibility_matrix(self):
+        from sse_multivector import distillation_review_evaluation as evaluation
+        from sse_multivector import distillation_review_assessment as assessment
+        selected = self.selection([dict(note_id="sparse", post="Cable detail.",
+            teacher=subjects(("1", "Cable"), ("1.1", "Cable detail")),
+            answer=answer(subjects(("1", "Cable"), ("1.1", "Cable detail"), ("2", "Other"))))])
+        identifier = json.loads(selected.read_text())["random"]["answers"][0]["id"]
+        context = self.root / "context"
+        assessment.record(selected, identifier, context, teacher_meanings=[
+            dict(teacher_numbers=[number], required=True) for number in ("1", "1.1")],
+            reason="Frozen fixture meanings.")
+        complete = self.root / "complete"
+        sparse = self.root / "sparse"
+        worker = self.worker()
+        evaluation.prepare(selected, complete, runner_binary=worker, assessment_directory=context)
+        prepared = evaluation.prepare(selected, sparse, runner_binary=worker,
+            assessment_directory=context, actual_edges_only=True)
+        with patch.object(evaluation, "compatibility_case",
+                          side_effect=AssertionError("sparse preparation must not construct pairs")):
+            changed = evaluation.report(sparse)
+        self.assertEqual(prepared["schema_version"], 3)
+        self.assertTrue(changed["actual_edges_only"])
+        baseline = evaluation.report(complete)
+        original = baseline["random"]["answers"][0]
+        replacement = changed["random"]["answers"][0]
+        for check in ("matching", "support", "relationship"):
+            expected = [row for row in original["checks"][check]
+                if row["evidence"].get("role") != "compatibility"]
+            self.assertEqual(replacement["checks"][check], expected)
+        self.assertFalse((self.root / "calls.json").exists())
+
+    def test_one_selected_compatibility_pair_avoids_unrelated_pairs_and_reuses_verified_source(self):
+        from sse_multivector import distillation_review_evaluation as evaluation
+        from sse_multivector import distillation_review_assessment as assessment
+        from sse_multivector import experiment_inputs
+        selected = self.selection([dict(note_id="pair", post="Cable detail.",
+            teacher=subjects(("1", "Cable"), ("1.1", "Cable detail")),
+            answer=answer(subjects(("1", "Cable"), ("1.1", "Cable detail"), ("2", "Other"))))])
+        bundle = json.loads(selected.read_text())
+        identifier = bundle["random"]["answers"][0]["id"]
+        context = self.root / "context"
+        assessment.record(selected, identifier, context, teacher_meanings=[
+            dict(teacher_numbers=[number], required=True) for number in ("1", "1.1")],
+            reason="Frozen fixture meanings.")
+        source = self.root / "source.json"
+        source.write_text(json.dumps(dict(schema_version=1, check="relationship",
+            selection=dict(path=str(selected), sha256=hashlib.sha256(selected.read_bytes()).hexdigest()),
+            assessment_directory=str(context))))
+        cases, _, _ = evaluation.prepare_source(json.loads(source.read_text()), self.root)
+        selected_id = identifier + ":compatibility:002:2"
+        expected = next(row for row in cases if row["id"] == selected_id)
+        template = (PROJECT / "sse_multivector/distillation-review-v1/relationship-prompt-v2.md").read_text()
+        dataset = dict(adapter="distillation_review_evaluation", path=str(source), select=[selected_id])
+        preparation_context = {}
+        with patch.object(evaluation, "compatibility_case", wraps=evaluation.compatibility_case) as pairs:
+            actual, _, _ = experiment_inputs.prepare_file(dataset, source, template,
+                preparation_context=preparation_context)
+            self.assertEqual(pairs.call_count, 1)
+            again, _, _ = experiment_inputs.prepare_file(dataset, source, template,
+                preparation_context=preparation_context)
+            self.assertEqual(pairs.call_count, 2)
+        self.assertEqual(actual, again)
+        self.assertEqual(actual[0]["inputs"], expected["inputs"])
+        self.assertEqual(actual[0]["evidence"], expected["evidence"])
+        with patch.object(evaluation, "_selection", side_effect=AssertionError("cached bundle must be reused")):
+            experiment_inputs.prepare_file(dataset, source, template, preparation_context=preparation_context)
+        selected.write_bytes(selected.read_bytes() + b"\n")
+        with self.assertRaisesRegex(ValueError, "changed|differs"):
+            experiment_inputs.prepare_file(dataset, source, template, preparation_context=preparation_context)
+
+    def test_sparse_root_only_answer_retains_relationship_configuration(self):
+        from sse_multivector import distillation_review_evaluation as evaluation
+        selected = self.selection([dict(note_id="root-only", post="Cable detail.",
+            teacher=subjects(("1", "Cable detail")), answer=answer(subjects(("1", "Detail"))))])
+        prompt = PROJECT / "sse_multivector/distillation-review-v1/relationship-prompt-v10.md"
+        destination = self.root / "root-only"
+        evaluation.prepare(selected, destination, runner_binary=self.worker(), actual_edges_only=True,
+            relationship_prompt=prompt, relationship_prompt_id="DSLv10", reasoning_effort="high")
+        result = evaluation.report(destination)
+        self.assertFalse(any(row["check"] == "relationship"
+            for row in json.loads((destination / "evaluation.json").read_text())["experiments"]))
+        configured = result["relationship_configuration"]
+        self.assertEqual(configured["prompt"], dict(id="DSLv10", path=str(prompt),
+            sha256=hashlib.sha256(prompt.read_bytes()).hexdigest()))
+        self.assertEqual(configured["runner"]["reasoning_effort"], "high")
+        self.assertEqual(result["sources"][str(prompt)], configured["prompt"]["sha256"])
+        self.assertFalse((self.root / "calls.json").exists())
+
     def test_native_cli_prepares_a_reasoning_override_without_changing_selection(self):
         selected = self.selection()
         frozen = selected.read_bytes()
