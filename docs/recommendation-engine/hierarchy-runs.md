@@ -14,15 +14,16 @@ Each run's raw build, browsing menu and export share its ID.
 
 ## HR11–HR13 — approved V3 round
 
-The user approved these three official experiments, run sequentially. Their
-definitions and parameter rows are recorded before inference. Native preparation
-and source freezing are pending; no calls have been dispatched for this round.
+The user approved these three official experiments, run sequentially. All three
+are natively prepared in isolated worktrees with frozen source and input bindings.
+Their complete parameter rows and generation commits are recorded before
+inference; no calls have been dispatched for this round yet.
 
-| Run | Notes | Definition | Status |
-| --- | --- | --- | --- |
-| HR11 | 6 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr11/hierarchy.spec.json) | Approved; awaiting preparation |
-| HR12 | 12 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr12/hierarchy.spec.json) | Approved; awaiting preparation |
-| HR13 | 24 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr13/hierarchy.spec.json) | Approved; awaiting preparation |
+| Run | Notes | Definition | Prepared provenance | Status |
+| --- | --- | --- | --- | --- |
+| HR11 | 6 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr11/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr11-v3/target/hierarchy-hr11-v3-six-note-v1/prepared-provenance.json) | Prepared; first to execute |
+| HR12 | 12 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr12/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr12-v3/target/hierarchy-hr12-v3-twelve-note-v1/prepared-provenance.json) | Prepared; awaits HR11 |
+| HR13 | 24 | [Native V3 definition](../../sse_multivector/hierarchy-runs/hr13/hierarchy.spec.json) | [Frozen bindings](../../../oracle-mvp-hierarchy-hr13-v3/target/hierarchy-hr13-v3-twenty-four-note-v1/prepared-provenance.json) | Prepared; awaits HR12 |
 
 HR13 preserves HR05, HR08 and HR09's exact ordered 24-note selection. HR11 and
 HR12 are approved nested subsets, retaining the original relative order.
@@ -31,6 +32,12 @@ All parameters, persistent call allowances and generator versions belong in the
 checked review UIs will be linked here as each run finishes. The earlier
 three-note V3 qualification remains diagnostic evidence and is not an official
 run or part of this round's answer history.
+
+HR11's first preparation attempt stopped before any inference because the new
+isolated runner lacked its locked Node dependencies. The native files were
+[preserved](../../../oracle-mvp-hierarchy-hr11-v3/target/hierarchy-hr11-v3-six-note-v1/preparation-failure-v1.json),
+the dependencies were installed from the unchanged lockfile, and native
+preparation then succeeded with identical inputs and its counter still at zero.
 
 ## Previous official runs
 
