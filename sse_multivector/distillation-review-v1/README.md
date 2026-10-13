@@ -204,9 +204,42 @@ actual-edge inputs and 17 already-ready coverage searches: 36,359 semantic
 questions. Later guards, searches, verifiers and final decisions depend on
 those outputs. Native warming is eligible for 125 repeated prefixes; three
 groups receive no warmup. The largest execution manifest is 39,577,767 bytes.
-The full prepared experiment remains unrun. The final regression executes
-135 tests: 134 pass, with the same legacy attempt-budget failure reproduced
-on unchanged code; focused native checks also pass on combined main.
+The full prepared experiment was launched on October 13, 2026. Preparation's
+final regression executes 135 tests: 134 pass, with the same legacy
+attempt-budget failure reproduced on unchanged code; focused native checks
+also pass on combined main.
+
+Initial execution exposed a shared-runner scheduling bottleneck: 128 ready
+coordinators occupied only 7–13 of 30 slots even while provider backoff was
+inactive. A production queue snapshot took 2.428 seconds, including 2.415
+seconds waiting for the host scheduling lock; its locked work took about
+13 milliseconds. Each polling coordinator acquired that lock two or three
+times per cycle, and a free slot waited for the preferred coordinator to poll.
+The compatible operational fix in runner `be61c57` lets a coordinator reserve
+free slots for registered waiters in the existing fair order. Recipients adopt
+their reservations; cancellation and expiry release or renew them safely.
+Sixty-five production regressions, an independent audit and six combined-main
+checks pass. The run drained before integration and resumed the same frozen
+automatic directory with an explicit runner-upgrade reason. Saved results,
+teacher inventories, reviewer prompts and grading policy are preserved.
+The resumed execution exhausted host memory before sustained throughput could
+be established. Kernel logs confirm global OOM kills at 12:16:15 and 12:33:47
+EDT on October 13, including the Hearth VM and the user's systemd manager.
+The user's PID-matched analysis reports 88.7 GiB of grading-process memory at
+the first incident and 98 GiB at the second. The 30-request admission limit
+does not bound the memory of the 127 concurrently launched batch processes.
+At inspection after the outage, no full-grading processes remain active and
+the saved result files remain present; no final grades file exists. The
+automatic state still describes interrupted processes as running, so that
+saved status is not evidence of a live run.
+
+`RequestHistory` scans the shared automatic directory for manifests with
+receipts and retains parsed manifests in each process's `ReceiptFiles` cache.
+That directory now contains 252 such manifests totaling 197.8 MiB on disk.
+Replicating this cache across processes is a concrete memory amplifier; the
+precise contribution requires bounded profiling. The run must remain stopped
+pending a memory-safe execution design and workload containment. The earlier
+eight-hour scenario is unverified and must not authorize an unchanged restart.
 
 The saved ordinary DSL manifest contains 30,713 prompts and occupies 242 MB.
 Production parsing takes about 1.49 seconds alone; four concurrent reads finish
