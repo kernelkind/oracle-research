@@ -71,13 +71,28 @@ and L2S6 is compared. L2S3 has no partner in its family. The six L2 nodes are
 never one pairing pool. This illustration establishes family boundaries; it
 does not attempt to demonstrate the distinct-note stopping rule 3.2.
 
+## Step 1.4: consolidation of a selected pair
+
+Follow the current consolidation prompt's overall structure, adapted to exactly
+two supplied nodes, each with its subject and explicit meaning. Generate a
+synthetic parent for that pair rather than selecting two or more nodes from a
+larger supplied group.
+
+There is no supplied parent or ancestor input at any consolidation round. Do
+not include the current prompt's parent-relative restrictions or its instruction
+to select two or more siblings. Family separation is handled by construction
+as specified above, not by providing a parent to the consolidation prompt.
+
+The exact adapted prompt wording and output contract remain to be drafted.
+
 ## Details still to settle
 
 - Vector text and selected tokens for temporary synthetic nodes (step 1.5).
 - Handling odd leftovers, similarity ties, equivalence and failed/null
   consolidation results.
 - How a round reaches the target group count without reducing past it.
-- Consolidation inputs, meaning validation and final canonical promotion.
+- Exact consolidation wording/output, meaning validation and final canonical
+  promotion.
 - Complete distinct-note stopping behavior and cases where further grouping
   does not provide useful refinement.
 
