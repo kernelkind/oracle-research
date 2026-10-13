@@ -100,6 +100,14 @@ Pool only the synthetic subject. The synthetic explicit meaning is unselected
 encoder context. As above, the brackets indicate the selected tokens and are
 not literal text to encode.
 
+## Steps 1.6–1.7: pair and consolidate the synthetic nodes
+
+Use cosine similarity across all the synthetic nodes' SSE vectors within the
+same sibling family to select the highest-scoring unique pairs, following the
+non-overlapping selection in step 1.3. Consolidation generates a synthetic
+parent for each selected pair, following step 1.4. Its inputs are the two
+synthetic nodes' subjects and explicit meanings, without a supplied parent.
+
 ## Details still to settle
 
 - Handling odd leftovers, similarity ties, equivalence and failed/null
