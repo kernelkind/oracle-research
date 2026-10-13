@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "prompt": {
+    "id": "pair-consolidation-owl-v8",
+    "path": "pair-consolidation-owl-v8.md"
+  },
+  "dataset": {
+    "adapter": "generic",
+    "path": "pair-consolidation-owl-v8-generalization-source-v1.json"
+  },
+  "runner": {
+    "provider": "openai-codex",
+    "auth_file": null,
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "medium",
+    "transport": "sse",
+    "runner_binary": "/home/dev/src/notedeck_worktrees/algos/experiment-runner/experiment_runner/run-model.sh",
+    "timeout_seconds": 600
+  }
+}
