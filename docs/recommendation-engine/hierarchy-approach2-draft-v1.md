@@ -88,8 +88,17 @@ not include the current prompt's parent-relative restrictions or its instruction
 to select two or more siblings. Family separation is handled by construction
 as specified above, not by providing a parent to the consolidation prompt.
 
+The pair prompt must always generate a synthetic parent whose explicit meaning
+covers both supplied meanings. Return only its subject and explicit meaning;
+`null` is not an allowed semantic result. This rule is approved. Transport or
+invalid-output failures remain separate, unresolved operational cases.
+
 Hierarchy-pair-consolidation-v1 was presented in chat, but the user deferred
-review. Its wording and output contract remain unapproved.
+review. [Hierarchy-pair-consolidation-v2](../../sse_multivector/shr_single_pair/Hierarchy-pair-consolidation-v2.md)
+records the no-`null` change. Its overall wording remains an unreviewed,
+untested draft. It uses the exact shared definition-writing rules-v6 from
+Bootstrap-v129 and Consolidation-v21 through a pinned assembly; those prompts
+and shared rules are unchanged. No prompt is activated by this draft.
 
 ## Step 1.5: SSE encoding of temporary synthetic nodes
 
@@ -170,7 +179,7 @@ each note once even when multiple associated local L1 entries come from it.
 
 ## Details still to settle
 
-- Handling similarity ties, equivalence and failed/null consolidation results.
+- Handling similarity ties, equivalence and failed/invalid consolidation calls.
 - Exact consolidation wording/output and meaning validation.
 - One-note stopping cases and cases where further grouping does not provide
   useful refinement.
