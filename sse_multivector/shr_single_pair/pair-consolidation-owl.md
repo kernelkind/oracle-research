@@ -1,14 +1,21 @@
 # Pair-consolidation-owl: experimental prompt line
 
-`pair-consolidation-owl-v9` is the current experimental draft. The user approved
-explicitly applying activity decomposition inside stated purposes or uses.
-This changes one wrapper sentence; the shared meaning-writing text, Bootstrap
-companion, guide, example and all historical prompt bytes remain unchanged.
-The matched three-case check is complete: all three retain the required formal
-actions and objects, including the shelf storage action in both coffee orders.
-Two qualified agent accepts and one separate scope uncertainty are recorded.
-V9 is not activated in hierarchy construction and no general semantic accuracy
-is established.
+`pair-consolidation-owl-v10` is the current experimental draft. The user approved
+replacing the inherited rule that activity topics automatically include plans
+with explicit purpose/use and plan representation. Activity classes retain the
+action's identity; plans relate separately to their proposed activities. A
+purpose or intended use alone does not establish occurrence, while explicit
+actual use remains supplied evidence. V10 has not yet been tested or activated.
+The shared meaning-writing text, Bootstrap companion, guide and example are
+unchanged; no new example or production code is introduced.
+
+V9's three matched controls exposed the shelf storage action in both coffee
+orders and passed the bottle action/object check. Two qualified agent accepts
+and one scope uncertainty were recorded: the forward activity glossaries
+included plans to perform the activities. A subsequent read of the complete
+assembled prompt found the inherited plan-browsing rule in its after-wrapper.
+That is a plausible contributor, not a demonstrated causal attribution. Original
+receipts and earlier classifications remain evidence, not independent human gold.
 
 V8's twelve-case panel passed its targeted checks under qualified agent review.
 Its independent follow-ups preserved explicit coffee drinking and passed the
@@ -61,7 +68,9 @@ following contract:
   expression or a supporting class definition. A class name may abbreviate
   conditions when its formal definition exposes them. Every activity stated
   inside a purpose or use retains its action as a class and relations to its
-  required objects or participants.
+  required objects or participants. Plans retain their distinct identity and
+  relation to the proposed activity; admitted activity/plan alternatives use
+  `OR` without adding plans to an activity primitive.
 - Each `owl` object has `expression` first, for the topic's own expression,
   then `classes`, a JSON object of supporting class definitions. The entrypoint
   is always `owl.expression`; `owl.classes` may be empty. This same layout is
@@ -81,14 +90,14 @@ are omitted from expression strings; nested parentheses preserve grouping.
 
 ## Sources and assembly
 
-The [v9 draft](pair-consolidation-owl-v9.md) is built by its
-[pinned assembly manifest](pair-consolidation-owl-v9.assembly.json). It includes
+The [v10 draft](pair-consolidation-owl-v10.md) is built by its
+[pinned assembly manifest](pair-consolidation-owl-v10.assembly.json). It includes
 [OWL-like guide v5](prompt_parts/owl-reasoning-guide-v5.md) and
 [explicit-meaning rules v6](prompt_parts/explicit-meaning-rules-v6.md)
 byte-for-byte. Its matching definition-writing reference is
 [Bootstrap-v129](Hierarchy-bootstrap-v129.md).
 
-V9 retains the [v8 prompt](pair-consolidation-owl-v8.md)'s one
+V10 retains the [v9 prompt](pair-consolidation-owl-v9.md)'s one
 [complete input/output example](prompt_parts/pair-consolidation-owl-example-v3.md)
 using the same display-panel case, with each entry expression separated from
 its supporting classes. The guide distinguishes exact class definitions from
@@ -96,9 +105,9 @@ one-way containment checks; required membership implications are expressed in
 the formal definitions. It does not encode a containment claim as an exact
 equivalence. The shared meaning-writing rules and consolidated natural-language
 meaning-writing instructions are unchanged. The only compiled-prompt change
-from v8 explicitly applies activity decomposition inside stated purposes or
-uses, in the node-translation instructions. All earlier published
-prompt and guide files retain their original bytes.
+from v9 replaces the automatic plan-browsing sentences in the final-check
+wrapper with explicit purpose/use and plan representation. All earlier
+published prompt and guide files retain their original bytes.
 
 The notation is the simplified OWL-like notation described in the guide. The
 model supplies formal definitions, not an executable OWL document or a
@@ -116,7 +125,7 @@ complete saved API-equivalent cost of $0.216726; it did not generate a hierarchy
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
 python3 sse_multivector/prompt_assembly.py check \
-  sse_multivector/shr_single_pair/pair-consolidation-owl-v9.assembly.json
+  sse_multivector/shr_single_pair/pair-consolidation-owl-v10.assembly.json
 ```
 
 Assembly checks establish exact reconstruction and unchanged shared sources.
@@ -582,11 +591,8 @@ The reversed answer's "planned instances" wording does not explicitly say
 plans themselves are members, and is retained as a qualification. Both printed
 consolidations still cover their translated nodes.
 
-The most useful next clarification is to separate an unperformed activity from
-a plan to perform it: design purpose can refer to the former without making the
-latter a member of the activity class. Check that boundary with matched purpose
-and explicit-plan controls before qualifying the prompt more broadly. No V10
-prompt, extra calls or hierarchy activation is included in this completed trial.
+The user separately authorized the V10 replacement and the contrasts recorded
+below. The completed V9 trial itself made no V10 calls or hierarchy changes.
 
 ### Accounting and retained evidence
 
@@ -613,3 +619,40 @@ Ignored evidence is `target/pair-consolidation-owl-v9-coffee-forward-v1`,
 `target/pair-consolidation-owl-v9-controls-usage-summary-v1.json`. Earlier
 retained worktrees still supply exact baseline/source bindings. Historical
 prompts, fixed inputs and original receipts remain unchanged.
+
+## V10 purpose/use/plan check: pre-call method
+
+The user authorized the replacement after a read-only audit found the inherited
+plan-browsing sentence at line 7 of the [old after-wrapper](prompt_sources/pair-consolidation-owl-v5.after.md).
+Replace that sentence pair with the proposed identity and representation rule;
+leave the other assembly parts unchanged. The occurrence sentence explicitly
+concerns purpose or intended use, preserving any actual use stated in input.
+
+The approach follows official guidance on concise, direct constraints,
+consistent examples and resolving competing instructions. This supports the
+method, not the semantic correctness of this particular rule: [OpenAI reasoning
+guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices#how-to-prompt-reasoning-models-effectively)
+and [prompt optimization example](https://developers.openai.com/cookbook/examples/gpt-5/prompt-optimization-cookbook#our-baseline-prompt).
+
+Prepare the three exact V9 coffee-forward, reversed-coffee and bottle controls
+with only the prompt replaced. Prepare three new authored contrasts through the
+[native source](pair-consolidation-owl-v10-purpose-plan-source-v1.json) and
+[spec](pair-consolidation-owl-v10-purpose-plan-v1.spec.json): designed washing
+brushes, items explicitly used in past washing/soaking, and a washing activity
+versus a plan to perform it. Six cases in three independent native batches;
+launch all ready batches immediately on the same Sol medium subscription/SSE
+settings. No intentional repeat, extra baseline call, warmup, paid fallback,
+additional example or hierarchy change is included. Exact native reuse remains
+available, and the shared runner owns scheduling and provider-only retries.
+
+Assess structure, formal actions/objects, activity versus plan identity,
+independent input fidelity, coverage and English/formal agreement separately.
+Do not infer occurrence from intended use or erase explicitly stated actual
+use. Plans require their distinct kind and a relation to the proposed activity;
+combined activity/plan scope must be formally exposed rather than hidden in an
+activity glossary. Basic concepts need no unstated technical decomposition.
+Allow equivalent vocabulary and coherent broader topics, without predetermining
+one consolidated title. Frozen expectations stay outside model input; assessments
+are agent-authored, not human gold or automated reasoner certification. A passing
+screen would not establish reliability or prove the old sentence caused the V9
+wording. Test this replacement before deciding whether another example is needed.
