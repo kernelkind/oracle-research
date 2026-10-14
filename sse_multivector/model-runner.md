@@ -1750,8 +1750,8 @@ broader sections from their immediate children's fixed meanings. Generated
 meanings are not encoded or reclustered. Original HDBSCAN groups expose notes
 directly, even when they represent many notes. No local L2 phase is used.
 Select `generation_policy=hierarchy-generation-v4.2`, supply `hdbscan_binary`,
-and optionally supply `bootstrap_hierarchy` to reuse matching frozen V3.2
-Bootstrap-v133 answers and vectors. Without that checkpoint the ordinary
+and optionally supply `bootstrap_hierarchy` to reuse matching frozen V3.2,
+V4.1 or V4.2 Bootstrap-v133 answers and vectors. Without that checkpoint the ordinary
 Bootstrap and original encoding stages run. The shared native runner retains
 exact reuse, concurrency, usage and retry ownership. Every ready section is
 submitted without waiting for unrelated groups. V4's earlier

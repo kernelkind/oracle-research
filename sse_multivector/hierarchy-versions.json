@@ -140,6 +140,13 @@
       "artifact_path": "target/hierarchy-hr22-v41-hundred-note-v1/HR22/state.json",
       "sha256": "9c8e6610cdcb5e6ecfa4dd1675f83da949570d317cadc3422beded6786799555",
       "family": "Hierarchy"
+    },
+    {
+      "version_id": "HR23",
+      "identity": "68b5cb1204ce38310e477cd49700f54d25e9d1d93a444f7fcef5b10404d57e75",
+      "artifact_path": "target/hierarchy-hr23-v42-hundred-note-v1/HR23/state.json",
+      "sha256": "5c7ce914fb4b8dae4544b16799722c470dd24805c6a07542c2b7ad9bc608f125",
+      "family": "Hierarchy"
     }
   ]
 }
