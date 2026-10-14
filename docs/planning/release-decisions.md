@@ -802,6 +802,24 @@ stages or approve a dataset size, hardware rental or spending allocation.
 
 ## Two separate model pilots
 
+**October 14 Qwen continuation approved:** continue the selected Qwen3.8-27B
+final 1,000-note checkpoint for two further complete passes over the same notes,
+retaining the complete optimizer/RNG state, ASv6.100, splits and numerical recipe.
+Use one 96GB RTX PRO 6000 under a new **$30 maximum total charge**. At the end of
+each pass, save the continuing checkpoint and generate the same 100 validation
+and 200 test answers: 200 new validation and 400 new test answers in total.
+Retrieve and mechanically verify every required artifact, then terminate the
+single rental. Grade validation locally, select the checkpoint without reviewing
+new test content or scores, and grade only its saved test answers. Grading
+requires no rented GPU. Existing test notes remain an already-examined benchmark.
+The [continuation and pilot-failure audit](fine-tuning-pilot-process.md#approved-qwen-continuation-october-14)
+records the measured estimate, verified parent, current worker limitations and
+required preparation. The code currently enforces one pass and final-checkpoint
+test collection; continuation support and full verification are still required.
+No new rental or model run began during the audit. New labels, final training
+volume, mask training and production adoption remain outside this approval.
+The older three-family/two-GPU directions below describe the completed pilot.
+
 **October 2 larger-pilot scope approved:** the user removed masks from this
 pilot. Train and evaluate subjects and their hierarchy only: one teacher
 subject-hierarchy example per note and one generated subject response per
