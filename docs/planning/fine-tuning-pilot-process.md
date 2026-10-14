@@ -1258,7 +1258,7 @@ The user requires a high GPU memory allowance for the replacement, while the
 standing instruction to protect the host remains in force. The GX10's
 [128 GB is coherent unified CPU/GPU memory](https://rog.asus.com/in/support/faq/1056142/),
 not a separate VRAM allocation. The measured host exposes 121.6 GiB total and
-approximately 118 GiB available while idle. The proposed replacement raises the
+approximately 118 GiB available while idle. The approved replacement raises the
 CUDA allocator ceiling from 80 to **96 GiB** and the fixed hybrid cache pool from
 22 to approximately **40 GiB**, retaining the **20 GiB host-available watchdog**.
 Adding eighteen GiB to the measured cache configuration predicts approximately
@@ -1266,6 +1266,31 @@ Adding eighteen GiB to the measured cache configuration predicts approximately
 the larger pool and actual allocation must be validated before launch. Raising
 the allocator ceiling alone does not increase the engine's fixed cache capacity.
 The stopped driver's settings and receipts remain unchanged.
+
+The user approves natural EOS generation inside the model's native **262,144**
+total context, with no separate thought or final-answer cutoff. Preserve the
+eight naturally completed answers and regenerate notes 6, 7, 14, 20, 34, 36,
+51, 71, 73, 74, 91 and 96. The reusable manual driver is
+`sse_multivector/distillation_manual_generation.py`; it validates the original
+inputs and merged weights once, imports completed records without rewriting
+them, and saves each new answer atomically. Six production-path tests cover
+natural completion beyond the old bounds, unchanged reused records, input and
+runtime tampering, completed resumption without a model load, and cache counters.
+The native manual importer accepts a source-bound per-answer policy override;
+twenty import/trial regression tests pass. `SamplingParams(max_tokens=None)`
+explicitly selects native remaining context instead of vLLM's sixteen-token
+default. Context exhaustion remains a reported truncation.
+
+The policy permits up to eight model-runner slots. The documented execution
+option `--max-num-active-seqs` can lower concurrent admissions after a stopped
+run if measured cache pressure warrants it, without changing frozen inputs or
+completed records. Actual engine settings remain in each invocation's receipt.
+Progress includes saved-note percentage, generated tokens, running/waiting
+requests, cache use and cumulative preemption counts. Native cache preemption
+can reset computed history; retained prefixes may reduce the ensuing work.
+The replacement uses `qwen-thinking-20-natural-20261014` paths. Generation is
+manually launched and grading remains a separate handoff after all twenty
+answers are available. The larger-memory GPU benchmark is still pending.
 
 Generation is incomplete and grading has not started. Report paired
 correctness, coverage, invalid outputs, thought/final
