@@ -43,7 +43,7 @@ def export_viewer(directory, output):
     for index, note in enumerate(corpus, 1):
         if note['note_id'] not in selected:
             continue
-        short = note.get('note_short_id') or f"N{note.get('selection_rank', index):03d}"
+        short = note.get('note_short_id') or f"N{index:03d}"
         if note['note_id'] in short_ids or short in used_short_ids:
             raise ValueError('canonical viewer note references must be unique')
         short_ids[note['note_id']] = short
