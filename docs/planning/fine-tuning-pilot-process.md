@@ -1116,7 +1116,8 @@ Base revision `1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0`, final checkpoint
 1,000, BF16 weights, greedy decoding and original ASv6.100 inputs remain fixed.
 The native thinking template receives `reasoning_effort=xhigh`, a 16,384-token
 thought allowance and the pilot's 10,240-token final-answer allowance inside
-32,768 context tokens. Local GPU batches contain at most eight notes inside a
+40,960 context tokens. The measured inputs contain 9,248–9,466 tokens, requiring
+36,091 tokens at the maximum combined allowance. Local GPU batches contain at most eight notes inside a
 96 GiB, zero-swap systemd boundary; durable batch receipts permit resumption.
 The grader imports the completed manual collection through
 `prepare-distillation-review-trial --saved-generations`, retaining original
