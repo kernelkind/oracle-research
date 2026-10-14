@@ -1,18 +1,20 @@
-# HiGen V4.1 — hierarchy from one HDBSCAN tree
+# HiGen V4.2 — hierarchy from one HDBSCAN tree
 
-Status: approved V4.1 design; native construction and offline verification are
-implemented. Official HR21 (50 notes) and HR22 (100 notes) completed with native
+Status: approved V4.2 setting; native construction is implemented. V4.2 changes
+only `min_cluster_size` from two to four. All other V4.1 settings and stages
+remain unchanged; no V4.2 hierarchy has been generated or reviewed yet.
+Official V4.1 runs HR21 (50 notes) and HR22 (100 notes) completed with native
 structural validation and checked review UIs; human semantic review is pending.
 Their parameters and commands are in
 [the compact run index](hierarchy-review-commands.md).
 The earlier V4 root-only experiment remains separate evidence below. Historical
 V3 variants and V4 definitions retain their frozen policies on resume.
 
-## Approved V4.1 process
+## Approved V4.2 process
 
 Use Bootstrap-v133's generated titles and fixed meanings for original local L1
 entries. SSE encodes `title`, two newline characters, and `meaning`, pooling
-only the title. Run HDBSCAN once with `min_samples = 3`, `min_cluster_size = 2`
+only the title. Run HDBSCAN once with `min_samples = 3`, `min_cluster_size = 4`
 and excess-of-mass selection. The size minimum counts original entries rather
 than distinct notes. Preserve the selected groups, their ancestor connections
 and the exact input/output evidence. Leave unassigned entries out of the
@@ -44,7 +46,7 @@ Every displayed section becomes a canonical node. Preserve each node's
 associated original local entries, deduplicating note IDs when counting notes.
 Different sections can represent some of the same notes. Stop at the original
 HDBSCAN groups and expose their notes directly, regardless of their note count;
-there is no local L2 or further subdivision phase in V4.1.
+there is no local L2 or further subdivision phase in V4.2.
 
 All ready grouped-consolidation cases use the shared native runner. A broader
 section can advance once its own children have valid answers without waiting
@@ -53,7 +55,7 @@ provider retry limits, constructor outage backoff and atomic resume. Freeze and
 validate the numerical sections, membership and canonical parent relationships
 against the saved HDBSCAN result on advancement.
 
-Select `generation_policy = hierarchy-generation-v4.1` in a schema-1 hierarchy
+Select `generation_policy = hierarchy-generation-v4.2` in a schema-1 hierarchy
 definition. Use the ordinary `prepare-hierarchy`, `advance-hierarchy` and
 `run-hierarchy` commands. `hdbscan_binary` names the production executable.
 Optional `bootstrap_hierarchy` reuses a matching frozen V3.2 Bootstrap-v133
@@ -61,7 +63,14 @@ checkpoint and original vectors; without it, preparation creates the ordinary
 Bootstrap batch followed by original SSE encoding. Teacher specs, source corpus
 and local encoder controls retain their existing contracts.
 
-The offline adapter reproduces the earlier 27-group walkthrough: six roots and
+Saved V4.1 and V4 root-only definitions retain `min_cluster_size = 2` under
+their existing generation policies. Their requests, receipts, parameter
+records and results are not relabeled as V4.2. A V4.2 run requires a new
+definition and preparation; changing a frozen run's policy is invalid.
+
+## V4.1 validation evidence
+
+The V4.1 offline adapter reproduced the earlier 27-group walkthrough: six roots and
 33 displayed nodes, ending at all 27 original groups. That reference used v129
 meanings. V4.1 uses v133 inputs, so those historical memberships are a mechanical
 regression control rather than the expected new hierarchy.

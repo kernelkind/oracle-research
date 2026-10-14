@@ -12,6 +12,7 @@ from . import experiment as workflow
 
 
 CONFIG = dict(min_samples=3, min_cluster_size=2, selection_method="excess_of_mass")
+CONFIG_V42 = dict(CONFIG, min_cluster_size=4)
 
 
 def section_plan(response, request, mapping, max_siblings):
@@ -175,7 +176,8 @@ def request_for(state, ids, vectors):
             [identifier, state["items"][identifier]["vector_key"]] for identifier in ids
         ]),
         normalized_vector_sha256=hashlib.sha256(raw).hexdigest(),
-        hdbscan_configuration=CONFIG,
+        hdbscan_configuration=(CONFIG_V42 if state.get("generation_policy") ==
+                               "hierarchy-generation-v4.2" else CONFIG),
     ), mapping
 
 
@@ -185,8 +187,10 @@ def members(response, request, mapping):
         raise ValueError("unexpected HDBSCAN response identity")
     artifact = response["artifact"]
     manifest = artifact["manifest"]
-    if (json.loads(artifact["canonical_configuration_json"]) != CONFIG
-            or manifest.get("parameters") != CONFIG
+    configuration = request["hdbscan_configuration"]
+    if (configuration not in (CONFIG, CONFIG_V42)
+            or json.loads(artifact["canonical_configuration_json"]) != configuration
+            or manifest.get("parameters") != configuration
             or manifest.get("algorithm_version") != "hdbscan-star-exact-angular-v1"
             or manifest.get("fine_output_selector_version") != "hdbscan-clusters-members-v1"
             or any(manifest.get(k) != request[k] for k in (
@@ -198,7 +202,7 @@ def members(response, request, mapping):
         raise ValueError("HDBSCAN groups must be an array")
     assigned = []
     for group in segments:
-        if (not isinstance(group, list) or len(group) < 2
+        if (not isinstance(group, list) or len(group) < configuration["min_cluster_size"]
                 or any(not isinstance(i, str) or i not in mapping for i in group)):
             raise ValueError("invalid HDBSCAN group membership")
         assigned.extend(group)

@@ -586,6 +586,44 @@ print(json.dumps({"schema_version":1,"candidate_identity":"hdbscan-explicit-conf
                             if len(p["nodes"]) != 3 for n in p["nodes"]))
         generation.check_state(state)
 
+    def test_v42_uses_cluster_size_four_through_native_construction(self):
+        from sse_multivector import hierarchy_generation as generation
+        from sse_multivector import hierarchy_hdbscan as hdbscan
+
+        spec = self.prepare_v41(count=9)
+        binary = self.root / "hdbscan-fixture"
+        binary.write_text(binary.read_text().replace(
+            'groups=[ids[i:i+3] for i in range(0,len(ids)-2,3)]',
+            'size=r["hdbscan_configuration"]["min_cluster_size"]\n'
+            'groups=[ids[i:i+size] for i in range(0,len(ids)-size+1,size)]'
+        ).replace('"child_size":3', '"child_size":size'))
+        cfg = json.loads(spec.read_text())
+        cfg["generation_policy"] = "hierarchy-generation-v4.2"
+        spec = self.write("v42.json", cfg)
+        prior = self.calls()
+        self.cli("prepare-hierarchy", "v42", "--spec", spec)
+        self.assertEqual(self.calls(), prior)
+        result = json.loads(self.cli("run-hierarchy", "v42").stdout)
+        state = json.loads((self.root / "v42/state.json").read_text())
+        round_ = state["families"][0]["rounds"][0]
+        request = json.loads(Path(round_["hdbscan"]["request"]).read_text())
+        self.assertEqual(request["hdbscan_configuration"], dict(
+            min_samples=3, min_cluster_size=4, selection_method="excess_of_mass"))
+        self.assertEqual(result["generation_policy"], "hierarchy-generation-v4.2")
+        self.assertEqual(result["status"], "complete")
+        self.assertEqual(len(result["hdbscan_rounds"]), 1)
+        self.assertEqual(result["hdbscan_rounds"][0]["group_sizes"], [4, 4])
+        self.assertEqual(len(state["nodes"]), 2)
+        self.assertTrue(all(len(n["original_ids"]) == 4 for n in state["nodes"]))
+        generation.check_state(state)
+        legacy = dict(state, generation_policy="hierarchy-generation-v4.1")
+        old_request, _ = hdbscan.request_for(legacy, round_["current"],
+                                           generation._vectors(state, round_["current"]))
+        self.assertEqual(old_request["hdbscan_configuration"]["min_cluster_size"], 2)
+        state["generation_policy"] = "hierarchy-generation-v4.1"
+        with self.assertRaisesRegex(ValueError, "frozen hierarchy definition"):
+            generation.check_state(state)
+
     def test_v41_rejects_changed_section_edges_and_retains_native_reuse(self):
         from sse_multivector import hierarchy_generation as generation
 

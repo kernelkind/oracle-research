@@ -1,4 +1,4 @@
-"""Native V3 variants and V4/V4.1 HDBSCAN hierarchy construction.
+"""Native V3 variants and V4 variants of HDBSCAN hierarchy construction.
 
 The shared experiment runner owns teacher transport, caching and accounting.
 Preparation and advancement only freeze inputs and collect saved results.
@@ -32,7 +32,9 @@ POLICY_V31 = "hierarchy-generation-v3.1"
 POLICY_V32 = "hierarchy-generation-v3.2"
 POLICY_V4_ROOTS = "hierarchy-generation-v4-roots"
 POLICY_V41 = "hierarchy-generation-v4.1"
-HDBSCAN_POLICIES = (POLICY_V4_ROOTS, POLICY_V41)
+POLICY_V42 = "hierarchy-generation-v4.2"
+SECTION_POLICIES = (POLICY_V41, POLICY_V42)
+HDBSCAN_POLICIES = (POLICY_V4_ROOTS, *SECTION_POLICIES)
 TITLE_POLICIES = (POLICY_V32, *HDBSCAN_POLICIES)
 MAX_SIBLINGS = 6
 MIN_NOTES = 2
@@ -145,7 +147,7 @@ def summary(state):
             if state["status"] == "complete" else None)
         result["scope"] = ("roots only" if state["generation_policy"] == POLICY_V4_ROOTS
                            else "hierarchy down to original HDBSCAN groups")
-        if state["generation_policy"] == POLICY_V41:
+        if state["generation_policy"] in SECTION_POLICIES:
             result["hdbscan_section_cuts"] = state.get("hdbscan_sections", {}).get("cuts", [])
     return result
 
@@ -239,10 +241,10 @@ def prepare(spec_path, directory, history_root=None):
     policy = cfg.get("generation_policy", POLICY) if isinstance(cfg, dict) else None
     if policy == POLICY_V4_ROOTS:
         fields |= {"bootstrap_hierarchy", "hdbscan_binary"}
-    elif policy == POLICY_V41:
+    elif policy in SECTION_POLICIES:
         fields |= {"hdbscan_binary"}
     allowed_fields = (fields, fields | {"generation_policy"})
-    if policy == POLICY_V41:
+    if policy in SECTION_POLICIES:
         allowed_fields += (fields | {"bootstrap_hierarchy"},
                            fields | {"bootstrap_hierarchy", "generation_policy"})
     if (
@@ -343,7 +345,7 @@ def prepare(spec_path, directory, history_root=None):
         from . import hierarchy_hdbscan
         state["hdbscan_binary"] = str(workflow.resolve(cfg["hdbscan_binary"], spec_path.parent))
         if teacher_specs["consolidation_spec"]["prompt"]["id"] != "Hierarchy-consolidated-grouped-v1":
-            raise ValueError("V4/V4.1 requires Hierarchy-consolidated-grouped-v1")
+            raise ValueError("V4/V4.1/V4.2 requires Hierarchy-consolidated-grouped-v1")
         for path in (Path(state["hdbscan_binary"]), Path(hierarchy_hdbscan.__file__)):
             sources[str(path.resolve())] = trial._hash(path)
     if policy in HDBSCAN_POLICIES and "bootstrap_hierarchy" in cfg:
@@ -357,7 +359,7 @@ def prepare(spec_path, directory, history_root=None):
                 or source_state["bootstrap_spec"] != teacher_specs["bootstrap_spec"]
                 or source_state["worker_config"] != worker_config
                 or not source_state["experiments"][0].get("complete")):
-            raise ValueError("V4/V4.1 requires matching saved Bootstrap-v133 inputs and controls")
+            raise ValueError("V4/V4.1/V4.2 requires matching saved Bootstrap-v133 inputs and controls")
         state["bootstrap_hierarchy"] = str(source_path)
         sources[str(source_path)] = trial._hash(source_path)
         state["experiments"] = [deepcopy(source_state["experiments"][0])]
@@ -871,7 +873,7 @@ def _schedule(directory, state):
         state.update(status="constructing", unresolved=[])
         # Original vectors are frozen once, even if a small initial set needs no consolidation.
         _prepare_encoding(directory, state, list(state["items"]))
-    if state["generation_policy"] == POLICY_V41:
+    if state["generation_policy"] in SECTION_POLICIES:
         _schedule_v41(directory, state)
         return
     while True:
@@ -991,7 +993,7 @@ def _check_v41(state):
             raise ValueError("HDBSCAN sections appeared before clustering")
         return
     if len(family["rounds"]) != 1 or family.get("pending") is not None:
-        raise ValueError("V4.1 must keep a single HDBSCAN tree")
+        raise ValueError("V4.1/V4.2 must keep a single HDBSCAN tree")
     round_ = family["rounds"][0]
     vectors = _vectors(state, round_["current"])
     hierarchy_hdbscan.check_round(state, family, round_, vectors)
@@ -1117,7 +1119,7 @@ def check_state(state, *, verify_receipts=True, verify_current_code=True):
             source = workflow.read(expected_source)
             if (state["experiments"][0] != source["experiments"][0]
                     or state["encodings"][:len(source["encodings"])] != source["encodings"]
-                    or (state["generation_policy"] == POLICY_V41 and (
+                    or (state["generation_policy"] in SECTION_POLICIES and (
                         state["encodings"] != source["encodings"] or state["vectors"] != source["vectors"]))):
                 raise ValueError("reused Bootstrap or encoder producer changed")
     trial._ancestors(state["nodes"])
@@ -1204,7 +1206,7 @@ def check_state(state, *, verify_receipts=True, verify_current_code=True):
             node[k] != item[k] for k in ("subject", "meaning", "original_ids")
         ) or node["entries"] != [originals[i]["local"] for i in item["original_ids"]]:
             raise ValueError("canonical node differs from final construction item")
-        if state["generation_policy"] == POLICY_V41:
+        if state["generation_policy"] in SECTION_POLICIES:
             continue
         family = next(f for f in state["families"] if f["id"] == node["family"])
         if (
@@ -1215,10 +1217,10 @@ def check_state(state, *, verify_receipts=True, verify_current_code=True):
         ):
             raise ValueError("canonical placement differs from family construction")
     by_id = {n["id"]: n for n in state["nodes"]}
-    if state["generation_policy"] == POLICY_V41:
+    if state["generation_policy"] in SECTION_POLICIES:
         _check_v41(state)
     for family in state["families"]:
-        if state["generation_policy"] == POLICY_V41:
+        if state["generation_policy"] in SECTION_POLICIES:
             continue
         expected = (
             [

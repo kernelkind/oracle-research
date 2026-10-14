@@ -11,7 +11,8 @@ def fixture(groups=7, distances=None):
     count = 2 * groups
     ids = [f"{i:064x}" for i in range(count)]
     mapping = {x: f"L{i+1:05d}" for i, x in enumerate(ids)}
-    request = dict(source_vector_manifest_sha256="a"*64,
+    request = dict(hdbscan_configuration=hdbscan.CONFIG,
+                   source_vector_manifest_sha256="a"*64,
                    normalized_vector_sha256="b"*64)
     leaves = [count+groups-1+i for i in range(groups)]
     segments = [ids[2*i:2*i+2] for i in range(groups)]
@@ -38,6 +39,16 @@ def fixture(groups=7, distances=None):
 
 
 class HdbscanSectionTests(unittest.TestCase):
+    def test_v42_rejects_groups_below_four_and_mismatched_controls(self):
+        response, request, mapping = fixture(3)
+        request["hdbscan_configuration"] = hdbscan.CONFIG_V42
+        with self.assertRaisesRegex(ValueError, "controls"):
+            hdbscan.members(response, request, mapping)
+        response["artifact"]["canonical_configuration_json"] = json.dumps(hdbscan.CONFIG_V42)
+        response["artifact"]["manifest"]["parameters"] = hdbscan.CONFIG_V42
+        with self.assertRaisesRegex(ValueError, "group membership"):
+            hdbscan.members(response, request, mapping)
+
     def test_first_six_section_cut_and_recursive_leaf_stop(self):
         response, request, mapping = fixture(14)
         plan = hdbscan.section_plan(response, request, mapping, 6)
