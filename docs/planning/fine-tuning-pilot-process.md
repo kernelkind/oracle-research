@@ -1223,6 +1223,27 @@ scheduling remains disabled to keep stopping and receipt handling synchronous.
 Hardware checks find no throttle, contention or swap activity; the model still
 must read approximately 51 GB of weights per decode step.
 
+The [pinned Qwen template](https://huggingface.co/Qwen/Qwen3.8-27B/blob/1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0/chat_template.jinja)
+implements `xhigh` through a reasoning instruction, without assigning a numerical
+token limit. The 16,384-token thought cap belongs to this experiment. The current
+driver aborts a request that reaches that cap before `</think>`, retaining its
+reasoning and an empty, truncated final answer. Early results include both these
+cutoffs and a natural completion using 15,012 thought tokens plus 5,173 final
+tokens. A capped trace ends with “Now need final JSON”; hitting the cap does not
+establish a reasoning loop. The unchanged grader counts these empty outputs as
+invalid, so its overall score measures this bounded configuration rather than
+unrestricted `xhigh` capability. No larger-budget policy is approved yet.
+
+The [Qwen model card](https://huggingface.co/Qwen/Qwen3.8-27B#best-practices)
+recommends sampled thinking (`temperature=1.0`, `top_p=0.95`, `top_k=20`), which
+differs from the frozen greedy screen. This recommendation does not establish
+that sampling would fix the observed cutoffs. The pinned base also contains
+approximately 0.79 GiB of MTP tensors; the text-only merged export omits them.
+Native vLLM supports Qwen MTP, but its draft acceptance, greedy equivalence and
+memory/performance on this fine tune remain untested. It is not enabled in the
+active run. Any budget, sampling or MTP change requires a separately recorded
+configuration and validation; the current run's source and policy remain frozen.
+
 The manually launched twenty-note generation restarts at **19:35 UTC on
 October 14** with this validated configuration and immediate individual saves.
 Grading has not started. Report paired correctness, coverage, invalid outputs, thought/final
