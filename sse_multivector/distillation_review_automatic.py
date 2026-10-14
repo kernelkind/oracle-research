@@ -8,6 +8,7 @@ from pathlib import Path
 import subprocess
 import sys
 import time
+import traceback
 
 from . import distillation_coverage_search as coverage
 from . import distillation_review_evaluation as evaluation
@@ -413,6 +414,7 @@ def run(directory, *, runner_upgrade_reason=None):
                         result = {key: result[key] for key in ("automatic_status", "sources")}
                 experiment.write(directory / "state.json", state)
         except Exception as error:
+            traceback.print_exc(file=sys.stderr)
             # Stop new admissions before draining in-flight requests. A sibling's
             # unlimited provider retries must not keep a failed overall run alive.
             pauses = []
@@ -431,7 +433,7 @@ def run(directory, *, runner_upgrade_reason=None):
                 native = experiment.report(Path(path), include_request_preview=False)
                 entry.update(status="paused" if native.get("scheduling", {}).get("state") == "paused"
                     else "complete" if process.returncode == 0 else "failed", returncode=process.returncode)
-            state.update(status="failed", error=str(error))
+            state.update(status="failed", error=str(error) or type(error).__name__)
         experiment.write(directory / "state.json", state)
         return dict(status=state["status"], report=state["report"], experiments=state["experiments"],
             **({"error": state["error"]} if state.get("error") else {}))

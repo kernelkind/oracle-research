@@ -1,5 +1,6 @@
 """Automatic grading through the stable native CLI and saved worker receipts."""
 import json
+import io
 import os
 from pathlib import Path
 import subprocess
@@ -248,6 +249,30 @@ class DistillationAutomaticTests(unittest.TestCase):
         result = automatic.run(directory)
         self.assertEqual(result["status"], "failed")
         self.assertEqual(result["error"], state["error"])
+        self.assertEqual((self.root / "calls.json").read_bytes(), calls)
+
+    def test_empty_collection_exception_keeps_diagnostics_without_retrying(self):
+        from experiment_runner import experiment
+        from sse_multivector import distillation_review_automatic as automatic
+        _, _, coverage, _, _ = self.fixture("empty-exception")
+        directory = self.root / "automatic"
+        automatic.prepare(coverage, directory, runner_binary=self.root / "fake-runner")
+        diagnostics = io.StringIO()
+        with patch.dict(os.environ, FAKE_RUNNER_LOG=str(self.root / "calls.json")), \
+                patch.object(automatic, "_collect", side_effect=StopIteration()), \
+                patch.object(sys, "stderr", diagnostics):
+            result = automatic.run(directory)
+        state = experiment.read(directory / "state.json")
+        self.assertEqual(state["status"], "failed")
+        self.assertEqual(state["error"], "StopIteration")
+        self.assertEqual(result["error"], "StopIteration")
+        self.assertIn("Traceback (most recent call last)", diagnostics.getvalue())
+        self.assertIn("distillation_review_automatic.py", diagnostics.getvalue())
+        self.assertIn("StopIteration", diagnostics.getvalue())
+        self.assertNotIn("automatic_requests", diagnostics.getvalue())
+        self.assertFalse((directory / "grades.json").exists())
+        calls = (self.root / "calls.json").read_bytes()
+        self.assertEqual(automatic.run(directory), result)
         self.assertEqual((self.root / "calls.json").read_bytes(), calls)
 
     def test_dispatched_requests_are_not_embedded_again_while_scores_stay_pending(self):
