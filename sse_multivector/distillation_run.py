@@ -24,6 +24,14 @@ from sse_multivector.extraction_pipeline import prepare_mask_inputs
 from sse_multivector.mask_positions import decode, parse_json_response, unique_object
 
 
+def shared_code_files():
+    """The shared modules used by local-weight input formatting and parsing."""
+    import experiment_runner
+    root = Path(experiment_runner.__file__).parent
+    return {"experiment_runner/" + name: root / name for name in (
+        "__init__.py", "project.py", "compatibility.py", "extraction_pipeline.py", "mask_positions.py")}
+
+
 def sha256(path):
     with Path(path).open("rb") as source:
         return hashlib.file_digest(source, "sha256").hexdigest()
@@ -763,18 +771,69 @@ def train(config, tokenizer, data, output):
     return reloaded
 
 
+def subject_parent(data, config):
+    """Verify the immutable source of a new run before adopting its training state."""
+    binding = config["continuation"]
+    fields = {"parent_run", "manifest_sha256", "plan_sha256", "checkpoint_sha256"}
+    if (not isinstance(binding, dict) or set(binding) != fields
+            or not isinstance(binding["parent_run"], str) or not binding["parent_run"]
+            or any(not isinstance(binding[key], str) or not re.fullmatch(r"[a-f0-9]{64}", binding[key])
+                   for key in fields - {"parent_run"})):
+        raise ValueError("invalid continuation parent binding")
+    parent = Path(binding["parent_run"])
+    for filename, key in (("manifest.json", "manifest_sha256"), ("training-plan.json", "plan_sha256")):
+        if sha256(parent / filename) != binding[key]:
+            raise ValueError("continuation parent identity differs")
+    frozen = read_json(parent / "manifest.json")
+    original = frozen["config"]
+    if "continuation" in original or "preparation" in original:
+        raise ValueError("continuation parent must be a completed original subject pilot")
+    if frozen["dataset"] != data["manifest"]:
+        raise ValueError("continuation dataset differs from parent")
+    omitted = {"data", "training_milestones", "continuation"}
+    if frozen.get("local_model") is not None:
+        if not Path(config["model"]).is_dir() or file_hashes(Path(config["model"])) != frozen["local_model"]:
+            raise ValueError("continuation model recipe differs from parent")
+        omitted.add("model")
+    recipe = lambda value: {k: v for k, v in {"evaluation_tasks": ["subjects"], **value}.items()
+                            if k not in omitted}
+    if recipe(original) != recipe(config):
+        raise ValueError("continuation recipe differs from parent")
+    plan = subject_training_plan(data, original)
+    if read_json(parent / "training-plan.json") != plan:
+        raise ValueError("continuation parent training plan differs")
+    checkpoint = parent / "checkpoints" / f"checkpoint-{plan['milestones'][-1]}"
+    if sha256(checkpoint / "complete.json") != binding["checkpoint_sha256"]:
+        raise ValueError("continuation parent checkpoint differs")
+    metadata = subject_checkpoint_metadata(checkpoint, parent, plan)
+    return parent, checkpoint, plan, metadata
+
+
 def subject_training_plan(data, config):
     """Freeze whole-note block membership, then shuffle only within each block."""
     ids = [row["note_id"] for row in data["train"]]
     milestones = config["training_milestones"]
     if (any(row["task"] != "subjects" for row in data["train"]) or len(set(ids)) != len(ids)):
         raise ValueError("training requires exactly one subject example per note")
+    if config["batch_size"] * config["gradient_accumulation_steps"] != 8:
+        raise ValueError("subject training requires eight examples per update")
+    if "continuation" in config:
+        _, _, parent_plan, metadata = subject_parent(data, config)
+        if (not isinstance(milestones, list) or not milestones or not ids
+                or any(type(n) is not int for n in milestones)
+                or milestones != [metadata["cursor"] + len(ids) * (i + 1) for i in range(len(milestones))]):
+            raise ValueError("continuation milestones must add complete passes over the same notes")
+        order = list(parent_plan["note_ids"])
+        for index in range(len(milestones)):
+            block = list(ids)
+            random.Random(config["seed"] + index + 1).shuffle(block)
+            order.extend(block)
+        return {"note_ids": order, "milestones": parent_plan["milestones"] + milestones,
+                "examples_per_update": 8}
     if (not isinstance(milestones, list) or not milestones
             or any(type(n) is not int or n <= 0 for n in milestones)
             or milestones != sorted(set(milestones)) or milestones[-1] != len(ids)):
         raise ValueError("training milestones must increase through the complete note set")
-    if config["batch_size"] * config["gradient_accumulation_steps"] != 8:
-        raise ValueError("subject training requires eight examples per update")
     order, start = [], 0
     rng = random.Random(config["seed"])
     for stop in milestones:
@@ -915,9 +974,19 @@ def train_subject_block(config, tokenizer, data, output, plan, milestone, previo
                 "plan_sha256": sha256(output / "training-plan.json")}
     state = {"cursor": 0, "updates": 0, "supervised_tokens": 0, "consumed_note_ids": []}
     if previous is not None:
-        metadata = subject_checkpoint_metadata(previous, output, plan)
+        previous_identity = identity
+        if "continuation" in config:
+            parent, checkpoint, parent_plan, _ = subject_parent(data, config)
+            if Path(previous).resolve() == checkpoint.resolve():
+                metadata = subject_checkpoint_metadata(previous, parent, parent_plan)
+                previous_identity = {"manifest_sha256": sha256(parent / "manifest.json"),
+                                     "plan_sha256": sha256(parent / "training-plan.json")}
+            else:
+                metadata = subject_checkpoint_metadata(previous, output, plan)
+        else:
+            metadata = subject_checkpoint_metadata(previous, output, plan)
         state = torch.load(Path(previous) / "training-state.pt", map_location="cpu", weights_only=True)
-        if (state["identity"] != identity
+        if (state["identity"] != previous_identity
                 or any(state[key] != metadata[key] for key in ("cursor", "updates", "supervised_tokens", "consumed_note_ids"))):
             raise ValueError("subject training checkpoint identity or cursor differs")
     if milestone <= state["cursor"] or milestone not in plan["milestones"]:
@@ -1469,11 +1538,14 @@ def run_subject_preparation(config, tokenizer, data, output):
 
 def run_subject_pilot(config, tokenizer, data, output, through):
     plan = save_subject_training_plan(data, config, output)
-    baseline = subject_stage_summary(output / "baseline", data)
-    baseline_test = subject_test_summary(output, data, config) if "test" in data else None
+    baseline_output = output
     previous = None
+    if "continuation" in config:
+        baseline_output, previous, _, _ = subject_parent(data, config)
+    baseline = subject_stage_summary(baseline_output / "baseline", data)
+    baseline_test = subject_test_summary(baseline_output, data, config) if "test" in data else None
     stages = []
-    for milestone in plan["milestones"]:
+    for milestone in config["training_milestones"]:
         checkpoint = output / "checkpoints" / f"checkpoint-{milestone}"
         if (checkpoint / "complete.json").exists():
             subject_checkpoint_metadata(checkpoint, output, plan)
@@ -1483,7 +1555,7 @@ def run_subject_pilot(config, tokenizer, data, output, through):
             print(f"stage: subject training through {milestone} notes", flush=True)
             checkpoint = train_subject_block(config, tokenizer, data, output, plan, milestone, previous)
         stage = output / "evaluations" / checkpoint.name
-        final_test = "test" in data and milestone == plan["milestones"][-1]
+        final_test = "test" in data and ("continuation" in config or milestone == plan["milestones"][-1])
         if (not (stage / "complete.json").exists() or
                 final_test and not (output / "test" / checkpoint.name / "complete.json").exists()):
             print(f"stage: merged subject evaluation at {milestone} notes", flush=True)
@@ -1516,7 +1588,12 @@ def run_subject_pilot(config, tokenizer, data, output, through):
             "semantic_review": "Pending; saved subject answers require local correctness/coverage review."}
         if baseline_test is not None:
             report["test"] = {"review_status": "sealed", "baseline": baseline_test,
-                              previous.name: subject_test_summary(output, data, config, previous)}
+                              **{f"checkpoint-{m}": subject_test_summary(output, data, config,
+                                  output / "checkpoints" / f"checkpoint-{m}")
+                                 for m in config["training_milestones"]
+                                 if "continuation" in config or m == plan["milestones"][-1]}}
+        if "continuation" in config:
+            report["continuation"] = {k: v for k, v in config["continuation"].items() if k != "parent_run"}
         report_path = output / "report.json"
         if report_path.exists() and read_json(report_path) != report:
             raise ValueError("saved subject pilot report differs")
@@ -1525,26 +1602,38 @@ def run_subject_pilot(config, tokenizer, data, output, through):
     print("stage: subject pilot complete", flush=True)
 
 
-def verify_subject_run(output, data, config, through="report"):
+def verify_subject_run(output, data, config, through="report", *, package=None):
     """Verify the required work, not merely the existence of a completion report."""
     output = Path(output)
     frozen = read_json(output / "manifest.json")
     expected_config = {**config, "evaluation_tasks": ["subjects"]}
     if (frozen["dataset"] != data["manifest"] or
-            {k: v for k, v in frozen["config"].items() if k not in ("data", "model")}
-            != {k: v for k, v in expected_config.items() if k not in ("data", "model")}):
+            {k: v for k, v in frozen["config"].items() if k not in ("data", "model", "continuation")}
+            != {k: v for k, v in expected_config.items() if k not in ("data", "model", "continuation")}):
         raise ValueError("saved run differs from the packaged comparison")
+    for value in (frozen["config"], expected_config):
+        binding = value.get("continuation", {})
+        if {k: v for k, v in binding.items() if k != "parent_run"} != {
+                k: v for k, v in config.get("continuation", {}).items() if k != "parent_run"}:
+            raise ValueError("saved continuation parent differs")
     for key in ("data", "model"):
         actual, expected = Path(frozen["config"][key]), Path(config[key])
         if actual != expected and (expected.is_absolute() or actual.parts[-len(expected.parts):] != expected.parts):
             raise ValueError(f"saved run {key} differs from the packaged comparison")
+    if package is not None:
+        config = dict(config)
+        if (Path(package) / config["model"]).is_dir():
+            config["model"] = str(Path(package) / config["model"])
+        if "continuation" in config:
+            config["continuation"] = {**config["continuation"],
+                "parent_run": str(Path(package) / config["continuation"]["parent_run"])}
     if through == "preparation":
         data = preparation_data(data, config)
     plan = subject_training_plan(data, config)
     if read_json(output / "training-plan.json") != plan:
         raise ValueError("saved subject training plan differs")
     metadata = [subject_checkpoint_metadata(output / "checkpoints" / f"checkpoint-{m}", output, plan)
-                for m in plan["milestones"]]
+                for m in config["training_milestones"]]
     report = read_json(output / "report.json")
     if (report.get("status") != "complete" or report["training"] != {
             "examples": len(plan["note_ids"]), "updates": metadata[-1]["updates"]}):
@@ -1587,10 +1676,11 @@ def verify_subject_run(output, data, config, through="report"):
                        for batch in full_plan["batches"])):
             raise ValueError("preparation did not cover the full validation batch shapes")
         return {"status": "complete", "training": report["training"]}
-    baseline = subject_stage_summary(output / "baseline", data)
+    baseline_output = subject_parent(data, config)[0] if "continuation" in config else output
+    baseline = subject_stage_summary(baseline_output / "baseline", data)
     stages = []
-    first_plan = read_json(output / "baseline/subject-batches.json")
-    for milestone in plan["milestones"]:
+    first_plan = read_json(baseline_output / "baseline/subject-batches.json")
+    for milestone in config["training_milestones"]:
         checkpoint = output / "checkpoints" / f"checkpoint-{milestone}"
         stage = output / "evaluations" / checkpoint.name
         summary = subject_stage_summary(stage, data)
@@ -1604,15 +1694,23 @@ def verify_subject_run(output, data, config, through="report"):
         raise ValueError("subject comparison report differs from saved work")
     checked = {"status": "complete", "baseline": baseline, "checkpoints": stages, "training": report["training"]}
     if "test" in data:
-        final = output / "checkpoints" / f"checkpoint-{plan['milestones'][-1]}"
-        tests = {"review_status": "sealed", "baseline": subject_test_summary(output, data, config),
-                 final.name: subject_test_summary(output, data, config, final)}
-        if (read_json(output / "test/baseline/subject-batches.json") !=
-                read_json(output / "test" / final.name / "subject-batches.json")):
-            raise ValueError("test batching differs from baseline")
+        tests = {"review_status": "sealed", "baseline": subject_test_summary(baseline_output, data, config)}
+        for milestone in config["training_milestones"]:
+            if "continuation" not in config and milestone != plan["milestones"][-1]:
+                continue
+            checkpoint = output / "checkpoints" / f"checkpoint-{milestone}"
+            tests[checkpoint.name] = subject_test_summary(output, data, config, checkpoint)
+            if (read_json(baseline_output / "test/baseline/subject-batches.json") !=
+                    read_json(output / "test" / checkpoint.name / "subject-batches.json")):
+                raise ValueError("test batching differs from baseline")
         if report.get("test") != tests:
             raise ValueError("subject test report differs from saved work")
         checked["test"] = tests
+    if "continuation" in config:
+        binding = {k: v for k, v in config["continuation"].items() if k != "parent_run"}
+        if report.get("continuation") != binding:
+            raise ValueError("subject report continuation differs")
+        checked["continuation"] = binding
     return checked
 
 
@@ -1628,7 +1726,7 @@ def run(config_path, output, through="report"):
         required = required - {"mask_prompt", "mask_batch_size", "max_steps", "save_steps", "subject_fraction", "max_subjects"}
         required |= {"training_milestones", "subject_batching"}
     optional = {"subject_batching", "evaluation_tasks", "preparation", "max_subjects",
-                "efficient_attention", "fused_linear_cross_entropy"}
+                "efficient_attention", "fused_linear_cross_entropy", "continuation"}
     if required - set(config) or set(config) - required - optional:
         raise ValueError(f"configuration fields differ: {set(config) ^ required}")
     for key in ("efficient_attention", "fused_linear_cross_entropy"):
@@ -1646,6 +1744,8 @@ def run(config_path, output, through="report"):
         if config.get("evaluation_tasks", ["subjects"]) != ["subjects"] or config["quantization"] != "none":
             raise ValueError("subject pilot requires subjects-only evaluation and an unquantized base")
         config.setdefault("evaluation_tasks", ["subjects"])
+    if "continuation" in config and (not pilot or "preparation" in config or through == "preparation"):
+        raise ValueError("continuation requires a subject pilot without preparation settings")
     if config.get("evaluation_tasks", ["subjects", "mask"]) not in (["subjects"], ["subjects", "mask"]):
         raise ValueError("invalid evaluation tasks")
     for key in required - {"model", "revision", "data", "mask_prompt", "device", "quantization",
@@ -1689,7 +1789,8 @@ def run(config_path, output, through="report"):
     code = Path(__file__).parent
     frozen = {"config": config, "dataset": data["manifest"],
         "code": {name: sha256(code / name) for name in
-                 ("distillation_run.py", "distillation_data.py", "extraction_pipeline.py", "mask_positions.py")},
+                 ("distillation_run.py", "distillation_data.py", "extraction_pipeline.py", "mask_positions.py",
+                  "_runner_bootstrap.py")} | {name: sha256(path) for name, path in shared_code_files().items()},
         "python": sys.version,
         "packages": {p: importlib.metadata.version(p) for p in ("torch", "transformers", "peft", "accelerate",
                                                                  "tokenizers", "safetensors", "bitsandbytes", "numpy")
@@ -1725,6 +1826,15 @@ def run(config_path, output, through="report"):
             return
         if through == "preparation":
             run_subject_preparation(config, tokenizer, data, output)
+            return
+        if "continuation" in config:
+            # Reuse source-bound baselines; never rent GPU time to regenerate them.
+            parent, _, _, _ = subject_parent(data, config)
+            subject_stage_summary(parent / "baseline", data)
+            if "test" in data:
+                subject_test_summary(parent, data, config)
+            if through != "baseline":
+                run_subject_pilot(config, tokenizer, data, output, through)
             return
         print("stage: baseline", flush=True)
         baseline_path = output / "baseline" / "results.json"

@@ -40,6 +40,23 @@ class VerificationFixture:
         return attempt, keys
 
 class VerificationCacheTests(VerificationFixture, unittest.TestCase):
+    def test_clean_build_context_imports_without_a_sibling_runner_checkout(self):
+        environment = {k: v for k, v in os.environ.items() if k != 'EXPERIMENT_RUNNER_ROOT'}
+        script = "import sys; sys.path.insert(0, sys.argv[1]); " \
+                 "from sse_multivector import distillation_run, distillation_deploy; " \
+                 "assert distillation_run.parse_subjects('{\"subjects\":[]}') == []; " \
+                 "assert 'experiment_runner/mask_positions.py' in distillation_deploy.code_hashes()"
+        result = subprocess.run([sys.executable, '-I', '-c', script, str(self.package)],
+            cwd=self.root, env=environment, capture_output=True, text=True, timeout=20)
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_shared_parser_change_invalidates_every_runtime_stage(self):
+        _, keys = self.cached()
+        with (self.package / 'experiment_runner/mask_positions.py').open('a') as output:
+            output.write('\n# changed shared parser\n')
+        current = vm.verification_keys(self.package)
+        self.assertTrue(all(current['stages'][key] != value for key, value in keys['stages'].items()))
+
     def test_unchanged_successful_stages_are_reused_automatically(self):
         attempt, keys = self.cached()
         plan = vm.verification_plan(self.directory, keys)

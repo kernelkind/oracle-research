@@ -359,7 +359,7 @@ deploy.execute(Path({str(package)!r}), Path({str(output)!r}))
                 with lock:
                     active.remove(gpu)
                 return type('Result', (), {'returncode': 0})()
-            def verify(directory, *args):
+            def verify(directory, *args, **kwargs):
                 with lock:
                     if directory.parent.name == 'preparation':
                         prepared.add(directory.name)
@@ -1092,6 +1092,31 @@ class SharedSSHTests(unittest.TestCase):
             for milestone in (1, 2, 3, 4, 6):
                 self.assertTrue(verify_saved(run / f'checkpoints/checkpoint-{milestone}'))
                 self.assertTrue(verify_saved(run / f'evaluations/checkpoint-{milestone}'))
+
+    def test_single_model_continuation_transfers_parent_and_requires_both_test_collections(self):
+        from vast import runner
+        source = Path(os.environ['DISTILLATION_TEST_OUTPUT'])
+        root = Path(os.environ['DISTILLATION_DEPLOY_OUTPUT']) / 'single-model-continuation'
+        root.mkdir(parents=True)
+        inputs = root / 'inputs'
+        deploy.prepare_continuation(source / 'continuation-parent-archived', source / 'continuation-data',
+            source / 'continuation-preparation.json', inputs, name='qwen')
+        self.assertEqual(deploy.verify_package(inputs)['gpu_assignments'], {'qwen': 0})
+        result = self.run_package(inputs, root / 'operation')
+        checked = deploy.verify_results(inputs, result)['candidates']['qwen']
+        self.assertEqual(checked['training'], {'examples': 12, 'updates': 4})
+        self.assertEqual(set(checked['test']), {'review_status', 'baseline', 'checkpoint-8', 'checkpoint-12'})
+        self.assertFalse((result / 'qwen/baseline').exists())
+        self.assertTrue(deploy.review_completion(inputs, root / 'operation')['complete'])
+        # A final report and second test do not authorize deleting the rental
+        # when an answer from the first new test is absent locally.
+        missing = result / 'qwen/test/checkpoint-8/note-0000/subjects.json'
+        saved = missing.read_bytes()
+        missing.unlink()
+        with self.assertRaises((OSError, ValueError, runner.OperationError)):
+            deploy.review_completion(inputs, root / 'operation')
+        missing.write_bytes(saved)
+        self.assertTrue(deploy.review_completion(inputs, root / 'operation')['complete'])
 
     def test_subject_pilot_continues_saved_checkpoint_and_refreshes_retrieval_over_ssh(self):
         policy = {'budget_bytes': 8*1024*1024, 'workspace_bytes': 0,

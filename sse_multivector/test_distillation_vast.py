@@ -22,6 +22,52 @@ def quote():
 
 
 class WorkloadTests(unittest.TestCase):
+    def test_known_failed_machine_is_rejected_before_workload_preparation(self):
+        settings, offer = quote()
+        settings['excluded_machine_ids'] = [offer['machine_id']]
+        with self.assertRaisesRegex(ValueError, 'excluded machine'):
+            deploy.check_offer(settings, offer)
+
+    def test_qwen_continuation_profile_has_complete_single_rental_allowances(self):
+        settings = read_json(Path(__file__).parent / 'distillation/qwen-continuation-v1.vast.json')
+        offer = {**settings['offer_equals'], **settings['offer_minimums'],
+            **settings['offer_maximums'], 'id': 123, 'machine_id': 12, 'bundle_id': 23,
+            'driver_version': '595.58.03', 'dph_base': 1.10, 'storage_cost': .24,
+            'storage_total_cost': .05}
+        self.assertEqual(settings['offer_equals']['num_gpus'], 1)
+        self.assertEqual(settings['approved_maximum_usd'], 30)
+        self.assertGreaterEqual(settings['rental_hours'], 24)
+        self.assertIsNone(settings['worker_timeout_seconds'])
+        self.assertFalse(settings['ssh_direct'])
+        self.assertEqual(settings['onstart'], 'ssh-keygen -A && service ssh start')
+        self.assertIn(146170, settings['excluded_machine_ids'])
+        self.assertNotIn('local_volume', settings)
+        checked = deploy.check_offer(settings, offer)
+        self.assertLessEqual(float(checked['maximum_charge_usd']), 30)
+        self.assertGreaterEqual(settings['setup_cost_cents'], 100 * (
+            settings['inbound_gb'] * settings['offer_maximums']['inet_down_cost'] +
+            settings['outbound_gb'] * settings['offer_maximums']['inet_up_cost']))
+        sys.path.insert(0, str(deploy.CODE_ROOT / 'vast'))
+        import package as packager
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            DistillationDataTests().prepare(root)
+            config = root / 'qwen.json'
+            write_json(config, {'data': str(root / 'prepared'), 'mask_prompt': str(root / 'masks.txt'),
+                'model': 'example/qwen', 'revision': 'a' * 40, 'training_milestones': [1, 2]})
+            deploy.prepare([config], root / 'inputs', gpu_assignments={'qwen': 0})
+            spec = vast.make_spec(settings, offer, root / 'inputs',
+                                 settings['image_repository'] + '@sha256:' + '4' * 64)
+            ledger = root / 'ledger.json'
+            write_json(ledger, {'lifetime_cap_cents': 100000, 'actual_spend_cents': 0,
+                'outstanding_commitments_cents': 0, 'reserved_remaining_work_cents': 0, 'entries': []})
+            contract = read_json(packager.freeze(spec, root / 'operation', ledger))
+            self.assertIsNone(contract['workload']['work_seconds'])
+            self.assertTrue(contract['workload']['resumable'])
+            self.assertEqual(contract['session_seconds'], 86400)
+            self.assertEqual(contract['limits']['setup_cost_micro_usd'], 5_000_000)
+            self.assertEqual(contract['limits']['reservation_ceiling_micro_usd'], 30_000_000)
+
     def test_one_gpu_download_workload_requires_volume_and_no_training(self):
         from gte.full_build_package import write_manifest
         settings, offer = quote()

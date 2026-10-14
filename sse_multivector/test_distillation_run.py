@@ -845,6 +845,113 @@ class TinyWorkflowTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "test collection source differs"):
             distillation_run.verify_subject_run(output, data, config)
 
+    def test_continuation_preserves_optimizer_and_collects_both_tests_without_new_baselines(self):
+        import shutil
+        import torch
+        from safetensors.torch import load_file
+        root = self.root
+        splits = root / "continuation-splits.json"
+        distillation_run.write_json(splits, {"train": ["0", "1", "2", "3"],
+                                           "validation": ["4", "5"], "test": ["6", "7"]})
+        prepared = root / "continuation-data"
+        distillation_data.prepare(root / "source.json", root / "annotations.json", root / "subjects.txt",
+            None, "AS-test", None, 2, "test", prepared, tasks=("subjects",), splits_path=splits)
+        original = {k: v for k, v in self.config.items() if k not in
+                    ("mask_prompt", "max_steps", "save_steps", "subject_fraction", "mask_batch_size")}
+        original.update(data=str(prepared), training_milestones=[2, 4], batch_size=1,
+            gradient_accumulation_steps=8, evaluation_tasks=["subjects"], max_new_tokens={"subjects": 120},
+            subject_batching={"budget_bytes": 8*1024*1024, "workspace_bytes": 0,
+                              "prefill_bytes_per_token": 1024, "attention_matrix_count": 4})
+        parent = root / "continuation-parent"
+        path = root / "continuation-parent.json"
+        distillation_run.write_json(path, original)
+        distillation_run.run(path, parent)
+        source = parent / "checkpoints/checkpoint-4"
+        before = distillation_run.file_hashes(parent)
+        config = {**original, "training_milestones": [8, 12], "continuation": {
+            "parent_run": str(parent), "manifest_sha256": distillation_run.sha256(parent / "manifest.json"),
+            "plan_sha256": distillation_run.sha256(parent / "training-plan.json"),
+            "checkpoint_sha256": distillation_run.sha256(source / "complete.json")}}
+        path, output = root / "continuation.json", root / "continuation"
+        distillation_run.write_json(path, config)
+        distillation_run.run(path, output)
+        self.assertEqual(before, distillation_run.file_hashes(parent))
+        self.assertFalse((output / "baseline").exists())
+        self.assertFalse((output / "test/baseline").exists())
+        data = distillation_run.load_data(prepared)
+        checked = distillation_run.verify_subject_run(output, data, config)
+        self.assertEqual(checked["training"], {"examples": 12, "updates": 4})
+        self.assertEqual(set(checked["test"]), {"review_status", "baseline", "checkpoint-8", "checkpoint-12"})
+        for milestone in (8, 12):
+            self.assertEqual(checked["test"][f"checkpoint-{milestone}"]["notes"], 2)
+            self.assertTrue(distillation_run.verify_saved(output / f"evaluations/checkpoint-{milestone}"))
+        # Compare actual weights and Adam moments with identical production updates
+        # performed without any evaluation in between.
+        reference = root / "continuation-reference"
+        reference.mkdir()
+        for name in ("manifest.json", "training-plan.json"):
+            shutil.copyfile(output / name, reference / name)
+        plan = distillation_run.read_json(output / "training-plan.json")
+        previous = source
+        for update, milestone in enumerate((8, 12), 3):
+            previous = distillation_run.train_subject_block(config, self.tokenizer, data,
+                reference, plan, milestone, previous)
+            checkpoint = output / f"checkpoints/checkpoint-{milestone}"
+            actual = torch.load(checkpoint / "training-state.pt", weights_only=True)
+            expected = torch.load(previous / "training-state.pt", weights_only=True)
+            self.assertEqual(actual["updates"], update)
+            self.assertTrue(all(int(value["step"]) == update for value in actual["optimizer"]["state"].values()))
+            self.assertEqual(actual["consumed_note_ids"], plan["note_ids"][:milestone])
+            torch.testing.assert_close(load_file(str(checkpoint / "adapter_model.safetensors")),
+                                       load_file(str(previous / "adapter_model.safetensors")), rtol=0, atol=0)
+            torch.testing.assert_close(actual["optimizer"], expected["optimizer"], rtol=0, atol=0)
+            torch.testing.assert_close(actual["random"]["torch"], expected["random"]["torch"], rtol=0, atol=0)
+            for key in ("python", "numpy", "cuda"):
+                self.assertEqual(actual["random"][key], expected["random"][key])
+            self.assertEqual(actual["schedule"], expected["schedule"])
+        completed = distillation_run.file_hashes(output)
+        with patch.object(distillation_run, "load_model", side_effect=AssertionError("repeated completed work")):
+            distillation_run.run(path, output)
+        self.assertEqual(completed, distillation_run.file_hashes(output))
+        # A missing first-pass test must block completion even when the final
+        # report exists. Recover its publication from the saved batch receipt.
+        stage = output / "test/checkpoint-8"
+        (stage / "complete.json").unlink()
+        (stage / "results.json").unlink()
+        shutil.rmtree(stage / "note-0001")
+        with self.assertRaises((ValueError, FileNotFoundError)):
+            distillation_run.verify_subject_run(output, data, config)
+        with patch.object(distillation_run, "train_subject_block", side_effect=AssertionError("retrained")), \
+                patch.object(distillation_run, "generate_batch", side_effect=AssertionError("regenerated saved answer")):
+            distillation_run.run(path, output)
+        distillation_run.verify_subject_run(output, data, config)
+        self.assertEqual(before, distillation_run.file_hashes(parent))
+        # The rented machine cannot see the original local parent directory.
+        # Packaging must carry the sealed parent, without its unused checkpoints.
+        from sse_multivector import distillation_deploy as deploy
+        package = root / "continuation-package"
+        preparation = {**original, "training_milestones": [1, 3], "preparation": {
+            "max_new_tokens": 4, "cache_fill_tokens": 16, "train_note_ids": ["0", "1", "2"],
+            "evaluation_note_ids": ["4"]}}
+        preparation_path = root / "continuation-preparation.json"
+        distillation_run.write_json(preparation_path, preparation)
+        subprocess.run([sys.executable, "-m", "sse_multivector.distillation_deploy", "prepare-continuation",
+            "--parent-run", str(parent), "--data", str(prepared), "--preparation-config", str(preparation_path),
+            "--name", "continuation", "--output", str(package)], check=True, capture_output=True, timeout=30)
+        self.assertEqual(deploy.verify_package(package)["gpu_assignments"], {"continuation": 0})
+        self.assertEqual(deploy.verify_package(package)["preparation_runs"], ["preparation-configs/continuation.json"])
+        self.assertIsNone(deploy.verify_package(package)["timeout_seconds"])
+        packaged = distillation_run.read_json(package / "configs/continuation.json")
+        self.assertTrue(packaged["continuation"]["parent_run"].startswith("parents/"))
+        copied_parent = package / packaged["continuation"]["parent_run"]
+        self.assertEqual(sorted(p.name for p in (copied_parent / "checkpoints").iterdir()), ["checkpoint-4"])
+        parent.rename(root / "continuation-parent-archived")
+        retrieved = root / "continuation-package-results"
+        self.assertEqual(deploy.execute(package, retrieved)["state"], "complete")
+        checked = deploy.verify_results(package, retrieved)
+        self.assertEqual(checked["candidates"]["continuation"]["training"], {"examples": 12, "updates": 4})
+        self.assertFalse((retrieved / "continuation/baseline").exists())
+
     def test_subject_preparation_saves_cache_measurement_before_memory_rejection(self):
         import shutil
         prepared = self.root / "failed-cache-data"

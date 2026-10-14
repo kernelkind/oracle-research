@@ -10,12 +10,13 @@ import shutil
 import signal
 import subprocess
 import sys
+import tempfile
 import threading
 import time
 
 from gte.full_build_package import write_manifest, verify_manifest
 from sse_multivector.distillation_run import (load_data, read_json, sha256, write_json,
-    preparation_data, subject_stage_summary, subject_test_summary, verify_subject_run)
+    preparation_data, shared_code_files, subject_parent, subject_stage_summary, subject_test_summary, verify_subject_run)
 
 
 CODE_ROOT = Path(__file__).resolve().parents[1]
@@ -23,9 +24,11 @@ CODE_FILES = (
     "sse_multivector/distillation_deploy.py", "sse_multivector/distillation_run.py",
     "sse_multivector/distillation_cache.py",
     "sse_multivector/distillation_data.py", "sse_multivector/extraction_pipeline.py",
+    "sse_multivector/_runner_bootstrap.py",
     "sse_multivector/mask_positions.py", "sse_multivector/distillation/requirements.lock",
     "sse_multivector/distillation/requirements-gpu.lock",
     "sse_multivector/distillation_vast.py", "sse_multivector/distillation/vast-launch.json",
+    "sse_multivector/distillation/qwen-continuation-v1.vast.json",
     "sse_multivector/distillation/Dockerfile",
     "vast/runner.py", "vast/package.py",
     "gte/full_build_package.py",
@@ -45,6 +48,10 @@ def check_offer(settings, offer):
             raise ValueError("invalid numeric quote")
         return result
 
+    excluded = settings.get("excluded_machine_ids", [])
+    if (not isinstance(excluded, list) or any(type(n) is not int or n <= 0 for n in excluded)
+            or offer.get("machine_id") in excluded):
+        raise ValueError("offer uses an excluded machine or invalid exclusion list")
     for key, value in settings["offer_equals"].items():
         if offer.get(key) != value:
             raise ValueError(f"offer differs: {key}")
@@ -77,7 +84,8 @@ def check_offer(settings, offer):
 
 
 def code_hashes():
-    return {name: sha256(CODE_ROOT / name) for name in CODE_FILES}
+    return ({name: sha256(CODE_ROOT / name) for name in CODE_FILES}
+            | {name: sha256(path) for name, path in shared_code_files().items()})
 
 
 def validate_gpu_assignments(assignments, names):
@@ -120,7 +128,7 @@ def prepare(config_paths, output, timeout_seconds=None, through="report", prepar
             if (Path(pilot_path).stem != Path(prep_path).stem or "preparation" in pilot
                     or "preparation" not in prep or "training_milestones" not in pilot
                     or {k: v for k, v in prep.items() if k not in ("preparation", "training_milestones")}
-                       != {k: v for k, v in pilot.items() if k != "training_milestones"}):
+                       != {k: v for k, v in pilot.items() if k not in ("training_milestones", "continuation")}):
                 raise ValueError("preparation recipe differs from the pilot")
             preparation_data(load_data(prep["data"], prep.get("mask_prompt")), prep)
     if output.exists():
@@ -141,7 +149,22 @@ def prepare(config_paths, output, timeout_seconds=None, through="report", prepar
             config = read_json(path)
             data = Path(config["data"])
             prompt = Path(config["mask_prompt"]) if "mask_prompt" in config else None
-            load_data(data, prompt)
+            loaded = load_data(data, prompt)
+            if "continuation" in config:
+                parent, checkpoint, _, _ = subject_parent(loaded, config)
+                subject_stage_summary(parent / "baseline", loaded)
+                if "test" in loaded:
+                    subject_test_summary(parent, loaded, config)
+                parent_relative = "parents/" + sha256(parent / "manifest.json")
+                destination = staging / parent_relative
+                if not destination.exists():
+                    destination.mkdir(parents=True)
+                    for filename in ("manifest.json", "training-plan.json"):
+                        shutil.copyfile(parent / filename, destination / filename)
+                    for directory in (Path("baseline"), checkpoint.relative_to(parent),
+                                      *([Path("test/baseline")] if "test" in loaded else [])):
+                        shutil.copytree(parent / directory, destination / directory)
+                config["continuation"] = {**config["continuation"], "parent_run": parent_relative}
             data_relative = "data/" + sha256(data / "manifest.json")
             (staging / data_relative).mkdir(parents=True, exist_ok=True)
             for filename in ("manifest.json", *read_json(data / "manifest.json")["outputs"]):
@@ -179,6 +202,33 @@ def prepare(config_paths, output, timeout_seconds=None, through="report", prepar
         shutil.rmtree(staging)
         raise
     return sha256(output / "manifest.json")
+
+
+def prepare_continuation(parent_run, data, preparation_config, output, *, name, additional_passes=2):
+    """Derive a single-model package from sealed training state, without inference."""
+    if type(additional_passes) is not int or additional_passes < 1:
+        raise ValueError("additional passes must be positive")
+    if not re.fullmatch(r"[a-z][a-z0-9_-]*", name):
+        raise ValueError("invalid continuation run name")
+    parent_run = Path(parent_run).resolve()
+    original = read_json(parent_run / "manifest.json")["config"]
+    if "continuation" in original or "preparation" in original:
+        raise ValueError("continuation requires an original subject pilot")
+    count = original["training_milestones"][-1]
+    checkpoint = parent_run / "checkpoints" / f"checkpoint-{count}"
+    config = {**original, "data": str(Path(data).resolve()),
+        "training_milestones": [count * (i + 2) for i in range(additional_passes)],
+        "continuation": {"parent_run": str(parent_run),
+            "manifest_sha256": sha256(parent_run / "manifest.json"),
+            "plan_sha256": sha256(parent_run / "training-plan.json"),
+            "checkpoint_sha256": sha256(checkpoint / "complete.json")}}
+    preparation = {**read_json(preparation_config), "data": config["data"]}
+    with tempfile.TemporaryDirectory() as temporary:
+        root = Path(temporary)
+        pilot_path, prep_path = root / "configs" / (name + ".json"), root / "preparation" / (name + ".json")
+        write_json(pilot_path, config)
+        write_json(prep_path, preparation)
+        return prepare([pilot_path], output, preparation_configs=[prep_path], gpu_assignments={name: 0})
 
 
 def verify_package(package):
@@ -282,6 +332,9 @@ def execute(package, output):
                     config[key] = str(package / config[key])
             if (package / config["model"]).is_dir():
                 config["model"] = str(package / config["model"])
+            if "continuation" in config:
+                config["continuation"] = {**config["continuation"],
+                    "parent_run": str(package / config["continuation"]["parent_run"])}
             return name, config
 
         def invoke(relative, mode, preparing=False):
@@ -369,12 +422,19 @@ def execute(package, output):
             baselines = {}
             def verify_baseline(directory, config):
                 data = load_data(config["data"])
+                name = directory.name
+                if "continuation" in config:
+                    directory = subject_parent(data, config)[0]
                 summary = subject_stage_summary(directory / "baseline", data)
                 if "test" in data:
                     summary["test"] = subject_test_summary(directory, data, config)
                 with lock:
-                    baselines[directory.name] = summary
-            run_stage(pilots, "baseline", verify=verify_baseline)
+                    baselines[name] = summary
+            continuing = [r for r in pilots if "continuation" in read_json(package / r)]
+            for relative in continuing:
+                name, config = candidate(relative)
+                verify_baseline(output / name, config)
+            run_stage([r for r in pilots if r not in continuing], "baseline", verify=verify_baseline)
             write_json(output / "baselines-integrity.json", baselines)
         if job["through"] != "baseline" or not pilots:
             def verify_run(directory, config):
@@ -454,7 +514,7 @@ def verify_results(package, output):
             raise ValueError("comparison verification requires subject pilot reports")
         name = Path(relative).stem
         data = load_data(package / config["data"])
-        results[name] = verify_subject_run(output / name, data, config, "report")
+        results[name] = verify_subject_run(output / name, data, config, "report", package=package)
     for relative in job.get("preparation_runs", []):
         config = read_json(package / relative)
         data = load_data(package / config["data"])
@@ -487,9 +547,9 @@ def review_completion(package, operation):
         "retrieval_verification_sha256": sha256(receipt_path),
         "integrity_sha256": sha256(operation / "launch/completion-integrity.json"),
         "checks": ["All required candidate baselines and checkpoint evaluations accounted for.",
-                   "Reserved baseline/final test collections complete, source-bound and sealed for local review.",
+                   "All required reserved test collections complete, source-bound and sealed for local review.",
                    "Raw/parsed subjects and batch receipts agree; model failures remain counted.",
-                   "Every training note used once; all continuing checkpoints retained.",
+                   "Every planned training-note use and update verified; all continuing checkpoints retained.",
                    "Matched preparation and local transfer verification complete."]}
     write_json(operation / "launch/completion-review.json", review)
     runner.verify_completion_review(context, instance_id, None)
@@ -511,6 +571,13 @@ def main():
     prepare_parser.add_argument("--timeout-seconds", type=int,
                                 help="optional execution deadline; omitted means no automatic stop")
     prepare_parser.add_argument("--through", choices=("preflight", "baseline", "train", "report", "preparation"), default="report")
+    continuation_parser = commands.add_parser("prepare-continuation", help="freeze a single-model continuation; no inference or rental")
+    continuation_parser.add_argument("--parent-run", type=Path, required=True)
+    continuation_parser.add_argument("--data", type=Path, required=True)
+    continuation_parser.add_argument("--preparation-config", type=Path, required=True)
+    continuation_parser.add_argument("--name", required=True)
+    continuation_parser.add_argument("--additional-passes", type=int, default=2)
+    continuation_parser.add_argument("--output", type=Path, required=True)
     offer_parser = commands.add_parser("check-offer", help="validate a saved quote without renting")
     offer_parser.add_argument("--settings", type=Path, required=True)
     offer_parser.add_argument("--offers", type=Path, required=True)
@@ -528,6 +595,9 @@ def main():
     args = parser.parse_args()
     if args.operation == "status":
         result = status(args.output)
+    elif args.operation == "prepare-continuation":
+        result = {"package_sha256": prepare_continuation(args.parent_run, args.data,
+            args.preparation_config, args.output, name=args.name, additional_passes=args.additional_passes)}
     elif args.operation == "prepare":
         result = {"package_sha256": prepare(args.config, args.output, args.timeout_seconds, args.through,
                                              args.preparation_config,

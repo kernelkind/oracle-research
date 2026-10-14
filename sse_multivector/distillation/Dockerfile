@@ -26,14 +26,18 @@ RUN uv pip install --python /opt/distillation-venv/bin/python --target /opt/dist
 
 WORKDIR /work
 FROM runtime
+COPY experiment_runner/ /work/experiment_runner/
 COPY gte/full_build_package.py gte/calibration_package.py gte/vast_private_create.py /work/gte/
 COPY sse_multivector/distillation/requirements.lock sse_multivector/distillation/Dockerfile \
     sse_multivector/distillation/requirements-gpu.lock \
     sse_multivector/distillation/vast-launch.json \
+    sse_multivector/distillation/qwen-continuation-v1.vast.json \
     /work/sse_multivector/distillation/
 COPY sse_multivector/distillation_run.py sse_multivector/distillation_data.py \
     sse_multivector/extraction_pipeline.py sse_multivector/mask_positions.py \
+    sse_multivector/_runner_bootstrap.py \
     sse_multivector/test_distillation_run.py sse_multivector/test_distillation_data.py \
+    sse_multivector/test_distillation_continuation.py \
     sse_multivector/distillation_deploy.py sse_multivector/test_distillation_deploy.py \
     sse_multivector/distillation_cache.py sse_multivector/test_distillation_cache.py \
     sse_multivector/test_distillation_candidates.py \
