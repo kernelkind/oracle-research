@@ -402,6 +402,46 @@ source and does not affect the uncapped automatic path. Artifacts remain in
 the `oracle-mvp-grading-memory-profile` and `oracle-mvp-grading-memory-verify`
 worktrees to preserve their sealed source and native receipt paths.
 
+At 20:38:05 EDT on October 13, the completed large matching batch had unlocked
+159 more native batches alongside the unfinished support batch. These 160
+coordinators exceeded the 32 GiB workload boundary. The kernel records
+`CONSTRAINT_MEMCG` against `distillation-full-1800.service`; the grading group
+was killed, while the host remained responsive. The observer retained 37,919
+saved judgments, 241 complete batches and 44,790 prepared questions. The
+earlier 128-group proofs did not execute this later fanout or reproduce its
+larger accumulated request history.
+
+Every new coordinator still discovered all historical request identities.
+The actual nineteen-request batch `0243` indexed 38,080 foreign identities:
+its production load/discovery retained 127.18 MiB RSS and peaked at 318.14 MiB.
+Runner `3f745cf` scopes discovery to unfinished batch requests and reads receipt
+identity hints before parsing historical manifests. Canonical manifest keys,
+legacy compatibility, latest-record rules and full receipt verification remain
+authoritative. The same probe retains 34.87 MiB and peaks at 34.89 MiB; completed
+resumes skip discovery. All 116 relevant regression checks pass, with four
+critical checks repeated on merged main. No submission limit or reviewer
+instruction changed.
+
+The new production-path resource proof launches all 160 full native plans
+(14,880 questions) concurrently, retains a 5 GiB coordinator allocation and
+holds thirty synthetic workers using 512 MiB each. It completes in 238.65 seconds,
+peaks at 30.405 GiB and records no memory-limit, OOM or swap events. All saved
+synthetic outputs pass native validation; two-attempt budgets deliberately leave
+most questions unrun. A separate read-only production check validates all 8,009
+saved successes in the real support batch, including receipt provenance and
+adapter validation. Its peak RSS is 1.139 GiB; conservatively adding its excess
+over the corresponding live fixture process gives 30.855 GiB. This is a resource
+check, not a semantic-accuracy result or a guarantee for arbitrary future fanout.
+An additional 256-coordinator test reaches thirty synthetic workers allocating
+256 MiB each and peaks at 27.670 GiB without memory-limit, OOM or swap events.
+It stops after the resource plateau; complete reporting for all 256 is not
+claimed. Both tests use private queue/backoff state and make no model calls.
+Evidence remains in `experiment-runner-scoped-history-memory/build/` and
+`oracle-mvp-followup-memory-scale/target/followup-memory-scale/analysis-160.json`
+and `analysis-256.json`. The resumed service explicitly selects the working Nix
+Python interpreter and executable `PATH`; the systemd manager's default
+environment does not supply the same tools as the login shell.
+
 Reviewer prompts, teacher policies, saved
 receipts, the 30-request cap and immediate submission of all ready groups
 remain unchanged. Full grading and eight-hour readiness are still unverified.
