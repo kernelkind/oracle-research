@@ -63,6 +63,7 @@ original vectors.
   notes directly. **HR21: 31 nodes, 46/50 notes. HR22: 80 nodes, 94/100 notes.
   Both have six roots.**
 - V4.2: same construction as V4.1, with **min_cluster_size=4**.
+  **HR23: 53 nodes, six roots and 93/100 notes.**
 - HR14/HR16 omit two null Bootstrap meanings. HR17 had none. Answers and receipts
   remain saved; the original selected note set is preserved as input evidence.
 
@@ -145,6 +146,7 @@ tokens and cost are known subtotals; the complete totals remain unknown.
 | HR20 | 327 | 167 | 1,355,596 | $1.8697 | 5 |
 | HR21 | 10 | 25 + 326 Bootstrap | 20,183 | $0.0450 | 0 |
 | HR22 | 512 | 1,050 events across checkpoints | 2,760,036 | $3.8414 | 4 |
+| HR23 | 20 | 39 + 733 Bootstrap | 44,303 | $0.1147 | 0 |
 
 HR18's tokens and cost are known subtotals: three recovered provider attempts
 lack reported usage. HR20 has five recovered attempts without reported usage.
@@ -347,8 +349,27 @@ Prompts, model, encoder, clustering and stopping settings were unchanged.
 
 ## HR23 — 100 notes · HiGen V4.2
 
-Running. Same controls and exact Bootstrap answers/vectors as HR22; only
-HDBSCAN minimum cluster size changes from two to four. Bootstrap-v133,
-Consolidated-grouped-v1, GPT-6.1 Sol medium, 600s/1,800s teacher timeouts,
-512-token encoder limit, no cosine cutoff and no call cap. Review command and
-usage will be added after successful completion.
+```bash
+cd /home/dev/src/notedeck_worktrees/algos
+./oracle-mvp-hierarchy-hr23-v42/target/hr23-review-ui-v1/launch.sh
+```
+
+Completed in **7m 55s**: 53 nodes, six roots, 42 original groups and 93/100 notes.
+Same controls and exact Bootstrap answers/vectors as HR22; HDBSCAN minimum
+cluster size changes from two to four. Bootstrap-v133, Consolidated-grouped-v1,
+GPT-6.1 Sol medium, 600s/1,800s teacher timeouts, 512-token encoder limit,
+no cosine cutoff and no call cap.
+
+**20 new calls** comprise 14 section answers and six warmups; 39 group answers
+and all 733 Bootstrap answers were reused. No new AS, Bootstrap or encoder work.
+New usage: 17,279 uncached input, 19,200 cached input and 7,824 output tokens
+(including 5,060 reasoning), with complete usage and no failures/retries.
+New API-equivalent cost: **$0.114718**. Historical hierarchy producers have a
+known subtotal of **$6.0894**, with four historical attempts missing usage;
+original subject generation is excluded.
+
+Saved-input reuse now accepts validated V4.1/V4.2 checkpoints with matching
+inputs and controls. HR22’s frozen runner was retained for the comparison.
+Five null meanings and 393 unassigned entries remain recorded as evidence;
+seven input notes are absent. Structural validation and the review UI check
+passed; human semantic review is pending.

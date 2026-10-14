@@ -2,8 +2,9 @@
 
 Status: approved V4.2 setting; native construction is implemented. V4.2 changes
 only `min_cluster_size` from two to four. All other V4.1 settings and stages
-remain unchanged. HR23 is running with HR22’s exact 100-note inputs and saved
-Bootstrap answers/vectors; no V4.2 hierarchy has completed or been reviewed yet.
+remain unchanged. HR23 completed using HR22’s exact 100-note inputs and saved
+Bootstrap answers/vectors: 53 nodes, six roots and 93/100 notes. Native structural
+validation and its review UI check passed; human semantic review is pending.
 Official V4.1 runs HR21 (50 notes) and HR22 (100 notes) completed with native
 structural validation and checked review UIs; human semantic review is pending.
 Their parameters and commands are in

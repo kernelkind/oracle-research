@@ -7655,6 +7655,429 @@
         },
         "initial_subject_preparation_git": "399dbc0e"
       }
+    },
+    {
+      "version_id": "HR23",
+      "name": "ASv6.100 100-note HiGen V4.2 — exact HR22 Bootstrap baseline / Consolidated-grouped-v1",
+      "root": "../../oracle-mvp-hierarchy-hr23-v42",
+      "artifact_path": "target/hierarchy-hr23-v42-hundred-note-v1/HR23/state.json",
+      "sha256": "5c7ce914fb4b8dae4544b16799722c470dd24805c6a07542c2b7ad9bc608f125",
+      "related_outputs": [
+        {
+          "label": "Checked review UI without supporting-note ID lists; 93 of 100 notes",
+          "path": "target/hr23-review-ui-v1/hierarchy.json",
+          "sha256": "8a9e7c9bf8784cf5c96468fb386ede91fce4eb46d28f5a11e439e0b16139102a"
+        }
+      ],
+      "code_provenance": {
+        "sidecar": {
+          "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr23-v42/target/hierarchy-hr23-v42-hundred-note-v1/HR23/code-provenance.json",
+          "sha256": "db921731aa4854a39b5f9d94472b418a739a440e7b4cbcf9efd37b91e32ae330"
+        },
+        "git": {
+          "oracle": {
+            "git_commit": "df96b21c7c2c949810339bac56fcfa19f8bbf27e",
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr23-v42",
+            "uncommitted_source": false
+          },
+          "runner": {
+            "git_commit": "e7dd09fac055cb22148118fe8157ad729ca82f66",
+            "path": "/home/dev/src/notedeck_worktrees/algos/experiment-runner-hr21-hr22-source-v1",
+            "uncommitted_source": false
+          }
+        },
+        "terminal_snapshot": {
+          "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr23-v42/target/hierarchy-hr23-v42-hundred-note-v1/terminal-provenance.json",
+          "sha256": "27e85a9be279788c439c93c648c9c94c6e423be67ae2dd3717ffe6a5568d43b4"
+        }
+      },
+      "generator_commits": [
+        {
+          "role": "V4.2 construction with validated saved Bootstrap reuse",
+          "oracle": "df96b21c7c2c949810339bac56fcfa19f8bbf27e"
+        }
+      ],
+      "experimental_parameters": {
+        "dataset": {
+          "notes": 100,
+          "subject_prompt": "ASv6.100",
+          "subject_reuse": "Exact ordered HR20 fifty-note set first; remaining frozen collection notes appended in collection order. Original fifty AS outputs unchanged; fifty new ASv6.100 answers.",
+          "note_ids": [
+            "99e6a5148b40b59013d8a391f6f593cb8791c167eb445cf1f49c1565cefdbb92",
+            "26749e4bb8c7c7c2d53e303033b7f2641952894edd51bab1e9deafbf46be81b2",
+            "a7475c940b50d31d115c9cea990b14b1c6c3b02232e9a005305e0257373fc5dc",
+            "ab52ebc67eed9ae6d8e8bd327073ff0ed4e80e267f2b76dfcb8a4468d136c895",
+            "4db3cf2df042910312e44810434a5c5da5d659f981b57f14eb9a8eec4a9631f4",
+            "25f5a4c07578d46dc7aa35d740c614e39c1f19d252f257008348ca0d6bb7e03f",
+            "dc1d58a8e0d9036ad3e1f4e58e225733cdb9921fbca7c1a78c84aa4a7a2c7d4c",
+            "493f02481e0355200d3390369435cefc29bdeacce8f218771b35795971d82556",
+            "78157049a8a2d52d31043febab1a3dfcd06dbc0e8834678557097e1122b7a165",
+            "821011b60ccabb942d2540b722ea5d88f15484c407bfb77c9b6318c851eedb9f",
+            "4646bba688b309931c1f026b8dd3f9deb1ade8b515b7dd2c90e172a340066e69",
+            "c68026e7c9e1f97913aa4044eea86d60c22ce1d8469b315ebb8a124149235525",
+            "d54600b5dc41b080741e8eca59156909269d821e05536ab994ce96af4da9c492",
+            "42950396f61cf105b312836086e0a532009cea14bf1c86585039bce534c06e90",
+            "fbd52a1d6cd45246db640d5d70f2363bdd65a73fff89f6576bd359a66fc3e407",
+            "fbd3796768e2bb12f215dd5d15a4e7377f6c9ce7849c01e6de166cafffd29a25",
+            "e0f4c41291e1f3185c07579131eb92c0feb77057b12e93e51bb9eceec500b24f",
+            "38862a72602118a848694796950dd35f2bb48770c085735f6a9d1abdb0f7fe8c",
+            "ccbd903d83c668a746addcf3321b47a55e9f37feda3177c46d7783a0f7b4e852",
+            "a9b49c0a356d9db7971a58444d9f498523bcad1ab98035a3474f22ec63c45970",
+            "c78ee86d3d31ff731203406db3ac159ffabe1aecd3a99587411e55d21c6a5c3d",
+            "5305db5ebb47eceb32e79ba74858ee594e2d9bef41e21951ac75419dedcc34fa",
+            "65f4b8499757761b98c9dc2aa550b9ea1c0374f54b52e77420c427512910bec6",
+            "51209f1582fd9e8e5f440278ba79e399f65c8b020fc0d43f07f1e67005a8bf70",
+            "896b0a29be94953a577d7181b8fa069fded2bea588bc1ef4d13caef9ce174cd1",
+            "612fa3c5bdabd571a01591f3e02bd6a53a80f536a6c0102c243686e162ee291f",
+            "bd357fcf78f3674020b3108adef73f3190890e5053015b26d4812f6cf5c2d201",
+            "e050883463c52c9591e1ff51f7a6299bfdcfea68407248c5655732e04ea61bf3",
+            "41efa59d103afdd8682f194d3bb9edaa70d4715137165abddc918d5ee8651d47",
+            "d8c979a95c694844c8852080c11945744aadfffc54b5ceda47243ab80a247f85",
+            "f7ed481e9a564c95bf788dbcf34e0c098b32e7e5dffe2c841f769fb8cbc4f5e0",
+            "33fd524783fedacfcfd6746dfcddd885ebb9577607bc8c40bb5a46ba2ad0384f",
+            "4bb3dd6e32fd53e58f6a274621f94a90411065d469fe4fc2fc0d26c0834b273d",
+            "862486d8ab23753c39aa9484b1beb52b51e59369f91eb037f2898c5ed9b1f75e",
+            "0ec1ce444c865e4c141d6b4c7560fba67e513dcf10934fe366e9ad76038d4627",
+            "7d538c44dc29fae61416493174f990b84da3a4fc03d20c5b82f99d9fbe8cdd07",
+            "54dcdd65cdde0aa60951b640dd95fbff6d0e7497fcb87762c4ecd7939b502165",
+            "d18012900dfb247317fd58b8e1e765a2af98bb4827b6fd8bac21c59a1c1a6884",
+            "8cf2c204f8f5c6cf6ec6bf2375498a7adcee85287dc62040723cd64f5aef907d",
+            "37f44e1fec8dc1d2bbb5f7594d387e151bc348c380311e0e8c98e5200893ffdd",
+            "76e19c3e48e6b8fe12972fb23296b50c2c2fd24ed81e8d2cdaf0a4ebdee3037f",
+            "46ed60cb0d3a5873d3a11f65515c366b03934cd4e25ded6732c819d2a2d493d0",
+            "ada943cfb5b2d76764fc4dbf3785f507e88bf7aef558a1700a389bd9c30498d5",
+            "0752790819c72c567930527b06079723259fd08e26084bd0633d53fcbca27531",
+            "89cdcfbbebaf021b74ddd2a16ceaf592f674487657268e4c8c52c80f70ff2d8c",
+            "bb440af90858516c7aa1cc9d54df9c4a5b507671606f44137d02561733ed3a6b",
+            "8a025f696155d00efc9bc4d313ee5933e90b10a1ff1c2783f5a6b3e3a3590926",
+            "14e6162b966f97f85b6ff1f68d81573dac5cdbc22431f1fc2928f27e6234b7be",
+            "143fee7643620ece551e713d05f7a1d60315fb181b3df2d00c1a0453d4ba6e13",
+            "484773cbb8a5ee96944b02df05a7de11a85fc5b232284de580025cb3fb6b0fe1",
+            "c933708d1e1258ba065b6cfdd657b6482ca20e799ba0e71e5a7fa10a34a9f6d0",
+            "be8d07d42b8f14d60ccfe50b63c93c5c607c589129d79d9f6b560948150542bc",
+            "d9fd859d40088f8fbe94ec6e9ef0c43e83ed8903d9745a1b401da5dad67c48ab",
+            "7258eaac361e1d44f6fa279ee9ac43ee6c138714e67e5d9c2c98e32c5ce2c60c",
+            "9d166fb097842ece1afe76904a0a1f4bb8d13fcb74825496a47ce8fde391054d",
+            "6e909b5014553be38d2e4825dfe710737658ca78f0a8b00480db720513a0bf9e",
+            "387c8a24d1e2aad1ab8dc69a6a307cc3cc79d13e63beb21c2d79247ee2272767",
+            "d6628bf3817eefba6f369ab16f12fdf2acbbbaf51d0393aaa2e13de748fff671",
+            "1c964a412ac60a1f4234cf22bf3291669562b23113ad55fc0c369ac811903061",
+            "ef8cf528d17f5fb86e946ba80fed5d63e9ed466dfed65db616d4db52b51d2177",
+            "82d3d344765a44441bee62a4004d8551a2923adc101bbd44734708faa3ba464c",
+            "8ccb05277a35536d5461312ebe3909c1ba600ca1150b0ab9e6bc3bab369d5cc3",
+            "f4c5aa5f18026412caa17c21c3fad6056c82b80de57ad70003074ff622adc496",
+            "cf50b578d2ade866ab4b5afe16876c79735fa8029fe2c05495c2e46454184481",
+            "7160694f2464560cc312477be6fb73de871a8f98adc4610bdba3b38372b37c31",
+            "bca8827b22a89771b85932f2aa13e44a4ff66266c9863ac14008bb9ea4092079",
+            "a197ff5f5c62e27c0c4089a08463f81741c0a1a388267d949da59e3c9a722c96",
+            "33f5cd06fbcf1bfd0a013a8acfbf4353b88fe66dd91706eb82d0b4799c38a8e6",
+            "48eaec6bed5d9bf6835b33f688f45070fcc552295091210f8d673b7625498dd7",
+            "7e7eeee72ee15c8861c69a89d9af01f78fe14cafb38ac98e47988260ef6ffa3e",
+            "05f275f4b6e52744a7f8148ab768843355f3ce2bfb07f3e4b82224294f990626",
+            "263aa67fa8eb8c9a0ee7f843680a6f658aad9741b8356e92fc04e51d45fe257a",
+            "ee3404d57d4b19657f8344fd04381cceb22b73e1617a08bff1eddddeb1e1b8f3",
+            "03313183e42615c765021814b8c6b3de61c7ff95f89e75f5cebe588c1bcb0f4a",
+            "b58177a5b3a06b95325b2d6d2aae1e01a508d21a57ca861d8ff225614bf23952",
+            "824ba53067301e735cf2cebf18230f9ab6894bc72fa0ada68acde90b394ec999",
+            "6eb9023a0971a5ebd5b3494ae7258ae743d40d8a937b349783630c4456c50d74",
+            "8e1628b4a5df4b25702b854aa295553b430df4d90bb10515c1778deb5bca98b9",
+            "3e681a052a685b882bc4d5c4d7da23027995d2166c21fc38d028b09cf56b857e",
+            "78462b9287ba5e2021e492a0d68a4d9105a0e2c871c01d88ddb0e577d04fe6e5",
+            "eaa6a5e60ffe198420a931845700e7396f51a10620a7f7a0bc4a77cfb8572a0b",
+            "b3c0ab8f939ac8a5834ff877c7a298e74d814e8175b539ad009e796bb6674572",
+            "9198898e8d683e552c2a8898fcc97098a3bc15fc271df38c00826a294951cd59",
+            "7c00514b4d3d57717dad199981a3f3cdad40fa3008ec3eac068e69f0a7e808b1",
+            "ae3b3db408ffeee0bee532f3accf24b59b07fb37a4b95124e569512a6f4e307a",
+            "056e6466257003453c3065421db88270511cb13ec8c860e3cb4d4b22edf3ba77",
+            "495d2b7075a1737b31bb39c7c29afcb8c5829c097abf980dbda2de12ce395c81",
+            "d89f383e44559e2a3b83ada29829dfb8d8f8cd78b56033ba9ac0ac38a4dae4c8",
+            "85197ac3577a1c23cab15e6918d60135c51c55d63927d6213fd0d0de3c66814a",
+            "fb878a83592eda5d9d3a38dff27dab1c4ba71bf12d83a16b2e6beb176439ef67",
+            "11d2afb1607f1d1284adb6cb3dabb8876aaf53a7aff204cf65083df2c5d34865",
+            "61bdef2b4e23e4c661ffa505139043edb006f3707df11e77f25d3174f46ca059",
+            "add487c48d6d03accfadd13c4c94ac383a6db688612d1e07774d1a53b3370c7f",
+            "2dc50a304a2f029231506e3ad15f9dc9f1ce72db2bc4f74d31566cb0259e38f1",
+            "737eaa89d3944963b505b9aa2e6261c3cd2e52fc37a78010aabcaec29e9bcedf",
+            "e7cc1ce172d74dc89b09dd0e917a06f192a4327010c86e5f144b2db19845044d",
+            "3202cb9407ab3780248fc6a3e6cd34a09bbf844229dc22592fc1c687718b8870",
+            "c8f3157a282115b257706a7b99457197e4d636fafa4a3a46c2ef159381b8c325",
+            "9e811e034e592b9f4ce12ed52c1561e59737b8ab9ea04ebcc35c00fec5d56dbd",
+            "f67c7c548416df5c59ce5ae8f316fcd70a3e067ca7334f2d62dc82d94876c9a7"
+          ],
+          "original_l1_entries": 733,
+          "subjects_sha256": "69ac6d8baabab336a1e41c519f5cff3b4c9e16b35ea8818d7f1e3fa3a0dac43d",
+          "raw_collection_sha256": "581e465d9a4c3ac5e6e2067a2edb9e9711acb3fd68982909394c9c704151dbf3",
+          "additional_collection_ranks": "47-100 excluding 56,63,74,83",
+          "selection": "Exact ordered HR22 100-note set; unchanged ASv6.100 corpus"
+        },
+        "construction": {
+          "policy": "hierarchy-generation-v4.2",
+          "bootstrap_prompt": "Hierarchy-bootstrap-v133",
+          "consolidation_prompt": "Hierarchy-consolidated-grouped-v1",
+          "shared_meaning_rules": "v6",
+          "local_schema_version": 4,
+          "initial_graph": "empty",
+          "independent_meanings": true,
+          "max_siblings": 6,
+          "cosine_cutoff": null,
+          "hdbscan": {
+            "min_samples": 3,
+            "min_cluster_size": 4,
+            "selection_method": "excess_of_mass",
+            "distance": "angular",
+            "tree_count": 1
+          },
+          "section_cuts": "First angular mutual-reachability cut producing at most six sections; repeat within each displayed section; merge equal-distance joins",
+          "leaf_stopping": "Original selected HDBSCAN groups expose their notes directly; no local L2 subdivision; no note-count leaf limit",
+          "null_policy": "Omit null meanings from clustering, preserve answers and receipts",
+          "unassigned_policy": "Omit unassigned original entries, preserve evidence and report lost entries/notes",
+          "synthetic_vectors": "Generated titles/meanings are never encoded or reclustered",
+          "completion_conditions": [
+            "completed valid generated definitions for every displayed section",
+            "saved numerical cuts, memberships and canonical parent relationships verified",
+            "maximum six roots and children",
+            "notes_not_in_hierarchy reported"
+          ]
+        },
+        "model_execution": {
+          "provider": "openai-codex",
+          "model": "gpt-6.1-sol",
+          "reasoning_effort": "medium",
+          "transport": "sse",
+          "prompt_cache": {
+            "bootstrap": true,
+            "consolidation": true
+          },
+          "automatic_warming": "automatic-prefix-warmup-v1",
+          "shared_queue_capacity": 30,
+          "timeout_seconds": {
+            "bootstrap": 600,
+            "consolidation": 1800,
+            "subjects": 1800
+          },
+          "max_output_tokens": null,
+          "seed": "unspecified",
+          "temperature": "unspecified",
+          "provider_retry_policy": {
+            "maximum_attempts_per_case": 2,
+            "retry_eligibility": "provider_transient only",
+            "attempt_limit_applies_across_resumes": true
+          }
+        },
+        "attempt_allowance": null,
+        "reuse_policy": "Reuse HR22 complete Bootstrap experiment and original encoder receipts/vectors directly; native exact complete-request consolidation reuse through isolated history.",
+        "cash_charge": "zero incremental cash on existing subscription route; no paid fallback",
+        "worker_config": {
+          "schema_version": 1,
+          "request_path": "unused",
+          "request_sha256": "b7bb6c94a043de352c0b974e26976d8551ad80821487f33a8757310cf7e6c160",
+          "checkpoint_path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr11-v3/target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt",
+          "base_model_artifact_path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr11-v3/target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781",
+          "device": "cpu",
+          "output_path": "unused",
+          "checkpoint_sha256": "ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d",
+          "base_model_artifact_tree_sha256": "bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d",
+          "container_image": "sha256:a6c9674dca720e1f094b7feeb1397b6e6b0a97e10f13e0a6555deebf4b70ddaa",
+          "model": {
+            "base_model": "sentence-transformers/sentence-t5-base",
+            "dimensions": 768,
+            "maximum_tokens": 512,
+            "pooling": "selected-contextual-token-mean-linear-relu-linear-v1"
+          },
+          "note_batch_size": 8,
+          "input_text": "Original Bootstrap title, two newline characters, explicit meaning",
+          "selected_span": "Title UTF-8 byte span only",
+          "runtime": {
+            "python": "3.13.12",
+            "torch": "2.13.0+cpu",
+            "transformers": "4.57.1",
+            "tokenizers": "0.22.2",
+            "numpy": "2.5.2",
+            "execution": "All original HR22 vectors reused unchanged; no new SSE encoding or generated-node encoding"
+          }
+        },
+        "history_root": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr23-v42/target/hierarchy-hr23-v42-hundred-note-v1/history",
+        "decisions": [
+          "Used all 733 validated HR22 Bootstrap answers and all original vectors unchanged; no new AS or Bootstrap calls.",
+          "Extended the native saved-Bootstrap reuse guard to accept validated V4.1/V4.2 checkpoints with exactly matching inputs and controls.",
+          "Kept HR22 frozen shared runner commit e7dd09fa to preserve execution controls; no newer runner changes included."
+        ],
+        "parameter_ledger": {
+          "path": "docs/recommendation-engine/hierarchy-parameters.csv",
+          "row": "HR23"
+        },
+        "result": {
+          "schema_version": 1,
+          "version_id": "HR23",
+          "status": "complete",
+          "state_sha256": "5c7ce914fb4b8dae4544b16799722c470dd24805c6a07542c2b7ad9bc608f125",
+          "selected_notes": 100,
+          "notes_represented": 93,
+          "missing_note_count": 7,
+          "notes_not_in_hierarchy": [
+            "78157049a8a2d52d31043febab1a3dfcd06dbc0e8834678557097e1122b7a165",
+            "e0f4c41291e1f3185c07579131eb92c0feb77057b12e93e51bb9eceec500b24f",
+            "c78ee86d3d31ff731203406db3ac159ffabe1aecd3a99587411e55d21c6a5c3d",
+            "ada943cfb5b2d76764fc4dbf3785f507e88bf7aef558a1700a389bd9c30498d5",
+            "14e6162b966f97f85b6ff1f68d81573dac5cdbc22431f1fc2928f27e6234b7be",
+            "9d166fb097842ece1afe76904a0a1f4bb8d13fcb74825496a47ce8fde391054d",
+            "d89f383e44559e2a3b83ada29829dfb8d8f8cd78b56033ba9ac0ac38a4dae4c8"
+          ],
+          "canonical_nodes": 53,
+          "roots": 6,
+          "edges": 47,
+          "original_groups": 42,
+          "leaf_nodes": 42,
+          "maximum_siblings": 6,
+          "maximum_leaf_distinct_notes": 34,
+          "skipped_null_bootstrap_count": 5,
+          "original_l1_entries": 733,
+          "hdbscan_input_entries": 728,
+          "hdbscan_unassigned_entries": 393,
+          "hdbscan_tree_count": 1,
+          "encoder_maximum_tokens": 512,
+          "elapsed_wall_seconds": 475.386747,
+          "completed_at_utc": "2026-10-14T15:11:38.536593+00:00",
+          "native_state_validation": "passed",
+          "review_ui_validation": "passed",
+          "hr22_bootstrap_answers_reused": 733,
+          "hr22_original_vectors_identical": true,
+          "new_execution_errors": []
+        },
+        "native_usage": {
+          "report": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr23-v42/target/hierarchy-hr23-v42-hundred-note-v1/usage-new.json",
+            "sha256": "d12058f79177d55056dcfea2fc32b03769e14a6d53ea307643dca4fe944a2f71"
+          },
+          "inventory": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr23-v42/target/hierarchy-hr23-v42-hundred-note-v1/usage-new.spec.json",
+            "sha256": "47c7df73313b75fd8b17581bba831251d93be48e4506f902bcc10f9ac0613493"
+          },
+          "totals": {
+            "experiments": 6,
+            "imported_experiments": 0,
+            "cases": 53,
+            "attempts": 20,
+            "reused": 39,
+            "failed_attempts": 0,
+            "recovered_failed_attempts": 0,
+            "retry_attempts": 0,
+            "attempts_without_usage": 0,
+            "attempts_without_cost_estimate": 0,
+            "known_catalog_cost_estimate_usd": 0.114718,
+            "valid": 53,
+            "empty": 0,
+            "malformed": 0,
+            "invalid_receipt": 0,
+            "failed": 0,
+            "unrun": 0,
+            "known_input_tokens": 17279,
+            "known_cached_input_tokens": 19200,
+            "known_cache_write_tokens": 0,
+            "known_output_tokens": 7824,
+            "known_reasoning_tokens": 5060,
+            "catalog_cost_estimate_usd": 0.114718
+          },
+          "generation_usage": {
+            "input_tokens": 72144,
+            "cached_input_tokens": 37248,
+            "cache_write_tokens": 0,
+            "output_tokens": 23032,
+            "reasoning_tokens": 16340,
+            "attempts_without_usage": 0,
+            "catalog_cost_estimate_usd": 0.37833279999999986,
+            "attempts_without_cost_estimate": 0,
+            "provider_reported_cost_usd": null,
+            "attempts_without_provider_cost": 61,
+            "known_catalog_cost_estimate_usd": 0.37833279999999986,
+            "known_provider_reported_cost_usd": 0,
+            "cost_statistics": {
+              "basis": "saved_catalog_estimates",
+              "requests": 61,
+              "requests_without_cost": 0,
+              "comparison_requests": 53,
+              "warmup_requests": 8,
+              "comparison_requests_without_usage": 0,
+              "cache_hit_requests": 25,
+              "comparison_requests_without_uncached_cost": 0,
+              "cache_hit_rate_percent": 47.16981132075472,
+              "total_cost_usd": 0.3783328,
+              "mean_request_cost_usd": 0.006202177049180328,
+              "median_request_cost_usd": 0.006188,
+              "p95_request_cost_usd": 0.00924,
+              "uncached_comparison_cost_usd": 0.415352,
+              "net_cache_savings_usd": 0.037019199999999974,
+              "net_cache_savings_percent": 8.912729443941519
+            },
+            "original_calls": 61,
+            "source_calls_added": 41,
+            "failed_calls": 0,
+            "usage_complete": true,
+            "reasoning_included_in_output": true
+          },
+          "scope": "New hierarchy consolidation calls include warmups and retries; no new subjects, Bootstrap or encoder work. Direct HR22 Bootstrap/vector reuse is reported separately. Original subject-generation costs excluded.",
+          "direct_bootstrap_answers_reused": 733,
+          "direct_original_vector_count": 725,
+          "producer_inclusive_report": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr23-v42/target/hierarchy-hr23-v42-hundred-note-v1/usage-all-producers.json",
+            "sha256": "79ad96e752035a5f7394e2940adc04912c262e8c0947060f46bc837fe3236286"
+          },
+          "producer_inclusive_inventory": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr23-v42/target/hierarchy-hr23-v42-hundred-note-v1/usage-all-producers.spec.json",
+            "sha256": "8298fd7b9ecd55f610f3b860a27fa2393da71c7732458676cfa461f2115a2016"
+          },
+          "producer_inclusive_generation_usage": {
+            "input_tokens": 503280,
+            "cached_input_tokens": 3669888,
+            "cache_write_tokens": 0,
+            "output_tokens": 471588,
+            "reasoning_tokens": 133106,
+            "attempts_without_usage": 4,
+            "catalog_cost_estimate_usd": null,
+            "attempts_without_cost_estimate": 4,
+            "provider_reported_cost_usd": null,
+            "attempts_without_provider_cost": 803,
+            "known_catalog_cost_estimate_usd": 6.089428800000002,
+            "known_provider_reported_cost_usd": 0,
+            "cost_statistics": {
+              "basis": "saved_catalog_estimates",
+              "requests": 803,
+              "requests_without_cost": 4,
+              "comparison_requests": 790,
+              "warmup_requests": 13,
+              "comparison_requests_without_usage": 4,
+              "cache_hit_requests": 745,
+              "comparison_requests_without_uncached_cost": 4,
+              "cache_hit_rate_percent": null,
+              "total_cost_usd": null,
+              "mean_request_cost_usd": null,
+              "median_request_cost_usd": null,
+              "p95_request_cost_usd": null,
+              "uncached_comparison_cost_usd": null,
+              "net_cache_savings_usd": null,
+              "net_cache_savings_percent": null
+            },
+            "original_calls": 803,
+            "source_calls_added": 778,
+            "failed_calls": 4,
+            "usage_complete": false,
+            "reasoning_included_in_output": true
+          }
+        },
+        "review_ui": {
+          "command": "cd /home/dev/src/notedeck_worktrees/algos\n./oracle-mvp-hierarchy-hr23-v42/target/hr23-review-ui-v1/launch.sh",
+          "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr23-v42/target/hr23-review-ui-v1",
+          "check": "passed from /tmp",
+          "displayed_note_id_lists": false,
+          "input_notes": 100,
+          "displayed_notes": 93,
+          "missing_notes": 7
+        },
+        "baseline_control": {
+          "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr23-v42/target/hierarchy-hr23-v42-hundred-note-v1/baseline-control-validation.json",
+          "sha256": "25865b463a8fcfef087976d01d6da86701ca2c2e8352a02aa08b4d66e25c6b1b"
+        }
+      }
     }
   ]
 }
