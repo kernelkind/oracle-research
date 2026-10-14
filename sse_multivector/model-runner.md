@@ -2521,9 +2521,19 @@ Pending report bodies are released before dispatch and rebuilding. Interrupted
 publication preserves existing collection/batch artifacts and selects unused
 paths on resume. Receipt and report JSON handling streams through the shared
 runner; the full grading workload retains its 32 GiB, zero-swap systemd boundary.
-Full grading concerns the 1,800 saved
-validation answers; eight-hour readiness and reserved final-test review remain
-open.
+The completed validation grading covers 1,800 saved answers. The user has now
+authorized grading the 200-note test split for all three families: baseline and
+final checkpoint only, totaling 1,200 saved answers. Native preview and trial
+preparation require explicit `--split test` for this access; their default
+remains validation. Test preparation verifies the original test collection,
+generation policy and final checkpoint identity, without loading weights.
+Use the same frozen DSMv3, DSSv2, DSLv10 and DCSv1 grading configuration,
+teacher-only requirement rules, native eligible prefix warming and 32 GiB
+zero-swap process boundary. Model selection awaits the test results.
+Automatic child batches use the stable launcher from the loaded shared-runner
+checkout. Set the existing `EXPERIMENT_RUNNER_ROOT` to an isolated runner
+worktree and invoke that worktree's `bin/experiment-runner`; preparation and
+child execution then retain the same frozen runner binding.
 
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,

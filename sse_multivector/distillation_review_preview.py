@@ -1,7 +1,8 @@
-"""Count mechanically resolved and remaining validation checks without inference.
+"""Count mechanically resolved and remaining saved-answer checks without inference.
 
-Only evaluation content is decoded. The mixed reference ledger is hash checked
-as opaque bytes, then identity headers establish which rows may be decoded.
+Only the selected split is decoded; evaluation remains the default. The mixed
+reference ledger is hash checked as opaque bytes, then identity headers establish
+which rows may be decoded. Explicit test previews use baseline and final only.
 Distinct semantic inputs describe theoretical request grouping under one fixed
 prompt and settings per check; this command prepares no reviewer requests.
 """
@@ -34,7 +35,9 @@ def _read(path, sources, expected=None):
     return raw
 
 
-def _validation(manifest_path, sources):
+def _validation(manifest_path, sources, *, split="evaluation"):
+    if split not in ("evaluation", "test"):
+        raise ValueError("expected evaluation or test split")
     manifest = _decode(_read(manifest_path, sources))
     if manifest["schema_version"] != 2 or manifest["tasks"] != {"subjects": "ASv6.100"}:
         raise ValueError("review preview requires an ASv6.100 subjects-only dataset")
@@ -43,20 +46,21 @@ def _validation(manifest_path, sources):
            for ids in splits):
         raise ValueError("invalid frozen validation splits")
     identities = [i for ids in splits for i in ids]
-    if not splits[0] or not splits[1] or len(set(identities)) != len(identities):
+    selected_ids = manifest[split + "_note_ids"]
+    if not splits[0] or not splits[1] or not selected_ids or len(set(identities)) != len(identities):
         raise ValueError("invalid or overlapping frozen validation splits")
     directory = manifest_path.parent
     raw = _read(directory / "references.jsonl", sources, manifest["outputs"]["references.jsonl"])
-    references = [_decode(line) for line in review._evaluation_reference_lines(raw, splits)]
-    raw = _read(directory / "evaluation.jsonl", sources, manifest["outputs"]["evaluation.jsonl"])
+    references = [_decode(line) for line in review._evaluation_reference_lines(raw, splits, split=split)]
+    raw = _read(directory / f"{split}.jsonl", sources, manifest["outputs"][f"{split}.jsonl"])
     evaluation = [_decode(line) for line in raw.splitlines()]
-    if [r["note_id"] for r in evaluation] != splits[1]:
+    if [r["note_id"] for r in evaluation] != selected_ids:
         raise ValueError("evaluation identities differ from frozen splits")
     teachers = []
     for reference, row in zip(references, evaluation):
         suffix = "\n\n<post>\n" + reference["text"] + "\n</post>"
         messages = row["messages"]
-        if (reference["note_id"] != row["note_id"] or reference["split"] != "evaluation"
+        if (reference["note_id"] != row["note_id"] or reference["split"] != split
                 or len(messages) != 1 or messages[0]["role"] != "user"
                 or not messages[0]["content"].endswith(suffix)
                 or hashlib.sha256(messages[0]["content"][:-len(suffix)].encode()).hexdigest()
@@ -69,6 +73,12 @@ def _validation(manifest_path, sources):
         teachers.append((index, _digest(index.catalog), _digest(reference["text"]),
                          reference["text"], messages[0]["content"][:-len(suffix)]))
     return manifest, evaluation, teachers
+
+
+def _stage(output, version, *, split="evaluation"):
+    if split == "test":
+        return output / "test" / version
+    return output / ("baseline" if version == "baseline" else "evaluations/" + version)
 
 
 class _Workload:
@@ -349,29 +359,36 @@ def _timing(directories, checks, templates, sources):
               "median/p90 scenarios are not confidence bounds.")
 
 
-def preview(manifest_path, model_outputs, *, estimate=False, timing_experiments=()):
-    """Verify complete saved validation stages and count all three review checks."""
+def preview(manifest_path, model_outputs, *, estimate=False, timing_experiments=(), split="evaluation"):
+    """Verify the selected saved stages and count all three review checks."""
+    if split not in ("evaluation", "test"):
+        raise ValueError("expected evaluation or test split")
     if timing_experiments and not estimate:
         raise ValueError("--timing-experiment requires --estimate")
     manifest_path = Path(manifest_path).expanduser().resolve()
     outputs = [Path(p).expanduser().resolve() for p in model_outputs]
     if not outputs or len(outputs) != len(set(outputs)):
         raise ValueError("expected nonempty distinct model output directories")
-    if "test" in manifest_path.parts or any("test" in p.parts for p in outputs):
+    if split == "evaluation" and ("test" in manifest_path.parts or any("test" in p.parts for p in outputs)):
         raise ValueError("reserved test paths cannot be previewed")
     sources = {}
-    manifest, evaluation, teachers = _validation(manifest_path, sources)
+    manifest, evaluation, teachers = _validation(manifest_path, sources, split=split)
     total, models = _Workload(), []
     for output in outputs:
         config, plan = _model_plan(output, manifest, sources)
         model_work, versions, baseline_plan = _Workload(), [], None
-        stages = [("baseline", output / "baseline", None)] + [
-            (f"checkpoint-{m}", output / "evaluations" / f"checkpoint-{m}", m)
-            for m in plan["milestones"]]
-        for version, directory, cursor in stages:
+        milestones = plan["milestones"] if split == "evaluation" else plan["milestones"][-1:]
+        stages = [("baseline", None)] + [(f"checkpoint-{m}", m) for m in milestones]
+        for version, cursor in stages:
+            directory = _stage(output, version, split=split)
             if cursor is not None:
                 _checkpoint(output, cursor, plan, sources)
-            stage_summary = run.subject_stage_summary(directory, {"evaluation": evaluation})
+            if split == "test":
+                checkpoint = None if cursor is None else output / "checkpoints" / version
+                stage_summary = run.subject_test_summary(output, {split: evaluation}, config, checkpoint)
+                _read(directory / "test-collection.json", sources)
+            else:
+                stage_summary = run.subject_stage_summary(directory, {split: evaluation})
             _read(directory / "complete.json", sources)
             batch_plan = run.read_json(directory / "subject-batches.json")
             if baseline_plan is None:
@@ -385,9 +402,9 @@ def preview(manifest_path, model_outputs, *, estimate=False, timing_experiments=
                 note_work = _note_workload(row, teacher)
                 notes.append(dict(note_id=row["note_id"], totals=note_work.summary()))
                 stage_work.include(note_work)
-            if (stage_work.counts["outputs"] != stage_summary["notes"]
-                    or stage_work.counts["invalid_outputs"] != stage_summary["subject_failures"]
-                    or stage_work.counts["subject_occurrences"] != stage_summary["returned_subjects"]):
+            if (stage_work.counts["outputs"] != stage_summary["notes"] or split == "evaluation" and (
+                    stage_work.counts["invalid_outputs"] != stage_summary["subject_failures"]
+                    or stage_work.counts["subject_occurrences"] != stage_summary["returned_subjects"])):
                 raise ValueError("review preview accounting differs from saved validation stage")
             versions.append(dict(version=version, totals=stage_work.summary(), notes=notes))
             model_work.include(stage_work)
@@ -404,4 +421,6 @@ def preview(manifest_path, model_outputs, *, estimate=False, timing_experiments=
         checkpoint_verification="Sealed metadata and identity only; weight files are not opened.")
     if estimates is not None:
         result["estimates"] = estimates
+    if split == "test":
+        result["dataset"]["split"] = split
     return result

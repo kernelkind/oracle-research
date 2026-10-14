@@ -45,7 +45,7 @@ class DistillationReviewPreviewTests(unittest.TestCase):
         self.addCleanup(temporary.cleanup)
         self.root = Path(temporary.name)
 
-    def fixture(self, notes=None, *, name="fixture", models=1):
+    def fixture(self, notes=None, *, name="fixture", models=1, split="evaluation", milestones=(1,)):
         root = self.root / name
         prepared = root / "prepared"
         prepared.mkdir(parents=True)
@@ -55,50 +55,68 @@ class DistillationReviewPreviewTests(unittest.TestCase):
         task = AS.read_text()
         evaluation = [dict(note_id=note["note_id"], messages=[dict(role="user",
             content=task + "\n\n<post>\n" + note["post"] + "\n</post>")]) for note in notes]
-        references = [dict(note_id=note["note_id"], split="evaluation", text=note["post"],
+        references = [dict(note_id=note["note_id"], split=split, text=note["post"],
                            subjects=note["teacher"]) for note in notes]
         # Only the note_id headers of other splits may be inspected. Their
         # contents deliberately cannot be decoded as JSON or subject answers.
-        reference_lines = ['{"note_id":"train-a", "poison": INVALID TRAIN CONTENT}']
-        reference_lines.extend(json.dumps(row) for row in references)
-        reference_lines.append('{"note_id":"test-a", "poison": INVALID RESERVED CONTENT}')
+        train_ids = ["train-a"] + [f"train-{i}" for i in range(1, milestones[-1])]
+        reference_lines = [json.dumps(dict(note_id=i))[:-1] + ', "poison": INVALID TRAIN CONTENT}'
+                           for i in train_ids]
+        if split == "evaluation":
+            reference_lines.extend(json.dumps(row) for row in references)
+            reference_lines.append('{"note_id":"test-a", "poison": INVALID RESERVED CONTENT}')
+        else:
+            reference_lines.append('{"note_id":"evaluation-a", "poison": INVALID VALIDATION CONTENT}')
+            reference_lines.extend(json.dumps(row) for row in references)
         (prepared / "references.jsonl").write_text("\n".join(reference_lines) + "\n")
-        (prepared / "evaluation.jsonl").write_text("\n".join(json.dumps(row) for row in evaluation) + "\n")
+        (prepared / f"{split}.jsonl").write_text("\n".join(json.dumps(row) for row in evaluation) + "\n")
         manifest = dict(schema_version=2, tasks=dict(subjects="ASv6.100"),
-            train_note_ids=["train-a"], evaluation_note_ids=[note["note_id"] for note in notes],
-            test_note_ids=["test-a"], subject_instruction_sha256=hashlib.sha256(task.encode()).hexdigest(),
-            outputs={name: run.sha256(prepared / name) for name in ("evaluation.jsonl", "references.jsonl")})
-        manifest["outputs"].update({name: "f" * 64 for name in ("train.jsonl", "test.jsonl")})
+            train_note_ids=train_ids,
+            evaluation_note_ids=[note["note_id"] for note in notes] if split == "evaluation" else ["evaluation-a"],
+            test_note_ids=[note["note_id"] for note in notes] if split == "test" else ["test-a"],
+            subject_instruction_sha256=hashlib.sha256(task.encode()).hexdigest(),
+            outputs={name: run.sha256(prepared / name) for name in (f"{split}.jsonl", "references.jsonl")})
+        manifest["outputs"].update({name: "f" * 64 for name in ("train.jsonl",)
+                                   + (("test.jsonl",) if split == "evaluation" else ("evaluation.jsonl",))})
         run.write_json(prepared / "manifest.json", manifest)
         model_outputs = []
         for index in range(models):
             output = root / f"model-{index}"
             config = dict(model=f"fixture/model-{index}", revision=str(index + 1) * 40,
-                data=str(prepared), training_milestones=[1], evaluation_tasks=["subjects"],
+                data=str(prepared), training_milestones=list(milestones), evaluation_tasks=["subjects"],
                 max_new_tokens=dict(subjects=64), subject_batching=dict(budget_bytes=4096,
                     workspace_bytes=0, prefill_bytes_per_token=1, attention_matrix_count=4))
             run.write_json(output / "manifest.json", dict(config=config, dataset=manifest))
-            plan = dict(note_ids=["train-a"], milestones=[1], examples_per_update=8)
+            plan = dict(note_ids=train_ids, milestones=list(milestones), examples_per_update=8)
             run.write_json(output / "training-plan.json", plan)
             run.seal_files(output, "provenance.complete.json", ["manifest.json", "training-plan.json"])
-            checkpoint = output / "checkpoints/checkpoint-1"
-            run.write_json(checkpoint / "training.json", dict(cursor=1, updates=1,
-                consumed_note_ids=["train-a"], manifest_sha256=run.sha256(output / "manifest.json"),
-                plan_sha256=run.sha256(output / "training-plan.json")))
-            weight = checkpoint / "adapter_model.safetensors"
-            weight.write_bytes(b"Fixture weight bytes: never needed by an offline review preview.")
-            run.write_json(checkpoint / "complete.json", run.file_hashes(checkpoint))
-            weight.write_bytes(b"Changed weight bytes prove the preview does not hash weights.")
-            for relative in ("baseline", "evaluations/checkpoint-1"):
-                self.stage(output / relative, evaluation, [note["answer"] for note in notes])
-            (output / "test").mkdir()
-            (output / "test/poison").write_text("Reserved saved generations must not be read.")
+            for update, cursor in enumerate(milestones, 1):
+                checkpoint = output / f"checkpoints/checkpoint-{cursor}"
+                run.write_json(checkpoint / "training.json", dict(cursor=cursor, updates=update,
+                    consumed_note_ids=train_ids[:cursor], manifest_sha256=run.sha256(output / "manifest.json"),
+                    plan_sha256=run.sha256(output / "training-plan.json")))
+                weight = checkpoint / "adapter_model.safetensors"
+                weight.write_bytes(b"Fixture weight bytes: never needed by an offline review preview.")
+                run.write_json(checkpoint / "complete.json", run.file_hashes(checkpoint))
+                weight.write_bytes(b"Changed weight bytes prove the preview does not hash weights.")
+            versions = ["baseline"] + [f"checkpoint-{m}" for m in
+                                      (milestones if split == "evaluation" else (milestones[-1],))]
+            for version in versions:
+                stage = output / (version if version == "baseline" else "evaluations/" + version)
+                if split == "test":
+                    stage = output / "test" / version
+                    checkpoint = None if version == "baseline" else output / "checkpoints" / version
+                    run.write_json(stage / "test-collection.json", run.subject_test_source(output, checkpoint))
+                self.stage(stage, evaluation, [note["answer"] for note in notes], split=split, config=config)
+            if split == "evaluation":
+                (output / "test").mkdir()
+                (output / "test/poison").write_text("Reserved saved generations must not be read.")
             model_outputs.append(output)
         return prepared / "manifest.json", model_outputs
 
-    def stage(self, directory, evaluation, answers):
+    def stage(self, directory, evaluation, answers, *, split="evaluation", config=None):
         batch = dict(indices=list(range(len(evaluation))), prompt_width=1, estimated_bytes=100)
-        plan = dict(policy={}, memory={}, max_new_tokens=64,
+        plan = dict(policy=config["subject_batching"] if split == "test" else {}, memory={}, max_new_tokens=64,
             inputs=[dict(note_id=row["note_id"], tokens=1, sha256="e" * 64) for row in evaluation],
             batches=[batch])
         run.write_json(directory / "subject-batches.json", plan)
@@ -118,7 +136,44 @@ class DistillationReviewPreviewTests(unittest.TestCase):
         run.write_json(directory / "results.json", results)
         run.write_json(directory / "complete.json", run.file_hashes(directory))
         # Validate the fixture with the real saved-stage verifier before preview.
-        self.assertEqual(run.subject_stage_summary(directory, dict(evaluation=evaluation))["notes"], len(evaluation))
+        self.assertEqual(run.subject_stage_summary(directory, {split: evaluation}, split=split)["notes"], len(evaluation))
+
+    def test_explicit_test_preview_uses_only_baseline_and_final_checkpoint(self):
+        notes = [dict(note_id=f"held-out-{i}", post=f"Held-out cable {i}.", teacher=TEACHER,
+                      answer=answer(STUDENT)) for i in range(2)]
+        manifest, outputs = self.fixture(notes, models=3, split="test", milestones=(1, 2))
+        for output in outputs:
+            (output / "test/checkpoint-1").mkdir()
+            (output / "test/checkpoint-1/complete.json").write_text("INVALID INTERMEDIATE CHECKPOINT")
+            (output / "baseline").mkdir()
+            (output / "baseline/complete.json").write_text("INVALID VALIDATION OUTPUT")
+        report = self.preview(manifest, outputs, split="test")
+        self.assertEqual(report["dataset"]["split"], "test")
+        self.assertEqual(report["totals"]["outputs"], 12)
+        self.assertEqual(report["totals"]["versions"], 6)
+        for model in report["models"]:
+            self.assertEqual([v["version"] for v in model["versions"]], ["baseline", "checkpoint-2"])
+        self.assertNotIn(str(manifest.parent / "evaluation.jsonl"), report["sources"])
+        self.assertIn(str(manifest.parent / "test.jsonl"), report["sources"])
+
+    def test_native_cli_test_preview_preserves_test_source_binding(self):
+        manifest, outputs = self.fixture(split="test")
+        path = self.root / "test-preview.json"
+        self.native("preview-distillation-review", manifest, "--model-output", outputs[0],
+                    "--split", "test", "--output", path)
+        report = run.read_json(path)
+        self.assertEqual(report["dataset"]["split"], "test")
+        self.assertEqual(report["totals"]["outputs"], 2)
+
+    def test_test_preview_rejects_resealed_wrong_checkpoint_collection(self):
+        manifest, outputs = self.fixture(split="test")
+        stage = outputs[0] / "test/checkpoint-1"
+        source = run.read_json(stage / "test-collection.json")
+        source["checkpoint"] = None
+        run.write_json(stage / "test-collection.json", source)
+        run.write_json(stage / "complete.json", run.file_hashes(stage))
+        with self.assertRaisesRegex(ValueError, "test collection source"):
+            self.preview(manifest, outputs, split="test")
 
     def preview(self, manifest, outputs, **options):
         from sse_multivector import distillation_review_preview

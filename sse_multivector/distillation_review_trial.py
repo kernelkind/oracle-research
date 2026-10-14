@@ -1,7 +1,8 @@
-"""Freeze complete validation answers for a bounded offline review trial.
+"""Freeze complete saved answers for a bounded offline review trial.
 
 Sampling uses saved answer structure and source identities, never reviewer
-outputs. The existing preview verifier keeps reserved test content sealed.
+outputs. The preview verifier decodes evaluation by default; an explicit test
+split freezes only the saved baseline and final checkpoint answers.
 """
 from collections import Counter, defaultdict
 from pathlib import Path
@@ -9,6 +10,7 @@ import random
 import re
 
 from . import distillation_review_preview as preview
+from . import distillation_review as review
 from . import distillation_run as run
 
 
@@ -32,16 +34,16 @@ def _prior_notes(sources):
     return notes
 
 
-def _population(manifest_path, outputs):
-    verified = preview.preview(manifest_path, outputs)
+def _population(manifest_path, outputs, *, split="evaluation"):
+    verified = preview.preview(manifest_path, outputs, split=split)
     sources = dict(verified["sources"])
-    manifest, evaluation, teachers = preview._validation(manifest_path, sources)
+    manifest, evaluation, teachers = preview._validation(manifest_path, sources, split=split)
     # Identity headers and the complete ledger hash have already been checked.
-    # Decode only the same validation slice as the production preview verifier.
+    # Decode only the same selected slice as the production preview verifier.
     raw = preview._read(manifest_path.parent / "references.jsonl", sources,
                         manifest["outputs"]["references.jsonl"])
-    start = len(manifest["train_note_ids"])
-    references = [preview._decode(line) for line in raw.splitlines()[start:start + len(evaluation)]]
+    splits = [manifest[name + "_note_ids"] for name in ("train", "evaluation", "test")]
+    references = [preview._decode(line) for line in review._evaluation_reference_lines(raw, splits, split=split)]
     prior = _prior_notes(sources)
     candidates, versions = [], []
     for model_index, model in enumerate(verified["models"], 1):
@@ -50,7 +52,7 @@ def _population(manifest_path, outputs):
             name = version["version"]
             key = f"M{model_index:02}-{name}"
             versions.append(key)
-            stage = output / ("baseline" if name == "baseline" else "evaluations/" + name)
+            stage = preview._stage(output, name, split=split)
             seal = preview._decode(preview._read(stage / "complete.json", sources,
                                                 sources[str(stage / "complete.json")]))
             rows = preview._decode(preview._read(stage / "results.json", sources, seal["results.json"]))
@@ -153,7 +155,7 @@ def _cohort(selected, candidates, *, allow_ancestor_paths=True):
 
 
 def prepare_trial(manifest_path, model_outputs, output, *, random_count=50, hard_count=10,
-                  seed="DS-final-20261009"):
+                  seed="DS-final-20261009", split="evaluation"):
     """Verify and freeze disjoint complete-answer samples without inference."""
     if (type(random_count) is not int or random_count < 0 or type(hard_count) is not int or hard_count < 0
             or not random_count + hard_count or not isinstance(seed, str) or not seed):
@@ -163,7 +165,7 @@ def prepare_trial(manifest_path, model_outputs, output, *, random_count=50, hard
     directory = Path(output).expanduser().resolve()
     if directory.exists():
         raise ValueError("trial output already exists; frozen selection cannot be overwritten")
-    verified, sources, candidates, versions = _population(manifest_path, outputs)
+    verified, sources, candidates, versions = _population(manifest_path, outputs, split=split)
     if random_count + hard_count > len(candidates):
         raise ValueError("not enough complete validation answers for the requested trial")
     rng = random.Random(seed)
@@ -203,7 +205,10 @@ def load_trial(path):
     if (type(report["schema_version"]) is not int or report["schema_version"] not in (1, 2)
             or report["inference_calls"] != 0 or report["settings"] != SETTINGS):
         raise ValueError("trial selection schema or reviewer settings differ")
-    if "test" in Path(report["dataset"]["path"]).parts:
+    split = report["dataset"].get("split", "evaluation")
+    if split not in ("evaluation", "test") or (split == "test" and report["schema_version"] < 2):
+        raise ValueError("invalid trial dataset split")
+    if split == "evaluation" and "test" in Path(report["dataset"]["path"]).parts:
         raise ValueError("reserved test paths cannot be loaded as a trial")
     for filename, checksum in report["sources"].items():
         if run.sha256(filename) != checksum:
@@ -212,16 +217,16 @@ def load_trial(path):
     sources = dict(report["sources"])
     if sources.get(str(manifest_path)) != report["dataset"]["sha256"]:
         raise ValueError("trial dataset binding differs")
-    manifest, evaluation, teachers = preview._validation(manifest_path, sources)
+    manifest, evaluation, teachers = preview._validation(manifest_path, sources, split=split)
     raw = preview._read(manifest_path.parent / "references.jsonl", sources,
                         manifest["outputs"]["references.jsonl"])
-    start = len(manifest["train_note_ids"])
-    references = [preview._decode(line) for line in raw.splitlines()[start:start + len(evaluation)]]
+    splits = [manifest[name + "_note_ids"] for name in ("train", "evaluation", "test")]
+    references = [preview._decode(line) for line in review._evaluation_reference_lines(raw, splits, split=split)]
     prior = _prior_notes(sources)
     models = {}
     for model_index, model in enumerate(report["model_outputs"], 1):
         output = Path(model["output"])
-        if "test" in output.parts or str(output) in models:
+        if (split == "evaluation" and "test" in output.parts) or str(output) in models:
             raise ValueError("invalid trial model source")
         config, plan = preview._model_plan(output, manifest, sources)
         if (model["model"], model["revision"]) != (config["model"], config["revision"]):
@@ -243,11 +248,12 @@ def load_trial(path):
             model_index, config, plan = models[row["model_output"]]
             output = Path(row["model_output"])
             version = row["version"]
-            versions = {"baseline"} | {f"checkpoint-{m}" for m in plan["milestones"]}
+            milestones = plan["milestones"] if split == "evaluation" else plan["milestones"][-1:]
+            versions = {"baseline"} | {f"checkpoint-{m}" for m in milestones}
             key = f"M{model_index:02}-{version}"
-            stage = output / ("baseline" if version == "baseline" else "evaluations/" + version)
+            stage = preview._stage(output, version, split=split)
             if (version not in versions or row["id"] != f"{key}-N{index:04}" or row["version_key"] != key
-                    or row["stage"] != str(stage) or "test" in stage.parts):
+                    or row["stage"] != str(stage) or (split == "evaluation" and "test" in stage.parts)):
                 raise ValueError("trial version or stage identity differs")
             if str(stage) not in stages:
                 if version != "baseline":
@@ -256,6 +262,15 @@ def load_trial(path):
                     report["sources"][str(stage / "complete.json")]))
                 batch_plan = preview._decode(preview._read(stage / "subject-batches.json", sources,
                                                           stage_seal["subject-batches.json"]))
+                if split == "test":
+                    checkpoint = None if version == "baseline" else output / "checkpoints" / version
+                    collection_path = stage / "test-collection.json"
+                    collection = preview._decode(preview._read(collection_path, sources,
+                        stage_seal["test-collection.json"]))
+                    if (collection != run.subject_test_source(output, checkpoint)
+                            or batch_plan["policy"] != config["subject_batching"]
+                            or batch_plan["max_new_tokens"] != config["max_new_tokens"]["subjects"]):
+                        raise ValueError("trial test collection or generation policy differs")
                 stages[str(stage)] = stage_seal, batch_plan, {}
             stage_seal, batch_plan, receipts = stages[str(stage)]
             generation_path = stage / f"note-{index:04}" / "subjects.json"
