@@ -25,8 +25,9 @@ original notes. Parameters describe the settings actually used.
 | HR18 | 24 | ASv6.100 | V3.2 | bootstrap-v133 | pair-consolidation-v11 | — |
 | HR19 | 50 | ASv6.100 | V3.1 | bootstrap-v129 | pair-consolidation-v7 | — |
 | HR20 | 50 | ASv6.100 | V3.2 | bootstrap-v133 | pair-consolidation-v11 | — |
+| HR21 | 50 | ASv6.100 | V4.1 | bootstrap-v133 | consolidated-grouped-v1 | — |
 
-**Same notes:** HR03/HR10/HR14/HR16/HR19/HR20 use the same ordered 50-note selection.
+**Same notes:** HR03/HR10/HR14/HR16/HR19/HR20/HR21 use the same ordered 50-note selection.
 HR05/HR08/HR09/HR13/HR15/HR17/HR18 use its same ordered first 24 notes. HR04 uses
 its first 12; HR11 and HR12 use selected 6- and 12-note subsets of the 24,
 so HR12's set differs from HR04's. HR06/HR07 use older ASv6.48 inputs and are
@@ -48,6 +49,11 @@ so HR12's set differs from HR04's. HR06/HR07 use older ASv6.48 inputs and are
 - V3.2: same cutoff and construction as V3.1; use Bootstrap-v133's generated
   titles in SSE, consolidation inputs and browsing. Preserve original AS subjects
   separately. **HR18 retains 19/24 notes in 20 nodes.**
+- V4.1: one HDBSCAN tree, **min_samples=3, min_cluster_size=2, excess-of-mass**,
+  angular distance and no cosine cutoff. Cut selected-group ancestors into at
+  most six choices per level. Name groups and broader sections bottom-up;
+  generated meanings are never reclustered. Stop at original groups, exposing
+  notes directly. **HR21 retains 46/50 notes in 31 nodes, with six roots.**
 - HR14/HR16 omit two null Bootstrap meanings. HR17 had none. Answers and receipts
   remain saved; the original selected note set is preserved as input evidence.
 
@@ -59,12 +65,13 @@ HR03/HR06/HR07 and 1,800s for traversal/V2. V2 prominence uses 600s.
 
 **Encoder:** V3/V3.1 use the same SSE checkpoint as HR15, sentence-T5-base,
 CPU, 768 dimensions, batch 8, **512-token maximum**. Pool the original AS
-subject with its Bootstrap meaning as unselected context. V3.2 uses the same
-encoder and limits, pooling the generated title instead. HR03/HR06/HR07 used
+subject with its Bootstrap meaning as unselected context. V3.2/V4.1 use the same
+encoder and limits, pooling the generated title instead. V4.1 encodes only
+original Bootstrap entries. HR03/HR06/HR07 used
 standalone subject vectors, also with a 512-token maximum. Traversal/V2 did not
 use SSE for hierarchy construction.
 
-**Execution:** HR11–HR20 use prefix caching, automatic warming and exact-request
+**Execution:** HR11–HR21 use prefix caching, automatic warming and exact-request
 answer reuse. Seed/temperature are unspecified; no explicit output-token cap.
 Normally at most two provider attempts per case across resumes, temporary
 provider errors only; HR14 had an approved recovery exception.
@@ -93,6 +100,7 @@ Unknown means the execution commit was not recorded.
 | HR18 | None | 48e71c71 | 9d956b3a |
 | HR19 | None | 5446454d | 9d956b3a |
 | HR20 | None | 48e71c71 → 273e16e1 | 9d956b3a |
+| HR21 | None | f5500b02 | e7dd09fa |
 
 ## Calls, tokens and API cost
 
@@ -122,6 +130,7 @@ tokens and cost are known subtotals; the complete totals remain unknown.
 | HR18 | 218 | 0 | 1,050,026 | $1.4479 | 3 |
 | HR19 | 54 | 432 | 95,792 | $0.2132 | 0 |
 | HR20 | 327 | 167 | 1,355,596 | $1.8697 | 5 |
+| HR21 | 10 | 25 + 326 Bootstrap | 20,183 | $0.0450 | 0 |
 
 HR18's tokens and cost are known subtotals: three recovered provider attempts
 lack reported usage. HR20 has five recovered attempts without reported usage.
@@ -279,3 +288,18 @@ were skipped with evidence retained. Revalidation used saved answers unchanged.
 cd /home/dev/src/notedeck_worktrees/algos
 ./oracle-mvp-hierarchy-hr20-v32/target/hr20-review-ui-v1/launch.sh
 ```
+
+## HR21 — 50 notes · HiGen V4.1
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos
+./oracle-mvp-hierarchy-hr21-v41/target/hr21-review-ui-v1/launch.sh
+```
+
+Completed in **8m 39s**. Ten new calls comprise six section answers and four
+warmups; all 25 original group answers and 326 Bootstrap answers were reused.
+New usage is 6,928 uncached input, 10,240 cached input and 3,015 output tokens
+(including 1,849 reasoning). Historical producer-inclusive cost is a known
+subtotal of **$2.6688**, with four historical calls missing usage; the complete
+producer-inclusive total remains unknown. Null meanings and 183 unassigned
+entries remain recorded as evidence; four selected notes are absent.
