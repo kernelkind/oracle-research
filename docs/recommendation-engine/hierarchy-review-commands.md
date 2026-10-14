@@ -455,7 +455,8 @@ Retain the isolated run worktree for its frozen source bindings and evidence.
 
 ## HR26 — 200 notes · HiGen V4.1
 
-Blocked before encoding and clustering. Exact historical 200 raw posts:
+Resuming after the user approved nonblocking diagnostics and provider recovery.
+Exact historical 200 raw posts:
 HR25’s ordered 100 food/drink posts followed by the frozen 100 music posts.
 All 100 food ASv6.100 subject trees and 733 Bootstrap-v133 answers reused.
 All 100 fresh music ASv6.100 subject trees are valid. The combined corpus
@@ -464,14 +465,17 @@ has 1,527 original L1s: 733 food/drink and 794 music.
 Bootstrap-v133 and consolidated-grouped-v1; HDBSCAN min_samples=3,
 min_cluster_size=2, excess_of_mass and angular distance. No cosine cutoff.
 At most six roots and children; original HDBSCAN groups expose notes directly.
-Two total provider attempts per case, no total call cap; native answer reuse.
+The initial invocation allowed two provider attempts per case. The approved
+HR26 recovery retries temporary provider failures until success without a
+per-case or total call cap; native answer reuse remains enabled.
 
-Native Bootstrap validation: 1,525 valid answers, one provider-overload failure
-that exhausted two attempts, and one malformed Songs answer whose diagnostic
-quote is not a literal post excerpt. Both recovery approvals are pending.
-The fresh one-case Songs trial is prepared with identical input, prompt and
-settings; it has not submitted calls. Preserve all old receipts and the blocked
-snapshot. Final hierarchy and review UI are unavailable.
+The initial Bootstrap pass had one provider-overload failure after two
+attempts and one invalid Songs diagnostic quote. The provider case recovered
+on its third attempt. The user directed that invalid diagnostics must not
+block construction: retain the saved Songs meaning/title and report the quote
+error as `diagnostic_errors`. No fresh Songs draw was submitted. Preserve all
+old receipts, the initial settings, the blocked snapshot and the audited code
+upgrade. Final hierarchy and review UI are pending.
 
 Native accounting so far: **899 new attempts**, including warmups and retries;
 733 exact answer reuses, four failed attempts and three retry attempts.

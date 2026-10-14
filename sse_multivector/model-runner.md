@@ -75,6 +75,11 @@ Native `hierarchy_local_nodes` validation requires a nonempty title for a
 non-null meaning and a null title for a null meaning. Earlier schemas retain
 their original exact fields; frozen experiments are unchanged.
 
+Bootstrap diagnostic validation is separate from the meaning/title payload.
+Invalid evidence quotes, ambiguity records or resolutions are retained and
+reported as `diagnostic_errors`; they do not block hierarchy construction or
+force another model draw. Invalid meaning/title payloads still cannot be used.
+
 Hierarchy generation V3.2 explicitly requires Bootstrap-v133. It uses the
 returned title for the original item's SSE heading, pair-consolidation inputs
 and canonical browsing, retaining the raw local subject as evidence. V3/V3.1
@@ -132,6 +137,9 @@ pass `run-hierarchy --max-provider-attempts N`. The constructor records it in
 its execution settings and forwards it to every native teacher batch, including
 warmups. Saved attempts count across resumes; the total hierarchy call allowance
 remains uncapped unless separately authorized.
+The first invocation's `execution-settings.json` remains preserved. Each
+invocation appends its actual limits and upgrade reason to
+`execution-settings.jsonl`, allowing an authorized limit change during recovery.
 
 Current Bootstrap prompt status, ASv6.100-only provenance requirements and
 branch regression findings are maintained in
