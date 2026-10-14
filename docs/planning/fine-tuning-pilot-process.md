@@ -11,7 +11,112 @@ preparation, training and evaluation, approved October 2.
 reserved-test answers now have correctness and coverage grades, with no manual
 review queue. The [200-note test results](#completed-test-grading-october-14)
 compare each final 1,000-note adapter with its untuned baseline. Model selection
-remains open; no additional training or student generation was performed.
+for continued subject training is now Qwen, as approved below. The completed
+comparison itself performed no additional training or student generation.
+
+## Approved Qwen continuation (October 14)
+
+The user selected **Qwen3.8-27B**, approved **two additional complete passes over
+the same 1,000 training notes**, and chose **one 96GB RTX PRO 6000**. The approved
+schedule generates both checkpoints' validation and test answers during one
+continuous rental, retrieves and verifies all required work, then terminates
+the rental before local semantic grading. The new experiment's maximum charge
+is **$30**, including preparation, failed attempts, storage and transfers;
+the project's $1,000 lifetime cap and ledger admission still apply.
+
+This is continued training from the existing final 1,000-note checkpoint,
+including optimizer, schedule and RNG state. It is not a fresh adapter or a
+new 3,000-note dataset. Keep the frozen Qwen revision, full **ASv6.100** including
+its examples, 1,000/100/200 splits, thinking off, unquantized BF16 base,
+FP32 rank-16/alpha-32 adapters, eight examples per update, token-averaged
+answer-only loss and constant 0.0001 learning rate. Full training-data volume,
+new labels, masks, preference training, rank changes and thinking-on training
+are outside this continuation.
+
+| Saved version | Total training-note uses | Distinct training notes | Total updates | New validation answers | New test answers |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Existing pass 1 | 1,000 | 1,000 | 125 | Already saved | Already saved |
+| End of pass 2 | 2,000 | 1,000 | 250 | 100 | 200 |
+| End of pass 3 | 3,000 | 1,000 | 375 | 100 | 200 |
+
+Generate **600 new answers: 200 validation and 400 test**. Test answers receive
+mechanical accounting, parsing and integrity checks only while on the rental;
+keep their content and semantic grades out of checkpoint selection. After
+retrieval and termination, grade validation locally using the completed pilot's
+semantic workflow, choose using correctness and coverage, then grade only the
+selected checkpoint's saved 200 test answers. Existing pass-1 results remain
+the comparison. The existing 200 test notes have already been examined; this
+does not create a fresh untouched final test set.
+
+For evaluation, load the saved adapter on a fresh BF16 base and merge the
+evaluation copy. Verify that evaluation leaves the unmerged training checkpoint
+unchanged, then restore its complete training state for the next pass. Preserve
+both new checkpoints and the original checkpoint; freeze each pass's example
+order and record every use without duplicating the underlying training rows.
+
+**Estimate, not a reservation:** Qwen's saved pilot measured 2.8045 hours per
+training pass, 2.0485 hours per 100-note validation generation and 4.1728 hours
+per 200-note test generation. Two passes, two validations and two tests total
+**18.05 GPU hours** before preparation, loading and transfers. The October 14
+single-card server quote was $1.125/hour including 150GB disk. Allow roughly
+**20–24 rental hours / $23–28**, within the approved $30 maximum. Longer answers,
+host throughput and recovery can change these estimates. Local grading needs
+no rented GPU and does not extend the rental.
+
+### Pilot failure audit and continuation requirements
+
+The audit below traces the October 3–8 runtime failures and the completed
+grading handoff to current production code and its regressions. The dated
+three-family/two-GPU rules below describe the completed comparison; this
+continuation packages Qwen only and has no Gemma preparation or baseline gate.
+
+| Pilot evidence | Requirement for this continuation |
+| --- | --- |
+| Full ASv6.100 inputs exceeded the old context and 4,096-token output allowance; seven teacher hierarchies exceeded the 128-node guard. | Reuse the validated 20,480-token context, 10,240-token output allowance and subjects-only parser without the old node guard. Verify complete examples; do not truncate notes, prompt examples or teacher answers. |
+| Dense attention/logit buffers made the full inputs impractical; CPU checks alone did not establish CUDA behavior. | Retain enforced efficient CUDA attention with no math fallback and the pinned fused linear cross-entropy training path. Rehearse the exact source/runtime locally and confirm actual Qwen CUDA loss/gradient agreement, longest-example updates and maximum-output cache shapes before main training. |
+| An inference memory allowance was incorrectly applied as a training cutoff. Gemma-specific gradient and cache failures caused further replacement rentals. | Keep training measurements separate from inference batch admission. Preserve numerical checks and tolerances. Run matched Qwen preparation only; do not repeat the three-family qualification. |
+| The old deployment assigns Qwen to GPU 1. Its required-card count is the highest assigned index plus one. | Freeze a Qwen-only package using logical GPU 0; copying the old assignment would still require two cards. Download only the pinned Qwen model. |
+| Host DNS prevented SSH; a startup gate also charged the full transfer allowance against an inadequate local startup bound. | Verify image/driver, SSH route, host RAM, disk and complete storage/transfer pricing. Freeze setup and work allowances inside the approved $30 total; do not reuse the earlier $1 startup allowance. |
+| A persistent-volume request used an unsupported mount path and was rejected. | If a volume is used, mount it at the provider-supported `/workspace` path, keep work under its child directory, and verify attachment, write/read and free space on the selected machine. A separate download rental is not part of this schedule. |
+| Direct copying was slow; large checkpoints could delay small responses. | Use the tested provider-proxy route and progressive copier. Prioritize sealed responses, copy checkpoint files in bounded chunks, verify hashes before publishing completion markers, and reuse verified copies in final retrieval. |
+| A controller can exit while a training child remains alive. Interrupted calls and partial publication must not be mistaken for finished work. | Retain worker locks through child lifetime. Reconcile the live worker before a recorded continuation; reuse complete checkpoints and saved receipts. Never regenerate a saved invalid answer or treat an unsealed partial checkpoint as resumable. Copier/observer failure must not stop training. |
+| The generic `distillation/vast-launch.json` still sets a 43,200-second worker timeout. | Do not inherit a 12-hour cutoff for a 20–24-hour run. Freeze the approved no-automatic-timeout behavior, monitor cost/time, and complete retrieval verification before the approved normal termination. |
+| A successful transfer or `report.json` alone did not prove experiment completeness. | Verify the parent and both continuing checkpoints, exact note uses and updates, all 600 raw/parsed answers, generation receipts, input bindings and seals before recording completion and deleting the rental. |
+| Long-form DSRv1/DSRv2 grading failed qualification; the later automatic workflow completed validation and test grading. | Reuse DSMv3/DSSv2/DSLv10/DCSv1 and the completed role-specific settings. Keep teacher requirement groups fixed, identities out of semantic requests and invalid outputs in denominators. Missing reviewer work remains ungraded. No new grader design or paid API fallback is proposed. |
+| Grading exposed shared-runner scheduling, history growth and overload recovery problems. | Use the landed runner fixes and native shared 30-request admission, with all ready batches submitted. Keep grading local in the established memory boundary; do not add an outer batch cap or hold the GPU for grading. |
+| Budget admission | Reconcile current commitments before any paid work. A price quote or a deleted-instance report does not establish a current project balance. |
+
+**Current implementation, audited October 14:** the saved parent checkpoint
+passes `subject_checkpoint_metadata` with 1,000 distinct consumed notes,
+125 updates and 1,658,323 supervised answer tokens. Its adapter and training-state
+files verify against the saved seals. The original training order reproduces
+exactly through `subject_training_plan` from the existing prepared dataset.
+
+The current worker is **not yet executable for the continuation**:
+
+- `subject_training_plan` requires unique note IDs and a final milestone equal
+  to dataset size. Merely changing milestones to 2,000/3,000 is rejected;
+  triplicating the rows is also rejected.
+- `train_subject_block` and `subject_checkpoint_metadata` bind state to the
+  original manifest and plan hashes. Add an explicit, verified parent-checkpoint
+  continuation; do not rewrite the original manifest, reset the optimizer or
+  weaken provenance checks to make a copied checkpoint fit.
+- `run_subject_pilot` collects test answers only at the last milestone and
+  requires its original baseline stages. The continuation must reuse verified
+  historical baselines and collect tests at both new checkpoints.
+- Package preparation/completion verification and the grading handoff must
+  account for the continuation and both test collections. Extend the existing
+  production workflow with failing regression tests first; do not hand-assemble
+  results or modify a frozen active source binding.
+
+Offline verification during this audit passed **73 existing production-path
+contract, data, lifecycle, package and VM-cache tests**. An initial broader
+114-test invocation did not pass: the host Python lacks `torch` and
+`huggingface_hub`, preventing tiny-model/cache tests; 16 SSH-VM tests were skipped.
+Local Docker execution is unavailable to this session. These checks do not
+replace pinned-runtime integration, a rehearsal of the new continuation, or
+actual CUDA preparation. No continuation code, rental, model generation or
+grading run was started during the audit.
 
 **Two-GPU execution approved October 5:** keep each complete student on one
 **96GB RTX PRO 6000**. GPU 0 runs Gemma dense; GPU 1 runs Qwen, then Gemma MoE.
@@ -1049,7 +1154,8 @@ observed final coverage; its correctness is nearly tied with dense Gemma.
 These measurements compare the frozen final recipes, not alternative
 checkpoints or each family's best possible training recipe. They do not
 establish uncertainty intervals or independently certify the semantic grader.
-Selecting the model and authorizing the real fine-tune remain user decisions.
+The user subsequently selected Qwen for the continuation above. The full
+training-data volume and production adoption remain separate decisions.
 
 The teacher-only inventory covers all 200 contexts, with 2,094 required and
 985 optional exact-wording groups. Optional groups retain explicit ASv6.100

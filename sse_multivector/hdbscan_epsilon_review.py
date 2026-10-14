@@ -230,6 +230,77 @@ def saved_review(state_path):
     return group_review(response, request, mapping, state, provenance)
 
 
+def prepare_section_source(source, base, read, read_bytes):
+    """Load one reviewed root section from its original named native groups."""
+    from experiment_runner import experiment as workflow
+
+    if (set(source) != {'schema_version', 'epsilon_review', 'section'}
+            or type(source['schema_version']) is not int or source['schema_version'] != 1
+            or not isinstance(source['epsilon_review'], str)
+            or not isinstance(source['section'], str)):
+        raise ValueError('epsilon section source requires schema_version=1, epsilon_review and section')
+    analysis_path = workflow.resolve(source['epsilon_review'], base)
+    analysis = read(analysis_path)
+    provenance = analysis['provenance']
+    if 'state_path' not in provenance:
+        raise ValueError('epsilon section requires one saved native hierarchy source')
+    state_path = workflow.resolve(provenance['state_path'], analysis_path.parent)
+    state = read(state_path)
+    if saved_review(state_path) != analysis:
+        raise ValueError('epsilon review differs from saved native evidence')
+    if state['status'] != 'complete':
+        raise ValueError('epsilon section requires completed native group definitions')
+    sections = {f'S{i+1:02d}': section for i, section in enumerate(analysis['sections'])}
+    if source['section'] not in sections:
+        raise ValueError('unknown epsilon section: ' + source['section'])
+    section = sections[source['section']]
+    groups = {group['id']: group for group in analysis['groups']}
+    if len(section['groups']) < 2:
+        raise ValueError('section consolidation requires at least two original groups')
+
+    def protect(path, expected=None):
+        actual = hashlib.sha256(read_bytes(Path(path))).hexdigest()
+        if expected is not None and actual != expected:
+            raise ValueError('epsilon section source changed: ' + str(path))
+
+    for path, expected in state['sources'].items():
+        protect(path, expected)
+    for name in ('request', 'result'):
+        protect(provenance[name], provenance[name + '_sha256'])
+    leaf_sections = {frozenset(s['original_ids']): s for s in
+                     state['hdbscan_sections']['sections'] if s['group']}
+    nodes, witnesses, notes, producer_directories = [], [], set(), set()
+    for group_id in section['groups']:
+        group = groups[group_id]
+        leaf = leaf_sections.get(frozenset(group['original_ids']))
+        matches = [n for n in state['nodes'] if leaf and n['item'] == leaf.get('item')]
+        if len(matches) != 1:
+            raise ValueError('original HDBSCAN group lacks a unique native named node')
+        node = matches[0]
+        producer = node['synthetic']
+        directory = Path(producer['experiment']).resolve()
+        if directory not in producer_directories:
+            plan, _, _ = workflow.load(directory)
+            protect(directory / 'experiment.json')
+            for path, expected in plan['sources'].items():
+                protect(path, expected)
+            for name, expected in plan['files'].items():
+                protect(directory / name, expected)
+            protect(Path(plan['run_directory']) / 'manifest.json')
+            producer_directories.add(directory)
+        protect(producer['receipt']['results_path'])
+        nodes.append(dict(title=node['subject'], meaning=node['meaning']))
+        witnesses.append(dict(group=group_id, node=node['id'], producer=producer))
+        notes.update(group['note_ids'])
+    evidence = dict(epsilon_review=str(analysis_path), state=str(state_path),
+                    section=source['section'], epsilon=analysis['selection']['epsilon'],
+                    groups=section['groups'], group_nodes=witnesses, note_ids=sorted(notes))
+    case = dict(id=source['section'], inputs=dict(
+        INPUT_JSON=json.dumps(dict(nodes=nodes), ensure_ascii=False)), evidence=evidence)
+    return [case], dict(application_allowed=False,
+                        purpose='Name one fixed epsilon section; no saved hierarchy is changed.')
+
+
 def combine_sources(states, notes_per_source):
     """Select original L1s by note, retaining their native meanings and vectors."""
     if type(notes_per_source) is not int or notes_per_source < 1 or not states:

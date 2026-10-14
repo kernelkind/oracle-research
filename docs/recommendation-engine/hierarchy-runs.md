@@ -1305,3 +1305,18 @@ the original runs. The registry alone is not a backup. Experiment preparation,
 execution and resumption still use task worktrees and the shared launcher.
 The [HTML viewer](../../target/hierarchy-catalogue/index.html) also supports
 side-by-side comparison of official runs.
+
+## HR26 — 200-note HiGen V4.1
+
+Completed official run: 192 nodes, six roots and 198/200 notes. Exact historical
+100 food/drink and 100 music posts, using ASv6.100, Bootstrap-v133 and
+consolidated-grouped-v1. HDBSCAN uses min_samples=3 and min_cluster_size=2.
+The user-approved recovery retains invalid diagnostics as flags and retries
+temporary provider failures without the original per-case limit.
+
+The [parameter ledger](hierarchy-parameters.csv) records the actual controls;
+[HR26’s concise record and review command](hierarchy-review-commands.md#hr26--200-notes--higen-v41)
+links the checked UI and native usage. The primary XLSX is updated with Complete
+status, 200 input notes and 198 output notes. The official catalogue preserves
+the final state and generation commits. Original model answers and the blocked
+checkpoint remain available alongside the completed artifacts.

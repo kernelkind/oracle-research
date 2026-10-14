@@ -74,6 +74,12 @@ def prepare_file(dataset, path, template, load_report=None, *, preparation_conte
         sources.update(protected)
         return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, preparation
     if dataset['adapter'] in {'hierarchy_pair_consolidation', 'hierarchy_group_consolidation'}:
+        if (dataset['adapter'] == 'hierarchy_group_consolidation'
+                and isinstance(source, dict) and 'epsilon_review' in source):
+            from . import hdbscan_epsilon_review
+            cases, preparation = hdbscan_epsilon_review.prepare_section_source(
+                source, path.parent, read, read_bytes)
+            source = dict(cases=cases)
         engine._expect_fields(source,'pair consolidation source',{'cases'})
         if not isinstance(source['cases'],list):
             raise ValueError('pair consolidation cases must be an array')
@@ -91,7 +97,7 @@ def prepare_file(dataset, path, template, load_report=None, *, preparation_conte
                 engine._expect_fields(node,'pair consolidation node',{'title','meaning'})
                 if any(not isinstance(node[key],str) or not node[key].strip() for key in node):
                     raise ValueError('pair consolidation nodes require nonempty title and meaning')
-        return prepare({**dataset, 'adapter':'generic'}, source, template), sources, None
+        return prepare({**dataset, 'adapter':'generic'}, source, template), sources, preparation
     if dataset['adapter'] == 'canonical_consolidation':
         prepared = source if 'cases' in source else dict(
             cases=prepare_consolidations(source, path.parent, read))

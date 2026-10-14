@@ -7,6 +7,19 @@ Implementation and deployment details are recorded below.
 
 ## Status and scope
 
+**Current direction, October 14:** the three-family subjects-only pilot has
+completed training, generation and semantic grading. Qwen3.8-27B is selected for
+two further complete passes from its saved final 1,000-note checkpoint on one
+96GB card, with a $30 maximum charge. Generate validation and sealed test answers
+at both new checkpoints, retrieve and verify all required artifacts, then end
+the rental before local grading and checkpoint selection. The
+[approved continuation and failure audit](../docs/planning/fine-tuning-pilot-process.md#approved-qwen-continuation-october-14)
+is the current operational plan. It preserves ASv6.100, the splits and numerical
+recipe. Explicit checkpoint continuation and both test collections still need
+production-workflow support and verification; no continuation rental has started.
+The dated setup directions below retain the earlier experiments' scope and
+evidence and do not require repeating Gemma checks or untuned baselines for Qwen.
+
 **October 2 subjects-only decision:** the larger pilot trains and evaluates
 subject discovery and hierarchy only. One teacher hierarchy per training note
 yields 1,000 examples and 125 updates per student, 25 per 200-note block. No
@@ -30,16 +43,17 @@ remain pending; the combined rental is approved up to $285.
 **Release-plan tracking:** the preliminary 100-note experiment below is task
 **29 · Run preliminary 100-note fine-tuning experiment**, in progress. The larger
 model-selection pilot is **06 · Choose model through larger fine-tuning pilot**,
-waiting for larger-run preparation and semantic scoring. Its data is frozen.
+whose three-family training and semantic scoring are complete; its Qwen
+continuation is recorded above. Its data is frozen.
 The planned pilot includes a comparison trained on
 1,000 notes, approved September 30. On October 1 the user requested three
 continuing student training runs, replacing separate fresh starts at each size,
 and approved validation checkpoints at 200, 400, 600, 800, and 1,000 training
 notes. The 1,000 train / 100 validation / 200 test split was approved October 4.
 Task 18's preliminary training setup
-is complete. The subjects-only continuing worker is implemented locally;
-GPU fit remains open. The background copier
-is implemented locally.
+is complete. The subjects-only worker and background copier are implemented
+and the three-family GPU run has completed. The new two-pass continuation
+still needs the production-workflow support recorded above.
 Task 29 needs 01 + 18, not the larger-pilot data
 in 05, and its findings inform 06 without becoming a new completion gate.
 Splitting the tracking does not change the experiments or spending approvals.
