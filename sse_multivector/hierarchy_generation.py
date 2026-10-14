@@ -33,7 +33,9 @@ POLICY_V32 = "hierarchy-generation-v3.2"
 POLICY_V4_ROOTS = "hierarchy-generation-v4-roots"
 POLICY_V41 = "hierarchy-generation-v4.1"
 POLICY_V42 = "hierarchy-generation-v4.2"
-SECTION_POLICIES = (POLICY_V41, POLICY_V42)
+POLICY_V43 = "hierarchy-generation-v4.3"
+POLICY_V44 = "hierarchy-generation-v4.4"
+SECTION_POLICIES = (POLICY_V41, POLICY_V42, POLICY_V43, POLICY_V44)
 HDBSCAN_POLICIES = (POLICY_V4_ROOTS, *SECTION_POLICIES)
 TITLE_POLICIES = (POLICY_V32, *HDBSCAN_POLICIES)
 MAX_SIBLINGS = 6
@@ -345,7 +347,7 @@ def prepare(spec_path, directory, history_root=None):
         from . import hierarchy_hdbscan
         state["hdbscan_binary"] = str(workflow.resolve(cfg["hdbscan_binary"], spec_path.parent))
         if teacher_specs["consolidation_spec"]["prompt"]["id"] != "Hierarchy-consolidated-grouped-v1":
-            raise ValueError("V4/V4.1/V4.2 requires Hierarchy-consolidated-grouped-v1")
+            raise ValueError("V4 requires Hierarchy-consolidated-grouped-v1")
         for path in (Path(state["hdbscan_binary"]), Path(hierarchy_hdbscan.__file__)):
             sources[str(path.resolve())] = trial._hash(path)
     if policy in HDBSCAN_POLICIES and "bootstrap_hierarchy" in cfg:
@@ -359,7 +361,7 @@ def prepare(spec_path, directory, history_root=None):
                 or source_state["bootstrap_spec"] != teacher_specs["bootstrap_spec"]
                 or source_state["worker_config"] != worker_config
                 or not source_state["experiments"][0].get("complete")):
-            raise ValueError("V4/V4.1/V4.2 requires matching saved Bootstrap-v133 inputs and controls")
+            raise ValueError("V4 requires matching saved Bootstrap-v133 inputs and controls")
         state["bootstrap_hierarchy"] = str(source_path)
         sources[str(source_path)] = trial._hash(source_path)
         state["experiments"] = [deepcopy(source_state["experiments"][0])]

@@ -13,6 +13,14 @@ from . import experiment as workflow
 
 CONFIG = dict(min_samples=3, min_cluster_size=2, selection_method="excess_of_mass")
 CONFIG_V42 = dict(CONFIG, min_cluster_size=4)
+CONFIG_V43 = dict(CONFIG, min_samples=4)
+CONFIG_V44 = dict(CONFIG_V43, min_cluster_size=4)
+SECTION_CONFIGS = {
+    "hierarchy-generation-v4.1": CONFIG,
+    "hierarchy-generation-v4.2": CONFIG_V42,
+    "hierarchy-generation-v4.3": CONFIG_V43,
+    "hierarchy-generation-v4.4": CONFIG_V44,
+}
 
 
 def section_plan(response, request, mapping, max_siblings):
@@ -176,8 +184,7 @@ def request_for(state, ids, vectors):
             [identifier, state["items"][identifier]["vector_key"]] for identifier in ids
         ]),
         normalized_vector_sha256=hashlib.sha256(raw).hexdigest(),
-        hdbscan_configuration=(CONFIG_V42 if state.get("generation_policy") ==
-                               "hierarchy-generation-v4.2" else CONFIG),
+        hdbscan_configuration=SECTION_CONFIGS.get(state.get("generation_policy"), CONFIG),
     ), mapping
 
 
@@ -188,7 +195,7 @@ def members(response, request, mapping):
     artifact = response["artifact"]
     manifest = artifact["manifest"]
     configuration = request["hdbscan_configuration"]
-    if (configuration not in (CONFIG, CONFIG_V42)
+    if (configuration not in SECTION_CONFIGS.values()
             or json.loads(artifact["canonical_configuration_json"]) != configuration
             or manifest.get("parameters") != configuration
             or manifest.get("algorithm_version") != "hdbscan-star-exact-angular-v1"

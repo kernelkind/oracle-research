@@ -12,6 +12,25 @@ Their parameters and commands are in
 The earlier V4 root-only experiment remains separate evidence below. Historical
 V3 variants and V4 definitions retain their frozen policies on resume.
 
+## Authorized parameter comparisons
+
+V4.3 and V4.4 are experimental variants of the same V4.2 construction. Their
+configuration is authorized for testing; neither is a new semantic approval or
+replacement for the V4.2 baseline.
+
+| Version | `min_samples` (including the entry itself) | `min_cluster_size` | Frozen policy |
+| --- | ---: | ---: | --- |
+| V4.1 | 3 | 2 | `hierarchy-generation-v4.1` |
+| V4.2 | 3 | 4 | `hierarchy-generation-v4.2` |
+| V4.3 | 4 | 2 | `hierarchy-generation-v4.3` |
+| V4.4 | 4 | 4 | `hierarchy-generation-v4.4` |
+
+The V4.3/V4.4 trials reuse HR23's exact ordered 100-note corpus, Bootstrap-v133
+answers and original vectors. All other model, prompt, encoder, grouping,
+section-cut and stopping settings remain the same. Existing requests, answers
+and receipts remain immutable; exact grouped-consolidation answers are reused
+when available. Only newly required section definitions need inference.
+
 ## Approved V4.2 process
 
 Use Bootstrap-v133's generated titles and fixed meanings for original local L1
@@ -60,7 +79,7 @@ against the saved HDBSCAN result on advancement.
 Select `generation_policy = hierarchy-generation-v4.2` in a schema-1 hierarchy
 definition. Use the ordinary `prepare-hierarchy`, `advance-hierarchy` and
 `run-hierarchy` commands. `hdbscan_binary` names the production executable.
-Optional `bootstrap_hierarchy` reuses a matching frozen V3.2, V4.1 or V4.2
+Optional `bootstrap_hierarchy` reuses a matching frozen V3.2 or V4.1–V4.4
 Bootstrap-v133 checkpoint and original vectors; without it, preparation creates
 the ordinary Bootstrap batch followed by original SSE encoding. Teacher specs, source corpus
 and local encoder controls retain their existing contracts.

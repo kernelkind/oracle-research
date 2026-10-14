@@ -586,7 +586,7 @@ print(json.dumps({"schema_version":1,"candidate_identity":"hdbscan-explicit-conf
                             if len(p["nodes"]) != 3 for n in p["nodes"]))
         generation.check_state(state)
 
-    def test_v42_uses_cluster_size_four_through_native_construction(self):
+    def _assert_section_policy_controls(self, policy, min_samples, min_cluster_size):
         from sse_multivector import hierarchy_generation as generation
         from sse_multivector import hierarchy_hdbscan as hdbscan
 
@@ -598,7 +598,7 @@ print(json.dumps({"schema_version":1,"candidate_identity":"hdbscan-explicit-conf
             'groups=[ids[i:i+size] for i in range(0,len(ids)-size+1,size)]'
         ).replace('"child_size":3', '"child_size":size'))
         cfg = json.loads(spec.read_text())
-        cfg["generation_policy"] = "hierarchy-generation-v4.2"
+        cfg["generation_policy"] = policy
         spec = self.write("v42.json", cfg)
         prior = self.calls()
         self.cli("prepare-hierarchy", "v42", "--spec", spec)
@@ -608,13 +608,16 @@ print(json.dumps({"schema_version":1,"candidate_identity":"hdbscan-explicit-conf
         round_ = state["families"][0]["rounds"][0]
         request = json.loads(Path(round_["hdbscan"]["request"]).read_text())
         self.assertEqual(request["hdbscan_configuration"], dict(
-            min_samples=3, min_cluster_size=4, selection_method="excess_of_mass"))
-        self.assertEqual(result["generation_policy"], "hierarchy-generation-v4.2")
+            min_samples=min_samples, min_cluster_size=min_cluster_size,
+            selection_method="excess_of_mass"))
+        self.assertEqual(result["generation_policy"], policy)
         self.assertEqual(result["status"], "complete")
         self.assertEqual(len(result["hdbscan_rounds"]), 1)
-        self.assertEqual(result["hdbscan_rounds"][0]["group_sizes"], [4, 4])
-        self.assertEqual(len(state["nodes"]), 2)
-        self.assertTrue(all(len(n["original_ids"]) == 4 for n in state["nodes"]))
+        expected_groups = [min_cluster_size] * (9 // min_cluster_size)
+        self.assertEqual(result["hdbscan_rounds"][0]["group_sizes"], expected_groups)
+        self.assertEqual(len(state["nodes"]), len(expected_groups))
+        self.assertTrue(all(len(n["original_ids"]) == min_cluster_size
+                            for n in state["nodes"]))
         generation.check_state(state)
         legacy = dict(state, generation_policy="hierarchy-generation-v4.1")
         old_request, _ = hdbscan.request_for(legacy, round_["current"],
@@ -623,6 +626,15 @@ print(json.dumps({"schema_version":1,"candidate_identity":"hdbscan-explicit-conf
         state["generation_policy"] = "hierarchy-generation-v4.1"
         with self.assertRaisesRegex(ValueError, "frozen hierarchy definition"):
             generation.check_state(state)
+
+    def test_v42_uses_cluster_size_four_through_native_construction(self):
+        self._assert_section_policy_controls("hierarchy-generation-v4.2", 3, 4)
+
+    def test_v43_uses_samples_four_and_cluster_size_two_through_native_construction(self):
+        self._assert_section_policy_controls("hierarchy-generation-v4.3", 4, 2)
+
+    def test_v44_uses_samples_four_and_cluster_size_four_through_native_construction(self):
+        self._assert_section_policy_controls("hierarchy-generation-v4.4", 4, 4)
 
     def test_v42_reuses_v41_bootstrap_answers_and_original_vectors(self):
         from sse_multivector import hierarchy_generation as generation

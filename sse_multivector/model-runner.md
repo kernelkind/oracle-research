@@ -1751,7 +1751,7 @@ meanings are not encoded or reclustered. Original HDBSCAN groups expose notes
 directly, even when they represent many notes. No local L2 phase is used.
 Select `generation_policy=hierarchy-generation-v4.2`, supply `hdbscan_binary`,
 and optionally supply `bootstrap_hierarchy` to reuse matching frozen V3.2,
-V4.1 or V4.2 Bootstrap-v133 answers and vectors. Without that checkpoint the ordinary
+V4.1–V4.4 Bootstrap-v133 answers and vectors. Without that checkpoint the ordinary
 Bootstrap and original encoding stages run. The shared native runner retains
 exact reuse, concurrency, usage and retry ownership. Every ready section is
 submitted without waiting for unrelated groups. V4's earlier
@@ -1759,6 +1759,10 @@ submitted without waiting for unrelated groups. V4's earlier
 V4.1 (`hierarchy-generation-v4.1`) retains `min_cluster_size=2`; the cluster
 size is the only V4.2 change. Saved V4.1 requests and receipts keep their
 original settings and policy on resume.
+V4.3 (`hierarchy-generation-v4.3`) uses `min_samples=4, min_cluster_size=2`;
+V4.4 (`hierarchy-generation-v4.4`) uses `min_samples=4, min_cluster_size=4`.
+Both are authorized experimental variants with every other V4.2 stage and
+setting unchanged. They do not replace the V4.2 baseline or relabel old runs.
 
 Read help through the shared stable launcher from the task worktree:
 
