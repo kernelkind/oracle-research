@@ -90,6 +90,24 @@ class CanonicalHierarchyViewerTests(unittest.TestCase):
         self.assertEqual(path.read_bytes(), original)
         self.assertEqual(fixtures.ExperimentTests.calls(self), [])
 
+    def test_merged_collections_can_repeat_selection_ranks(self):
+        path = self.source()
+        state = json.loads(path.read_text())
+        corpus = self.root / 'notes.json'
+        value = json.loads(corpus.read_text())
+        value['notes'][2]['selection_rank'] = 1
+        corpus.write_text(json.dumps(value))
+        state['sources'][str(corpus)] = hashlib.sha256(corpus.read_bytes()).hexdigest()
+        path.write_text(json.dumps(state))
+        before = path.read_bytes(), corpus.read_bytes()
+        self.cli('export-canonical-viewer', 'trial', '--output', 'viewer')
+        view = json.loads((self.root / 'viewer/hierarchy.json').read_text())
+        self.assertEqual(view['notes'], [
+            {'note_id': 'n1', 'note_short_id': 'N001'},
+            {'note_id': 'n3', 'note_short_id': 'N003'}])
+        self.assertEqual((path.read_bytes(), corpus.read_bytes()), before)
+        self.assertEqual(fixtures.ExperimentTests.calls(self), [])
+
     def test_note_memberships_are_available_without_displaying_note_id_lists(self):
         path = self.source()
         original = path.read_bytes()
