@@ -455,15 +455,38 @@ Retain the isolated run worktree for its frozen source bindings and evidence.
 
 ## HR26 — 200 notes · HiGen V4.1
 
-Running. Exact historical 200 raw posts: HR25’s ordered
-100 food/drink posts followed by the frozen 100 music posts. Food subjects
-reuse validated ASv6.100 receipts; all 100 fresh music subject trees are valid.
-The combined corpus has 1,527 original L1s: 733 food/drink and 794 music.
+Blocked before encoding and clustering. Exact historical 200 raw posts:
+HR25’s ordered 100 food/drink posts followed by the frozen 100 music posts.
+All 100 food ASv6.100 subject trees and 733 Bootstrap-v133 answers reused.
+All 100 fresh music ASv6.100 subject trees are valid. The combined corpus
+has 1,527 original L1s: 733 food/drink and 794 music.
+
 Bootstrap-v133 and consolidated-grouped-v1; HDBSCAN min_samples=3,
 min_cluster_size=2, excess_of_mass and angular distance. No cosine cutoff.
 At most six roots and children; original HDBSCAN groups expose notes directly.
 Two total provider attempts per case, no total call cap; native answer reuse.
-Review UI unavailable until the hierarchy completes.
+
+Native Bootstrap validation: 1,525 valid answers, one provider-overload failure
+that exhausted two attempts, and one malformed Songs answer whose diagnostic
+quote is not a literal post excerpt. Both recovery approvals are pending.
+The fresh one-case Songs trial is prepared with identical input, prompt and
+settings; it has not submitted calls. Preserve all old receipts and the blocked
+snapshot. Final hierarchy and review UI are unavailable.
+
+Native accounting so far: **899 new attempts**, including warmups and retries;
+733 exact answer reuses, four failed attempts and three retry attempts.
+Known API-equivalent cost is **$8.4191272**. Four failed calls lack usage,
+so complete tokens and cost remain unknown. Known token subtotals:
+475,437 input; 4,840,832 cached input; 698,417 output, including 146,333 reasoning.
+Subscription incremental cash charge is zero.
+
+The 1,518 defined, validated Bootstrap entries passed the production encoder
+length check: maximum 165 tokens under the agreed 512-token limit. Seven null
+answers remain recorded; the two unresolved entries await recovery.
 
 Reusable definition: `sse_multivector/hierarchy-runs/hr26/hierarchy.spec.json`.
-Frozen generator commit: `b1b1118e0be6a01b0c621206a398b5308879e92a`; shared runner: `1cfdd6a76a9910b2c9dea0ca395f825b90485f7e`.
+Frozen generator commit: `b1b1118e0be6a01b0c621206a398b5308879e92a`;
+shared runner: `1cfdd6a76a9910b2c9dea0ca395f825b90485f7e`.
+Saved artifacts: `oracle-mvp-hierarchy-hr26-v41/target/hierarchy-hr26-v41-two-hundred-note-v1/`.
+Native accounting: `usage-new-blocked.json`; preserved checkpoint evidence:
+`terminal-blocked-snapshot-v1/`. Retain the run and runner worktrees for recovery.
