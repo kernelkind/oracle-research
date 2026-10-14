@@ -121,13 +121,12 @@ tokens and cost are known subtotals; the complete totals remain unknown.
 | HR17 | 25 | 193 | 43,585 | $0.0856 | 0 |
 | HR18 | 218 | 0 | 1,050,026 | $1.4479 | 3 |
 | HR19 | 54 | 432 | 95,792 | $0.2132 | 0 |
-| HR20 | 184 | 147 | 1,082,829 | $1.3317 | 4 |
+| HR20 | 327 | 167 | 1,355,596 | $1.8697 | 5 |
 
 HR18's tokens and cost are known subtotals: three recovered provider attempts
-lack reported usage. Its complete totals remain unknown. HR20's row covers its
-completed Bootstrap batch only; four recovered attempts lack reported usage.
-HR20 has resumed from its saved Bootstrap answers; its row remains a Bootstrap-only
-subtotal until construction finishes.
+lack reported usage. HR20 has five recovered attempts without reported usage.
+Both rows are known subtotals; complete tokens and API-equivalent costs remain
+unknown. HR20's final row includes Bootstrap and consolidation across its resume.
 
 HR17's new calls took **1m 45s**. Including the saved original producers behind
 its reused answers, its construction used **226 calls, 1,039,228 tokens and
@@ -269,10 +268,14 @@ cd /home/dev/src/notedeck_worktrees/algos
 ./oracle-mvp-hierarchy-hr18-v32/target/hr18-review-ui-v1/launch.sh
 ```
 
-## HR20 — 50 input notes · running
+## HR20 — 50 input notes · 30 retained
 
-Same controls as HR18, with an approved validation fix treating non-breaking
-and ordinary spaces as equivalent in Bootstrap evidence quotes. All other
-characters still match exactly, and the original saved text is preserved.
-All **326 Bootstrap answers** are valid after revalidation; construction has
-resumed without rerunning Bootstrap.
+Same controls as HR18, with the approved Bootstrap quote-space validation fix.
+Complete: **58 nodes, three roots, 30/50 notes**. **8m 59s active execution**;
+29m 06s elapsed including the validation stop. Four null Bootstrap meanings
+were skipped with evidence retained. Revalidation used saved answers unchanged.
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos
+./oracle-mvp-hierarchy-hr20-v32/target/hr20-review-ui-v1/launch.sh
+```
