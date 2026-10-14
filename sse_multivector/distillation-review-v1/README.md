@@ -442,6 +442,20 @@ and `analysis-256.json`. The resumed service explicitly selects the working Nix
 Python interpreter and executable `PATH`; the systemd manager's default
 environment does not supply the same tools as the login shell.
 
+At 21:56:21 EDT, the resumed run stops without an OOM after saving 42,077
+judgments; its memory peak is 29.3 GiB. One native coverage request reports
+`server_is_overloaded` inside an HTTP-200 stream. Its proxy records terminal
+`failed` and context `canceled`, while outer metadata omits the terminal event.
+The retry classifier previously recognized only the outer failed marker and
+mistook proxy cleanup for a local cancellation. Runner `e7dd09f` recognizes
+either failed marker before applying the existing provider-code checks.
+Explicit aborts, completed responses and permanent failures still take
+precedence. The exact receipt now receives exponential retry and account
+backoff. Twenty-six policy checks and five native integration checks pass;
+policy checks repeat on merged main, and the automatic coordinator confirms
+the original failed batch is retryable. The existing saved run resumes with
+the same frozen inputs, grading policy, shared capacity and memory boundary.
+
 Reviewer prompts, teacher policies, saved
 receipts, the 30-request cap and immediate submission of all ready groups
 remain unchanged. Full grading and eight-hour readiness are still unverified.
