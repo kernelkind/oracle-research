@@ -1290,7 +1290,20 @@ requests, cache use and cumulative preemption counts. Native cache preemption
 can reset computed history; retained prefixes may reduce the ensuing work.
 The replacement uses `qwen-thinking-20-natural-20261014` paths. Generation is
 manually launched and grading remains a separate handoff after all twenty
-answers are available. The larger-memory GPU benchmark is still pending.
+answers are available.
+
+The larger-memory benchmark passes on October 14: **90.5 GiB peak CUDA
+reservation**, approximately **24 GiB host availability**, and zero preemptions.
+All **128** checked greedy tokens match the earlier runtime. Eight original
+prompts reach **32.2 output tokens/second**; a diagnostic batch containing one
+70,000-token context and seven original prompts reaches **29.7 tokens/second**.
+Both measurements use sixteen steady decode steps. Cache addresses stay fixed,
+safetensors mappings are absent, and the allocator fraction remains set in the
+same worker process. Model initialization and both benchmark phases take
+209 seconds, excluding input verification. Diagnostic outputs are not graded.
+The manual twelve-note generation starts at **22:43 UTC**, preserving eight
+answers for an initial **8/20 (40%)**. Its source copy, policy and input hashes
+are frozen separately from the repository checkout; grading has not started.
 
 Generation is incomplete and grading has not started. Report paired
 correctness, coverage, invalid outputs, thought/final
