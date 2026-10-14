@@ -1155,9 +1155,10 @@ BF16 convolution probes, but its native configuration failed a combined model
 check and is not enabled. A brief loading attempt was stopped before generation;
 the failed check and logs are preserved. No bridge or source build was added.
 
-The replacement logs generated steps every 15 seconds. Full-model loading takes
-49.4 seconds, the first generated token follows 78.65 seconds of prefill, and the
-first measured decode intervals advance at approximately **2.40 steps/second**
+That stopped FlashAttention2 launch logged generated steps every 15 seconds.
+Full-model loading took 49.4 seconds, the first generated token followed 78.65
+seconds of prefill, and the first measured decode intervals advanced at
+approximately **2.40 steps/second**
 across eight rows (about 19.2 tokens/second while all rows generate). Host
 available RAM is approximately 38 GiB after prefill, with no OOM or swap. These
 measurements establish advancing generation; they do not measure the original
@@ -1166,8 +1167,25 @@ The native Qwen template supports thinking levels `low`, `medium` and `xhigh`
 (default); the current screen uses `xhigh`. The thought-token allowance is a
 separate bound, not a reasoning level.
 
-Thinking-on generation is active; grading is pending. Report paired correctness,
-coverage, invalid outputs, thought/final token counts and GX10 elapsed time.
+The user stopped generation on October 14 to fix avoidable full-cache copying
+and audit the execution settings. The stopped attempt has zero saved answers;
+its input, script, runtime, log and stop receipt are retained under
+`stopped-flash-copy-audit/`. Grading has not started. Source inspection confirms
+cached single-token decoding and GPU placement, but the padded Transformers
+path repeatedly concatenates, clones and gathers the growing full-attention
+cache. These additional passes plausibly explain much of the observed speed;
+the traffic estimate is not a profiler measurement. Live hardware checks found
+no contention, swapping or active thermal/power throttling.
+
+The replacement under validation uses a separate stock vLLM ARM64/CUDA 13
+runtime with native paged hybrid attention and continuous batching. The exact
+20 notes, original AS inputs, greedy decoding, xhigh, BF16 model/cache precision,
+FP32 recurrent states and token bounds remain fixed. It will load the original
+GPU-merged text weights, retain host/CUDA memory guards, and persist each
+completed answer immediately. Native kernel compatibility, generation-boundary
+tests, output equivalence and measured throughput must pass before restarting
+the screen. Report paired correctness, coverage, invalid outputs, thought/final
+token counts and GX10 elapsed time after the completed manual grader handoff.
 These exposed validation notes provide a small screen, not unseen-note
 accuracy or proof that the full test exceeds 90%. Different generation
 hardware also prevents attributing every difference to thinking alone.
