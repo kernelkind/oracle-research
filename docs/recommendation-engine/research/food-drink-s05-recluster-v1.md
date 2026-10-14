@@ -53,7 +53,21 @@ python3 -m sse_multivector.hdbscan_section_replacement prepare \
 ```
 
 Run the ordinary `sse_multivector.worker` on the emitted worker config using
-the pinned local Torch 2.13.0+cpu / Transformers 4.57.1 runtime, then collect:
+the pinned local Torch 2.13.0+cpu / Transformers 4.57.1 runtime. The actual
+offline invocation on this host was:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp-food-drink-s05-recluster-v1
+LD_LIBRARY_PATH=/nix/store/fly29nz0gwiww48y76myy0mimv12wz5w-gcc-14.3.0-lib/lib \
+OMP_NUM_THREADS=4 MKL_NUM_THREADS=4 \
+uv run --offline --python /etc/profiles/per-user/dev/bin/python3 \
+  --with 'torch==2.13.0+cpu' --with 'transformers==4.57.1' \
+  --extra-index-url https://download.pytorch.org/whl/cpu \
+  python -m sse_multivector.worker \
+  target/food-drink-s05-recluster-v1/encoding-00001/worker-config.json
+```
+
+Then collect:
 
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp-food-drink-s05-recluster-v1
@@ -81,3 +95,60 @@ All 15 replacement, native source, epsilon and HDBSCAN checks pass.
 The task worktree remains for its new vector, frozen source paths and review
 artifacts. Generated data is ignored. No semantic quality claim follows from
 these mechanical checks.
+
+## Completed result
+
+| Measure | Original review | After S05 replacement |
+|---|---:|---:|
+| Clustering inputs | 728 | 616 |
+| Selected HDBSCAN groups | 62 | 51 |
+| Epsilon sections | 42 | 40 |
+| Assigned current inputs | 367 | 293 |
+| Represented distinct notes | 94 | 96 |
+| Epsilon | 0.8265007473450509 | 0.8912946305292836 |
+
+The 293 assigned inputs include the replacement item. Expanding its saved
+113-entry association gives 405 original entries represented in selected
+groups; these are associations, not 405 vectors in the new clustering.
+All 94 previously represented notes remain represented, and two more notes
+are gained. Four of the original 100 notes remain unrepresented by selected
+groups. Coverage does not establish semantic correctness.
+
+The replacement is assigned to **new G31**, alongside Animals, Veganism,
+Animal slaughter, Animal fat, Raw meat, Non-carnivore recipes and Raw diets
+for dogs. G31 has eight clustering inputs and represents 60 notes. It joins
+new G11 (chicken, stock and chicken-related topics; eight inputs, five notes)
+to form **new S08**, the largest section at 60 notes. Thus G11 adds no distinct
+notes beyond G31's represented set. The original 58-note S05 membership is
+fully present; the new section has two additional distinct notes.
+
+| Largest new sections | Groups | Distinct notes |
+|---|---|---:|
+| S08: animal/chicken topics, including the synthetic food/domestic-animal node | G11, G31 | 60 |
+| S19: appreciation, positive feelings, greetings, hopes and aspirations | G04, G13, G17, G25, G50 | 27 |
+| S14: Nostr and GrowNostr | G22, G23 | 24 |
+| S06: coffee, coffee businesses/hashtags and drinking | G03, G29, G40, G44 | 22 |
+| S07: food and culinary topics | G06 | 14 |
+| S12: breakfast, mornings and sleep | G16, G21, G46 | 13 |
+
+No additional synthetic section meanings were generated. This is one rerun,
+not a further contraction or a completed root-selection loop. The unchanged
+58-note definition remains available through its original native receipt.
+
+One new 768-dimensional SSE row was encoded. Its complete input has 213 tokens,
+below the fixed 512-token limit. Worker source hash and Torch/Transformers/
+Tokenizers versions match the source encoding. The 615 retained input vectors
+are unchanged; aliases give 613 unique vectors in the HDBSCAN calculation.
+There were zero additional teacher calls or paid charges.
+
+Artifacts are retained in
+`target/food-drink-s05-recluster-v1/`: `replacement.json`, the single worker
+job/receipt, `request.json`, `result.json`, `analysis.json`, and
+`food-drink-100-after-s05.svg`, `.png` and `.md`. All 51 group labels, exact
+40-section coverage and original-ID removal were verified; the PNG was
+visually inspected. Original source state remains unchanged. The 15 focused
+checks also passed on the combined local main checkout.
+
+Next, inspect S08's actual new memberships before deciding whether to name
+or contract another section; the first synthetic root has joined the new
+largest section rather than remaining separate from it.
