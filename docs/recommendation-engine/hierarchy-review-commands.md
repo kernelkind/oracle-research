@@ -24,8 +24,9 @@ original notes. Parameters describe the settings actually used.
 | HR17 | 24 | ASv6.100 | V3.1 | bootstrap-v129 | pair-consolidation-v7 | — |
 | HR18 | 24 | ASv6.100 | V3.2 | bootstrap-v133 | pair-consolidation-v11 | — |
 | HR19 | 50 | ASv6.100 | V3.1 | bootstrap-v129 | pair-consolidation-v7 | — |
+| HR20 | 50 | ASv6.100 | V3.2 | bootstrap-v133 | pair-consolidation-v11 | — |
 
-**Same notes:** HR03/HR10/HR14/HR16/HR19 use the same ordered 50-note selection.
+**Same notes:** HR03/HR10/HR14/HR16/HR19/HR20 use the same ordered 50-note selection.
 HR05/HR08/HR09/HR13/HR15/HR17/HR18 use its same ordered first 24 notes. HR04 uses
 its first 12; HR11 and HR12 use selected 6- and 12-note subsets of the 24,
 so HR12's set differs from HR04's. HR06/HR07 use older ASv6.48 inputs and are
@@ -63,7 +64,7 @@ encoder and limits, pooling the generated title instead. HR03/HR06/HR07 used
 standalone subject vectors, also with a 512-token maximum. Traversal/V2 did not
 use SSE for hierarchy construction.
 
-**Execution:** HR11–HR19 use prefix caching, automatic warming and exact-request
+**Execution:** HR11–HR20 use prefix caching, automatic warming and exact-request
 answer reuse. Seed/temperature are unspecified; no explicit output-token cap.
 Normally at most two provider attempts per case across resumes, temporary
 provider errors only; HR14 had an approved recovery exception.
@@ -91,6 +92,7 @@ Unknown means the execution commit was not recorded.
 | HR17 | None | bdc22432 | 9d956b3a |
 | HR18 | None | 48e71c71 | 9d956b3a |
 | HR19 | None | 5446454d | 9d956b3a |
+| HR20 | None | 48e71c71 | 9d956b3a |
 
 ## Calls, tokens and API cost
 
@@ -119,9 +121,12 @@ tokens and cost are known subtotals; the complete totals remain unknown.
 | HR17 | 25 | 193 | 43,585 | $0.0856 | 0 |
 | HR18 | 218 | 0 | 1,050,026 | $1.4479 | 3 |
 | HR19 | 54 | 432 | 95,792 | $0.2132 | 0 |
+| HR20 | 184 | 147 | 1,082,829 | $1.3317 | 4 |
 
 HR18's tokens and cost are known subtotals: three recovered provider attempts
-lack reported usage. Its complete totals remain unknown.
+lack reported usage. Its complete totals remain unknown. HR20's row covers its
+completed Bootstrap batch only; four recovered attempts lack reported usage.
+HR20 is stopped before encoding and has no completed hierarchy or review UI.
 
 HR17's new calls took **1m 45s**. Including the saved original producers behind
 its reused answers, its construction used **226 calls, 1,039,228 tokens and
@@ -262,3 +267,10 @@ HiGen V3.2 with Bootstrap-v133 titles and Pair-consolidation-v11. Complete:
 cd /home/dev/src/notedeck_worktrees/algos
 ./oracle-mvp-hierarchy-hr18-v32/target/hr18-review-ui-v1/launch.sh
 ```
+
+## HR20 — 50 input notes · stopped at Bootstrap
+
+Same controls as HR18. Bootstrap has **325 valid answers and one invalid evidence
+quote**: a normal space replaces a non-breaking space after “Dezeen Showroom:”.
+All answers are saved. Waiting for the user's decision on treating those spaces
+as equivalent before resuming; no hierarchy or review UI has been produced.
