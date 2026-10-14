@@ -817,8 +817,9 @@ records the measured estimate, verified parent and required preparation.
 Explicit parent-checkpoint continuation, both test collections, offline
 completion verification and a one-card launch profile are implemented. The
 clean-runtime rehearsal also now freezes the shared input/parser dependency.
-Pinned-runtime/SSH verification and matching image publication precede rental;
-no continuation rental or full-model run has started. New labels, final training
+Pinned-runtime/SSH verification and the actual Qwen tokenizer check pass;
+matching image publication, fresh offer and ledger admission precede rental.
+No continuation rental or full-model run has started. New labels, final training
 volume, mask training and production adoption remain outside this approval.
 The older three-family/two-GPU directions below describe the completed pilot.
 

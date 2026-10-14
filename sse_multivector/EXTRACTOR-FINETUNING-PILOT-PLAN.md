@@ -17,8 +17,9 @@ the rental before local grading and checkpoint selection. The
 is the current operational plan. It preserves ASv6.100, the splits and numerical
 recipe. The production workflow now supports explicit parent-checkpoint
 continuation, both test collections and offline completeness verification.
-The Qwen-only launch profile and frozen shared dependency are implemented;
-pinned-runtime/SSH rehearsal and matching image publication precede rental.
+The Qwen-only launch profile and frozen shared dependency are implemented.
+Pinned-runtime/SSH rehearsal and the actual Qwen tokenizer check pass; matching
+image publication, fresh offer and ledger admission precede rental.
 No continuation rental has started.
 The dated setup directions below retain the earlier experiments' scope and
 evidence and do not require repeating Gemma checks or untuned baselines for Qwen.

@@ -146,13 +146,32 @@ python3 -m sse_multivector.distillation_deploy prepare-continuation \
   --output target/qwen-continuation-v1/inputs-next
 ```
 
-Local continuation and package checks pass; the exact pinned-runtime VM/SSH
-rehearsal is in progress. The host's older PyTorch 2.8 also reproduces an existing
-physical-batch numerical tolerance failure on unchanged `main`; its tolerance
-has not been relaxed. Before renting, finish the matching image rehearsal and
-private publication, obtain a fresh approved-profile offer and reconcile/admit
-the budget. Actual Qwen CUDA preparation occurs on the same rental before main
-training. No continuation rental, full-model generation or grading has started.
+**Verification complete, October 14:** the combined `main` tree passes 86 local
+contract checks and nine targeted Vast failure regressions. The pinned
+PyTorch **2.12.1+cu130** VM passes 10 architecture and 50 workflow tests. Its
+deployment batch passes with 55 tests, five skipped; four cache tests and four
+explicit volume/replacement/download/handoff tests also pass. Those four
+handoffs cover four deployment skips. Qwen's saved tokenizer separately passes
+the actual 1,000 training, 100 validation and 200 test inputs: maximum complete
+training length 18,114, answer length 8,452 and validation/test prompts
+9,608/9,584 tokens. Thinking remains off. No full model weights are loaded for
+this tokenizer check.
+
+The real SSH continuation transfers its parent, produces both checkpoints and
+both reserved test collections, and rejects completion approval if a first-pass
+test answer is missing. The VM is stopped and its verified image export is at
+`target/qwen-continuation-v1/vm/attempt-1792019928827772682/results/container.tar.gz`.
+Every prepared `inputs-v3` runtime source hash matches that image's frozen build
+context. The host's older PyTorch 2.8 reproduces an existing physical-batch
+numerical tolerance failure on unchanged `main`; that same test passes in the
+pinned VM without relaxing its tolerance.
+
+Before renting, publish this matching image privately, obtain a fresh
+approved-profile offer and reconcile/admit the budget. Actual Qwen CUDA
+preparation occurs on the same rental before main training. No continuation
+rental, full-model generation or grading has started. Retain the task worktree
+for the prepared inputs and verified image, and the isolated shared checkout
+for their exact runtime source binding.
 
 **Two-GPU execution approved October 5:** keep each complete student on one
 **96GB RTX PRO 6000**. GPU 0 runs Gemma dense; GPU 1 runs Qwen, then Gemma MoE.
