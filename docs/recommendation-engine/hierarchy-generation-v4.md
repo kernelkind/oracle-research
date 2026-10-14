@@ -1,8 +1,8 @@
 # HiGen V4 — root experiment draft
 
-Status: approved root-test design; Consolidated-grouped-v1 is a wording draft
-awaiting user review. No V4 constructor is implemented or activated, and no
-model calls have been made for this draft. V3, V3.1 and V3.2 remain available.
+Status: approved root-test design and approved Consolidated-grouped-v1 wording.
+The native constructor supports the root-only experiment explicitly; full V4
+hierarchy construction is not implemented or activated. V3, V3.1 and V3.2 remain available.
 The V3.3 proposal is not part of this experiment.
 
 ## Inputs and grouping
@@ -56,3 +56,23 @@ checks to every member. The example, output fields, title requirements and
 shared definition-writing rules are unchanged. Its pinned assembly references
 the same shared rules-v6 used by Bootstrap-v133 and names Bootstrap-v133 as its
 companion. Historical prompts and assemblies remain unchanged.
+
+## Native root-only test
+
+Use `prepare-hierarchy`, `advance-hierarchy` and `run-hierarchy` through the
+shared stable launcher, selecting `generation_policy` =
+`hierarchy-generation-v4-roots` explicitly. The schema-1 definition adds
+`bootstrap_hierarchy`, naming a saved V3.2 state with matching Bootstrap-v133
+answers and original vectors, and `hdbscan_binary`, naming the retained
+production `fine-segmentation-candidate` executable. Their hashes are frozen;
+all other corpus, teacher and encoder controls retain the existing constructor
+contract. Native preparation validates and reuses the saved Bootstrap producer
+and encoder receipts without dispatching Bootstrap again.
+
+Every group becomes one ordinary native `hierarchy_group_consolidation` case.
+The shared runner owns scheduling, caching, usage and provider retries. The
+constructor retains its runner-outage backoff, receipt checks and atomic
+resumption. Root summaries expose `hdbscan_rounds` and
+`notes_not_in_hierarchy`. Final nodes are roots even when they represent more
+than two notes: this experiment never constructs their children. Discarded
+members remain in the saved round evidence with their original associations.

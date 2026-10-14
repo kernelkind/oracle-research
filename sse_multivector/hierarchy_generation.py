@@ -1,4 +1,4 @@
-"""Native V3, V3.1 and V3.2 construction by SSE pairing and pair consolidation.
+"""Native V3 variants and the V4 HDBSCAN root-only experiment.
 
 The shared experiment runner owns teacher transport, caching and accounting.
 Preparation and advancement only freeze inputs and collect saved results.
@@ -30,6 +30,7 @@ from .canonical_receipts import _failure_receipts
 POLICY = "hierarchy-generation-v3"
 POLICY_V31 = "hierarchy-generation-v3.1"
 POLICY_V32 = "hierarchy-generation-v3.2"
+POLICY_V4_ROOTS = "hierarchy-generation-v4-roots"
 MAX_SIBLINGS = 6
 MIN_NOTES = 2
 PAIR_CHUNK_ROWS = 50000
@@ -117,6 +118,29 @@ def summary(state):
             [n for n in state["note_ids"] if n not in represented]
             if state["status"] == "complete" else None
         )
+    if state["generation_policy"] == POLICY_V4_ROOTS:
+        originals = {o["id"]: o for o in state["originals"]}
+        def notes(ids):
+            return {originals[o]["local"]["note_id"] for i in ids
+                    for o in state["items"][i]["original_ids"]}
+        result["hdbscan_rounds"] = []
+        for family in state["families"]:
+            for index, round_ in enumerate(family["rounds"]):
+                before = notes(round_["current"])
+                after = notes([i for group in round_["groups"] for i in group])
+                result["hdbscan_rounds"].append(dict(
+                    round=index + 1, input_nodes=len(round_["current"]),
+                    groups=len(round_["groups"]),
+                    group_sizes=[len(g) for g in round_["groups"]],
+                    unassigned_nodes=len(round_["unassigned"]),
+                    notes_before=len(before), notes_after=len(after),
+                    lost_note_ids=[n for n in state["note_ids"] if n in before - after],
+                ))
+        represented = {e["note_id"] for n in state["nodes"] for e in n["entries"]}
+        result["notes_not_in_hierarchy"] = (
+            [n for n in state["note_ids"] if n not in represented]
+            if state["status"] == "complete" else None)
+        result["scope"] = "roots only"
     return result
 
 
@@ -207,10 +231,12 @@ def prepare(spec_path, directory, history_root=None):
         "worker_config",
     }
     policy = cfg.get("generation_policy", POLICY) if isinstance(cfg, dict) else None
+    if policy == POLICY_V4_ROOTS:
+        fields |= {"bootstrap_hierarchy", "hdbscan_binary"}
     if (
         not isinstance(cfg, dict)
         or set(cfg) not in (fields, fields | {"generation_policy"})
-        or policy not in (POLICY, POLICY_V31, POLICY_V32)
+        or policy not in (POLICY, POLICY_V31, POLICY_V32, POLICY_V4_ROOTS)
         or type(cfg["schema_version"]) is not int
         or cfg["schema_version"] != 1
         or type(cfg["local_schema_version"]) is not int
@@ -258,7 +284,7 @@ def prepare(spec_path, directory, history_root=None):
         name: _teacher_spec(workflow.resolve(cfg[name], spec_path.parent), sources)
         for name in ("bootstrap_spec", "consolidation_spec")
     }
-    if policy == POLICY_V32:
+    if policy in (POLICY_V32, POLICY_V4_ROOTS):
         bootstrap = teacher_specs["bootstrap_spec"]
         if bootstrap["prompt"]["id"] != "Hierarchy-bootstrap-v133":
             raise ValueError("hierarchy generation V3.2 requires Hierarchy-bootstrap-v133")
@@ -301,6 +327,36 @@ def prepare(spec_path, directory, history_root=None):
         ),
         **teacher_specs,
     )
+    if policy == POLICY_V4_ROOTS:
+        from . import hierarchy_hdbscan
+        source_path = workflow.resolve(cfg["bootstrap_hierarchy"], spec_path.parent)
+        source_state = workflow.read(source_path)
+        check_state(source_state, verify_current_code=False)
+        if (source_state["generation_policy"] != POLICY_V32
+                or source_state["note_ids"] != cfg["note_ids"]
+                or [{k: o[k] for k in ("id", "local", "subject")}
+                    for o in source_state["originals"]] != originals
+                or source_state["bootstrap_spec"] != teacher_specs["bootstrap_spec"]
+                or source_state["worker_config"] != worker_config
+                or not source_state["experiments"][0].get("complete")):
+            raise ValueError("V4 root test requires matching saved Bootstrap-v133 inputs and controls")
+        state["bootstrap_hierarchy"] = str(source_path)
+        state["hdbscan_binary"] = str(workflow.resolve(cfg["hdbscan_binary"], spec_path.parent))
+        if teacher_specs["consolidation_spec"]["prompt"]["id"] != "Hierarchy-consolidated-grouped-v1":
+            raise ValueError("V4 root test requires Hierarchy-consolidated-grouped-v1")
+        for path in (source_path, Path(state["hdbscan_binary"]), Path(hierarchy_hdbscan.__file__)):
+            sources[str(path.resolve())] = trial._hash(path)
+        state["experiments"] = [deepcopy(source_state["experiments"][0])]
+        state["encodings"] = deepcopy(source_state["encodings"])
+        state["vectors"] = deepcopy(source_state["vectors"])
+        for o in source_state["originals"]:
+            if o.get("meaning") is not None:
+                key = _vector_key(dict(subject=o["title"], meaning=o["meaning"]))
+                if key not in state["vectors"]:
+                    raise ValueError("saved Bootstrap-v133 original vector is missing")
+        directory.mkdir(parents=True)
+        workflow.write(directory / "state.json", state)
+        return summary(state)
     directory.mkdir(parents=True)
     source = dict(
         schema_version=4,
@@ -580,7 +636,7 @@ def _rank_pairs(vectors, directory):
         return selected
 
 
-def _pairs(state, ids, directory):
+def _vectors(state, ids):
     batches = {}
     vectors = []
     for identifier in ids:
@@ -589,7 +645,16 @@ def _pairs(state, ids, directory):
         if index not in batches:
             batches[index] = _encoding_result(state, index)[1]
         vectors.append(batches[index][reference["ordinal"]])
-    return [(ids[a], ids[b], score) for a, b, score in _rank_pairs(vectors, directory)]
+    return vectors
+
+
+def _pairs(state, ids, directory):
+    return [(ids[a], ids[b], score)
+            for a, b, score in _rank_pairs(_vectors(state, ids), directory)]
+
+
+def _children(item):
+    return item.get("pair") or item.get("group")
 
 
 def _new_family(state, parent, ids):
@@ -651,13 +716,14 @@ def _promote(state, family):
         producer = item["producer"]
         experiment = state["experiments"][producer["experiment"]]
         answer = experiment["answers"][producer["case"]]
-        node["synthetic" if item.get("pair") else "bootstrap"] = dict(
+        node["synthetic" if _children(item) else "bootstrap"] = dict(
             experiment=experiment["experiment"],
             case=producer["case"],
             receipt=answer["receipt"],
         )
         state["nodes"].append(node)
-        if len({entry["note_id"] for entry in node["entries"]}) > state["min_notes"]:
+        if (state["generation_policy"] != POLICY_V4_ROOTS
+                and len({entry["note_id"] for entry in node["entries"]}) > state["min_notes"]):
             _new_family(state, node["id"], item["original_ids"])
     family["complete"] = True
 
@@ -672,7 +738,7 @@ def _schedule(directory, state):
             answer = bootstrap["answers"][original["id"]]
             meaning = answer["output"]["meaning"]
             original["meaning"] = meaning
-            if state["generation_policy"] == POLICY_V32:
+            if state["generation_policy"] in (POLICY_V32, POLICY_V4_ROOTS):
                 original["title"] = answer["output"]["title"]
             if meaning is None:
                 unresolved.append(
@@ -702,7 +768,7 @@ def _schedule(directory, state):
             state["items"][original["id"]] = dict(
                 subject=(
                     original["title"]
-                    if state["generation_policy"] == POLICY_V32
+                    if state["generation_policy"] in (POLICY_V32, POLICY_V4_ROOTS)
                     else original["subject"]
                 ),
                 meaning=original["meaning"],
@@ -739,7 +805,8 @@ def _schedule(directory, state):
                     state["items"][identifier] = dict(
                         subject=value["title"],
                         meaning=value["meaning"],
-                        pair=pair,
+                        **({"group": pair} if state["generation_policy"] == POLICY_V4_ROOTS
+                           else {"pair": pair}),
                         parent=family["parent"],
                         original_ids=originals,
                         producer=dict(experiment=family["pending"], case=case),
@@ -750,8 +817,9 @@ def _schedule(directory, state):
                 del family["pending"]
                 changed = True
             ids = family["current"]
-            if len(ids) <= state["max_siblings"]:
-                originals = [i for i in ids if not state["items"][i].get("pair")]
+            if (len(ids) <= state["max_siblings"]
+                    and (state["generation_policy"] != POLICY_V4_ROOTS or family["rounds"])):
+                originals = [i for i in ids if not _children(state["items"][i])]
                 _prepare_encoding(directory, state, originals)
                 if any(state["items"][i]["vector_key"] not in state["vectors"] for i in originals):
                     continue
@@ -763,8 +831,12 @@ def _schedule(directory, state):
                 state["items"][i]["vector_key"] not in state["vectors"] for i in ids
             ):
                 continue
-            pairs = _pairs(state, ids, directory)
-            round_ = _pairing_round(state, family, pairs)
+            if state["generation_policy"] == POLICY_V4_ROOTS:
+                from . import hierarchy_hdbscan
+                round_ = hierarchy_hdbscan.round_for(directory, state, family, _vectors(state, ids))
+            else:
+                pairs = _pairs(state, ids, directory)
+                round_ = _pairing_round(state, family, pairs)
             cases = round_["cases"]
             if not cases:
                 family["rounds"].append(dict(round_, experiment=None))
@@ -799,7 +871,8 @@ def _schedule(directory, state):
                 "consolidation",
                 state["consolidation_spec"],
                 dict(cases=requests),
-                "hierarchy_pair_consolidation",
+                ("hierarchy_group_consolidation" if state["generation_policy"] == POLICY_V4_ROOTS
+                 else "hierarchy_pair_consolidation"),
             )
             for family, round_ in ready:
                 family["rounds"].append(dict(round_, experiment=producer))
@@ -811,7 +884,7 @@ def _schedule(directory, state):
 
 
 def check_state(state, *, verify_receipts=True, verify_current_code=True):
-    if (state.get("generation_policy") not in (POLICY, POLICY_V31, POLICY_V32)
+    if (state.get("generation_policy") not in (POLICY, POLICY_V31, POLICY_V32, POLICY_V4_ROOTS)
             or state.get("schema_version") != 3):
         raise ValueError("unknown hierarchy generation policy")
     for path, digest in state["sources"].items():
@@ -848,6 +921,21 @@ def check_state(state, *, verify_receipts=True, verify_current_code=True):
         )
     ):
         raise ValueError("saved controls differ from frozen hierarchy definition")
+    if state["generation_policy"] == POLICY_V4_ROOTS:
+        from . import hierarchy_hdbscan
+        if (state["bootstrap_hierarchy"] != str(workflow.resolve(cfg["bootstrap_hierarchy"], definition.parent))
+                or state["hdbscan_binary"] != str(workflow.resolve(cfg["hdbscan_binary"], definition.parent))
+                or (verify_current_code and
+                    str(Path(hierarchy_hdbscan.__file__).resolve()) not in state["sources"])
+                or (not verify_current_code and
+                    sum(Path(p).name == "hierarchy_hdbscan.py" for p in state["sources"]) != 1)
+                or len(state["families"]) > 1
+                or any(f["parent"] is not None for f in state["families"])):
+            raise ValueError("V4 root-test controls or scope changed")
+        source = workflow.read(state["bootstrap_hierarchy"])
+        if (state["experiments"][0] != source["experiments"][0]
+                or state["encodings"][:len(source["encodings"])] != source["encodings"]):
+            raise ValueError("reused Bootstrap or encoder producer changed")
     trial._ancestors(state["nodes"])
     originals = {r["id"]: r for r in state["originals"]}
     if len(originals) != len(state["originals"]):
@@ -885,16 +973,17 @@ def check_state(state, *, verify_receipts=True, verify_current_code=True):
             or {}
         ).get("meaning"):
             raise ValueError("original meaning differs from native Bootstrap")
-        if state["generation_policy"] == POLICY_V32 and "meaning" in row:
+        if state["generation_policy"] in (POLICY_V32, POLICY_V4_ROOTS) and "meaning" in row:
             answer = state["experiments"][0].get("answers", {}).get(row["id"], {})
             if "title" not in row or row["title"] != (answer.get("output") or {}).get("title"):
                 raise ValueError("original title differs from native Bootstrap")
     for identifier, item in state["items"].items():
-        if item.get("pair"):
-            pair = item["pair"]
+        if _children(item):
+            pair = _children(item)
             if (
-                len(pair) != 2
-                or pair[0] == pair[1]
+                len(pair) < 2
+                or (state["generation_policy"] != POLICY_V4_ROOTS and len(pair) != 2)
+                or len(set(pair)) != len(pair)
                 or any(i not in state["items"] for i in pair)
             ):
                 raise ValueError("invalid synthetic original association")
@@ -906,7 +995,7 @@ def check_state(state, *, verify_receipts=True, verify_current_code=True):
             if (
                 identifier not in originals
                 or item["subject"] != originals[identifier][
-                    "title" if state["generation_policy"] == POLICY_V32 else "subject"
+                    "title" if state["generation_policy"] in (POLICY_V32, POLICY_V4_ROOTS) else "subject"
                 ]
             ):
                 raise ValueError("invalid original local L1 item")
@@ -920,10 +1009,10 @@ def check_state(state, *, verify_receipts=True, verify_current_code=True):
         value = answer.get("output") or {}
         if answer.get("status") != "valid" or value.get("meaning") != item["meaning"]:
             raise ValueError("item meaning differs from native producer")
-        if item.get("pair"):
+        if _children(item):
             if value.get("title") != item["subject"] or json.loads(
                 record["inputs"][producer["case"]]["INPUT_JSON"]
-            ) != _payload(state, item["pair"], item["parent"]):
+            ) != _payload(state, _children(item), item["parent"]):
                 raise ValueError("synthetic input differs from native producer")
     for node in state["nodes"]:
         item = state["items"][node["item"]]
@@ -979,6 +1068,13 @@ def check_state(state, *, verify_receipts=True, verify_current_code=True):
                 for item in pair["nodes"]
                 for original in state["items"][item]["original_ids"]
             ]
+        if state["generation_policy"] == POLICY_V4_ROOTS:
+            from . import hierarchy_hdbscan
+            for round_ in family["rounds"]:
+                hierarchy_hdbscan.check_round(state, family, round_, _vectors(state, round_["current"]))
+            discarded = [
+                o for round_ in _applied_rounds(family) for i in round_["unassigned"]
+                for o in state["items"][i]["original_ids"]]
         if (
             family["original_ids"] != expected
             or sorted(members + discarded) != sorted(expected)
@@ -996,11 +1092,11 @@ def check_state(state, *, verify_receipts=True, verify_current_code=True):
                     and represented != set(state["note_ids"]))):
             raise ValueError("completed hierarchy omits selected notes")
         parents = {p for node in state["nodes"] for p in node["parents"]}
-        if not all(f["complete"] for f in state["families"]) or any(
+        if not all(f["complete"] for f in state["families"]) or (state["generation_policy"] != POLICY_V4_ROOTS and any(
             len({e["note_id"] for e in node["entries"]}) > state["min_notes"]
             for node in state["nodes"]
             if node["id"] not in parents
-        ):
+        )):
             raise ValueError("completed hierarchy has unfinished branches")
     if verify_receipts:
         with workflow.report_scope():

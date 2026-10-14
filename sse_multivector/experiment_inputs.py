@@ -73,7 +73,7 @@ def prepare_file(dataset, path, template, load_report=None, *, preparation_conte
             source, path.parent, preparation_context=preparation_context)
         sources.update(protected)
         return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, preparation
-    if dataset['adapter'] == 'hierarchy_pair_consolidation':
+    if dataset['adapter'] in {'hierarchy_pair_consolidation', 'hierarchy_group_consolidation'}:
         engine._expect_fields(source,'pair consolidation source',{'cases'})
         if not isinstance(source['cases'],list):
             raise ValueError('pair consolidation cases must be an array')
@@ -81,8 +81,12 @@ def prepare_file(dataset, path, template, load_report=None, *, preparation_conte
             payload=json.loads(case['inputs']['INPUT_JSON'])
             fields={'nodes'} | ({'parent'} if isinstance(payload,dict) and 'parent' in payload else set())
             engine._expect_fields(payload,'pair consolidation input',fields)
-            if not isinstance(payload['nodes'],list) or len(payload['nodes'])!=2:
-                raise ValueError('pair consolidation requires exactly two nodes')
+            if (not isinstance(payload['nodes'], list) or len(payload['nodes']) < 2
+                    or (dataset['adapter'] == 'hierarchy_pair_consolidation'
+                        and len(payload['nodes']) != 2)):
+                raise ValueError('pair consolidation requires exactly two nodes'
+                                 if dataset['adapter'] == 'hierarchy_pair_consolidation'
+                                 else 'group consolidation requires at least two nodes')
             for node in [*payload['nodes'],*([payload['parent']] if 'parent' in payload else [])]:
                 engine._expect_fields(node,'pair consolidation node',{'title','meaning'})
                 if any(not isinstance(node[key],str) or not node[key].strip() for key in node):
@@ -1714,7 +1718,7 @@ def validate(dataset, case, raw, schema):
     """Check output mechanics, never semantic correctness."""
     adapter = dataset["adapter"]
     result = {"status": "valid", "output": raw}
-    if adapter == 'hierarchy_pair_consolidation':
+    if adapter in {'hierarchy_pair_consolidation', 'hierarchy_group_consolidation'}:
         value=json.loads(raw,object_pairs_hook=engine._position_decoder().unique_object)
         if (not isinstance(value,dict) or set(value)!={'title','meaning'}
                 or any(not isinstance(value[k],str) or not value[k].strip() for k in value)):

@@ -433,6 +433,82 @@ class HierarchyGenerationV3Tests(unittest.TestCase):
         self.cli("run", experiment)
         self.cli("advance-hierarchy", "trial", "--comment", "Collect Bootstrap title and meaning")
 
+    def prepare_v4_root_probe(self, count=21):
+        self.cli("prepare-hierarchy", "trial", "--spec", self.configure_v32(count=count))
+        self.collect_title_bootstrap()
+        self.encode_pending()
+        binary = self.root / "hdbscan-fixture"
+        binary.write_text('''#!/usr/bin/env python3
+import json, sys
+r=json.load(open(sys.argv[1]))
+ids=[i["opaque_id"] for i in r["inputs"]]
+groups=[ids[i:i+3] for i in range(0,len(ids)-2,3)]
+print(json.dumps({"schema_version":1,"candidate_identity":"hdbscan-explicit-config-v1",
+ "artifact":{"canonical_input_ids":sorted(ids),
+ "canonical_configuration_json":json.dumps(r["hdbscan_configuration"]),
+ "result":{"fine_output":{"segments":groups}},
+ "manifest":{"parameters":r["hdbscan_configuration"],
+ "algorithm_version":"hdbscan-star-exact-angular-v1",
+ "fine_output_selector_version":"hdbscan-clusters-members-v1",
+ "source_vector_manifest_sha256":r["source_vector_manifest_sha256"],
+ "normalized_vector_sha256":r["normalized_vector_sha256"]}}}))
+''')
+        binary.chmod(0o755)
+        consolidation = json.loads((self.root / "consolidation.json").read_text())
+        consolidation["prompt"] = dict(id="Hierarchy-consolidated-grouped-v1", path=str(
+            PROJECT / "sse_multivector/shr_single_pair/Hierarchy-consolidated-grouped-v1.md"))
+        self.write("group-consolidation.json", consolidation)
+        cfg = json.loads((self.root / "hierarchy.json").read_text())
+        cfg.update(generation_policy="hierarchy-generation-v4-roots",
+                   bootstrap_hierarchy="trial/state.json", hdbscan_binary=str(binary),
+                   consolidation_spec="group-consolidation.json")
+        return self.write("v4.json", cfg)
+
+    def test_v4_root_probe_reuses_saved_bootstrap_and_vectors(self):
+        spec = self.prepare_v4_root_probe()
+        prior_calls = self.calls()
+        source = self.state()
+        self.cli("prepare-hierarchy", "v4", "--spec", spec)
+        state = json.loads((self.root / "v4/state.json").read_text())
+        self.assertEqual(state["generation_policy"], "hierarchy-generation-v4-roots")
+        self.assertEqual(state["experiments"][0], source["experiments"][0])
+        self.assertEqual(state["encodings"], source["encodings"])
+        self.assertEqual(self.calls(), prior_calls)
+
+    def test_v4_root_probe_repeats_groups_and_counts_distinct_note_loss(self):
+        from sse_multivector import hierarchy_generation as generation
+        spec = self.prepare_v4_root_probe()
+        self.cli("prepare-hierarchy", "v4", "--spec", spec)
+        with patch("sse_multivector.worker.OfficialSseEncoder", return_value=FixtureEncoder()), \
+                patch.dict(os.environ, FAKE_RUNNER_LOG=str(self.log)):
+            result = generation.run(self.root / "v4")
+        state = json.loads((self.root / "v4/state.json").read_text())
+        self.assertEqual(result["status"], "complete")
+        self.assertEqual(len(state["nodes"]), 2)
+        self.assertEqual(len(state["families"]), 1)
+        self.assertTrue(all(not n["parents"] for n in state["nodes"]))
+        self.assertEqual([(r["input_nodes"], r["groups"], r["notes_after"])
+                          for r in result["hdbscan_rounds"]], [(21, 7, 21), (7, 2, 18)])
+        self.assertEqual(len(result["notes_not_in_hierarchy"]), 3)
+        for experiment in state["experiments"][1:]:
+            for payload in experiment["inputs"].values():
+                self.assertEqual(len(json.loads(payload["INPUT_JSON"])["nodes"]), 3)
+        generation.check_state(state)
+
+    def test_v4_root_probe_rejects_changed_cluster_evidence(self):
+        spec = self.prepare_v4_root_probe(count=3)
+        self.cli("prepare-hierarchy", "v4", "--spec", spec)
+        self.cli("advance-hierarchy", "v4", "--comment", "Prepare original group")
+        state = json.loads((self.root / "v4/state.json").read_text())
+        path = Path(state["families"][0]["rounds"][0]["hdbscan"]["result"])
+        value = json.loads(path.read_text())
+        value["artifact"]["result"]["fine_output"]["segments"] = []
+        path.write_text(json.dumps(value))
+        prior = self.calls()
+        result = self.cli("advance-hierarchy", "v4", "--comment", "Reject changed groups", ok=False)
+        self.assertIn("saved HDBSCAN evidence changed", result.stderr)
+        self.assertEqual(self.calls(), prior)
+
     def test_v32_generated_title_drives_sse_and_browsing_preserving_original_subject(self):
         self.cli("prepare-hierarchy", "trial", "--spec", self.configure_v32())
         self.collect_title_bootstrap()
