@@ -586,6 +586,20 @@ print(json.dumps({"schema_version":1,"candidate_identity":"hdbscan-explicit-conf
                             if len(p["nodes"]) != 3 for n in p["nodes"]))
         generation.check_state(state)
 
+    def test_v41_passes_provider_attempt_limit_to_native_teacher_batches(self):
+        spec = self.prepare_v41()
+        self.cli("prepare-hierarchy", "v41", "--spec", spec)
+        result = json.loads(self.cli("run-hierarchy", "v41", "--max-provider-attempts", "2").stdout)
+        self.assertEqual(result['status'], 'complete')
+        settings = json.loads((self.root / 'v41/execution-settings.json').read_text())
+        self.assertEqual(settings['max_provider_attempts'], 2)
+        state = json.loads((self.root / 'v41/state.json').read_text())
+        for record in state['experiments'][1:]:
+            rows = [json.loads(line) for line in
+                    (Path(record['experiment']) / 'execution-settings.jsonl').read_text().splitlines()]
+            self.assertTrue(rows)
+            self.assertTrue(all(row['max_provider_attempts'] == 2 for row in rows))
+
     def _assert_section_policy_controls(self, policy, min_samples, min_cluster_size):
         from sse_multivector import hierarchy_generation as generation
         from sse_multivector import hierarchy_hdbscan as hdbscan

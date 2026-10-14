@@ -127,6 +127,12 @@ records fresh attempts, retries, exact reuses and usage without a persistent
 attempt budget. Generic optional budget support, deliberately bounded unrelated
 experiments, task authorization and the monetary ledger remain unchanged.
 
+When a hierarchy experiment has an explicit per-case provider-attempt limit,
+pass `run-hierarchy --max-provider-attempts N`. The constructor records it in
+its execution settings and forwards it to every native teacher batch, including
+warmups. Saved attempts count across resumes; the total hierarchy call allowance
+remains uncapped unless separately authorized.
+
 Current Bootstrap prompt status, ASv6.100-only provenance requirements and
 branch regression findings are maintained in
 [Bootstrap qualification](shr_single_pair/bootstrap-current-as-qualification.md).

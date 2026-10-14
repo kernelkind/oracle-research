@@ -598,6 +598,8 @@ def add_commands(commands):
     p.add_argument('--comment', required=True)
     p = commands.add_parser('run-hierarchy', help='run hierarchy construction automatically until complete or blocked')
     p.add_argument('directory', type=Path)
+    p.add_argument('--max-provider-attempts', type=int,
+                   help='optional total attempts per teacher case, including saved attempts and warmups')
     p.add_argument('--attempt-budget', type=Path,
                    help='optional explicitly supplied persistent attempt allowance')
     p.add_argument('--comment', default='Automated hierarchy generation')
@@ -848,7 +850,7 @@ def handle_command(args):
             result = hierarchy_generation.prepare(args.spec, args.directory, args.history_root)
         elif args.command == 'run-hierarchy':
             result = hierarchy_generation.run(args.directory, args.attempt_budget, args.comment,
-                                             args.runner_upgrade_reason)
+                                             args.runner_upgrade_reason, args.max_provider_attempts)
         else:
             result = hierarchy_generation.advance(args.directory, args.comment)
         print(json.dumps(result, ensure_ascii=False, indent=2))

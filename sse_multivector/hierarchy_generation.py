@@ -1474,12 +1474,14 @@ def _native_advance(directory, comment, stop):
     )
 
 
-def _native_teacher(directory, experiment, budget, upgrade_reason, stop):
+def _native_teacher(directory, experiment, budget, upgrade_reason, stop, max_provider_attempts=None):
     arguments = ["run", str(experiment)]
     if budget is not None:
         arguments.extend(["--attempt-budget", str(budget)])
     if upgrade_reason is not None:
         arguments.extend(["--runner-upgrade-reason", upgrade_reason])
+    if max_provider_attempts is not None:
+        arguments.extend(["--max-provider-attempts", str(max_provider_attempts)])
     return _native_command(
         directory, arguments, stop, pending_experiment=experiment, budget=budget
     )
@@ -1508,9 +1510,12 @@ def run(
     attempt_budget=None,
     comment="Automated hierarchy generation",
     runner_upgrade_reason=None,
+    max_provider_attempts=None,
 ):
     """Coordinate ordinary native batches and one SSE worker; no provider limiter."""
     directory = Path(directory).resolve()
+    if max_provider_attempts is not None and (type(max_provider_attempts) is not int or max_provider_attempts < 1):
+        raise ValueError('max_provider_attempts must be a positive integer')
     budget = Path(attempt_budget).resolve() if attempt_budget is not None else None
     if budget is not None:
         workflow.engine.PersistentAttemptBudget(budget).remaining()
@@ -1519,10 +1524,10 @@ def run(
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError as error:
             raise ValueError("hierarchy execution is already active") from error
-        trial._save_once(
-            directory / "execution-settings.json",
-            dict(attempt_budget=None if budget is None else str(budget)),
-        )
+        settings = dict(attempt_budget=None if budget is None else str(budget))
+        if max_provider_attempts is not None:
+            settings['max_provider_attempts'] = max_provider_attempts
+        trial._save_once(directory / "execution-settings.json", settings)
         _resume_sources(directory, runner_upgrade_reason)
         active, attempted, errors = {}, set(), []
         stop = Event()
@@ -1549,6 +1554,7 @@ def run(
                                     budget,
                                     runner_upgrade_reason,
                                     stop,
+                                    max_provider_attempts,
                                 ),
                             )
                         else:
