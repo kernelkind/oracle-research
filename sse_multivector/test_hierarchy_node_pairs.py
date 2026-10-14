@@ -1822,6 +1822,36 @@ class HierarchyNodePairsTests(unittest.TestCase):
         self.assertEqual(self.calls(), [])
 
 
+    def test_schema4_diagnostic_quotes_match_nonbreaking_and_regular_spaces(self):
+        schema = json.loads((Path(__file__).with_name('shr_single_pair') /
+                             'Hierarchy-bootstrap-v130.output.schema.json').read_text())
+        for index, (post_space, quote_space) in enumerate((('\u00a0', ' '), (' ', '\u00a0'))):
+            with self.subTest(post_space=post_space, quote_space=quote_space):
+                source = self.local_source()
+                source['schema_version'] = 4
+                source['nodes'][0]['post_override'] = (
+                    'Dezeen Showroom:' + post_space + 'the extractor fan appears invisible.')
+                self.write('source.json', source)
+                self.prepare(f'space-{index}')
+                case = self.show(f'space-{index}')['cases'][0]
+                answer = {'ambiguities': [], 'resolutions': [],
+                          'meaning': 'Extractor fans remove cooking fumes.',
+                          'title': 'Extractor fans', 'evidence': [
+                              {'quote': 'Showroom:' + quote_space + 'the extractor fan',
+                               'supports': 'The post names the extractor fan.',
+                               'inference': None}]}
+                result = experiment_inputs.validate(
+                    {'adapter': 'hierarchy_local_nodes'}, case, json.dumps(answer), schema)
+                self.assertEqual(result['parsed'], answer)
+                for quote in ('Showroom: the exhaust fan', 'Showroom:\tthe extractor fan',
+                              'Showroom:  the extractor fan'):
+                    answer['evidence'][0]['quote'] = quote
+                    with self.assertRaisesRegex(ValueError, 'exact contiguous excerpt'):
+                        experiment_inputs.validate(
+                            {'adapter': 'hierarchy_local_nodes'}, case, json.dumps(answer), schema)
+        self.assertEqual(self.calls(), [])
+
+
     def test_schema4_context_and_post_controls_reject_invalid_inputs(self):
         source = self.local_source()
         source['schema_version'] = 4
