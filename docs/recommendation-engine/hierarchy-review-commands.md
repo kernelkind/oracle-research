@@ -455,43 +455,52 @@ Retain the isolated run worktree for its frozen source bindings and evidence.
 
 ## HR26 — 200 notes · HiGen V4.1
 
-Running after the user approved nonblocking diagnostics and provider recovery.
-Exact historical 200 raw posts:
-HR25’s ordered 100 food/drink posts followed by the frozen 100 music posts.
-All 100 food ASv6.100 subject trees and 733 Bootstrap-v133 answers reused.
-All 100 fresh music ASv6.100 subject trees are valid. The combined corpus
-has 1,527 original L1s: 733 food/drink and 794 music.
+Completed: **192 nodes, 151 original groups, six roots and 198/200 notes**.
+Maximum leaf depth is 16 category selections, with at most six choices per
+section. Native state/receipt validation and the standalone review UI check
+passed. Human semantic review is pending.
+
+Exact historical raw input: HR25’s ordered 100 food/drink notes followed by
+100 frozen music notes. All 100 food ASv6.100 subject trees and 733
+Bootstrap-v133 answers reused. Music uses 100 fresh ASv6.100 subject trees.
+The combined corpus has 1,527 original L1s; seven null meanings are preserved
+and omitted. All 1,516 unique original title/meaning vectors were encoded once.
 
 Bootstrap-v133 and consolidated-grouped-v1; HDBSCAN min_samples=3,
-min_cluster_size=2, excess_of_mass and angular distance. No cosine cutoff.
-At most six roots and children; original HDBSCAN groups expose notes directly.
-The initial invocation allowed two provider attempts per case. The approved
-HR26 recovery retries temporary provider failures until success without a
-per-case or total call cap; native answer reuse remains enabled.
+min_cluster_size=2, excess_of_mass and angular distance. No cosine cutoff,
+local L2 refinement or encoding/reclustering generated section meanings.
+Original HDBSCAN groups expose notes directly.
 
-The initial Bootstrap pass had one provider-overload failure after two
-attempts and one invalid Songs diagnostic quote. The provider case recovered
-on its third attempt. The user directed that invalid diagnostics must not
-block construction: retain the saved Songs meaning/title and report the quote
-error as `diagnostic_errors`. No fresh Songs draw was submitted. Preserve all
-old receipts, the initial settings, the blocked snapshot and the audited code
-upgrade. Final hierarchy and review UI are pending.
+Recovery preserves the original Songs answer, flagging its invalid diagnostic
+quote without blocking its meaning/title. The overloaded provider case
+recovered on attempt three. The user approved temporary-provider retries until
+recovery without the initial two-attempt limit. Original settings, answers and
+receipts remain preserved; source/limit changes are audited separately.
 
-Native accounting so far: **899 new attempts**, including warmups and retries;
-733 exact answer reuses, four failed attempts and three retry attempts.
-Known API-equivalent cost is **$8.4191272**. Four failed calls lack usage,
-so complete tokens and cost remain unknown. Known token subtotals:
-475,437 input; 4,840,832 cached input; 698,417 output, including 146,333 reasoning.
-Subscription incremental cash charge is zero.
+Native accounting: **1,102 new attempts**, including warmups and failed calls;
+740 exact reuses (733 Bootstrap and seven grouped consolidation).
+Four failed attempts lack usage. Known API-equivalent cost: **$9.8172116**;
+complete cost is unknown. Known token subtotals: 789,037 input; 4,891,776 cached
+input; 774,996 output, including 201,379 reasoning. Incremental subscription
+cash charge is zero. Original food subject-generation costs are excluded.
 
-The 1,518 defined, validated Bootstrap entries passed the production encoder
-length check: maximum 165 tokens under the agreed 512-token limit. Seven null
-answers remain recorded; the two unresolved entries await recovery.
+The resumed constructor interval was 1169.0 seconds. The full recorded interval
+includes the initial AS/Bootstrap pass, the blocked interval and code recovery;
+use the saved phase timestamps when comparing runtimes.
 
-Reusable definition: `sse_multivector/hierarchy-runs/hr26/hierarchy.spec.json`.
-Initial generator commit: `b1b1118e0be6a01b0c621206a398b5308879e92a`;
+```bash
+cd /home/dev/src/notedeck_worktrees/algos
+./oracle-mvp-hierarchy-hr26-v41/target/hr26-review-ui-v1/launch.sh
+```
+
+Initial generator: `b1b1118e0be6a01b0c621206a398b5308879e92a`;
 recovery constructor: `e66eb182832ec689e13f6f79c95aec4ae9a8017f`;
 shared runner: `1cfdd6a76a9910b2c9dea0ca395f825b90485f7e`.
-Saved artifacts: `oracle-mvp-hierarchy-hr26-v41/target/hierarchy-hr26-v41-two-hundred-note-v1/`.
-Native accounting: `usage-new-blocked.json`; preserved checkpoint evidence:
-`terminal-blocked-snapshot-v1/`. Retain the run and runner worktrees for recovery.
+The viewer exporter uses `eb30aa68`; its source is retained with the review UI.
+Saved state: `oracle-mvp-hierarchy-hr26-v41/target/hierarchy-hr26-v41-two-hundred-note-v1/HR26/state.json`.
+Native accounting: `usage-new-complete.json`; structure and timing:
+`structural-measurements.json` and `execution-provenance.json` in the same
+artifact root. The blocked snapshot and recovery authorization remain saved.
+Reusable definition: `sse_multivector/hierarchy-runs/hr26/hierarchy.spec.json`.
+Retain the original run, recovery-source and shared-runner worktrees for frozen
+bindings, artifacts and reproducibility.
