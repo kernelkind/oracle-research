@@ -1,9 +1,15 @@
 # Official hierarchy run records
 
-For experimental parameters only, open the
-[spreadsheet ledger (CSV)](hierarchy-parameters.csv) in Excel or Google Sheets.
-It has one row per official run, with prompt versions, selection and construction
-settings, model execution, attempt limits and generation Git commits. Its model
+The user's comparison spreadsheet is
+[hierarchy-experiments.xlsx](../../target/hierarchy-experiments.xlsx), opened from
+the workspace with `vd oracle-mvp/target/hierarchy-experiments.xlsx`. Keep this
+exact workbook current after every official hierarchy experiment. Its
+`Experiments` tab contains run ID, status, input and output note counts, HiGen,
+Bootstrap prompt and pair/consolidation prompt. Review commands belong on its
+separate `Review commands` tab. Each row records its actual values.
+
+The [full parameter ledger](hierarchy-parameters.csv) supports internal
+bookkeeping, including execution settings and generation Git commits. Its model
 settings describe hierarchy construction; the corpus hash binds the saved
 subject outputs. `not used`, `not recorded` and `unspecified` are distinct values.
 
@@ -1266,6 +1272,12 @@ inputs remain provenance.
 Keep the parameter ledger, these run records and the explicit source list
 synchronized when registering an official run. Add only experimental settings
 to the CSV; outcomes, usage, costs and review instructions belong here.
+Before reporting a completed, stopped or failed official experiment, update the
+canonical `oracle-mvp/target/hierarchy-experiments.xlsx` with its actual status,
+parameters and saved output note coverage. Update its separate review-command
+tab, stating when a UI has not been prepared. Reopen the saved workbook and
+verify the row against native evidence. Updating an internal ledger or a task
+worktree's copy does not replace this required update to the user's workbook.
 Before a new run, record the full commits of Oracle
 and the shared runner, plus any uncommitted source changes, alongside their
 frozen code hashes. Generator source is accepted only when its bytes match a
