@@ -813,10 +813,12 @@ single rental. Grade validation locally, select the checkpoint without reviewing
 new test content or scores, and grade only its saved test answers. Grading
 requires no rented GPU. Existing test notes remain an already-examined benchmark.
 The [continuation and pilot-failure audit](fine-tuning-pilot-process.md#approved-qwen-continuation-october-14)
-records the measured estimate, verified parent, current worker limitations and
-required preparation. The code currently enforces one pass and final-checkpoint
-test collection; continuation support and full verification are still required.
-No new rental or model run began during the audit. New labels, final training
+records the measured estimate, verified parent and required preparation.
+Explicit parent-checkpoint continuation, both test collections, offline
+completion verification and a one-card launch profile are implemented. The
+clean-runtime rehearsal also now freezes the shared input/parser dependency.
+Pinned-runtime/SSH verification and matching image publication precede rental;
+no continuation rental or full-model run has started. New labels, final training
 volume, mask training and production adoption remain outside this approval.
 The older three-family/two-GPU directions below describe the completed pilot.
 

@@ -19,7 +19,7 @@ import subprocess
 import time
 import urllib.request
 
-from sse_multivector.distillation_run import sha256, write_json
+from sse_multivector.distillation_run import sha256, shared_code_files, write_json
 from sse_multivector.distillation_deploy import verify_package
 
 
@@ -27,10 +27,12 @@ IMAGE_URL = "https://cloud-images.ubuntu.com/noble/20260911/noble-server-cloudim
 IMAGE_SHA256 = "612b2c0cc1bc413a6cb8c38fd611794caf0f2b436c50013d8b3794db12ad7354"
 PACKAGE_FILES = (
     "distillation_run.py", "distillation_data.py", "extraction_pipeline.py", "mask_positions.py",
-    "test_distillation_run.py", "test_distillation_data.py", "test_distillation_deploy.py", "distillation_deploy.py",
+    "_runner_bootstrap.py",
+    "test_distillation_run.py", "test_distillation_continuation.py", "test_distillation_data.py", "test_distillation_deploy.py", "distillation_deploy.py",
     "test_distillation_candidates.py", "distillation_vast.py", "test_distillation_vast.py",
     "distillation_cache.py", "test_distillation_cache.py",
     "distillation/vast-launch.json",
+    "distillation/qwen-continuation-v1.vast.json",
     "distillation/Dockerfile", "distillation/requirements.in", "distillation/requirements.lock",
     "distillation/requirements-gpu.in", "distillation/requirements-gpu.lock",
 )
@@ -50,9 +52,14 @@ def prepare_package(source, destination):
     shutil.copyfile(source / "gte/full_build_package.py", destination / "gte/full_build_package.py")
     shutil.copyfile(source / "gte/calibration_package.py", destination / "gte/calibration_package.py")
     shutil.copyfile(source / "gte/vast_private_create.py", destination / "gte/vast_private_create.py")
+    for name, path in shared_code_files().items():
+        target = destination / name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(path, target)
     write_json(destination / "package.json", {name: sha256(destination / "sse_multivector" / name)
                                              for name in PACKAGE_FILES} | {
-        "gte/full_build_package.py": sha256(destination / "gte/full_build_package.py")})
+        "gte/full_build_package.py": sha256(destination / "gte/full_build_package.py")} | {
+        name: sha256(destination / name) for name in shared_code_files()})
 
 
 def verified_image(cache):
@@ -76,12 +83,12 @@ ARTIFACTS = ("container.tar.gz", "image.json", "runtime.json")
 MODEL_FILES = {
     "sse_multivector/" + name for name in (
         "distillation_run.py", "distillation_data.py", "extraction_pipeline.py", "mask_positions.py",
-        "test_distillation_run.py", "test_distillation_data.py", "test_distillation_candidates.py")}
+        "test_distillation_run.py", "test_distillation_continuation.py", "test_distillation_data.py", "test_distillation_candidates.py")}
 DEPLOYMENT_FILES = {
     "sse_multivector/" + name for name in (
         "distillation_deploy.py", "test_distillation_deploy.py", "distillation_vast.py",
         "test_distillation_vast.py", "distillation_cache.py", "test_distillation_cache.py",
-        "distillation/vast-launch.json")
+        "distillation/vast-launch.json", "distillation/qwen-continuation-v1.vast.json")
 } | {"vast/runner.py", "vast/package.py", "gte/full_build_package.py",
      "gte/calibration_package.py", "gte/vast_private_create.py"}
 
@@ -200,7 +207,7 @@ docker run --rm --network none -e HF_HUB_OFFLINE=1 -e TRANSFORMERS_OFFLINE=1 \
 docker run --rm --network none -e HF_HUB_OFFLINE=1 -e TRANSFORMERS_OFFLINE=1 \
   -e DISTILLATION_TEST_OUTPUT=/results/workflow -v "$result_dir":/results \
   --entrypoint /opt/distillation-venv/bin/python notedeck-distillation:local -m unittest -v \
-  sse_multivector.test_distillation_run
+  sse_multivector.test_distillation_run sse_multivector.test_distillation_continuation
 """,
     'deployment': r"""
 # Launch the exact image as a separate SSH target, as Vast does. It has no

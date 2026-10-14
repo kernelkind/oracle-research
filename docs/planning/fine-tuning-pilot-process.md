@@ -92,31 +92,67 @@ passes `subject_checkpoint_metadata` with 1,000 distinct consumed notes,
 files verify against the saved seals. The original training order reproduces
 exactly through `subject_training_plan` from the existing prepared dataset.
 
-The current worker is **not yet executable for the continuation**:
+**Continuation implementation, October 14:** `distillation_deploy
+prepare-continuation` derives one model's configuration from its saved parent,
+verifies the same dataset and recipe, and freezes the parent manifest, plan and
+checkpoint seals. The package carries the parent checkpoint and existing
+baselines; it omits unused earlier checkpoints. Qwen uses logical GPU 0 and
+matched Qwen preparation. New plans preserve the original note order, then
+shuffle each additional full pass separately using seeds 18 and 19. The original
+checkpoint, optimizer and RNG state remain unchanged; new checkpoints bind to
+the new manifest and extended plan after verifying the original state identity.
 
-- `subject_training_plan` requires unique note IDs and a final milestone equal
-  to dataset size. Merely changing milestones to 2,000/3,000 is rejected;
-  triplicating the rows is also rejected.
-- `train_subject_block` and `subject_checkpoint_metadata` bind state to the
-  original manifest and plan hashes. Add an explicit, verified parent-checkpoint
-  continuation; do not rewrite the original manifest, reset the optimizer or
-  weaken provenance checks to make a copied checkpoint fit.
-- `run_subject_pilot` collects test answers only at the last milestone and
-  requires its original baseline stages. The continuation must reuse verified
-  historical baselines and collect tests at both new checkpoints.
-- Package preparation/completion verification and the grading handoff must
-  account for the continuation and both test collections. Extend the existing
-  production workflow with failing regression tests first; do not hand-assemble
-  results or modify a frozen active source binding.
+Both new checkpoints collect validation and reserved test answers. Completion
+verification requires both collections, their raw/parsed answers and receipts,
+and all planned training-note uses and updates. Reruns reuse saved answers and
+complete checkpoints, including when publication of the first test is interrupted.
 
-Offline verification during this audit passed **73 existing production-path
-contract, data, lifecycle, package and VM-cache tests**. An initial broader
-114-test invocation did not pass: the host Python lacks `torch` and
-`huggingface_hub`, preventing tiny-model/cache tests; 16 SSH-VM tests were skipped.
-Local Docker execution is unavailable to this session. These checks do not
-replace pinned-runtime integration, a rehearsal of the new continuation, or
-actual CUDA preparation. No continuation code, rental, model generation or
-grading run was started during the audit.
+Use [the Qwen continuation Vast profile](../../sse_multivector/distillation/qwen-continuation-v1.vast.json)
+with one 96GB card, 150GB disk, 24 hours at at most $1.15/hour including disk,
+80GB inbound and 10GB outbound transfer allowances. The worst-case planned
+allowance is $28.50 within the $30 total; failed attempts also count toward that
+total. The setup allowance is $5; $27 calls for cost review. Work has no automatic
+timeout. Machine 146170 is excluded. The profile uses managed SSH with
+`ssh-keygen -A && service ssh start`, the provider proxy and progressive copying.
+It adds no separate download rental or persistent volume.
+Pass this profile explicitly with `distillation_vast --settings`; the default
+settings file still describes the historical informal pilot.
+
+The clean-container rehearsal found that the project input/parser entry points
+now depend on the separate shared runner. VM build contexts include those five
+shared Python modules and `_runner_bootstrap.py`; run/package identities hash
+the actual shared source. A clean import test prevents a sibling checkout from
+hiding a missing image dependency. The shared source for this preparation is
+isolated at `experiment-runner-qwen-continuation-v1`, commit `1cfdd6a7`.
+
+The real input package was prepared locally and mechanically verified: one Qwen
+run, one preparation, 1,000 distinct training notes, 3,000 total note uses,
+milestones 2,000/3,000, expected final 375 updates and 600 new answers. Artifacts
+belong in the task worktree under `target/qwen-continuation-v1/`; `inputs-v3` is
+the current package, bound to the corrected shared-source runtime.
+
+To prepare another immutable package, use a fresh output directory:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp-qwen-continuation-v1
+export EXPERIMENT_RUNNER_ROOT=/home/dev/src/notedeck_worktrees/algos/experiment-runner-qwen-continuation-v1
+pilot=../oracle-mvp/target/distillation-pilot-v1/main-pilot-memory-workspace-20261006
+dataset=ee734d39ec007fb832763b273e96f24c250c32f0ef79a018e8cc08ac0b941349
+python3 -m sse_multivector.distillation_deploy prepare-continuation \
+  --parent-run "$pilot/operation/result/work/results/qwen" \
+  --data "$pilot/pilot-package/data/$dataset" \
+  --preparation-config "$pilot/source-configs/preparation-configs/qwen.json" \
+  --name qwen --additional-passes 2 \
+  --output target/qwen-continuation-v1/inputs-next
+```
+
+Local continuation and package checks pass; the exact pinned-runtime VM/SSH
+rehearsal is in progress. The host's older PyTorch 2.8 also reproduces an existing
+physical-batch numerical tolerance failure on unchanged `main`; its tolerance
+has not been relaxed. Before renting, finish the matching image rehearsal and
+private publication, obtain a fresh approved-profile offer and reconcile/admit
+the budget. Actual Qwen CUDA preparation occurs on the same rental before main
+training. No continuation rental, full-model generation or grading has started.
 
 **Two-GPU execution approved October 5:** keep each complete student on one
 **96GB RTX PRO 6000**. GPU 0 runs Gemma dense; GPU 1 runs Qwen, then Gemma MoE.
