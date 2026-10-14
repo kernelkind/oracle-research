@@ -30,6 +30,7 @@ original notes. Parameters describe the settings actually used.
 | HR23 | 100 | ASv6.100 | V4.2 | bootstrap-v133 | consolidated-grouped-v1 | — |
 | HR24 | 100 | ASv6.100 | V4.3 | bootstrap-v133 | consolidated-grouped-v1 | — |
 | HR25 | 100 | ASv6.100 | V4.4 | bootstrap-v133 | consolidated-grouped-v1 | — |
+| HR26 | 200 | ASv6.100 | V4.1 | bootstrap-v133 | consolidated-grouped-v1 | — |
 
 **Same notes:** HR03/HR10/HR14/HR16/HR19/HR20/HR21 use the same ordered 50-note selection.
 HR05/HR08/HR09/HR13/HR15/HR17/HR18 use its same ordered first 24 notes. HR04 uses
@@ -451,3 +452,16 @@ Measured structure and controls: `structural-measurements.json` and
 `usage-new.json` and `execution-provenance.json` preserve usage and timing.
 Reusable definition: `sse_multivector/hierarchy-runs/hr25/hierarchy.spec.json`.
 Retain the isolated run worktree for its frozen source bindings and evidence.
+
+## HR26 — 200 notes · HiGen V4.1
+
+Authorized and preparing. Exact historical 200 raw posts: HR25’s ordered
+100 food/drink posts followed by the frozen 100 music posts. Food subjects
+reuse validated ASv6.100 receipts; music subjects use fresh ASv6.100 calls.
+Bootstrap-v133 and consolidated-grouped-v1; HDBSCAN min_samples=3,
+min_cluster_size=2, excess_of_mass and angular distance. No cosine cutoff.
+At most six roots and children; original HDBSCAN groups expose notes directly.
+Two total provider attempts per case, no total call cap; native answer reuse.
+Review UI unavailable until the hierarchy completes.
+
+Reusable definition: `sse_multivector/hierarchy-runs/hr26/hierarchy.spec.json`.
