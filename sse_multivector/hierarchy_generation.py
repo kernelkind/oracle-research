@@ -1338,13 +1338,15 @@ def _resume_sources(directory, reason):
 
     with workflow.locked(directory):
         state = workflow.read(directory / "state.json")
+        names = CODE_FILES + (('hierarchy_hdbscan.py',)
+                              if state['generation_policy'] in HDBSCAN_POLICIES else ())
         bound = {
             name: [
                 p
                 for p in state["sources"]
                 if Path(p).name == name and Path(p).parent.name == "sse_multivector"
             ]
-            for name in CODE_FILES
+            for name in names
         }
         if any(len(paths) != 1 for paths in bound.values()):
             raise ValueError("invalid hierarchy construction source bindings")

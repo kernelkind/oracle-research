@@ -612,6 +612,28 @@ print(json.dumps({"schema_version":1,"candidate_identity":"hdbscan-explicit-conf
                 (self.root / 'v41/execution-settings.jsonl').read_text().splitlines()]
         self.assertEqual(rows[-1]['max_provider_attempts'], None)
 
+    def test_v41_source_upgrade_moves_the_hdbscan_helper_binding(self):
+        from sse_multivector import hierarchy_hdbscan
+
+        spec = self.prepare_v41()
+        self.cli('prepare-hierarchy', 'v41', '--spec', spec)
+        path = self.root / 'v41/state.json'
+        state = json.loads(path.read_text())
+        current = Path(hierarchy_hdbscan.__file__).resolve()
+        archived = self.root / 'archived/sse_multivector/hierarchy_hdbscan.py'
+        archived.parent.mkdir(parents=True)
+        archived.write_bytes(current.read_bytes())
+        state['sources'][str(archived)] = state['sources'].pop(str(current))
+        path.write_text(json.dumps(state))
+        result = json.loads(self.cli('run-hierarchy', 'v41', '--runner-upgrade-reason',
+                                     'Approved recovery worktree migration').stdout)
+        self.assertEqual(result['status'], 'complete')
+        state = json.loads(path.read_text())
+        self.assertIn(str(current), state['sources'])
+        self.assertNotIn(str(archived), state['sources'])
+        self.assertEqual(state['source_upgrades'][0]['before'],
+                         {str(archived): hashlib.sha256(archived.read_bytes()).hexdigest()})
+
     def test_bootstrap_diagnostic_errors_do_not_block_meanings_or_encoding(self):
         spec = self.configure_v32()
         self.runner.write_text(self.runner.read_text().replace(
