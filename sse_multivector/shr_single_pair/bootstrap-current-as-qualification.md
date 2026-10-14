@@ -126,6 +126,82 @@ retries or exact reuses. Complete native API-equivalent cost is $0.0843996,
 not subscription cash spend. No hierarchy build or diagnostic-output change
 is included.
 
+The user subsequently rejected "Chicken-stock canning and pantry-storage plan"
+and the optimization behind it. A lower whitespace-separated word count is not
+a title-quality success criterion. V131's numeric preference and shortest-name
+instruction are superseded by the natural-title guidance below; its original
+prompt, outputs and receipts remain historical evidence.
+
+### Natural meaning-derived titles: Bootstrap-v132 and v133
+
+The user approved replacing compression targets with concise, natural naming
+based solely on the finalized meaning. Title review must preserve topic identity
+and level of abstraction, retain distinctions needed to recognize the topic,
+leave explanatory and illustrative details in the meaning, and favor clear,
+faithful phrasing when shortening would make a title awkward or misleading.
+Established hyphenated names remain valid; there is no blanket punctuation ban.
+
+[Bootstrap-v132](Hierarchy-bootstrap-v132.md) implements this title-only revision.
+Its negatives example uses "Old glass negatives of studio portraits awaiting
+digital scanning" to demonstrate ordinary phrasing with necessary distinctions.
+The pre-change plan case was recorded as a native agent rejection before editing:
+its awkward compounds and omission of the pressure-specific method fail the
+stated criteria. The example contract test failed before V132 publication and
+passed afterward through production local-node validation.
+
+Native `prepare --from` retains all eight exact V131 inputs, model settings and
+the existing title schema. All eight V132 responses are valid. Native agent
+reviews accept six titles and reject two supported, grammatical titles for
+unnecessary explanations of ordinary names: "Pressure-canning for food
+preservation" and "Nostr communication protocol and network". These judgments
+are fresh assessments of each actual title/meaning pair, not restored gold or
+human semantic approval.
+
+[Bootstrap-v133](Hierarchy-bootstrap-v133.md) adds one ordinary-name preference
+and changes the Feedback example title to "Feedback". The remaining definition
+instructions, example inputs, meanings, diagnostics and output contract remain
+unchanged. Both versions reuse explicit-meaning-rules-v6 and the Consolidation-v21
+companion and have native revision receipts against last approved Bootstrap-v104.
+
+The V133 draw retains the same eight inputs and settings. All responses are
+valid. Its exact titles are:
+
+- Food
+- Half-and-half
+- Chicken stock
+- Pressure-canning
+- Planned pressure-canning and pantry storage of today’s chicken stock
+- Rome
+- Nostr
+- Pottery soup mugs
+
+Eight native agent reviews assess naturalness, faithful topic naming and support
+from the exact returned meaning. The plan title preserves the planned state,
+pressure-specific method, subsequent pantry storage and particular stock batch;
+quantity, source material and technical explanations stay in the meaning.
+Food, Nostr and the mugs do not borrow illustrative dish, food-sharing or tea
+details into their titles. This panel shows no unsupported title addition, but
+it cannot prove that original inputs never influence titles. Meanings regenerate
+in the same call, so this is not a fixed-meaning experiment or proof of unchanged
+definitions. The plan remains a longer title; there is no word-count pass rule.
+
+V132 uses nine attempts: eight cases and one warmup, with no failures, retries or
+reuses. Native API-equivalent catalog cost is $0.0868856. V133 uses ten attempts:
+eight cases, one warmup and one automatic retry after a provider connection
+failure, with no final failures or reuses. One failed attempt has unknown usage;
+$0.0878312 is the known API-equivalent subtotal, not a complete total or a
+subscription cash charge.
+
+Frozen results and native reviews remain under
+`target/bootstrap-v132-natural-titles-v1/draw1` and
+`target/bootstrap-v133-natural-titles-v1/draw1` in the retained
+`oracle-mvp-bootstrap-title-samples-v1` worktree. The isolated shared-runner
+source stays pinned at `956a473`. Contract, assembly and revision checks pass;
+the example regression also verifies unchanged input, meaning and diagnostic
+fields for all four title versions against V129. V133 remains experimental and
+unactivated. General reliability and user acceptance of the longer plan title
+remain open.
+
 ## Current model-attempt policy
 
 The user permanently removed the shared **20,000 model-attempt cap** for

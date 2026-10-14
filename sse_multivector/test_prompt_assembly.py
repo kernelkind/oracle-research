@@ -219,17 +219,24 @@ class PromptAssemblyTests(unittest.TestCase):
         from sse_multivector import experiment_inputs
 
         schema = json.loads((PROMPTS / 'Hierarchy-bootstrap-v130.output.schema.json').read_text())
-        for version in (130, 131):
+        example_pattern = (r'<example>\s*<input>\s*(.*?)\s*</input>\s*'
+                           r'<output>\s*(.*?)\s*</output>\s*</example>')
+        original_examples = re.findall(example_pattern,
+                                       (PROMPTS / 'Hierarchy-bootstrap-v129.md').read_text(), re.S)
+        for version in (130, 131, 132, 133):
             with self.subTest(version=version):
                 prompt = (PROMPTS / f'Hierarchy-bootstrap-v{version}.md').read_text()
-                examples = re.findall(r'<example>\s*<input>\s*(.*?)\s*</input>\s*'
-                                      r'<output>\s*(.*?)\s*</output>\s*</example>', prompt, re.S)
+                examples = re.findall(example_pattern, prompt, re.S)
                 self.assertEqual(len(examples), 2)
-                for input_json, output in examples:
+                for (input_json, output), (original_input, original_output) in zip(
+                        examples, original_examples, strict=True):
+                    self.assertEqual(input_json, original_input)
                     case = {'inputs': {'INPUT_JSON': input_json}}
                     value = experiment_inputs.validate({'adapter': 'hierarchy_local_nodes'},
                                                        case, output, schema)['parsed']
                     self.assertIsInstance(value['title'], str)
+                    self.assertEqual({key: field for key, field in value.items() if key != 'title'},
+                                     json.loads(original_output))
         historical = (PROMPTS / 'Hierarchy-bootstrap-v129.md').read_bytes()
         self.assertEqual(sha256(historical),
                          '1ea170044a0daf63916e576df68e932b50ade5b3f8adec6a47fae5a420e8765e')
