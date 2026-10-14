@@ -401,7 +401,14 @@ Accounting includes all input/cache/output token types and includes reasoning
 within output. Reuse is not a matched policy-savings claim.
 
 Native receipt/state validation passed. The browsing hierarchy has not received
-human semantic approval. No review UI was generated or refreshed.
+human semantic approval. The review UI passed its checks from `/tmp`, preserving
+60 canonical nodes, six roots and 94 represented original notes. Its checked
+viewer, export provenance and launcher are saved together.
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos
+./oracle-mvp-hierarchy-hr24-v43/target/hr24-review-ui-v1/launch.sh
+```
 
 Saved state: `/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr24-v43/target/hierarchy-hr24-v43-hundred-note-v1/HR24/state.json`.
 Measured structure and controls: `structural-measurements.json` and
@@ -429,7 +436,14 @@ Accounting includes all input/cache/output token types and includes reasoning
 within output. Reuse is not a matched policy-savings claim.
 
 Native receipt/state validation passed. The browsing hierarchy has not received
-human semantic approval. No review UI was generated or refreshed.
+human semantic approval. The review UI passed its checks from `/tmp`, preserving
+52 canonical nodes, six roots and 90 represented original notes. Its checked
+viewer, export provenance and launcher are saved together.
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos
+./oracle-mvp-hierarchy-hr25-v44/target/hr25-review-ui-v1/launch.sh
+```
 
 Saved state: `/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr25-v44/target/hierarchy-hr25-v44-hundred-note-v1/HR25/state.json`.
 Measured structure and controls: `structural-measurements.json` and
