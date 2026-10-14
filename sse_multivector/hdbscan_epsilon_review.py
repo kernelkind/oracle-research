@@ -10,6 +10,7 @@ from html import escape
 import json
 import math
 from pathlib import Path
+import subprocess
 
 from . import hierarchy_hdbscan as hdbscan
 from .hierarchy_generation import _vectors, check_state
@@ -193,17 +194,7 @@ def render_svg(tree, sections, groups, epsilon, *, title, provenance):
     return '\n'.join(parts)+'\n'
 
 
-def saved_review(state_path):
-    state_path = Path(state_path).resolve()
-    state = json.loads(state_path.read_text())
-    check_state(state, verify_current_code=False)
-    round_ = state['families'][0]['rounds'][0]
-    ids = round_['current']
-    vectors = _vectors(state, ids)
-    hdbscan.check_round(state, state['families'][0], round_, vectors)
-    request, mapping = hdbscan.request_for(state, ids, vectors)
-    evidence = round_['hdbscan']
-    response = json.loads(Path(evidence['result']).read_text())
+def group_review(response, request, mapping, state, provenance):
     tree = project(response, request, mapping)
     selection = select_epsilon(tree)
     sections = partition(tree, selection['epsilon'])
@@ -216,23 +207,134 @@ def saved_review(state_path):
                            titles=[f'{t} ({n})' if n>1 else t for t, n in titles.items()],
                            notes=len(note_ids), note_ids=note_ids))
     covered = {n for g in groups for n in g['note_ids']}
-    provenance = dict(state_path=str(state_path),
-                      state_sha256=hashlib.sha256(state_path.read_bytes()).hexdigest(),
-                      **evidence, configuration=request['hdbscan_configuration'])
     return dict(provenance=provenance, tree=tree, selection=selection,
                 sections=sections, groups=groups, input_notes=len(state['note_ids']),
                 represented_notes=len(covered),
                 omitted_note_ids=sorted(set(state['note_ids'])-covered))
 
 
+def saved_review(state_path):
+    state_path = Path(state_path).resolve()
+    state = json.loads(state_path.read_text())
+    check_state(state, verify_current_code=False)
+    round_ = state['families'][0]['rounds'][0]
+    ids = round_['current']
+    vectors = _vectors(state, ids)
+    hdbscan.check_round(state, state['families'][0], round_, vectors)
+    request, mapping = hdbscan.request_for(state, ids, vectors)
+    evidence = round_['hdbscan']
+    response = json.loads(Path(evidence['result']).read_text())
+    provenance = dict(state_path=str(state_path),
+                      state_sha256=hashlib.sha256(state_path.read_bytes()).hexdigest(),
+                      **evidence, configuration=request['hdbscan_configuration'])
+    return group_review(response, request, mapping, state, provenance)
+
+
+def combine_sources(states, notes_per_source):
+    """Select original L1s by note, retaining their native meanings and vectors."""
+    if type(notes_per_source) is not int or notes_per_source < 1 or not states:
+        raise ValueError('notes per source must be a positive integer')
+    combined = dict(generation_policy='hierarchy-generation-v4.1',
+                    note_ids=[], originals=[], items={})
+    vectors, selections, identity = [], [], None
+    for index, state in enumerate(states, 1):
+        check_state(state, verify_current_code=False)
+        if not state['experiments'][0].get('complete'):
+            raise ValueError('source Bootstrap is incomplete')
+        bootstrap = state['bootstrap_spec']
+        controls = dict(
+            prompt_id=bootstrap['prompt']['id'],
+            prompt_sha256=hashlib.sha256(Path(bootstrap['prompt']['path']).read_bytes()).hexdigest(),
+            runner={k: v for k, v in bootstrap['runner'].items()
+                    if k not in {'runner_binary', 'auth_file'}},
+            encoder={k: state['worker_config'][k] for k in
+                     ['checkpoint_sha256', 'base_model_artifact_tree_sha256', 'model']})
+        if controls['prompt_id'] != 'Hierarchy-bootstrap-v133':
+            raise ValueError('source must use Bootstrap-v133 titles and meanings')
+        if identity is not None and controls != identity:
+            raise ValueError('source Bootstrap or encoder controls differ')
+        identity = controls
+        if len(state['note_ids']) < notes_per_source:
+            raise ValueError('not enough notes in source')
+        note_ids = state['note_ids'][:notes_per_source]
+        if set(note_ids) & set(combined['note_ids']):
+            raise ValueError('overlapping note IDs across sources')
+        selected = set(note_ids)
+        originals = [o for o in state['originals'] if o['local']['note_id'] in selected]
+        valid = [o for o in originals if o.get('meaning') is not None]
+        for original in valid:
+            source_id = original['id']
+            identifier = f'S{index:02d}-{source_id}'
+            combined['originals'].append(dict(id=identifier, local=original['local']))
+            combined['items'][identifier] = {
+                k: state['items'][source_id][k] for k in ['subject', 'meaning', 'vector_key']}
+        vectors.extend(_vectors(state, [o['id'] for o in valid]))
+        combined['note_ids'].extend(note_ids)
+        selections.append(dict(note_ids=note_ids, original_entries=len(originals),
+                               encoded_entries=len(valid), controls=controls,
+                               source_ids=[o['id'] for o in valid],
+                               skipped=[dict(id=o['id'], subject=o['subject'], local=o['local'])
+                                        for o in originals if o.get('meaning') is None]))
+    return combined, vectors, selections
+
+
+def source_review(state_paths, notes_per_source, output):
+    """Recluster verified saved vectors; no teacher or encoder execution."""
+    output = Path(output).resolve()
+    paths = [Path(p).resolve() for p in state_paths]
+    states = [json.loads(p.read_text()) for p in paths]
+    combined, vectors, selections = combine_sources(states, notes_per_source)
+    binaries = [Path(s['hdbscan_binary']).resolve() for s in states]
+    hashes = [hashlib.sha256(p.read_bytes()).hexdigest() for p in binaries]
+    if len(set(hashes)) != 1:
+        raise ValueError('source HDBSCAN executables differ')
+    ids = list(combined['items'])
+    request, mapping = hdbscan.request_for(combined, ids, vectors)
+    provenance = dict(sources=[dict(state_path=str(p),
+                                   state_sha256=hashlib.sha256(p.read_bytes()).hexdigest(),
+                                   selection=selection)
+                              for p, selection in zip(paths, selections, strict=True)],
+                      hdbscan_binary=str(binaries[0]), hdbscan_binary_sha256=hashes[0],
+                      configuration=request['hdbscan_configuration'],
+                      new_model_calls=0, new_encodings=0)
+    output.mkdir(parents=True, exist_ok=False)
+    (output/'sources.json').write_text(json.dumps(provenance, indent=2)+'\n')
+    request_path = output/'request.json'
+    request_path.write_text(json.dumps(request, ensure_ascii=False)+'\n')
+    result = subprocess.run([str(binaries[0]), str(request_path)],
+                            capture_output=True, check=False)
+    (output/'stderr.txt').write_bytes(result.stderr)
+    if result.returncode:
+        raise ValueError('HDBSCAN command failed: '+result.stderr.decode(errors='replace'))
+    response = json.loads(result.stdout)
+    hdbscan.members(response, request, mapping)
+    (output/'result.json').write_bytes(result.stdout)
+    provenance.update(request=str(request_path),
+                      request_sha256=hashlib.sha256(request_path.read_bytes()).hexdigest(),
+                      result=str(output/'result.json'),
+                      result_sha256=hashlib.sha256(result.stdout).hexdigest())
+    review = group_review(response, request, mapping, combined, provenance)
+    review.update(original_entries=sum(s['original_entries'] for s in selections),
+                  encoded_entries=len(vectors),
+                  assigned_entries=sum(g['entries'] for g in review['groups']))
+    return review
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('state', type=Path)
+    parser.add_argument('state', type=Path, nargs='+')
+    parser.add_argument('--notes-per-source', type=int,
+                        help='recluster the first N notes of each saved source using their exact vectors')
     parser.add_argument('--output', required=True, type=Path)
     parser.add_argument('--title', default='HDBSCAN groups · automatic epsilon candidate')
     args = parser.parse_args()
-    result = saved_review(args.state)
-    args.output.mkdir(parents=True, exist_ok=False)
+    if args.notes_per_source is not None:
+        result = source_review(args.state, args.notes_per_source, args.output)
+    else:
+        if len(args.state) != 1:
+            parser.error('multiple states require --notes-per-source')
+        result = saved_review(args.state[0])
+        args.output.mkdir(parents=True, exist_ok=False)
     (args.output/'analysis.json').write_text(json.dumps(result, indent=2, ensure_ascii=False)+'\n')
     (args.output/'groups.svg').write_text(render_svg(result['tree'], result['sections'],
         result['groups'], result['selection']['epsilon'], title=args.title,

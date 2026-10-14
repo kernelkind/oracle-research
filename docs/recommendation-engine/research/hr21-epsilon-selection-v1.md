@@ -181,3 +181,12 @@ tied splits together and verify that every displayed group has a section color.
 An independently loaded HR21 native state also reproduced all 25 groups, all
 15 sections and epsilon 0.94062506360364. This qualifies the mechanical review
 tool, not the semantic quality of a new corpus's automatically selected cut.
+
+To recluster subsets from several saved sources, pass their state paths and
+`--notes-per-source N`. The command selects the first N notes of each source,
+reuses their original L1 Bootstrap titles/meanings and exact vectors, and runs
+the same production angular HDBSCAN executable on the combined inputs. It does
+not combine the sources' old groups. Bootstrap-v133 wording, teacher settings
+and SSE model identities must match; duplicate note IDs, unfinished Bootstrap
+results and different HDBSCAN executables are rejected. This offline mode
+performs no model calls or encoding and preserves every source artifact.
