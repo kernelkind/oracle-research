@@ -7,9 +7,14 @@ The payment-specific example versions are **withdrawn**; unchanged DCSv1 and
 DSLv10 remain the experimental baselines. The [fresh development trial](#fresh-development-after-example-withdrawal-october-11)
 uses different validation posts. The original sixty-answer selection is
 retained as development/regression and workload evidence; its exposure during
-prompt development prevents a claim of unseen-note accuracy. Reserved pilot
-test data remains unopened. A separately reserved assessment is needed for
-independent final accuracy; no replacement final selection is drawn here.
+prompt development prevents a claim of unseen-note accuracy. The user has now
+authorized the saved 200-note pilot test across all three families, comparing
+each final checkpoint with its untuned baseline: **1,200 answers**. Explicit
+`--split test` enables native preview and trial preparation while retaining
+validation as the default. The grading prompts, scoring and teacher-only
+requirement policy remain unchanged. This test uses isolated frozen inputs,
+persisted receipts, eligible prefix warming, shared 30-request admission and
+a 32 GiB zero-swap process boundary. No student inference is required.
 
 The approved **DCSv1** wording completes a
 [four-note positive-placement challenge](#dcsv1-four-note-positive-placement-challenge-october-11):

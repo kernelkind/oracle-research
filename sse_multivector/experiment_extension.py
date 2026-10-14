@@ -606,8 +606,10 @@ def add_commands(commands):
     p = commands.add_parser('summarize-experiments', help='summarize native saved usage across experiments; no inference')
     p.add_argument('--spec', type=Path, required=True)
     p.add_argument('--output', type=Path, required=True, help='fresh summary report; never overwrite')
-    p = commands.add_parser('prepare-distillation-review-trial', help='freeze a complete-answer validation trial; no inference')
+    p = commands.add_parser('prepare-distillation-review-trial', help='freeze complete saved answers from an explicit held-out split; no inference')
     p.add_argument('manifest', type=Path)
+    p.add_argument('--split', choices=('evaluation', 'test'), default='evaluation',
+                   help='test explicitly opens saved baseline and final-checkpoint test answers')
     p.add_argument('--model-output', type=Path, action='append', required=True)
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--random-count', type=int, default=50)
@@ -728,8 +730,10 @@ def add_commands(commands):
     p.add_argument('--runner-upgrade-reason')
     p.add_argument('--answer-id', action='append', help='run only this frozen answer ID; repeat for a nested subset')
     p = commands.add_parser('preview-distillation-review',
-                            help='count complete saved validation review work; no inference')
+                            help='count complete saved held-out review work; no inference')
     p.add_argument('manifest', type=Path)
+    p.add_argument('--split', choices=('evaluation', 'test'), default='evaluation',
+                   help='test explicitly opens saved baseline and final-checkpoint test answers')
     p.add_argument('--model-output', type=Path, action='append', required=True)
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--estimate', action='store_true', help='estimate rendered tokens and eligible repeated prefixes')
@@ -857,7 +861,7 @@ def handle_command(args):
     elif args.command == 'prepare-distillation-review-trial':
         from . import distillation_review_trial
         result = distillation_review_trial.prepare_trial(args.manifest, args.model_output, args.output,
-            random_count=args.random_count, hard_count=args.hard_count, seed=args.seed)
+            random_count=args.random_count, hard_count=args.hard_count, seed=args.seed, split=args.split)
         print(json.dumps({key: result[key] for key in ('selection_path', 'inference_calls', 'selection_policy')}, indent=2))
     elif args.command in {'show-distillation-review-trial', 'assess-distillation-review', 'freeze-distillation-review-assessments', 'prepare-distillation-review-inventory'}:
         from . import distillation_review_assessment as assessment
@@ -964,7 +968,7 @@ def handle_command(args):
         if args.output.exists():
             raise ValueError('review preview output already exists')
         result = distillation_review_preview.preview(args.manifest, args.model_output,
-            estimate=args.estimate, timing_experiments=args.timing_experiment)
+            estimate=args.estimate, timing_experiments=args.timing_experiment, split=args.split)
         write(args.output, result)
         summary = dict(output=str(args.output), inference_calls=result['inference_calls'], totals=result['totals'])
         if 'estimates' in result:

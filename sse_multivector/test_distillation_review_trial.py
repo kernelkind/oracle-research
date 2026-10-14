@@ -1,5 +1,6 @@
 """Frozen offline final-trial sampling through production validation paths."""
 import json
+import os
 from pathlib import Path
 import tempfile
 import unittest
@@ -20,6 +21,78 @@ class DistillationReviewTrialTests(unittest.TestCase):
         fixture = fixtures.DistillationReviewPreviewTests("runTest")
         fixture.root = self.root
         return fixture.fixture(notes, models=3)
+
+    def test_explicit_test_selection_roundtrips_all_models_and_final_only(self):
+        from sse_multivector.distillation_review_trial import prepare_trial, load_trial
+        fixture = fixtures.DistillationReviewPreviewTests("runTest")
+        fixture.root = self.root
+        notes = [dict(note_id=f"held-out-{i}", post=f"Test cable {i}.", teacher=TEACHER,
+                      answer=answer(fixtures.STUDENT)) for i in range(2)]
+        manifest, models = fixture.fixture(notes, models=3, split="test", milestones=(1, 2))
+        report = prepare_trial(manifest, models, self.root / "test-trial", split="test",
+                               random_count=12, hard_count=0)
+        self.assertEqual(report["dataset"]["split"], "test")
+        self.assertEqual(len(report["random"]["answers"]), 12)
+        self.assertEqual({r["version"] for r in report["random"]["answers"]}, {"baseline", "checkpoint-2"})
+        self.assertEqual(load_trial(report["selection_path"])["random"], report["random"])
+        for row in report["random"]["answers"]:
+            self.assertIn("/test/", row["generation"]["path"])
+            self.assertEqual(row["teacher"], TEACHER)
+
+    def test_native_cli_prepares_explicit_test_selection(self):
+        from sse_multivector.distillation_review_trial import load_trial
+        fixture = fixtures.DistillationReviewPreviewTests("runTest")
+        fixture.root = self.root
+        manifest, models = fixture.fixture(split="test")
+        output = self.root / "native-test-selection"
+        fixture.native("prepare-distillation-review-trial", manifest, "--model-output", models[0],
+                       "--split", "test", "--output", output, "--random-count", "2", "--hard-count", "0")
+        loaded = load_trial(output / "selection.json")
+        self.assertEqual(loaded["dataset"]["split"], "test")
+        self.assertEqual(len(loaded["random"]["answers"]), 2)
+
+    def test_test_loader_rejects_intermediate_checkpoint_even_when_resealed(self):
+        from sse_multivector.distillation_review_trial import prepare_trial, load_trial
+        fixture = fixtures.DistillationReviewPreviewTests("runTest")
+        fixture.root = self.root
+        manifest, models = fixture.fixture(split="test", milestones=(1, 2))
+        prepared = prepare_trial(manifest, models, self.root / "test-selection", split="test",
+                                 random_count=2, hard_count=0)
+        path = Path(prepared["selection_path"])
+        report = run.read_json(path)
+        row = next(row for row in report["random"]["answers"] if row["version"] != "baseline")
+        row["version"] = "checkpoint-1"
+        run.write_json(path, report)
+        run.write_json(path.parent / "selection.complete.json", {path.name: run.sha256(path)})
+        with self.assertRaisesRegex(ValueError, "version or stage identity"):
+            load_trial(path)
+
+    def test_native_cli_prepares_approved_grader_from_test_selection_without_calls(self):
+        from sse_multivector import distillation_review_evaluation as evaluation
+        from sse_multivector.distillation_review_trial import prepare_trial
+        fixture = fixtures.DistillationReviewPreviewTests("runTest")
+        fixture.root = self.root
+        manifest, models = fixture.fixture(split="test")
+        selected = prepare_trial(manifest, models, self.root / "test-selection", split="test",
+                                 random_count=2, hard_count=0)
+        worker = self.root / "fake-runner"
+        worker.write_text((fixtures.PROJECT.parent / "experiment-runner/tests/fixtures/fake-runner.py").read_text())
+        worker.chmod(0o755)
+        output = self.root / "test-evaluation"
+        calls = self.root / "calls.json"
+        prompt = fixtures.PROJECT / "sse_multivector/distillation-review-v1/relationship-prompt-v10.md"
+        fixture.native("prepare-distillation-review-evaluation", selected["selection_path"],
+                       "--output", output, "--actual-edges-only", "--runner-binary", worker,
+                       "--reasoning-effort", "high", "--support-reasoning-effort", "medium",
+                       "--relationship-prompt", prompt, "--relationship-prompt-id", "DSLv10",
+                       environment=dict(os.environ, FAKE_RUNNER_LOG=str(calls)))
+        report = evaluation.report(output)
+        frozen = run.read_json(output / "evaluation.json")
+        self.assertEqual(len(report["random"]["answers"]), 2)
+        self.assertEqual({row["check"] for row in frozen["experiments"]}, {"matching", "support", "relationship"})
+        self.assertEqual(report["relationship_configuration"]["prompt"]["id"], "DSLv10")
+        self.assertTrue(all("/test/" in row["generation"]["path"] for row in report["random"]["answers"]))
+        self.assertFalse(calls.exists())
 
     def test_random_sample_preserves_complete_invalid_answer(self):
         from sse_multivector.distillation_review_trial import prepare_trial

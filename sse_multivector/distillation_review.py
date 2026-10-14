@@ -24,8 +24,10 @@ def _fields(value, fields, label):
         raise ValueError(f"expected exact {label} fields: {', '.join(sorted(fields))}")
 
 
-def _evaluation_reference_lines(raw, splits):
-    """Verify all identity headers before exposing only validation content."""
+def _evaluation_reference_lines(raw, splits, *, split="evaluation"):
+    """Verify all identity headers before exposing the explicitly selected split."""
+    if split not in ("evaluation", "test"):
+        raise ValueError("reference review split must be evaluation or test")
     identities = [identifier for split in splits for identifier in split]
     lines = raw.splitlines()
     if len(lines) != len(identities):
@@ -35,8 +37,9 @@ def _evaluation_reference_lines(raw, splits):
         match = header.match(line)
         if match is None or json.loads(match[1]) != identifier:
             raise ValueError("reference identity header order differs from frozen splits")
-    start = len(splits[0])
-    return lines[start:start + len(splits[1])]
+    index = 1 if split == "evaluation" else 2
+    start = sum(len(part) for part in splits[:index])
+    return lines[start:start + len(splits[index])]
 
 
 def load_saved_generations(dataset_manifest, definitions, base):
