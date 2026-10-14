@@ -455,7 +455,7 @@ Retain the isolated run worktree for its frozen source bindings and evidence.
 
 ## HR26 — 200 notes · HiGen V4.1
 
-Resuming after the user approved nonblocking diagnostics and provider recovery.
+Running after the user approved nonblocking diagnostics and provider recovery.
 Exact historical 200 raw posts:
 HR25’s ordered 100 food/drink posts followed by the frozen 100 music posts.
 All 100 food ASv6.100 subject trees and 733 Bootstrap-v133 answers reused.
@@ -489,7 +489,8 @@ length check: maximum 165 tokens under the agreed 512-token limit. Seven null
 answers remain recorded; the two unresolved entries await recovery.
 
 Reusable definition: `sse_multivector/hierarchy-runs/hr26/hierarchy.spec.json`.
-Frozen generator commit: `b1b1118e0be6a01b0c621206a398b5308879e92a`;
+Initial generator commit: `b1b1118e0be6a01b0c621206a398b5308879e92a`;
+recovery constructor: `e66eb182832ec689e13f6f79c95aec4ae9a8017f`;
 shared runner: `1cfdd6a76a9910b2c9dea0ca395f825b90485f7e`.
 Saved artifacts: `oracle-mvp-hierarchy-hr26-v41/target/hierarchy-hr26-v41-two-hundred-note-v1/`.
 Native accounting: `usage-new-blocked.json`; preserved checkpoint evidence:
