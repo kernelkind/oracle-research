@@ -156,3 +156,28 @@ Before any adoption, review at least one larger tree's adaptive cut alongside
 the fixed-0.94 baseline. Inspect the concrete HR22 Dogs concern rather than
 assuming either numerical rule has established semantic correctness. The
 research worktree remains for these ignored calculations and review images.
+
+## Offline review command
+
+`sse_multivector/hdbscan_epsilon_review.py` applies this exact experimental rule
+to a saved native HDBSCAN state. It validates the native state, vector receipts,
+request identity and selected memberships. It writes the complete colored SVG,
+compact group/section tables and numerical evidence to an ignored output
+directory. It makes no model calls and changes no saved state or production
+construction policy. It fails explicitly when the candidate has too few
+retained distance levels or no positive bend; no fallback has been approved.
+
+From a task worktree, with the frozen state's absolute path:
+
+```bash
+python3 -m sse_multivector.hdbscan_epsilon_review \
+  /absolute/path/to/state.json \
+  --output target/epsilon-review-v1 \
+  --title 'HDBSCAN groups · automatic epsilon candidate'
+```
+
+The production-path checks reproduce HR21's exact reviewed partition, count
+tied splits together and verify that every displayed group has a section color.
+An independently loaded HR21 native state also reproduced all 25 groups, all
+15 sections and epsilon 0.94062506360364. This qualifies the mechanical review
+tool, not the semantic quality of a new corpus's automatically selected cut.
