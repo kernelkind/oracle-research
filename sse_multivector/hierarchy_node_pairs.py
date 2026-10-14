@@ -888,7 +888,7 @@ def validate(raw, *, diagnostics=False, meaning=None, symmetric=False):
 
 
 def validate_meaning(raw, *, post=None, diagnostic=False, ambiguity_diagnostics=False, with_title=False):
-    """Validate a standalone local meaning without judging its semantics."""
+    """Validate a local meaning, matching NBSP and ordinary spaces in quotes."""
     value = json.loads(raw, object_pairs_hook=engine._position_decoder().unique_object)
     diagnostic = diagnostic or ambiguity_diagnostics
     fields = {'meaning', 'evidence'} if diagnostic else {'meaning'}
@@ -950,13 +950,14 @@ def validate_meaning(raw, *, post=None, diagnostic=False, ambiguity_diagnostics=
             raise ValueError('diagnostic evidence must be an array')
         if value['meaning'] is not None and not records:
             raise ValueError('a non-null meaning requires diagnostic evidence')
+        quote_post = post.replace('\u00a0', ' ')
         for record in records:
             if not isinstance(record, dict) or set(record) != {'quote', 'supports', 'inference'}:
                 raise ValueError('expected quote, supports and inference in each diagnostic record')
             for name in ('quote', 'supports'):
                 if not isinstance(record[name], str) or not record[name].strip():
                     raise ValueError('diagnostic ' + name + ' must be nonempty text')
-            if record['quote'] not in post:
+            if record['quote'].replace('\u00a0', ' ') not in quote_post:
                 raise ValueError('diagnostic quote must be an exact contiguous excerpt of the local post')
             inference = record['inference']
             if inference is not None and (not isinstance(inference, str) or not inference.strip()):
