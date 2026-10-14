@@ -195,6 +195,10 @@ imports a manually generated validation subset while binding each answer to the
 original note input, pinned model revision, checkpoint and generation policy.
 The collection fixes the seeded sample; invalid or truncated saved answers stay
 eligible for the existing zero-score rule, and no generation is started.
+An entry may supply `generation_policy` to override the collection default;
+its saved record must match that exact policy hash, preserving earlier receipts.
+Natural EOS uses `stop_policy: "natural_eos"` with both phase budgets null;
+legacy policies retain positive phase budgets without `stop_policy`.
 `prepare-distillation-automatic-grading --evaluation EVALUATION --output DIR`
 then freezes core requests directly from unrun evaluations; the existing single
 `run-distillation-automatic-grading DIR` advances every dependency. Ordinary
