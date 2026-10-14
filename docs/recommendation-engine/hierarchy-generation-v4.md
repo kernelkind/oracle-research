@@ -58,9 +58,9 @@ against the saved HDBSCAN result on advancement.
 Select `generation_policy = hierarchy-generation-v4.2` in a schema-1 hierarchy
 definition. Use the ordinary `prepare-hierarchy`, `advance-hierarchy` and
 `run-hierarchy` commands. `hdbscan_binary` names the production executable.
-Optional `bootstrap_hierarchy` reuses a matching frozen V3.2 Bootstrap-v133
-checkpoint and original vectors; without it, preparation creates the ordinary
-Bootstrap batch followed by original SSE encoding. Teacher specs, source corpus
+Optional `bootstrap_hierarchy` reuses a matching frozen V3.2, V4.1 or V4.2
+Bootstrap-v133 checkpoint and original vectors; without it, preparation creates
+the ordinary Bootstrap batch followed by original SSE encoding. Teacher specs, source corpus
 and local encoder controls retain their existing contracts.
 
 Saved V4.1 and V4 root-only definitions retain `min_cluster_size = 2` under

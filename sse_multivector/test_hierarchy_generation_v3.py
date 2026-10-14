@@ -624,6 +624,28 @@ print(json.dumps({"schema_version":1,"candidate_identity":"hdbscan-explicit-conf
         with self.assertRaisesRegex(ValueError, "frozen hierarchy definition"):
             generation.check_state(state)
 
+    def test_v42_reuses_v41_bootstrap_answers_and_original_vectors(self):
+        from sse_multivector import hierarchy_generation as generation
+
+        spec = self.prepare_v41(count=9)
+        self.cli("prepare-hierarchy", "v41", "--spec", spec)
+        self.cli("run-hierarchy", "v41")
+        source = json.loads((self.root / "v41/state.json").read_text())
+        cfg = json.loads(spec.read_text())
+        cfg.update(generation_policy="hierarchy-generation-v4.2",
+                   bootstrap_hierarchy="v41/state.json")
+        spec = self.write("v42-from-v41.json", cfg)
+        prior = self.calls()
+        self.cli("prepare-hierarchy", "v42", "--spec", spec)
+        state = json.loads((self.root / "v42/state.json").read_text())
+        self.assertEqual(self.calls(), prior)
+        self.assertEqual(state["experiments"], [source["experiments"][0]])
+        self.assertEqual(state["encodings"], source["encodings"])
+        self.assertEqual(state["vectors"], source["vectors"])
+        self.assertEqual(state["families"], [])
+        self.assertEqual(state["nodes"], [])
+        generation.check_state(state)
+
     def test_v41_rejects_changed_section_edges_and_retains_native_reuse(self):
         from sse_multivector import hierarchy_generation as generation
 

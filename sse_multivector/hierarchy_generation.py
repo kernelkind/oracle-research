@@ -352,7 +352,7 @@ def prepare(spec_path, directory, history_root=None):
         source_path = workflow.resolve(cfg["bootstrap_hierarchy"], spec_path.parent)
         source_state = workflow.read(source_path)
         check_state(source_state, verify_current_code=False)
-        if (source_state["generation_policy"] != POLICY_V32
+        if (source_state["generation_policy"] not in (POLICY_V32, *SECTION_POLICIES)
                 or source_state["note_ids"] != cfg["note_ids"]
                 or [{k: o[k] for k in ("id", "local", "subject")}
                     for o in source_state["originals"]] != originals
