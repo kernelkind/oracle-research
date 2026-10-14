@@ -202,7 +202,8 @@ def group_review(response, request, mapping, state, provenance):
     groups = []
     for index, members in enumerate(hdbscan.members(response, request, mapping), 1):
         titles = Counter(state['items'][i]['subject'] for i in members)
-        note_ids = sorted({originals[i]['local']['note_id'] for i in members})
+        note_ids = sorted({originals[o]['local']['note_id'] for i in members
+                           for o in state['items'][i].get('original_ids', [i])})
         groups.append(dict(id=index, original_ids=members, entries=len(members),
                            titles=[f'{t} ({n})' if n>1 else t for t, n in titles.items()],
                            notes=len(note_ids), note_ids=note_ids))
@@ -391,6 +392,27 @@ def source_review(state_paths, notes_per_source, output):
     return review
 
 
+def write_review(result, output, *, title, name='groups'):
+    """Write one complete numerical review with caller-selected artifact names."""
+    output = Path(output)
+    if not name or any(c not in 'abcdefghijklmnopqrstuvwxyz0123456789-_' for c in name):
+        raise ValueError('review artifact name requires lowercase letters, digits, hyphens or underscores')
+    (output/'analysis.json').write_text(json.dumps(result, indent=2, ensure_ascii=False)+'\n')
+    (output/(name+'.svg')).write_text(render_svg(result['tree'], result['sections'],
+        result['groups'], result['selection']['epsilon'], title=title,
+        provenance=result['provenance']))
+    rows = ['| Group | Entry titles | Notes |', '|---|---|---:|']
+    for group in result['groups']:
+        names = '; '.join(group['titles']).replace('|', '\\|').replace('\n', ' ')
+        rows.append(f'| G{group["id"]:02d} | {names} | {group["notes"]} |')
+    rows += ['', '| Section | Groups | Distinct notes |', '|---|---|---:|']
+    by_group = {g['id']: g for g in result['groups']}
+    for i, section in enumerate(result['sections'], 1):
+        note_ids = {n for g in section['groups'] for n in by_group[g]['note_ids']}
+        rows.append(f'| S{i:02d} | '+', '.join(f'G{g:02d}' for g in section['groups'])+f' | {len(note_ids)} |')
+    (output/(name+'.md')).write_text('\n'.join(rows)+'\n')
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('state', type=Path, nargs='+')
@@ -406,20 +428,7 @@ def main():
             parser.error('multiple states require --notes-per-source')
         result = saved_review(args.state[0])
         args.output.mkdir(parents=True, exist_ok=False)
-    (args.output/'analysis.json').write_text(json.dumps(result, indent=2, ensure_ascii=False)+'\n')
-    (args.output/'groups.svg').write_text(render_svg(result['tree'], result['sections'],
-        result['groups'], result['selection']['epsilon'], title=args.title,
-        provenance=result['provenance']))
-    rows = ['| Group | Entry titles | Notes |', '|---|---|---:|']
-    for group in result['groups']:
-        names = '; '.join(group['titles']).replace('|', '\\|').replace('\n', ' ')
-        rows.append(f'| G{group["id"]:02d} | {names} | {group["notes"]} |')
-    rows += ['', '| Section | Groups | Distinct notes |', '|---|---|---:|']
-    by_group = {g['id']: g for g in result['groups']}
-    for i, section in enumerate(result['sections'], 1):
-        note_ids = {n for g in section['groups'] for n in by_group[g]['note_ids']}
-        rows.append(f'| S{i:02d} | '+', '.join(f'G{g:02d}' for g in section['groups'])+f' | {len(note_ids)} |')
-    (args.output/'groups.md').write_text('\n'.join(rows)+'\n')
+    write_review(result, args.output, title=args.title)
     print(json.dumps(dict(groups=len(result['groups']), sections=len(result['sections']),
                           epsilon=result['selection']['epsilon'],
                           represented_notes=result['represented_notes'],
