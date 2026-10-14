@@ -1241,12 +1241,21 @@ that sampling would fix the observed cutoffs. The pinned base also contains
 approximately 0.79 GiB of MTP tensors; the text-only merged export omits them.
 Native vLLM supports Qwen MTP, but its draft acceptance, greedy equivalence and
 memory/performance on this fine tune remain untested. It is not enabled in the
-active run. Any budget, sampling or MTP change requires a separately recorded
-configuration and validation; the current run's source and policy remain frozen.
+stopped run. Any budget, sampling or MTP change requires a separately recorded
+configuration and validation; this run's source and policy remain frozen.
 
 The manually launched twenty-note generation restarts at **19:35 UTC on
 October 14** with this validated configuration and immediate individual saves.
-Grading has not started. Report paired correctness, coverage, invalid outputs, thought/final
+The user stops this configuration at approximately **22:00 UTC** after fifteen
+records are saved: eight completed JSON answers and seven empty final answers
+caused by the thought cutoff. Notes 71, 73, 74, 91 and 96 remain unfinished.
+The generation unit and its memory watchdog are inactive; host available RAM
+returns to approximately 118 GiB. The fifteen records, runtime receipt and stop
+receipt are preserved remotely and locally. The capped configuration must not
+be resumed unchanged. No replacement policy has been applied.
+
+Generation is incomplete and grading has not started. Report paired
+correctness, coverage, invalid outputs, thought/final
 token counts and GX10 elapsed time after the completed manual grader handoff.
 These exposed validation notes provide a small screen, not unseen-note
 accuracy or proof that the full test exceeds 90%. Different generation
