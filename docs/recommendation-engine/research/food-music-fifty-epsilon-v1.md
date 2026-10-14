@@ -89,6 +89,15 @@ section colors; cutoff arrows remain outside the tree. The PNG was visually
 inspected. The prior Food and Music controls independently reproduce their
 original 25/15 and 40/30 group/section counts and exact epsilons.
 
+After synchronization with current main, 158 relevant tests ran. One existing
+node-input test fails for two malformed-input subcases (`null` and integer
+`42`): it receives an iteration error instead of the expected "must be an
+object" message. Both failures were independently reproduced on unchanged
+main before integration; this task changes none of that input-validation
+code. All grouping/reuse tests pass, and a current-main numerical replay
+preserves every mixed-corpus group, section and epsilon. The unrelated
+error-reporting defect was left outside this task's scope.
+
 Task worktree, retained for frozen source references and ignored evidence:
 `/home/dev/src/notedeck_worktrees/algos/oracle-mvp-food-music-fifty-epsilon-v1`.
 
