@@ -27,6 +27,7 @@ original notes. Parameters describe the settings actually used.
 | HR20 | 50 | ASv6.100 | V3.2 | bootstrap-v133 | pair-consolidation-v11 | — |
 | HR21 | 50 | ASv6.100 | V4.1 | bootstrap-v133 | consolidated-grouped-v1 | — |
 | HR22 | 100 | ASv6.100 | V4.1 | bootstrap-v133 | consolidated-grouped-v1 | — |
+| HR23 | 100 | ASv6.100 | V4.2 | bootstrap-v133 | consolidated-grouped-v1 | — |
 
 **Same notes:** HR03/HR10/HR14/HR16/HR19/HR20/HR21 use the same ordered 50-note selection.
 HR05/HR08/HR09/HR13/HR15/HR17/HR18 use its same ordered first 24 notes. HR04 uses
@@ -36,6 +37,8 @@ so HR12's set differs from HR04's. HR06/HR07 use older ASv6.48 inputs and are
 
 HR22 keeps that same 50-note set first and appends the remaining 50 frozen
 collection notes. All 326 original Bootstrap titles and meanings match HR20.
+HR23 uses HR22’s exact ordered 100 notes, all 733 saved Bootstrap answers and
+original vectors.
 
 **Selection and stopping:**
 
@@ -59,6 +62,7 @@ collection notes. All 326 original Bootstrap titles and meanings match HR20.
   generated meanings are never reclustered. Stop at original groups, exposing
   notes directly. **HR21: 31 nodes, 46/50 notes. HR22: 80 nodes, 94/100 notes.
   Both have six roots.**
+- V4.2: same construction as V4.1, with **min_cluster_size=4**.
 - HR14/HR16 omit two null Bootstrap meanings. HR17 had none. Answers and receipts
   remain saved; the original selected note set is preserved as input evidence.
 
@@ -70,13 +74,13 @@ HR03/HR06/HR07 and 1,800s for traversal/V2. V2 prominence uses 600s.
 
 **Encoder:** V3/V3.1 use the same SSE checkpoint as HR15, sentence-T5-base,
 CPU, 768 dimensions, batch 8, **512-token maximum**. Pool the original AS
-subject with its Bootstrap meaning as unselected context. V3.2/V4.1 use the same
-encoder and limits, pooling the generated title instead. V4.1 encodes only
+subject with its Bootstrap meaning as unselected context. V3.2/V4.1/V4.2 use the same
+encoder and limits, pooling the generated title instead. V4.1/V4.2 encode only
 original Bootstrap entries. HR03/HR06/HR07 used
 standalone subject vectors, also with a 512-token maximum. Traversal/V2 did not
 use SSE for hierarchy construction.
 
-**Execution:** HR11–HR22 use prefix caching, automatic warming and exact-request
+**Execution:** HR11–HR23 use prefix caching, automatic warming and exact-request
 answer reuse. Seed/temperature are unspecified; no explicit output-token cap.
 Normally at most two provider attempts per case across resumes, temporary
 provider errors only; HR14 had an approved recovery exception. HR22 used a
@@ -109,6 +113,7 @@ Unknown means the execution commit was not recorded.
 | HR20 | None | 48e71c71 → 273e16e1 | 9d956b3a |
 | HR21 | None | f5500b02 | e7dd09fa |
 | HR22 | None | 581132e9 | e7dd09fa |
+| HR23 | None | df96b21c | e7dd09fa |
 
 ## Calls, tokens and API cost
 
@@ -339,3 +344,11 @@ regenerated. One malformed evidence quote was replaced using the same prompt;
 three other additional-note answers were regenerated after cache misses.
 Every initial response and extra call is retained and included in accounting.
 Prompts, model, encoder, clustering and stopping settings were unchanged.
+
+## HR23 — 100 notes · HiGen V4.2
+
+Running. Same controls and exact Bootstrap answers/vectors as HR22; only
+HDBSCAN minimum cluster size changes from two to four. Bootstrap-v133,
+Consolidated-grouped-v1, GPT-6.1 Sol medium, 600s/1,800s teacher timeouts,
+512-token encoder limit, no cosine cutoff and no call cap. Review command and
+usage will be added after successful completion.
