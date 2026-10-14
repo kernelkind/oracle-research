@@ -600,6 +600,55 @@ print(json.dumps({"schema_version":1,"candidate_identity":"hdbscan-explicit-conf
             self.assertTrue(rows)
             self.assertTrue(all(row['max_provider_attempts'] == 2 for row in rows))
 
+    def test_v41_resume_records_removed_provider_limit_without_rewriting_initial_settings(self):
+        spec = self.prepare_v41()
+        self.cli('prepare-hierarchy', 'v41', '--spec', spec)
+        self.cli('run-hierarchy', 'v41', '--max-provider-attempts', '2')
+        settings = self.root / 'v41/execution-settings.json'
+        before = settings.read_bytes()
+        self.cli('run-hierarchy', 'v41')
+        self.assertEqual(settings.read_bytes(), before)
+        rows = [json.loads(line) for line in
+                (self.root / 'v41/execution-settings.jsonl').read_text().splitlines()]
+        self.assertEqual(rows[-1]['max_provider_attempts'], None)
+
+    def test_v41_source_upgrade_moves_the_hdbscan_helper_binding(self):
+        from sse_multivector import hierarchy_hdbscan
+
+        spec = self.prepare_v41()
+        self.cli('prepare-hierarchy', 'v41', '--spec', spec)
+        path = self.root / 'v41/state.json'
+        state = json.loads(path.read_text())
+        current = Path(hierarchy_hdbscan.__file__).resolve()
+        archived = self.root / 'archived/sse_multivector/hierarchy_hdbscan.py'
+        archived.parent.mkdir(parents=True)
+        archived.write_bytes(current.read_bytes())
+        state['sources'][str(archived)] = state['sources'].pop(str(current))
+        path.write_text(json.dumps(state))
+        result = json.loads(self.cli('run-hierarchy', 'v41', '--runner-upgrade-reason',
+                                     'Approved recovery worktree migration').stdout)
+        self.assertEqual(result['status'], 'complete')
+        state = json.loads(path.read_text())
+        self.assertIn(str(current), state['sources'])
+        self.assertNotIn(str(archived), state['sources'])
+        self.assertEqual(state['source_upgrades'][0]['before'],
+                         {str(archived): hashlib.sha256(archived.read_bytes()).hexdigest()})
+
+    def test_bootstrap_diagnostic_errors_do_not_block_meanings_or_encoding(self):
+        spec = self.configure_v32()
+        self.runner.write_text(self.runner.read_text().replace(
+            '"quote": "Original post"', '"quote": "Words absent from the post"'))
+        self.cli('prepare-hierarchy', 'trial', '--spec', spec)
+        experiment = self.state()['experiments'][0]['experiment']
+        self.cli('run', experiment)
+        result = json.loads(self.cli('advance-hierarchy', 'trial', '--comment',
+                                     'Retain diagnostics without blocking').stdout)
+        state = self.state()
+        self.assertEqual(len(state['encodings']), 1)
+        self.assertTrue(state['experiments'][0]['complete'])
+        self.assertEqual(len(result['diagnostic_errors']), 3)
+        self.assertTrue(all(o['meaning'] == 'Coffee served as a beverage.' for o in state['originals']))
+
     def _assert_section_policy_controls(self, policy, min_samples, min_cluster_size):
         from sse_multivector import hierarchy_generation as generation
         from sse_multivector import hierarchy_hdbscan as hdbscan

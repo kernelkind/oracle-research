@@ -887,8 +887,8 @@ def validate(raw, *, diagnostics=False, meaning=None, symmetric=False):
     return value
 
 
-def validate_meaning(raw, *, post=None, diagnostic=False, ambiguity_diagnostics=False, with_title=False):
-    """Validate a local meaning, matching NBSP and ordinary spaces in quotes."""
+def validate_meaning(raw, *, diagnostic=False, ambiguity_diagnostics=False, with_title=False):
+    """Validate the meaning/title payload independently of its diagnostics."""
     value = json.loads(raw, object_pairs_hook=engine._position_decoder().unique_object)
     diagnostic = diagnostic or ambiguity_diagnostics
     fields = {'meaning', 'evidence'} if diagnostic else {'meaning'}
@@ -896,7 +896,8 @@ def validate_meaning(raw, *, post=None, diagnostic=False, ambiguity_diagnostics=
         fields.update({'ambiguities', 'resolutions'})
     if with_title:
         fields.add('title')
-    if not isinstance(value, dict) or set(value) != fields:
+    required = {'meaning', 'title'} if with_title else {'meaning'}
+    if (not isinstance(value, dict) or required - set(value) or set(value) - fields):
         if with_title:
             raise ValueError('expected ' + ', '.join(sorted(fields)))
         if ambiguity_diagnostics:
@@ -911,8 +912,13 @@ def validate_meaning(raw, *, post=None, diagnostic=False, ambiguity_diagnostics=
             raise ValueError('title must be nonempty text or null')
         if (value['meaning'] is None) != (value['title'] is None):
             raise ValueError('title must be null exactly when meaning is null')
+    return value
+
+
+def validate_meaning_diagnostics(value, *, post=None, diagnostic=False, ambiguity_diagnostics=False):
+    """Check diagnostic records without deciding whether a meaning is usable."""
     if ambiguity_diagnostics:
-        if not isinstance(value['ambiguities'], list) or not isinstance(value['resolutions'], list):
+        if not isinstance(value.get('ambiguities'), list) or not isinstance(value.get('resolutions'), list):
             raise ValueError('ambiguities and resolutions must be arrays')
         questions = set()
         for record in value['ambiguities']:
@@ -942,10 +948,10 @@ def validate_meaning(raw, *, post=None, diagnostic=False, ambiguity_diagnostics=
                 raise ValueError('an unresolved ambiguity requires a null meaning')
         if resolved != questions:
             raise ValueError('each ambiguity requires exactly one resolution')
-    if 'evidence' in value:
+    if diagnostic or ambiguity_diagnostics:
         if not isinstance(post, str):
             raise ValueError('diagnostic evidence requires the original local post')
-        records = value['evidence']
+        records = value.get('evidence')
         if not isinstance(records, list):
             raise ValueError('diagnostic evidence must be an array')
         if value['meaning'] is not None and not records:
