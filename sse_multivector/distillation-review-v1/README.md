@@ -184,6 +184,11 @@ their original contracts.
 exact note/post/teacher/task-prompt context from their original sealed
 selections. It preserves source hashes and explicit optional flags, imports no
 candidate expectations, and reports missing contexts without defaults.
+`prepare-distillation-review-trial MANIFEST --saved-generations COLLECTION --output DIR`
+imports a manually generated validation subset while binding each answer to the
+original note input, pinned model revision, checkpoint and generation policy.
+The collection fixes the seeded sample; invalid or truncated saved answers stay
+eligible for the existing zero-score rule, and no generation is started.
 `prepare-distillation-automatic-grading --evaluation EVALUATION --output DIR`
 then freezes core requests directly from unrun evaluations; the existing single
 `run-distillation-automatic-grading DIR` advances every dependency. Ordinary

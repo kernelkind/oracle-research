@@ -225,6 +225,9 @@ def _saved_report(manifest_path, collection_path, *, verify_checkpoint=False):
         if (saved["note_id"] != definition["note_id"] or saved["messages"] != evaluation[index]["messages"]
                 or saved.get("generation_policy_sha256") != policy_hash):
             raise ValueError("manual generation input or policy differs from frozen source")
+        if (saved.get("model") != config["model"] or saved.get("revision") != config["revision"]
+                or saved.get("checkpoint_sha256") != checkpoint["sha256"]):
+            raise ValueError("manual generation model or checkpoint differs from frozen source")
         row = run.subject_result(saved["note_id"], saved["answer"])
         teacher = teachers[index]
         wording = [s["subject"] for s in row["subjects"]]

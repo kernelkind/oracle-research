@@ -32,12 +32,15 @@ class DistillationSavedGenerationTests(unittest.TestCase):
         seed = "manual-thinking-fixture"
         policy = dict(enable_thinking=True, thought_budget_tokens=128, final_budget_tokens=256,
                       max_context_tokens=32768, do_sample=False)
+        config = run.read_json(model / "manifest.json")["config"]
         sources = []
         rows = [json.loads(line) for line in (manifest.parent / "evaluation.jsonl").read_text().splitlines()]
         for offset, index in enumerate(sorted(random.Random(seed).sample(range(4), 2))):
             path = self.root / name / f"manual/note-{index:04}/subjects.json"
             saved_answer = fixtures.answer(fixtures.STUDENT) if not offset else fixtures.answer([], raw="unfinished", truncated=True)
             run.write_json(path, dict(note_id=rows[index]["note_id"], messages=rows[index]["messages"],
+                model=config["model"], revision=config["revision"],
+                checkpoint_sha256=run.sha256(checkpoint / "complete.json"),
                 answer=saved_answer, generation_policy_sha256=hashlib.sha256(json.dumps(policy,
                     sort_keys=True, separators=(",", ":")).encode()).hexdigest()))
             sources.append(dict(path=str(path), sha256=run.sha256(path), index=index, note_id=rows[index]["note_id"]))
@@ -120,6 +123,19 @@ class DistillationSavedGenerationTests(unittest.TestCase):
         generation.write_bytes(generation.read_bytes() + b"\n")
         with self.assertRaisesRegex(ValueError, "source hash differs"):
             trial.load_trial(path)
+
+    def test_import_rejects_wrong_checkpoint_when_policy_and_receipt_hash_match(self):
+        _, manifest, collection = self.fixture()
+        value = run.read_json(collection)
+        ref = value["generations"][0]
+        path = Path(ref["path"])
+        saved = run.read_json(path)
+        saved["checkpoint_sha256"] = "f" * 64
+        run.write_json(path, saved)
+        ref["sha256"] = run.sha256(path)
+        run.write_json(collection, value)
+        with self.assertRaisesRegex(ValueError, "model or checkpoint differs"):
+            trial.prepare_trial(manifest, [], self.root / "selection", saved_generations=collection)
 
 
 if __name__ == "__main__":
