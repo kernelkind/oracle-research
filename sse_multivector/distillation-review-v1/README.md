@@ -456,6 +456,24 @@ policy checks repeat on merged main, and the automatic coordinator confirms
 the original failed batch is retryable. The existing saved run resumes with
 the same frozen inputs, grading policy, shared capacity and memory boundary.
 
+At 22:06:19 EDT, a later collection stops with `StopIteration` after
+42,191 judgments have been saved. Memory peaks at 11.6 GiB; this is not an OOM.
+The collector reuses an identical coverage-search receipt across answers, but
+sparse compatibility previously constructed its witness check only for the
+receipt's original answer. Oracle `622e474b` constructs the missing checks and
+retains witness conflicts for every answer with the same post, teacher meaning,
+student candidate and teacher contexts. Native verdict acceptance still requires
+the exact input digest and rendered prompt. Seventy coverage tests pass, including
+a two-answer shared-receipt run through both final xhigh outcomes and a completed
+resume without new calls. Automatic/evaluation regressions pass 64 of 65 checks;
+the remaining legacy attempt-budget failure also exists before this fix.
+Oracle `3b90bc18` preserves empty exception names and ordinary tracebacks;
+23 automatic checks and three focused combined checks pass.
+A fresh production collection of the actual saved run succeeds before recovery,
+prepares 56 missing questions in eleven groups, and publishes a backed-up,
+audited checkpoint. All fifty ready groups resume concurrently with the same
+32 GiB memory boundary and zero swap. Final grading is still incomplete.
+
 Reviewer prompts, teacher policies, saved
 receipts, the 30-request cap and immediate submission of all ready groups
 remain unchanged. Full grading and eight-hour readiness are still unverified.
