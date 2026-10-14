@@ -1117,8 +1117,9 @@ Base revision `1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0`, final checkpoint
 The native thinking template receives `reasoning_effort=xhigh`, a 16,384-token
 thought allowance and the pilot's 10,240-token final-answer allowance inside
 40,960 context tokens. The measured inputs contain 9,248–9,466 tokens, requiring
-36,091 tokens at the maximum combined allowance. Local GPU batches contain at most eight notes inside a
-96 GiB, zero-swap systemd boundary; durable batch receipts permit resumption.
+36,091 tokens at the maximum combined allowance. Local generation runs at most
+eight requests concurrently inside a 96 GiB, zero-swap systemd boundary;
+immediate per-note receipts permit resumption without regenerating completed notes.
 The grader imports the completed manual collection through
 `prepare-distillation-review-trial --saved-generations`, retaining original
 inputs, model/checkpoint/policy identities and invalid-output zero scores.
@@ -1140,8 +1141,8 @@ stopped before generation; the host records no OOM.
 The first SDPA generation launch ran for approximately 100 minutes without a
 completed batch; it did not log individual token progress. Its masked attention
 path repeats four key/value heads into 24 query heads. Generation was stopped
-with zero saved answers, preserving its source, runtime and log. The replacement
-uses native FlashAttention2 pinned to
+with zero saved answers, preserving its source, runtime and log. Its replacement
+used native FlashAttention2 pinned to
 `db6b51744f0cd7061386442c09df890fc6d9f47e`, loaded through an isolated
 `kernels==0.16.2` installation. Actual BF16, left-padded Q24/KV4 attention and a
 small native Qwen model with cached decoding pass the comparison against SDPA;
@@ -1149,8 +1150,8 @@ the cached-decode comparison is bit-identical. No custom attention bridge is
 used. The native loader resolves the pinned kernel online from its existing
 cache; base and adapter weights remain pinned and local-only.
 
-The optional causal-convolution kernel remains absent from the native runtime;
-its correct PyTorch reference path is retained. A prebuilt kernel passed raw
+That Transformers runtime retained the correct PyTorch causal-convolution
+reference path. A prebuilt kernel passed raw
 BF16 convolution probes, but its native configuration failed a combined model
 check and is not enabled. A brief loading attempt was stopped before generation;
 the failed check and logs are preserved. No bridge or source build was added.
@@ -1177,14 +1178,54 @@ cache. These additional passes plausibly explain much of the observed speed;
 the traffic estimate is not a profiler measurement. Live hardware checks found
 no contention, swapping or active thermal/power throttling.
 
-The replacement under validation uses a separate stock vLLM ARM64/CUDA 13
-runtime with native paged hybrid attention and continuous batching. The exact
+The replacement uses stock vLLM **0.31.0 / Torch 2.13.0+cu130** in a separate
+run-owned ARM64 environment, with native paged hybrid attention and continuous
+batching. The original Torch/Transformers environment is untouched. The exact
 20 notes, original AS inputs, greedy decoding, xhigh, BF16 model/cache precision,
-FP32 recurrent states and token bounds remain fixed. It will load the original
-GPU-merged text weights, retain host/CUDA memory guards, and persist each
-completed answer immediately. Native kernel compatibility, generation-boundary
-tests, output equivalence and measured throughput must pass before restarting
-the screen. Report paired correctness, coverage, invalid outputs, thought/final
+FP32 recurrent states and token bounds remain fixed. The original GPU merge was
+exported as standard text-only safetensors: 851 BF16 tensors, 50.10 GiB, with
+hashed source/export receipts and atomic publication. Native eager safetensors
+loading avoids the former CPU mapping duplication. The engine uses one CPU
+thread, Triton attention/prefill, a native CUDA GDN decode kernel, and a fixed
+**22 GiB** cache pool. Eighteen GiB would not fit eight near-limit requests plus
+their recurrent states without relying on prefix sharing. The CUDA allocator
+remains capped at 80 GiB in the same process; the 96 GiB, zero-swap CPU boundary
+and independent 20 GiB host-memory watchdog remain active. No quantization,
+CPU offload, dynamic adapter or custom cache bridge is used.
+
+The native regression reproduces 16 KV concatenations and 16 gathers in the
+former padded HF path. The replacement emits the same sixteen greedy tokens on
+the identical four-layer hybrid fixture, with maximum selected-token
+log-probability difference 0.003969 and zero history-copy operations. An
+8,192-token prefix trial reuses 7,840 tokens and matches uncached continuation.
+Production driver tests cover thought/final boundaries, stop tokens, reordered
+rows, atomic individual saves, interrupted/completed resumption and rejection
+of an unexpected saved note. The real importer retains malformed/truncated
+answers as invalid outputs, preserves the exact twenty input identities, and
+binds every runtime receipt through collection source hashes.
+
+The full-model eager benchmark measures **3.96 decode steps/second / 31.7
+output tokens/second** on eight original 9,276–9,466-token prompts and **3.19
+steps/second / 25.5 output tokens/second** on eight diagnostic 36,000-token
+contexts. These are 32 steady decode steps per measurement, not complete-answer
+timings. Cache addresses remain fixed; GPU reservation peaks at **72.4 GiB**,
+host available RAM stays approximately **42 GiB**, and safetensors mappings
+remain absent. The synthetic late contexts are performance probes, not graded
+answers. Native decode-only CUDA graphs for batch sizes 1, 2, 4 and 8 pass
+prefix/state tests and reproduce all **256** checked full-model greedy tokens.
+The short-context graph benchmark reaches **32.3 output tokens/second**, a
+modest 1.8% increase, with approximately 64 MiB extra GPU reservation. Torch
+Inductor compilation remains disabled; the engine's native kernel warmup stays
+enabled. Optional FlashInfer random-sampler warmup is disabled for this
+greedy-only run. Native CuBLAS BF16 linear operations are appropriate for
+SM12.1; the optional SM100-only BF16 GEMM backend is ineligible. Asynchronous
+scheduling remains disabled to keep stopping and receipt handling synchronous.
+Hardware checks find no throttle, contention or swap activity; the model still
+must read approximately 51 GB of weights per decode step.
+
+The manually launched twenty-note generation restarts at **19:35 UTC on
+October 14** with this validated configuration and immediate individual saves.
+Grading has not started. Report paired correctness, coverage, invalid outputs, thought/final
 token counts and GX10 elapsed time after the completed manual grader handoff.
 These exposed validation notes provide a small screen, not unseen-note
 accuracy or proof that the full test exceeds 90%. Different generation
