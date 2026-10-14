@@ -7,6 +7,12 @@ learning from teacher answers improve quality, and what does it cost?
 hierarchy. Generate no masks for this pilot. Thinking stays **off** throughout
 preparation, training and evaluation, approved October 2.
 
+**Grading complete, October 14:** all 1,800 validation answers and all 1,200
+reserved-test answers now have correctness and coverage grades, with no manual
+review queue. The [200-note test results](#completed-test-grading-october-14)
+compare each final 1,000-note adapter with its untuned baseline. Model selection
+remains open; no additional training or student generation was performed.
+
 **Two-GPU execution approved October 5:** keep each complete student on one
 **96GB RTX PRO 6000**. GPU 0 runs Gemma dense; GPU 1 runs Qwen, then Gemma MoE.
 All three prep checks and all three baselines must pass before training starts.
@@ -1014,9 +1020,89 @@ on the test notes would require additional inference. Test results do not revise
 the experiment or choose another checkpoint.
 
 Test collection and completeness checks passed the local VM rehearsal. Separate test
-files stay outside content review; automatic reports expose only their counts
-and locations. The combined rental is approved up to $285; actual GPU fit and
-duration remain unmeasured.
+files stayed outside content review until the user authorized the six-version
+test grading. Earlier automatic collection reports exposed only their counts
+and locations. The combined rental was approved up to $285; its measured
+execution and recovery evidence is recorded above.
+
+### Completed test grading (October 14)
+
+The authorized local run finished at approximately **09:37 EDT October 14**.
+All **1,200 answers** cover the same **200 distinct notes**, with 200 answers
+for each of the six family/version combinations. Every answer has finite
+correctness and coverage grades. There are **zero manual reviews, pending
+judgments or agent adjudications**. All **40,607 prepared semantic judgments**
+are saved across **911 completed native batches** and 529 collections.
+
+These are arithmetic mean answer scores. Invalid student outputs remain in
+each denominator and receive both zeros under the approved policy.
+
+| Distilled model family | Baseline correctness | Final correctness | Baseline coverage | Final coverage | Invalid outputs, baseline → final |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Qwen3.8-27B | 62.4% | 88.4% | 22.4% | 44.7% | 43 → 2 |
+| Gemma 4 31B dense | 86.0% | 88.5% | 32.2% | 40.8% | 3 → 2 |
+| Gemma 4 26B-A4B MoE | 79.5% | 83.3% | 23.2% | 39.4% | 5 → 11 |
+
+On the same paired notes, coverage improves by **22.3 percentage points for
+Qwen, 8.6 for dense Gemma and 16.2 for MoE Gemma**. Qwen has the highest
+observed final coverage; its correctness is nearly tied with dense Gemma.
+These measurements compare the frozen final recipes, not alternative
+checkpoints or each family's best possible training recipe. They do not
+establish uncertainty intervals or independently certify the semantic grader.
+Selecting the model and authorizing the real fine-tune remain user decisions.
+
+The teacher-only inventory covers all 200 contexts, with 2,094 required and
+985 optional exact-wording groups. Optional groups retain explicit ASv6.100
+generalization justifications; candidate answers supplied no requirement
+labels. The frozen prompts are DSMv3, DSSv2, DSLv10 and DCSv1, using Sol/high
+for matching, relationships and ordinary coverage, Sol/medium for support,
+and Sol/xhigh for final conflicts. Trusted mechanical decisions take
+precedence. Eligible repeated prefixes receive native warming; short prefixes
+receive no artificial padding. All saved student answers and grading inputs
+remain unchanged.
+
+Four reviewed shared-runner fixes were necessary during execution:
+
+- `f0b7a60`: remove duplicate scheduling-state cleanup while preserving the
+  locked transaction; measured critical CPU work falls from 27.89 to 16.73 ms.
+- `1fd278e`: omit the global experiment inventory from each batch's scheduling
+  history, retaining its own events; sampled history entries shrink by 98.7%.
+- `cc0fbb8`: allocate vacant request slots among owners that actually have a
+  registered ready request; preserve the existing fairness rules and 30-slot cap.
+- `9575d04`: retry temporary model overloads per request with exponential delay
+  and Retry-After, while retaining account-wide recovery for explicit limits
+  and transport recovery for HTTP/2 failures.
+
+All four changes are committed on the shared runner's local `main`. Their
+production-path regressions and combined-main checks passed, including the
+unchanged isolated rerun of one test's cleanup timeout. Two environment-bound
+memory integration checks were unavailable. Runner handovers drained active
+calls and preserved saved successful receipts before resuming. The prompts,
+grading policy and model settings were frozen throughout.
+
+All ready batches submitted immediately through shared 30-request admission.
+The workload stayed inside a **32 GiB, zero-swap systemd boundary**. During
+the coverage transition it reached that limit and reclaimed clean file cache;
+monitoring recorded **zero OOM events**. Later HTTP/2 GOAWAY waves temporarily
+reduced concurrency through the existing recovery policy and resumed
+automatically. No speculative proxy or transport-policy change was made.
+The initial launch was approximately 00:33 EDT and completion 09:37 EDT:
+about **nine hours elapsed**, including repair handovers and provider waits.
+This run does not establish the earlier eight-hour fresh-run target.
+
+Independent streaming verification checks the exact answer set, identical
+note IDs across cohorts, score fractions, completion checkpoint and **8,967
+protected source hashes**. It completes in 7.17 seconds with 43.4 MiB peak RSS.
+The final report SHA-256 is
+`d6d040c9f2f98e1a2ce17827132efc679cfdffab0ccdb70221783424ab0146f6`.
+The ignored artifacts are retained under
+`oracle-mvp-test-grading/target/distillation-review-v1/grading/test-1200/`:
+`automatic/grades.json`, `completion-summary.json`, saved native receipts,
+observer logs and memory/retry evidence. That worktree remains frozen at
+Oracle `a9c074a4`; `experiment-runner-test-grading` remains frozen at
+runner `9575d04`. Both are retained for artifact paths, provenance and
+receipt-safe reuse. The four runner fix worktrees retain their ignored audit
+artifacts for the measured fixes above.
 
 ## Historical conditional batched cost reference — October 3
 

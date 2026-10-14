@@ -2529,7 +2529,11 @@ remains validation. Test preparation verifies the original test collection,
 generation policy and final checkpoint identity, without loading weights.
 Use the same frozen DSMv3, DSSv2, DSLv10 and DCSv1 grading configuration,
 teacher-only requirement rules, native eligible prefix warming and 32 GiB
-zero-swap process boundary. Model selection awaits the test results.
+zero-swap process boundary. Test grading completed October 14: all 1,200
+answers have both finite grades, with zero manual reviews or pending judgments.
+The [completed test record](../docs/planning/fine-tuning-pilot-process.md#completed-test-grading-october-14)
+binds the final report, source verification and runner repairs. Model selection
+remains open.
 Automatic child batches use the stable launcher from the loaded shared-runner
 checkout. Set the existing `EXPERIMENT_RUNNER_ROOT` to an isolated runner
 worktree and invoke that worktree's `bin/experiment-runner`; preparation and

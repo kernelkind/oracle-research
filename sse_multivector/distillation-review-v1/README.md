@@ -16,6 +16,18 @@ requirement policy remain unchanged. This test uses isolated frozen inputs,
 persisted receipts, eligible prefix warming, shared 30-request admission and
 a 32 GiB zero-swap process boundary. No student inference is required.
 
+**Completed October 14:** all 1,200 reserved-test answers have both finite
+grades, with zero manual reviews, pending judgments or agent adjudications.
+All 40,607 semantic judgments and 911 native batches are complete. The
+[test results and runner repair record](../../docs/planning/fine-tuning-pilot-process.md#completed-test-grading-october-14)
+report means, retained invalid outputs, frozen provenance and verification.
+Qwen's final coverage is 44.7%, dense Gemma's 40.8% and MoE Gemma's 39.4%;
+correctness is 88.4%, 88.5% and 83.3%, respectively. Model selection remains
+open. Execution takes about nine hours including handovers and provider
+waits; this does not establish the eight-hour fresh-run target. The protected
+workload reaches its 32 GiB boundary through cache reclamation with no
+recorded OOM events.
+
 The approved **DCSv1** wording completes a
 [four-note positive-placement challenge](#dcsv1-four-note-positive-placement-challenge-october-11):
 38 searches generate in approximately 118 seconds, with **34 accepted complete

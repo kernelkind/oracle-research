@@ -17,17 +17,21 @@ The larger pilot is subjects only, approved October 2: one teacher hierarchy
 per training note and no mask generation. Each checkpoint generates its own
 subject hierarchies on the same held-out validation notes. Thinking stays off
 throughout preparation, training, baselines, checkpoints and the final test.
-**Pilot status — October 8:** all three students completed training through
-1,000 notes. Qwen's response collection is complete; dense Gemma and Gemma MoE
-are still collecting evaluation responses. Pilot training data is complete;
-model selection is in progress, not accepted. The pilot-specific label teacher
+**Pilot status — October 14:** all three students completed training through
+1,000 notes. All 1,800 validation answers and all 1,200 reserved-test answers
+have correctness and coverage grades, with zero manual reviews. The
+[completed 200-note test](fine-tuning-pilot-process.md#completed-test-grading-october-14)
+compares each final adapter with its untuned baseline. Model selection remains
+open. The pilot-specific label teacher
 was approved independently of the still-open release teacher selection.
-Semantic review happens outside the GPU rental. The current reviewer defaults to
-GPT-6.1 Sol / xhigh; [DSRv1](../../sse_multivector/distillation-review-v1/README.md)
-drafts its prompt, report format and qualification cases. October 8 qualification
+The dated qualification records below retain the prompt-development evidence.
+Semantic review happens outside the GPU rental. Initial October 8 qualification
+used GPT-6.1 Sol / xhigh; [DSRv1](../../sse_multivector/distillation-review-v1/README.md)
+drafted its prompt, report format and qualification cases. That qualification
 completed with 28 complete reports and one interrupted report, failing known
 semantic and cross-version checks. Subsequent runs used the user-directed
-concurrency 8 with existing backoff. Bulk review has not run.
+concurrency 8 with existing backoff. The later automatic workflow completed
+bulk grading as recorded above.
 Source preparation, report checks and scoring
 are implemented offline; DSRv1 includes a concrete preview before model calls.
 Its 29 cases include eight large training hierarchies selected by entry count
