@@ -28,6 +28,12 @@ waits; this does not establish the eight-hour fresh-run target. The protected
 workload reaches its 32 GiB boundary through cache reclamation with no
 recorded OOM events.
 
+The user also approved a [manual Qwen thinking-on screen on 20 validation
+notes](../../docs/planning/fine-tuning-pilot-process.md#approved-qwen-thinking-screen-october-14).
+After GX10 generation, a separate native import hands those answers to the
+unchanged grader and compares them with the same notes' saved thinking-off
+grades. This adds no generation automation and leaves model selection open.
+
 The approved **DCSv1** wording completes a
 [four-note positive-placement challenge](#dcsv1-four-note-positive-placement-challenge-october-11):
 38 searches generate in approximately 118 seconds, with **34 accepted complete

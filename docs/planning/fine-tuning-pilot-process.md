@@ -1104,6 +1104,35 @@ runner `9575d04`. Both are retained for artifact paths, provenance and
 receipt-safe reuse. The four runner fix worktrees retain their ignored audit
 artifacts for the measured fixes above.
 
+### Approved Qwen thinking screen (October 14)
+
+The user authorized a seeded random **20-note validation subset** for the final `Qwen/Qwen3.8-27B` adapter, generated manually on GX10 with thinking on, then handed separately to the unchanged grader. The seed is
+`Qwen-thinking-20-20261014`; original validation indices are
+0, 6, 7, 14, 20, 34, 36, 41, 44, 51, 60, 68, 70, 71, 73, 74, 76, 91, 95, 96.
+The comparison reuses the saved thinking-off grades for these exact notes;
+it does not regenerate the pilot or use the reserved test set.
+
+Base revision `1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0`, final checkpoint
+1,000, BF16 weights, greedy decoding and original ASv6.100 inputs remain fixed.
+The native thinking template receives `reasoning_effort=xhigh`, a 16,384-token
+thought allowance and the pilot's 10,240-token final-answer allowance inside
+32,768 context tokens. Local GPU batches contain at most eight notes inside a
+96 GiB, zero-swap systemd boundary; durable batch receipts permit resumption.
+The grader imports the completed manual collection through
+`prepare-distillation-review-trial --saved-generations`, retaining original
+inputs, model/checkpoint/policy identities and invalid-output zero scores.
+The grader has its own isolated worktree and existing 32 GiB memory boundary.
+
+Thinking-on generation and grading are pending. Report paired correctness,
+coverage, invalid outputs, thought/final token counts and GX10 elapsed time.
+These exposed validation notes provide a small screen, not unseen-note
+accuracy or proof that the full test exceeds 90%. Different generation
+hardware also prevents attributing every difference to thinking alone.
+Selecting a family, expanding the screen and the real fine-tune remain open.
+Ignored artifacts are retained in
+`oracle-mvp-qwen-thinking-gx10/target/qwen-thinking-20-20261014/` and
+`gx10:/home/dev/experiments/qwen-thinking-20-20261014/`.
+
 ## Historical conditional batched cost reference — October 3
 
 Using prep's **ASv6.48** input/batch shapes, saved historical answer lengths,
