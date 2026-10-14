@@ -935,7 +935,23 @@ class HierarchyNodePairsTests(unittest.TestCase):
             json.dumps(value), spec['runner']['output_schema'])['parsed']
         self.assertEqual(parsed, value)
 
-    def test_bootstrap_ambiguity_diagnostics_reject_invalid_links_and_quotes(self):
+    def test_bootstrap_invalid_diagnostic_quote_preserves_usable_meaning(self):
+        self.local_source()
+        self.prepare()
+        case = self.show()['cases'][0]
+        schema = json.loads((Path(__file__).with_name('shr_single_pair') /
+                             'Hierarchy-bootstrap-v130.output.schema.json').read_text())
+        value = dict(ambiguities=[], resolutions=[], meaning='A usable definition',
+                     title='Songs', evidence=[dict(quote='words absent from the post',
+                     supports='Diagnostic evidence', inference=None)])
+        result = experiment_inputs.validate({'adapter': 'hierarchy_local_nodes'},
+                                           case, json.dumps(value), schema)
+        self.assertEqual(result['status'], 'valid')
+        self.assertEqual(result['parsed'], value)
+        self.assertEqual(result['diagnostic_errors'],
+                         ['diagnostic quote must be an exact contiguous excerpt of the local post'])
+
+    def test_bootstrap_ambiguity_diagnostics_report_invalid_links_and_quotes(self):
         self.local_source()
         self.prepare()
         case = self.show()['cases'][0]
@@ -963,9 +979,12 @@ class HierarchyNodePairsTests(unittest.TestCase):
                 {**value, 'resolutions': [{**resolution, 'extra': 'rejected'}]},
                 {**value, 'evidence': [{**value['evidence'][0], 'quote': 'Local entry context'}]},
                 {key: item for key, item in value.items() if key != 'ambiguities'}):
-            with self.subTest(answer=bad), self.assertRaises(ValueError):
-                experiment_inputs.validate({'adapter': 'hierarchy_local_nodes'}, case,
-                                           json.dumps(bad), schema)
+            with self.subTest(answer=bad):
+                result = experiment_inputs.validate({'adapter': 'hierarchy_local_nodes'}, case,
+                                                    json.dumps(bad), schema)
+                self.assertEqual(result['status'], 'valid')
+                self.assertEqual(result['parsed'], bad)
+                self.assertTrue(result['diagnostic_errors'])
         empty = {**value, 'ambiguities': [], 'resolutions': []}
         self.assertEqual(experiment_inputs.validate({'adapter': 'hierarchy_local_nodes'}, case,
                          json.dumps(empty), schema)['parsed'], empty)
@@ -994,7 +1013,7 @@ class HierarchyNodePairsTests(unittest.TestCase):
         self.assertEqual(json.loads(collected[0]['inputs']['INPUT_JSON']), original)
         self.assertEqual(len(collected[0]['evidence']['review']['historical_witnesses']), 2)
 
-    def test_bootstrap_diagnostics_reject_inexact_quotes_and_invalid_records(self):
+    def test_bootstrap_diagnostics_report_inexact_quotes_and_invalid_records(self):
         self.local_source()
         self.prepare()
         case = self.show()['cases'][0]
@@ -1012,11 +1031,14 @@ class HierarchyNodePairsTests(unittest.TestCase):
                 {'meaning': 'X', 'evidence': [{**record, 'inference': ''}]},
                 {'meaning': 'X', 'evidence': [{'quote': 'FULL LOCAL POST'}]},
                 {'meaning': 'X', 'evidence': [{**record, 'extra': 'rejected'}]}):
-            with self.subTest(answer=bad), self.assertRaises(ValueError):
-                experiment_inputs.validate({'adapter': 'hierarchy_local_nodes'}, case,
-                                           json.dumps(bad), schema)
+            with self.subTest(answer=bad):
+                result = experiment_inputs.validate({'adapter': 'hierarchy_local_nodes'}, case,
+                                                    json.dumps(bad), schema)
+                self.assertEqual(result['status'], 'valid')
+                self.assertEqual(result['parsed'], bad)
+                self.assertTrue(result['diagnostic_errors'])
 
-    def test_legacy_bootstrap_schema_stays_strict_and_diagnostic_schema_requires_evidence(self):
+    def test_legacy_bootstrap_schema_stays_strict_and_missing_diagnostics_are_reported(self):
         self.local_source()
         self.prepare()
         case = self.show()['cases'][0]
@@ -1028,9 +1050,10 @@ class HierarchyNodePairsTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             experiment_inputs.validate({'adapter': 'hierarchy_local_nodes'}, case,
                                        json.dumps(answer), legacy)
-        with self.assertRaises(ValueError):
-            experiment_inputs.validate({'adapter': 'hierarchy_local_nodes'}, case,
-                                       '{"meaning":"X"}', diagnostic)
+        result = experiment_inputs.validate({'adapter': 'hierarchy_local_nodes'}, case,
+                                            '{"meaning":"X"}', diagnostic)
+        self.assertEqual(result['status'], 'valid')
+        self.assertIn('diagnostic evidence must be an array', result['diagnostic_errors'])
 
     def test_local_collection_deduplicates_inputs_and_preserves_historical_reviews(self):
         original = self.local_source()
@@ -1203,11 +1226,11 @@ class HierarchyNodePairsTests(unittest.TestCase):
         self.assertEqual(self.show('valid-quote')['cases'][0]['status'], 'valid')
         self.prepare('invalid-quote', '--repeat')
         answer['evidence'][0]['quote'] = 'Local entry context'
-        self.cli('run', 'invalid-quote', env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(answer)},
-                 ok=False)
+        self.cli('run', 'invalid-quote', env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(answer)})
         case = self.show('invalid-quote')['cases'][0]
-        self.assertEqual(case['status'], 'malformed')
-        self.assertIn('exact contiguous excerpt of the local post', case['error'])
+        self.assertEqual(case['status'], 'valid')
+        self.assertEqual(case['parsed'], answer)
+        self.assertIn('exact contiguous excerpt of the local post', case['diagnostic_errors'][0])
 
     def test_local_collection_saved_answers_are_witnesses_not_meaning_inputs(self):
         self.saved_meaning_source()
@@ -1816,9 +1839,10 @@ class HierarchyNodePairsTests(unittest.TestCase):
         self.assertEqual(experiment_inputs.validate({'adapter': 'hierarchy_local_nodes'}, case,
                          json.dumps(answer), schema)['parsed'], answer)
         answer['evidence'][0]['quote'] = 'FULL LOCAL POST'
-        with self.assertRaisesRegex(ValueError, 'exact contiguous excerpt of the local post'):
-            experiment_inputs.validate({'adapter': 'hierarchy_local_nodes'}, case,
-                                       json.dumps(answer), schema)
+        result = experiment_inputs.validate({'adapter': 'hierarchy_local_nodes'}, case,
+                                            json.dumps(answer), schema)
+        self.assertEqual(result['parsed'], answer)
+        self.assertIn('exact contiguous excerpt of the local post', result['diagnostic_errors'][0])
         self.assertEqual(self.calls(), [])
 
 
@@ -1846,9 +1870,10 @@ class HierarchyNodePairsTests(unittest.TestCase):
                 for quote in ('Showroom: the exhaust fan', 'Showroom:\tthe extractor fan',
                               'Showroom:  the extractor fan'):
                     answer['evidence'][0]['quote'] = quote
-                    with self.assertRaisesRegex(ValueError, 'exact contiguous excerpt'):
-                        experiment_inputs.validate(
-                            {'adapter': 'hierarchy_local_nodes'}, case, json.dumps(answer), schema)
+                    result = experiment_inputs.validate(
+                        {'adapter': 'hierarchy_local_nodes'}, case, json.dumps(answer), schema)
+                    self.assertEqual(result['parsed'], answer)
+                    self.assertIn('exact contiguous excerpt', result['diagnostic_errors'][0])
         self.assertEqual(self.calls(), [])
 
 

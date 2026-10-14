@@ -1766,8 +1766,13 @@ def validate(dataset, case, raw, schema):
             diagnostic = 'evidence' in properties
             ambiguity_diagnostics = bool({'ambiguities', 'resolutions'} & properties.keys())
             result['parsed'] = node_pairs.validate_meaning(
-                raw, post=post, diagnostic=diagnostic, ambiguity_diagnostics=ambiguity_diagnostics,
+                raw, diagnostic=diagnostic, ambiguity_diagnostics=ambiguity_diagnostics,
                 with_title='title' in properties)
+            try:
+                node_pairs.validate_meaning_diagnostics(result['parsed'], post=post,
+                    diagnostic=diagnostic, ambiguity_diagnostics=ambiguity_diagnostics)
+            except ValueError as error:
+                result['diagnostic_errors'] = [str(error)]
         else:
             properties = schema.get('properties', {}) if isinstance(schema, dict) else {}
             diagnostics = bool({'questions', 'answers'} & properties.keys())

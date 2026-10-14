@@ -89,6 +89,13 @@ def summary(state):
             for r in state["encodings"] if r.get("skipped")
         ],
         unresolved=unresolved,
+        diagnostic_errors=[
+            dict(role=record['role'], experiment=record['experiment'],
+                 case=identifier, errors=answer['diagnostic_errors'])
+            for record in state['experiments']
+            for identifier, answer in record.get('answers', {}).items()
+            if answer.get('diagnostic_errors')
+        ],
         skipped_bootstrap=[
             dict(
                 local=original["local"],
@@ -436,6 +443,9 @@ def _collect_experiment(record):
             )
             for row in cases
         }
+        for row in cases:
+            if row.get('diagnostic_errors'):
+                answers[row['id']]['diagnostic_errors'] = row['diagnostic_errors']
         for identifier, prior in record.get("answers", {}).items():
             if prior["status"] == "valid" and prior != answers[identifier]:
                 raise ValueError("saved hierarchy answer changed")
@@ -1527,7 +1537,15 @@ def run(
         settings = dict(attempt_budget=None if budget is None else str(budget))
         if max_provider_attempts is not None:
             settings['max_provider_attempts'] = max_provider_attempts
-        trial._save_once(directory / "execution-settings.json", settings)
+        settings_path = directory / "execution-settings.json"
+        if not settings_path.exists():
+            trial._save_once(settings_path, settings)
+        workflow.engine._append_json_line(
+            directory / "execution-settings.jsonl",
+            dict(settings, max_provider_attempts=max_provider_attempts,
+                 runner_upgrade_reason=runner_upgrade_reason,
+                 observed_at_utc=datetime.now(timezone.utc).isoformat()),
+        )
         _resume_sources(directory, runner_upgrade_reason)
         active, attempted, errors = {}, set(), []
         stop = Event()

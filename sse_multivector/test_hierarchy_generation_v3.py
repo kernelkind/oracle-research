@@ -600,6 +600,33 @@ print(json.dumps({"schema_version":1,"candidate_identity":"hdbscan-explicit-conf
             self.assertTrue(rows)
             self.assertTrue(all(row['max_provider_attempts'] == 2 for row in rows))
 
+    def test_v41_resume_records_removed_provider_limit_without_rewriting_initial_settings(self):
+        spec = self.prepare_v41()
+        self.cli('prepare-hierarchy', 'v41', '--spec', spec)
+        self.cli('run-hierarchy', 'v41', '--max-provider-attempts', '2')
+        settings = self.root / 'v41/execution-settings.json'
+        before = settings.read_bytes()
+        self.cli('run-hierarchy', 'v41')
+        self.assertEqual(settings.read_bytes(), before)
+        rows = [json.loads(line) for line in
+                (self.root / 'v41/execution-settings.jsonl').read_text().splitlines()]
+        self.assertEqual(rows[-1]['max_provider_attempts'], None)
+
+    def test_bootstrap_diagnostic_errors_do_not_block_meanings_or_encoding(self):
+        spec = self.configure_v32()
+        self.runner.write_text(self.runner.read_text().replace(
+            '"quote": "Original post"', '"quote": "Words absent from the post"'))
+        self.cli('prepare-hierarchy', 'trial', '--spec', spec)
+        experiment = self.state()['experiments'][0]['experiment']
+        self.cli('run', experiment)
+        result = json.loads(self.cli('advance-hierarchy', 'trial', '--comment',
+                                     'Retain diagnostics without blocking').stdout)
+        state = self.state()
+        self.assertEqual(len(state['encodings']), 1)
+        self.assertTrue(state['experiments'][0]['complete'])
+        self.assertEqual(len(result['diagnostic_errors']), 3)
+        self.assertTrue(all(o['meaning'] == 'Coffee served as a beverage.' for o in state['originals']))
+
     def _assert_section_policy_controls(self, policy, min_samples, min_cluster_size):
         from sse_multivector import hierarchy_generation as generation
         from sse_multivector import hierarchy_hdbscan as hdbscan
