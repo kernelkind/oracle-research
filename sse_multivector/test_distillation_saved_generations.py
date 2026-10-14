@@ -1,4 +1,4 @@
-"""Native grader handoff for bounded manual saved generation collections."""
+"""Native grader handoff for manual saved generation collections."""
 import json
 import hashlib
 from pathlib import Path
@@ -64,6 +64,63 @@ class DistillationSavedGenerationTests(unittest.TestCase):
         source = run.read_json(collection)
         self.assertEqual([r["generation"]["index"] for r in loaded["random"]["answers"]],
                          [r["index"] for r in source["generations"]])
+
+    def test_mixed_generation_policies_preserve_original_receipts(self):
+        for natural_default in (False, True):
+            with self.subTest(natural_default=natural_default):
+                name = f"mixed-{natural_default}"
+                _, manifest, collection = self.fixture(name=name)
+                value = run.read_json(collection)
+                legacy = value["generation_policy"]
+                natural = dict(legacy, thought_budget_tokens=None, final_budget_tokens=None,
+                               stop_policy="natural_eos", max_context_tokens=262144)
+                first, second = value["generations"]
+                original = Path(first["path"]).read_bytes()
+                if natural_default:
+                    value["generation_policy"] = natural
+                    first["generation_policy"] = legacy
+                else:
+                    second["generation_policy"] = natural
+                path = Path(second["path"])
+                saved = run.read_json(path)
+                saved["generation_policy_sha256"] = hashlib.sha256(json.dumps(natural,
+                    sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+                run.write_json(path, saved)
+                second["sha256"] = run.sha256(path)
+                run.write_json(collection, value)
+                prepared = trial.prepare_trial(manifest, [], self.root / ("selection-" + name),
+                                               saved_generations=collection)
+                loaded = trial.load_trial(prepared["selection_path"])
+                self.assertEqual(loaded["generation_policy"], value["generation_policy"])
+                self.assertEqual([r["generation"] for r in loaded["random"]["answers"]], value["generations"])
+                self.assertEqual(loaded["random"]["totals"]["invalid_outputs"], 1)
+                self.assertEqual(Path(first["path"]).read_bytes(), original)
+                self.assertEqual(run.sha256(first["path"]), first["sha256"])
+
+    def test_policy_override_cannot_relabel_a_saved_generation(self):
+        _, manifest, collection = self.fixture()
+        value = run.read_json(collection)
+        value["generations"][0]["generation_policy"] = dict(value["generation_policy"],
+            thought_budget_tokens=None, final_budget_tokens=None,
+            stop_policy="natural_eos", max_context_tokens=262144)
+        run.write_json(collection, value)
+        with self.assertRaisesRegex(ValueError, "input or policy differs"):
+            trial.prepare_trial(manifest, [], self.root / "selection", saved_generations=collection)
+
+    def test_natural_eos_policy_rejects_phase_caps_and_unknown_modes(self):
+        defects = ({"stop_policy": "unknown"}, {"stop_policy": "natural_eos"},
+                   {"thought_budget_tokens": None, "final_budget_tokens": None},
+                   {"stop_policy": "natural_eos", "thought_budget_tokens": None},
+                   {"stop_policy": "natural_eos", "thought_budget_tokens": None,
+                    "final_budget_tokens": None, "do_sample": 0})
+        for index, defect in enumerate(defects):
+            with self.subTest(defect=defect):
+                _, manifest, collection = self.fixture(name=f"invalid-policy-{index}")
+                value = run.read_json(collection)
+                value["generation_policy"].update(defect)
+                run.write_json(collection, value)
+                with self.assertRaisesRegex(ValueError, "invalid manual generation policy"):
+                    trial.prepare_trial(manifest, [], self.root / f"selection-{index}", saved_generations=collection)
 
     def test_native_cli_handoff_prepares_only_imported_answers_without_model_calls(self):
         from sse_multivector import distillation_review_evaluation as evaluation
