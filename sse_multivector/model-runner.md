@@ -72,8 +72,12 @@ their original exact fields; frozen experiments are unchanged.
 The new title instructions live in the Bootstrap wrapper. Its checked assembly
 reuses explicit-meaning-rules-v6 and Consolidation-v21, with no common
 definition-writing change. The existing two examples include titles consistent
-with the new output contract. Mechanical checks do not establish title quality;
-no model evaluation or prompt activation accompanies this publication.
+with the new output contract. The initial publication had mechanical checks.
+The subsequent authorized [eight-case verbosity screen](shr_single_pair/bootstrap-current-as-qualification.md#eight-case-title-verbosity-screen)
+produced eight valid responses: seven titles of one to four words and one
+nine-word title. Full diagnostic responses remain much longer. The native
+collection/specification and frozen outputs support inspection; this small
+development panel does not establish general title quality or activate V130.
 
 ## Current Bootstrap, Compare and hierarchy attempt policy
 

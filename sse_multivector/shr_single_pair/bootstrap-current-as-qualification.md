@@ -47,9 +47,44 @@ explicit-meaning-rules-v6 and the Consolidation-v21 companion; definition-writin
 rules are unchanged. Native revision provenance uses last approved v104 as its
 base, while the title addition preserves v129's definition instructions.
 
-V130 is an experimental prompt with mechanical contract checks, not a model
-quality result or activation. No new inference or hierarchy build is part of
-this change; fresh title evaluation remains open.
+V130 remains experimental and unactivated. Its initial publication had mechanical
+contract checks; the eight-case verbosity screen below adds generated-output
+evidence without establishing general title quality or hierarchy compatibility.
+
+### Eight-case title verbosity screen
+
+The user authorized testing V130 and inspecting sample outputs because of
+verbosity concerns. The [native collection](hierarchy-bootstrap-v130-title-samples-v1.json)
+and [specification](hierarchy-bootstrap-v130-title-samples-v1.spec.json) select
+eight existing ASv6.100 inputs covering broad and named topics, activities and a
+long particular plan. Native preparation regenerates the complete original root
+trees and keeps saved judgments and answers outside model input. The prompt,
+schema, GPT-6.1 Sol medium settings and definition-writing rules are unchanged.
+
+All eight responses are mechanically valid and non-null. Seven titles contain
+one to four whitespace-separated words; the long particular plan's title has
+nine words and 74 characters. Title median is 2.5 words. Meanings range from
+10 to 52 words, with median 26.5. Across the complete parsed response, string
+values contain 176–413 words; diagnostics account for 165–371. These counts
+exclude JSON keys and hidden reasoning. The title field is generally short in
+this small panel, while the full diagnostic output remains verbose.
+
+Agent examination found each title supported by its own exact meaning; this is
+not human semantic approval or a reliability estimate. Some short titles still
+include descriptive wording beyond the topic name. The long title compresses its
+source subject but remains longer than a brief browsing label. A soft title
+length target is a possible next change, requiring user direction; no brevity
+edit, new prompt version or hierarchy build is part of this test.
+
+Frozen native results remain at
+`oracle-mvp-bootstrap-title-samples-v1/target/bootstrap-v130-title-samples-v1/draw1`
+in the retained task worktree. Execution uses the stable launcher from the
+isolated shared-runner checkout `experiment-runner-bootstrap-title-v130-source-v1`,
+pinned at `956a473`; preparation verifies that no source binds either canonical
+main checkout. Twelve attempts include one warmup and three comparison retries,
+with no final failures or exact reuses. Three failed attempts have unknown usage;
+the known API-equivalent subtotal is $0.090654, not a complete cost or subscription
+cash charge. Original outputs and receipts remain ignored artifacts.
 
 ## Current model-attempt policy
 
