@@ -472,11 +472,25 @@ Oracle `3b90bc18` preserves empty exception names and ordinary tracebacks;
 A fresh production collection of the actual saved run succeeds before recovery,
 prepares 56 missing questions in eleven groups, and publishes a backed-up,
 audited checkpoint. All fifty ready groups resume concurrently with the same
-32 GiB memory boundary and zero swap. Final grading is still incomplete.
+32 GiB memory boundary and zero swap.
 
-Reviewer prompts, teacher policies, saved
-receipts, the 30-request cap and immediate submission of all ready groups
-remain unchanged. Full grading and eight-hour readiness are still unverified.
+The preserved 1,800-answer run subsequently completes on October 13 at about
+22:58 EDT. All 45,235 prepared judgments are saved, all 512 native groups are
+complete, and every answer has finite correctness and coverage scores. The final
+report has no missing automatic requests or manual review queue. Independent
+verification checks answer IDs, both scores, completion status and the report's
+recorded SHA-256. The last protected invocation runs for about 31 minutes, peaks
+at 13.9 GiB and has no recorded OOM events or swap use. HTTP-429 bursts reduce
+admissions through the existing backoff; successful calls resume automatically.
+The artifact is retained at
+`oracle-mvp-grading/target/distillation-review-v1/grading/full-1800/automatic/grades.json`.
+Its frozen worktree and saved receipts remain needed for provenance and reuse.
+
+Reviewer prompts, teacher policies, saved receipts, the 30-request cap and
+immediate submission of all ready groups remain unchanged. Successful grading
+is verified for this preserved run. Eight-hour readiness for a fresh complete
+run remains unverified; accumulated recovery work and provider waits prevent
+inferring it from the final invocation alone.
 
 The saved ordinary DSL manifest contains 30,713 prompts and occupies 242 MB.
 Production parsing takes about 1.49 seconds alone; four concurrent reads finish
