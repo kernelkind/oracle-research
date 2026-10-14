@@ -2514,6 +2514,10 @@ generation policy and final checkpoint identity, without loading weights.
 Use the same frozen DSMv3, DSSv2, DSLv10 and DCSv1 grading configuration,
 teacher-only requirement rules, native eligible prefix warming and 32 GiB
 zero-swap process boundary. Model selection awaits the test results.
+Automatic child batches use the stable launcher from the loaded shared-runner
+checkout. Set the existing `EXPERIMENT_RUNNER_ROOT` to an isolated runner
+worktree and invoke that worktree's `bin/experiment-runner`; preparation and
+child execution then retain the same frozen runner binding.
 
 The authorized [complete-answer reviewer trial](distillation-review-v1/README.md#complete-answer-reviewer-trial-october-9)
 adds native project commands: `prepare-distillation-review-trial`,

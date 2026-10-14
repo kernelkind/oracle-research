@@ -3,6 +3,7 @@ import json
 import io
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -46,6 +47,32 @@ class DistillationAutomaticTests(unittest.TestCase):
         self.assertIn('--scheduling-group', prepared.stdout)
         self.assertIn('distillation', prepared.stdout)
         self.native("run-distillation-automatic-grading", "--help")
+
+    def test_launcher_follows_loaded_runner_checkout_and_keeps_children_bound(self):
+        isolated = self.root / "isolated-runner"
+        shutil.copytree(LAUNCHER.parents[1] / "experiment_runner", isolated / "experiment_runner")
+        (isolated / "bin").mkdir()
+        shutil.copy2(LAUNCHER, isolated / "bin/experiment-runner")
+        script = '''
+import json
+import subprocess
+import sys
+from sse_multivector import distillation_review_automatic as automatic
+import experiment_runner
+child = subprocess.run([sys.executable, str(automatic.LAUNCHER), "--project-root",
+                        str(automatic.PROJECT), "run-distillation-automatic-grading", "--help"],
+                       capture_output=True, text=True)
+print(json.dumps(dict(package=experiment_runner.__file__, launcher=str(automatic.LAUNCHER),
+                      child_returncode=child.returncode, child_error=child.stderr)))
+'''
+        result = subprocess.run([sys.executable, "-c", script], cwd=PROJECT,
+            env=dict(os.environ, EXPERIMENT_RUNNER_ROOT=str(isolated)),
+            capture_output=True, text=True, timeout=30)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        binding = json.loads(result.stdout)
+        self.assertEqual(Path(binding["package"]).resolve(), isolated / "experiment_runner/__init__.py")
+        self.assertEqual(Path(binding["launcher"]), isolated / "bin/experiment-runner")
+        self.assertEqual(binding["child_returncode"], 0, binding["child_error"])
 
     def test_source_configuration_reuses_immutable_native_plan_per_operation(self):
         from experiment_runner import experiment

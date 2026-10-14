@@ -13,10 +13,11 @@ import traceback
 from . import distillation_coverage_search as coverage
 from . import distillation_review_evaluation as evaluation
 from . import extraction_pipeline as engine
+import experiment_runner
 
 
 PROJECT = Path(__file__).resolve().parents[1]
-LAUNCHER = PROJECT.parent / "experiment-runner/bin/experiment-runner"
+LAUNCHER = Path(experiment_runner.__file__).resolve().parents[1] / "bin/experiment-runner"
 ROLES = {"required", "final_matching", "final_coverage"}
 DEFAULT_SCHEDULING_GROUP = 'distillation'
 
