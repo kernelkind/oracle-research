@@ -156,6 +156,25 @@ def _cohort(selected, candidates, *, allow_ancestor_paths=True):
         previously_used_note_answers=sum(a["previously_used_note"] for a in selected))
 
 
+def _generation_policy_hash(policy):
+    required = {"enable_thinking", "thought_budget_tokens", "final_budget_tokens", "max_context_tokens", "do_sample"}
+    if (not isinstance(policy, dict) or not required <= policy.keys()
+            or type(policy["enable_thinking"]) is not bool or type(policy["do_sample"]) is not bool
+            or type(policy["max_context_tokens"]) is not int or policy["max_context_tokens"] < 1):
+        raise ValueError("invalid manual generation policy")
+    if "stop_policy" in policy:
+        valid = (policy["stop_policy"] == "natural_eos"
+                 and policy["thought_budget_tokens"] is None and policy["final_budget_tokens"] is None)
+    else:
+        valid = (all(type(policy[key]) is int and policy[key] > 0 for key in
+                     ("thought_budget_tokens", "final_budget_tokens"))
+                 and policy["thought_budget_tokens"] + policy["final_budget_tokens"] <= policy["max_context_tokens"])
+    if not valid:
+        raise ValueError("invalid manual generation policy")
+    return hashlib.sha256(json.dumps(policy, sort_keys=True, ensure_ascii=False,
+        separators=(",", ":"), allow_nan=False).encode()).hexdigest()
+
+
 def _saved_report(manifest_path, collection_path, *, verify_checkpoint=False):
     """Bind a complete manual collection to original validation inputs."""
     sources = {}
@@ -191,15 +210,7 @@ def _saved_report(manifest_path, collection_path, *, verify_checkpoint=False):
     if not version.startswith(f"checkpoint-{cursor}-"):
         raise ValueError("manual generation version differs from checkpoint")
     policy = value["generation_policy"]
-    required = {"enable_thinking", "thought_budget_tokens", "final_budget_tokens", "max_context_tokens", "do_sample"}
-    if (not isinstance(policy, dict) or not required <= policy.keys()
-            or type(policy["enable_thinking"]) is not bool or type(policy["do_sample"]) is not bool
-            or any(type(policy[key]) is not int or policy[key] < 1 for key in
-                   ("thought_budget_tokens", "final_budget_tokens", "max_context_tokens"))
-            or policy["thought_budget_tokens"] + policy["final_budget_tokens"] > policy["max_context_tokens"]):
-        raise ValueError("invalid manual generation policy")
-    policy_hash = hashlib.sha256(json.dumps(policy, sort_keys=True, ensure_ascii=False,
-        separators=(",", ":"), allow_nan=False).encode()).hexdigest()
+    policy_hash = _generation_policy_hash(policy)
     definitions = value["generations"]
     if not isinstance(definitions, list) or not definitions or len(definitions) > len(evaluation):
         raise ValueError("invalid manual generation count")
@@ -213,7 +224,12 @@ def _saved_report(manifest_path, collection_path, *, verify_checkpoint=False):
     prior = _prior_notes(sources)
     candidates = []
     for definition in definitions:
-        review._fields(definition, {"path", "sha256", "index", "note_id"}, "manual generation")
+        fields = {"path", "sha256", "index", "note_id"}
+        if "generation_policy" in definition:
+            fields.add("generation_policy")
+        review._fields(definition, fields, "manual generation")
+        actual_policy_hash = (_generation_policy_hash(definition["generation_policy"])
+                              if "generation_policy" in definition else policy_hash)
         index = definition["index"]
         if type(index) is not int or definition["note_id"] != evaluation[index]["note_id"]:
             raise ValueError("manual generation note identity differs")
@@ -223,7 +239,7 @@ def _saved_report(manifest_path, collection_path, *, verify_checkpoint=False):
         bound({key: definition[key] for key in ("path", "sha256")})
         saved = preview._decode(path.read_bytes())
         if (saved["note_id"] != definition["note_id"] or saved["messages"] != evaluation[index]["messages"]
-                or saved.get("generation_policy_sha256") != policy_hash):
+                or saved.get("generation_policy_sha256") != actual_policy_hash):
             raise ValueError("manual generation input or policy differs from frozen source")
         if (saved.get("model") != config["model"] or saved.get("revision") != config["revision"]
                 or saved.get("checkpoint_sha256") != checkpoint["sha256"]):

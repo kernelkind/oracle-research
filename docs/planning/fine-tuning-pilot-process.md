@@ -1254,6 +1254,19 @@ returns to approximately 118 GiB. The fifteen records, runtime receipt and stop
 receipt are preserved remotely and locally. The capped configuration must not
 be resumed unchanged. No replacement policy has been applied.
 
+The user requires a high GPU memory allowance for the replacement, while the
+standing instruction to protect the host remains in force. The GX10's
+[128 GB is coherent unified CPU/GPU memory](https://rog.asus.com/in/support/faq/1056142/),
+not a separate VRAM allocation. The measured host exposes 121.6 GiB total and
+approximately 118 GiB available while idle. The proposed replacement raises the
+CUDA allocator ceiling from 80 to **96 GiB** and the fixed hybrid cache pool from
+22 to approximately **40 GiB**, retaining the **20 GiB host-available watchdog**.
+Adding eighteen GiB to the measured cache configuration predicts approximately
+90.4 GiB GPU reservation and 24 GiB host availability. These are sizing estimates;
+the larger pool and actual allocation must be validated before launch. Raising
+the allocator ceiling alone does not increase the engine's fixed cache capacity.
+The stopped driver's settings and receipts remain unchanged.
+
 Generation is incomplete and grading has not started. Report paired
 correctness, coverage, invalid outputs, thought/final
 token counts and GX10 elapsed time after the completed manual grader handoff.
