@@ -1,11 +1,76 @@
-# HiGen V4 — root experiment draft
+# HiGen V4.1 — hierarchy from one HDBSCAN tree
 
-Status: approved root-test design and approved Consolidated-grouped-v1 wording.
-The native constructor supports the root-only experiment explicitly; full V4
-hierarchy construction is not implemented or activated. V3, V3.1 and V3.2 remain available.
-The V3.3 proposal is not part of this experiment.
+Status: approved V4.1 design; native construction and offline verification are
+implemented. No V4.1 teacher run or resulting hierarchy has been reviewed yet.
+The earlier V4 root-only experiment remains separate evidence below. Historical
+V3 variants and V4 definitions retain their frozen policies on resume.
 
-## Inputs and grouping
+## Approved V4.1 process
+
+Use Bootstrap-v133's generated titles and fixed meanings for original local L1
+entries. SSE encodes `title`, two newline characters, and `meaning`, pooling
+only the title. Run HDBSCAN once with `min_samples = 3`, `min_cluster_size = 2`
+and excess-of-mass selection. The size minimum counts original entries rather
+than distinct notes. Preserve the selected groups, their ancestor connections
+and the exact input/output evidence. Leave unassigned entries out of the
+hierarchy; report lost entries and distinct notes rather than claiming complete
+corpus coverage.
+
+Use only those selected groups and the connections above them. Hide branches
+with no selected-group descendants and skip ancestors with only one remaining
+branch. Do not absorb unassigned entries when displaying a broader branch.
+
+At the top, choose the first distance threshold that produces at most six
+sections. Repeat within every displayed section containing multiple original
+groups. If a section contains six or fewer groups, show those groups directly.
+Merge equal-distance joins together; a cut can produce fewer than six sections.
+These thresholds use angular mutual-reachability distance, not cosine cutoff.
+If tied distances make a section impossible to split into two through six
+children, retain the evidence and block construction rather than inventing a
+partition or repeatedly retrying the runner.
+
+Generate names and meanings from the bottom upward using
+[Consolidated-grouped-v1](../../sse_multivector/shr_single_pair/Hierarchy-consolidated-grouped-v1.md).
+First supply each original group's member titles and meanings. Then supply
+each broader section's immediate children's generated titles and fixed meanings.
+Every supplied meaning must be covered. No enclosing parent is supplied because
+its definition is generated later from those children. Generated titles and
+meanings are not encoded or reclustered.
+
+Every displayed section becomes a canonical node. Preserve each node's
+associated original local entries, deduplicating note IDs when counting notes.
+Different sections can represent some of the same notes. Stop at the original
+HDBSCAN groups and expose their notes directly, regardless of their note count;
+there is no local L2 or further subdivision phase in V4.1.
+
+All ready grouped-consolidation cases use the shared native runner. A broader
+section can advance once its own children have valid answers without waiting
+for unrelated groups. Preserve ordinary exact reuse, receipt validation,
+provider retry limits, constructor outage backoff and atomic resume. Freeze and
+validate the numerical sections, membership and canonical parent relationships
+against the saved HDBSCAN result on advancement.
+
+Select `generation_policy = hierarchy-generation-v4.1` in a schema-1 hierarchy
+definition. Use the ordinary `prepare-hierarchy`, `advance-hierarchy` and
+`run-hierarchy` commands. `hdbscan_binary` names the production executable.
+Optional `bootstrap_hierarchy` reuses a matching frozen V3.2 Bootstrap-v133
+checkpoint and original vectors; without it, preparation creates the ordinary
+Bootstrap batch followed by original SSE encoding. Teacher specs, source corpus
+and local encoder controls retain their existing contracts.
+
+The offline adapter reproduces the earlier 27-group walkthrough: six roots and
+33 displayed nodes, ending at all 27 original groups. That reference used v129
+meanings. V4.1 uses v133 inputs, so those historical memberships are a mechanical
+regression control rather than the expected new hierarchy.
+
+The saved Bootstrap-v133 first-round result also passes offline section
+validation: 25 original groups, 31 displayed nodes, six roots and at most six
+children per node. No teacher or encoder calls were made for this check;
+section names have not yet been generated. The constructor, numerical-cut,
+assembly and saved-viewer regression suites pass 91 tests, including native
+fresh preparation, independent readiness, exact reuse and atomic resume.
+
+## Earlier V4 root-only experiment
 
 Use the selected 50-note ASv6.100 corpus and Bootstrap-v133. Reuse exact saved
 Bootstrap-v133 answers and encodings where available; preserve original local

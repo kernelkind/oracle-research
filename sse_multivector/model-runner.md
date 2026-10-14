@@ -1741,6 +1741,22 @@ then promote only those final nodes. Build each next canonical level from its pa
 local L1s, stopping at two or fewer distinct notes. No prominence or traversal
 comparison phase is used. The former V2 constructor is preserved in Git history.
 
+[HiGen V4.1](../docs/recommendation-engine/hierarchy-generation-v4.md) uses
+Bootstrap-v133 titles/meanings and one HDBSCAN result (`min_samples=3`,
+`min_cluster_size=2`, excess-of-mass). It leaves unassigned entries out and
+recursively cuts the saved selected-group ancestor tree into at most six
+sections per level. Consolidated-grouped-v1 names original groups first, then
+broader sections from their immediate children's fixed meanings. Generated
+meanings are not encoded or reclustered. Original HDBSCAN groups expose notes
+directly, even when they represent many notes. No local L2 phase is used.
+Select `generation_policy=hierarchy-generation-v4.1`, supply `hdbscan_binary`,
+and optionally supply `bootstrap_hierarchy` to reuse matching frozen V3.2
+Bootstrap-v133 answers and vectors. Without that checkpoint the ordinary
+Bootstrap and original encoding stages run. The shared native runner retains
+exact reuse, concurrency, usage and retry ownership. Every ready section is
+submitted without waiting for unrelated groups. V4's earlier
+`hierarchy-generation-v4-roots` experiment remains a separate frozen policy.
+
 Read help through the shared stable launcher from the task worktree:
 
 ```bash

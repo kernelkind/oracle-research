@@ -433,8 +433,20 @@ class HierarchyGenerationV3Tests(unittest.TestCase):
         self.cli("run", experiment)
         self.cli("advance-hierarchy", "trial", "--comment", "Collect Bootstrap title and meaning")
 
-    def prepare_v4_root_probe(self, count=21):
-        self.cli("prepare-hierarchy", "trial", "--spec", self.configure_v32(count=count))
+    def prepare_v4_root_probe(self, count=21, unique=False):
+        spec = self.configure_v32(count=count)
+        if unique:
+            code = '''if "ambiguities" in properties:
+    import hashlib
+    value=json.loads(os.environ["FAKE_RUNNER_PROMPT_RESPONSE"])
+    value["title"]="Topic "+hashlib.sha256(prompt.encode()).hexdigest()[:12]
+    value["meaning"]="Definition of "+value["title"]
+    value["evidence"][0]["supports"]=value["meaning"]
+    os.environ["FAKE_RUNNER_PROMPT_RESPONSE"]=json.dumps(value)
+'''
+            self.runner.write_text(self.runner.read_text().replace(
+                '\nif stage == "prompt":\n', '\n'+code+'if stage == "prompt":\n'))
+        self.cli("prepare-hierarchy", "trial", "--spec", spec)
         self.collect_title_bootstrap()
         self.encode_pending()
         binary = self.root / "hdbscan-fixture"
@@ -508,6 +520,145 @@ print(json.dumps({"schema_version":1,"candidate_identity":"hdbscan-explicit-conf
         result = self.cli("advance-hierarchy", "v4", "--comment", "Reject changed groups", ok=False)
         self.assertIn("saved HDBSCAN evidence changed", result.stderr)
         self.assertEqual(self.calls(), prior)
+
+    def prepare_v41(self, count=43, unique=False, tied=False):
+        spec = self.prepare_v4_root_probe(count=count, unique=unique)
+        binary = self.root / "hdbscan-fixture"
+        binary.write_text('''#!/usr/bin/env python3
+import json, sys
+r=json.load(open(sys.argv[1]))
+ids=sorted(i["opaque_id"] for i in r["inputs"])
+groups=[ids[i:i+3] for i in range(0,len(ids)-2,3)]
+n=len(ids); k=len(groups)
+leaves=[n+k-1+i for i in range(k)]
+edges=[]
+for i in range(k-1):
+    children=([n+i+1,leaves[k-i-1]] if i<k-2 else leaves[:2])
+    for child in children:
+        edges.append({"parent":n+i,"child":child,"child_size":3,
+                      "lambda":1/((k-i-1)/10)})
+clusters=[{"id":leaf,"members":[ids.index(x) for x in group],"stability":1}
+          for leaf,group in zip(leaves,groups)]
+print(json.dumps({"schema_version":1,"candidate_identity":"hdbscan-explicit-config-v1",
+ "artifact":{"canonical_input_ids":ids,
+ "canonical_configuration_json":json.dumps(r["hdbscan_configuration"]),
+ "result":{"canonical_unique_ids":ids,"alias_groups":[[i] for i in ids],
+ "algorithm_result":{"vector_count":n,"clusters":clusters,"condensed_tree":edges},
+ "fine_output":{"segments":groups}},
+ "manifest":{"parameters":r["hdbscan_configuration"],
+ "algorithm_version":"hdbscan-star-exact-angular-v1",
+ "fine_output_selector_version":"hdbscan-clusters-members-v1",
+ "source_vector_manifest_sha256":r["source_vector_manifest_sha256"],
+ "normalized_vector_sha256":r["normalized_vector_sha256"]}}}))
+''')
+        if tied:
+            binary.write_text(binary.read_text().replace('1/((k-i-1)/10)', '1'))
+        cfg = json.loads(spec.read_text())
+        cfg["generation_policy"] = "hierarchy-generation-v4.1"
+        return self.write("v41.json", cfg)
+
+    def test_v41_keeps_one_tree_and_names_immediate_children_bottom_up(self):
+        from sse_multivector import hierarchy_generation as generation
+
+        spec = self.prepare_v41()
+        source = self.state()
+        self.cli("prepare-hierarchy", "v41", "--spec", spec)
+        result = json.loads(self.cli("run-hierarchy", "v41").stdout)
+        state = json.loads((self.root / "v41/state.json").read_text())
+        self.assertEqual(result["status"], "complete")
+        self.assertEqual(state["encodings"], source["encodings"])
+        self.assertEqual(len(result["hdbscan_rounds"]), 1)
+        self.assertEqual(len(state["nodes"]), 16)  # 14 groups, two displayed joins.
+        roots = [n for n in state["nodes"] if not n["parents"]]
+        self.assertEqual(len(roots), 6)
+        parents = {p for n in state["nodes"] for p in n["parents"]}
+        leaves = [n for n in state["nodes"] if n["id"] not in parents]
+        self.assertEqual(len(leaves), 14)
+        self.assertTrue(all(len(n["original_ids"]) == 3 for n in leaves))
+        self.assertEqual(len(result["notes_not_in_hierarchy"]), 1)
+        for parent in parents:
+            self.assertLessEqual(sum(parent in n["parents"] for n in state["nodes"]), 6)
+        payloads = [json.loads(p["INPUT_JSON"]) for r in state["experiments"][1:]
+                    for p in r["inputs"].values()]
+        self.assertEqual(sorted(len(p["nodes"]) for p in payloads), [3]*14+[4, 6])
+        self.assertTrue(all("parent" not in p for p in payloads))
+        self.assertTrue(all(n["title"] == "Coffee group" for p in payloads
+                            if len(p["nodes"]) != 3 for n in p["nodes"]))
+        generation.check_state(state)
+
+    def test_v41_rejects_changed_section_edges_and_retains_native_reuse(self):
+        from sse_multivector import hierarchy_generation as generation
+
+        spec = self.prepare_v41()
+        self.cli("prepare-hierarchy", "v41", "--spec", spec)
+        self.cli("run-hierarchy", "v41")
+        before = self.calls()
+        self.cli("prepare-hierarchy", "v41-repeat", "--spec", spec)
+        self.cli("run-hierarchy", "v41-repeat")
+        self.assertEqual(self.calls(), before)
+        state = json.loads((self.root / "v41/state.json").read_text())
+        node = next(n for n in state["nodes"] if n["parents"])
+        node["parents"] = []
+        with self.assertRaisesRegex(ValueError, "HDBSCAN section"):
+            generation.check_state(state)
+
+    def test_v41_can_prepare_bootstrap_without_a_previous_hierarchy(self):
+        from sse_multivector import hierarchy_generation as generation
+
+        spec = self.prepare_v41(count=7)
+        cfg = json.loads(spec.read_text())
+        del cfg["bootstrap_hierarchy"]
+        self.write("fresh.json", cfg)
+        self.cli("prepare-hierarchy", "fresh", "--spec", "fresh.json")
+        state = json.loads((self.root / "fresh/state.json").read_text())
+        self.assertEqual(state["status"], "bootstrap")
+        self.assertNotIn("bootstrap_hierarchy", state)
+        with patch("sse_multivector.worker.OfficialSseEncoder", return_value=FixtureEncoder()), \
+                patch.dict(os.environ, FAKE_RUNNER_LOG=str(self.log)):
+            result = generation.run(self.root / "fresh")
+        self.assertEqual(result["status"], "complete")
+        state = json.loads((self.root / "fresh/state.json").read_text())
+        self.assertEqual(len(state["encodings"]), 1)
+        self.assertEqual(len(state["nodes"]), 2)
+        generation.check_state(state)
+
+    def test_v41_ready_section_advances_before_unrelated_groups_finish(self):
+        spec = self.prepare_v41(unique=True)
+        self.cli("prepare-hierarchy", "v41", "--spec", spec)
+        self.cli("advance-hierarchy", "v41", "--comment", "Prepare original groups")
+        state = json.loads((self.root / "v41/state.json").read_text())
+        section = next(s for s in state["hdbscan_sections"]["sections"] if len(s["children"]) == 4)
+        self.cli("run", state["experiments"][1]["experiment"],
+                 *[a for c in section["children"] for a in ("--only", f"H{c:06d}")])
+        self.cli("advance-hierarchy", "v41", "--comment", "Collect four independent groups")
+        state = json.loads((self.root / "v41/state.json").read_text())
+        self.assertFalse(state["experiments"][1]["complete"])
+        self.assertEqual(len(state["nodes"]), 4)
+        self.assertEqual(len(state["experiments"]), 3)
+        self.assertEqual(len(state["experiments"][2]["inputs"]), 1)
+        payload = json.loads(next(iter(state["experiments"][2]["inputs"].values()))["INPUT_JSON"])
+        self.assertEqual(len(payload["nodes"]), 4)
+        self.cli("run-hierarchy", "v41")
+        count = len(self.calls())
+        result = json.loads(self.cli("run-hierarchy", "v41").stdout)
+        self.assertEqual(result["status"], "complete")
+        self.assertEqual(len(self.calls()), count)
+
+    def test_v41_impossible_tied_cut_blocks_without_calls_or_runner_backoff(self):
+        from sse_multivector import hierarchy_generation as generation
+
+        spec = self.prepare_v41(tied=True)
+        self.cli("prepare-hierarchy", "v41", "--spec", spec)
+        prior = self.calls()
+        result = json.loads(self.cli("run-hierarchy", "v41", ok=False).stdout)
+        self.assertEqual(result["status"], "blocked_hdbscan")
+        self.assertEqual(self.calls(), prior)
+        self.assertIn("tied split", result["unresolved"][0]["error"])
+        self.assertFalse((self.root / "v41/runner-backoff.jsonl").exists())
+        state = json.loads((self.root / "v41/state.json").read_text())
+        generation.check_state(state)
+        result = json.loads(self.cli("advance-hierarchy", "v41", "--comment", "Keep evidence").stdout)
+        self.assertEqual(result["status"], "blocked_hdbscan")
 
     def test_v32_generated_title_drives_sse_and_browsing_preserving_original_subject(self):
         self.cli("prepare-hierarchy", "trial", "--spec", self.configure_v32())
