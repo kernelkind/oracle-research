@@ -22,8 +22,9 @@ original notes. Parameters describe the settings actually used.
 | HR15 | 24 | ASv6.100 | V3 | bootstrap-v129 | pair-consolidation-v7 | — |
 | HR16 | 50 | ASv6.100 | V3 | bootstrap-v129 | pair-consolidation-v7 | — |
 | HR17 | 24 | ASv6.100 | V3.1 | bootstrap-v129 | pair-consolidation-v7 | — |
+| HR19 | 50 | ASv6.100 | V3.1 | bootstrap-v129 | pair-consolidation-v7 | — |
 
-**Same notes:** HR03/HR10/HR14/HR16 use the same ordered 50-note selection.
+**Same notes:** HR03/HR10/HR14/HR16/HR19 use the same ordered 50-note selection.
 HR05/HR08/HR09/HR13/HR15/HR17 use its same ordered first 24 notes. HR04 uses
 its first 12; HR11 and HR12 use selected 6- and 12-note subsets of the 24,
 so HR12's set differs from HR04's. HR06/HR07 use older ASv6.48 inputs and are
@@ -83,6 +84,7 @@ Unknown means the execution commit was not recorded.
 | HR15 | None | dbd03c02 | 9d956b3a |
 | HR16 | None | dbd03c02 → fb6f6154 | 9d956b3a |
 | HR17 | None | bdc22432 | 9d956b3a |
+| HR19 | None | 5446454d | 9d956b3a |
 
 ## Calls, tokens and API cost
 
@@ -109,6 +111,7 @@ tokens and cost are known subtotals; the complete totals remain unknown.
 | HR15 | 334 | 169 | 611,130 | $1.3505 | 1 |
 | HR16 | 864 | 417 | 1,538,725 | $3.3941 | 51 |
 | HR17 | 25 | 193 | 43,585 | $0.0856 | 0 |
+| HR19 | 54 | 432 | 95,792 | $0.2132 | 0 |
 
 HR17's new calls took **1m 45s**. Including the saved original producers behind
 its reused answers, its construction used **226 calls, 1,039,228 tokens and
@@ -228,4 +231,14 @@ cd /home/dev/src/notedeck_worktrees/algos
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos
 ./oracle-mvp-hierarchy-hr17-v31/target/hr17-review-ui-v1/launch.sh
+```
+
+## HR19 — 50 input notes · 35 retained
+
+Same controls and generator Python sources as HR17, with the original 50-note
+selection. Complete: **63 nodes, three roots, 35/50 notes**, in **9m 45s**.
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos
+./oracle-mvp-hierarchy-hr19-v31/target/hr19-review-ui-v1/launch.sh
 ```
