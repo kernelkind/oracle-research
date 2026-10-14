@@ -1124,7 +1124,23 @@ The grader imports the completed manual collection through
 inputs, model/checkpoint/policy identities and invalid-output zero scores.
 The grader has its own isolated worktree and existing 32 GiB memory boundary.
 
-Thinking-on generation and grading are pending. Report paired correctness,
+GX10 preflight found missing Python headers and CPU duplication during weight
+loading. Matching Python 3.12 headers were extracted into the experiment
+directory without a system installation. The stock Transformers loader's
+Linux `mmap` path retains anonymous CPU pages after transferring weights on
+this unified-memory host. A production-sized 178 MB BF16 tensor probe verifies
+bit-identical GPU values with safetensors' native `pread` backend and no file
+mapping. Selecting `pread` inside the unchanged Transformers loader and
+disabling asynchronous materialization loads the full model in **53.5 seconds**.
+The selection is scoped to model loading and restored afterwards. CUDA
+allocations are capped at 80 GiB, and an independent one-second watchdog stops
+only this job if host available RAM falls below 20 GiB. Earlier setup attempts
+stopped before generation; the host records no OOM. The first eight notes are
+now generating with approximately 52 GiB available. The installed optional
+causal-convolution kernel is absent; its correct PyTorch reference path is
+retained, preserving the existing runtime packages.
+
+Thinking-on generation is active; grading is pending. Report paired correctness,
 coverage, invalid outputs, thought/final token counts and GX10 elapsed time.
 These exposed validation notes provide a small screen, not unseen-note
 accuracy or proof that the full test exceeds 90%. Different generation
