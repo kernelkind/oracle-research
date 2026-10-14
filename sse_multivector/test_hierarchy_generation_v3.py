@@ -421,7 +421,6 @@ class HierarchyGenerationV3Tests(unittest.TestCase):
         # Shared queue workers must not depend on an invocation's ambient response override.
         needle = 'if stage == "prompt":\n'
         code = ('if "ambiguities" in request.get("schema", {}).get("properties", {}):\n'
-                '    stage = "prompt"\n'
                 '    os.environ["FAKE_RUNNER_PROMPT_RESPONSE"] = ' + repr(json.dumps(response)) + '\n'
                 'elif stage == "prompt":\n'
                 '    os.environ["FAKE_RUNNER_PROMPT_RESPONSE"] = ' +

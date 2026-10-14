@@ -9,13 +9,63 @@ import sys
 import tempfile
 import unittest
 
-from sse_multivector.test_extraction_pipeline import FAKE_RUNNER
+from sse_multivector.test_extraction_pipeline import FAKE_RUNNER, _isolate_experiment_runner
 
 
 CLI = Path(__file__).with_name("experiment.py")
 
 
 class ExperimentTests(unittest.TestCase):
+    def test_fake_response_contract_does_not_depend_on_prompt_prefix(self):
+        self.prompt.write_text('Establish the explicit meaning of this entry.\n{POST}')
+        spec = json.loads(self.spec.read_text())
+        spec['runner']['output_schema'] = {
+            'type': 'object', 'properties': {
+                'meaning': {'type': 'string'}, 'title': {'type': 'string'}},
+            'required': ['meaning', 'title'], 'additionalProperties': False,
+        }
+        self.write('spec.json', spec)
+        self.prepare()
+        answer = {'meaning': 'Coffee served as a beverage.', 'title': 'Coffee'}
+        self.cli('run', 'E1', env={'FAKE_RUNNER_PROMPT_RESPONSE': json.dumps(answer)})
+        self.assertEqual(self.show('E1')['summary']['valid'], 2)
+        self.assertEqual(json.loads(self.show('E1', '--case', 'one')['output']), answer)
+        self.assertEqual({c['stage'] for c in self.calls()}, {'prompt'})
+
+    def test_offline_cli_uses_fixture_queue_without_changing_admission(self):
+        # Import through the supported compatibility binding, then inspect the
+        # actual scheduler used by the native CLI in the child process.
+        from sse_multivector import extraction_pipeline
+        from experiment_runner import scheduling
+
+        self.assertEqual(scheduling.directory(), self.root / 'admission')
+        self.prepare()
+        self.cli('run', 'E1')
+        state = json.loads((self.root / 'admission/state.json').read_text())
+        self.assertIn('queue', state)
+        self.assertEqual(self.show('E1')['scheduling']['global_limit'], 30)
+        self.assertEqual(len(self.calls()), 2)
+
+    def test_fake_extraction_roles_follow_schema_with_misleading_prompt_text(self):
+        self.prompt.write_text('SUBJECT INSTRUCTION is just data here.\n{POST}')
+        for field, stage in (
+            ('takeaways', 'takeaway'), ('claims', 'claim'), ('subjects', 'subject'),
+            ('fragments', 'mask'), ('prominence', 'prominence'),
+        ):
+            with self.subTest(field=field):
+                spec = json.loads(self.spec.read_text())
+                spec['runner']['output_schema'] = {
+                    'type': 'object', 'properties': {
+                        field: {'type': 'integer' if field == 'prominence' else 'array'}},
+                    'required': [field], 'additionalProperties': False,
+                }
+                self.write('spec.json', spec)
+                self.prepare(field)
+                self.cli('run', field)
+                self.assertEqual(set(json.loads(self.show(field, '--case', 'one')['output'])),
+                                 {field})
+                self.assertEqual(self.calls()[-1]['stage'], stage)
+
     def paired_prompt_spec(self):
         shared = self.root / 'rules-v1.md'
         shared.write_text('Shared definition rules.\n')
@@ -1642,6 +1692,7 @@ class ExperimentTests(unittest.TestCase):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
         self.root = Path(temporary.name)
+        _isolate_experiment_runner(self, self.root)
         self.runner = self.root / "runner"
         self.runner.write_text(FAKE_RUNNER)
         self.runner.chmod(0o755)

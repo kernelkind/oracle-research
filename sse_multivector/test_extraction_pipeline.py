@@ -7,10 +7,20 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 
 RUNNER = Path(__file__).with_name("extraction_pipeline.py")
 CLAIM_RUNNER = Path(__file__).with_name("claim_exec.py")
+
+
+def _isolate_experiment_runner(test, root):
+    """Use real admission and backoff with state private to this offline fixture."""
+    environment = patch.dict(os.environ, {
+        "ORACLE_EXPERIMENT_BACKOFF_DIRECTORY": str(root / "admission"),
+    })
+    environment.start()
+    test.addCleanup(environment.stop)
 
 
 def batch_engine_command(mode, config, *flags):
@@ -106,18 +116,17 @@ if os.environ.get("FAKE_RUNNER_BARRIER"):
         if time.monotonic() > until:
             raise SystemExit("expected calls did not run concurrently")
         time.sleep(0.01)
-if prompt.startswith("GENERIC PROMPT"):
+properties = request.get("schema", {}).get("properties", {})
+stages = {
+    "takeaways": "takeaway", "claims": "claim", "subjects": "subject",
+    "fragments": "mask", "prominence": "prominence",
+}
+if "FAKE_RUNNER_PROMPT_RESPONSE" in os.environ:
     stage = "prompt"
-elif prompt.startswith("CLAIM INSTRUCTION"):
-    stage = "claim"
-elif prompt.startswith("SUBJECT INSTRUCTION"):
-    stage = "subject"
-elif prompt.startswith("MASK INSTRUCTION"):
-    stage = "mask"
-elif prompt.startswith("PROMINENCE INSTRUCTION"):
-    stage = "prominence"
+elif len(properties) == 1 and next(iter(properties)) in stages:
+    stage = stages[next(iter(properties))]
 else:
-    stage = "takeaway"
+    stage = "prompt"
 append_log({
     "kind": "exec",
     "stage": stage,
@@ -842,6 +851,7 @@ class ExtractionPipelineTests(unittest.TestCase):
         self.temporary = tempfile.TemporaryDirectory()
         self.addCleanup(self.temporary.cleanup)
         self.root = Path(self.temporary.name)
+        _isolate_experiment_runner(self, self.root)
         self.fake_runner = self.root / "codex"
         self.fake_runner.write_text(FAKE_RUNNER, encoding="utf-8")
         self.fake_runner.chmod(0o755)
