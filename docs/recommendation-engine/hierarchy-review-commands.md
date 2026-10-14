@@ -455,9 +455,10 @@ Retain the isolated run worktree for its frozen source bindings and evidence.
 
 ## HR26 — 200 notes · HiGen V4.1
 
-Authorized and preparing. Exact historical 200 raw posts: HR25’s ordered
+Running. Exact historical 200 raw posts: HR25’s ordered
 100 food/drink posts followed by the frozen 100 music posts. Food subjects
-reuse validated ASv6.100 receipts; music subjects use fresh ASv6.100 calls.
+reuse validated ASv6.100 receipts; all 100 fresh music subject trees are valid.
+The combined corpus has 1,527 original L1s: 733 food/drink and 794 music.
 Bootstrap-v133 and consolidated-grouped-v1; HDBSCAN min_samples=3,
 min_cluster_size=2, excess_of_mass and angular distance. No cosine cutoff.
 At most six roots and children; original HDBSCAN groups expose notes directly.
@@ -465,3 +466,4 @@ Two total provider attempts per case, no total call cap; native answer reuse.
 Review UI unavailable until the hierarchy completes.
 
 Reusable definition: `sse_multivector/hierarchy-runs/hr26/hierarchy.spec.json`.
+Frozen generator commit: `b1b1118e0be6a01b0c621206a398b5308879e92a`; shared runner: `1cfdd6a76a9910b2c9dea0ca395f825b90485f7e`.
