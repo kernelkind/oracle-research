@@ -1,9 +1,11 @@
 """Checks for the offline full-tree review, without changing construction."""
+import json
 import unittest
 import xml.etree.ElementTree as ET
 
 from sse_multivector import hdbscan_epsilon_review as review
 from sse_multivector.test_hierarchy_hdbscan import fixture
+from sse_multivector import test_hierarchy_generation_v3 as native_fixtures
 
 
 class EpsilonReviewTests(unittest.TestCase):
@@ -53,6 +55,51 @@ class EpsilonReviewTests(unittest.TestCase):
         self.assertIn('cutoff-arrow-top', svg)
         self.assertIn('cutoff-arrow-bottom', svg)
         self.assertNotIn('stroke-dasharray', svg)
+
+
+class SavedSourceSelectionTests(unittest.TestCase):
+    def source(self, prefix, complete=True):
+        native = native_fixtures.HierarchyGenerationV3Tests('runTest')
+        native.setUp()
+        self.addCleanup(native.doCleanups)
+        spec = native.configure_v32(count=3)
+        corpus = json.loads((native.root/'notes.json').read_text())
+        for note in corpus['notes']:
+            note['note_id'] = prefix + note['note_id']
+        native.write('notes.json', corpus)
+        definition = json.loads(spec.read_text())
+        definition['note_ids'] = [n['note_id'] for n in corpus['notes']]
+        native.write('hierarchy.json', definition)
+        native.cli('prepare-hierarchy', 'trial', '--spec', spec)
+        if not complete:
+            return native.state()
+        native.collect_title_bootstrap()
+        native.encode_pending()
+        native.cli('advance-hierarchy', 'trial', '--comment', 'Collect original vectors')
+        return native.state()
+
+    def test_combination_selects_notes_not_entries_and_reuses_exact_vectors(self):
+        sources = [self.source('food-'), self.source('music-')]
+        combined, vectors, selections = review.combine_sources(sources, 2)
+        self.assertEqual(combined['note_ids'], ['food-n0', 'food-n1', 'music-n0', 'music-n1'])
+        self.assertEqual(len(combined['originals']), 4)
+        self.assertEqual(len(vectors), 4)
+        self.assertEqual(len(set(combined['items'])), 4)
+        self.assertEqual([s['note_ids'] for s in selections],
+                         [['food-n0', 'food-n1'], ['music-n0', 'music-n1']])
+        self.assertEqual(vectors, review._vectors(sources[0], ['L00001', 'L00002']) +
+                         review._vectors(sources[1], ['L00001', 'L00002']))
+        request, mapping = review.hdbscan.request_for(combined, list(combined['items']), vectors)
+        self.assertEqual(len(request['inputs']), 4)
+        self.assertEqual(len(mapping), 4)
+        with self.assertRaisesRegex(ValueError, 'overlapping note'):
+            review.combine_sources([sources[0], sources[0]], 2)
+        with self.assertRaisesRegex(ValueError, 'not enough notes'):
+            review.combine_sources(sources, 4)
+
+    def test_unfinished_bootstrap_is_not_treated_as_null_meanings(self):
+        with self.assertRaisesRegex(ValueError, 'Bootstrap is incomplete'):
+            review.combine_sources([self.source('pending-', complete=False)], 2)
 
 
 if __name__ == '__main__':
