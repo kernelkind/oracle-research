@@ -1,7 +1,8 @@
-# Hierarchy generation V3
+# Hierarchy generation V3 and V3.1
 
-Status: approved canonical generation mechanism, implemented as the sole shared
-CLI constructor in `sse_multivector/hierarchy_generation.py`, replacing V2.
+Status: the shared CLI constructor in `sse_multivector/hierarchy_generation.py`
+implements V3 and the approved V3.1 update. V3 remains available in code; V2 is
+preserved in Git history.
 Offline construction checks pass; model-based hierarchy-quality qualification
 remains pending. HR11–HR14 retain Pair-consolidation-v6; HR15 and HR16 used
 Pair-consolidation-v7. The title revision, Pair-consolidation-v8, is experimental
@@ -10,21 +11,54 @@ by this record. This document does not authorize model calls. The user's persona
 `docs/notes/MY-NOTES_10-12.md`, remains read-only. The preceding mechanisms are
 V2 and V1; earlier variants need no formal naming.
 
-## Approved provisional cutoff for the next run
+## V3.1: shifted exponential cosine cutoff
 
-The user approved a minimum cosine similarity of **0.66** for the next
-hierarchy run. Pair eligibility uses the unrounded score: `cosine >= 0.66`.
-Retain entries that are not paired, with their meanings, vectors and associated
-original local L1 entries, so the cutoff does not silently remove notes.
+The user approved an initial cutoff of **0.66**, a floor of **0.40**, and decay
+that halves the distance to the floor after each consolidation round:
 
-This is an approved next-run setting. The current constructor has no cosine
-cutoff; its implemented pairing behavior is described below. HR11–HR14 retain
-their frozen settings and saved evidence. The approval does not establish that
-0.66 separates every useful grouping from an unhelpful one.
+```text
+cutoff(round) = 0.40 + (0.66 - 0.40) * 0.5^(round - 1)
+```
 
-One decision remains open before implementation: when a family still contains
-more than six nodes and no pair reaches 0.66, whether construction should pause
-for review or permit the larger menu. No below-cutoff fallback is approved.
+The first four cutoffs are 0.66, 0.53, 0.465 and 0.4325. Each sibling family
+starts at round 1, including roots and children of a canonical node. These are
+temporary consolidation rounds, not canonical hierarchy levels.
+
+Select the highest-scoring non-overlapping pairs as in V3, then filter them
+using the unrounded cosine. A score equal to the cutoff passes. Only passing
+pairs receive consolidation calls. Both topics in a below-cutoff pair disappear
+from further construction in that family; preserve their original entries,
+meanings, vectors and receipts as evidence. A lone odd entry carries forward
+unchanged because it has no failed pair score.
+
+Promote six or fewer remaining topics without another pairing round. If every
+pair fails, finish the family without an empty model batch, retaining the odd
+leftover when present. Nodes with at most two distinct notes still stop.
+Children still restart from their parent's associated original local L1 entries.
+
+V3.1 permits notes to disappear when their topics are discarded. Native summaries
+report `discarded_by_cutoff` with family, round, score and original associations,
+and `notes_not_in_hierarchy` after completion, counting notes available through
+canonical leaves. Completion describes construction, not full-corpus coverage
+or semantic qualification. State validation accounts separately for retained
+and discarded original entries.
+
+Select V3.1 with `"generation_policy": "hierarchy-generation-v3.1"` in the
+schema-1 hierarchy definition. Omitting this field retains V3; explicit
+`"hierarchy-generation-v3"` is also accepted. V3 continues to consolidate every
+selected pair without a cutoff and retains its original coverage checks.
+The frozen definition fixes the policy across resumes. Existing run definitions,
+prompts, producer identities and receipts are unchanged.
+
+The manual root-only V7 comparison produced five roots representing 40/50 notes
+at floor 0.40, four roots and 39/50 at 0.30, and six roots and 42/50 with ordinary
+halving. The 0.40 headings were judged more understandable by the agent; this
+is not full-hierarchy qualification. That diagnostic discarded intermediate
+odd leftovers. V3.1 carries them, following the user's rule that a topic that
+has not failed the cutoff passes, so it does not claim to reproduce the
+diagnostic's 40-note coverage exactly. Evidence remains in the retained
+`oracle-mvp-hierarchy-root-shifted-cutoff-v7-v1` worktree under
+`target/root-shifted-cutoff-v7-v1/`.
 
 ## Construction outline
 
@@ -79,6 +113,9 @@ candidate shortlist. Rank those pairs from highest similarity to lowest and
 select non-overlapping pairs in that order: once a vector has been selected,
 skip subsequent pairs containing it. Continue selecting pairs until no pair of
 unused vectors remains. With ten nodes this selects five pairs, not four.
+V3 consolidates all selected pairs. V3.1 filters those selected pairs using the
+round's shifted cutoff as specified above; it does not search for another
+partner for a rejected pair.
 When the node count is odd, carry the one unpaired node forward unchanged,
 including its subject, explicit meaning, SSE vector and associated original
 local L1 entries.
@@ -567,7 +604,8 @@ not literal text to encode.
 Use cosine similarity across all the synthetic nodes' SSE vectors within the
 same sibling family to select the highest-scoring unique pairs, following the
 non-overlapping selection in step 1.3. Consolidation generates a synthetic
-parent for each selected pair, following step 1.4. Its inputs are the two
+parent for each eligible pair, following step 1.4. V3.1 applies its current
+round's cutoff before consolidation. Its inputs are the two
 synthetic nodes' subjects and explicit meanings, plus the current canonical
 parent when constructing a deeper level. Root construction has no parent.
 
@@ -577,19 +615,21 @@ Repeat steps 1.5–1.7 until there are six or fewer nodes in the sibling family.
 Select all the highest-scoring unique pairs as described in step 1.3; do not
 limit pairing to force exactly six nodes.
 
-With ten nodes, generate ten SSE vectors and calculate cosine similarity for
+In V3, with ten nodes, generate ten SSE vectors and calculate cosine similarity for
 all 45 distinct pairs. Select five non-overlapping pairs. If each consolidation
 returns a synthetic parent, five consolidation calls produce five synthetic
 nodes. Five is within the maximum, so no further consolidation is needed for
 that family. These final nodes become canonical; intermediate synthetic nodes
 remain outside the canonical hierarchy.
 
-If construction starts with more than six nodes and each consolidation
+In V3, if construction starts with more than six nodes and each consolidation
 successfully returns one parent for its pair, the final node count is four,
 five or six. The last consolidation starts with seven to twelve nodes: seven
 or eight become four; nine or ten become five; eleven or twelve become six.
 For seven nodes, three pairs produce three synthetic parents and the unpaired
 node carries forward, giving four nodes total. This range is acceptable.
+V3.1 can finish below four nodes, including zero, because below-cutoff topics
+are discarded. Only passing pairs need consolidation calls.
 
 If the starting set already has six or fewer nodes, no consolidation is needed;
 the final count can be below four.
@@ -610,7 +650,8 @@ original SSE vectors. Do not use the intermediate synthetic nodes, original
 local L2 nodes, or every L1 from the notes represented by that root.
 
 Within this separate family, find the highest-scoring unique cosine pairs and
-consolidate each pair. Generate SSE vectors for the resulting synthetic nodes
+apply the selected policy's eligibility rule before consolidation. Generate
+SSE vectors for the resulting synthetic nodes
 and repeat pairing and consolidation until six or fewer nodes remain. Only
 those final nodes become the root's canonical L2 children. Each retains the
 original local L1 entries associated with it. Process each root separately,
@@ -637,14 +678,15 @@ These open details are not implementation decisions.
 
 ## Implementation and native workflow
 
-Use the shared stable launcher from an isolated task worktree. V3 has three
+Use the shared stable launcher from an isolated task worktree. V3 and V3.1 use three
 commands: `prepare-hierarchy`, `advance-hierarchy` and `run-hierarchy`. V2's
 constructor and its commands are removed; their source remains in Git history.
 Historical traversal research and saved-data readers remain available.
 
 The schema-1 construction definition contains `corpus`, `note_ids`,
 `local_schema_version` (4), `bootstrap_spec`, `consolidation_spec` and
-`worker_config`. Teacher specifications use the existing native prompt/runner
+`worker_config`, with optional `generation_policy` as specified above.
+Teacher specifications use the existing native prompt/runner
 format. `worker_config` is an ordinary pinned SSE worker configuration used as
 a template; each encoding gets its own frozen request and output paths. Run
 the automatic command in the SSE worker's Python environment with its required

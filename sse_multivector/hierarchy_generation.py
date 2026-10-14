@@ -1,4 +1,4 @@
-"""Native V3 hierarchy construction by SSE pairing and pair consolidation.
+"""Native V3 and V3.1 construction by SSE pairing and pair consolidation.
 
 The shared experiment runner owns teacher transport, caching and accounting.
 Preparation and advancement only freeze inputs and collect saved results.
@@ -28,6 +28,7 @@ from .canonical_receipts import _failure_receipts
 
 
 POLICY = "hierarchy-generation-v3"
+POLICY_V31 = "hierarchy-generation-v3.1"
 MAX_SIBLINGS = 6
 MIN_NOTES = 2
 PAIR_CHUNK_ROWS = 50000
@@ -62,9 +63,9 @@ def summary(state):
             if answer["status"] not in ("valid", "unrun")
         ],
     ]
-    return dict(
+    result = dict(
         status=state["status"],
-        generation_policy=POLICY,
+        generation_policy=state["generation_policy"],
         canonical_nodes=len(state["nodes"]),
         original_l1s=len(state["originals"]),
         experiments=[
@@ -92,6 +93,30 @@ def summary(state):
             and original["meaning"] is None
         ],
     )
+    if state["generation_policy"] == POLICY_V31:
+        result["discarded_by_cutoff"] = [
+            dict(
+                family=family["id"], parent=family["parent"], round=index + 1,
+                cutoff=round_["cutoff"], nodes=pair["nodes"], cosine=pair["cosine"],
+                original_ids=[
+                    original for item in pair["nodes"]
+                    for original in state["items"][item]["original_ids"]
+                ],
+            )
+            for family in state["families"]
+            for index, round_ in enumerate(_applied_rounds(family))
+            for pair in round_["pairs"] if pair["cosine"] < round_["cutoff"]
+        ]
+        parents = {p for n in state["nodes"] for p in n["parents"]}
+        represented = {
+            e["note_id"] for n in state["nodes"] if n["id"] not in parents
+            for e in n["entries"]
+        }
+        result["notes_not_in_hierarchy"] = (
+            [n for n in state["note_ids"] if n not in represented]
+            if state["status"] == "complete" else None
+        )
+    return result
 
 
 def _experiment(directory, state, role, spec, source, adapter):
@@ -180,9 +205,11 @@ def prepare(spec_path, directory, history_root=None):
         "consolidation_spec",
         "worker_config",
     }
+    policy = cfg.get("generation_policy", POLICY) if isinstance(cfg, dict) else None
     if (
         not isinstance(cfg, dict)
-        or set(cfg) != fields
+        or set(cfg) not in (fields, fields | {"generation_policy"})
+        or policy not in (POLICY, POLICY_V31)
         or type(cfg["schema_version"]) is not int
         or cfg["schema_version"] != 1
         or type(cfg["local_schema_version"]) is not int
@@ -192,7 +219,7 @@ def prepare(spec_path, directory, history_root=None):
         or any(not isinstance(n, str) or not n for n in cfg["note_ids"])
         or len(set(cfg["note_ids"])) != len(cfg["note_ids"])
     ):
-        raise ValueError("invalid hierarchy generation V3 spec")
+        raise ValueError("invalid hierarchy generation V3/V3.1 spec")
     if directory.exists():
         raise ValueError("hierarchy destination already exists")
     corpus_path = workflow.resolve(cfg["corpus"], spec_path.parent)
@@ -238,7 +265,7 @@ def prepare(spec_path, directory, history_root=None):
         sources[str(path)] = trial._hash(path)
     state = dict(
         schema_version=3,
-        generation_policy=POLICY,
+        generation_policy=policy,
         status="bootstrap",
         definition=str(spec_path),
         corpus=str(corpus_path),
@@ -565,6 +592,33 @@ def _new_family(state, parent, ids):
     )
 
 
+def _applied_rounds(family):
+    rounds = family["rounds"]
+    return rounds[:-1] if family.get("pending") is not None else rounds
+
+
+def _pairing_round(state, family, pairs):
+    cutoff = None
+    if state["generation_policy"] == POLICY_V31:
+        cutoff = 0.40 + (0.66 - 0.40) * 0.5 ** len(family["rounds"])
+    cases = {
+        f"{family['id']}-P{index:05d}": [a, b]
+        for index, (a, b, score) in enumerate(pairs)
+        if cutoff is None or score >= cutoff
+    }
+    paired = {i for a, b, score in pairs for i in (a, b)}
+    result = dict(
+        current=list(family["current"]),
+        comparisons=len(family["current"]) * (len(family["current"]) - 1) // 2,
+        pairs=[dict(nodes=[a, b], cosine=score) for a, b, score in pairs],
+        cases=cases,
+        unpaired=[i for i in family["current"] if i not in paired],
+    )
+    if cutoff is not None:
+        result["cutoff"] = cutoff
+    return result
+
+
 def _promote(state, family):
     for identifier in family["current"]:
         item = state["items"][identifier]
@@ -691,11 +745,13 @@ def _schedule(directory, state):
             ):
                 continue
             pairs = _pairs(state, ids, directory)
-            cases = {
-                f"{family['id']}-P{index:05d}": [a, b]
-                for index, (a, b, score) in enumerate(pairs)
-            }
-            paired = {i for pair in cases.values() for i in pair}
+            round_ = _pairing_round(state, family, pairs)
+            cases = round_["cases"]
+            if not cases:
+                family["rounds"].append(dict(round_, experiment=None))
+                family["current"] = round_["unpaired"]
+                changed = True
+                continue
             requests.extend(
                 dict(
                     id=case,
@@ -716,20 +772,7 @@ def _schedule(directory, state):
                 )
                 for case, pair in cases.items()
             )
-            ready.append(
-                (
-                    family,
-                    dict(
-                        current=list(ids),
-                        comparisons=len(ids) * (len(ids) - 1) // 2,
-                        pairs=[
-                            dict(nodes=[a, b], cosine=score) for a, b, score in pairs
-                        ],
-                        cases=cases,
-                        unpaired=[i for i in ids if i not in paired],
-                    ),
-                )
-            )
+            ready.append((family, round_))
         if ready:
             producer = _experiment(
                 directory,
@@ -749,7 +792,8 @@ def _schedule(directory, state):
 
 
 def check_state(state, *, verify_receipts=True, verify_current_code=True):
-    if state.get("generation_policy") != POLICY or state.get("schema_version") != 3:
+    if (state.get("generation_policy") not in (POLICY, POLICY_V31)
+            or state.get("schema_version") != 3):
         raise ValueError("unknown hierarchy generation policy")
     for path, digest in state["sources"].items():
         if trial._hash(path) != digest:
@@ -770,7 +814,8 @@ def check_state(state, *, verify_receipts=True, verify_current_code=True):
     definition = Path(state["definition"])
     cfg = workflow.read(definition)
     if (
-        state["max_siblings"] != MAX_SIBLINGS
+        state["generation_policy"] != cfg.get("generation_policy", POLICY)
+        or state["max_siblings"] != MAX_SIBLINGS
         or state["min_notes"] != MIN_NOTES
         or state["note_ids"] != cfg["note_ids"]
         or state["local_schema_version"] != cfg["local_schema_version"]
@@ -885,18 +930,45 @@ def check_state(state, *, verify_receipts=True, verify_current_code=True):
             for item in family["current"]
             for i in state["items"][item]["original_ids"]
         ]
+        discarded = []
+        if state["generation_policy"] == POLICY_V31:
+            for index, round_ in enumerate(family["rounds"]):
+                pairs = [(p["nodes"][0], p["nodes"][1], p["cosine"])
+                         for p in round_["pairs"]]
+                paired = [i for a, b, score in pairs for i in (a, b)]
+                if (len(pairs) != len(round_["current"]) // 2
+                        or len(paired) != len(set(paired))
+                        or set(paired) - set(round_["current"])
+                        or any(not math.isfinite(score) or not -1 <= score <= 1
+                               for a, b, score in pairs)):
+                    raise ValueError("invalid hierarchy cosine pairs")
+                controls = _pairing_round(state, dict(
+                    id=family["id"], current=round_["current"],
+                    rounds=family["rounds"][:index],
+                ), pairs)
+                if any(round_.get(k) != v for k, v in controls.items()):
+                    raise ValueError("saved cutoff or selected pairs changed")
+            discarded = [
+                original for round_ in _applied_rounds(family)
+                for pair in round_["pairs"] if pair["cosine"] < round_["cutoff"]
+                for item in pair["nodes"]
+                for original in state["items"][item]["original_ids"]
+            ]
         if (
             family["original_ids"] != expected
-            or sorted(members) != sorted(expected)
-            or len(members) != len(set(members))
+            or sorted(members + discarded) != sorted(expected)
+            or len(members + discarded) != len(set(members + discarded))
         ):
             raise ValueError("family original L1 membership changed")
         if family["complete"] and len(family["current"]) > state["max_siblings"]:
             raise ValueError("canonical family exceeds maximum siblings")
     if state["status"] == "complete":
-        if {
+        represented = {
             entry["note_id"] for node in state["nodes"] for entry in node["entries"]
-        } != set(state["note_ids"]):
+        }
+        if (represented - set(state["note_ids"])
+                or (state["generation_policy"] == POLICY
+                    and represented != set(state["note_ids"]))):
             raise ValueError("completed hierarchy omits selected notes")
         parents = {p for node in state["nodes"] for p in node["parents"]}
         if not all(f["complete"] for f in state["families"]) or any(
@@ -1119,7 +1191,7 @@ def _start_job(function, arguments):
 def run(
     directory,
     attempt_budget=None,
-    comment="Automated hierarchy generation V3",
+    comment="Automated hierarchy generation",
     runner_upgrade_reason=None,
 ):
     """Coordinate ordinary native batches and one SSE worker; no provider limiter."""
@@ -1188,7 +1260,7 @@ def run(
                         errors.append(dict(kind=kind, path=path, error=str(error)))
                 result = _native_advance(directory, comment, stop)
                 print(
-                    "Hierarchy V3: "
+                    result["generation_policy"] + ": "
                     + json.dumps(
                         {
                             k: result[k]

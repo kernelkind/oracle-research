@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import subprocess
@@ -25,6 +26,34 @@ class FixtureEncoder:
                     note_id=note.note_id,
                     subject_id=subject.subject_id,
                     vector=(1.0, 1.0, 1.0),
+                    selected_token_indices=(1,),
+                    selected_token_ids=(101,),
+                    token_count=3,
+                )
+
+
+class CutoffFixtureEncoder:
+    """Controlled vectors supplied through the ordinary SSE worker interface."""
+
+    def __init__(self, dimensions, scores=(0.8, 0.7, 0.6, 0.2)):
+        self.dimensions = dimensions
+        self.scores = scores
+
+    def encode(self, notes):
+        for note in notes:
+            index = int(note.text.split("\n\n")[0].split()[-1])
+            vector = [0.0] * self.dimensions
+            if index % 2 and index < 8:
+                score = self.scores[index // 2]
+                vector[index - 1] = score
+                vector[index] = math.sqrt(1 - score * score)
+            else:
+                vector[index] = 1.0
+            for subject in note.subjects:
+                yield worker.EncodedSubject(
+                    note_id=note.note_id,
+                    subject_id=subject.subject_id,
+                    vector=tuple(vector),
                     selected_token_indices=(1,),
                     selected_token_ids=(101,),
                     token_count=3,
@@ -222,6 +251,152 @@ class HierarchyGenerationV3Tests(unittest.TestCase):
         self.assertEqual(len(state["experiments"][0]["inputs"]), 10)
         self.assertEqual(state["nodes"], [])
         self.assertEqual(self.calls(), [])
+
+    def test_prepare_v31_freezes_the_selected_generation_policy(self):
+        spec = self.configure(count=3)
+        value = json.loads(spec.read_text())
+        value["generation_policy"] = "hierarchy-generation-v3.1"
+        self.write("hierarchy.json", value)
+        self.cli("prepare-hierarchy", "trial", "--spec", spec)
+        self.assertEqual(self.state()["generation_policy"], "hierarchy-generation-v3.1")
+        self.assertEqual(self.calls(), [])
+
+    def run_cutoff_fixture(self, count=8, policy="hierarchy-generation-v3.1",
+                           scores=(0.8, 0.7, 0.6, 0.2)):
+        from sse_multivector import hierarchy_generation as generation
+
+        spec = self.configure(count=count)
+        value = json.loads(spec.read_text())
+        value["generation_policy"] = policy
+        self.write("hierarchy.json", value)
+        config = json.loads((self.root / "worker.json").read_text())
+        config["model"]["dimensions"] = count
+        self.write("worker.json", config)
+        self.automatic_runner()
+        self.cli("prepare-hierarchy", "trial", "--spec", spec)
+        with (
+            patch.dict(os.environ, FAKE_RUNNER_LOG=str(self.log), FAKE_V3="1"),
+            patch("sse_multivector.worker.OfficialSseEncoder",
+                  return_value=CutoffFixtureEncoder(count, scores)),
+        ):
+            result = generation.run(self.root / "trial")
+        return self.state(), result
+
+    def test_v31_only_consolidates_passing_pairs_and_reports_discarded_notes(self):
+        state, result = self.run_cutoff_fixture()
+        self.assertEqual(result["status"], "complete")
+        self.assertEqual(len(state["experiments"][1]["inputs"]), 2)
+        self.assertEqual(len(state["nodes"]), 2)
+        self.assertEqual(state["families"][0]["rounds"][0]["cutoff"], 0.66)
+        self.assertEqual(result["notes_not_in_hierarchy"], ["n4", "n5", "n6", "n7"])
+        self.assertEqual(len(self.calls()), 10)
+        self.cli("advance-hierarchy", "trial", "--comment", "Validate completed V3.1")
+        self.assertEqual(len(self.calls()), 10)
+
+    def test_v31_carries_a_lone_unpaired_topic_without_a_failed_score(self):
+        state, result = self.run_cutoff_fixture(count=9)
+        self.assertEqual(result["status"], "complete")
+        self.assertEqual(len(state["nodes"]), 3)
+        self.assertTrue(any(n["original_ids"] == ["L00009"] for n in state["nodes"]))
+        self.assertEqual(state["families"][0]["rounds"][0]["unpaired"], ["L00009"])
+
+    def test_v3_still_consolidates_every_pair_with_the_same_vectors(self):
+        state, result = self.run_cutoff_fixture(policy="hierarchy-generation-v3")
+        self.assertEqual(result["status"], "complete")
+        self.assertEqual(len(state["experiments"][1]["inputs"]), 4)
+        self.assertEqual(len(state["nodes"]), 4)
+        self.assertNotIn("cutoff", state["families"][0]["rounds"][0])
+
+    def test_v31_all_rejected_pairs_finish_without_a_consolidation_batch(self):
+        state, result = self.run_cutoff_fixture(scores=(0.5, 0.4, 0.3, 0.2))
+        self.assertEqual(result["status"], "complete")
+        self.assertEqual(state["nodes"], [])
+        self.assertEqual(len(state["experiments"]), 1)
+        self.assertEqual(result["notes_not_in_hierarchy"], [f"n{i}" for i in range(8)])
+        self.assertEqual(len(self.calls()), 8)
+        self.cli("advance-hierarchy", "trial", "--comment", "Validate all rejected")
+
+    def test_v31_decay_restarts_for_each_child_family(self):
+        from sse_multivector import hierarchy_generation as generation
+
+        spec = self.configure(count=32)
+        self.write("hierarchy.json", {
+            **json.loads(spec.read_text()), "generation_policy": generation.POLICY_V31,
+        })
+        self.automatic_runner()
+        self.cli("prepare-hierarchy", "trial", "--spec", spec)
+        with (
+            patch.dict(os.environ, FAKE_RUNNER_LOG=str(self.log), FAKE_V3="1"),
+            patch("sse_multivector.worker.OfficialSseEncoder", return_value=FixtureEncoder()),
+        ):
+            result = generation.run(self.root / "trial")
+        self.assertEqual(result["status"], "complete")
+        self.assertEqual(result["notes_not_in_hierarchy"], [])
+        families = self.state()["families"]
+        self.assertEqual([r["cutoff"] for r in families[0]["rounds"]], [0.66, 0.53, 0.465])
+        self.assertGreater(len(families), 1)
+        self.assertTrue(all(f["rounds"][0]["cutoff"] == 0.66 for f in families[1:]))
+
+    def test_v31_frozen_policy_and_cutoff_cannot_be_changed_on_resume(self):
+        from sse_multivector import hierarchy_generation as generation
+
+        state, _ = self.run_cutoff_fixture()
+        state["families"][0]["rounds"][0]["cutoff"] = 0.4
+        with self.assertRaisesRegex(ValueError, "cutoff or selected pairs changed"):
+            generation.check_state(state)
+        state["generation_policy"] = generation.POLICY
+        with self.assertRaisesRegex(ValueError, "saved controls differ"):
+            generation.check_state(state)
+
+    def test_v31_cutoff_includes_the_exact_boundary_and_stays_above_floor(self):
+        from sse_multivector import hierarchy_generation as generation
+
+        family = dict(id="F00000", current=["L1", "L2", "L3", "L4"], rounds=[])
+        state = dict(generation_policy=generation.POLICY_V31)
+        round_ = generation._pairing_round(state, family, [("L1", "L2", 0.66),
+                                                          ("L3", "L4", 0.659999)])
+        self.assertEqual(round_["cases"], {"F00000-P00000": ["L1", "L2"]})
+        family["rounds"] = [None] * 10
+        late = generation._pairing_round(state, family, [("L1", "L2", 0.4),
+                                                        ("L3", "L4", 0.41)])
+        self.assertGreater(late["cutoff"], 0.4)
+        self.assertEqual(late["cases"], {"F00000-P00001": ["L3", "L4"]})
+
+    def test_existing_saved_graph_readers_accept_v31_nodes(self):
+        state, _ = self.run_cutoff_fixture()
+        before = (self.root / "trial/state.json").read_bytes()
+        self.cli("export-canonical-viewer", "trial", "--output", "view")
+        self.write("compare-source.json", dict(
+            schema_version=2, corpus="notes.json",
+            canonical_states=dict(current=dict(trial="trial/state.json")),
+            pairs=[dict(id="one", local=dict(note_id="n4", number="1"),
+                        canonical=dict(state="current", id=state["nodes"][0]["id"]),
+                        review={})],
+        ))
+        spec = json.loads((self.root / "bootstrap.json").read_text())
+        spec["dataset"] = dict(adapter="hierarchy_node_pairs", path="compare-source.json")
+        spec["runner"]["output_schema"] = json.loads((PROJECT /
+            "sse_multivector/shr_single_pair/Hierarchy-compare-v4.output.schema.json").read_text())
+        self.write("compare-spec.json", spec)
+        self.cli("prepare", "compare", "--spec", self.root / "compare-spec.json")
+        self.assertEqual((self.root / "trial/state.json").read_bytes(), before)
+        self.assertEqual(len(self.calls()), 10)
+
+    def test_v31_reuses_native_answers_in_a_new_construction(self):
+        from sse_multivector import hierarchy_generation as generation
+
+        self.run_cutoff_fixture()
+        calls = len(self.calls())
+        self.cli("prepare-hierarchy", "reuse", "--spec", self.root / "hierarchy.json")
+        with (
+            patch.dict(os.environ, FAKE_RUNNER_LOG=str(self.log), FAKE_V3="1"),
+            patch("sse_multivector.worker.OfficialSseEncoder",
+                  return_value=CutoffFixtureEncoder(8)),
+        ):
+            result = generation.run(self.root / "reuse")
+        self.assertEqual(result["status"], "complete")
+        self.assertEqual(result["notes_not_in_hierarchy"], ["n4", "n5", "n6", "n7"])
+        self.assertEqual(len(self.calls()), calls)
 
     def test_ten_original_vectors_produce_all_five_pairs_and_five_canonical_roots(self):
         self.cli("prepare-hierarchy", "trial", "--spec", self.configure())
