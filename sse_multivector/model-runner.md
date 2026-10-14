@@ -75,6 +75,12 @@ Native `hierarchy_local_nodes` validation requires a nonempty title for a
 non-null meaning and a null title for a null meaning. Earlier schemas retain
 their original exact fields; frozen experiments are unchanged.
 
+Hierarchy generation V3.2 explicitly requires Bootstrap-v133. It uses the
+returned title for the original item's SSE heading, pair-consolidation inputs
+and canonical browsing, retaining the raw local subject as evidence. V3/V3.1
+retain their original subject behavior; this is a versioned constructor choice,
+not a global migration of historical prompts or runs.
+
 The new title instructions live in the Bootstrap wrapper. Its checked assembly
 reuses explicit-meaning-rules-v6 and Consolidation-v21, with no common
 definition-writing change. The existing two examples include titles consistent
@@ -1721,15 +1727,17 @@ browsing exports do not establish official status. The previous `H0001`–`H0701
 diagnostic inventory IDs are withdrawn and must not be reused.
 
 The shared canonical constructor implements
-[hierarchy generation V3 and V3.1](../docs/recommendation-engine/hierarchy-generation-v3.md):
-Bootstrap all original local L1s, encode each subject with its explicit meaning
+[hierarchy generation V3, V3.1 and V3.2](../docs/recommendation-engine/hierarchy-generation-v3.md):
+Bootstrap all original local L1s, encode each heading with its explicit meaning
 as context, select the highest-scoring unique cosine pairs, and consolidate each
-pair. V3.1 consolidates only pairs whose unrounded cosine meets
+pair. V3.1/V3.2 consolidate only pairs whose unrounded cosine meets
 `0.40 + (0.66 - 0.40) * 0.5^(round - 1)`, resetting the round for each sibling
 family. Both topics in a below-cutoff pair disappear from that family's
 construction; a lone unpaired entry carries forward. V3 retains its no-cutoff
-behavior in code. Repeat until six or fewer nodes remain, then promote only
-those final nodes. Build each next canonical level from its parent's associated original
+behavior in code. V3.2 requires Bootstrap-v133 and uses its meaning-derived
+title instead of the original subject for SSE, consolidation and browsing.
+The raw local subject remains evidence. Repeat until six or fewer nodes remain,
+then promote only those final nodes. Build each next canonical level from its parent's associated original
 local L1s, stopping at two or fewer distinct notes. No prominence or traversal
 comparison phase is used. The former V2 constructor is preserved in Git history.
 
@@ -1744,10 +1752,12 @@ Read help through the shared stable launcher from the task worktree:
 `prepare-hierarchy DIRECTORY --spec SPEC` takes a schema-1 definition containing
 `corpus`, `note_ids`, `local_schema_version` (4), `bootstrap_spec`,
 `consolidation_spec` and `worker_config`. Optional `generation_policy` selects
-`hierarchy-generation-v3.1` or `hierarchy-generation-v3`; omission retains V3
+`hierarchy-generation-v3.2`, `hierarchy-generation-v3.1` or
+`hierarchy-generation-v3`; omission retains V3
 for existing definitions. The frozen policy cannot change on resume. Current data must originate from
 ASv6.100 or an explicitly approved later AS version. The teacher specs retain
-ordinary native runner settings, schemas and versioned prompt paths. The SSE
+ordinary native runner settings, schemas and versioned prompt paths.
+V3.2 requires Bootstrap-v133 and its five-field title output schema. The SSE
 config is a pinned worker template; generated jobs replace only its request
 and output paths. Use the worker's Python environment and local model artifacts
 when running the automatic constructor.
@@ -1775,14 +1785,18 @@ All distinct cosine pairs are scored; exact ties follow saved family order.
 Sorting uses bounded chunks and a bounded merge fan-in instead of retaining
 an unbounded Python pair list. This preserves the full comparison set and
 ranking. Cosine work and temporary pair storage remain quadratic. Encodings
-reuse unchanged subject/meaning text and exact selected spans within a build.
+reuse unchanged heading/meaning text and exact selected spans within a build.
+For original items the heading is the local subject in V3/V3.1 and the exact
+returned Bootstrap title in V3.2; only that heading is pooled. Saved original
+titles, item headings and canonical headings are checked against their native
+producer evidence. Synthetic items use the returned pair-consolidation title.
 
 State is saved atomically. Resume reuses completed native answers and SSE jobs,
 including after interrupted runs. A null Bootstrap meaning retains its entry,
 answer and receipt, finishes other independent Bootstrap work and is skipped
 from construction. `skipped_bootstrap` reports these entries. Root construction
 remains blocked if any selected note has no non-null L1 meaning, preserving
-selected-note coverage before cosine filtering. V3.1 reports discarded pairs as
+selected-note coverage before cosine filtering. V3.1/V3.2 report discarded pairs as
 `discarded_by_cutoff` and missing final leaf-note coverage as
 `notes_not_in_hierarchy`; a complete build may represent fewer input notes.
 An all-rejected round finishes without preparing an empty model batch.
@@ -1809,7 +1823,7 @@ Offline export verifies the saved constructor sources and receipts and may run
 from a different checkout; advancing construction still requires its bound
 checkout or a reviewed source upgrade.
 Source-bound Compare preparation remains available for evaluating
-fixed V3 or V3.1 definitions independently. Historical `audit-canonical-trial`,
+fixed V3, V3.1 or V3.2 definitions independently. Historical `audit-canonical-trial`,
 `shape-canonical-trial`, candidate measurements and policy-cost comparisons are
 saved-data tools; their older singleton-leaf and strict-note-set criteria do not
 define V3's stopping rule. V3's offline tests verify native orchestration,
@@ -7746,7 +7760,7 @@ fixtures. Do not rerun model calls merely to add a preparation capability.
 selection studies. It has no same-note filter, ranking shortlist or forced
 mapped-parent comparison.
 This is retained for historical selection-regression analysis. The current
-[V3/V3.1 constructor](../docs/recommendation-engine/hierarchy-generation-v3.md) uses SSE
+[V3/V3.1/V3.2 constructor](../docs/recommendation-engine/hierarchy-generation-v3.md) uses SSE
 pair consolidation instead. Historical scalability measurements remain in
 [the graph-search findings](canonical-graph-search-v1.md); they do not measure V3.
 

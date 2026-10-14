@@ -398,6 +398,146 @@ class HierarchyGenerationV3Tests(unittest.TestCase):
         self.assertEqual(result["notes_not_in_hierarchy"], ["n4", "n5", "n6", "n7"])
         self.assertEqual(len(self.calls()), calls)
 
+    def configure_v32(self, count=3, policy="hierarchy-generation-v3.2",
+                      title="Café coffee", meaning="Coffee served as a beverage."):
+        spec = self.configure(count=count)
+        bootstrap = json.loads((self.root / "bootstrap.json").read_text())
+        bootstrap["prompt"] = dict(
+            id="Hierarchy-bootstrap-v133",
+            path=str(PROJECT / "sse_multivector/shr_single_pair/Hierarchy-bootstrap-v133.md"),
+        )
+        bootstrap["runner"]["output_schema"] = json.loads((PROJECT /
+            "sse_multivector/shr_single_pair/Hierarchy-bootstrap-v130.output.schema.json").read_text())
+        self.write("bootstrap.json", bootstrap)
+        self.write("hierarchy.json", {
+            **json.loads(spec.read_text()), "generation_policy": policy,
+        })
+        response = dict(
+            ambiguities=[], resolutions=[], meaning=meaning, title=title,
+            evidence=[] if meaning is None else [dict(quote="Original post", supports=meaning,
+                                                     inference=None)],
+        )
+        # Bind the controlled external producer into its frozen executable.
+        # Shared queue workers must not depend on an invocation's ambient response override.
+        needle = 'if stage == "prompt":\n'
+        code = ('if "ambiguities" in request.get("schema", {}).get("properties", {}):\n'
+                '    stage = "prompt"\n'
+                '    os.environ["FAKE_RUNNER_PROMPT_RESPONSE"] = ' + repr(json.dumps(response)) + '\n'
+                'elif stage == "prompt":\n'
+                '    os.environ["FAKE_RUNNER_PROMPT_RESPONSE"] = ' +
+                repr(json.dumps(dict(title="Coffee group", meaning="Coffee beverages."))) + '\n')
+        self.runner.write_text(self.runner.read_text().replace(needle, code + needle))
+        return spec
+
+    def collect_title_bootstrap(self):
+        experiment = self.state()["experiments"][0]["experiment"]
+        self.cli("run", experiment)
+        self.cli("advance-hierarchy", "trial", "--comment", "Collect Bootstrap title and meaning")
+
+    def test_v32_generated_title_drives_sse_and_browsing_preserving_original_subject(self):
+        self.cli("prepare-hierarchy", "trial", "--spec", self.configure_v32())
+        self.collect_title_bootstrap()
+        state = self.state()
+        self.assertEqual(state["originals"][0]["subject"], "Topic 0")
+        self.assertEqual(state["originals"][0].get("title"), "Café coffee")
+        request = json.loads((Path(state["encodings"][0]["config"]).parent /
+                              "request.json").read_text())
+        self.assertEqual(len(request["notes"]), 1)
+        self.assertEqual(request["notes"][0]["text"], "Café coffee\n\nCoffee served as a beverage.")
+        self.assertEqual(request["notes"][0]["subjects"][0]["byte_spans"],
+                         [[0, len("Café coffee".encode())]])
+        self.encode_pending()
+        self.cli("export-canonical-viewer", "trial", "--output", "view")
+        view = json.loads((self.root / "view/hierarchy.json").read_text())
+        self.assertTrue(all(n["label"].startswith("Café coffee (")
+                            for n in view["nodes"] if n["node_id"] != "VIEW_ROOT"))
+        self.cli("advance-hierarchy", "trial", "--comment", "Validate completed V3.2")
+        self.assertEqual(len(self.calls()), 3)
+        from sse_multivector import hierarchy_generation as generation
+
+        state = self.state()
+        state["originals"][0]["title"] = "Changed title"
+        with self.assertRaisesRegex(ValueError, "title differs from native Bootstrap"):
+            generation.check_state(state)
+        state = self.state()
+        state["items"]["L00001"]["subject"] = "Topic 0"
+        with self.assertRaisesRegex(ValueError, "invalid original local L1 item"):
+            generation.check_state(state)
+        self.cli("prepare-hierarchy", "reuse", "--spec", self.root / "hierarchy.json")
+        with patch("sse_multivector.worker.OfficialSseEncoder", return_value=FixtureEncoder()):
+            result = generation.run(self.root / "reuse")
+        self.assertEqual(result["status"], "complete")
+        self.assertEqual(len(self.calls()), 3)
+        reused = json.loads((self.root / "reuse/state.json").read_text())
+        self.assertTrue(all(n["subject"] == "Café coffee" for n in reused["nodes"]))
+
+    def test_v32_consolidation_receives_generated_titles_and_uses_v31_cutoff(self):
+        self.cli("prepare-hierarchy", "trial", "--spec", self.configure_v32(count=7))
+        self.collect_title_bootstrap()
+        self.encode_pending()
+        state = self.state()
+        round_ = state["families"][0]["rounds"][0]
+        self.assertEqual(round_["cutoff"], 0.66)
+        self.assertEqual(round_["unpaired"], ["L00007"])
+        payloads = [json.loads(v["INPUT_JSON"])
+                    for v in state["experiments"][1]["inputs"].values()]
+        self.assertEqual(len(payloads), 3)
+        self.assertTrue(all(n["title"] == "Café coffee"
+                            for p in payloads for n in p["nodes"]))
+        self.cli("run", state["experiments"][1]["experiment"])
+        self.cli("advance-hierarchy", "trial", "--comment", "Collect pair titles")
+        self.encode_pending()
+        state = self.state()
+        self.assertEqual(state["status"], "complete")
+        self.assertEqual([n["subject"] for n in state["nodes"]],
+                         ["Coffee group"] * 3 + ["Café coffee"])
+        # Identical pair inputs share one native answer within this batch.
+        self.assertEqual(len(self.calls()), 8)
+
+    def test_v32_null_meaning_keeps_null_title_and_never_encodes_it(self):
+        self.cli("prepare-hierarchy", "trial", "--spec",
+                 self.configure_v32(count=1, title=None, meaning=None))
+        self.collect_title_bootstrap()
+        state = self.state()
+        self.assertEqual(state["status"], "blocked_bootstrap")
+        self.assertIn("title", state["originals"][0])
+        self.assertIsNone(state["originals"][0]["title"])
+        self.assertEqual(state["encodings"], [])
+        self.assertEqual(state["nodes"], [])
+        self.cli("advance-hierarchy", "trial", "--comment", "Validate null Bootstrap")
+        self.assertEqual(len(self.calls()), 1)
+
+    def test_v31_keeps_original_subject_when_bootstrap_also_returns_title(self):
+        self.cli("prepare-hierarchy", "trial", "--spec",
+                 self.configure_v32(count=1, policy="hierarchy-generation-v3.1"))
+        self.collect_title_bootstrap()
+        self.encode_pending()
+        state = self.state()
+        self.assertEqual(state["originals"][0]["subject"], "Topic 0")
+        self.assertNotIn("title", state["originals"][0])
+        self.assertEqual(state["nodes"][0]["subject"], "Topic 0")
+
+    def test_v32_rejects_old_bootstrap_or_missing_title_schema_before_inference(self):
+        spec = self.configure(count=1)
+        self.write("hierarchy.json", {
+            **json.loads(spec.read_text()), "generation_policy": "hierarchy-generation-v3.2",
+        })
+        result = self.cli("prepare-hierarchy", "trial", "--spec", spec, ok=False)
+        self.assertIn("requires Hierarchy-bootstrap-v133", result.stderr)
+        bootstrap = json.loads((self.root / "bootstrap.json").read_text())
+        bootstrap["prompt"] = dict(id="Hierarchy-bootstrap-v133", path=str(PROJECT /
+            "sse_multivector/shr_single_pair/Hierarchy-bootstrap-v133.md"))
+        self.write("bootstrap.json", bootstrap)
+        result = self.cli("prepare-hierarchy", "trial", "--spec", spec, ok=False)
+        self.assertIn("requires the Bootstrap title output schema", result.stderr)
+        bootstrap["runner"]["output_schema"] = json.loads((self.root / "consolidation.json")
+                                                          .read_text())["runner"]["output_schema"]
+        self.write("bootstrap.json", bootstrap)
+        result = self.cli("prepare-hierarchy", "trial", "--spec", spec, ok=False)
+        self.assertIn("requires the Bootstrap title output schema", result.stderr)
+        self.assertFalse((self.root / "trial").exists())
+        self.assertEqual(self.calls(), [])
+
     def test_ten_original_vectors_produce_all_five_pairs_and_five_canonical_roots(self):
         self.cli("prepare-hierarchy", "trial", "--spec", self.configure())
         self.bootstrap()

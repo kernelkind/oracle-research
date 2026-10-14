@@ -1,8 +1,8 @@
-# Hierarchy generation V3 and V3.1
+# Hierarchy generation V3, V3.1 and V3.2
 
 Status: the shared CLI constructor in `sse_multivector/hierarchy_generation.py`
-implements V3 and the approved V3.1 update. V3 remains available in code; V2 is
-preserved in Git history.
+implements V3, V3.1 and the approved V3.2 update. V3 and V3.1 remain available
+in code; V2 is preserved in Git history.
 Offline construction checks pass; model-based hierarchy-quality qualification
 remains pending. HR11–HR14 retain Pair-consolidation-v6; HR15 and HR16 used
 Pair-consolidation-v7. Experimental Pair-consolidation-v11 specifies the user's
@@ -11,6 +11,37 @@ Meaning and browsing-quality qualifications remain below. This record does not
 activate the prompt or authorize model calls. The user's personal outline,
 `docs/notes/MY-NOTES_10-12.md`, remains read-only. The preceding mechanisms are
 V2 and V1; earlier variants need no formal naming.
+
+## V3.2: Bootstrap-v133 titles for SSE and browsing
+
+V3.2 requires [Bootstrap-v133](../../sse_multivector/shr_single_pair/Hierarchy-bootstrap-v133.md)
+and its existing [five-field output schema](../../sse_multivector/shr_single_pair/Hierarchy-bootstrap-v130.output.schema.json).
+Bootstrap returns an explicit `meaning` and a natural `title` derived from that
+meaning. Use that exact title as the heading for the original construction item,
+in its SSE input, in pair-consolidation inputs and in canonical browsing.
+Retain the original local `subject` separately in the original-entry evidence;
+do not overwrite the source hierarchy or generate another title.
+
+SSE receives the title, two newlines, then the meaning. Pool only the title's
+UTF-8 byte span; the meaning is unselected context. Existing encoding identities
+therefore distinguish a changed title even when the meaning is unchanged.
+Canonical nodes retain the construction item's heading in their existing
+`subject` field. Synthetic items continue to use pair-consolidation's returned
+title. Saved-state checks bind each original title to its validated Bootstrap
+answer and verify item and canonical headings against it.
+
+Select V3.2 with `"generation_policy": "hierarchy-generation-v3.2"` in the
+schema-1 hierarchy definition and configure Bootstrap-v133 explicitly. Native
+preparation rejects another Bootstrap version or a schema missing the five
+required output fields before preparing a batch. Null meanings retain null
+titles and remain excluded from encoding and construction.
+
+V3.2 inherits V3.1's cutoff, discard and unpaired-entry rules, family-specific
+round reset and two-note stopping rule. V3/V3.1 keep original local subjects for
+SSE and browsing, including when their configured Bootstrap returns a title.
+Historical prompts, definitions, producer answers and receipts remain unchanged.
+Offline fixtures qualify this wiring; a real V3.2 hierarchy comparison remains
+the next quality check.
 
 ## V3.1: shifted exponential cosine cutoff
 
@@ -97,14 +128,15 @@ Earlier frozen runs retain their original generator commits and null policy.
 Use exactly this text layout:
 
 ```text
-[[{local L1 subject}]]
+[[{heading}]]
 
 {explicit meaning from Bootstrap}
 ```
 
-The brackets mark the tokens selected for SSE pooling; they are notation rather
-than literal text to encode. Pool only the subject. The explicit meaning is
-unselected context available to the encoder.
+For V3/V3.1, `heading` is the original local L1 subject. For V3.2, it is
+Bootstrap-v133's returned title. The brackets mark the tokens selected for SSE
+pooling; they are notation rather than literal text to encode. Pool only the
+heading. The explicit meaning is unselected context available to the encoder.
 
 ## Step 1.3: cosine pairing within one family
 
@@ -114,7 +146,7 @@ candidate shortlist. Rank those pairs from highest similarity to lowest and
 select non-overlapping pairs in that order: once a vector has been selected,
 skip subsequent pairs containing it. Continue selecting pairs until no pair of
 unused vectors remains. With ten nodes this selects five pairs, not four.
-V3 consolidates all selected pairs. V3.1 filters those selected pairs using the
+V3 consolidates all selected pairs. V3.1/V3.2 filter those selected pairs using the
 round's shifted cutoff as specified above; it does not search for another
 partner for a rejected pair.
 When the node count is odd, carry the one unpaired node forward unchanged,
@@ -643,8 +675,8 @@ alternative remains a separate specificity qualification.
 
 ### Explicit 2–5-word requirement: experimental V11
 
-The user added a mandatory requirement: **generated titles must contain 2–5
-words**. This applies to generated `title`, not historical supplied headings;
+The user added a mandatory requirement: **pair-consolidation titles must contain
+2–5 words**. This applies to generated `title`, not historical supplied headings;
 fixed meanings and coverage requirements still apply. V9's one-word titles do
 not qualify under this new requirement, even though they were acceptable under
 the earlier test criterion. Retain their results without retroactive approvals.
@@ -742,7 +774,7 @@ not literal text to encode.
 Use cosine similarity across all the synthetic nodes' SSE vectors within the
 same sibling family to select the highest-scoring unique pairs, following the
 non-overlapping selection in step 1.3. Consolidation generates a synthetic
-parent for each eligible pair, following step 1.4. V3.1 applies its current
+parent for each eligible pair, following step 1.4. V3.1/V3.2 apply the current
 round's cutoff before consolidation. Its inputs are the two
 synthetic nodes' subjects and explicit meanings, plus the current canonical
 parent when constructing a deeper level. Root construction has no parent.
@@ -766,7 +798,7 @@ five or six. The last consolidation starts with seven to twelve nodes: seven
 or eight become four; nine or ten become five; eleven or twelve become six.
 For seven nodes, three pairs produce three synthetic parents and the unpaired
 node carries forward, giving four nodes total. This range is acceptable.
-V3.1 can finish below four nodes, including zero, because below-cutoff topics
+V3.1/V3.2 can finish below four nodes, including zero, because below-cutoff topics
 are discarded. Only passing pairs need consolidation calls.
 
 If the starting set already has six or fewer nodes, no consolidation is needed;
@@ -816,8 +848,8 @@ These open details are not implementation decisions.
 
 ## Implementation and native workflow
 
-Use the shared stable launcher from an isolated task worktree. V3 and V3.1 use three
-commands: `prepare-hierarchy`, `advance-hierarchy` and `run-hierarchy`. V2's
+Use the shared stable launcher from an isolated task worktree. V3, V3.1 and V3.2
+use three commands: `prepare-hierarchy`, `advance-hierarchy` and `run-hierarchy`. V2's
 constructor and its commands are removed; their source remains in Git history.
 Historical traversal research and saved-data readers remain available.
 
@@ -846,9 +878,9 @@ one local SSE job runs at a time; graph updates remain serialized.
 Advancement and teacher execution invoke fresh processes through the shared
 stable launcher, so compatible runner repairs are picked up on the next attempt.
 
-Each unchanged subject/meaning encoding is reused within the construction.
-SSE text contains the subject, two newlines, then the explicit meaning. Only
-the subject's UTF-8 byte span is selected for pooling. The input brackets in
+Each unchanged heading/meaning encoding is reused within the construction.
+SSE text contains the heading, two newlines, then the explicit meaning. Only
+the heading's UTF-8 byte span is selected for pooling. The input brackets in
 this document are notation, not encoded characters. Worker identities,
 selected spans, receipt hashes and raw vector hashes are checked before use.
 

@@ -1,4 +1,4 @@
-"""Native V3 and V3.1 construction by SSE pairing and pair consolidation.
+"""Native V3, V3.1 and V3.2 construction by SSE pairing and pair consolidation.
 
 The shared experiment runner owns teacher transport, caching and accounting.
 Preparation and advancement only freeze inputs and collect saved results.
@@ -29,6 +29,7 @@ from .canonical_receipts import _failure_receipts
 
 POLICY = "hierarchy-generation-v3"
 POLICY_V31 = "hierarchy-generation-v3.1"
+POLICY_V32 = "hierarchy-generation-v3.2"
 MAX_SIBLINGS = 6
 MIN_NOTES = 2
 PAIR_CHUNK_ROWS = 50000
@@ -93,7 +94,7 @@ def summary(state):
             and original["meaning"] is None
         ],
     )
-    if state["generation_policy"] == POLICY_V31:
+    if state["generation_policy"] in (POLICY_V31, POLICY_V32):
         result["discarded_by_cutoff"] = [
             dict(
                 family=family["id"], parent=family["parent"], round=index + 1,
@@ -209,7 +210,7 @@ def prepare(spec_path, directory, history_root=None):
     if (
         not isinstance(cfg, dict)
         or set(cfg) not in (fields, fields | {"generation_policy"})
-        or policy not in (POLICY, POLICY_V31)
+        or policy not in (POLICY, POLICY_V31, POLICY_V32)
         or type(cfg["schema_version"]) is not int
         or cfg["schema_version"] != 1
         or type(cfg["local_schema_version"]) is not int
@@ -219,7 +220,7 @@ def prepare(spec_path, directory, history_root=None):
         or any(not isinstance(n, str) or not n for n in cfg["note_ids"])
         or len(set(cfg["note_ids"])) != len(cfg["note_ids"])
     ):
-        raise ValueError("invalid hierarchy generation V3/V3.1 spec")
+        raise ValueError("invalid hierarchy generation V3/V3.1/V3.2 spec")
     if directory.exists():
         raise ValueError("hierarchy destination already exists")
     corpus_path = workflow.resolve(cfg["corpus"], spec_path.parent)
@@ -257,6 +258,18 @@ def prepare(spec_path, directory, history_root=None):
         name: _teacher_spec(workflow.resolve(cfg[name], spec_path.parent), sources)
         for name in ("bootstrap_spec", "consolidation_spec")
     }
+    if policy == POLICY_V32:
+        bootstrap = teacher_specs["bootstrap_spec"]
+        if bootstrap["prompt"]["id"] != "Hierarchy-bootstrap-v133":
+            raise ValueError("hierarchy generation V3.2 requires Hierarchy-bootstrap-v133")
+        schema = bootstrap["runner"].get("output_schema")
+        output_fields = {"ambiguities", "resolutions", "meaning", "title", "evidence"}
+        if (
+            not isinstance(schema, dict)
+            or set(schema.get("properties", {})) != output_fields
+            or set(schema.get("required", [])) != output_fields
+        ):
+            raise ValueError("hierarchy generation V3.2 requires the Bootstrap title output schema")
     config_path = workflow.resolve(cfg["worker_config"], spec_path.parent)
     worker_config = _worker_template(config_path)
     sources[str(config_path)] = trial._hash(config_path)
@@ -599,7 +612,7 @@ def _applied_rounds(family):
 
 def _pairing_round(state, family, pairs):
     cutoff = None
-    if state["generation_policy"] == POLICY_V31:
+    if state["generation_policy"] in (POLICY_V31, POLICY_V32):
         cutoff = 0.40 + (0.66 - 0.40) * 0.5 ** len(family["rounds"])
     cases = {
         f"{family['id']}-P{index:05d}": [a, b]
@@ -659,6 +672,8 @@ def _schedule(directory, state):
             answer = bootstrap["answers"][original["id"]]
             meaning = answer["output"]["meaning"]
             original["meaning"] = meaning
+            if state["generation_policy"] == POLICY_V32:
+                original["title"] = answer["output"]["title"]
             if meaning is None:
                 unresolved.append(
                     dict(
@@ -685,7 +700,11 @@ def _schedule(directory, state):
             if original["meaning"] is None:
                 continue
             state["items"][original["id"]] = dict(
-                subject=original["subject"],
+                subject=(
+                    original["title"]
+                    if state["generation_policy"] == POLICY_V32
+                    else original["subject"]
+                ),
                 meaning=original["meaning"],
                 original_ids=[original["id"]],
                 producer=dict(experiment=0, case=original["id"]),
@@ -792,7 +811,7 @@ def _schedule(directory, state):
 
 
 def check_state(state, *, verify_receipts=True, verify_current_code=True):
-    if (state.get("generation_policy") not in (POLICY, POLICY_V31)
+    if (state.get("generation_policy") not in (POLICY, POLICY_V31, POLICY_V32)
             or state.get("schema_version") != 3):
         raise ValueError("unknown hierarchy generation policy")
     for path, digest in state["sources"].items():
@@ -866,6 +885,10 @@ def check_state(state, *, verify_receipts=True, verify_current_code=True):
             or {}
         ).get("meaning"):
             raise ValueError("original meaning differs from native Bootstrap")
+        if state["generation_policy"] == POLICY_V32 and "meaning" in row:
+            answer = state["experiments"][0].get("answers", {}).get(row["id"], {})
+            if "title" not in row or row["title"] != (answer.get("output") or {}).get("title"):
+                raise ValueError("original title differs from native Bootstrap")
     for identifier, item in state["items"].items():
         if item.get("pair"):
             pair = item["pair"]
@@ -882,7 +905,9 @@ def check_state(state, *, verify_receipts=True, verify_current_code=True):
             expected = [identifier]
             if (
                 identifier not in originals
-                or item["subject"] != originals[identifier]["subject"]
+                or item["subject"] != originals[identifier][
+                    "title" if state["generation_policy"] == POLICY_V32 else "subject"
+                ]
             ):
                 raise ValueError("invalid original local L1 item")
         if item["original_ids"] != expected or len(set(expected)) != len(expected):
@@ -931,7 +956,7 @@ def check_state(state, *, verify_receipts=True, verify_current_code=True):
             for i in state["items"][item]["original_ids"]
         ]
         discarded = []
-        if state["generation_policy"] == POLICY_V31:
+        if state["generation_policy"] in (POLICY_V31, POLICY_V32):
             for index, round_ in enumerate(family["rounds"]):
                 pairs = [(p["nodes"][0], p["nodes"][1], p["cosine"])
                          for p in round_["pairs"]]
