@@ -6,7 +6,9 @@ the workspace with `vd oracle-mvp/target/hierarchy-experiments.xlsx`. Keep this
 exact workbook current after every official hierarchy experiment. Its
 `Experiments` tab contains run ID, status, input and output note counts, HiGen,
 Bootstrap prompt and pair/consolidation prompt. Review commands belong on its
-separate `Review commands` tab. Each row records its actual values.
+separate `Review commands` tab. The `HiGen versions` tab gives concise,
+self-contained descriptions of every version used in the run rows. Each row
+records its actual values.
 
 The [full parameter ledger](hierarchy-parameters.csv) supports internal
 bookkeeping, including execution settings and generation Git commits. Its model
@@ -1275,7 +1277,8 @@ to the CSV; outcomes, usage, costs and review instructions belong here.
 Before reporting a completed, stopped or failed official experiment, update the
 canonical `oracle-mvp/target/hierarchy-experiments.xlsx` with its actual status,
 parameters and saved output note coverage. Update its separate review-command
-tab, stating when a UI has not been prepared. Reopen the saved workbook and
+tab, stating when a UI has not been prepared. Add a description to `HiGen
+versions` when a new generator version is used. Reopen the saved workbook and
 verify the row against native evidence. Updating an internal ledger or a task
 worktree's copy does not replace this required update to the user's workbook.
 Before a new run, record the full commits of Oracle
