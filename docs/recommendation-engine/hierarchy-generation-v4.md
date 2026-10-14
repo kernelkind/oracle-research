@@ -1,7 +1,10 @@
 # HiGen V4.1 — hierarchy from one HDBSCAN tree
 
 Status: approved V4.1 design; native construction and offline verification are
-implemented. No V4.1 teacher run or resulting hierarchy has been reviewed yet.
+implemented. Official HR21 (50 notes) and HR22 (100 notes) completed with native
+structural validation and checked review UIs; human semantic review is pending.
+Their parameters and commands are in
+[the compact run index](hierarchy-review-commands.md).
 The earlier V4 root-only experiment remains separate evidence below. Historical
 V3 variants and V4 definitions retain their frozen policies on resume.
 
@@ -66,7 +69,7 @@ regression control rather than the expected new hierarchy.
 The saved Bootstrap-v133 first-round result also passes offline section
 validation: 25 original groups, 31 displayed nodes, six roots and at most six
 children per node. No teacher or encoder calls were made for this check;
-section names have not yet been generated. The constructor, numerical-cut,
+section names had not been generated in that offline check. The constructor, numerical-cut,
 assembly and saved-viewer regression suites pass 91 tests, including native
 fresh preparation, independent readiness, exact reuse and atomic resume.
 

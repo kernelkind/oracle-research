@@ -26,12 +26,16 @@ original notes. Parameters describe the settings actually used.
 | HR19 | 50 | ASv6.100 | V3.1 | bootstrap-v129 | pair-consolidation-v7 | — |
 | HR20 | 50 | ASv6.100 | V3.2 | bootstrap-v133 | pair-consolidation-v11 | — |
 | HR21 | 50 | ASv6.100 | V4.1 | bootstrap-v133 | consolidated-grouped-v1 | — |
+| HR22 | 100 | ASv6.100 | V4.1 | bootstrap-v133 | consolidated-grouped-v1 | — |
 
 **Same notes:** HR03/HR10/HR14/HR16/HR19/HR20/HR21 use the same ordered 50-note selection.
 HR05/HR08/HR09/HR13/HR15/HR17/HR18 use its same ordered first 24 notes. HR04 uses
 its first 12; HR11 and HR12 use selected 6- and 12-note subsets of the 24,
 so HR12's set differs from HR04's. HR06/HR07 use older ASv6.48 inputs and are
 **deprecated historical runs**.
+
+HR22 keeps that same 50-note set first and appends the remaining 50 frozen
+collection notes. All 326 original Bootstrap titles and meanings match HR20.
 
 **Selection and stopping:**
 
@@ -53,7 +57,8 @@ so HR12's set differs from HR04's. HR06/HR07 use older ASv6.48 inputs and are
   angular distance and no cosine cutoff. Cut selected-group ancestors into at
   most six choices per level. Name groups and broader sections bottom-up;
   generated meanings are never reclustered. Stop at original groups, exposing
-  notes directly. **HR21 retains 46/50 notes in 31 nodes, with six roots.**
+  notes directly. **HR21: 31 nodes, 46/50 notes. HR22: 80 nodes, 94/100 notes.
+  Both have six roots.**
 - HR14/HR16 omit two null Bootstrap meanings. HR17 had none. Answers and receipts
   remain saved; the original selected note set is preserved as input evidence.
 
@@ -71,10 +76,12 @@ original Bootstrap entries. HR03/HR06/HR07 used
 standalone subject vectors, also with a 512-token maximum. Traversal/V2 did not
 use SSE for hierarchy construction.
 
-**Execution:** HR11–HR21 use prefix caching, automatic warming and exact-request
+**Execution:** HR11–HR22 use prefix caching, automatic warming and exact-request
 answer reuse. Seed/temperature are unspecified; no explicit output-token cap.
 Normally at most two provider attempts per case across resumes, temporary
-provider errors only; HR14 had an approved recovery exception.
+provider errors only; HR14 had an approved recovery exception. HR22 used a
+scoped replacement checkpoint for one invalid evidence quote, preserving the
+strict validator and original prompts.
 
 Call caps include warmups, retries and resumes. Older caps below are historical;
 HR15 onward have no cap. Git arrows show initial → continuation commits.
@@ -101,6 +108,7 @@ Unknown means the execution commit was not recorded.
 | HR19 | None | 5446454d | 9d956b3a |
 | HR20 | None | 48e71c71 → 273e16e1 | 9d956b3a |
 | HR21 | None | f5500b02 | e7dd09fa |
+| HR22 | None | 581132e9 | e7dd09fa |
 
 ## Calls, tokens and API cost
 
@@ -131,6 +139,7 @@ tokens and cost are known subtotals; the complete totals remain unknown.
 | HR19 | 54 | 432 | 95,792 | $0.2132 | 0 |
 | HR20 | 327 | 167 | 1,355,596 | $1.8697 | 5 |
 | HR21 | 10 | 25 + 326 Bootstrap | 20,183 | $0.0450 | 0 |
+| HR22 | 512 | 1,050 events across checkpoints | 2,760,036 | $3.8414 | 4 |
 
 HR18's tokens and cost are known subtotals: three recovered provider attempts
 lack reported usage. HR20 has five recovered attempts without reported usage.
@@ -303,3 +312,30 @@ New usage is 6,928 uncached input, 10,240 cached input and 3,015 output tokens
 subtotal of **$2.6688**, with four historical calls missing usage; the complete
 producer-inclusive total remains unknown. Null meanings and 183 unassigned
 entries remain recorded as evidence; four selected notes are absent.
+
+## HR22 — 100 notes · HiGen V4.1
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos
+./oracle-mvp-hierarchy-hr22-v41/target/hr22-review-ui-v1/launch.sh
+```
+
+Completed in **1h 31m 53s**, including subject generation and recovery.
+Construction used **512 new calls** and **729 final Bootstrap reuses**; the
+initial generation also recorded 321 reuses. The 1,050 reuse events count both
+checkpoints, rather than distinct original producers. All 80 section answers
+are valid. Five null meanings and 361 unassigned entries remain as evidence.
+
+The additional 50 ASv6.100 notes required **52 new calls**, 547,933 known tokens
+and **$1.0014** known API-equivalent cost. Including those calls and every
+recovery attempt, HR22 used **564 new calls, 3,307,969 known tokens and $4.8428**
+known API-equivalent cost. Five provider attempts lack usage; complete totals
+remain unknown. Historical Bootstrap producers are separate: the native
+producer-inclusive known subtotal is **$7.3450**, excluding original 50-note
+AS generation, with nine calls missing usage.
+
+Recovery preserved all 326 HR20 Bootstrap answers after five were initially
+regenerated. One malformed evidence quote was replaced using the same prompt;
+three other additional-note answers were regenerated after cache misses.
+Every initial response and extra call is retained and included in accounting.
+Prompts, model, encoder, clustering and stopping settings were unchanged.
