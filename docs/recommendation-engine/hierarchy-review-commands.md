@@ -92,7 +92,7 @@ Unknown means the execution commit was not recorded.
 | HR17 | None | bdc22432 | 9d956b3a |
 | HR18 | None | 48e71c71 | 9d956b3a |
 | HR19 | None | 5446454d | 9d956b3a |
-| HR20 | None | 48e71c71 | 9d956b3a |
+| HR20 | None | 48e71c71 → 273e16e1 | 9d956b3a |
 
 ## Calls, tokens and API cost
 
@@ -126,7 +126,8 @@ tokens and cost are known subtotals; the complete totals remain unknown.
 HR18's tokens and cost are known subtotals: three recovered provider attempts
 lack reported usage. Its complete totals remain unknown. HR20's row covers its
 completed Bootstrap batch only; four recovered attempts lack reported usage.
-HR20 is stopped before encoding and has no completed hierarchy or review UI.
+HR20 has resumed from its saved Bootstrap answers; its row remains a Bootstrap-only
+subtotal until construction finishes.
 
 HR17's new calls took **1m 45s**. Including the saved original producers behind
 its reused answers, its construction used **226 calls, 1,039,228 tokens and
@@ -268,9 +269,10 @@ cd /home/dev/src/notedeck_worktrees/algos
 ./oracle-mvp-hierarchy-hr18-v32/target/hr18-review-ui-v1/launch.sh
 ```
 
-## HR20 — 50 input notes · stopped at Bootstrap
+## HR20 — 50 input notes · running
 
-Same controls as HR18. Bootstrap has **325 valid answers and one invalid evidence
-quote**: a normal space replaces a non-breaking space after “Dezeen Showroom:”.
-All answers are saved. Waiting for the user's decision on treating those spaces
-as equivalent before resuming; no hierarchy or review UI has been produced.
+Same controls as HR18, with an approved validation fix treating non-breaking
+and ordinary spaces as equivalent in Bootstrap evidence quotes. All other
+characters still match exactly, and the original saved text is preserved.
+All **326 Bootstrap answers** are valid after revalidation; construction has
+resumed without rerunning Bootstrap.
