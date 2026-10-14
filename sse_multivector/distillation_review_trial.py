@@ -5,6 +5,8 @@ outputs. The preview verifier decodes evaluation by default; an explicit test
 split freezes only the saved baseline and final checkpoint answers.
 """
 from collections import Counter, defaultdict
+import hashlib
+import json
 from pathlib import Path
 import random
 import re
@@ -154,9 +156,124 @@ def _cohort(selected, candidates, *, allow_ancestor_paths=True):
         previously_used_note_answers=sum(a["previously_used_note"] for a in selected))
 
 
-def prepare_trial(manifest_path, model_outputs, output, *, random_count=50, hard_count=10,
-                  seed="DS-final-20261009", split="evaluation"):
+def _saved_report(manifest_path, collection_path, *, verify_checkpoint=False):
+    """Bind a complete manual collection to original validation inputs."""
+    sources = {}
+    value = preview._decode(preview._read(collection_path, sources))
+    review._fields(value, {"schema_version", "origin", "dataset", "model_output", "checkpoint",
+        "version", "seed", "generation_policy", "generations", "additional_sources"}, "manual generation collection")
+    if (type(value["schema_version"]) is not int or value["schema_version"] != 1
+            or value["origin"] != "manual_generations" or not isinstance(value["seed"], str) or not value["seed"]):
+        raise ValueError("invalid manual generation collection")
+    base = collection_path.parent
+    def bound(reference, filename=None):
+        review._fields(reference, {"path", "sha256"}, "manual generation source")
+        path = review.engine._resolve_path(reference["path"], "manual generation source", base)
+        preview._read(path / filename if filename else path, sources, reference["sha256"])
+        return path
+    if bound(value["dataset"]) != manifest_path or "test" in manifest_path.parts:
+        raise ValueError("manual generations require the original validation dataset")
+    manifest, evaluation, teachers = preview._validation(manifest_path, sources)
+    output = bound(value["model_output"], "manifest.json")
+    config, plan = preview._model_plan(output, manifest, sources)
+    checkpoint = value["checkpoint"]
+    review._fields(checkpoint, {"cursor", "path", "sha256"}, "manual generation checkpoint")
+    cursor = checkpoint["cursor"]
+    if type(cursor) is not int or cursor not in plan["milestones"]:
+        raise ValueError("manual generation checkpoint differs from training plan")
+    checkpoint_path = bound({key: checkpoint[key] for key in ("path", "sha256")}, "complete.json")
+    if checkpoint_path != output / "checkpoints" / f"checkpoint-{cursor}":
+        raise ValueError("manual generation checkpoint path differs")
+    preview._checkpoint(output, cursor, plan, sources)
+    if verify_checkpoint and not run.verify_saved(checkpoint_path):
+        raise ValueError("manual generation checkpoint files differ from sealed source")
+    version = review.engine._expect_identifier(value["version"], "manual generation version")
+    if not version.startswith(f"checkpoint-{cursor}-"):
+        raise ValueError("manual generation version differs from checkpoint")
+    policy = value["generation_policy"]
+    required = {"enable_thinking", "thought_budget_tokens", "final_budget_tokens", "max_context_tokens", "do_sample"}
+    if (not isinstance(policy, dict) or not required <= policy.keys()
+            or type(policy["enable_thinking"]) is not bool or type(policy["do_sample"]) is not bool
+            or any(type(policy[key]) is not int or policy[key] < 1 for key in
+                   ("thought_budget_tokens", "final_budget_tokens", "max_context_tokens"))
+            or policy["thought_budget_tokens"] + policy["final_budget_tokens"] > policy["max_context_tokens"]):
+        raise ValueError("invalid manual generation policy")
+    policy_hash = hashlib.sha256(json.dumps(policy, sort_keys=True, ensure_ascii=False,
+        separators=(",", ":"), allow_nan=False).encode()).hexdigest()
+    definitions = value["generations"]
+    if not isinstance(definitions, list) or not definitions or len(definitions) > len(evaluation):
+        raise ValueError("invalid manual generation count")
+    expected_indices = sorted(random.Random(value["seed"]).sample(range(len(evaluation)), len(definitions)))
+    if any(not isinstance(d, dict) for d in definitions) or [d.get("index") for d in definitions] != expected_indices:
+        raise ValueError("manual generation identities differ from seeded validation sample")
+    if not isinstance(value["additional_sources"], dict):
+        raise ValueError("manual additional sources must be a hash mapping")
+    for filename, checksum in value["additional_sources"].items():
+        bound(dict(path=filename, sha256=checksum))
+    prior = _prior_notes(sources)
+    candidates = []
+    for definition in definitions:
+        review._fields(definition, {"path", "sha256", "index", "note_id"}, "manual generation")
+        index = definition["index"]
+        if type(index) is not int or definition["note_id"] != evaluation[index]["note_id"]:
+            raise ValueError("manual generation note identity differs")
+        path = review.engine._resolve_path(definition["path"], "manual generation source", base)
+        if "test" in path.parts or path.name != "subjects.json" or path.parent.name != f"note-{index:04}":
+            raise ValueError("manual generation path differs from original validation index")
+        bound({key: definition[key] for key in ("path", "sha256")})
+        saved = preview._decode(path.read_bytes())
+        if (saved["note_id"] != definition["note_id"] or saved["messages"] != evaluation[index]["messages"]
+                or saved.get("generation_policy_sha256") != policy_hash):
+            raise ValueError("manual generation input or policy differs from frozen source")
+        row = run.subject_result(saved["note_id"], saved["answer"])
+        teacher = teachers[index]
+        wording = [s["subject"] for s in row["subjects"]]
+        nonexact = [s for s in wording if s not in teacher[0].by_subject]
+        key = "M01-" + version
+        generation = dict(definition, path=str(path))
+        candidates.append(dict(id=f"{key}-N{index:04}", note_id=definition["note_id"],
+            model=config["model"], revision=config["revision"], model_output=str(output),
+            version=version, version_key=key, stage=str(path.parent.parent), index=index, row=row,
+            teacher_index=teacher,
+            teacher=[dict(number=n, context=teacher[0].contexts[n], subject=s) for n, s in teacher[0].subjects.items()],
+            previously_used_note=definition["note_id"] in prior,
+            complexity=dict(teacher_catalog_size=len(teacher[0].catalog), teacher_occurrences=len(teacher[0].subjects),
+                nonexact_subjects=len(nonexact), nonexact_composite_subjects=sum(bool(_COMPOSITE.search(s)) for s in nonexact),
+                student_max_depth=max((s["number"].count(".") + 1 for s in row["subjects"]), default=0),
+                candidate_variants=1), generation=generation))
+    selected = [_answer(c, "random", sources) for c in candidates]
+    for module in (Path(__file__), Path(preview.__file__), Path(review.__file__), Path(run.__file__)):
+        preview._read(module.resolve(), sources)
+    cohort = _cohort(selected, candidates)
+    return dict(schema_version=3, origin="manual_generations", inference_calls=0,
+        saved_generations=dict(path=str(collection_path), sha256=sources[str(collection_path)]),
+        dataset=dict(path=str(manifest_path), sha256=sources[str(manifest_path)]),
+        model_outputs=[dict(output=str(output), model=config["model"], revision=config["revision"])],
+        sources=sources, settings=SETTINGS, population=cohort["totals"], generation_policy=policy,
+        selection_policy=dict(seed=value["seed"], random_count=len(selected), hard_count=0,
+            version_quotas={key: len(selected)}, random="Complete seeded manual collection; no resampling.",
+            challenge="No challenge sampling.", previous_note_sources=list(_PRIOR_SOURCES)),
+        random=cohort, challenge=_cohort([], candidates),
+        checkpoint_verification="Original checkpoint files verified at import; frozen metadata and source identities rechecked on load.")
+
+
+def prepare_trial(manifest_path, model_outputs, output, *, random_count=None, hard_count=None,
+                  seed="DS-final-20261009", split="evaluation", saved_generations=None):
     """Verify and freeze disjoint complete-answer samples without inference."""
+    if saved_generations is not None:
+        if model_outputs or split != "evaluation" or random_count is not None or hard_count is not None:
+            raise ValueError("saved generations already fix the validation subset; do not supply model outputs or sampling counts")
+        directory = Path(output).expanduser().resolve()
+        if directory.exists():
+            raise ValueError("trial output already exists; frozen selection cannot be overwritten")
+        report = _saved_report(Path(manifest_path).expanduser().resolve(),
+            Path(saved_generations).expanduser().resolve(), verify_checkpoint=True)
+        path = directory / "selection.json"
+        run.write_json(path, report)
+        run.write_json(directory / "selection.complete.json", {"selection.json": run.sha256(path)})
+        return dict(report, selection_path=str(path))
+    random_count = 50 if random_count is None else random_count
+    hard_count = 10 if hard_count is None else hard_count
     if (type(random_count) is not int or random_count < 0 or type(hard_count) is not int or hard_count < 0
             or not random_count + hard_count or not isinstance(seed, str) or not seed):
         raise ValueError("expected nonnegative trial counts and a nonempty seed")
@@ -202,9 +319,17 @@ def load_trial(path):
     if seal != {path.name: run.sha256(path)}:
         raise ValueError("trial selection hash differs")
     report = run.read_json(path)
-    if (type(report["schema_version"]) is not int or report["schema_version"] not in (1, 2)
+    if (type(report["schema_version"]) is not int or report["schema_version"] not in (1, 2, 3)
             or report["inference_calls"] != 0 or report["settings"] != SETTINGS):
         raise ValueError("trial selection schema or reviewer settings differ")
+    if report["schema_version"] == 3:
+        for filename, checksum in report["sources"].items():
+            if run.sha256(filename) != checksum:
+                raise ValueError(f"trial source hash differs: {filename}")
+        expected = _saved_report(Path(report["dataset"]["path"]), Path(report["saved_generations"]["path"]))
+        if report != expected:
+            raise ValueError("manual trial selected evidence differs from source")
+        return report
     split = report["dataset"].get("split", "evaluation")
     if split not in ("evaluation", "test") or (split == "test" and report["schema_version"] < 2):
         raise ValueError("invalid trial dataset split")

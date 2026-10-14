@@ -610,10 +610,13 @@ def add_commands(commands):
     p.add_argument('manifest', type=Path)
     p.add_argument('--split', choices=('evaluation', 'test'), default='evaluation',
                    help='test explicitly opens saved baseline and final-checkpoint test answers')
-    p.add_argument('--model-output', type=Path, action='append', required=True)
+    group = p.add_mutually_exclusive_group(required=True)
+    group.add_argument('--model-output', type=Path, action='append')
+    group.add_argument('--saved-generations', type=Path,
+                       help='import all answers from a source-bound manual validation collection')
     p.add_argument('--output', type=Path, required=True)
-    p.add_argument('--random-count', type=int, default=50)
-    p.add_argument('--hard-count', type=int, default=10)
+    p.add_argument('--random-count', type=int)
+    p.add_argument('--hard-count', type=int)
     p.add_argument('--seed', default='DS-final-20261009')
     p = commands.add_parser('show-distillation-review-trial', help='inspect frozen source evidence; no inference')
     p.add_argument('selection', type=Path)
@@ -861,7 +864,8 @@ def handle_command(args):
     elif args.command == 'prepare-distillation-review-trial':
         from . import distillation_review_trial
         result = distillation_review_trial.prepare_trial(args.manifest, args.model_output, args.output,
-            random_count=args.random_count, hard_count=args.hard_count, seed=args.seed, split=args.split)
+            random_count=args.random_count, hard_count=args.hard_count, seed=args.seed, split=args.split,
+            saved_generations=args.saved_generations)
         print(json.dumps({key: result[key] for key in ('selection_path', 'inference_calls', 'selection_policy')}, indent=2))
     elif args.command in {'show-distillation-review-trial', 'assess-distillation-review', 'freeze-distillation-review-assessments', 'prepare-distillation-review-inventory'}:
         from . import distillation_review_assessment as assessment
