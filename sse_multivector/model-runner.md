@@ -63,7 +63,10 @@ separate from these mechanical checks.
 
 Experimental [Bootstrap-v130](shr_single_pair/Hierarchy-bootstrap-v130.md)
 returns a concise `title` derived solely from its finalized `meaning`.
-New specifications using this prompt must select its
+Experimental [Bootstrap-v131](shr_single_pair/Hierarchy-bootstrap-v131.md)
+adds a soft two-to-five-word preference, retaining shorter clear names and
+allowing longer titles for identity or an essential scope distinction.
+Both versions use the
 [five-field output schema](shr_single_pair/Hierarchy-bootstrap-v130.output.schema.json).
 Native `hierarchy_local_nodes` validation requires a nonempty title for a
 non-null meaning and a null title for a null meaning. Earlier schemas retain
@@ -78,6 +81,14 @@ produced eight valid responses: seven titles of one to four words and one
 nine-word title. Full diagnostic responses remain much longer. The native
 collection/specification and frozen outputs support inspection; this small
 development panel does not establish general title quality or activate V130.
+
+The authorized [v131 matched-input test](shr_single_pair/bootstrap-current-as-qualification.md#soft-title-length-target-bootstrap-v131)
+uses native `prepare --from` to preserve the eight exact inputs and settings.
+All eight new titles have one to five whitespace-separated words; the longest
+shrinks from 74 to 45 characters but still has awkward hyphens. Definition
+instructions are unchanged, while generated meanings vary between draws.
+V131 remains experimental; this small panel does not establish general title
+quality or change diagnostic verbosity.
 
 ## Current Bootstrap, Compare and hierarchy attempt policy
 
