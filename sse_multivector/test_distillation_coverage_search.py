@@ -499,6 +499,71 @@ class DistillationCoverageSearchTests(unittest.TestCase):
         fixture.native("run-distillation-automatic-grading", automatic)
         self.assertEqual((self.root / "calls.json").read_bytes(), saved_calls)
 
+    def test_sparse_shared_positive_receipt_and_final_search_settle_every_answer(self):
+        from sse_multivector import distillation_review_assessment as assessment
+        from sse_multivector import distillation_review_evaluation as evaluation
+        from sse_multivector import test_distillation_review_evaluation as fixtures
+        for final_positive in (False, True):
+            with self.subTest(final_positive=final_positive):
+                fixture = fixtures.DistillationReviewEvaluationTests()
+                fixture.root = self.root / str(final_positive)
+                fixture.root.mkdir()
+                selected = fixture.selection([dict(note_id="shared-positive", post="Cable A. Fruit.",
+                    teacher=fixtures.subjects(("1", "Fruits"), ("2", "Cable A")),
+                    answer=fixtures.answer(fixtures.subjects(
+                        ("1", "Fruits"), ("2", "Cables"), ("3", "Cable A in general"))))], random_count=2)
+                context = fixture.root / "assessment"
+                assessment.record(selected, "R01", context, teacher_meanings=[
+                    dict(teacher_numbers=["1"], required=False), dict(teacher_numbers=["2"], required=True)],
+                    reason="Complete trusted fixture inventory.")
+                worker = fixture.worker()
+                positive = dict(evidence=[dict(student_number="2", reason="Fixture compatible witness.")],
+                    witness_student_number="2")
+                final = positive if final_positive else dict(evidence=[
+                    dict(student_number=number, reason="Fixture final complete assessment.")
+                    for number in ("1", "2")], witness_student_number=None)
+                response = ('({"teacher_id": "T02" if \'"student_subject": "Cable A in general"\' in prompt else None, '
+                    '"reason": "Fixture complete match."} if prompt.startswith("DSMv3") else '
+                    '(' + repr(positive) + ' if sum(row["prompt"].startswith("DCSv1") for row in '
+                    'json.loads(Path(os.environ["FAKE_RUNNER_LOG"]).read_text())) == 1 else ' + repr(final) + ') '
+                    'if prompt.startswith("DCSv1") else '
+                    '{"valid": \'"parent_subject": "Cables"\' not in prompt, "reason": "Fixture exact pair."})')
+                worker.write_text(worker.read_text().replace('("DSMv3", "DSSv2", "DSLv2", "DSLv4")',
+                    '("DSMv3", "DSSv2", "DSLv2", "DSLv4", "DSLv10", "DCSv1")').replace(
+                    '{"teacher_id": None, "reason": "Fixture unmatched wording."} if prompt.startswith("DSMv3") '
+                    'else {"valid": True, "reason": "Fixture semantic verdict."}', response))
+                directory = Path(__file__).parent / "distillation-review-v1"
+                baseline = fixture.root / "evaluation"
+                evaluation.prepare(selected, baseline, runner_binary=worker, assessment_directory=context,
+                    actual_edges_only=True, relationship_prompt=directory / "relationship-prompt-v10.md",
+                    relationship_prompt_id="DSLv10", reasoning_effort="high")
+                automatic = fixture.root / "automatic"
+                fixture.native("prepare-distillation-automatic-grading", "--evaluation", baseline,
+                    "--output", automatic, "--runner-binary", worker)
+                finished = json.loads(fixture.native("run-distillation-automatic-grading", automatic))
+                self.assertEqual(finished["status"], "complete")
+                result = json.loads(Path(finished["report"]).read_text())
+                answers = result["random"]["answers"] + result["challenge"]["answers"]
+                self.assertEqual(len(answers), 2)
+                self.assertEqual(result["automatic_requests"], [])
+                self.assertTrue(all(answer["scoring"]["scores"]["coverage"]["value"] ==
+                    (0 if final_positive else 1) for answer in answers))
+                calls = json.loads((fixture.root / "calls.json").read_text())
+                guards = [row for row in calls if row["prompt"].startswith("DSLv10")]
+                dcs = [row for row in calls if row["prompt"].startswith("DCSv1")]
+                self.assertEqual(len(guards), 2)
+                self.assertEqual(len(dcs), 2)
+                self.assertEqual(dcs[0]["prompt"], dcs[1]["prompt"])
+                state = json.loads((automatic / "state.json").read_text())
+                final_groups = [entry for entry in state["experiments"] if entry["role"] == "final_coverage"]
+                self.assertEqual(len(final_groups), 1)
+                native = json.loads(fixture.native("show", final_groups[0]["path"], "--json"))
+                self.assertEqual(native["settings"]["reasoning_effort"], "xhigh")
+                self.assertEqual(len(native["cases"]), 1)
+                saved_calls = (fixture.root / "calls.json").read_bytes()
+                fixture.native("run-distillation-automatic-grading", automatic)
+                self.assertEqual((fixture.root / "calls.json").read_bytes(), saved_calls)
+
     def test_null_requires_every_candidate_and_positive_requires_only_the_witness(self):
         case = dict(inputs=dict(COVERAGE_INPUT=json.dumps(dict(teacher_subject="Cable A", candidates=[
             dict(student_number="1", student_subject="Fruits", teacher_contexts=[]),

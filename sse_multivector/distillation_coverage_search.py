@@ -395,6 +395,30 @@ def _matching_path_settlement(identity, teacher, group, matching, accepted, unco
         semantic_status="Conditional on the accepted ancestor match, saved coverage matches and fixed interpretations of the trusted teacher path; separate matching uncertainties remain unresolved.")
 
 
+def _coverage_candidate(teacher, child_number, number, students):
+    return dict(student_number=number, student_subject=students[number],
+        teacher_contexts=[{name: row[name] for name in ("subject", "context")}
+            for row in teacher.interpretation_entries(students[number], teacher.subjects[child_number],
+                                                     child_number=child_number)])
+
+
+def _positive_searches(rows):
+    """Find reached witnesses by their supplied post and meaning, not receipt ownership."""
+    witnesses = {}
+    for row in rows:
+        if row["evidence"].get("check") != "coverage_search" or row["status"] != "valid":
+            continue
+        number = row["parsed"]["witness_student_number"]
+        if number is None:
+            continue
+        question = json.loads(row["inputs"]["COVERAGE_INPUT"])
+        candidate = next(candidate for candidate in question["candidates"]
+            if candidate["student_number"] == number)
+        key = row["inputs"]["POST"], question["teacher_subject"]
+        witnesses.setdefault(key, []).append(candidate)
+    return witnesses
+
+
 def _sparse_compatibility(report, assessments, saved_rows=()):
     """Construct exact checks only for reached matches and positive search witnesses."""
     if not report.get("actual_edges_only"):
@@ -405,6 +429,7 @@ def _sparse_compatibility(report, assessments, saved_rows=()):
     if hashlib.sha256(template.encode()).hexdigest() != definition["prompt"]["sha256"]:
         raise ValueError("sparse compatibility prompt changed")
     reached = {}
+    witnesses = _positive_searches(saved_rows)
     for row in saved_rows:
         evidence = row["evidence"]
         if evidence.get("role") == "compatibility":
@@ -423,11 +448,17 @@ def _sparse_compatibility(report, assessments, saved_rows=()):
             present = {(tuple(row["evidence"]["teacher_numbers"]), row["evidence"]["heading_number"])
                 for row in relationships if row["evidence"]["role"] == "compatibility"}
             teacher = review._TeacherIndex(answer["teacher"])
-            students = {row["number"] for row in answer["student"]}
+            students = {row["number"]: row["subject"] for row in answer["student"]}
             for ordinal, group in enumerate(assessments["contexts"].get(answer["id"], []), 1):
                 if not group["required"]:
                     continue
-                numbers = set(reached.get((answer["id"], tuple(group["teacher_numbers"])), ())) & students
+                numbers = set(reached.get((answer["id"], tuple(group["teacher_numbers"])), ())) & students.keys()
+                representative = group["teacher_numbers"][0]
+                for candidate in witnesses.get((answer["post"], teacher.subjects[representative]), []):
+                    number = candidate["student_number"]
+                    if (students.get(number) == candidate["student_subject"] and candidate ==
+                            _coverage_candidate(teacher, representative, number, students)):
+                        numbers.add(number)
                 identifiers = {teacher.by_number[number] for number in group["teacher_numbers"]}
                 numbers.update(row["evidence"]["student_number"] for row in answer["checks"]["matching"]
                     if row["status"] == "valid" and row["parsed"]["teacher_id"] in identifiers)
@@ -565,11 +596,7 @@ def _cases(report, assessments, audits=None, policy="audited", *, final_groups=N
                     else:
                         settlements.append(dict(identity, rule="no_uncovered_heading", covered=True))
                     continue
-                candidates = [dict(student_number=number, student_subject=students[number],
-                    teacher_contexts=[{key: row[key] for key in ("subject", "context")}
-                        for row in teacher.interpretation_entries(students[number], child,
-                                                                child_number=representative)])
-                    for number in roots]
+                candidates = [_coverage_candidate(teacher, representative, number, students) for number in roots]
                 distinct, aliases = {}, {}
                 for candidate in candidates:
                     key = json.dumps({field: candidate[field] for field in ("student_subject", "teacher_contexts")},
@@ -1018,6 +1045,7 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
             for answer in baseline[cohort]["answers"]]) for cohort in ("random", "challenge")})
         baseline, sparse_configurations = _sparse_compatibility(baseline, assessments,
             list(searches.values()) + list(required_index.values()) +
+            list(final_index.values()) +
             [row for rows in verifiers.values() for row in rows])
         for identity, configuration in sparse_configurations.items():
             configurations.setdefault(identity, configuration)
@@ -1049,11 +1077,8 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
     if automatic:
         # Retain every exact completed question. A narrower negative question
         # does not resolve a disputed positive witness from an earlier search.
-        search_history = {}
-        for row in list(searches.values()) + list(required_index.values()):
-            if row["evidence"]["check"] == "coverage_search":
-                identity = row["evidence"]["answer_id"], tuple(row["evidence"]["teacher_numbers"])
-                search_history.setdefault(identity, []).append(row)
+        search_history = _positive_searches(list(searches.values()) + list(required_index.values()) +
+            list(final_index.values()))
         # Detect disagreements before candidate exclusions remove a disputed witness.
         for cohort in ("random", "challenge"):
             for answer in baseline[cohort]["answers"]:
@@ -1086,22 +1111,12 @@ def collect(coverage_directory, output, *, verification_experiments=None, premis
                         request(match, "final_matching")
                     witness = pair["evidence"]["heading_number"]
                     disputed_search = False
-                    witness_searches = [search for search in search_history.get(key, [])
-                        if search["status"] == "valid" and search["parsed"]["witness_student_number"] == witness
-                        and search["inputs"].get("POST") == answer["post"]]
+                    child_number = pair["evidence"]["teacher_representative_number"]
+                    child = teacher.subjects[child_number]
+                    witness_searches = search_history.get((answer["post"], child), [])
                     if matched and witness not in covered and False in values and witness_searches:
-                        child_number = pair["evidence"]["teacher_representative_number"]
-                        child = teacher.subjects[child_number]
-                        contexts = [{name: row[name] for name in ("subject", "context")}
-                            for row in teacher.interpretation_entries(students[witness], child,
-                                                                     child_number=child_number)]
-                        candidate = dict(student_number=witness, student_subject=students[witness],
-                                         teacher_contexts=contexts)
-                        for search in witness_searches:
-                            question = json.loads(search["inputs"]["COVERAGE_INPUT"])
-                            if question["teacher_subject"] == child and candidate in question["candidates"]:
-                                disputed_search = True
-                                break
+                        candidate = _coverage_candidate(teacher, child_number, witness, students)
+                        disputed_search = candidate in witness_searches
                     if len(values) > 1 or disputed_search:
                         final_groups.add(key)
         for row in final_index.values():
