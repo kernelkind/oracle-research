@@ -3,9 +3,10 @@
 Status: approved canonical generation mechanism, implemented as the sole shared
 CLI constructor in `sse_multivector/hierarchy_generation.py`, replacing V2.
 Offline construction checks pass; model-based hierarchy-quality qualification
-remains pending. HR11–HR14 used approved Pair-consolidation-v6. The specificity
-revision, Pair-consolidation-v7, is experimental; saved runs and current run
-definitions retain V6. This document does not authorize model calls. The user's personal outline,
+remains pending. HR11–HR14 retain Pair-consolidation-v6; HR15 and HR16 used
+Pair-consolidation-v7. The title revision, Pair-consolidation-v8, is experimental
+and failed the extended HR16 browsing-quality screen below. It is not activated
+by this record. This document does not authorize model calls. The user's personal outline,
 `docs/notes/MY-NOTES_10-12.md`, remains read-only. The preceding mechanisms are
 V2 and V1; earlier variants need no formal naming.
 
@@ -367,6 +368,181 @@ Evidence remains in the retained expanded worktree under
 `target/pair-consolidation-v7-coffee-parent-usage-source-v1.json` and
 `target/pair-consolidation-v7-coffee-parent-usage-summary-v1.json`. No prompt,
 Bootstrap meaning or hierarchy was changed.
+
+### Approved title requirement and experimental V8 cycle
+
+The user requires: **“the title for the explicit meaning must be a concise
+reflection of the explicit meaning content.”** The title should convey the
+central kinds and relationships admitted by the final meaning. Illustrative
+examples and optional variations need not be repeated in a title. This adds a
+title criterion; it does not withdraw the earlier meaning-coverage accepts or
+the user's Coffeechain/Diets decisions.
+
+The user authorized one draft/test/review cycle. Experimental
+[Pair-consolidation-v8](../../sse_multivector/shr_single_pair/Hierarchy-pair-consolidation-v8.md)
+removes V7's unqualified preference for a single shared-category heading, adds
+a final title-writing/check step, and makes title-to-meaning fidelity explicit
+in the output description. It preserves the coherent most-specific parent
+objective, full meaning coverage, fixed-parent checks, example, schema and exact
+shared-rules-v6/Bootstrap-v129 companion. No historical prompt is rewritten.
+The focused change follows [official reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices#how-to-prompt-reasoning-models-effectively)
+on clear constraints and concise instructions; that guidance does not certify
+the naming rule. No reasoning trace or additional title example is requested.
+
+Before authoring V8, native preparation/run reused the exact saved V7
+Coffee/Coffee-chains answer F00000-P00042. Native agent review rejects its title
+under the new criterion: Coffee names the beverage while its meaning also
+admits branded multi-outlet coffee-shop businesses. This minimal failing
+semantic check exercises saved production evidence with zero fresh calls; it
+does not reject the earlier meaning-coverage assessment or establish human gold.
+Evidence is `target/pair-consolidation-v8-title-baseline-v1` in the V8 worktree.
+
+Pre-call panel: fourteen root requests from the saved V7 expanded run, P00000,
+P00002, P00039, P00041, P00042, P00044, P00046, P00048, P00052, P00053,
+P00054, P00057, P00058 and P00059; plus supplied-parent F00012-P00003
+(Frying/Forks) and F00015-P00000 (Coffee/Coffee). Native `prepare --from`
+preserves exact inputs/settings and V7 answers as baselines, without rerunning
+V7. Use unchanged GPT-6.1 Sol medium subscription/SSE and frozen workers, native
+prefix warming and one shared scheduling group for all ready V8 batches.
+
+Review criteria fixed before calls: titles must reveal substantial admitted
+kinds/relationships such as beverage/retail chain, meal/container,
+process/equipment and activity/plan. Short natural wording should replace
+elaborate abstractions; familiar accurate category names remain allowed.
+No exact proposed caption is gold. Review the entire final meaning separately
+for both-input coverage, specificity and supplied-parent fit: a clearer title
+does not excuse a lost kind, new restriction or unnecessary meaning breadth.
+The controls check retained identity and already informative short titles.
+This is one candidate draw on sixteen requests, not a reliability estimate,
+sentence-level ablation or authorization to activate a hierarchy prompt.
+
+All sixteen V8 cases completed and received qualified native agent accepts for
+title fidelity and full meaning coverage/parent fit in this initial panel.
+Eight targeted cases improved under that criterion; eight controls remained
+acceptable. Representative title changes:
+
+| Saved V7 title | V8 title |
+|---|---|
+| Coffee (meaning also admits coffee-shop chains) | Coffee and coffee-shop chains |
+| Lunch (meaning also admits lunch boxes) | Lunches and lunch boxes |
+| Food smoking (meaning also admits smokers) | Food smoking and smokers |
+| Exercise (meaning also admits workout plans) | Exercise and workout plans |
+| Changes to whether or when undertakings proceed | Cancellation and postponement |
+| Chicken carcasses and their stock derivatives | Chicken carcasses and stock |
+
+Tomatoes, beverage-only Coffee and supplied-parent Coffee retain the chosen
+supplied meanings exactly. Other bodies were reviewed rather than assumed
+unchanged. This panel demonstrates clearer naming of small pairs, not good
+titles after repeated consolidation. Its complete fresh API-equivalent cost
+was $0.0608836 for nineteen attempts, including three warmups; the V7 failing
+baseline was one exact reuse with zero fresh calls. The historical baseline's
+producer is accounted separately in the native generation total.
+
+
+#### HR16 review prompted by the user
+
+The user rejected HR15 C00047's long inventory heading and reported that this
+was a widespread V7 failure, directing attention to HR16. HR16's completed
+50-note state uses Pair-consolidation-v7/Bootstrap-v129 and contains 410 canonical
+nodes, including 106 produced by consolidation. The saved state SHA-256 is
+`24a660a3e12fef7e235c76a30f4c5f9eaee9efc72e99049bf805a581fb530a43`.
+
+Its six root titles are Biological and culinary materials, practices and
+resources; Life, society, and the material world; Activity, experience, and
+meaning; Entities; Materials, products, services, and engagement with them;
+and Nostr. Five are broad abstractions or inventories. The Entities root
+C00004 has children C00019 and C00022 also titled Entities. Its Food-related
+branches use several similar inventories, including C00013 Biological and
+culinary materials, activities and food resources and C00024 Food, drink,
+and related activities and engagement. This is a browsing-quality failure;
+word count alone cannot identify it. All canonical titles have at most eight
+whitespace-separated words, yet a short Entities heading does not tell the
+reader which information to choose.
+
+The first root-round Beets/MrBeast input F00000-P00106 generated Entities.
+Beets' supplied meaning defines edible table-beet roots; MrBeast's supplied
+meaning defines Jimmy Donaldson's public online name. Later rounds propagate
+that generic topic. Root-round input counts are 324, 162, 81, 41, 21 and 11;
+median supplied meaning lengths rise from 26 to 44, 64, 102, 157 and 195 words.
+These descriptive lengths do not establish semantic accuracy. They show that
+the original V8 small-pair panel omitted repeated consolidation of already
+broad synthetic meanings. A long title is one symptom; faithful naming of an
+uninformative meaning remains uninformative.
+
+Before extra V8 calls, extend this same one-revision cycle with ten exact saved
+production requests: five final HR16 root pairs from batch-00006 and the carried Nostr root
+from batch-00002; the first
+Beets/MrBeast pair from batch-00001; supplied-parent C00013 from batch-00017
+and C00024 from batch-00022; and the user's HR15 C00047 from batch-00015.
+Native preparation preserves each original input, parent, settings and saved
+V7 output. This is an extension after seeing the first panel's results, not a
+preplanned holdout or another prompt revision. Evaluate title concision and
+fidelity, full coverage/parent fit, and browsing usefulness separately. A
+short generic abstraction or another inventory is not an acceptable fix merely
+because the JSON and containment are valid. Do not shorten scope silently or
+rewrite the saved hierarchy. One draw cannot establish reliable hierarchy
+quality.
+
+#### Extended V8 result: not a hierarchy-title fix
+
+All ten extended cases completed. Qualified native agent review rejects eight
+for browsing usefulness or specificity, accepts the Nostr identity control,
+and leaves HR15 C00047's shorter inventory title uncertain. These are agent
+assessments, not ten new human judgments. Full-scope formal certification is
+not claimed; the rejected headings do not themselves prove containment errors.
+
+| Saved node / exact production case | V8 title | Assessment |
+|---|---|---|
+| HR16 C00001 / F00000-P00000 | Food and related practices, gardening, and animal biological materials | Another long inventory |
+| HR16 C00002 / F00000-P00001 | Life and the social, cultural, and material world | Broad abstraction, longer than V7 |
+| HR16 C00003 / F00000-P00002 | Activity, meaning, and mental, bodily, and sensory phenomena | Elaborate inventory |
+| HR16 C00004 / F00000-P00003 | Entities | Short but uninformative |
+| HR16 C00005 / F00000-P00004 | Materials, products, services, and engagement with them | Unchanged vague heading |
+| HR16 C00006 / earlier F00000-P00002 | Nostr | Retains a useful named identity |
+| HR16 first Beets/MrBeast / F00000-P00106 | Root vegetables and YouTube creator identities | Unrelated kinds; unnecessary identity generalization |
+| HR16 C00013 / F00001-P00002 | Food resources and activities, gardening and animal eggs | Another inventory |
+| HR16 C00024 / F00005-P00001 | Food and drink: products, activities, and engagement | Inventory remains |
+| HR15 C00047 / F00004-P00003 | Food and drink, preparation, and service | Shorter; not an established acceptable fix |
+
+The Beets/MrBeast result covers both supplied meanings but generalizes the
+specific table-beet kind and named creator identity without creating a useful
+shared topic. At the final Entities input, one supplied meaning is already
+Entities, so simply selecting a narrower familiar heading would exclude
+admitted information. The final-root experiment holds all earlier V7 outputs
+fixed; it is not a V8 hierarchy rerun and cannot determine how V8 would change
+pairing in subsequent rounds.
+
+The evidence supports a broader diagnosis than excessive title length:
+consolidation can lose useful topic identity early and accumulate broad
+inventories through repeated rounds. V8's title-after-meaning instruction
+improves some small pairs but does not resolve this. Do not recommend V8 for
+activation based on the sixteen initial accepts. A next prompt revision should
+be qualified on early unrelated inputs and already synthetic later-round
+inputs, with coherent grouping, useful natural names and scope preservation
+evaluated separately. This recommendation does not change pair eligibility,
+the constructor, shared rules or any immutable hierarchy meaning.
+
+The native v2 usage summary covers ten experiments: twenty-six fresh V8
+answers plus the reused V7 baseline; thirty-seven fresh attempts including nine
+warmups and two recovered provider failures; one exact reuse; no terminal
+failures. Two failed attempts have unknown usage, so the **$0.1412444** known
+fresh API-equivalent subtotal is not a complete total. Known token subtotals
+are 22,695 uncached input, 31,744 cached input, zero reported cache writes and
+9,268 output, including 5,089 reasoning tokens. Original generation tracing
+adds the reused baseline's two source calls once; its known subtotal is
+$0.1466228 and also incomplete. These are catalogue equivalents, not cash
+subscription charges or a matched cost-savings claim.
+
+Evidence is retained in
+`/home/dev/src/notedeck_worktrees/algos/oracle-mvp-pair-consolidation-v8-title-v1/target/`
+under the `pair-consolidation-v8-title-*`, `pair-consolidation-v8-hr16-*` and
+`pair-consolidation-v8-hr15-c47-v1` experiments. Native usage specifications and
+summaries have v1/v2 suffixes; native reviews preserve case/input/output hashes.
+The worktree must remain because these receipts bind absolute project source
+and artifact paths. V8's compiled SHA-256 is
+`91d6e0e2f9ee3a0455778c7dd9f0722890ff67e57889b5c632e2dab164396ad2`;
+V7, Bootstrap-v129 and shared-rules-v6 remain unchanged. No saved hierarchy or
+UI was edited, no new hierarchy was generated, and no second revision was made.
 
 Exact answer reuse must match the complete request, including the optional
 canonical parent. A root-consolidation answer cannot be reused for a request
