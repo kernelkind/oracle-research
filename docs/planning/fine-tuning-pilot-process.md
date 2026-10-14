@@ -1135,10 +1135,36 @@ disabling asynchronous materialization loads the full model in **53.5 seconds**.
 The selection is scoped to model loading and restored afterwards. CUDA
 allocations are capped at 80 GiB, and an independent one-second watchdog stops
 only this job if host available RAM falls below 20 GiB. Earlier setup attempts
-stopped before generation; the host records no OOM. The first eight notes are
-now generating with approximately 52 GiB available. The installed optional
-causal-convolution kernel is absent; its correct PyTorch reference path is
-retained, preserving the existing runtime packages.
+stopped before generation; the host records no OOM.
+
+The first SDPA generation launch ran for approximately 100 minutes without a
+completed batch; it did not log individual token progress. Its masked attention
+path repeats four key/value heads into 24 query heads. Generation was stopped
+with zero saved answers, preserving its source, runtime and log. The replacement
+uses native FlashAttention2 pinned to
+`db6b51744f0cd7061386442c09df890fc6d9f47e`, loaded through an isolated
+`kernels==0.16.2` installation. Actual BF16, left-padded Q24/KV4 attention and a
+small native Qwen model with cached decoding pass the comparison against SDPA;
+the cached-decode comparison is bit-identical. No custom attention bridge is
+used. The native loader resolves the pinned kernel online from its existing
+cache; base and adapter weights remain pinned and local-only.
+
+The optional causal-convolution kernel remains absent from the native runtime;
+its correct PyTorch reference path is retained. A prebuilt kernel passed raw
+BF16 convolution probes, but its native configuration failed a combined model
+check and is not enabled. A brief loading attempt was stopped before generation;
+the failed check and logs are preserved. No bridge or source build was added.
+
+The replacement logs generated steps every 15 seconds. Full-model loading takes
+49.4 seconds, the first generated token follows 78.65 seconds of prefill, and the
+first measured decode intervals advance at approximately **2.40 steps/second**
+across eight rows (about 19.2 tokens/second while all rows generate). Host
+available RAM is approximately 38 GiB after prefill, with no OOM or swap. These
+measurements establish advancing generation; they do not measure the original
+launch's decode speed or prove the attention path caused its full delay.
+The native Qwen template supports thinking levels `low`, `medium` and `xhigh`
+(default); the current screen uses `xhigh`. The thought-token allowance is a
+separate bound, not a reasoning level.
 
 Thinking-on generation is active; grading is pending. Report paired correctness,
 coverage, invalid outputs, thought/final token counts and GX10 elapsed time.
