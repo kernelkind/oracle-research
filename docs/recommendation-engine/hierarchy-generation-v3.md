@@ -5,9 +5,10 @@ implements V3 and the approved V3.1 update. V3 remains available in code; V2 is
 preserved in Git history.
 Offline construction checks pass; model-based hierarchy-quality qualification
 remains pending. HR11–HR14 retain Pair-consolidation-v6; HR15 and HR16 used
-Pair-consolidation-v7. The title revision, Pair-consolidation-v8, is experimental
-and failed the extended HR16 browsing-quality screen below. It is not activated
-by this record. This document does not authorize model calls. The user's personal outline,
+Pair-consolidation-v7. Experimental Pair-consolidation-v11 specifies the user's
+2–5-word title requirement; all fifteen screened answers meet that limit.
+Meaning and browsing-quality qualifications remain below. This record does not
+activate the prompt or authorize model calls. The user's personal outline,
 `docs/notes/MY-NOTES_10-12.md`, remains read-only. The preceding mechanisms are
 V2 and V1; earlier variants need no formal naming.
 
@@ -584,6 +585,143 @@ UI was edited, no new hierarchy was generated, and no second revision was made.
 Exact answer reuse must match the complete request, including the optional
 canonical parent. A root-consolidation answer cannot be reused for a request
 with a supplied canonical parent merely because its two input nodes match.
+
+### Experimental V9: summarize the topic in its title
+
+The user clarified and approved that a title should be a **short, recognizable
+topic name summarizing the meaning**, with detailed boundaries in the meaning.
+The earlier V8 assessment that a title must name each substantial related kind
+does not express this requirement. Prior records remain evidence of that
+experiment, not the title criterion for future tests. Fixed meanings continue
+to define containment; title concision does not authorize changing their scope.
+
+[Pair-consolidation-v9](../../sse_multivector/shr_single_pair/Hierarchy-pair-consolidation-v9.md)
+uses native revision against V7, replacing V8's title wording with one direct
+instruction section: choose a short familiar topic name; let the name convey
+directly related activities, products, participants and resources; keep detailed
+conditions in the meaning; retain qualifiers that identify the topic; check the
+title as a faithful summary while keeping the established meaning unchanged.
+Its output description agrees with that distinction. V7's other wrapper text,
+synthetic example, meaning checks and shared-rules-v6/Bootstrap-v129 companion
+are preserved byte-for-byte. No new example, reasoning trace, hard title word
+limit or hierarchy implementation is added. This follows the [official
+reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices#how-to-prompt-reasoning-models-effectively)
+on concise direct constraints and representative evaluation; the guidance does
+not prove that these semantic instructions work for Sol 6.1.
+
+Before implementation, native preparation/run reproduced the user-rejected
+HR15 C00047 heading through one exact reuse, zero fresh calls. Its user review
+records the verbatim title and “this is way too long”, limited to naming.
+
+Pre-call panel: the ten exact V8 extended HR15/HR16 inputs above, plus four
+small-pair controls from V7's expanded root run (P00000 Tomatoes, P00002 Coffee,
+P00042 Coffee/chains and P00048 Lunch/lunch boxes) and the exact supplied-parent
+Coffee F00015-P00000. Native `prepare --from` retains saved V7 answers, inputs,
+parents, model/settings and frozen workers. All ready batches run under one
+shared scheduling group, with GPT-6.1 Sol medium subscription/SSE. Fifteen
+requests, one candidate draw; no hierarchy rerun or prompt activation.
+
+Review concise natural topic naming and fidelity to the final meaning, without
+requiring any exact caption or every covered facet in the title. Separately
+check full meaning coverage, identity, restrictions and parent fit. A familiar
+heading may summarize related activities and products; a short generic
+catch-all does not establish browsing usefulness. Root inputs whose earlier
+V7 meanings are already universal remain diagnostic limits, not instructions
+to hide or narrow their scope. Existing Bootstrap semantic conclusions are
+not reinstated as gold by these title tests.
+
+V9's fifteen comparisons completed. Qualified native agent assessment accepted
+seven, rejected six, and left two uncertain under the clarified title criterion.
+C00047 becomes **Food and drink**, preserving its preparation, ordering,
+service, appreciation and establishment/chain scope. Coffee/chains becomes
+Coffee; Lunch/lunch boxes becomes Lunch; Activity, experience, and meaning
+becomes Activity and experience. V9 still returns Food, drink, and engagement
+with them and several abstract inventories. The already universal Entities
+input remains Entities. These results are partial improvements, not approval
+or a complete title fix. The supplied-parent Coffee body's added water-extract
+alternative remains a separate specificity qualification.
+
+### Explicit 2–5-word requirement: experimental V11
+
+The user added a mandatory requirement: **generated titles must contain 2–5
+words**. This applies to generated `title`, not historical supplied headings;
+fixed meanings and coverage requirements still apply. V9's one-word titles do
+not qualify under this new requirement, even though they were acceptable under
+the earlier test criterion. Retain their results without retroactive approvals.
+
+[Pair-consolidation-v10](../../sse_multivector/shr_single_pair/Hierarchy-pair-consolidation-v10.md)
+was drafted after V9 to make inclusion of related facets in a title exceptional
+and explain the title/meaning distinction through the existing display-panel
+example. **No V10 model calls were made** before the user specified word count.
+[Pair-consolidation-v11](../../sse_multivector/shr_single_pair/Hierarchy-pair-consolidation-v11.md)
+incorporates that explicit requirement in the title instruction, final check
+and output description. The existing example's three-word title agrees with
+the constraint. It retains V7's exact definition-writing and containment rules
+and the same shared-rules-v6/Bootstrap-v129 companion. No historical version,
+fixed meaning, constructor policy or selected hierarchy prompt is changed.
+
+Before V11 calls, freeze the same fifteen exact inputs and settings used by V9,
+with saved V7 answers as baselines and the same shared scheduling group. Check
+2–5 whitespace-separated words mechanically, then assess natural topic naming
+and fidelity independently of the word count. Avoid counting a generic filler
+phrase as success. Review full coverage, identity, restrictions and parent fit
+separately; a short heading cannot justify changing the meaning to fit it.
+One candidate draw, no hierarchy rerun, no activation or reliability claim.
+
+All fifteen V11 comparisons completed; **15/15 titles contain 2–5
+whitespace-separated words**. Historical inputs remain unchanged.
+Representative exact results:
+
+| Saved title / case | V11 title | Words |
+|---|---|---:|
+| HR15 C00047's food/preparation/provision/appreciation inventory | Food and drink | 3 |
+| HR16 C00024: Food, drink, and related activities and engagement | Food and drink | 3 |
+| HR16 C00005: Materials, products, services, and engagement with them | Materials, products, and services | 4 |
+| HR16 C00001's biological/culinary materials/practices/resources inventory | Food and biological materials | 4 |
+| HR16 C00006: Nostr | Nostr ecosystem | 2 |
+| Tomatoes control | Tomato fruits | 2 |
+| Lunch/lunch-box control | Midday meals | 2 |
+
+C00047 and C00024 retain their major supplied kinds and relationships in the
+meaning rather than in the title. Nostr retains its protocol/network,
+applications, community and adoption scope. The two-word tomato heading
+preserves edible tomato-fruit identity. The lunch meaning still covers actual
+or intended midday meals and related packed-meal containers.
+
+Word count is established; comprehensive quality is not. Qualified native
+agent assessment accepts six, leaves eight uncertain, and rejects the generic
+Concrete and abstract entities heading for usefulness, despite its four words.
+Some broad roots remain abstract and some generated meanings generalize roles
+or alter extraction/nourishment wording. These qualifications are recorded
+separately from the successful length check. No new human semantic approvals,
+reliable success rate, complete hierarchy improvement or causal attribution to
+a particular sentence is claimed. V9 and V11 each have one draw, and the
+constraint changed between them. No V10 inference occurred.
+
+Native accounting: V9 has fifteen fresh answers, twenty-three attempts including
+warming, zero failures/reuses, and complete API-equivalent catalogue cost
+$0.097938. V11 has fifteen fresh answers, twenty-five attempts including warming
+and two recovered provider failures, zero reuses and no terminal failure. Its
+known subtotal is $0.110756; two failed attempts have unknown usage. Across
+both versions and the reused baseline: forty-eight fresh attempts, one exact
+reuse, known subtotal $0.208694; full cost remains unknown. Known fresh tokens
+are 31,782 uncached input, 44,800 cached input, zero reported cache writes and
+14,065 output, including 8,391 reasoning tokens. Original-generation tracing
+adds the baseline's two source calls once: fifty calls, known subtotal
+$0.2132424, also incomplete. These are saved catalogue equivalents, not cash
+subscription charges or a matched savings claim.
+
+Source and evidence remain in
+`/home/dev/src/notedeck_worktrees/algos/oracle-mvp-pair-consolidation-v9-topic-title-v1/`.
+Ignored native experiments are under `target/pair-consolidation-v9-*` and
+`target/pair-consolidation-v11-*`; the usage source/summary are
+`target/pair-consolidation-title-usage-{source,summary}-v1.json`. Revisions and
+paired assemblies preserve V7, Bootstrap-v129 and shared-rules-v6. V11's
+compiled SHA-256 is
+`9250707f50fd6469247499b20bcf3535edbc403b4e9f53c8c291be3c9fe735eb`.
+Retain the worktree for its frozen absolute source/receipt paths. Integrate
+through a separate worktree based on latest main so its newer constructor
+changes do not invalidate the completed experiments' source bindings.
 
 ## Step 1.5: SSE encoding of temporary synthetic nodes
 
