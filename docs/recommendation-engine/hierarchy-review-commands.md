@@ -28,6 +28,8 @@ original notes. Parameters describe the settings actually used.
 | HR21 | 50 | ASv6.100 | V4.1 | bootstrap-v133 | consolidated-grouped-v1 | — |
 | HR22 | 100 | ASv6.100 | V4.1 | bootstrap-v133 | consolidated-grouped-v1 | — |
 | HR23 | 100 | ASv6.100 | V4.2 | bootstrap-v133 | consolidated-grouped-v1 | — |
+| HR24 | 100 | ASv6.100 | V4.3 | bootstrap-v133 | consolidated-grouped-v1 | — |
+| HR25 | 100 | ASv6.100 | V4.4 | bootstrap-v133 | consolidated-grouped-v1 | — |
 
 **Same notes:** HR03/HR10/HR14/HR16/HR19/HR20/HR21 use the same ordered 50-note selection.
 HR05/HR08/HR09/HR13/HR15/HR17/HR18 use its same ordered first 24 notes. HR04 uses
@@ -38,7 +40,9 @@ so HR12's set differs from HR04's. HR06/HR07 use older ASv6.48 inputs and are
 HR22 keeps that same 50-note set first and appends the remaining 50 frozen
 collection notes. All 326 original Bootstrap titles and meanings match HR20.
 HR23 uses HR22’s exact ordered 100 notes, all 733 saved Bootstrap answers and
-original vectors.
+original vectors. HR24 and HR25 reuse that same frozen corpus, all Bootstrap
+answers and vectors, changing only their two explicitly recorded HDBSCAN
+parameters.
 
 **Selection and stopping:**
 
@@ -64,6 +68,10 @@ original vectors.
   Both have six roots.**
 - V4.2: same construction as V4.1, with **min_cluster_size=4**.
   **HR23: 53 nodes, six roots and 93/100 notes.**
+- V4.3: same construction, **min_samples=4, min_cluster_size=2**.
+  **HR24: 60 nodes, six roots and 94/100 notes.**
+- V4.4: same construction, **min_samples=4, min_cluster_size=4**.
+  **HR25: 52 nodes, six roots and 90/100 notes.**
 - HR14/HR16 omit two null Bootstrap meanings. HR17 had none. Answers and receipts
   remain saved; the original selected note set is preserved as input evidence.
 
@@ -75,13 +83,13 @@ HR03/HR06/HR07 and 1,800s for traversal/V2. V2 prominence uses 600s.
 
 **Encoder:** V3/V3.1 use the same SSE checkpoint as HR15, sentence-T5-base,
 CPU, 768 dimensions, batch 8, **512-token maximum**. Pool the original AS
-subject with its Bootstrap meaning as unselected context. V3.2/V4.1/V4.2 use the same
-encoder and limits, pooling the generated title instead. V4.1/V4.2 encode only
+subject with its Bootstrap meaning as unselected context. V3.2/V4.1–V4.4 use the same
+encoder and limits, pooling the generated title instead. V4.1–V4.4 encode only
 original Bootstrap entries. HR03/HR06/HR07 used
 standalone subject vectors, also with a 512-token maximum. Traversal/V2 did not
 use SSE for hierarchy construction.
 
-**Execution:** HR11–HR23 use prefix caching, automatic warming and exact-request
+**Execution:** HR11–HR25 use prefix caching, automatic warming and exact-request
 answer reuse. Seed/temperature are unspecified; no explicit output-token cap.
 Normally at most two provider attempts per case across resumes, temporary
 provider errors only; HR14 had an approved recovery exception. HR22 used a
@@ -373,3 +381,59 @@ inputs and controls. HR22’s frozen runner was retained for the comparison.
 Five null meanings and 393 unassigned entries remain recorded as evidence;
 seven input notes are absent. Structural validation and the review UI check
 passed; human semantic review is pending.
+
+## HR24 — 100 notes · HiGen V4.3
+
+Completed: 60 nodes, 46 original groups,
+six roots and 94/100 represented notes. Recorded run interval:
+504.5 seconds. Maximum leaf depth is
+7 category selections, with at most six choices per section.
+The exact ordered HR23 corpus, all 733 Bootstrap answers, original vectors,
+prompts, teacher settings, encoder controls and frozen shared runner e7dd09fa
+are unchanged. HDBSCAN uses min_samples=4 and min_cluster_size=2.
+The generation source is e498cda9. No new AS, Bootstrap or encoder calls occurred.
+
+Native accounting: **32 new attempts**, comprising 25 definitions
+and 7 warmups; **35 exact definition answers reused**.
+No failures, retries or missing usage. New API-equivalent catalog cost:
+**$0.1738776**; subscription incremental cash charge is zero.
+Accounting includes all input/cache/output token types and includes reasoning
+within output. Reuse is not a matched policy-savings claim.
+
+Native receipt/state validation passed. The browsing hierarchy has not received
+human semantic approval. No review UI was generated or refreshed.
+
+Saved state: `/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr24-v43/target/hierarchy-hr24-v43-hundred-note-v1/HR24/state.json`.
+Measured structure and controls: `structural-measurements.json` and
+`baseline-control-validation.json` in the same artifact root. Native
+`usage-new.json` and `execution-provenance.json` preserve usage and timing.
+Reusable definition: `sse_multivector/hierarchy-runs/hr24/hierarchy.spec.json`.
+Retain the isolated run worktree for its frozen source bindings and evidence.
+
+## HR25 — 100 notes · HiGen V4.4
+
+Completed: 52 nodes, 39 original groups,
+six roots and 90/100 represented notes. Recorded run interval:
+461.9 seconds. Maximum leaf depth is
+6 category selections, with at most six choices per section.
+The exact ordered HR23 corpus, all 733 Bootstrap answers, original vectors,
+prompts, teacher settings, encoder controls and frozen shared runner e7dd09fa
+are unchanged. HDBSCAN uses min_samples=4 and min_cluster_size=4.
+The generation source is e498cda9. No new AS, Bootstrap or encoder calls occurred.
+
+Native accounting: **17 new attempts**, comprising 11 definitions
+and 6 warmups; **41 exact definition answers reused**.
+No failures, retries or missing usage. New API-equivalent catalog cost:
+**$0.0913840**; subscription incremental cash charge is zero.
+Accounting includes all input/cache/output token types and includes reasoning
+within output. Reuse is not a matched policy-savings claim.
+
+Native receipt/state validation passed. The browsing hierarchy has not received
+human semantic approval. No review UI was generated or refreshed.
+
+Saved state: `/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr25-v44/target/hierarchy-hr25-v44-hundred-note-v1/HR25/state.json`.
+Measured structure and controls: `structural-measurements.json` and
+`baseline-control-validation.json` in the same artifact root. Native
+`usage-new.json` and `execution-provenance.json` preserve usage and timing.
+Reusable definition: `sse_multivector/hierarchy-runs/hr25/hierarchy.spec.json`.
+Retain the isolated run worktree for its frozen source bindings and evidence.

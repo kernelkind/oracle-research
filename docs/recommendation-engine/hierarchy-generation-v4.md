@@ -31,6 +31,32 @@ section-cut and stopping settings remain the same. Existing requests, answers
 and receipts remain immutable; exact grouped-consolidation answers are reused
 when available. Only newly required section definitions need inference.
 
+### Completed 100-note comparisons
+
+| Run | Samples / minimum cluster size | Original groups | Displayed nodes | Notes represented | Maximum leaf depth |
+| --- | --- | ---: | ---: | ---: | ---: |
+| HR22 · V4.1 | 3 / 2 | 62 | 80 | 94 | 9 |
+| HR23 · V4.2 | 3 / 4 | 42 | 53 | 93 | 6 |
+| HR24 · V4.3 | 4 / 2 | 46 | 60 | 94 | 7 |
+| HR25 · V4.4 | 4 / 4 | 39 | 52 | 90 | 6 |
+
+All four retain at most six roots/children per section. These are native
+structural results, not semantic approval. For the 92 notes shared by HR22 and
+HR24, average shortest category selections to a note group fall from 4.4457 to
+3.7391. For the 89 notes shared by HR23 and HR25, they change only from 3.1011
+to 3.0899; HR25 has three fewer represented notes overall. These comparisons
+exclude selecting or scanning individual notes within a group. Broad repeated
+categories persist, so fewer groups or levels alone do not establish improved
+browsing quality. Prompts, original meanings/vectors and all other parameters
+remain fixed; newly required section definitions are single model draws.
+
+Native HR24/HR25 accounting totals 49 new attempts, including 13 warmups, zero
+failures/retries and complete usage. The incremental catalog subtotal is
+$0.2652616 API-equivalent, not a cash subscription charge. Each run's exact
+reuse and immutable receipts remain separate from new attempts; no matched
+operational-cost savings are claimed. See the compact run index for definitions,
+source checkpoints, retained evidence and complete per-run accounting.
+
 ## Approved V4.2 process
 
 Use Bootstrap-v133's generated titles and fixed meanings for original local L1
