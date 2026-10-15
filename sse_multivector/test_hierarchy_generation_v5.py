@@ -153,6 +153,56 @@ class V5ConstructionTests(unittest.TestCase):
                 self.assertEqual(d['payload']['parent'], dict(title=p['subject'], meaning=p['meaning']))
         generation.check_state(state)
 
+    def test_roots_only_trial_keeps_original_noise_available_for_later_roots(self):
+        from sse_multivector import hierarchy_generation as generation
+
+        spec = self.prepare(count=43, bend=True)
+        cfg = json.loads(spec.read_text())
+        cfg['v5_options'] = dict(roots_only=True, include_original_unassigned=True)
+        self.native.write('v5.json', cfg)
+        state = self.construct(spec)
+        self.assertEqual(len(state['families']), 1)
+        self.assertTrue(all(not n['parents'] for n in state['nodes']))
+        family = state['families'][0]
+        first = family['rounds'][0]
+        noise = set(first['unassigned'])
+        self.assertTrue(noise)
+        self.assertGreater(len(family['rounds']), 1)
+        self.assertTrue(noise <= set(first['after']))
+        self.assertTrue(noise <= set(family['rounds'][1]['current']))
+        self.assertEqual(state['v5']['eligible_ids'], family['original_ids'])
+        self.assertEqual(generation.summary(state)['scope'], 'roots only')
+        altered = deepcopy(state)
+        altered['v5_options']['include_original_unassigned'] = False
+        with self.assertRaisesRegex(ValueError, 'frozen hierarchy definition'):
+            generation.check_state(altered, verify_receipts=False)
+
+    def test_roots_only_trial_preserves_original_noise_exclusion_by_default(self):
+        spec = self.prepare(count=43, bend=True)
+        cfg = json.loads(spec.read_text())
+        cfg['v5_options'] = dict(roots_only=True)
+        self.native.write('v5.json', cfg)
+        state = self.construct(spec)
+        self.assertEqual(len(state['families']), 1)
+        family = state['families'][0]
+        first = family['rounds'][0]
+        noise = set(first['unassigned'])
+        self.assertTrue(noise)
+        self.assertFalse(noise & set(first['after']))
+        self.assertFalse(noise & set(state['v5']['eligible_ids']))
+
+    def test_v5_trial_options_require_known_boolean_fields(self):
+        from sse_multivector import hierarchy_generation as generation
+
+        spec = self.prepare()
+        cfg = json.loads(spec.read_text())
+        for options in (None, [], {'roots_only': 1},
+                        {'include_original_unassigned': 'yes'}, {'other': True}):
+            with self.subTest(options=options):
+                self.native.write('v5.json', dict(cfg, v5_options=options))
+                with self.assertRaisesRegex(ValueError, 'invalid hierarchy generation spec'):
+                    generation.prepare(spec, self.native.root/'invalid')
+
     def test_original_noise_is_excluded_but_leftover_notes_survive_viewer_export(self):
         from sse_multivector.canonical_hierarchy_viewer import export_viewer
         state = self.construct(self.prepare(count=22, tied=True))

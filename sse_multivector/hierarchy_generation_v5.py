@@ -138,6 +138,8 @@ def _finish(state, family):
     else:
         nodes[family['parent']]['direct_note_ids'] = direct
     family['complete'] = True
+    if state.get('v5_options', {}).get('roots_only'):
+        return
     for identifier in family['nodes']:
         node = nodes[identifier]
         if node['leaf']:
@@ -176,7 +178,8 @@ def _step(directory, state, family):
         round_ = hdbscan.round_for(destination, state, family, vectors)
         if not round_['groups']:
             if family['parent'] is None and 'eligible_ids' not in state['v5']:
-                state['v5']['eligible_ids'] = []
+                state['v5']['eligible_ids'] = (list(round_['current']) if
+                    state.get('v5_options', {}).get('include_original_unassigned') else [])
                 state['v5']['original_unassigned_ids'] = list(round_['current'])
                 family['current'] = []
             family['rounds'].append(dict(round_, selection=None, proposals=[], applied=True,
@@ -189,7 +192,9 @@ def _step(directory, state, family):
         round_.update(proposals(state, round_, state['max_siblings']))
         family['rounds'].append(round_)
         if family['parent'] is None and 'eligible_ids' not in state['v5']:
-            state['v5']['eligible_ids'] = _originals(state, [i for g in round_['groups'] for i in g])
+            state['v5']['eligible_ids'] = _originals(state, round_['current'] if
+                state.get('v5_options', {}).get('include_original_unassigned') else
+                [i for g in round_['groups'] for i in g])
             state['v5']['original_unassigned_ids'] = list(round_['unassigned'])
     if not round_['proposals']:
         round_.update(applied=True, after=list(family['current']))
@@ -370,12 +375,15 @@ def check_state(state, *, verify_current_code=True):
             raise ValueError('V5 amendment lost original associations')
     child_parents = [f['parent'] for f in state['families'] if f['parent'] is not None]
     expected_parents = [n['id'] for n in state['nodes'] if not n['leaf']
-                        and families[n['family']]['complete']]
+                        and families[n['family']]['complete']
+                        and not state.get('v5_options', {}).get('roots_only')]
     if sorted(child_parents) != sorted(expected_parents):
         raise ValueError('V5 unfinished child families changed')
     if 'eligible_ids' in data:
         first = state['families'][0]['rounds'][0]
-        expected = _originals(state, [i for group in first['groups'] for i in group])
+        expected = _originals(state, first['current'] if
+            state.get('v5_options', {}).get('include_original_unassigned') else
+            [i for group in first['groups'] for i in group])
         if data['eligible_ids'] != expected or data['original_unassigned_ids'] != first['unassigned']:
             raise ValueError('V5 original grouped eligibility changed')
     if (state['status'] == 'complete') != all(f['complete'] for f in state['families']):

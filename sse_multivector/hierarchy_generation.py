@@ -160,7 +160,8 @@ def summary(state):
         result["scope"] = ("roots only" if state["generation_policy"] == POLICY_V4_ROOTS
                            else "hierarchy down to original HDBSCAN groups")
         if state['generation_policy'] == POLICY_V5:
-            result['scope'] = 'recursive fresh HDBSCAN trees with group leaves'
+            result['scope'] = ('roots only' if state.get('v5_options', {}).get('roots_only')
+                               else 'recursive fresh HDBSCAN trees with group leaves')
             result['direct_note_ids'] = state.get('direct_note_ids', [])
             result['hdbscan_section_cuts'] = [
                 dict(family=f['id'], parent=f['parent'], round=i+1,
@@ -266,9 +267,15 @@ def prepare(spec_path, directory, history_root=None):
     if policy in (*SECTION_POLICIES, POLICY_V5):
         allowed_fields += (fields | {"bootstrap_hierarchy"},
                            fields | {"bootstrap_hierarchy", "generation_policy"})
+    if policy == POLICY_V5:
+        allowed_fields += tuple(f | {"v5_options"} for f in allowed_fields)
+    options = cfg.get('v5_options', {}) if isinstance(cfg, dict) else {}
     if (
         not isinstance(cfg, dict)
         or set(cfg) not in allowed_fields
+        or not isinstance(options, dict)
+        or set(options) - {'roots_only', 'include_original_unassigned'}
+        or any(type(value) is not bool for value in options.values())
         or policy not in (POLICY, POLICY_V31, *TITLE_POLICIES)
         or type(cfg["schema_version"]) is not int
         or cfg["schema_version"] != 1
@@ -360,6 +367,8 @@ def prepare(spec_path, directory, history_root=None):
         ),
         **teacher_specs,
     )
+    if 'v5_options' in cfg:
+        state['v5_options'] = deepcopy(options)
     if policy in HDBSCAN_POLICIES:
         from . import hierarchy_hdbscan
         state["hdbscan_binary"] = str(workflow.resolve(cfg["hdbscan_binary"], spec_path.parent))
@@ -1137,6 +1146,7 @@ def check_state(state, *, verify_receipts=True, verify_current_code=True):
         or state["min_notes"] != MIN_NOTES
         or state["note_ids"] != cfg["note_ids"]
         or state["local_schema_version"] != cfg["local_schema_version"]
+        or state.get('v5_options', {}) != cfg.get('v5_options', {})
         or state["corpus"] != str(workflow.resolve(cfg["corpus"], definition.parent))
         or state["worker_config"]
         != _worker_template(workflow.resolve(cfg["worker_config"], definition.parent))

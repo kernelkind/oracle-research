@@ -121,3 +121,22 @@ introduced.
 Historical V3/V4 definitions retain their frozen policies and settings on
 resume. They do not acquire V5's algorithm or parameters. HR27 and V5's
 version description are recorded in the hierarchy workbook.
+
+## Experimental roots-only iterations
+
+V5 definitions may freeze an optional `v5_options` object. Both supported
+fields are booleans and default to false:
+
+- `roots_only`: finish after the root lineup, without preparing children.
+- `include_original_unassigned`: keep all non-null original entries eligible,
+  including entries unassigned by the first root clustering. The first tree
+  and root selection are unchanged; subsequent root pools retain those entries.
+
+These controls support isolated chat iterations, not a new official HiGen
+version or a change to V5 defaults. Bootstrap meanings and original vectors
+can be reused through `bootstrap_hierarchy`; identical consolidation requests
+still use native answer reuse. Reports must count distinct notes under the
+actual roots separately from notes left outside those roots. Top-container
+access does not establish root coverage. The user rejected treating direct
+top-container notes as approved root placement; this iteration does not
+resolve the final handling of root leftovers.
