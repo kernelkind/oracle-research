@@ -6,11 +6,11 @@ The user requested continuing the same process until six roots exist, then
 observing that result before settling complete-coverage or sixth-root rules.
 The protected `MY-NOTES_10-12.md` is read-only and remains unedited.
 
-## Approved recursive extension — future work
+## HiGen V5 — approved recursive design, not implemented
 
-The following decisions extend the design; they do not change the completed
-six-root evidence or activate a new HiGen version. Recursive construction is
-not implemented by this experiment.
+The user named this recursive design **HiGen V5**. The following decisions do
+not change the completed six-root evidence or activate its implementation.
+Recursive construction is not implemented by this experiment.
 
 For each final parent, use its complete accumulated set of assigned HDBSCAN
 groups, including additions from every amendment. Do not use only the groups
@@ -36,6 +36,31 @@ discard the remaining groups as child-node candidates and retain their notes
 directly on the parent, deduplicating note IDs. For example, while generating
 children beneath L2S1, those notes remain attached to L2S1 and appear when
 viewing L2S1's notes. The child limit must not remove those note associations.
+
+### Questions identified before implementation
+
+These are unresolved implementation choices, not approved changes:
+
+- Accumulated groups can come from different HDBSCAN runs. The source of the
+  tree connections for cutting that complete set must be specified. Root 6's
+  six creation groups span seven groups in the original HR22 clustering;
+  remapping it to that original tree would change the approved six-leaf case.
+  Root 2 also contains seven of the eight members of original G08, so including
+  whole original groups would incorrectly pull in an entry outside that root.
+- The protected rough notes select the section with the most nodes; the saved
+  round record uses distinct supporting notes. The size measure for V5 needs
+  an explicit decision rather than treating those measures as interchangeable.
+- A section can contain several existing siblings. Final G09 contains roots
+  1, 2 and 5. The one-existing-root amendment rule does not specify whether to
+  combine these siblings or keep them separate and how to assign new entries.
+- Grouped-v1 accepts an optional fixed parent. Root experiments omitted it;
+  whether new recursive consolidation calls should supply their known parent
+  needs to be specified. Historical requests and exact-reuse identities must
+  remain unchanged.
+- The current bend implementation requires at least three retained distance
+  levels and a positive bend. It has no fallback. A parent with more than six
+  groups can still have too few distinct distance levels or no positive bend;
+  the intended handling of that case remains open.
 
 ## Starting evidence and round construction
 
