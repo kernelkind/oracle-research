@@ -847,7 +847,7 @@ ASv6.100 is the approved subject baseline after diverse-input testing, with
 measured omissions and relationship errors still reported. Its designation
 does not clear the broader-generation hold or select a production workflow.
 The Notedeck browser UI is approved and committed; task 15 waits
-for protocol agreement and service implementation before integration.
+for service implementation before integration.
 The reviewed-100-note prerequisite for the planned validation ladder remains open.
 
 On October 1, the user is undertaking prompt stress-testing. Shared task 30,
@@ -1001,12 +1001,13 @@ every evaluation use thinking off. Pilot data is frozen; final-test collection
 is implemented locally. Scoring and hardware execution remain open; see the
 [pilot process](fine-tuning-pilot-process.md).
 
-Task 13 remains in progress. The [protocol draft](../recommendation-engine/design/hierarchy-serving-protocol-decisions.md)
-now covers opening a hierarchy, node events, note lists and indexes. Proposals
-remain under review; service implementation and client integration await
-agreement. The Notedeck browser UI is approved and committed; task 15 is waiting
-for service integration. Dependencies are unchanged; no protocol design is
-selected by this planning update.
+Task 13 is complete for the [toy snapshot protocol](../recommendation-engine/design/hierarchy-serving-protocol-decisions.md)
+approved October 15. A replaceable starting event selects regular node events;
+each node contains its children and direct note IDs, without pagination.
+The protocol is not recommended for widespread adoption; efficient hierarchy
+updates are out of scope. Service implementation and client integration remain
+separate work. The Notedeck browser UI is approved and committed; task 15 is
+waiting for service integration. Dependencies are unchanged.
 
 The user confirmed separate GPU preparation in principle October 3 because the
 pilot data is not ready. Existing notes can exercise the hardware workflow;

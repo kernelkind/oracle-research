@@ -1,6 +1,7 @@
 # Paid relays for the flagship hierarchy
 
 Investigated October 5, 2026; publication options clarified October 8.
+Protocol compatibility updated October 15 for the approved toy snapshot protocol.
 
 ## Provisional paid-relay candidate
 
@@ -17,8 +18,10 @@ use than relying on a flat-price promise of unlimited storage.
 
 This selects a candidate; it does not approve spending or publication. Paid
 writes of our custom kinds, upload pacing, the actual event count and the
-operating period remain to be verified. Protocol agreement and Notedeck
-integration remain separate work.
+operating period remain to be verified. The
+[snapshot protocol](../design/hierarchy-serving-protocol-decisions.md) is agreed
+as a toy and is not recommended for widespread adoption. Service implementation
+and Notedeck integration remain separate work.
 
 The hierarchy relay needs to store hierarchy events and references to original
 posts. **It does not need to retain the original posts.** Clients fetch those
@@ -79,37 +82,32 @@ tests of paid writes.
 [NIP-11](https://github.com/nostr-protocol/nips/blob/master/11.md#server-limitations)
 defines the message limit in serialized UTF-8 bytes and the tag limit as the
 number of tag arrays. A tag-heavy event can reach the byte limit before the tag
-limit. The draft already allows further pages when items or page references
-do not fit; measure the actual encoded events rather than impose one fixed
-item count for every page.
+limit. The toy protocol has no pagination: each node holds at most 500 direct
+note IDs, with small root and child lists. Measure the actual encoded events
+against the selected relay's limits before publishing.
 
-## Compatibility with the complete protocol draft
+## Compatibility with the toy snapshot protocol
 
-The complete draft supplied by the user for review on October 5 proposes these
-experimental kind numbers. This compatibility check does not register the
-numbers or approve the protocol.
+The toy snapshot protocol approved October 15 uses these experimental kind
+numbers. They are not registered allocations. Relay compatibility does not
+establish suitability for widespread adoption.
 
-| Kind | Draft event | Nostr behavior |
+| Kind | Event | Nostr behavior |
 | --- | --- | --- |
-| `18680` | Hierarchy entry | Replaceable |
+| `18680` | Starting event | Replaceable |
 | `8680` | Node event | Regular |
-| `8681` | Node list page | Regular |
-| `38680` | First notes page | Addressable |
-| `8682` | Notes page | Regular |
 
 **None is ephemeral, and none appears in either Cellar exclusion list.**
 [NIP-01](https://github.com/nostr-protocol/nips/blob/master/01.md#kinds)
 defines ephemeral events as kinds `20000–29999`, which are not expected to be
-stored. A new `18680` entry can replace the previous entry for its author. A
-new `38680` first notes page can replace the previous page for that author and
-`d`. Referenced `8680`, `8681` and `8682` events are regular events fetched by
-their exact IDs. Replaceability is compatible with storage and is separate
-from ephemeral behavior.
+stored. A new `18680` starting event can replace the previous starting event
+for its author. Referenced `8680` nodes are regular events fetched by their
+exact IDs. Replaceability is compatible with storage and is separate from
+ephemeral behavior.
 
-All draft events have empty `content`. Tag-based data and these exact five
+All hierarchy events have empty `content`. Tag-based data and these exact two
 kinds still need a funded write test. Existing reads of a different
-addressable kind support the choice but do not prove that all custom kinds
-will be accepted.
+addressable kind do not prove that these custom kinds will be accepted.
 
 ## Read-only checks performed
 
@@ -123,10 +121,11 @@ Bounded queries with `nak 0.16.2` against Cellar confirmed:
 - Fetching that same event by its exact ID succeeded.
 - Fetching it by author, kind and `#d` succeeded.
 
-The last two queries exercise the forms needed to fetch referenced nodes/pages
-and a node's current first notes page. No funds were deposited, events
-published, imports triggered, or operators contacted. Bulk-write behavior,
-renewals, exports and maximum-size events were not tested.
+The exact-ID query exercises the form used to fetch referenced nodes. The
+author/kind/`#d` query is not needed by the toy snapshot protocol.
+No funds were deposited, events published, imports triggered, or operators
+contacted. Bulk-write behavior, renewals, exports and maximum-size events were
+not tested.
 
 ## Other paid relays considered
 
@@ -157,17 +156,17 @@ but that example is not a deployed-service commitment. Neither displaced Cellar.
 
 ## Verification before publishing the hierarchy
 
-1. Agree the event kinds and protocol. Count billable events and measure the
-   largest encoded message and tag count. Include regular events retained
-   across hierarchy updates when estimating ongoing cost.
+1. Using the agreed toy protocol, count billable events and measure the largest
+   encoded message and tag count. Include regular events retained across
+   snapshots when estimating ongoing cost.
 2. Estimate the total charge for the intended operating period and obtain
    spending approval within the project's $1,000 lifetime paid-resource cap.
    Hosting estimates and accounting follow
    [release planning](../../planning/release-decisions.md#compute-hosting-and-budget).
 3. After an approved deposit, publish a minimal hierarchy using every selected
-   kind, including an empty first notes page. Confirm accepted writes, exact-ID
-   reads, author/kind/`#d` reads, and replacement of the entry and first notes
-   page while referenced regular events remain readable.
+   kind, including a node with no notes. Confirm accepted writes, author/kind
+   reads of the starting event, exact-ID reads of nodes, and replacement of the
+   starting event while previously referenced regular nodes remain readable.
 4. Pace the full upload, handle throttling and verify that every referenced
    hierarchy event can be retrieved. Recheck policy if actual kinds or limits
    differ from this investigation.
@@ -177,7 +176,8 @@ The advertised base rate would make 100,000 billable stored events cost
 measured hierarchy size or an approved allocation. Original post IDs within
 one hierarchy event are references, not separately uploaded original posts.
 
-The most useful next step is the small funded compatibility test once the
-protocol and spending are approved. Contacting the operator is warranted only
-for a requirement that remains unclear and affects the actual upload; special
-permission for high total volume is not a published prerequisite found here.
+The most useful next step for this paid-relay route is the small funded
+compatibility test once spending is approved. Contacting the operator is
+warranted only for a requirement that remains unclear and affects the actual
+upload; special permission for high total volume is not a published prerequisite
+found here.

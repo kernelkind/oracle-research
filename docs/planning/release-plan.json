@@ -88,22 +88,22 @@
       "id": "13",
       "track": "release",
       "title": "Define Nostr hierarchy protocol",
-      "status": "IN PROGRESS",
-      "description": "Agree the Nostr protocol for opening snapshots and browsing hierarchy nodes and ordered notes.\nProtocol proposals are under review. Service implementation and client integration await agreement."
+      "status": "COMPLETE",
+      "description": "Define a toy Nostr protocol for opening snapshots and browsing hierarchy nodes and ordered notes.\nThe two-event snapshot protocol is approved as a toy, not recommended for widespread adoption. Efficient hierarchy updates are out of scope. Service implementation and client integration remain separate work."
     },
     {
       "id": "14",
       "track": "release",
       "title": "Build and test hierarchy service code",
       "status": "WAITING",
-      "description": "Deliver service code that serves a saved hierarchy snapshot through the Nostr protocol, with end-to-end local tests and serving instructions.\nImplementation awaits the protocol; testing needs the reviewed 100-note snapshot. Hosted operation is optional."
+      "description": "Deliver service code that serves a saved hierarchy snapshot through the Nostr protocol, with end-to-end local tests and serving instructions.\nThe toy snapshot protocol is agreed; implementation requires separate authorization. Testing needs the reviewed 100-note snapshot. Hosted operation is optional."
     },
     {
       "id": "15",
       "track": "release",
       "title": "Build Notedeck hierarchy browser",
       "status": "WAITING",
-      "description": "Deliver a Notedeck hierarchy browser on the user’s fork, integrated with the Nostr service.\nBrowser UI is approved and committed; service integration awaits protocol agreement and service implementation."
+      "description": "Deliver a Notedeck hierarchy browser on the user’s fork, integrated with the Nostr service.\nBrowser UI is approved and committed; the toy snapshot protocol is agreed. Service integration awaits service implementation."
     },
     {
       "id": "16",

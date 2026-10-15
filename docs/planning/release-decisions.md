@@ -1,6 +1,6 @@
 # October 18 release decisions
 
-Updated October 10, 2026. This is the written record of the planning discussion.
+Updated October 15, 2026. This is the written record of the planning discussion.
 Agreed requirements, tentative choices and existing-data facts are distinguished
 below. The overall plan is not approved. Approval of an individual requirement
 or task-view edit does not approve the whole plan. Approved scheduling changes
@@ -92,8 +92,8 @@ started September 30. A 200-note experimental hierarchy using saved outputs has
 since been generated and is under further development. Task 03 remains in
 progress; the planned validation ladder and 100-note acceptance gate remain open.
 The Notedeck browser UI is approved and committed; task 15 is waiting for
-protocol agreement and service implementation before integration. Completion
-links, acceptance requirements and open implementation choices are unchanged.
+service implementation before integration. Completion links, acceptance
+requirements and open implementation choices are unchanged.
 
 **Parallel hierarchy-construction candidates — status reconciled October 8:**
 Frontier-based and vector-space approaches are both being tested within the
@@ -4555,14 +4555,17 @@ costs where recovery is used, not only model calls. It can use available evidenc
 from 24 and the growing hierarchy builds; it does not wait for the finished
 implementation in 28.
 
-**Protocol and client status reconciled October 2:** 13 remains in progress.
-The [protocol draft](../recommendation-engine/design/hierarchy-serving-protocol-decisions.md)
-now covers opening a hierarchy, node events, note lists and indexes. Proposals
-remain under review; service implementation and client integration await
-agreement. The Notedeck browser UI is approved and committed; task 15 is waiting
-for service integration. This does not establish end-to-end readiness. Tracks
-and completion links are unchanged. Protocol design and UI work remain with
-their assigned agents; this update makes no technical choice.
+**Toy snapshot protocol approved October 15:** task 13 is complete for the
+[toy protocol](../recommendation-engine/design/hierarchy-serving-protocol-decisions.md).
+A replaceable starting event selects regular node events by exact event ID.
+Each node contains its title, UUID, child references and at most 500 direct note
+IDs. Root and child lists are small; there is no pagination. Efficient hierarchy
+updates are out of scope. The protocol is not recommended for widespread
+adoption; its kind numbers are experimental, not registered allocations.
+Service implementation and client integration remain separate work. The
+Notedeck browser UI is approved and committed; task 15 is waiting for service
+integration. This does not establish end-to-end readiness or authorize
+implementation, publication or spending. Tracks and completion links are unchanged.
 
 Service testing needs both the protocol and a saved hierarchy snapshot. The
 100-note hierarchy can supply the initial snapshot; service development need

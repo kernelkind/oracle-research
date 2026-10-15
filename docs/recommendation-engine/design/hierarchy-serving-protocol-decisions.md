@@ -1,154 +1,119 @@
-# Hierarchy serving protocol
+# Toy hierarchy snapshot protocol
 
-Each author publishes one hierarchy. The hierarchy author and relay operator
-are separate roles.
+`toy` `experimental`
 
-## Opening a hierarchy — proposal
+This is a toy protocol. It is not recommended for widespread adoption.
+Efficient hierarchy updates are out of scope.
 
-The client starts with the hierarchy author's public key and a relay URL.
+The client starts with a hierarchy author's public key and a relay URL.
+One author publishes one hierarchy. The author and relay operator are separate.
+All hierarchy events come from that author and have empty `content`.
+Source notes are fetched separately and need not be on the hierarchy relay.
 
-The author publishes a signed hierarchy entry event using a dedicated
-**replaceable kind** in `10000–19999`; the kind number is not assigned yet.
-Its author and kind select the current entry event, so no `d` tag is needed.
-[NIP-01](https://github.com/nostr-protocol/nips/blob/master/01.md#kinds)
+| Kind | Event | Nostr behavior | Contains |
+| --- | --- | --- | --- |
+| 18680 | Starting event | Replaceable | Exact root node references |
+| 8680 | Node | Regular | UUID, title, exact child references and direct note IDs |
 
-For example, connect to `wss://hierarchy.example` and request:
+These are experimental kind numbers, not registered allocations. Kind behavior
+follows [NIP-01](https://github.com/nostr-protocol/nips/blob/master/01.md#kinds).
+Examples abbreviate event IDs, public keys and signatures.
+
+## Open the snapshot
+
+Request the author's starting event:
 
 ```text
-["REQ","sid",{"authors":["npub1abc..abc"],"kinds":[K_ENTRY],"limit":1}]
+["REQ","sid",{"authors":["npub1abc..abc"],"kinds":[18680],"limit":1}]
 ```
 
-`K_ENTRY` stands for the unassigned kind number. Examples abbreviate event IDs,
-public keys and signatures; wire IDs and keys use full lowercase hex.
-[NIP-19](https://github.com/nostr-protocol/nips/blob/master/19.md#bare-keys-and-ids)
-
-## Entry event — proposed schema
-
-The entry event's `e` tags list the root node event IDs in order.
-The root nodes are served by the same relay. `content` is empty.
+Its `child` tags list all root nodes:
 
 ```text
 {
   "id":"note1abc..abc", "pubkey":"npub1abc..abc",
-  "created_at":1790683200, "kind":K_ENTRY,
-  "tags":[["e","note1def..def"],["e","note1ghi..ghi"]],
+  "created_at":1790683200, "kind":18680,
+  "tags":[
+    ["child","7602d719-2393-4fab-93b8-5df19d887eb0","note1def..def"]
+  ],
   "content":"", "sig":"abc..abc"
 }
 ```
 
-Fetch the referenced root nodes from that relay:
+Each `child` tag contains a node's UUID followed by its exact event ID.
+Fetch that event:
 
 ```text
-["REQ","sid",{"ids":["note1def..def","note1ghi..ghi"]}]
+["REQ","sid",{"ids":["note1def..def"]}]
 ```
 
-## Node event — proposed schema
-
-`K_NODE` is an unassigned regular kind in `1000–9999`.
-Node events are published by the hierarchy author and served by the same relay.
-
-Each node MUST have exactly one `d` tag with a nonempty identifier, unique
-within the author's hierarchy. The identifier MUST stay the same when the
-node's title, children or notes change, and MUST NOT be reused for a
-different node.
-
-A node MAY have multiple parents. Different parents MAY select different
-node event IDs for the same `d` value.
-
-A `d` value MUST NOT occur twice along one path from a root through `child`
-references, even if the node event IDs differ.
-
-`title` names the node. Its `child` tags list immediate children in tag order.
-Each tag contains the child's `d` value followed by its node event ID.
-The event ID selects the child version. The referenced event MUST be a
-`K_NODE` event by the hierarchy author, and its `d` value MUST match the
-tag's identifier.
-A node with no `child` tags has no children. `content` is empty.
+## Read a node
 
 ```text
 {
   "id":"note1def..def", "pubkey":"npub1abc..abc",
-  "created_at":1790683199, "kind":K_NODE,
+  "created_at":1790683199, "kind":8680,
   "tags":[
     ["d","7602d719-2393-4fab-93b8-5df19d887eb0"],
-    ["title","Cooking"],
-    ["child","d288321f-a49b-4dbd-9523-86337d7ad046","note1jkl..jkl"],
-    ["child","74286a9a-5768-44ce-8a1a-c4af2f1a2255","note1mno..mno"]
+    ["title","Root node"],
+    ["child","d288321f-a49b-4dbd-9523-86337d7ad046","note1ghi..ghi"],
+    ["e","note1jkl..jkl"],
+    ["e","note1mno..mno"]
   ],
   "content":"", "sig":"def..def"
 }
 ```
 
-## Note lists — proposed schema
+- `d` is the node's stable UUID.
+- `title` is its title.
+- Each `child` references an immediate child node by UUID and exact event ID.
+- Each `e` references one source note directly assigned to this node.
 
-Each node's note list starts with a `K_NOTES_LIST` event, an unassigned
-addressable kind in `30000–39999`. This first page has exactly one `d` tag
-matching the node's. Further pages use `K_NOTES_INDEX`, an unassigned regular
-kind in `1000–9999`. Both use the page format below.
-[NIP-01](https://github.com/nostr-protocol/nips/blob/master/01.md#kinds)
+The root list follows `child` tag order in the starting event. A node's child
+list follows its `child` tag order; its notes follow its `e` tag order.
+Descendant notes appear in this node only if their IDs are explicitly listed.
 
-Request the current first page from the hierarchy author:
+Root and immediate-child counts are small. Each node holds at most 500 direct
+note IDs. All lists are complete in their containing event; there is no
+pagination. Fetching a node for its title also transfers its note IDs.
 
-```text
-["REQ","sid",{"authors":["npub1abc..abc"],"kinds":[K_NOTES_LIST],"#d":["7602d719-2393-4fab-93b8-5df19d887eb0"],"limit":1}]
-```
+## Follow the selected events
 
-Clients use the current first page independently of the selected node version.
-An empty first page has no `e` or `notes_index` tags. A missing first page
-makes the read incomplete.
-A read follows its selected first page's references even if a newer page arrives.
+Clients MUST follow the exact event IDs in the selected starting event and
+its referenced nodes. Read the title, children and note IDs from those node
+events. The UUID identifies the logical node; it does not select a newer event.
 
-Child nodes do not automatically contribute notes. A child's note is
-included only if the author also lists its ID in this node's note list.
+A newer starting event can begin another snapshot read. It does not change an
+existing read's references. Cached events with matching IDs remain reusable.
 
-In every page, `e` tags list note event IDs and `notes_index` tags reference
-further pages by event ID. Each referenced page MUST be a `K_NOTES_INDEX`
-event by the hierarchy author. All `e` tags precede all `notes_index` tags.
+## Validity and missing data
 
-The first page:
+- A node MUST contain exactly one `d` tag with its UUID and exactly one
+  `title` tag with a nonempty value. Its UUID MUST NOT identify a different node.
+- Every `child` MUST reference a kind 8680 event by the hierarchy author,
+  with a `d` matching the UUID in the reference.
+- A UUID MUST appear at most once in a root list or immediate-child list.
+  A node MAY have multiple parents.
+- A UUID MUST NOT repeat along a path through child references.
+- A source note ID MUST appear at most once in one node. The same source note
+  MAY appear in different nodes.
 
-```text
-{
-  "id":"note1xyz..xyz", "pubkey":"npub1abc..abc",
-  "created_at":1790683201, "kind":K_NOTES_LIST,
-  "tags":[
-    ["d","7602d719-2393-4fab-93b8-5df19d887eb0"],
-    ["e","note1ccc..ccc"],
-    ["notes_index","note1pqr..pqr"],
-    ["notes_index","note1stu..stu"]
-  ],
-  "content":"", "sig":"abc..abc"
-}
-```
+Malformed recognized tags and references violating these rules are invalid.
+Missing referenced node events leave that part of the snapshot unresolved.
+Clients MUST NOT replace them with newer events found by UUID.
 
-A further page:
+| Available event | Empty list |
+| --- | --- |
+| Starting event with no `child` tags | No roots |
+| Node with no `child` tags | No children |
+| Node with no `e` tags | No direct notes |
 
-```text
-{
-  "id":"note1pqr..pqr", "pubkey":"npub1abc..abc",
-  "created_at":1790683198, "kind":K_NOTES_INDEX,
-  "tags":[
-    ["e","note1aaa..aaa"],
-    ["e","note1bbb..bbb"],
-    ["notes_index","note1vwx..vwx"]
-  ],
-  "content":"", "sig":"abc..abc"
-}
-```
+A missing node is unresolved, not an empty node. A missing source note does not
+change the complete list of IDs recorded in its node.
 
-For every page, list the `e` tag values in their tag order, then append each
-referenced page's complete sequence in `notes_index` tag order.
-Apply this rule recursively.
-A missing referenced page makes the read incomplete.
+## Publish a snapshot
 
-Within a node's complete note sequence, each note event ID MUST appear at
-most once, whether listed directly or through further pages.
-The same note ID MAY appear in different nodes' lists.
-
-A page MUST NOT reference itself directly or through other pages. If
-following `notes_index` references revisits a page on the current traversal
-path, the list is invalid.
-
-Pages are published by the hierarchy author and served by the same relay.
-`content` is empty. The author chooses how many entries fit each event's
-byte and tag limits. [NIP-11](https://github.com/nostr-protocol/nips/blob/master/11.md#server-limitations)
+Construct children before their parents so their event IDs can be referenced.
+Publish the snapshot's node events before its starting event. Readers select
+that starting event and follow its exact references while those events remain
+available.
