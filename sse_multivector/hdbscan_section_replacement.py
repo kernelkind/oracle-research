@@ -8,6 +8,7 @@ No teacher calls or saved hierarchy edits are performed.
 import argparse
 from copy import deepcopy
 import hashlib
+from html import escape
 import json
 from pathlib import Path
 import subprocess
@@ -23,7 +24,7 @@ def sha(path):
         return hashlib.file_digest(stream, 'sha256').hexdigest()
 
 
-def prepare(directory, experiment, case_id):
+def prepare(directory, experiment, case_id, *, replacement_review=None, section=None):
     directory = Path(directory).resolve()
     experiment = Path(experiment).resolve()
     native, _, _ = workflow.load(experiment)
@@ -35,6 +36,11 @@ def prepare(directory, experiment, case_id):
         raise ValueError('replacement requires one valid native synthetic meaning')
     case = result['cases'][0]
     evidence = case.get('evidence', {})
+    if replacement_review is not None:
+        if section is None:
+            raise ValueError('saved group replacement requires a section')
+        return _prepare_next(directory, experiment, case, source=dict(schema_version=1,
+            replacement_review=str(Path(replacement_review).resolve()), section=section, stage='section'))
     if 'replacement_review' in evidence:
         return _prepare_next(directory, experiment, case)
     if not {'epsilon_review', 'state', 'section', 'groups'} <= set(evidence):
@@ -184,8 +190,8 @@ def saved_review(directory, *, execute=False):
                           for j in pool['encodings']])
     if 'source_replacement' in plan:
         provenance.update(source_replacement=plan['source_replacement'],
-            exclude_unassigned=plan['exclude_unassigned'],
-            excluded_unassigned_ids=plan['excluded_unassigned_ids'])
+            exclude_unassigned=plan.get('exclude_unassigned', False),
+            excluded_unassigned_ids=plan.get('excluded_unassigned_ids', []))
     result = review.group_review(response, request, mapping, pool, provenance)
     identifier = plan.get('replacement_id', 'R00001')
     original_notes = {o['id']: o['local']['note_id'] for o in pool['originals']}
@@ -273,8 +279,11 @@ def prepare_source(source, base, read, read_bytes):
     if source['section'] not in sections:
         raise ValueError('unknown replacement section: ' + source['section'])
     selected = sections[source['section']]['groups']
-    if len(selected) < 2:
-        raise ValueError('section consolidation requires at least two groups')
+    if not selected:
+        raise ValueError('section consolidation requires a group')
+    single = len(selected) == 1
+    if single and 'group_experiment' in source:
+        raise ValueError('one-group section requires no intermediate group experiment')
     groups = {g['id']: g for g in analysis['groups']}
     state = read(Path(plan['source_state']))
     leaves = {frozenset(s['original_ids']): s for s in
@@ -294,6 +303,17 @@ def prepare_source(source, base, read, read_bytes):
                           note_ids=group['note_ids']))
         leaf = leaves.get(frozenset(ids))
         node = native_nodes.get(leaf.get('item')) if leaf else None
+        if single:
+            group_case['id'] = source['section']
+            group_case['evidence'].update(stage='section', group_nodes=[])
+            if node:
+                saved, producer = _saved_case(node['synthetic']['experiment'], node['synthetic']['case'], read_bytes)
+                if (saved['inputs'] != inputs or saved['parsed'] != dict(title=node['subject'], meaning=node['meaning'])):
+                    raise ValueError('saved group definition differs from exact current group input')
+                group_case['evidence']['group_nodes'] = [dict(
+                    group=group_id, input_ids=ids, reused=True, producer=producer)]
+            return [group_case], dict(application_allowed=False,
+                purpose='One group supplies its section definition directly; no one-node consolidation.')
         if node:
             saved, producer = _saved_case(node['synthetic']['experiment'], node['synthetic']['case'], read_bytes)
             if (saved['inputs'] != inputs or saved['parsed'] != dict(title=node['subject'], meaning=node['meaning'])):
@@ -327,9 +347,10 @@ def prepare_source(source, base, read, read_bytes):
         purpose='Name reviewed groups, then their synthetic section; preserve saved hierarchies.')
 
 
-def _prepare_next(directory, experiment, case):
+def _prepare_next(directory, experiment, case, *, source=None):
     evidence = case['evidence']
-    if evidence.get('stage') != 'section':
+    reuse = source is not None
+    if not reuse and evidence.get('stage') != 'section':
         raise ValueError('replacement requires a completed section definition, not a group')
     sources = {}
 
@@ -345,13 +366,21 @@ def _prepare_next(directory, experiment, case):
     def read(path):
         return json.loads(read_bytes(path))
 
-    source = dict(schema_version=1, replacement_review=evidence['replacement_review'],
-                  section=evidence['section'], stage='section')
-    if 'group_experiment' in evidence:
-        source['group_experiment'] = evidence['group_experiment']
+    if not reuse:
+        source = dict(schema_version=1, replacement_review=evidence['replacement_review'],
+                      section=evidence['section'], stage='section')
+        if 'group_experiment' in evidence:
+            source['group_experiment'] = evidence['group_experiment']
     expected, _ = prepare_source(source, experiment, read, read_bytes)
-    if (expected[0]['id'] != case['id'] or expected[0]['inputs'] != case['inputs']
-            or expected[0]['evidence'] != evidence):
+    if reuse:
+        witnesses = expected[0]['evidence']['group_nodes']
+        if (len(witnesses) != 1 or not witnesses[0]['reused']
+                or witnesses[0]['producer'] != dict(experiment=str(experiment),
+                    case=case['id'], receipt=case['receipt'])):
+            raise ValueError('saved definition is not the exact native group in this section')
+        evidence = expected[0]['evidence']
+    if (expected[0]['inputs'] != case['inputs'] or (not reuse and
+            (expected[0]['id'] != case['id'] or expected[0]['evidence'] != evidence))):
         raise ValueError('replacement producer differs from the reviewed section')
     _saved_case(experiment, case['id'], read_bytes)
     prior = _load_replacement(Path(evidence['replacement_review']).parent)
@@ -378,12 +407,89 @@ def _prepare_next(directory, experiment, case):
     generation._prepare_encoding(directory, pool, [identifier])
     updated = dict(prior, experiment=str(experiment), case=case['id'], receipt=case['receipt'],
         replacement_id=identifier, removed_ids=origins, removed_input_ids=removed,
+        reused_definition=reuse,
         source_replacement=str(Path(evidence['replacement_review']).parent),
         replacement_review=evidence['replacement_review'], current_ids=retained+[identifier],
         first_new_encoding=first_new_encoding, sources=sources, pool=pool)
     workflow.write(directory/'replacement.json', dict(plan=updated, sha256=workflow.inputs.digest(updated)))
     return dict(removed_entries=len(removed), reused_vectors=len(retained), updated_entries=len(retained)+1,
         worker_configs=[j['config'] for j in pool['encodings'][first_new_encoding:]])
+
+
+def write_roots(directory, *, name='proposed-roots'):
+    """Show retained synthetic roots, including those absent from current groups."""
+    directory = Path(directory).resolve()
+    if not name or any(c not in 'abcdefghijklmnopqrstuvwxyz0123456789-_' for c in name):
+        raise ValueError('root artifact name requires lowercase letters, digits, hyphens or underscores')
+    analysis = saved_review(directory)
+    latest = _load_replacement(directory)
+    chain, seen, plan = [], set(), latest
+    while True:
+        chain.append(plan)
+        if 'source_replacement' not in plan:
+            break
+        path = Path(plan['source_replacement'])/'replacement.json'
+        if str(path) in seen or latest['sources'].get(str(path)) != sha(path):
+            raise ValueError('root lineage is cyclic or not frozen')
+        seen.add(str(path))
+        envelope = workflow.read(path)
+        plan = envelope['plan']
+        if workflow.inputs.digest(plan) != envelope['sha256']:
+            raise ValueError('root lineage preparation changed')
+    active, next_slot = {}, 1
+    for plan in reversed(chain):
+        identifier = plan.get('replacement_id', 'R00001')
+        if identifier in active:
+            continue  # A filtering-only preparation preserves the existing root.
+        absorbed = [active.pop(i) for i in plan.get('removed_input_ids', []) if i in active]
+        if absorbed:
+            slots = sorted({s for r in absorbed for s in r['slots']})
+            version = 1+max(r['version'] for r in absorbed)
+        else:
+            slots, version = [next_slot], 1
+            next_slot += 1
+        active[identifier] = dict(slots=slots, version=version)
+    records = analysis.get('replacements', [analysis['replacement']])
+    roots = sorted([dict(r, **active[r['id']]) for r in records], key=lambda r: r['slots'])
+    notes = sorted({n for r in roots for n in r['note_ids']})
+    result = dict(schema_version=1, replacement=str(directory/'replacement.json'),
+        replacement_sha256=sha(directory/'replacement.json'), roots=roots, root_count=len(roots),
+        represented_notes=len(notes), note_ids=notes, eligible_notes=analysis['input_notes'],
+        retained_original_entries=sum(len(r['original_ids']) for r in roots),
+        input_entries=analysis['encoded_entries'])
+    workflow.write(directory/(name+'.json'), result)
+    md = [f'# {len(roots)} proposed roots', '',
+          f'{len(notes)} distinct notes represented; {analysis["input_notes"]} eligible notes.', '',
+          '| Root slot | Title | Notes | Original entries |', '|---|---|---:|---:|']
+    height = 150+len(roots)*125
+    svg = [f'<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="{height}">',
+        '<style>text{font-family:Arial,sans-serif}</style><rect width="100%" height="100%" fill="white"/>',
+        f'<text x="28" y="36" font-size="24" font-weight="bold">{len(roots)} proposed roots</text>',
+        f'<text x="28" y="64" font-size="15">{len(notes)} distinct notes represented · '
+        f'{analysis["input_notes"]} eligible notes · root membership preserved across clustering</text>']
+    for i, root in enumerate(roots):
+        slot = '+'.join(map(str, root['slots']))
+        md.append(f'| {slot} v{root["version"]} | {root["title"].replace("|", "\\|")} | '
+                  f'{len(root["note_ids"])} | {len(root["original_ids"])} |')
+        color, y = f'hsl({(i*137.508)%360:.1f},65%,36%)', 95+i*125
+        status = (f'Current clustering: G{root["group"]:02d}, {root["section"]}'
+                  if root['group'] is not None else 'Current clustering: ungrouped; retained as a root')
+        svg += [f'<g><title>{escape(root["meaning"])}</title>',
+            f'<rect x="28" y="{y}" width="1144" height="105" rx="8" fill="white" stroke="{color}" stroke-width="2"/>',
+            f'<text x="48" y="{y+30}" font-size="20" font-weight="bold" fill="{color}">'
+            f'Root {slot} v{root["version"]} · {escape(root["title"])}</text>',
+            f'<text x="48" y="{y+57}" font-size="15">{len(root["note_ids"])} notes · '
+            f'{len(root["original_ids"])} original entries · {root["id"]}</text>',
+            f'<text x="48" y="{y+82}" font-size="14">{escape(status)}</text></g>']
+    for root in roots:
+        md += ['', f'## Root {"+".join(map(str, root["slots"]))} v{root["version"]}: {root["title"]}',
+               '', root['meaning']]
+    svg += [f'<text x="28" y="{height-18}" font-size="14">'
+            'Hover over a root for its complete fixed meaning. Note counts overlap across roots.</text></svg>']
+    (directory/(name+'.svg')).write_text('\n'.join(svg)+'\n')
+    (directory/(name+'.md')).write_text('\n'.join(md)+'\n')
+    return dict(root_count=len(roots), represented_notes=len(notes), eligible_notes=analysis['input_notes'],
+                svg=str(directory/(name+'.svg')), definitions=str(directory/(name+'.md')))
 
 
 def main():
@@ -396,23 +502,34 @@ def main():
     source.add_argument('--from-replacement', type=Path,
                         help='reuse the exact completed synthetic vector from this preparation')
     prepare_parser.add_argument('--case')
+    prepare_parser.add_argument('--replacement-review', type=Path,
+                                help='reuse an exact native definition for one group in this review')
+    prepare_parser.add_argument('--section', help='section for --replacement-review')
     prepare_parser.add_argument('--exclude-unassigned', action='store_true',
                                 help='exclude original unassigned nodes; requires --from-replacement')
     collect_parser = commands.add_parser('collect')
     collect_parser.add_argument('directory', type=Path)
     collect_parser.add_argument('--name', default='reclustered-sections')
+    roots_parser = commands.add_parser('roots')
+    roots_parser.add_argument('directory', type=Path)
+    roots_parser.add_argument('--name', default='proposed-roots')
     args = parser.parse_args()
     if args.command == 'collect':
         result = collect(args.directory, name=args.name)
+    elif args.command == 'roots':
+        result = write_roots(args.directory, name=args.name)
     elif args.from_replacement is not None:
-        if args.case is not None:
-            parser.error('--case applies only to --experiment')
+        if args.case is not None or args.replacement_review is not None or args.section is not None:
+            parser.error('--case, --replacement-review and --section apply only to --experiment')
         result = prepare_from(args.directory, args.from_replacement,
                               exclude_unassigned=args.exclude_unassigned)
     else:
         if args.case is None or args.exclude_unassigned:
             parser.error('--experiment requires --case and does not accept --exclude-unassigned')
-        result = prepare(args.directory, args.experiment, args.case)
+        if (args.replacement_review is None) != (args.section is None):
+            parser.error('--replacement-review and --section must be supplied together')
+        result = prepare(args.directory, args.experiment, args.case,
+                         replacement_review=args.replacement_review, section=args.section)
     print(json.dumps(result))
 
 

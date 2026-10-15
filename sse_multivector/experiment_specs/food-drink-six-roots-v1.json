@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "prompt": {
+    "id": "Hierarchy-consolidated-grouped-v1",
+    "path": "../shr_single_pair/Hierarchy-consolidated-grouped-v1.md"
+  },
+  "dataset": {
+    "adapter": "hierarchy_group_consolidation",
+    "path": "food-drink-six-roots-v1.source.json"
+  },
+  "runner": {
+    "provider": "openai-codex",
+    "auth_file": null,
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "medium",
+    "transport": "sse",
+    "runner_binary": "/home/dev/src/notedeck_worktrees/algos/experiment-runner-music-fifty-source-v1/experiment_runner/run-model.sh",
+    "prompt_cache": false,
+    "timeout_seconds": 1800,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "meaning": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "title",
+        "meaning"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "scheduling_group": "food-drink-six-roots-v1"
+}

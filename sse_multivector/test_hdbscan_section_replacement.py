@@ -83,6 +83,22 @@ class SectionReplacementTests(unittest.TestCase):
         pending = native.cli('prepare', 'pending', '--spec', 'pending.spec.json', ok=False)
         self.assertIn('group definition requires one valid native result', pending.stderr)
         native.cli('run', 'changed-groups')
+        # A one-group section already has its final definition; reuse the exact native result.
+        single = next(s for s in derived['sections'] if len(s['groups']) == 1)
+        single_label = f"S{derived['sections'].index(single)+1:02d}"
+        single_source = dict(source, section=single_label, stage='section')
+        prepare_model('single-group', single_source)
+        one = json.loads(native.cli('show', 'single-group', '--case', single_label).stdout)
+        self.assertEqual(len(json.loads(one['inputs']['INPUT_JSON'])['nodes']), 3)
+        producer = one['evidence']['group_nodes'][0]['producer']
+        previous_calls = len(native.calls())
+        replacement('prepare', native.root/'single-reused', '--experiment', producer['experiment'],
+                    '--case', producer['case'], '--replacement-review', native.root/'filtered/analysis.json',
+                    '--section', single_label)
+        reused_plan = json.loads((native.root/'single-reused/replacement.json').read_text())['plan']
+        self.assertTrue(reused_plan['reused_definition'])
+        self.assertEqual(reused_plan['receipt'], producer['receipt'])
+        self.assertEqual(len(native.calls()), previous_calls)
         source.update(stage='section', group_experiment=str(native.root/'changed-groups'))
         prepare_model('second-section', source)
         second = json.loads(native.cli('show', 'second-section', '--case', second_label).stdout)
@@ -119,6 +135,14 @@ class SectionReplacementTests(unittest.TestCase):
         original_ids = {o for i in removed for o in before['pool']['items'][i]['original_ids']}
         self.assertEqual(set(final['replacement']['original_ids']), original_ids)
         self.assertEqual(json.loads((native.root/'v41/state.json').read_text()), state)
+        replacement('roots', native.root/'second', '--name', 'proposed-roots')
+        roots = json.loads((native.root/'second/proposed-roots.json').read_text())
+        self.assertEqual([r['id'] for r in roots['roots']], ['R00001', 'R00002'])
+        self.assertEqual([r['slots'] for r in roots['roots']], [[1], [2]])
+        self.assertEqual(roots['root_count'], 2)
+        self.assertEqual(roots['represented_notes'], len({n for r in roots['roots'] for n in r['note_ids']}))
+        self.assertTrue((native.root/'second/proposed-roots.svg').exists())
+        self.assertTrue((native.root/'second/proposed-roots.md').exists())
         derived['groups'][0]['titles'] = ['Altered visualization']
         native.write('filtered/analysis.json', derived)
         tampered = native.cli('prepare', 'tampered-next', '--spec', 'changed-groups.spec.json', ok=False)
