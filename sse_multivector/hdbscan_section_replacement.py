@@ -418,6 +418,10 @@ def _prepare_next(directory, experiment, case, *, source=None):
         source_replacement=str(Path(evidence['replacement_review']).parent),
         replacement_review=evidence['replacement_review'], current_ids=retained+[identifier],
         first_new_encoding=first_new_encoding, sources=sources, pool=pool)
+    updated['replacement_ids'] = [identifier]
+    updated['root_changes'] = [dict(id=identifier, section=evidence['section'],
+        removed_input_ids=removed, original_ids=origins, experiment=str(experiment),
+        case=case['id'], receipt=case['receipt'], reused_definition=reuse)]
     workflow.write(directory/'replacement.json', dict(plan=updated, sha256=workflow.inputs.digest(updated)))
     return dict(removed_entries=len(removed), reused_vectors=len(retained), updated_entries=len(retained)+1,
         worker_configs=[j['config'] for j in pool['encodings'][first_new_encoding:]])
