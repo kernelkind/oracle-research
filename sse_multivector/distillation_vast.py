@@ -1,5 +1,6 @@
 """Describe distillation for vast/package.py. No provider calls or paid actions."""
 import argparse
+from decimal import Decimal
 from pathlib import Path
 import re
 
@@ -26,6 +27,8 @@ def make_cache_spec(settings, offer, package, image):
 
 
 def _make_spec(settings, offer, package, image, job, module, action, resumable):
+    if settings.get('require_local_volume') and 'local_volume' not in settings:
+        raise ValueError('this launch profile requires a local volume')
     check_offer(settings, offer)
     if not re.fullmatch(re.escape(settings['image_repository']) + r'@sha256:[a-f0-9]{64}', image):
         raise ValueError('supply the published image registry digest')
@@ -50,7 +53,11 @@ def _make_spec(settings, offer, package, image, job, module, action, resumable):
         'status_command': [REMOTE_PYTHON, '-m', module, 'status', '--output', 'results'],
         'progressive_copy': settings.get('progressive_copy', {
             'poll_seconds': 5, 'bytes_per_second': 8 * 1024 * 1024, 'timeout_seconds': 900}),
-        'limits': {'maximum_charge_cents': int(settings['approved_maximum_usd'] * 100),
+        # The volume has its own ledger commitment, including time detached.
+        # Keep that allowance out of the instance's reservation ceiling.
+        'limits': {'maximum_charge_cents': int(100 * (
+            Decimal(str(settings['approved_maximum_usd'])) -
+            Decimal(str(settings.get('local_volume_maximum_usd', 0))))),
             'maximum_hourly_usd': settings['offer_maximums']['dph_total'],
             'session_seconds': settings['rental_hours'] * 3600, 'cleanup_seconds': 900,
             'work_seconds': job['timeout_seconds'],
@@ -82,12 +89,22 @@ def main():
     parser.add_argument('--package', type=Path, required=True)
     parser.add_argument('--image', required=True)
     parser.add_argument('--download-only', action='store_true', help='one-GPU persistent model cache job')
+    parser.add_argument('--local-volume-id', type=int, help='existing persistent Vast local volume')
+    parser.add_argument('--local-volume-machine-id', type=int, help='physical machine owning that volume')
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
+    if (args.local_volume_id is None) != (args.local_volume_machine_id is None):
+        parser.error('supply both --local-volume-id and --local-volume-machine-id')
     if args.output.exists():
         raise FileExistsError(args.output)
+    settings = read_json(args.settings)
+    if args.local_volume_id is not None:
+        volume = {'id': args.local_volume_id, 'machine_id': args.local_volume_machine_id}
+        if 'local_volume' in settings and settings['local_volume'] != volume:
+            parser.error('CLI volume differs from the volume already bound in settings')
+        settings['local_volume'] = volume
     builder = make_cache_spec if args.download_only else make_spec
-    write_json(args.output, builder(read_json(args.settings), read_json(args.offer), args.package, args.image))
+    write_json(args.output, builder(settings, read_json(args.offer), args.package, args.image))
 
 
 if __name__ == '__main__':

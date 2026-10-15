@@ -805,8 +805,13 @@ stages or approve a dataset size, hardware rental or spending allocation.
 **October 14 Qwen continuation approved:** continue the selected Qwen3.8-27B
 final 1,000-note checkpoint for two further complete passes over the same notes,
 retaining the complete optimizer/RNG state, ASv6.100, splits and numerical recipe.
-Use one 96GB RTX PRO 6000 under a new **$30 maximum total charge**. At the end of
-each pass, save the continuing checkpoint and generate the same 100 validation
+Use one 96GB RTX PRO 6000 under a new **$30 maximum total charge**, with a
+**persistent Vast local volume** required for the model cache and work. Bind
+the volume and GPU to the same physical host, mounting at `/workspace`. The
+profile reserves $28.50 for the instance/transfers and $1.50 separately for
+volume retention, including detached storage time; both commitments and failed
+attempts count toward $30. At the end of each pass, save the continuing
+checkpoint and generate the same 100 validation
 and 200 test answers: 200 new validation and 400 new test answers in total.
 Retrieve and mechanically verify every required artifact, then terminate the
 single rental. Grade validation locally, select the checkpoint without reviewing
@@ -816,6 +821,10 @@ The [continuation and pilot-failure audit](fine-tuning-pilot-process.md#approved
 records the measured estimate, verified parent and required preparation.
 Explicit parent-checkpoint continuation, both test collections, offline
 completion verification and a one-card launch profile are implemented. The
+profile now rejects launches without an explicit volume binding; CLI volume
+IDs must identify the selected physical machine. The matching input package
+and image are regenerated and verified locally, including container replacement
+with a retained volume and offline cache reuse. The
 clean-runtime rehearsal also now freezes the shared input/parser dependency.
 Pinned-runtime/SSH verification and the actual Qwen tokenizer check pass;
 matching image publication, fresh offer and ledger admission precede rental.

@@ -74,7 +74,8 @@ def check_offer(settings, offer):
     limits = settings["offer_maximums"]
     maximum = (number(limits["dph_total"]) * number(settings["rental_hours"]) +
                number(limits["inet_down_cost"]) * number(settings["inbound_gb"]) +
-               number(limits["inet_up_cost"]) * number(settings["outbound_gb"]))
+               number(limits["inet_up_cost"]) * number(settings["outbound_gb"]) +
+               number(settings.get("local_volume_maximum_usd", 0)))
     if maximum > number(settings["approved_maximum_usd"]):
         raise ValueError("launch allowances exceed the approved maximum")
     return {"offer_id": offer["id"], "quoted_hourly_usd": str(offer["dph_total"]),

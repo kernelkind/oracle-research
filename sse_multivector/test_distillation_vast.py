@@ -22,6 +22,23 @@ def quote():
 
 
 class WorkloadTests(unittest.TestCase):
+    def test_qwen_profile_rejects_launch_without_a_local_volume(self):
+        settings = read_json(Path(__file__).parent / 'distillation/qwen-continuation-v1.vast.json')
+        offer = {**settings['offer_equals'], **settings['offer_minimums'],
+            **settings['offer_maximums'], 'id': 123, 'machine_id': 12, 'bundle_id': 23,
+            'driver_version': '595.58.03', 'dph_base': 1.10, 'storage_cost': .24,
+            'storage_total_cost': .05}
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            DistillationDataTests().prepare(root)
+            config = root / 'qwen.json'
+            write_json(config, {'data': str(root / 'prepared'), 'mask_prompt': str(root / 'masks.txt'),
+                'model': 'example/qwen', 'revision': 'a' * 40, 'training_milestones': [1, 2]})
+            deploy.prepare([config], root / 'inputs', gpu_assignments={'qwen': 0})
+            with self.assertRaisesRegex(ValueError, 'requires a local volume'):
+                vast.make_spec(settings, offer, root / 'inputs',
+                               settings['image_repository'] + '@sha256:' + '4' * 64)
+
     def test_known_failed_machine_is_rejected_before_workload_preparation(self):
         settings, offer = quote()
         settings['excluded_machine_ids'] = [offer['machine_id']]
@@ -41,7 +58,9 @@ class WorkloadTests(unittest.TestCase):
         self.assertFalse(settings['ssh_direct'])
         self.assertEqual(settings['onstart'], 'ssh-keygen -A && service ssh start')
         self.assertIn(146170, settings['excluded_machine_ids'])
-        self.assertNotIn('local_volume', settings)
+        self.assertTrue(settings['require_local_volume'])
+        self.assertEqual(settings['local_volume_maximum_usd'], 1.5)
+        self.assertEqual(settings['disk_gb'], 30)
         checked = deploy.check_offer(settings, offer)
         self.assertLessEqual(float(checked['maximum_charge_usd']), 30)
         self.assertGreaterEqual(settings['setup_cost_cents'], 100 * (
@@ -56,8 +75,11 @@ class WorkloadTests(unittest.TestCase):
             write_json(config, {'data': str(root / 'prepared'), 'mask_prompt': str(root / 'masks.txt'),
                 'model': 'example/qwen', 'revision': 'a' * 40, 'training_milestones': [1, 2]})
             deploy.prepare([config], root / 'inputs', gpu_assignments={'qwen': 0})
+            settings['local_volume'] = {'id': 881, 'machine_id': offer['machine_id']}
             spec = vast.make_spec(settings, offer, root / 'inputs',
                                  settings['image_repository'] + '@sha256:' + '4' * 64)
+            self.assertEqual(spec['local_volume'], settings['local_volume'])
+            self.assertEqual(spec['environment']['HF_HOME'], '/workspace/oracle-full-build/model-cache')
             ledger = root / 'ledger.json'
             write_json(ledger, {'lifetime_cap_cents': 100000, 'actual_spend_cents': 0,
                 'outstanding_commitments_cents': 0, 'reserved_remaining_work_cents': 0, 'entries': []})
@@ -66,7 +88,56 @@ class WorkloadTests(unittest.TestCase):
             self.assertTrue(contract['workload']['resumable'])
             self.assertEqual(contract['session_seconds'], 86400)
             self.assertEqual(contract['limits']['setup_cost_micro_usd'], 5_000_000)
-            self.assertEqual(contract['limits']['reservation_ceiling_micro_usd'], 30_000_000)
+            self.assertEqual(contract['limits']['reservation_ceiling_micro_usd'], 28_500_000)
+            self.assertEqual(contract['local_volume'], settings['local_volume'])
+            # The independent volume commitment and instance ceiling share $30.
+            self.assertEqual(spec['limits']['maximum_charge_cents'] +
+                             int(settings['local_volume_maximum_usd'] * 100), 3000)
+
+    def test_volume_allowance_counts_toward_the_total_before_launch(self):
+        settings = read_json(Path(__file__).parent / 'distillation/qwen-continuation-v1.vast.json')
+        offer = {**settings['offer_equals'], **settings['offer_minimums'],
+            **settings['offer_maximums'], 'id': 123, 'machine_id': 12, 'bundle_id': 23,
+            'driver_version': '595.58.03', 'dph_base': 1.10, 'storage_cost': .24,
+            'storage_total_cost': .05}
+        settings['local_volume_maximum_usd'] = 1.51
+        with self.assertRaisesRegex(ValueError, 'allowances exceed'):
+            deploy.check_offer(settings, offer)
+
+    def test_cli_binds_a_volume_to_the_selected_machine(self):
+        settings_path = Path(__file__).parent / 'distillation/qwen-continuation-v1.vast.json'
+        settings = read_json(settings_path)
+        offer = {**settings['offer_equals'], **settings['offer_minimums'],
+            **settings['offer_maximums'], 'id': 123, 'machine_id': 12, 'bundle_id': 23,
+            'driver_version': '595.58.03', 'dph_base': 1.10, 'storage_cost': .24,
+            'storage_total_cost': .05}
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            DistillationDataTests().prepare(root)
+            config = root / 'qwen.json'
+            write_json(config, {'data': str(root / 'prepared'), 'mask_prompt': str(root / 'masks.txt'),
+                'model': 'example/qwen', 'revision': 'a' * 40, 'training_milestones': [1, 2]})
+            deploy.prepare([config], root / 'inputs', gpu_assignments={'qwen': 0})
+            write_json(root / 'offer.json', offer)
+            command = [sys.executable, '-m', 'sse_multivector.distillation_vast',
+                '--settings', str(settings_path), '--offer', str(root / 'offer.json'),
+                '--package', str(root / 'inputs'), '--image',
+                settings['image_repository'] + '@sha256:' + '4' * 64,
+                '--output', str(root / 'spec.json'), '--local-volume-id', '881']
+            incomplete = subprocess.run(command, capture_output=True, text=True)
+            self.assertNotEqual(incomplete.returncode, 0)
+            self.assertIn('supply both', incomplete.stderr)
+            self.assertFalse((root / 'spec.json').exists())
+            wrong = subprocess.run(command + ['--local-volume-machine-id', '13'],
+                                   capture_output=True, text=True)
+            self.assertNotEqual(wrong.returncode, 0)
+            self.assertIn('selected physical machine', wrong.stderr)
+            self.assertFalse((root / 'spec.json').exists())
+            subprocess.run(command + ['--local-volume-machine-id', '12'],
+                           check=True, capture_output=True, text=True)
+            spec = read_json(root / 'spec.json')
+            self.assertEqual(spec['local_volume'], {'id': 881, 'machine_id': 12})
+            self.assertEqual(spec['limits']['maximum_charge_cents'], 2850)
 
     def test_one_gpu_download_workload_requires_volume_and_no_training(self):
         from gte.full_build_package import write_manifest

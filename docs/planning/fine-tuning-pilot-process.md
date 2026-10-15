@@ -58,9 +58,11 @@ order and record every use without duplicating the underlying training rows.
 training pass, 2.0485 hours per 100-note validation generation and 4.1728 hours
 per 200-note test generation. Two passes, two validations and two tests total
 **18.05 GPU hours** before preparation, loading and transfers. The October 14
-single-card server quote was $1.125/hour including 150GB disk. Allow roughly
-**20–24 rental hours / $23–28**, within the approved $30 maximum. Longer answers,
-host throughput and recovery can change these estimates. Local grading needs
+single-card server quote was $1.125/hour including 150GB instance disk, before
+the persistent-volume decision. Allow roughly **20–24 rental hours**. Obtain a
+fresh quote for the required volume and 30GB instance disk under the combined
+**$30 maximum** below. Longer answers, host throughput and recovery can change
+these estimates. Local grading needs
 no rented GPU and does not extend the rental.
 
 ### Pilot failure audit and continuation requirements
@@ -77,7 +79,7 @@ continuation packages Qwen only and has no Gemma preparation or baseline gate.
 | An inference memory allowance was incorrectly applied as a training cutoff. Gemma-specific gradient and cache failures caused further replacement rentals. | Keep training measurements separate from inference batch admission. Preserve numerical checks and tolerances. Run matched Qwen preparation only; do not repeat the three-family qualification. |
 | The old deployment assigns Qwen to GPU 1. Its required-card count is the highest assigned index plus one. | Freeze a Qwen-only package using logical GPU 0; copying the old assignment would still require two cards. Download only the pinned Qwen model. |
 | Host DNS prevented SSH; a startup gate also charged the full transfer allowance against an inadequate local startup bound. | Verify image/driver, SSH route, host RAM, disk and complete storage/transfer pricing. Freeze setup and work allowances inside the approved $30 total; do not reuse the earlier $1 startup allowance. |
-| A persistent-volume request used an unsupported mount path and was rejected. | If a volume is used, mount it at the provider-supported `/workspace` path, keep work under its child directory, and verify attachment, write/read and free space on the selected machine. A separate download rental is not part of this schedule. |
+| A persistent-volume request used an unsupported mount path and was rejected. | Require a persistent local volume mounted at the provider-supported `/workspace` path, keep work under its child directory, and verify attachment, write/read and free space on the selected machine. A separate download rental is not part of this schedule. |
 | Direct copying was slow; large checkpoints could delay small responses. | Use the tested provider-proxy route and progressive copier. Prioritize sealed responses, copy checkpoint files in bounded chunks, verify hashes before publishing completion markers, and reuse verified copies in final retrieval. |
 | A controller can exit while a training child remains alive. Interrupted calls and partial publication must not be mistaken for finished work. | Retain worker locks through child lifetime. Reconcile the live worker before a recorded continuation; reuse complete checkpoints and saved receipts. Never regenerate a saved invalid answer or treat an unsealed partial checkpoint as resumable. Copier/observer failure must not stop training. |
 | The generic `distillation/vast-launch.json` still sets a 43,200-second worker timeout. | Do not inherit a 12-hour cutoff for a 20–24-hour run. Freeze the approved no-automatic-timeout behavior, monitor cost/time, and complete retrieval verification before the approved normal termination. |
@@ -108,13 +110,35 @@ and all planned training-note uses and updates. Reruns reuse saved answers and
 complete checkpoints, including when publication of the first test is interrupted.
 
 Use [the Qwen continuation Vast profile](../../sse_multivector/distillation/qwen-continuation-v1.vast.json)
-with one 96GB card, 150GB disk, 24 hours at at most $1.15/hour including disk,
-80GB inbound and 10GB outbound transfer allowances. The worst-case planned
-allowance is $28.50 within the $30 total; failed attempts also count toward that
-total. The setup allowance is $5; $27 calls for cost review. Work has no automatic
-timeout. Machine 146170 is excluded. The profile uses managed SSH with
+with one 96GB card, 30GB instance disk and a persistent local volume for the
+model cache, inputs, checkpoints and results. Plan for a 150GB volume; select it
+with the GPU host, since a Vast local volume only attaches on its physical
+machine. The profile rejects an unbound volume. Supply both
+`--local-volume-id` and `--local-volume-machine-id` when creating the workload
+specification, or bind the same `local_volume` object in launch settings. A
+different machine is rejected before any provider action. The existing shared
+launcher uses `--link-volume` with `--mount-path /workspace`, verifies the mount
+and volume identity, and keeps work under `/workspace/oracle-full-build` with
+`HF_HOME=/workspace/oracle-full-build/model-cache`.
+
+The 24-hour instance allowance is at most $1.15/hour including instance disk,
+with 80GB inbound and 10GB outbound transfers. Reserve **$28.50 for the instance
+and transfers plus $1.50 separately for the volume**, within the same **$30
+total**, including failed attempts. `check_offer` includes both allowances;
+the frozen instance contract receives only the $28.50 ceiling. Reconcile and
+record the volume's separate ledger commitment before creation or continued
+retention. Its current rate and intended retention must fit $1.50, including
+detached time after instance deletion; a current storage quote is still needed.
+The setup allowance is $5; $27 of instance spending calls for cost review.
+Work has no automatic timeout. Machine 146170 is excluded. The profile uses
+managed SSH with
 `ssh-keygen -A && service ssh start`, the provider proxy and progressive copying.
-It adds no separate download rental or persistent volume.
+There is no separate download rental. Replacement on the same host retains
+the cache and saved work; verified retrieval and destruction of the previous
+instance are still required before recorded recovery. Reusing an old pilot
+volume for this different workload requires the existing explicit recovery flow
+with `reuse_work=false` and a recorded reason, preserving its cache while
+archiving prior work. Do not silently adopt the old three-family worker state.
 Pass this profile explicitly with `distillation_vast --settings`; the default
 settings file still describes the historical informal pilot.
 
@@ -128,8 +152,10 @@ isolated at `experiment-runner-qwen-continuation-v1`, commit `1cfdd6a7`.
 The real input package was prepared locally and mechanically verified: one Qwen
 run, one preparation, 1,000 distinct training notes, 3,000 total note uses,
 milestones 2,000/3,000, expected final 375 updates and 600 new answers. Artifacts
-belong in the task worktree under `target/qwen-continuation-v1/`; `inputs-v3` is
-the current package, bound to the corrected shared-source runtime.
+belong in the task worktree under `target/qwen-continuation-v1/`; `inputs-v4` is
+the current package, bound to the required-volume runtime. The volume profile
+changes the source identity; earlier packages and images must not be used for
+this launch. All current runtime source hashes match the rebuilt VM image.
 
 To prepare another immutable package, use a fresh output directory:
 
@@ -146,10 +172,11 @@ python3 -m sse_multivector.distillation_deploy prepare-continuation \
   --output target/qwen-continuation-v1/inputs-next
 ```
 
-**Verification complete, October 14:** the combined `main` tree passes 86 local
-contract checks and nine targeted Vast failure regressions. The pinned
-PyTorch **2.12.1+cu130** VM passes 10 architecture and 50 workflow tests. Its
-deployment batch passes with 55 tests, five skipped; four cache tests and four
+**Verification complete, October 14:** the required-volume update passes 55
+local contract checks and nine targeted Vast failure regressions. The pinned
+PyTorch **2.12.1+cu130** VM reuses verified evidence for the unchanged 10
+architecture and 50 workflow tests. Its updated deployment batch passes with
+58 tests, five skipped; four cache tests and four
 explicit volume/replacement/download/handoff tests also pass. Those four
 handoffs cover four deployment skips. Qwen's saved tokenizer separately passes
 the actual 1,000 training, 100 validation and 200 test inputs: maximum complete
@@ -160,15 +187,17 @@ this tokenizer check.
 The real SSH continuation transfers its parent, produces both checkpoints and
 both reserved test collections, and rejects completion approval if a first-pass
 test answer is missing. The VM is stopped and its verified image export is at
-`target/qwen-continuation-v1/vm/attempt-1792019928827772682/results/container.tar.gz`.
-Every prepared `inputs-v3` runtime source hash matches that image's frozen build
+`target/qwen-continuation-v1/vm/attempt-1792022543813223028/results/container.tar.gz`.
+Every prepared `inputs-v4` runtime source hash matches that image's frozen build
 context. The host's older PyTorch 2.8 reproduces an existing physical-batch
 numerical tolerance failure on unchanged `main`; that same test passes in the
 pinned VM without relaxing its tolerance.
 
-Before renting, publish this matching image privately, obtain a fresh
-approved-profile offer and reconcile/admit the budget. Actual Qwen CUDA
-preparation occurs on the same rental before main training. No continuation
+Before renting, publish the matching image privately, select a currently
+available volume and same-host GPU offer, confirm capacity for both the 150GB
+volume and 30GB instance disk, and reconcile/admit both budget commitments.
+Do not assume the October 6 volumes still exist or remain usable. Actual Qwen
+CUDA preparation occurs on the same rental before main training. No continuation
 rental, full-model generation or grading has started. Retain the task worktree
 for the prepared inputs and verified image, and the isolated shared checkout
 for their exact runtime source binding.

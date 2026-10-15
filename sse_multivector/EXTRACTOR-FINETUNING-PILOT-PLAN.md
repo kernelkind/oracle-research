@@ -10,17 +10,23 @@ Implementation and deployment details are recorded below.
 **Current direction, October 14:** the three-family subjects-only pilot has
 completed training, generation and semantic grading. Qwen3.8-27B is selected for
 two further complete passes from its saved final 1,000-note checkpoint on one
-96GB card, with a $30 maximum charge. Generate validation and sealed test answers
-at both new checkpoints, retrieve and verify all required artifacts, then end
-the rental before local grading and checkpoint selection. The
+96GB card, with a persistent Vast local volume for the model cache and work.
+Mount it at `/workspace` on the same physical host as the GPU. The $30 maximum
+includes a $28.50 instance/transfer ceiling and $1.50 separate volume commitment,
+including detached storage time and failed attempts. Generate validation and
+sealed test answers at both new checkpoints, retrieve and verify all required
+artifacts, then end the rental before local grading and checkpoint selection. The
 [approved continuation and failure audit](../docs/planning/fine-tuning-pilot-process.md#approved-qwen-continuation-october-14)
 is the current operational plan. It preserves ASv6.100, the splits and numerical
 recipe. The production workflow now supports explicit parent-checkpoint
 continuation, both test collections and offline completeness verification.
-The Qwen-only launch profile and frozen shared dependency are implemented.
+The Qwen-only launch profile requires an explicit volume binding and rejects a
+different host. The shared dependency is frozen. The matching input package
+and image are regenerated and verified locally, including volume recovery and
+offline cache reuse after container replacement.
 Pinned-runtime/SSH rehearsal and the actual Qwen tokenizer check pass; matching
 image publication, fresh offer and ledger admission precede rental.
-No continuation rental has started.
+No continuation run has started.
 The dated setup directions below retain the earlier experiments' scope and
 evidence and do not require repeating Gemma checks or untuned baselines for Qwen.
 
