@@ -36,6 +36,7 @@ original notes. Parameters describe the settings actually used.
 | HR29 | 200 | ASv6.100 | V5 | bootstrap-v133 | consolidated-grouped-v1 | — |
 | HR30 | 1,000 | ASv6.100 | V5 | bootstrap-v133 | consolidated-grouped-v1 | — |
 | HR31 | 100 | ASv6.100 | V5.1 | bootstrap-v133 | consolidated-grouped-v1 | — |
+| HR32 | 200 | ASv6.100 | V5.1 | bootstrap-v133 | consolidated-grouped-v1 | — |
 
 **Same notes:** HR03/HR10/HR14/HR16/HR19/HR20/HR21/HR27 use the same ordered 50-note selection.
 HR05/HR08/HR09/HR13/HR15/HR17/HR18 use its same ordered first 24 notes. HR04 uses
@@ -92,7 +93,9 @@ parameters.
   HR28 corpora covered 50/50 and 100/100 notes under actual roots, respectively;
   they are not new official HR runs or semantic approval. Full construction
   remains recursive. HR31 completed with 72 nodes and 100/100 notes beneath
-  its six actual roots. Top-container access does not establish root coverage.
+  its six actual roots. HR32 completed with 70 nodes and 200 accessible notes,
+  but only 176 beneath roots; 24 remain top-only. Top-container access does not
+  establish root coverage.
 - HR14/HR16 omit two null Bootstrap meanings. HR17 had none. Answers and receipts
   remain saved; the original selected note set is preserved as input evidence.
 
@@ -111,13 +114,13 @@ using the same title-only pooling with their meaning as context. HR03/HR06/HR07 
 standalone subject vectors, also with a 512-token maximum. Traversal/V2 did not
 use SSE for hierarchy construction.
 
-**Execution:** HR11–HR31 use prefix caching, automatic warming and exact-request
+**Execution:** HR11–HR32 use prefix caching, automatic warming and exact-request
 answer reuse. Seed/temperature are unspecified; no explicit output-token cap.
 The earlier runs used at most two provider attempts per case across resumes;
 HR14 and HR30 had approved recovery exceptions. The autonomous HR30 continuation
 has no attempt cap and uses one-hour Bootstrap/consolidation deadlines. HR31
-also uses one-hour new-request deadlines without a per-case attempt maximum
-override; copied Bootstrap receipts retain their original settings. HR22 used a
+and HR32 also use one-hour new-request deadlines without a per-case attempt
+maximum override; copied Bootstrap receipts retain their original settings. HR22 used a
 scoped replacement checkpoint for one invalid evidence quote, preserving the
 strict validator and original prompts.
 
@@ -594,3 +597,20 @@ cd /home/dev/src/notedeck_worktrees/algos
 
 Press L on a leaf to show its notes.
 [Full result and evidence](hierarchy-runs.md#hr31--hr28-corpus-with-higen-v51).
+
+## HR32 — 200 notes · HiGen V5.1
+
+HR29's exact ordered corpus and saved Bootstrap-v133 meanings/vectors; unchanged
+Consolidated-grouped-v1 and numerical controls. Complete in 15m 24s: 70 canonical
+nodes, six roots, at most six canonical children and five canonical levels.
+All 200 notes are accessible, but only 176 occur beneath roots; 24 remain
+available only directly at the top container. Native validation and UI check
+passed. Root placement and semantic quality remain for review.
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos
+./oracle-mvp-hierarchy-hr32-v51/target/hr32-review-ui-v1/launch.sh
+```
+
+Press L on a leaf to show its notes.
+[Full result and evidence](hierarchy-runs.md#hr32--hr29-corpus-with-higen-v51).

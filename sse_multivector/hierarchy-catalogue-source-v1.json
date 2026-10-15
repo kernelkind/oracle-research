@@ -8772,6 +8772,71 @@
           "sha256": "51c90fd5813bda223bd65b22990c50b30d67d4cd4b62acfbb5ff403c0cea6ee8"
         }
       ]
+    },
+    {
+      "version_id": "HR32",
+      "name": "ASv6.100 200-note HiGen V5.1 — HR29 corpus / Bootstrap-v133 / Consolidated-grouped-v1",
+      "root": "../../oracle-mvp-hierarchy-hr32-v51",
+      "artifact_path": "target/hierarchy-hr32-v51-two-hundred-note-v1/HR32/state.json",
+      "sha256": "8c1ce5ce1ce05b5210a0d134c25ab6083b59d56859f3bca7297ead4f4044e50c",
+      "code_provenance": {
+        "sidecar": {
+          "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr32-v51/target/hierarchy-hr32-v51-two-hundred-note-v1/HR32/code-provenance.json",
+          "sha256": "ed943c06434538639d243772e4057d23fd081aab45e4a1c88b9decc89c262006"
+        },
+        "git": {
+          "oracle": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr32-v51",
+            "git_commit": "6ea045051c29934dbda88879aa4fd3352a702148",
+            "uncommitted_source": false
+          },
+          "runner_coordinator": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/experiment-runner",
+            "git_commit": "36dfcf6390eaaa5e46fff07cba7581003b8877a4",
+            "uncommitted_source": false
+          },
+          "bootstrap_transport": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/experiment-runner-hr26-source-v1",
+            "git_commit": "1cfdd6a76a9910b2c9dea0ca395f825b90485f7e",
+            "uncommitted_source": false
+          },
+          "consolidation_transport": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/experiment-runner-hr26-source-v1",
+            "git_commit": "1cfdd6a76a9910b2c9dea0ca395f825b90485f7e",
+            "uncommitted_source": false
+          }
+        }
+      },
+      "experimental_parameters": {
+        "baseline": "HR29",
+        "generation_policy": "hierarchy-generation-v5.1",
+        "definition": {
+          "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr32-v51/sse_multivector/hierarchy-runs/hr32/hierarchy.spec.json",
+          "sha256": "44f87f68d8ca411c66fe8dc9590a021eb075f7337b80e1ff7460f827b12597fb"
+        },
+        "parameter_ledger": {
+          "path": "docs/recommendation-engine/hierarchy-parameters.csv",
+          "row": "HR32"
+        },
+        "native_usage": {
+          "fresh": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr32-v51/target/hierarchy-hr32-v51-two-hundred-note-v1/usage-new.json",
+          "all_producers": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr32-v51/target/hierarchy-hr32-v51-two-hundred-note-v1/usage-all-producers.json",
+          "scope": "Fresh totals include consolidation only with complete usage; copied Bootstrap counts remain historical. All-producer generation_usage includes historical Bootstrap/reuse sources and has eight missing failed-call usages."
+        },
+        "qualification": "Native validation and UI check passed. 200 notes accessible, only 176 beneath actual roots, 24 top-container-only. No human semantic approval or quality-preserving savings claim; root coverage is one below HR29."
+      },
+      "related_outputs": [
+        {
+          "label": "HR32 review hierarchy",
+          "path": "target/hr32-review-ui-v1/hierarchy.json",
+          "sha256": "2d65b98bdd20fb0b03ad3c3d0b838c209e6394c5bd455257d5d83178ac7bb5cd"
+        },
+        {
+          "label": "HR32 original notes",
+          "path": "target/hr32-review-ui-v1/notes.json",
+          "sha256": "b91ff25df042e4153b44d2e9a7555c8612df508513fffbd28d94700ed020416c"
+        }
+      ]
     }
   ]
 }

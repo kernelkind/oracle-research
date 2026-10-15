@@ -14,6 +14,10 @@ for review. The first full V5.1 run, [HR31](hierarchy-runs.md#hr31--hr28-corpus-
 completed on HR28’s exact corpus with 72 nodes and all 100 notes beneath its six
 roots, compared with 87 under HR28’s roots. Its checked review UI is available;
 this coverage result does not establish semantic approval.
+On HR29’s 200-note corpus, [HR32](hierarchy-runs.md#hr32--hr29-corpus-with-higen-v51)
+completed with 70 nodes and all 200 notes accessible, but only 176 beneath
+actual roots and 24 top-only. Retaining initial noise does not guarantee root
+coverage or a monotonic improvement over V5’s 177 notes beneath roots.
 
 | Setting | V5.1 value |
 | --- | --- |

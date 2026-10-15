@@ -182,6 +182,13 @@
       "artifact_path": "target/hierarchy-hr31-v51-hundred-note-v1/HR31/state.json",
       "sha256": "4abb45e12009e8a3df415d4187c7e22ab72b9cce44b64ba9389525687bc4e175",
       "family": "Hierarchy"
+    },
+    {
+      "version_id": "HR32",
+      "identity": "e0ee88e7ed8fb17db48f9ced789fd3ce97e970c2b37dbe141dedc1754de9d2af",
+      "artifact_path": "target/hierarchy-hr32-v51-two-hundred-note-v1/HR32/state.json",
+      "sha256": "8c1ce5ce1ce05b5210a0d134c25ab6083b59d56859f3bca7297ead4f4044e50c",
+      "family": "Hierarchy"
     }
   ]
 }

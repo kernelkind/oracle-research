@@ -1598,3 +1598,64 @@ reuses the existing viewer binary and passed its offline check from /tmp:
 show its notes. The comparison workbook was updated, reopened and verified,
 preserving all other rows and version descriptions. Retain the execution
 worktree for frozen source, receipts, vectors and the launchable review UI.
+
+## HR32 — HR29 corpus with HiGen V5.1
+
+Complete in **15m 24s** from the native execution-settings timestamp to the
+terminal run-summary write, excluding preparation and historical producer work.
+HR32 uses HR29's exact ordered 200-note corpus: 100 food/drink and 100 music
+notes, with unchanged ASv6.100 subjects. It reuses all 1,527 saved Bootstrap-v133
+answers (1,520 non-null), 1,528 vector identities and 11 completed encoding jobs
+from HR29. Every input note has at least one usable meaning. No new Bootstrap
+samples were requested. Consolidated-grouped-v1, GPT-6.1 Sol medium, SSE,
+HDBSCAN min_samples=3/min_cluster_size=2, EOM and title-only SSE pooling are
+unchanged. V5.1 retains initially unassigned original entries for later root
+rounds; this is full recursive construction without a roots-only override.
+
+The final graph has **70 canonical nodes, 64 edges, six roots and 200 accessible
+notes**. **Only 176 notes occur beneath actual roots; 24 are available only at
+the top container.** None is omitted from the UI. All 15 sibling families are
+finished, with 56 leaves, at most six canonical children and five canonical
+levels. Native source, receipt and construction checks passed; the terminal
+run-summary contains no errors or unresolved results. This does not establish
+acceptable root placement or semantic approval. The retained top-container
+fallback remains unapproved root placement, as documented in the V5.1 design.
+
+Root headings and distinct-note counts are Media and communication (89), Food
+and living organisms (73), Human experience (55), Online Communication Ecosystems
+(39), a second Media and communication (38), and Human life (33). Counts overlap;
+the two identically titled roots are distinct saved nodes. HR29 had 177 notes
+beneath roots, 21 top-only and two omitted. HR32 gains eight notes beneath roots
+and loses nine compared with HR29, rather than monotonically extending coverage.
+The [source-bound coverage comparison](../../../oracle-mvp-hierarchy-hr32-v51/target/hierarchy-hr32-v51-two-hundred-note-v1/HR32/root-coverage-comparison.json)
+retains the exact note IDs. No repair, shaping or prompt revision was applied.
+
+[Fresh native consolidation accounting](../../../oracle-mvp-hierarchy-hr32-v51/target/hierarchy-hr32-v51-two-hundred-note-v1/usage-new.json)
+records **186 actual attempts including warmups, five exact answer reuses,
+zero failures/retries and complete usage** across 31 batches/160 valid cases.
+Fresh usage is 140,229 uncached input, 217,856 cached input and 51,046 output
+tokens, including 32,679 reasoning tokens. The full fresh API-equivalent total
+is **$0.8127036**; incremental subscription cash charge is zero. Reasoning is
+already included in output. The consolidation producer-inclusive total is
+$0.8354316. [All-producer accounting](../../../oracle-mvp-hierarchy-hr32-v51/target/hierarchy-hr32-v51-two-hundred-note-v1/usage-all-producers.json)
+includes historical Bootstrap and exact-reuse sources: its known generation
+subtotal is $12.5252716, with eight missing failed-call usages and no complete
+total. Its copied Bootstrap dispatch/retry counts are historical, not fresh
+HR32 calls. No quality-preserving cost saving is claimed.
+
+New requests use one-hour deadlines without an attempt-budget or per-case
+attempt maximum override. All independent ready branches were submitted
+immediately through the shared 30-request queue. Frozen Oracle code is
+6ea04505, shared coordinator 36dfcf63 and original teacher transport 1cfdd6a7.
+The [frozen definition](../../sse_multivector/hierarchy-runs/hr32/hierarchy.spec.json),
+[native state](../../../oracle-mvp-hierarchy-hr32-v51/target/hierarchy-hr32-v51-two-hundred-note-v1/HR32/state.json),
+[code provenance](../../../oracle-mvp-hierarchy-hr32-v51/target/hierarchy-hr32-v51-two-hundred-note-v1/HR32/code-provenance.json)
+and [terminal validation](../../../oracle-mvp-hierarchy-hr32-v51/target/hierarchy-hr32-v51-two-hundred-note-v1/HR32/terminal-validation.json)
+retain exact controls. The existing review binary was copied unchanged, and
+its offline check from /tmp passed: 70 canonical nodes plus one display
+container, 200 original notes. The workbook was updated, reopened and verified,
+with the 176/24 coverage qualification explicit. Retain the execution worktree
+for frozen source, receipts, vectors and the launchable review UI.
+
+Next, review the top-only notes and overlapping root headings before claiming
+that V5.1 improves this corpus's browsing hierarchy.
