@@ -294,8 +294,9 @@ The user approved the $43 ceiling with a $1.66 hourly limit, covering the
 unchanged 24-hour allowance, transfer allowances and separate $1.50 storage
 reserve. The earlier workstation offer disappeared. The continuation configuration uses a single 600W RTX PRO 6000 Server card quoted at $1.413889/hour, 193,450 MB host RAM, and a 150GB volume at $0.041667/hour. The
 profile now selects this same card type as the pilot, preserving every RAM,
-reliability, driver and transfer check.  The October 15 continuation used a **150GB local volume** and a 30GB instance disk.    Actual Qwen CUDA preparation occurs on this rental before main
-training; neither CUDA preparation nor training completion is confirmed yet.
+reliability, driver and transfer check.  The October 15 continuation used a **150GB local volume** and a 30GB instance disk.    Worker attempt **001** is downloading Qwen's pinned files to the local volume; the native watcher and progressive copier are active. Actual Qwen CUDA preparation follows the verified download
+on this rental before main training; neither CUDA preparation nor training
+completion is confirmed yet.
 No new grading has started. Retain the task worktree for the active frozen
 operation and artifacts, and the isolated shared checkout for its exact runtime
 source binding. Maintain launch receipts and status through a separate

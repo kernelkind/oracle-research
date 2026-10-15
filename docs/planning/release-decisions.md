@@ -844,9 +844,9 @@ at up to $1.66/hour; all other admission checks remain fixed. Read-only image pu
 admission precede rental.
  The approved Server profile, `inputs-v8` and exact private
 image pass the updated pinned VM/SSH and checkpoint-recovery qualification.
-The October 15 continuation used a **150GB local volume**.   Actual Qwen
-CUDA preparation is the next model gate; training completion and new semantic
-grading are unconfirmed. The active experiment's source remains frozen. New
+The October 15 continuation used a **150GB local volume**.   Worker attempt 001 is downloading Qwen's pinned files to the local volume, with native watching and progressive copying active. Actual
+Qwen CUDA preparation follows the verified download; training completion and
+new semantic grading are unconfirmed. The active experiment's source remains frozen. New
 labels, final training volume, mask training and production adoption remain
 outside this approval.
 The older three-family/two-GPU directions below describe the completed pilot.
