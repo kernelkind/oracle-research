@@ -174,6 +174,12 @@ all siblings' additions together. A failed or interrupted pass preserves its
 inputs rather than rebuilding them from a later global pool. Native validation
 reproduces every addition from its shared-group evidence.
 
+Independent sibling membership clusterings run concurrently on local CPUs,
+using the same frozen pool and separate output directories. Results are
+collected in sibling order and applied together. A failed sibling preserves
+other completed results for resume. This local concurrency does not limit
+teacher submissions or change the shared runner's provider queue.
+
 ## Native workflow
 
 Use the ordinary `prepare-hierarchy`, `advance-hierarchy` and `run-hierarchy`
@@ -208,6 +214,10 @@ whole-file hashes and all membership, tree, cut and graph checks still run.
 Unused distance matrices and numerical diagnostics are excluded from the read
 cache. Binary vector reads expand only requested rows into Python floats.
 `advance-timings.jsonl` records actual advancement durations and recovery mode.
+The coordinator and standalone advancement retain up to 1 GiB of compact
+serialized HDBSCAN views, releasing them when their scope ends. This is a
+retention budget, not a process-memory limit. It requires shared runner commit
+`132a0cd` or later; ordinary receipt readers keep their 16 MiB default.
 
 Transient advancement failures retry through the fresh shared CLI and its
 existing exponential backoff, so a repaired runner can be loaded. Teacher

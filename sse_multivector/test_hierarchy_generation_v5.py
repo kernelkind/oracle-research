@@ -66,9 +66,11 @@ class V5ConstructionTests(unittest.TestCase):
         from sse_multivector import hierarchy_generation as generation
         state = self.construct(self.prepare(count=43))
         before = (self.native.root/'v5/state.json').read_bytes()
-        with patch.object(generation.workflow, 'read', wraps=generation.workflow.read) as read:
+        reader = generation.workflow.engine.ReceiptFiles.json
+        with patch.object(generation.workflow.engine.ReceiptFiles, 'json',
+                          autospec=True, side_effect=reader) as read:
             generation.advance(self.native.root/'v5', 'Validate complete saved hierarchy')
-        reads = [c for c in read.call_args_list if Path(c.args[0]).name == 'result.json']
+        reads = [c for c in read.call_args_list if Path(c.args[1]).name == 'result.json']
         self.assertTrue(reads)
         self.assertTrue(all(c.kwargs.get('project') is not None for c in reads),
                         'unused distance matrices are parsed and retained as full results')

@@ -53,3 +53,35 @@ all original inputs, prompt versions, graph history, receipts and the existing
 attempt counter. Never edit the currently bound source in place or start a
 second constructor against the active trial. The existing native
 `--runner-upgrade-reason` path records reviewed code changes.
+
+## HR35: larger clustering evidence and independent membership jobs
+
+The 1,000-note V5.3 run exposed two further runtime costs. Its six root
+membership clusterings originally ran serially. One saved result was
+676,422,679 bytes; its compact retained view was 2,036,262 bytes. Multiple
+root-generation and membership views exceeded the ordinary reader's 16 MiB
+budget, causing eviction and repeated decoding of the large raw results.
+
+Independent sibling membership jobs now start concurrently on local CPUs.
+Each reads the same frozen input and writes its own directory. Results remain
+collected in sibling order and applied atomically after the whole pass. Existing
+completed results survive failures and are reused on resume. Teacher work still
+uses the shared provider queue without an outer submission cap.
+
+Hierarchy HDBSCAN views use a 1 GiB serialized retention budget, allocated only
+as files are read. Both native `run-hierarchy` and standalone advancement use
+the same scoped reader. Whole-source hashes, changed-file invalidation, receipt
+checks and numerical/graph validation remain required. This budget does not
+bound Python process RSS. Shared runner commit `132a0cd` adds the configurable
+projected-view limit while preserving the ordinary 16 MiB default.
+
+A no-inference replay used HR35's exact pre-membership checkpoint and frozen
+clustering binary. All six requests and all six result files matched the
+serial run byte-for-byte; six simultaneous clustering processes were observed.
+Evidence is ignored under `target/parallel-membership-replay-v1/` in
+`oracle-mvp-hr35-validation-performance-v1`. The replay is a numerical
+equivalence check, not a semantic accuracy or model-cost improvement claim.
+
+Production-path tests first reproduced serialized-job failure and compact-view
+eviction. The final 118 hierarchy/HDBSCAN/V3 checks and 24 shared receipt-reader
+checks pass, including corruption detection and completed-result recovery.
