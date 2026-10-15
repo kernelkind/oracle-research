@@ -32,6 +32,26 @@ Count each note ID once per section, including the original note associations
 represented by any synthetic nodes in that section. Input-node and group counts
 do not determine which section is largest.
 
+Each synthetic input remains associated with its existing canonical node. It
+acts as that canonical node's representative in later HDBSCAN runs. Entries
+grouped with that representative belong to its associated canonical node and
+amend that node, rather than becoming part of the new canonical node currently
+being constructed. This does not authorize merging existing canonical nodes.
+This association was already followed by all four saved amendments: Slot2v1
+to v2, Slot2v2 to v3, Slot4v1 to v2 and Slot1v1 to v2.
+
+Generate each group's title and explicit meaning from its member definitions
+first. Canonical-node consolidation always receives the groups' generated
+titles and meanings; never send original local L1 titles and meanings directly
+to canonical-node consolidation. Preserve the group-definition stage and its
+evidence even when exact saved group definitions are reused.
+
+For canonical consolidation beneath an existing node, supply that enclosing
+node's title and fixed explicit meaning as `parent`. The proposed child must
+cover the supplied group meanings in full and fit wholly within that parent.
+Omit `parent` when generating top-level roots. Historical requests, answers
+and exact-reuse identities remain unchanged.
+
 Each sibling lineup has at most six nodes. After selecting `k` children, if
 the remaining sections number at most `6 - k`, turn each remaining section
 directly into a child rather than continuing to select them one at a time.
@@ -52,13 +72,13 @@ viewing L2S1's notes. The child limit must not remove those note associations.
 
 These are unresolved implementation choices, not approved changes:
 
-- A section can contain several existing siblings. Final G09 contains roots
-  1, 2 and 5. The one-existing-root amendment rule does not specify whether to
-  combine these siblings or keep them separate and how to assign new entries.
-- Grouped-v1 accepts an optional fixed parent. Root experiments omitted it;
-  whether new recursive consolidation calls should supply their known parent
-  needs to be specified. Historical requests and exact-reuse identities must
-  remain unchanged.
+- The current one-group section shortcut sends its member definitions directly
+  to a section-definition case. V5 requires generated group definitions as the
+  canonical consolidation input. For a selected section with just one group,
+  settle whether to reuse its generated group definition directly or perform
+  another consolidation call with that one group. Grouped-v1 currently requires
+  two or more input nodes. This question does not reopen the approved use of
+  already named groups as leaves when the stopping condition is met.
 - The current bend implementation requires at least three retained distance
   levels and a positive bend. It has no fallback. A parent with more than six
   groups can still have too few distinct distance levels or no positive bend;
