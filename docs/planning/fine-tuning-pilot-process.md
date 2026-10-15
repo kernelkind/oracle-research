@@ -21,8 +21,11 @@ the same 1,000 training notes**, and chose **one 96GB RTX PRO 6000**. The approv
 schedule generates both checkpoints' validation and test answers during one
 continuous rental, retrieves and verifies all required work, then terminates
 the rental before local semantic grading. The new experiment's maximum charge
-is **$30**, including preparation, failed attempts, storage and transfers;
+is **$43**, raised from $30 with the user's launch approval, including
+preparation, failed attempts, storage and transfers;
 the project's $1,000 lifetime cap and ledger admission still apply.
+ The approved rental limit and project ledger still govern
+every paid resource.
 
 This is continued training from the existing final 1,000-note checkpoint,
 including optimizer, schedule and RNG state. It is not a fresh adapter or a
@@ -61,7 +64,7 @@ per 200-note test generation. Two passes, two validations and two tests total
 single-card server quote was $1.125/hour including 150GB instance disk, before
 the persistent-volume decision. Allow roughly **20–24 rental hours**. Obtain a
 fresh quote for the required volume and 30GB instance disk under the combined
-**$30 maximum** below. Longer answers, host throughput and recovery can change
+**$43 maximum** below. Longer answers, host throughput and recovery can change
 these estimates. Local grading needs
 no rented GPU and does not extend the rental.
 
@@ -78,7 +81,7 @@ continuation packages Qwen only and has no Gemma preparation or baseline gate.
 | Dense attention/logit buffers made the full inputs impractical; CPU checks alone did not establish CUDA behavior. | Retain enforced efficient CUDA attention with no math fallback and the pinned fused linear cross-entropy training path. Rehearse the exact source/runtime locally and confirm actual Qwen CUDA loss/gradient agreement, longest-example updates and maximum-output cache shapes before main training. |
 | An inference memory allowance was incorrectly applied as a training cutoff. Gemma-specific gradient and cache failures caused further replacement rentals. | Keep training measurements separate from inference batch admission. Preserve numerical checks and tolerances. Run matched Qwen preparation only; do not repeat the three-family qualification. |
 | The old deployment assigns Qwen to GPU 1. Its required-card count is the highest assigned index plus one. | Freeze a Qwen-only package using logical GPU 0; copying the old assignment would still require two cards. Download only the pinned Qwen model. |
-| Host DNS prevented SSH; a startup gate also charged the full transfer allowance against an inadequate local startup bound. | Verify image/driver, SSH route, host RAM, disk and complete storage/transfer pricing. Freeze setup and work allowances inside the approved $30 total; do not reuse the earlier $1 startup allowance. |
+| Host DNS prevented SSH; a startup gate also charged the full transfer allowance against an inadequate local startup bound. | Verify image/driver, SSH route, host RAM, disk and complete storage/transfer pricing. Freeze setup and work allowances inside the approved $43 total; do not reuse the earlier $1 startup allowance. |
 | A persistent-volume request used an unsupported mount path and was rejected. | Require a persistent local volume mounted at the provider-supported `/workspace` path, keep work under its child directory, and verify attachment, write/read and free space on the selected machine. A separate download rental is not part of this schedule. |
 | Direct copying was slow; large checkpoints could delay small responses. | Use the tested provider-proxy route and progressive copier. Prioritize sealed responses, copy checkpoint files in bounded chunks, verify hashes before publishing completion markers, and reuse verified copies in final retrieval. |
 | A controller can exit while a training child remains alive. Interrupted calls and partial publication must not be mistaken for finished work. | Retain worker locks through child lifetime. Reconcile the live worker before a recorded continuation; reuse complete checkpoints and saved receipts. Never regenerate a saved invalid answer or treat an unsealed partial checkpoint as resumable. Copier/observer failure must not stop training. |
@@ -154,11 +157,11 @@ launcher uses `--link-volume` with `--mount-path /workspace`, verifies the mount
 and volume identity, and keeps work under `/workspace/oracle-full-build` with
 `HF_HOME=/workspace/oracle-full-build/model-cache`.
 
-The 24-hour instance allowance is at most $1.15/hour including instance disk,
-with 80GB inbound and 10GB outbound transfers. Reserve **$28.50 for the instance
-and transfers plus $1.50 separately for the volume**, within the same **$30
+The 24-hour instance allowance is at most $1.66/hour including instance disk,
+with 80GB inbound and 10GB outbound transfers. Reserve **$41.50 for the instance
+and transfers plus $1.50 separately for the volume**, within the same **$43
 total**, including failed attempts. `check_offer` includes both allowances;
-the frozen instance contract receives only the $28.50 ceiling. Reconcile and
+the frozen instance contract receives only the $41.50 ceiling. Reconcile and
 record the volume's separate ledger commitment before creation or continued
 retention. The profile requires at least 150GB and a 36-hour storage reservation
 within $1.50, including detached time after instance deletion. Native launch
@@ -194,11 +197,13 @@ isolated at `experiment-runner-qwen-continuation-v1`, commit `1cfdd6a7`.
 The real input package was prepared locally and mechanically verified: one Qwen
 run, one preparation, 1,000 distinct training notes, 3,000 total note uses,
 milestones 2,000/3,000, expected final 375 updates and 600 new answers. Artifacts
-belong in the task worktree under `target/qwen-continuation-v1/`; `inputs-v6` is
+belong in the task worktree under `target/qwen-continuation-v1/`; `inputs-v8` is
 the current package with the Qwen-only cache manifest and download enabled.
 These corrections change the runtime identity; earlier packages and images
-must not be used for this launch. The matching image passes the interrupted-pass
-and container-replacement rehearsal with local recovery.
+must not be used for this launch. The preceding image passes the interrupted-pass
+and container-replacement rehearsal with local recovery. The current image
+changes only the frozen launch-profile hash; every other input and runtime
+source file matches the previous verified package.
 
 To prepare another immutable package, use a fresh output directory:
 
@@ -263,22 +268,34 @@ only corrupt files.
 
 **Launch preparation, October 14:** the user authorized proceeding. The matching
 image is published privately at
-`docker.io/kernelkind/oracle-mvp@sha256:6c8c9ed527538bc8db86e78e20eae6989867f671c8c5b957bc1626f8ac5e58af`.
-All 23 runtime source hashes match `inputs-v6`; anonymous manifest access is
+`docker.io/kernelkind/oracle-mvp@sha256:028b43f6208ce87d91853e0d51f66a63a361e7dd73e12c22dff0258d7a8a2fa6`.
+All 23 runtime source hashes match `inputs-v8`; anonymous manifest access is
 denied. Publication receipts are in the task worktree at
 `target/qwen-continuation-v1/launch-20261014/`. 
-Credential permission checks recorded mode 0600. Pull authentication and the private image manifest checks returned HTTP 200, while a push-scope request returned HTTP 401.  Authenticate with pull scope first: a rejected push-scope request does not establish that the token is invalid. Do not send a write credential to the provider. Only the spending decision remains pending.
+Credential permission checks recorded mode 0600. Pull authentication and the private image manifest checks returned HTTP 200, while a push-scope request returned HTTP 401.  Authenticate with pull scope first: a rejected push-scope request does not establish that the token is invalid. Do not send a write credential to the provider. The user subsequently approved the $43 total ceiling
+and proceeding with launch.
+
+The approved Server profile passes 68 local tests, with 20 fixture-dependent
+skips. Its matching pinned VM passes 64 deployment tests, with nine phase skips,
+four cache tests and all eight explicit SSH/volume/recovery phases. The unchanged
+10 architecture and 52 workflow tests are revalidated from their sealed evidence.
+The current verified export is
+`target/qwen-continuation-v1/vm/attempt-1792034896840606891/results/container.tar.gz`;
+its archive SHA-256 is
+`3b5d14baf3fe6f48a3b180c0f000dec508d4c7e99a2e2fb81cec2092cf61d4cc`.
+The exact published image matches this qualified VM image and all `inputs-v8`
+runtime hashes. The VM is stopped. Actual Qwen CUDA preparation remains the
+first model gate on the paid rental.
 
  The main pilot's GPU
 charge is $133.907. The final backup storage cost was $0.888. The posted working-storage charge was $16.361.   
 
-The current market has no offer passing the launch checks within the approved
-$30 ceiling. Offer 47457221 on machine 146648 passes every other saved check at
-$1.657444/hour, with a matching 150GB volume quoted at $0.013889/hour. A proposed
-$43 ceiling with a $1.66 hourly limit covers the unchanged 24-hour allowance,
-transfer allowances and separate $1.50 storage reserve; this increase is pending
-user approval. Recheck availability before creating either resource. The $30
-profile remains authoritative until that decision. Before renting, confirm
+The user approved the $43 ceiling with a $1.66 hourly limit, covering the
+unchanged 24-hour allowance, transfer allowances and separate $1.50 storage
+reserve. The earlier workstation offer disappeared. The continuation configuration uses a single 600W RTX PRO 6000 Server card quoted at $1.413889/hour, 193,450 MB host RAM, and a 150GB volume at $0.041667/hour. The
+profile now selects this same card type as the pilot, preserving every RAM,
+reliability, driver and transfer check. Recheck availability before creating
+either resource. Before renting, confirm
 capacity for both the volume and 30GB instance disk, and admit/commit both
 budget reservations.  Actual Qwen
 CUDA preparation occurs on the same rental before main training. No continuation

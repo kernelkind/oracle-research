@@ -23,6 +23,19 @@ def quote(settings_path=None):
 
 
 class WorkloadTests(unittest.TestCase):
+    def test_qwen_profile_accepts_the_original_pilot_server_card(self):
+        settings, offer = quote(Path(__file__).parent / 'distillation/qwen-continuation-v1.vast.json')
+        offer['gpu_name'] = 'RTX PRO 6000 S'
+        self.assertEqual(deploy.check_offer(settings, offer)['offer_id'], offer['id'])
+
+    def test_qwen_approved_hourly_rate_fits_the_43_dollar_total(self):
+        settings, offer = quote(Path(__file__).parent / 'distillation/qwen-continuation-v1.vast.json')
+        offer['dph_total'] = 1.66
+        offer['dph_base'] = offer['dph_total'] - offer['storage_total_cost']
+        checked = deploy.check_offer(settings, offer)
+        self.assertEqual(settings['approved_maximum_usd'], 43)
+        self.assertEqual(checked['maximum_charge_usd'], '42.24')
+
     def test_qwen_profile_rejects_launch_without_a_local_volume(self):
         settings = read_json(Path(__file__).parent / 'distillation/qwen-continuation-v1.vast.json')
         offer = {**settings['offer_equals'], **settings['offer_minimums'],
@@ -53,7 +66,7 @@ class WorkloadTests(unittest.TestCase):
             'driver_version': '595.58.03', 'dph_base': 1.10, 'storage_cost': .24,
             'storage_total_cost': .05}
         self.assertEqual(settings['offer_equals']['num_gpus'], 1)
-        self.assertEqual(settings['approved_maximum_usd'], 30)
+        self.assertEqual(settings['approved_maximum_usd'], 43)
         self.assertGreaterEqual(settings['rental_hours'], 24)
         self.assertIsNone(settings['worker_timeout_seconds'])
         self.assertFalse(settings['ssh_direct'])
@@ -63,7 +76,7 @@ class WorkloadTests(unittest.TestCase):
         self.assertEqual(settings['local_volume_maximum_usd'], 1.5)
         self.assertEqual(settings['disk_gb'], 30)
         checked = deploy.check_offer(settings, offer)
-        self.assertLessEqual(float(checked['maximum_charge_usd']), 30)
+        self.assertLessEqual(float(checked['maximum_charge_usd']), 43)
         self.assertGreaterEqual(settings['setup_cost_cents'], 100 * (
             settings['inbound_gb'] * settings['offer_maximums']['inet_down_cost'] +
             settings['outbound_gb'] * settings['offer_maximums']['inet_up_cost']))
@@ -95,13 +108,13 @@ class WorkloadTests(unittest.TestCase):
             self.assertTrue(contract['workload']['resumable'])
             self.assertEqual(contract['session_seconds'], 86400)
             self.assertEqual(contract['limits']['setup_cost_micro_usd'], 5_000_000)
-            self.assertEqual(contract['limits']['reservation_ceiling_micro_usd'], 28_500_000)
+            self.assertEqual(contract['limits']['reservation_ceiling_micro_usd'], 41_500_000)
             self.assertEqual(contract['local_volume'], settings['local_volume'])
             self.assertEqual(contract['volume_reservation'], {'reservation_id': 'volume-fixture',
                 'minimum_size_gb': 150, 'planning_retention_hours': 36, 'maximum_charge_cents': 150})
-            # The independent volume commitment and instance ceiling share $30.
+            # The independent volume commitment and instance ceiling share $43.
             self.assertEqual(spec['limits']['maximum_charge_cents'] +
-                             int(settings['local_volume_maximum_usd'] * 100), 3000)
+                             int(settings['local_volume_maximum_usd'] * 100), 4300)
 
     def test_volume_allowance_counts_toward_the_total_before_launch(self):
         settings = read_json(Path(__file__).parent / 'distillation/qwen-continuation-v1.vast.json')
@@ -109,7 +122,7 @@ class WorkloadTests(unittest.TestCase):
             **settings['offer_maximums'], 'id': 123, 'machine_id': 12, 'bundle_id': 23,
             'driver_version': '595.58.03', 'dph_base': 1.10, 'storage_cost': .24,
             'storage_total_cost': .05}
-        settings['local_volume_maximum_usd'] = 1.51
+        settings['local_volume_maximum_usd'] = 3
         with self.assertRaisesRegex(ValueError, 'allowances exceed'):
             deploy.check_offer(settings, offer)
 
@@ -152,7 +165,7 @@ class WorkloadTests(unittest.TestCase):
                            check=True, capture_output=True, text=True)
             spec = read_json(root / 'spec.json')
             self.assertEqual(spec['local_volume'], {'id': 881, 'machine_id': 12})
-            self.assertEqual(spec['limits']['maximum_charge_cents'], 2850)
+            self.assertEqual(spec['limits']['maximum_charge_cents'], 4150)
 
     def test_one_gpu_download_workload_requires_volume_and_no_training(self):
         from gte.full_build_package import write_manifest

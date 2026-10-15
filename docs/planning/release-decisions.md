@@ -805,12 +805,13 @@ stages or approve a dataset size, hardware rental or spending allocation.
 **October 14 Qwen continuation approved:** continue the selected Qwen3.8-27B
 final 1,000-note checkpoint for two further complete passes over the same notes,
 retaining the complete optimizer/RNG state, ASv6.100, splits and numerical recipe.
-Use one 96GB RTX PRO 6000 under a new **$30 maximum total charge**, with a
-**persistent Vast local volume** required for the model cache and work. Bind
+Use one 96GB RTX PRO 6000 under a new **$43 maximum total charge**, raised from
+$30 with the user's launch approval. A **persistent Vast local volume** is
+required for the model cache and work. Bind
 the volume and GPU to the same physical host, mounting at `/workspace`. The
-profile reserves $28.50 for the instance/transfers and $1.50 separately for
+profile reserves $41.50 for the instance/transfers and $1.50 separately for
 volume retention, including detached storage time; both commitments and failed
-attempts count toward $30. Save recovery state every 16 optimizer updates
+attempts count toward $43. Save recovery state every 16 optimizer updates
 (128 notes), retaining only the latest two verified checkpoints on the local
 volume. These intermediate checkpoints are excluded from SSH copying and
 terminal retrieval. Verify the next save before removing the oldest; resume
@@ -837,9 +838,12 @@ shared input/parser dependency.
 Pinned-runtime/SSH verification and the actual Qwen tokenizer check pass.
 The user authorized launch preparation; the matching image is published
 privately, with all 23 runtime source hashes verified and anonymous access
-denied.  Current offers require more than the approved $30 ceiling. A proposed
-$43 maximum remains pending. Read-only image pulling and push-scope rejection checks pass. Fresh offer/volume verification and committed budget
+denied.  The user approved the $43 maximum and proceeding with launch. The
+profile selects one 600W Server card, the same type used by the successful pilot,
+at up to $1.66/hour; all other admission checks remain fixed. Read-only image pulling and push-scope rejection checks pass. Fresh offer/volume verification and committed budget
 admission precede rental.
+ The approved Server profile, `inputs-v8` and exact private
+image pass the updated pinned VM/SSH and checkpoint-recovery qualification.
 No continuation rental or full-model run has started. New labels, final training
 volume, mask training and production adoption remain outside this approval.
 The older three-family/two-GPU directions below describe the completed pilot.

@@ -11,8 +11,9 @@ Implementation and deployment details are recorded below.
 completed training, generation and semantic grading. Qwen3.8-27B is selected for
 two further complete passes from its saved final 1,000-note checkpoint on one
 96GB card, with a persistent Vast local volume for the model cache and work.
-Mount it at `/workspace` on the same physical host as the GPU. The $30 maximum
-includes a $28.50 instance/transfer ceiling and $1.50 separate volume commitment,
+Mount it at `/workspace` on the same physical host as the GPU. The $43 maximum,
+raised from $30 with launch approval, includes a $41.50 instance/transfer ceiling
+and $1.50 separate volume commitment,
 including detached storage time and failed attempts. Generate validation and
 sealed test answers at both new checkpoints, retrieve and verify all required
 artifacts, then end the rental before local grading and checkpoint selection. The
@@ -34,9 +35,10 @@ is frozen. The matching inputs and image pass an interrupted-pass and
 container-replacement rehearsal with local recovery using tiny CPU models.
 Pinned-runtime/SSH rehearsal and the actual Qwen tokenizer check pass. Launch
 preparation is authorized, and the matching image is published privately with
-all 23 runtime source hashes verified and anonymous access denied. No current
-offer passes within the approved $30 ceiling. A proposed $43 maximum remains
-pending. Read-only image pulling and push-scope rejection checks pass. Fresh offer/volume verification and committed budget admission precede rental.
+all 23 runtime source hashes verified and anonymous access denied. The user
+approved the $43 maximum and proceeding with launch. The profile selects one
+600W Server card, the same type used by the successful pilot, at up to
+$1.66/hour; all other admission checks remain fixed. Read-only image pulling and push-scope rejection checks pass. Fresh offer/volume verification and committed budget admission precede rental.
 No continuation run has started.
 The dated setup directions below retain the earlier experiments' scope and
 evidence and do not require repeating Gemma checks or untuned baselines for Qwen.
