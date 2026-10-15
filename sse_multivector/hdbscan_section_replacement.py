@@ -98,7 +98,7 @@ def prepare(directory, experiment, case_id):
                 pool['encodings'][first_new_encoding:]])
 
 
-def collect(directory, *, name='reclustered-sections'):
+def _load_replacement(directory):
     directory = Path(directory).resolve()
     envelope = workflow.read(directory/'replacement.json')
     plan = envelope['plan']
@@ -107,6 +107,43 @@ def collect(directory, *, name='reclustered-sections'):
     for path, expected in plan['sources'].items():
         if sha(path) != expected:
             raise ValueError('replacement source changed: ' + path)
+    return plan
+
+
+def prepare_from(directory, source, *, exclude_unassigned=False):
+    """Reuse a completed synthetic encoding, optionally filtering original noise."""
+    directory, source = Path(directory).resolve(), Path(source).resolve()
+    plan = _load_replacement(source)
+    pool = plan['pool']
+    generation._collect_encodings(pool)
+    if any(not j['complete'] for j in pool['encodings']):
+        raise ValueError('source replacement SSE encoding is incomplete')
+    analysis = workflow.read(plan['source_review'])
+    assigned = {i for g in analysis['groups'] for i in g['original_ids']}
+    excluded = sorted(i for i in plan['current_ids'] if i != 'R00001' and i not in assigned)
+    ids = [i for i in plan['current_ids']
+           if not exclude_unassigned or i == 'R00001' or i in assigned]
+    pool['items'] = {i: pool['items'][i] for i in ids}
+    origins = {o['id']: o['local']['note_id'] for o in pool['originals']}
+    note_ids = {origins[o] for i in ids for o in pool['items'][i]['original_ids']}
+    pool['note_ids'] = [n for n in pool['note_ids'] if n in note_ids]
+    sources = plan['sources']
+    for path in [source/'replacement.json', Path(__file__), Path(review.__file__),
+                 Path(generation.__file__), Path(worker.__file__), Path(review.hdbscan.__file__)]:
+        path = path.resolve()
+        sources[str(path)] = sha(path)
+    plan.update(current_ids=ids, first_new_encoding=len(pool['encodings']),
+                source_replacement=str(source), exclude_unassigned=exclude_unassigned,
+                excluded_unassigned_ids=excluded if exclude_unassigned else [])
+    directory.mkdir(parents=True, exist_ok=False)
+    workflow.write(directory/'replacement.json', dict(plan=plan, sha256=workflow.inputs.digest(plan)))
+    return dict(updated_entries=len(ids), reused_vectors=len(ids), worker_configs=[],
+                excluded_unassigned=len(plan['excluded_unassigned_ids']))
+
+
+def collect(directory, *, name='reclustered-sections'):
+    directory = Path(directory).resolve()
+    plan = _load_replacement(directory)
     pool = plan['pool']
     generation._collect_encodings(pool)
     if any(not j['complete'] for j in pool['encodings']):
@@ -126,15 +163,19 @@ def collect(directory, *, name='reclustered-sections'):
         review.hdbscan.members(response, request, mapping)
         generation.trial._save_once(result_path, response)
     response = workflow.read(result_path)
+    new_encodings = sum(len(j['keys']) for j in pool['encodings'][plan['first_new_encoding']:])
     provenance = dict(source_state=plan['source_state'], source_review=plan['source_review'],
         replacement_experiment=plan['experiment'], replacement_case=plan['case'],
         replacement_receipt=plan['receipt'], sources=plan['sources'],
         configuration=request['hdbscan_configuration'], request=str(request_path),
         request_sha256=sha(request_path), result=str(result_path), result_sha256=sha(result_path),
-        new_model_calls=0, new_encodings=sum(len(j['keys']) for j in
-            pool['encodings'][plan['first_new_encoding']:]), reused_vectors=len(ids)-1,
+        new_model_calls=0, new_encodings=new_encodings, reused_vectors=len(ids)-new_encodings,
         encoder_receipts=[dict(config=j['config'], receipt_sha256=j['receipt_sha256'])
                           for j in pool['encodings']])
+    if 'source_replacement' in plan:
+        provenance.update(source_replacement=plan['source_replacement'],
+            exclude_unassigned=plan['exclude_unassigned'],
+            excluded_unassigned_ids=plan['excluded_unassigned_ids'])
     result = review.group_review(response, request, mapping, pool, provenance)
     group = next((g for g in result['groups'] if 'R00001' in g['original_ids']), None)
     section = next((f'S{i+1:02d}' for i, s in enumerate(result['sections'])
@@ -157,14 +198,28 @@ def main():
     commands = parser.add_subparsers(dest='command', required=True)
     prepare_parser = commands.add_parser('prepare')
     prepare_parser.add_argument('directory', type=Path)
-    prepare_parser.add_argument('--experiment', required=True, type=Path)
-    prepare_parser.add_argument('--case', required=True)
+    source = prepare_parser.add_mutually_exclusive_group(required=True)
+    source.add_argument('--experiment', type=Path)
+    source.add_argument('--from-replacement', type=Path,
+                        help='reuse the exact completed synthetic vector from this preparation')
+    prepare_parser.add_argument('--case')
+    prepare_parser.add_argument('--exclude-unassigned', action='store_true',
+                                help='exclude original unassigned nodes; requires --from-replacement')
     collect_parser = commands.add_parser('collect')
     collect_parser.add_argument('directory', type=Path)
     collect_parser.add_argument('--name', default='reclustered-sections')
     args = parser.parse_args()
-    result = (prepare(args.directory, args.experiment, args.case) if args.command == 'prepare'
-              else collect(args.directory, name=args.name))
+    if args.command == 'collect':
+        result = collect(args.directory, name=args.name)
+    elif args.from_replacement is not None:
+        if args.case is not None:
+            parser.error('--case applies only to --experiment')
+        result = prepare_from(args.directory, args.from_replacement,
+                              exclude_unassigned=args.exclude_unassigned)
+    else:
+        if args.case is None or args.exclude_unassigned:
+            parser.error('--experiment requires --case and does not accept --exclude-unassigned')
+        result = prepare(args.directory, args.experiment, args.case)
     print(json.dumps(result))
 
 

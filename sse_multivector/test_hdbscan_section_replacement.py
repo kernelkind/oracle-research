@@ -76,6 +76,28 @@ class SectionReplacementTests(unittest.TestCase):
         self.assertEqual(len(result['replacement']['original_ids']), len(removed))
         self.assertTrue((destination/'reclustered-sections.svg').exists())
         self.assertEqual(json.loads(state_path.read_text()), state)
+        # Reuse the exact synthetic encoding while excluding original noise.
+        filtered = native.root/'grouped-only'
+        again = subprocess.run([sys.executable, '-m', 'sse_multivector.hdbscan_section_replacement',
+            'prepare', str(filtered), '--from-replacement', str(destination), '--exclude-unassigned'],
+            cwd=fixtures.PROJECT, text=True, capture_output=True)
+        self.assertEqual(again.returncode, 0, again.stdout+again.stderr)
+        filtered_plan = json.loads((filtered/'replacement.json').read_text())['plan']
+        grouped = {i for g in analysis['groups'] for i in g['original_ids']}
+        self.assertEqual(filtered_plan['current_ids'],
+                         [i for i in originals if i in grouped and i not in removed]+['R00001'])
+        self.assertEqual(filtered_plan['first_new_encoding'], len(filtered_plan['pool']['encodings']))
+        self.assertEqual(filtered_plan['excluded_unassigned_ids'], sorted(unassigned))
+        root_key = item['vector_key']
+        self.assertEqual(filtered_plan['pool']['vectors'][root_key]['encoding'], len(pool['encodings'])-1)
+        self.assertEqual(filtered_plan['pool']['encodings'][-1]['config'], pool['encodings'][-1]['config'])
+        collected = subprocess.run([sys.executable, '-m', 'sse_multivector.hdbscan_section_replacement',
+            'collect', str(filtered)], cwd=fixtures.PROJECT, text=True, capture_output=True)
+        self.assertEqual(collected.returncode, 0, collected.stdout+collected.stderr)
+        filtered_result = json.loads((filtered/'analysis.json').read_text())
+        self.assertEqual(filtered_result['provenance']['new_encodings'], 0)
+        self.assertEqual(filtered_result['provenance']['reused_vectors'], len(filtered_plan['current_ids']))
+        self.assertEqual(filtered_result['replacement']['original_ids'], removed)
         (native.root/'epsilon.json').write_text((native.root/'epsilon.json').read_text()+'\n')
         changed = subprocess.run([sys.executable, '-m', 'sse_multivector.hdbscan_section_replacement',
             'collect', str(destination)], cwd=fixtures.PROJECT, text=True, capture_output=True)
