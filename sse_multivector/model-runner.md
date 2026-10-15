@@ -1741,13 +1741,15 @@ browsing exports do not establish official status. The previous `H0001`–`H0701
 diagnostic inventory IDs are withdrawn and must not be reused.
 
 New native hierarchy definitions use
-[HiGen V5](../docs/recommendation-engine/hierarchy-generation-v5.md). It uses
+[HiGen V5.1](../docs/recommendation-engine/hierarchy-generation-v5.md). It uses
 Bootstrap-v133 titles/meanings, angular HDBSCAN with `min_samples=3` and
 `min_cluster_size=2`, the middle-80% positive-bend cut and the approved cut
 fallbacks. It selects sections by distinct-note count, names groups before
 canonical sections with Consolidated-grouped-v1, and reclusters synthetic
-representatives while retaining canonical identity through amendments. Further
-section levels start with a fresh tree over the current node's accumulated
+representatives while retaining canonical identity through amendments. All
+non-null original entries remain eligible for subsequent roots, including
+entries unassigned in the first clustering. This is V5.1's change from V5.
+Further section levels start with a fresh tree over the current node's accumulated
 original entries. Groups are the leaves, with unclaimed notes retained on the
 parent. Model requests use the shared runner and exact native reuse; no new
 provider transport or concurrency cap is added. Frozen historical policies
@@ -1802,14 +1804,14 @@ Read help through the shared stable launcher from the task worktree:
 `prepare-hierarchy DIRECTORY --spec SPEC` takes a schema-1 definition containing
 `corpus`, `note_ids`, `local_schema_version` (4), `bootstrap_spec`,
 `consolidation_spec` and `worker_config`. New definitions default to
-`hierarchy-generation-v5` and also require `hdbscan_binary`; set the policy
+`hierarchy-generation-v5.1` and also require `hdbscan_binary`; set the policy
 explicitly for reproducibility. Optional `bootstrap_hierarchy` reuses matching
-saved meanings and original vectors. V5 can reuse completed Bootstrap before
-encoding finishes and can extend the client deadline without changing the
-completed producers or their recorded settings. Missing vectors are encoded
+saved meanings and original vectors, including producers from V5. Both versions
+can reuse completed Bootstrap before encoding finishes and can extend the client
+deadline without changing the completed producers or their recorded settings. Missing vectors are encoded
 normally; other Bootstrap controls must still match. Explicit historical generation policies
 remain supported, and frozen legacy definitions without a policy keep their
-saved V3 behavior. The frozen policy cannot change on resume. Current data must originate from
+saved policy. The frozen policy cannot change on resume. Current data must originate from
 ASv6.100 or an explicitly approved later AS version. The teacher specs retain
 ordinary native runner settings, schemas and versioned prompt paths.
 V3.2 requires Bootstrap-v133 and its five-field title output schema. The SSE

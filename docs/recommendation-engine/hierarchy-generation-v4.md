@@ -1,6 +1,6 @@
 # HiGen V4.2 — hierarchy from one HDBSCAN tree
 
-New construction uses [HiGen V5](hierarchy-generation-v5.md). This document
+New construction uses [HiGen V5.1](hierarchy-generation-v5.md). This document
 describes frozen V4 settings, still-used experiment evidence and native resume
 compatibility; it does not select V4 for new definitions.
 

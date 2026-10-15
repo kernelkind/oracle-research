@@ -85,6 +85,12 @@ parameters.
   parent. Originally unassigned entries remain excluded.
   **HR27: 22 nodes, 46/50 notes; HR28: 52 nodes, 94/100 notes; HR29: 66 nodes,
   198/200 notes.** Reachability includes direct top-level notes.
+- V5.1: V5's construction with all non-null original entries retained for
+  subsequent root rounds, including those initially left unassigned. This is
+  the default for new definitions. Roots-only chat iterations on the HR27 and
+  HR28 corpora covered 50/50 and 100/100 notes under actual roots, respectively;
+  they are not new official HR runs or semantic approval. Full construction
+  remains recursive. Top-container access does not establish root coverage.
 - HR14/HR16 omit two null Bootstrap meanings. HR17 had none. Answers and receipts
   remain saved; the original selected note set is preserved as input evidence.
 

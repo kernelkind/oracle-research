@@ -1,16 +1,21 @@
-# HiGen V5 — recursive HDBSCAN construction
+# HiGen V5.1 — recursive HDBSCAN construction
 
-V5 is the default for new native hierarchy definitions. It implements the
-approved recursive replacement process. Bootstrap-v133 supplies original L1
-titles and explicit meanings. Grouped-consolidation-v1 names groups and broader
+V5.1 is the default for new native hierarchy definitions. It retains entries
+left unassigned by the first root clustering for subsequent root rounds.
+Historical V5 excludes those entries unless its experimental eligibility
+option was explicitly enabled. The recursive replacement process, prompts,
+clustering parameters, cuts and stopping rules are otherwise unchanged.
+Bootstrap-v133 supplies original L1
+titles and explicit meanings. Consolidated-grouped-v1 names groups and broader
 sections. Offline native-workflow tests cover construction and recovery.
-The first matched-control run, [HR27](hierarchy-runs.md#hr27--hr21-controls-with-higen-v5),
+The first V5 matched-control run, [HR27](hierarchy-runs.md#hr27--hr21-controls-with-higen-v5),
 completed with 22 nodes and 46/50 reachable notes; semantic quality remains
 for review.
 
-| Setting | V5 value |
+| Setting | V5.1 value |
 | --- | --- |
-| Frozen policy | `hierarchy-generation-v5` |
+| Frozen policy | `hierarchy-generation-v5.1` |
+| Original root eligibility | All non-null original L1 definitions, including initially unassigned entries |
 | HDBSCAN distance | Angular mutual reachability |
 | `min_samples` | 3 |
 | `min_cluster_size` | 2 |
@@ -22,9 +27,11 @@ for review.
 
 ## Construction
 
-Start with all non-null original L1 definitions. Run HDBSCAN and keep only
-originally grouped entries as eligible inputs. Originally unassigned entries
-stay excluded. Later unassigned inputs remain eligible and stay in the pool.
+Start with all non-null original L1 definitions. Run HDBSCAN and retain all
+of those entries as eligible inputs. Entries left unassigned by this first
+clustering stay in the pool while subsequent roots are constructed. They may
+become grouped in a later round; they do not become canonical nodes merely
+because they were retained. Later unassigned inputs likewise stay in the pool.
 
 Project the condensed tree onto its selected groups. For more than six groups,
 choose the positive bend in the middle 80% of distinct merge-distance levels,
@@ -33,7 +40,7 @@ together. These temporary sections may exceed six. If the bend is unavailable,
 use V4's last cut before exceeding six sections. If a tied split makes that
 impossible, select the six groups with the most distinct notes as leaves.
 The remaining groups' notes stay directly on the parent. Below-line bends are
-a future investigation; V5 does not select them by absolute deviation.
+a future investigation; neither version selects them by absolute deviation.
 
 Select the largest section without an existing synthetic representative by
 distinct supporting notes. Expand representatives to their original note
@@ -58,8 +65,12 @@ sections can still advance. Unclaimed original notes remain on the parent.
 Finish the lineup at six children, when only existing representatives remain,
 or when its sections provide no further new node or amendment. Do not encode
 or recluster a finished lineup merely to regroup existing representatives.
-Keep notes from unclaimed eligible entries directly on the
-parent, including the display container above the roots. Canonical nodes retain
+The implementation keeps notes from unclaimed eligible entries directly on the
+parent, including the display container above the roots. That top-container
+fallback is not approved root placement; its final handling remains unresolved.
+Count coverage beneath actual roots separately from top-container access.
+V5.1 changes eligibility, not this fallback, and does not guarantee that every
+note will be assigned to a root. Canonical nodes retain
 all their supporting note associations, not just the notes left outside their
 children. The existing viewer export includes root-container notes.
 
@@ -84,11 +95,11 @@ Use the ordinary `prepare-hierarchy`, `advance-hierarchy` and `run-hierarchy`
 commands through the shared stable launcher from a task worktree. The schema-1
 definition supplies `corpus`, ordered `note_ids`, `local_schema_version: 4`,
 `bootstrap_spec`, `consolidation_spec`, `worker_config` and `hdbscan_binary`.
-Set `generation_policy: hierarchy-generation-v5` explicitly for reproducibility;
-omission selects V5 for new preparation. Optional `bootstrap_hierarchy` reuses a
+Set `generation_policy: hierarchy-generation-v5.1` explicitly for reproducibility;
+omission selects V5.1 for new preparation. Optional `bootstrap_hierarchy` reuses a
 matching saved Bootstrap-v133 checkpoint and original vectors.
-Completed Bootstrap answers can be reused before encoding finishes; V5 reuses
-completed encoder jobs and schedules the missing vectors normally. A longer
+Completed Bootstrap answers can be reused before encoding finishes; both
+versions reuse completed encoder jobs and schedule the missing vectors normally. A longer
 client timeout is also compatible with completed Bootstrap reuse when every
 other input and control matches. Original producer receipts retain their actual
 timeout. HR30 sets one-hour timeouts for new Bootstrap and consolidation requests.
@@ -118,25 +129,38 @@ existing exponential backoff, so a repaired runner can be loaded. Teacher
 execution keeps that fresh CLI path. No outer coordinator or provider cap is
 introduced.
 
-Historical V3/V4 definitions retain their frozen policies and settings on
-resume. They do not acquire V5's algorithm or parameters. HR27 and V5's
+Historical V3/V4/V5 definitions retain their frozen policies and settings on
+resume. They do not acquire V5.1's eligibility rule. HR27 and V5's
 version description are recorded in the hierarchy workbook.
 
 ## Experimental roots-only iterations
 
-V5 definitions may freeze an optional `v5_options` object. Both supported
-fields are booleans and default to false:
+V5/V5.1 definitions may freeze an optional `v5_options` object. Both supported
+fields are booleans:
 
-- `roots_only`: finish after the root lineup, without preparing children.
+- `roots_only`: finish after the root lineup, without preparing children;
+  defaults to false. V5.1 normally constructs the full recursive hierarchy.
 - `include_original_unassigned`: keep all non-null original entries eligible,
   including entries unassigned by the first root clustering. The first tree
   and root selection are unchanged; subsequent root pools retain those entries.
+  This legacy trial option defaults to false in V5. V5.1 always retains those
+  entries without an option and rejects an explicit false override.
 
-These controls support isolated chat iterations, not a new official HiGen
-version or a change to V5 defaults. Bootstrap meanings and original vectors
-can be reused through `bootstrap_hierarchy`; identical consolidation requests
+The user adopted the eligibility change as V5.1 after roots-only chat trials.
+Those saved trial states remain labeled V5 with their experimental options;
+they are not relabeled official hierarchy experiments. Bootstrap meanings and
+original vectors can be reused through `bootstrap_hierarchy`; identical consolidation requests
 still use native answer reuse. Reports must count distinct notes under the
 actual roots separately from notes left outside those roots. Top-container
 access does not establish root coverage. The user rejected treating direct
 top-container notes as approved root placement; this iteration does not
 resolve the final handling of root leftovers.
+
+The [50-note trial](../../../oracle-mvp-hierarchy-fifty-roots-ungrouped-v1/target/fifty-roots-include-ungrouped-v1/roots/state.json)
+increased actual-root coverage from 46 to 50 notes. The
+[HR28-corpus trial](../../../oracle-mvp-hierarchy-hr28-roots-ungrouped-v1/target/hr28-roots-include-ungrouped-v1/roots/state.json)
+increased it from 87 to 100. Both reused the baseline Bootstrap meanings and
+original vectors. Consolidation was sampled again: one-hour client deadlines
+prevented reuse of older shorter-deadline requests. These are observed chat
+iteration results, not a controlled causal estimate or semantic certification.
+Very broad generated headings remain a quality concern.

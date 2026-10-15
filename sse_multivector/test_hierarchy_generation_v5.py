@@ -245,13 +245,69 @@ class V5ConstructionTests(unittest.TestCase):
         self.assertEqual([n['original_ids'] for n in second['nodes']],
                          [n['original_ids'] for n in state['nodes']])
 
-    def test_new_preparation_defaults_to_v5(self):
+    def test_new_preparation_defaults_to_v51(self):
         spec = self.prepare()
         cfg = json.loads(spec.read_text())
         del cfg['generation_policy']
         self.native.write('v5.json', cfg)
         state = self.construct(spec)
-        self.assertEqual(state['generation_policy'], 'hierarchy-generation-v5')
+        self.assertEqual(state['generation_policy'], 'hierarchy-generation-v5.1')
+
+    def test_v51_retains_original_noise_without_an_eligibility_option_and_recurses(self):
+        from sse_multivector import hierarchy_generation as generation
+
+        spec = self.prepare(count=43, bend=True)
+        cfg = json.loads(spec.read_text())
+        cfg['generation_policy'] = 'hierarchy-generation-v5.1'
+        self.native.write('v5.json', cfg)
+        state = self.construct(spec)
+        family = state['families'][0]
+        first = family['rounds'][0]
+        self.assertTrue(first['unassigned'])
+        self.assertTrue(set(first['unassigned']) <= set(first['after']))
+        self.assertTrue(set(first['unassigned']) <= set(family['rounds'][1]['current']))
+        self.assertEqual(state['v5']['eligible_ids'], family['original_ids'])
+        self.assertGreater(len(state['families']), 1)
+        self.assertTrue(any(n['parents'] for n in state['nodes']))
+        self.assertEqual(generation.summary(state)['scope'],
+                         'recursive fresh HDBSCAN trees with group leaves')
+        generation.check_state(state)
+        from sse_multivector.canonical_hierarchy_viewer import export_viewer
+        viewer = export_viewer(self.native.root/'v5', self.native.root/'v51-viewer')
+        self.assertEqual(viewer['note_count'], len(state['note_ids']))
+
+    def test_v51_reuses_saved_v5_bootstrap_and_vectors_without_mutating_the_source(self):
+        from sse_multivector import hierarchy_generation as generation
+
+        spec = self.prepare()
+        source = self.construct(spec)
+        source_path = self.native.root/'v5/state.json'
+        before = source_path.read_bytes()
+        calls = self.native.calls()
+        cfg = json.loads(spec.read_text())
+        cfg['generation_policy'] = 'hierarchy-generation-v5.1'
+        cfg['bootstrap_hierarchy'] = str(source_path)
+        self.native.write('v51.json', cfg)
+        prepared = self.native.root/'v51'
+        generation.prepare(self.native.root/'v51.json', prepared)
+        state = json.loads((prepared/'state.json').read_text())
+        self.assertEqual(state['experiments'][0], source['experiments'][0])
+        self.assertEqual(state['vectors'], source['vectors'])
+        self.assertEqual(state['encodings'], source['encodings'])
+        self.assertEqual(self.native.calls(), calls)
+        self.assertEqual(source_path.read_bytes(), before)
+        generation.check_state(state)
+
+    def test_v51_cannot_disable_its_eligibility_rule(self):
+        from sse_multivector import hierarchy_generation as generation
+
+        spec = self.prepare()
+        cfg = json.loads(spec.read_text())
+        cfg.update(generation_policy='hierarchy-generation-v5.1',
+                   v5_options=dict(include_original_unassigned=False))
+        self.native.write('v5.json', cfg)
+        with self.assertRaisesRegex(ValueError, 'invalid hierarchy generation spec'):
+            generation.prepare(spec, self.native.root/'invalid')
 
     def test_all_initial_noise_finishes_without_inventing_groups(self):
         from sse_multivector import hierarchy_generation as generation

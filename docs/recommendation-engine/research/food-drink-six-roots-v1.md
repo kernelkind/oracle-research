@@ -12,7 +12,9 @@ The user named this recursive design **HiGen V5**. The following decisions do
 not change the completed six-root evidence or activate its implementation.
 This completed manual experiment did not construct recursive children. The
 subsequent native implementation is described in
-[HiGen V5](../hierarchy-generation-v5.md); it is the default for new definitions.
+[HiGen V5/V5.1](../hierarchy-generation-v5.md). New definitions now default to
+V5.1, which retains initially unassigned entries for later root rounds. The
+historical V5 decisions and this completed manual evidence remain unchanged.
 
 Implementation is authorized. V5 uses angular HDBSCAN with
 `min_cluster_size = 2`, `min_samples = 3` and excess-of-mass selection, retaining

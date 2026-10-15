@@ -1,4 +1,4 @@
-"""Recursive V5 selection using native definitions, SSE and saved HDBSCAN trees.
+"""Recursive V5/V5.1 selection using native definitions, SSE and saved HDBSCAN trees.
 
 This module prepares work and consumes receipts. The shared runner remains the
 only teacher executor; the ordinary hierarchy coordinator submits ready work.
@@ -18,6 +18,11 @@ def _originals(state, ids):
 
 def _notes(state, originals):
     return sorted({state['originals'][int(o[1:])-1]['local']['note_id'] for o in originals})
+
+
+def _include_original_unassigned(state):
+    return (state['generation_policy'] == generation.POLICY_V51
+            or state.get('v5_options', {}).get('include_original_unassigned', False))
 
 
 def _definition_key(members, parent, stage):
@@ -179,7 +184,7 @@ def _step(directory, state, family):
         if not round_['groups']:
             if family['parent'] is None and 'eligible_ids' not in state['v5']:
                 state['v5']['eligible_ids'] = (list(round_['current']) if
-                    state.get('v5_options', {}).get('include_original_unassigned') else [])
+                    _include_original_unassigned(state) else [])
                 state['v5']['original_unassigned_ids'] = list(round_['current'])
                 family['current'] = []
             family['rounds'].append(dict(round_, selection=None, proposals=[], applied=True,
@@ -193,7 +198,7 @@ def _step(directory, state, family):
         family['rounds'].append(round_)
         if family['parent'] is None and 'eligible_ids' not in state['v5']:
             state['v5']['eligible_ids'] = _originals(state, round_['current'] if
-                state.get('v5_options', {}).get('include_original_unassigned') else
+                _include_original_unassigned(state) else
                 [i for g in round_['groups'] for i in g])
             state['v5']['original_unassigned_ids'] = list(round_['unassigned'])
     if not round_['proposals']:
@@ -382,7 +387,7 @@ def check_state(state, *, verify_current_code=True):
     if 'eligible_ids' in data:
         first = state['families'][0]['rounds'][0]
         expected = _originals(state, first['current'] if
-            state.get('v5_options', {}).get('include_original_unassigned') else
+            _include_original_unassigned(state) else
             [i for group in first['groups'] for i in group])
         if data['eligible_ids'] != expected or data['original_unassigned_ids'] != first['unassigned']:
             raise ValueError('V5 original grouped eligibility changed')
