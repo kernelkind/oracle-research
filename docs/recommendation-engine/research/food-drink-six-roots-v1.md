@@ -21,11 +21,16 @@ and the next smaller distance, split into sections, and repeat the existing
 selection, grouped consolidation, replacement and amendment process to generate
 the parent's children. Repeat recursively within each resulting child.
 
-Use the HDBSCAN tree for that root when constructing its next level. Preserve
-its accumulated group memberships through amendments rather than remapping its
-entries to groups in the original whole-corpus run. In particular, Root 6 uses
-its six creation groups as leaves; its entries spanning seven original groups
-does not change that decision. Apply the same rule recursively to each parent.
+At every level, use the current node's own HDBSCAN tree when constructing its
+next level. Preserve its complete accumulated group membership, including all
+amendments, rather than remapping its entries to groups in the original
+whole-corpus run. In particular, Root 6 uses its six creation groups as leaves;
+its entries spanning seven original groups does not change that decision.
+
+Choose the largest eligible section by its number of distinct supporting notes.
+Count each note ID once per section, including the original note associations
+represented by any synthetic nodes in that section. Input-node and group counts
+do not determine which section is largest.
 
 Each sibling lineup has at most six nodes. After selecting `k` children, if
 the remaining sections number at most `6 - k`, turn each remaining section
@@ -47,9 +52,6 @@ viewing L2S1's notes. The child limit must not remove those note associations.
 
 These are unresolved implementation choices, not approved changes:
 
-- The protected rough notes select the section with the most nodes; the saved
-  round record uses distinct supporting notes. The size measure for V5 needs
-  an explicit decision rather than treating those measures as interchangeable.
 - A section can contain several existing siblings. Final G09 contains roots
   1, 2 and 5. The one-existing-root amendment rule does not specify whether to
   combine these siblings or keep them separate and how to assign new entries.
