@@ -6,11 +6,17 @@ The user requested continuing the same process until six roots exist, then
 observing that result before settling complete-coverage or sixth-root rules.
 The protected `MY-NOTES_10-12.md` is read-only and remains unedited.
 
-## HiGen V5 — approved recursive design, not implemented
+## HiGen V5 — approved recursive design, implementation in progress
 
 The user named this recursive design **HiGen V5**. The following decisions do
 not change the completed six-root evidence or activate its implementation.
 Recursive construction is not implemented by this experiment.
+
+Implementation is authorized. V5 uses angular HDBSCAN with
+`min_cluster_size = 2`, `min_samples = 3` and excess-of-mass selection, retaining
+Bootstrap-v133 titles and explicit meanings. These are V5's recorded settings;
+they do not relabel historical V4 parameter experiments. Investigating a real
+below-line bend is deferred; it does not change the approved positive-bend rule.
 
 For each final parent, use its complete accumulated set of assigned HDBSCAN
 groups, including additions from every amendment. Do not use only the groups
@@ -87,9 +93,19 @@ as leaves and retain the remaining groups' notes directly on the parent.
 Largest still means distinct supporting notes. Preserve the existing canonical
 associations and the six-child limit when applying these fallbacks.
 
-These are approved V5 design rules. The existing numerical review tool still
-has no bend fallback, and V4's implementation still blocks on an impossible
-tied split. This documentation change does not alter either implementation.
+The shared numerical module now implements V5's cut and both fallbacks in
+`hierarchy_hdbscan.select_sections`. It returns every section or group so the
+constructor can select by distinct-note count and preserve leftover notes.
+The numerical review tool still uses the original bend-only rule, and frozen
+V4 construction still blocks on an impossible tied split. The production
+recursive V5 constructor is not yet implemented or activated.
+
+One implementation question remains: after an amendment, the later HDBSCAN
+tree contains a synthetic representative rather than its earlier internal
+groups. Both sets of groups must be preserved, but the connection between
+their trees has not been specified. Do not invent distances, silently replace
+the node's own tree with the original whole-corpus tree, or infer approval for
+rerunning its internal clustering.
 
 ## Starting evidence and round construction
 

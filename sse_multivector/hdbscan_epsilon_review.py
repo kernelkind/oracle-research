@@ -4,7 +4,7 @@ This makes no model requests and does not activate a construction policy.
 Selected groups stay fixed; the 10%-trimmed bend determines only the display cut.
 """
 import argparse
-from collections import Counter, defaultdict
+from collections import Counter
 import hashlib
 from html import escape
 import json
@@ -13,99 +13,8 @@ from pathlib import Path
 import subprocess
 
 from . import hierarchy_hdbscan as hdbscan
+from .hierarchy_hdbscan import project, curve, select_epsilon, partition
 from .hierarchy_generation import _vectors, check_state
-
-
-def project(response, request, mapping):
-    """Project the original condensed tree onto the fixed selected groups."""
-    groups = hdbscan.members(response, request, mapping)
-    # Use the native validator without imposing its ordinary six-way cut.
-    hdbscan.section_plan(response, request, mapping, max(1, len(groups)))
-    if not groups:
-        raise ValueError('no selected HDBSCAN groups')
-    algorithm = response['artifact']['result']['algorithm_result']
-    count = algorithm['vector_count']
-    selected = {c['id']: i + 1 for i, c in enumerate(algorithm['clusters'])}
-    parents, children = {}, defaultdict(list)
-    for edge in algorithm['condensed_tree']:
-        parents[edge['child']] = (edge['parent'], edge['lambda'])
-        if edge['child'] >= count:
-            children[edge['parent']].append(edge['child'])
-    needed = {count}
-    for node in selected:
-        while node not in needed:
-            needed.add(node)
-            node = parents[node][0]
-    order, pending = [], [count]
-    while pending:
-        node = pending.pop()
-        order.append(node)
-        pending.extend(c for c in children[node] if c in needed)
-    nodes, representative = {}, {}
-    for node in reversed(order):
-        below = [representative[c] for c in children[node] if c in needed]
-        if node in selected:
-            nodes[node] = dict(node=node, groups=[selected[node]], children=[])
-        elif len(below) == 1:
-            representative[node] = below[0]
-            continue
-        else:
-            below.sort(key=lambda c: min(nodes[c]['groups']))
-            nodes[node] = dict(node=node, children=below,
-                               groups=sorted(g for c in below for g in nodes[c]['groups']),
-                               distance=1 / parents[next(c for c in children[node]
-                                                         if c in needed)][1])
-        representative[node] = node
-    return dict(root=representative[count], nodes=list(nodes.values()))
-
-
-def curve(tree):
-    splits = defaultdict(int)
-    for node in tree['nodes']:
-        if node['children']:
-            splits[node['distance']] += len(node['children']) - 1
-    distances = sorted(splits, reverse=True)
-    points, count = [], 1
-    for i, distance in enumerate(distances):
-        count += splits[distance]
-        following = distances[i + 1] if i + 1 < len(distances) else 0
-        points.append(dict(distance=distance, following_distance=following,
-                           section_count=count, midpoint=(distance + following) / 2))
-    return points
-
-
-def select_epsilon(tree):
-    points = curve(tree)
-    trim = math.ceil(.10 * len(points))
-    retained = points[trim:len(points) - trim]
-    if len(retained) < 3:
-        raise ValueError('candidate needs at least three retained distance levels')
-    first, last = retained[0], retained[-1]
-    scored = []
-    for point in retained:
-        x = ((point['section_count'] - first['section_count']) /
-             (last['section_count'] - first['section_count']))
-        y = ((first['distance'] - point['distance']) /
-             (first['distance'] - last['distance']))
-        scored.append(dict(point, score=x-y))
-    best = max(scored, key=lambda p: (p['score'], -p['section_count']))
-    if best['score'] <= 0:
-        raise ValueError('candidate needs a positive bend; no fallback is defined')
-    return dict(rule='trimmed-bend-10-percent-v1', epsilon=best['midpoint'],
-                omitted_levels_per_end=trim, selected_point=best,
-                fitted_points=scored, curve=points)
-
-
-def partition(tree, epsilon):
-    nodes = {n['node']: n for n in tree['nodes']}
-    sections, pending = [], [tree['root']]
-    while pending:
-        node = nodes[pending.pop()]
-        if not node['children'] or node['distance'] <= epsilon:
-            sections.append(node)
-        else:
-            pending.extend(reversed(node['children']))
-    return sections
 
 
 def render_svg(tree, sections, groups, epsilon, *, title, provenance):
