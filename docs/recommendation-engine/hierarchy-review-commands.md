@@ -32,6 +32,8 @@ original notes. Parameters describe the settings actually used.
 | HR25 | 100 | ASv6.100 | V4.4 | bootstrap-v133 | consolidated-grouped-v1 | — |
 | HR26 | 200 | ASv6.100 | V4.1 | bootstrap-v133 | consolidated-grouped-v1 | — |
 | HR27 | 50 | ASv6.100 | V5 | bootstrap-v133 | consolidated-grouped-v1 | — |
+| HR28 | 100 | ASv6.100 | V5 | bootstrap-v133 | consolidated-grouped-v1 | — |
+| HR29 | 200 | ASv6.100 | V5 | bootstrap-v133 | consolidated-grouped-v1 | — |
 
 **Same notes:** HR03/HR10/HR14/HR16/HR19/HR20/HR21/HR27 use the same ordered 50-note selection.
 HR05/HR08/HR09/HR13/HR15/HR17/HR18 use its same ordered first 24 notes. HR04 uses
@@ -74,6 +76,14 @@ parameters.
   **HR24: 60 nodes, six roots and 94/100 notes.**
 - V4.4: same construction, **min_samples=4, min_cluster_size=4**.
   **HR25: 52 nodes, six roots and 90/100 notes.**
+- V5: same original HDBSCAN parameters as V4.1. Choose a positive bend among
+  the middle 80% of merge distances, select the largest sections by distinct
+  notes, generate group definitions before section definitions, and recluster
+  synthetic representatives. Amend existing nodes; build fresh trees for their
+  children. Stop at groups; retain unclaimed eligible notes directly on the
+  parent. Originally unassigned entries remain excluded.
+  **HR27: 22 nodes, 46/50 notes; HR28: 52 nodes, 94/100 notes; HR29: 66 nodes,
+  198/200 notes.** Reachability includes direct top-level notes.
 - HR14/HR16 omit two null Bootstrap meanings. HR17 had none. Answers and receipts
   remain saved; the original selected note set is preserved as input evidence.
 
@@ -87,11 +97,12 @@ HR03/HR06/HR07 and 1,800s for traversal/V2. V2 prominence uses 600s.
 CPU, 768 dimensions, batch 8, **512-token maximum**. Pool the original AS
 subject with its Bootstrap meaning as unselected context. V3.2/V4.1–V4.4 use the same
 encoder and limits, pooling the generated title instead. V4.1–V4.4 encode only
-original Bootstrap entries. HR03/HR06/HR07 used
+original Bootstrap entries. V5 also encodes newly generated representatives
+using the same title-only pooling with their meaning as context. HR03/HR06/HR07 used
 standalone subject vectors, also with a 512-token maximum. Traversal/V2 did not
 use SSE for hierarchy construction.
 
-**Execution:** HR11–HR25 use prefix caching, automatic warming and exact-request
+**Execution:** HR11–HR29 use prefix caching, automatic warming and exact-request
 answer reuse. Seed/temperature are unspecified; no explicit output-token cap.
 Normally at most two provider attempts per case across resumes, temporary
 provider errors only; HR14 had an approved recovery exception. HR22 used a
@@ -517,3 +528,22 @@ at the top. Structural validation passed; semantic quality remains for review.
 cd /home/dev/src/notedeck_worktrees/algos
 ./oracle-mvp-hierarchy-hr27-v5/target/hr27-review-ui-v1/launch.sh
 ```
+
+## HR28 — 100 notes · HiGen V5
+
+HR22's exact ordered corpus, original meanings/vectors and teacher controls.
+Complete in 19m 26s: 52 canonical nodes, six roots and 94/100 reachable notes,
+including seven available only directly at the top. Native validation passed.
+Review UI not prepared; no refresh was requested.
+
+[Full result and evidence](hierarchy-runs.md#hr28--hr22-controls-with-higen-v5).
+
+## HR29 — 200 notes · HiGen V5
+
+HR26's exact ordered corpus, original meanings/vectors and teacher controls;
+ordinary two-attempt provider limit. Complete in 24m 32s: 66 canonical nodes,
+six roots and 198/200 reachable notes, including 21 available only directly
+at the top. Native validation passed. Review UI not prepared; no refresh
+was requested.
+
+[Full result and evidence](hierarchy-runs.md#hr29--hr26-controls-with-higen-v5).

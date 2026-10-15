@@ -161,6 +161,20 @@
       "artifact_path": "target/hierarchy-hr27-v5-fifty-note-v1/HR27/state.json",
       "sha256": "1a3da19f5e418364707d478b76af5457217f975f8097ade8ccf0d809111729de",
       "family": "Hierarchy"
+    },
+    {
+      "version_id": "HR28",
+      "identity": "e7adf34189a13d20540ca7c71a2852d69d4529f63270f7070e08123a1e5a578e",
+      "artifact_path": "target/hierarchy-hr28-v5-hundred-note-v1/HR28/state.json",
+      "sha256": "ae7dc20bf35924c21b71bbc5dddb0b3f1cabdcf3c9a1ee9a575ba74e7e560750",
+      "family": "Hierarchy"
+    },
+    {
+      "version_id": "HR29",
+      "identity": "0cf3e25adb73610ac3066d89911d0b945b60a3c0516a76de279126d5cc37615c",
+      "artifact_path": "target/hierarchy-hr29-v5-two-hundred-note-v1/HR29/state.json",
+      "sha256": "0ac4230fb27a36797832642958feacc97b605443f6819a8deaa777259667fdb2",
+      "family": "Hierarchy"
     }
   ]
 }

@@ -1355,3 +1355,87 @@ The user-requested [review launcher](../../../oracle-mvp-hierarchy-hr27-v5/targe
 passed the existing UI's offline check from /tmp (22 nodes and 46 original
 notes). Workbook status, coverage and launch command were reopened and verified.
 The execution worktree is retained for frozen source and receipt bindings.
+
+## HR28 — HR22 controls with HiGen V5
+
+Complete in **19m 26s** of native execution, excluding preparation and historical
+producer work. HR28 uses HR22's exact ordered 100-note ASv6.100 corpus, all 733
+saved Bootstrap-v133 answers, original vectors and encoder receipts. Prompt,
+model, reasoning, transport, schemas, timeouts and worker settings match HR22;
+the generation policy is V5. Both HR28 and HR29 were launched concurrently.
+Original teacher transport snapshots remain pinned; the shared stable
+coordinator is 1cfdd6a7. No new subjects or Bootstrap samples were generated.
+
+The final graph has **52 canonical nodes, six roots and 94/100 reachable notes**,
+with exactly HR22's coverage and omissions. Eighty-seven notes occur under
+canonical nodes; seven are available only directly at the top. Forty-nine have
+a direct top-level association, including overlap with canonical roots. All
+13 sibling families are complete, with a maximum of six canonical siblings.
+Root headings are Food and domestic life, Human life, Nostr ecosystem, Social
+and economic life, Biology and everyday life, and Human experience and expression.
+Native source, receipt, construction and baseline-control validation passed.
+This is structural qualification, not semantic approval or a quality-savings
+comparison. The original HR22 elapsed time includes pipeline work reused here.
+
+[Fresh native accounting](../../../oracle-mvp-hierarchy-hr28-v5/target/hierarchy-hr28-v5-hundred-note-v1/usage-new.json)
+records **70 fresh requests including warmups and a retry**, 37 exact
+consolidation reuses and one recovered provider failure. The known
+API-equivalent subtotal is **$0.3278828**; the failed request lacks usage,
+so the full fresh total is unknown. Known fresh usage is 53,952 uncached
+input, 76,288 cached input and 21,235 output tokens, including 14,110 reasoning
+tokens. The copied Bootstrap record's historical costs are excluded from these
+fresh totals. Incremental subscription cash charge is zero.
+[Producer-inclusive accounting](../../../oracle-mvp-hierarchy-hr28-v5/target/hierarchy-hr28-v5-hundred-note-v1/usage-all-producers.json)
+has a known $6.2826496 subtotal; five failed requests lack usage, so its full
+total is unknown.
+
+The frozen [definition](../../sse_multivector/hierarchy-runs/hr28/hierarchy.spec.json),
+[native state](../../../oracle-mvp-hierarchy-hr28-v5/target/hierarchy-hr28-v5-hundred-note-v1/HR28/state.json),
+[execution provenance](../../../oracle-mvp-hierarchy-hr28-v5/target/hierarchy-hr28-v5-hundred-note-v1/execution-provenance.json)
+and [terminal validation](../../../oracle-mvp-hierarchy-hr28-v5/target/hierarchy-hr28-v5-hundred-note-v1/terminal-validation.json)
+retain controls and evidence. Workbook status and coverage were reopened and
+verified. No review UI was requested or generated. Retain the execution
+worktree for frozen source and receipt bindings.
+
+## HR29 — HR26 controls with HiGen V5
+
+Complete in **24m 32s** of native execution, excluding preparation and historical
+producer work. HR29 uses HR26's exact ordered 200-note corpus (100 food/drink
+and 100 music notes), unchanged ASv6.100 subjects, all 1,527 saved Bootstrap-v133
+answers, original vectors and encoder receipts. Grouped-consolidation-v1,
+GPT-6.1 Sol medium, schemas, transport and worker controls match HR26. Only the
+generation policy changes to V5. The current shared coordinator is 1cfdd6a7;
+HR26's frozen teacher transport is retained. This new run uses the ordinary
+two-attempt provider limit; HR26's separately authorized unlimited recovery
+was not carried over. Both V5 runs were launched concurrently. No new subject
+or Bootstrap samples were generated.
+
+The final graph has **66 canonical nodes, six roots and 198/200 reachable notes**,
+with exactly HR26's coverage and omissions. There are 177 notes under canonical
+nodes; 21 are available only directly at the top. A total of 156 notes have
+direct top-level associations, including overlap with roots. All 16 sibling
+families are complete and the maximum is six canonical siblings. Root headings
+are Sound and digital media, Food and eating, Human Beings and Society, Nostr
+ecosystem, Drinks and drinking, and Arts and visual media. Native source,
+receipt, construction and baseline-control validation passed. Structural
+qualification does not establish semantic accuracy, improved browsing or
+quality-preserving savings. Original HR26 timing includes work reused here.
+
+[Fresh native accounting](../../../oracle-mvp-hierarchy-hr29-v5/target/hierarchy-hr29-v5-two-hundred-note-v1/usage-new.json)
+records **116 fresh requests including warmups and a retry**, 48 exact
+consolidation reuses and one recovered provider failure. The known
+API-equivalent subtotal is **$0.5458776**; the failed request lacks usage,
+so the full fresh total is unknown. Known fresh usage is 93,811 uncached
+input, 134,656 cached input and 34,479 output tokens, including 22,039 reasoning
+tokens. The same report's consolidation producer-inclusive generation subtotal
+is $0.8853304, also incomplete because of that failed request. These figures
+exclude historical Bootstrap generation; no full all-stage producer total was
+recomputed. Incremental subscription cash charge is zero.
+
+The frozen [definition](../../sse_multivector/hierarchy-runs/hr29/hierarchy.spec.json),
+[native state](../../../oracle-mvp-hierarchy-hr29-v5/target/hierarchy-hr29-v5-two-hundred-note-v1/HR29/state.json),
+[execution provenance](../../../oracle-mvp-hierarchy-hr29-v5/target/hierarchy-hr29-v5-two-hundred-note-v1/execution-provenance.json)
+and [terminal validation](../../../oracle-mvp-hierarchy-hr29-v5/target/hierarchy-hr29-v5-two-hundred-note-v1/terminal-validation.json)
+retain exact controls and evidence. Workbook status and coverage were reopened
+and verified. No review UI was requested or generated. Retain this execution
+worktree and baseline sources for frozen bindings and receipts.
