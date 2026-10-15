@@ -6,6 +6,39 @@ The user requested continuing the same process until six roots exist, then
 observing that result before settling complete-coverage or sixth-root rules.
 The protected `MY-NOTES_10-12.md` is read-only and remains unedited.
 
+## Approved recursive extension — future work
+
+The following decisions extend the design; they do not change the completed
+six-root evidence or activate a new HiGen version. Recursive construction is
+not implemented by this experiment.
+
+For each final parent, use its complete accumulated set of assigned HDBSCAN
+groups, including additions from every amendment. Do not use only the groups
+from the parent's first version. Apply the same “custom magic” to the HDBSCAN
+nodes and connections associated with that complete set: find the bend using
+the middle 80% of merge-distance levels, choose epsilon between that distance
+and the next smaller distance, split into sections, and repeat the existing
+selection, grouped consolidation, replacement and amendment process to generate
+the parent's children. Repeat recursively within each resulting child.
+
+Each sibling lineup has at most six nodes. After selecting `k` children, if
+the remaining sections number at most `6 - k`, turn each remaining section
+directly into a child rather than continuing to select them one at a time.
+For example, after the first child, five or fewer remaining sections can all
+become children immediately.
+
+When a parent has six or fewer assigned HDBSCAN groups, use those groups as its
+leaf nodes, each with its generated title and explicit meaning. Expose their
+notes directly; do not expand them into individual local L1 nodes.
+
+If six children have been generated and groups remain outside those children,
+discard the remaining groups as child-node candidates and retain their notes
+directly on the parent, deduplicating note IDs. For example, while generating
+children beneath L2S1, those notes remain attached to L2S1 and appear when
+viewing L2S1's notes. The child limit must not remove those note associations.
+
+## Starting evidence and round construction
+
 Start from the [completed S10 replacement](food-drink-s10-synthetic-grouped-v1.md):
 217 inputs, two retained synthetic roots, 39 HDBSCAN groups and 32 sections.
 S07 contains the second synthetic root and four mental-state entries; it amends
@@ -149,6 +182,6 @@ preserved alongside them; the usage summary is one directory tree above at
 Keep both experiment worktrees and their referenced sources for immutable
 receipts, vectors and absolute bindings. No official HR ID was assigned and
 the hierarchy UI was not refreshed. The temporary metadata-fix worktree was
-removed after its tested changes landed on main. Stop model calls here as
-requested. Next, review the broad root meanings and remaining-entry coverage
-before choosing what happens after the sixth root.
+removed after its tested changes landed on main. Model calls stopped at the
+requested observation point. Subsequent recursive-design decisions are recorded
+above; implementing and testing that extension remains future work.
