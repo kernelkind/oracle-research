@@ -303,15 +303,15 @@ permanent checkpoints including optimizer/RNG state, changed finite adapter
 weights, every raw/parsed answer, receipts, input bindings and file seals.
 Checkpoint 2,000 has 100 validation answers, including two invalid outputs;
 checkpoint 3,000 has 100 validation answers with no parsing failures. These
-counts do not establish semantic completeness. New test contents and scores
-remain sealed.    The conservative rental/transfer estimate plus the full storage allowance is **$29.35 of $43**. The verification record is
+counts do not establish semantic completeness. Both new test collections stayed
+sealed through validation and checkpoint selection.    The conservative rental/transfer estimate plus the full storage allowance is **$29.35 of $43**. The verification record is
 `oracle-mvp-qwen-continuation-v1/target/qwen-continuation-v1/launch-20261014/final-operation-verification.json`.
 
 The user authorized local validation grading, comparison with pass 1, checkpoint
 selection and then grading only the selected checkpoint's saved 200 test answers.
 Use the existing teacher requirements and DSMv3/DSSv2/DSLv10/DCSv1 settings.
-No new grading result or checkpoint selection is established yet. Retain the
-training worktree and isolated runner for artifact paths and frozen bindings;
+Retain the training worktree and isolated runner for artifact paths and frozen
+bindings;
 perform grading in `oracle-mvp-qwen-continuation-grading-v1`, with a separate
 isolated runner. The native review importer verifies the continuation's parent
 hashes and exact repeated-note plan. `--parent-run` resolves the saved rental
@@ -319,6 +319,62 @@ path to the unchanged local parent; `--model-version` fixes which saved
 checkpoint may be opened. Continuation test preparation requires exactly one
 explicit checkpoint, leaving other test collections sealed. Grading requires
 no GPU rental or regenerated answers.
+
+**Validation grading complete, October 15:** both new checkpoints have all
+100 shared validation answers graded, using the original teacher requirements
+and the same grading prompts and role-specific settings. Compare the existing
+pass-1 report without rerunning it. Arithmetic means include every answer;
+pass 2's two invalid outputs receive both zeros.
+
+| Qwen version | Validation correctness | Validation coverage | Invalid outputs |
+| --- | ---: | ---: | ---: |
+| Pass 1 / checkpoint 1,000 | 85.71% | 45.81% | 0 |
+| Pass 2 / checkpoint 2,000 | 87.96% | 44.77% | 2 |
+| Pass 3 / checkpoint 3,000 | 88.87% | 47.95% | 0 |
+
+Pass 3 has the highest observed means on both metrics and was selected at
+**21:51:25 UTC October 15**, before opening its test answers. Against pass 1,
+its validation gain is **3.16 correctness points and 2.14 coverage points**.
+Paired note-bootstrap 95% percentile intervals are **−1.43 to +7.91** and
+**−2.61 to +7.11 points**, respectively (20,000 resamples, seed 20261015).
+These intervals describe variation across the 100 paired notes, exclude grader
+uncertainty and include zero; validation does not establish a reliable gain.
+In validation, two additional passes have not produced the large completeness
+increase sought.
+
+The fixed validation inventory contains **845 required meaning groups**.
+Pass 1 covers **341** and pass 3 covers **347**: six additional groups across
+the 100 notes. These pooled counts differ from the primary score, which
+averages each note's coverage equally. Of pass 3's **498 uncovered groups**,
+**390** have no recorded matching returned subject; **108** have matches but
+missing required headings. These are saved grader findings, not new semantic
+adjudications. The remaining failures warrant examining which required
+meanings and parent headings are absent; this does not establish a new training
+recipe or authorize additional training.
+
+The new report has **200 finite grade pairs, zero manual reviews and zero
+pending judgments**. Independent verification checks all **5,448 protected
+new-source hashes** and all **6,138 pass-1 source hashes**, identical note IDs,
+score fractions and the preserved invalid-output zeros. Native automatic
+grading completed 385 batches and 299 collections. It stayed inside the 32 GiB,
+zero-swap boundary; observations recorded a 14.0 GiB peak and zero OOM events.
+Temporary HTTP 500/429 and transport failures recovered through the existing
+native retry policy; no grader settings or saved model answers changed.
+
+Artifacts remain under
+`oracle-mvp-qwen-continuation-grading-v1/target/qwen-continuation-grading-v1/`:
+`validation/automatic/grades.json`, `validation/completion-verification.json`,
+`validation/paired-differences.txt`, `validation/coverage-findings.txt` and the
+dated `checkpoint-selection.txt`.
+The validation report SHA-256 is
+`a9a5be338027fa052c864a3347d5f07b99f8bf98620c2cd8f898a5ce5b125206`.
+The grading worktree is frozen at Oracle `dc8c43f6` and its isolated runner at
+`36dfcf63`; retain both for their absolute source, prompt and receipt paths.
+Only pass 3's saved **200 test answers** are now opened for grading, with the
+same 200 teacher policies already imported. Its collection has no invalid
+outputs. Semantic test grades remain pending; pass 2's test collection remains
+sealed. Test results will not revise checkpoint selection, and these previously
+examined notes remain a reused benchmark rather than a fresh final holdout.
 
 The native volume-setup path sends the full 1.53GB transport twice: first to
 its staging directory for volume admission, then to the working directory.
