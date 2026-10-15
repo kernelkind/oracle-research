@@ -1,4 +1,4 @@
-"""Native hierarchy construction, including recursive HiGen V5 and V5.1.
+"""Native hierarchy construction, including recursive HiGen V5 through V5.2.
 
 The shared experiment runner owns teacher transport, caching and accounting.
 Preparation and advancement only freeze inputs and collect saved results.
@@ -38,7 +38,8 @@ POLICY_V43 = "hierarchy-generation-v4.3"
 POLICY_V44 = "hierarchy-generation-v4.4"
 POLICY_V5 = "hierarchy-generation-v5"
 POLICY_V51 = "hierarchy-generation-v5.1"
-V5_POLICIES = (POLICY_V5, POLICY_V51)
+POLICY_V52 = "hierarchy-generation-v5.2"
+V5_POLICIES = (POLICY_V5, POLICY_V51, POLICY_V52)
 SECTION_POLICIES = (POLICY_V41, POLICY_V42, POLICY_V43, POLICY_V44)
 HDBSCAN_POLICIES = (POLICY_V4_ROOTS, *SECTION_POLICIES, *V5_POLICIES)
 TITLE_POLICIES = (POLICY_V32, *HDBSCAN_POLICIES)
@@ -260,7 +261,7 @@ def prepare(spec_path, directory, history_root=None):
         "consolidation_spec",
         "worker_config",
     }
-    policy = cfg.get("generation_policy", POLICY_V51) if isinstance(cfg, dict) else None
+    policy = cfg.get("generation_policy", POLICY_V52) if isinstance(cfg, dict) else None
     if policy == POLICY_V4_ROOTS:
         fields |= {"bootstrap_hierarchy", "hdbscan_binary"}
     elif policy in (*SECTION_POLICIES, *V5_POLICIES):
@@ -278,7 +279,8 @@ def prepare(spec_path, directory, history_root=None):
         or not isinstance(options, dict)
         or set(options) - {'roots_only', 'include_original_unassigned'}
         or any(type(value) is not bool for value in options.values())
-        or (policy == POLICY_V51 and options.get('include_original_unassigned') is False)
+        or (policy in (POLICY_V51, POLICY_V52)
+            and options.get('include_original_unassigned') is False)
         or policy not in (POLICY, POLICY_V31, *TITLE_POLICIES)
         or type(cfg["schema_version"]) is not int
         or cfg["schema_version"] != 1

@@ -12,8 +12,9 @@ The user named this recursive design **HiGen V5**. The following decisions do
 not change the completed six-root evidence or activate its implementation.
 This completed manual experiment did not construct recursive children. The
 subsequent native implementation is described in
-[HiGen V5/V5.1](../hierarchy-generation-v5.md). New definitions now default to
-V5.1, which retains initially unassigned entries for later root rounds. The
+[HiGen V5.2](../hierarchy-generation-v5.md). New definitions now default to
+V5.2, which retains initially unassigned entries for later root rounds and ranks
+sections by notes not already covered by existing siblings at each level. The
 historical V5 decisions and this completed manual evidence remain unchanged.
 
 Implementation is authorized. V5 uses angular HDBSCAN with

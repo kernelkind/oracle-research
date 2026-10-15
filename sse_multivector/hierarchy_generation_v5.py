@@ -1,4 +1,4 @@
-"""Recursive V5/V5.1 selection using native definitions, SSE and saved HDBSCAN trees.
+"""Recursive V5 through V5.2 selection using native definitions and saved trees.
 
 This module prepares work and consumes receipts. The shared runner remains the
 only teacher executor; the ordinary hierarchy coordinator submits ready work.
@@ -21,7 +21,7 @@ def _notes(state, originals):
 
 
 def _include_original_unassigned(state):
-    return (state['generation_policy'] == generation.POLICY_V51
+    return (state['generation_policy'] in (generation.POLICY_V51, generation.POLICY_V52)
             or state.get('v5_options', {}).get('include_original_unassigned', False))
 
 
@@ -80,7 +80,7 @@ def _prepare_definitions(directory, state):
 
 
 def proposals(state, round_, max_siblings=6):
-    """Select new siblings by distinct notes; existing representatives keep ownership."""
+    """Rank sections by notes, excluding existing siblings' notes in V5.2."""
     items = state['items']
     existing = {items[i]['owner']: i for i in round_['current'] if 'owner' in items[i]}
     sections = round_['selection']['sections']
@@ -99,13 +99,19 @@ def proposals(state, round_, max_siblings=6):
         else:
             available.append(row)
     remaining = max_siblings-len(existing)
+    covered = (set(_notes(state, _originals(state, existing.values())))
+               if state.get('generation_policy') == generation.POLICY_V52 else set())
+
+    def score(proposal):
+        return len(set(_notes(state, _originals(state, proposal['members']))) - covered)
+
     if round_['selection']['rule'] == 'largest-groups-v5':
-        available.sort(key=lambda p: -len(_notes(state, _originals(state, p['members']))))
+        available.sort(key=lambda p: -score(p))
         selected = available[:remaining]
     elif len(available) <= remaining:
         selected = available
     else:
-        selected = [max(available, key=lambda p: len(_notes(state, _originals(state, p['members']))))]
+        selected = [max(available, key=score)]
     return dict(proposals=amendments+selected, conflicting_sections=conflicts)
 
 

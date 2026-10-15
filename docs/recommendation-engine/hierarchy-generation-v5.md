@@ -1,10 +1,14 @@
-# HiGen V5.1 — recursive HDBSCAN construction
+# HiGen V5.2 — recursive HDBSCAN construction
 
-V5.1 is the default for new native hierarchy definitions. It retains entries
-left unassigned by the first root clustering for subsequent root rounds.
+V5.2 is the default for new native hierarchy definitions. At every level, it
+ranks sections by distinct notes not already covered by existing siblings in
+that lineup. V5.1 ranked by total distinct notes. V5.2 retains V5.1's eligibility
+rule: entries left unassigned by the first root clustering remain available for
+subsequent root rounds.
 Historical V5 excludes those entries unless its experimental eligibility
 option was explicitly enabled. The recursive replacement process, prompts,
-clustering parameters, cuts and stopping rules are otherwise unchanged.
+clustering parameters, cuts and stopping rules are otherwise unchanged. V5.2's
+ranking is checked offline; no full V5.2 hierarchy has been generated yet.
 Bootstrap-v133 supplies original L1
 titles and explicit meanings. Consolidated-grouped-v1 names groups and broader
 sections. Offline native-workflow tests cover construction and recovery.
@@ -19,9 +23,10 @@ completed with 70 nodes and all 200 notes accessible, but only 176 beneath
 actual roots and 24 top-only. Retaining initial noise does not guarantee root
 coverage or a monotonic improvement over V5’s 177 notes beneath roots.
 
-| Setting | V5.1 value |
+| Setting | V5.2 value |
 | --- | --- |
-| Frozen policy | `hierarchy-generation-v5.1` |
+| Frozen policy | `hierarchy-generation-v5.2` |
+| Section ranking | Distinct notes not already covered by existing siblings in the same lineup |
 | Original root eligibility | All non-null original L1 definitions, including initially unassigned entries |
 | HDBSCAN distance | Angular mutual reachability |
 | `min_samples` | 3 |
@@ -45,14 +50,27 @@ choose the positive bend in the middle 80% of distinct merge-distance levels,
 then cut between that distance and the next smaller one. All tied merges split
 together. These temporary sections may exceed six. If the bend is unavailable,
 use V4's last cut before exceeding six sections. If a tied split makes that
-impossible, select the six groups with the most distinct notes as leaves.
+impossible, select groups as leaves using the same note ranking below, up to
+the remaining sibling slots.
 The remaining groups' notes stay directly on the parent. Below-line bends are
-a future investigation; neither version selects them by absolute deviation.
+a future investigation; V5 versions do not select them by absolute deviation.
 
-Select the largest section without an existing synthetic representative by
-distinct supporting notes. Expand representatives to their original note
-associations and deduplicate note IDs. Preserve saved section order for ties.
+Select the section without an existing synthetic representative that adds the
+most distinct notes not already covered by existing siblings. Expand the
+representatives in the current frozen round to their original note associations
+and deduplicate note IDs, including representatives left unassigned by HDBSCAN.
+Subtract that union from each available section's distinct supporting notes.
+Apply this rule both at the roots and within each parent's child lineup;
+coverage in unrelated branches does not reduce a child section's score.
+Preserve saved section order when uncovered-note counts tie. V5 and V5.1 retain
+their original total-note ranking.
 If all remaining sections fit the unused sibling slots, create all of them.
+
+The HR32 inspection motivating V5.2 found two available 33-note sections for the
+last root: Human life added two notes not under the existing five roots, while
+the coffee/drinks section added ten. V5.1 selected Human life by saved order.
+V5.2 selects the coffee/drinks section on that frozen round; this is an offline
+selection check, not a regenerated hierarchy or proof of overall quality.
 
 Generate each selected group's title and meaning from its member definitions.
 Generate the canonical section's definition from those group definitions,
@@ -74,8 +92,9 @@ or when its sections provide no further new node or amendment. Do not encode
 or recluster a finished lineup merely to regroup existing representatives.
 The constructor keeps notes from unclaimed eligible entries directly on the
 parent. At root level, those associations remain in the saved state's
-`direct_note_ids`; they are not approved root placement. V5.1 changes eligibility
-and does not guarantee that every note will be assigned to a root.
+`direct_note_ids`; they are not approved root placement. Retaining eligible
+entries and ranking uncovered notes do not guarantee that every note will be
+assigned to a root.
 Canonical nodes retain all their supporting note associations, not just the
 notes left outside their children.
 
@@ -107,11 +126,11 @@ Use the ordinary `prepare-hierarchy`, `advance-hierarchy` and `run-hierarchy`
 commands through the shared stable launcher from a task worktree. The schema-1
 definition supplies `corpus`, ordered `note_ids`, `local_schema_version: 4`,
 `bootstrap_spec`, `consolidation_spec`, `worker_config` and `hdbscan_binary`.
-Set `generation_policy: hierarchy-generation-v5.1` explicitly for reproducibility;
-omission selects V5.1 for new preparation. Optional `bootstrap_hierarchy` reuses a
+Set `generation_policy: hierarchy-generation-v5.2` explicitly for reproducibility;
+omission selects V5.2 for new preparation. Optional `bootstrap_hierarchy` reuses a
 matching saved Bootstrap-v133 checkpoint and original vectors.
-Completed Bootstrap answers can be reused before encoding finishes; both
-versions reuse completed encoder jobs and schedule the missing vectors normally. A longer
+Completed Bootstrap answers can be reused before encoding finishes. V5 versions
+reuse completed encoder jobs and schedule the missing vectors normally. A longer
 client timeout is also compatible with completed Bootstrap reuse when every
 other input and control matches. Original producer receipts retain their actual
 timeout. HR30 sets one-hour timeouts for new Bootstrap and consolidation requests.
@@ -141,22 +160,22 @@ existing exponential backoff, so a repaired runner can be loaded. Teacher
 execution keeps that fresh CLI path. No outer coordinator or provider cap is
 introduced.
 
-Historical V3/V4/V5 definitions retain their frozen policies and settings on
-resume. They do not acquire V5.1's eligibility rule. HR27 and V5's
+Historical definitions retain their frozen policies and settings on resume.
+They do not acquire a later version's eligibility or ranking rules. HR27 and V5's
 version description are recorded in the hierarchy workbook.
 
 ## Experimental roots-only iterations
 
-V5/V5.1 definitions may freeze an optional `v5_options` object. Both supported
+V5 through V5.2 definitions may freeze an optional `v5_options` object. Both supported
 fields are booleans:
 
 - `roots_only`: finish after the root lineup, without preparing children;
-  defaults to false. V5.1 normally constructs the full recursive hierarchy.
+  defaults to false. All V5 versions normally construct the full recursive hierarchy.
 - `include_original_unassigned`: keep all non-null original entries eligible,
   including entries unassigned by the first root clustering. The first tree
   and root selection are unchanged; subsequent root pools retain those entries.
-  This legacy trial option defaults to false in V5. V5.1 always retains those
-  entries without an option and rejects an explicit false override.
+  This legacy trial option defaults to false in V5. V5.1 and V5.2 always retain those
+  entries without an option and reject an explicit false override.
 
 The user adopted the eligibility change as V5.1 after roots-only chat trials.
 Those saved trial states remain labeled V5 with their experimental options;

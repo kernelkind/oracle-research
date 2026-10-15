@@ -248,13 +248,27 @@ class V5ConstructionTests(unittest.TestCase):
         self.assertEqual([n['original_ids'] for n in second['nodes']],
                          [n['original_ids'] for n in state['nodes']])
 
-    def test_new_preparation_defaults_to_v51(self):
-        spec = self.prepare()
+    def test_new_preparation_defaults_to_v52_and_recurses_with_initial_noise(self):
+        from sse_multivector import hierarchy_generation as generation
+
+        spec = self.prepare(count=43, bend=True)
         cfg = json.loads(spec.read_text())
         del cfg['generation_policy']
         self.native.write('v5.json', cfg)
         state = self.construct(spec)
-        self.assertEqual(state['generation_policy'], 'hierarchy-generation-v5.1')
+        self.assertEqual(state['generation_policy'], 'hierarchy-generation-v5.2')
+        family = state['families'][0]
+        first = family['rounds'][0]
+        self.assertTrue(first['unassigned'])
+        self.assertTrue(set(first['unassigned']) <= set(first['after']))
+        self.assertEqual(state['v5']['eligible_ids'], family['original_ids'])
+        self.assertTrue(any(f['parent'] is not None and f['rounds'] for f in state['families']))
+        generation.check_state(state)
+        before = (self.native.root/'v5/state.json').read_bytes()
+        calls = self.native.calls()
+        generation.run(self.native.root/'v5')
+        self.assertEqual(self.native.calls(), calls)
+        self.assertEqual((self.native.root/'v5/state.json').read_bytes(), before)
 
     def test_v51_retains_original_noise_without_an_eligibility_option_and_recurses(self):
         from sse_multivector import hierarchy_generation as generation
@@ -280,7 +294,7 @@ class V5ConstructionTests(unittest.TestCase):
         self.assertEqual(len(state['note_ids']), 43)
         self.assertEqual(viewer['note_count'], 41)
 
-    def test_v51_reuses_saved_v5_bootstrap_and_vectors_without_mutating_the_source(self):
+    def test_v51_and_v52_reuse_saved_v5_bootstrap_without_mutating_the_source(self):
         from sse_multivector import hierarchy_generation as generation
 
         spec = self.prepare()
@@ -289,29 +303,33 @@ class V5ConstructionTests(unittest.TestCase):
         before = source_path.read_bytes()
         calls = self.native.calls()
         cfg = json.loads(spec.read_text())
-        cfg['generation_policy'] = 'hierarchy-generation-v5.1'
         cfg['bootstrap_hierarchy'] = str(source_path)
-        self.native.write('v51.json', cfg)
-        prepared = self.native.root/'v51'
-        generation.prepare(self.native.root/'v51.json', prepared)
-        state = json.loads((prepared/'state.json').read_text())
-        self.assertEqual(state['experiments'][0], source['experiments'][0])
-        self.assertEqual(state['vectors'], source['vectors'])
-        self.assertEqual(state['encodings'], source['encodings'])
-        self.assertEqual(self.native.calls(), calls)
-        self.assertEqual(source_path.read_bytes(), before)
-        generation.check_state(state)
+        for version in ('v5.1', 'v5.2'):
+            with self.subTest(version=version):
+                cfg['generation_policy'] = f'hierarchy-generation-{version}'
+                spec = self.native.write(f'{version}.json', cfg)
+                prepared = self.native.root/version
+                generation.prepare(spec, prepared)
+                state = json.loads((prepared/'state.json').read_text())
+                self.assertEqual(state['experiments'][0], source['experiments'][0])
+                self.assertEqual(state['vectors'], source['vectors'])
+                self.assertEqual(state['encodings'], source['encodings'])
+                self.assertEqual(self.native.calls(), calls)
+                self.assertEqual(source_path.read_bytes(), before)
+                generation.check_state(state)
 
-    def test_v51_cannot_disable_its_eligibility_rule(self):
+    def test_v51_and_v52_cannot_disable_their_eligibility_rule(self):
         from sse_multivector import hierarchy_generation as generation
 
         spec = self.prepare()
         cfg = json.loads(spec.read_text())
-        cfg.update(generation_policy='hierarchy-generation-v5.1',
-                   v5_options=dict(include_original_unassigned=False))
-        self.native.write('v5.json', cfg)
-        with self.assertRaisesRegex(ValueError, 'invalid hierarchy generation spec'):
-            generation.prepare(spec, self.native.root/'invalid')
+        for policy in ('hierarchy-generation-v5.1', 'hierarchy-generation-v5.2'):
+            with self.subTest(policy=policy):
+                cfg.update(generation_policy=policy,
+                           v5_options=dict(include_original_unassigned=False))
+                self.native.write('v5.json', cfg)
+                with self.assertRaisesRegex(ValueError, 'invalid hierarchy generation spec'):
+                    generation.prepare(spec, self.native.root/'invalid')
 
     def test_all_initial_noise_finishes_without_inventing_groups(self):
         from sse_multivector import hierarchy_generation as generation
@@ -376,6 +394,90 @@ class V5ConstructionTests(unittest.TestCase):
 
 
 class V5SelectionTests(unittest.TestCase):
+    def overlapping_sections(self, policy='hierarchy-generation-v5.2'):
+        # Five siblings already cover 174 notes. Two available sections each
+        # cover 33 notes, but add two and ten previously uncovered notes.
+        note_ids = (list(range(174)) + list(range(31)) + [174, 175]
+                    + list(range(23)) + list(range(176, 186)))
+        originals = [dict(id=f'L{i+1:05d}', local=dict(note_id=f'n{n}'))
+                     for i, n in enumerate(note_ids)]
+        items = {o['id']: dict(original_ids=[o['id']]) for o in originals}
+        existing = []
+        for i in range(5):
+            identifier = f'R{i+1}'
+            items[identifier] = dict(owner=f'C{i+1}',
+                                     original_ids=[o['id'] for o in originals[i:174:5]])
+            existing.append(identifier)
+        groups = [[i] for i in existing] + [
+            [o['id'] for o in originals[174:207]],
+            [o['id'] for o in originals[207:]],
+        ]
+        state = dict(generation_policy=policy, items=items, originals=originals)
+        round_ = dict(current=existing + groups[-2] + groups[-1], groups=groups,
+                      selection=dict(rule='trimmed-bend-10-percent-v1',
+                                     sections=[dict(groups=[i+1]) for i in range(7)]))
+        return state, round_
+
+    def test_v52_selects_ten_uncovered_notes_instead_of_two_in_the_33_note_tie(self):
+        from sse_multivector.hierarchy_generation_v5 import proposals
+        state, round_ = self.overlapping_sections()
+        result = proposals(state, round_)
+        self.assertEqual([p['members'] for p in result['proposals']], [round_['groups'][-1]])
+
+    def test_v52_prefers_more_uncovered_notes_even_when_the_section_is_smaller(self):
+        from sse_multivector.hierarchy_generation_v5 import proposals
+        state, round_ = self.overlapping_sections()
+        # Discard the coffee section's already-covered entries: ten total/new
+        # notes must still beat 33 total notes of which only two are new.
+        round_['groups'][-1] = round_['groups'][-1][-10:]
+        round_['current'] = [i for group in round_['groups'] for i in group]
+        result = proposals(state, round_)
+        self.assertEqual([p['members'] for p in result['proposals']], [round_['groups'][-1]])
+
+    def test_v52_largest_group_fallback_also_ranks_uncovered_notes(self):
+        from sse_multivector.hierarchy_generation_v5 import proposals
+        state, round_ = self.overlapping_sections()
+        round_['selection']['rule'] = 'largest-groups-v5'
+        result = proposals(state, round_)
+        self.assertEqual([p['members'] for p in result['proposals']], [round_['groups'][-1]])
+
+    def test_v52_counts_existing_siblings_even_when_they_are_unassigned(self):
+        from sse_multivector.hierarchy_generation_v5 import proposals
+        state, round_ = self.overlapping_sections()
+        round_['groups'] = round_['groups'][-2:]
+        round_['selection']['sections'] = [dict(groups=[1]), dict(groups=[2])]
+        result = proposals(state, round_)
+        self.assertEqual([p['members'] for p in result['proposals']], [round_['groups'][-1]])
+
+    def test_v52_child_lineup_ignores_coverage_in_other_branches(self):
+        from sse_multivector.hierarchy_generation_v5 import proposals
+        state, round_ = self.overlapping_sections()
+        state['nodes'] = [dict(id=f'C{i+1}', parents=['P'],
+                               original_ids=state['items'][f'R{i+1}']['original_ids'])
+                          for i in range(5)]
+        state['nodes'].append(dict(id='other-root', parents=[],
+                                   original_ids=round_['groups'][-1]))
+        result = proposals(state, round_)
+        self.assertEqual([p['members'] for p in result['proposals']], [round_['groups'][-1]])
+
+    def test_v52_preserves_saved_order_when_uncovered_note_counts_tie(self):
+        from sse_multivector.hierarchy_generation_v5 import proposals
+        state, round_ = self.overlapping_sections()
+        for first, second in zip(round_['groups'][-2], round_['groups'][-1]):
+            state['originals'][int(first[1:])-1]['local'] = dict(
+                state['originals'][int(second[1:])-1]['local'])
+        result = proposals(state, round_)
+        self.assertEqual([p['members'] for p in result['proposals']], [round_['groups'][-2]])
+
+    def test_v5_and_v51_preserve_total_note_ranking(self):
+        from sse_multivector.hierarchy_generation_v5 import proposals
+        for policy in ('hierarchy-generation-v5', 'hierarchy-generation-v5.1'):
+            with self.subTest(policy=policy):
+                state, round_ = self.overlapping_sections(policy)
+                result = proposals(state, round_)
+                self.assertEqual([p['members'] for p in result['proposals']],
+                                 [round_['groups'][-2]])
+
     def test_largest_counts_distinct_notes_instead_of_original_entries(self):
         from sse_multivector.hierarchy_generation_v5 import proposals
         groups = [[f'L{i+1:05d}' for i in range(10)], ['L00011', 'L00012']]+[[f'L{i+1:05d}'] for i in range(12, 17)]

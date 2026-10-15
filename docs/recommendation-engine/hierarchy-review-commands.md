@@ -88,14 +88,18 @@ parameters.
   **HR27: 22 nodes, 46/50 notes; HR28: 52 nodes, 94/100 notes; HR29: 66 nodes,
   198/200 notes.** Reachability includes direct top-level notes.
 - V5.1: V5's construction with all non-null original entries retained for
-  subsequent root rounds, including those initially left unassigned. This is
-  the default for new definitions. Roots-only chat iterations on the HR27 and
+  subsequent root rounds, including those initially left unassigned. It was the
+  default for new definitions until V5.2. Roots-only chat iterations on the HR27 and
   HR28 corpora covered 50/50 and 100/100 notes under actual roots, respectively;
   they are not new official HR runs or semantic approval. Full construction
   remains recursive. HR31 completed with 72 nodes and 100/100 notes beneath
   its six actual roots. HR32 completed with 70 nodes; its original export
   exposed 200 notes. New exports show only the 176 beneath roots, hiding 24
   unclaimed top-only notes. Top-container access does not establish root coverage.
+- V5.2: V5.1's construction, ranking sections at every level by distinct notes
+  not already covered by existing siblings in that lineup. Saved section order
+  breaks ties. This is the default for new definitions; offline checks pass,
+  but no full V5.2 hierarchy has been generated yet.
 - HR14/HR16 omit two null Bootstrap meanings. HR17 had none. Answers and receipts
   remain saved; the original selected note set is preserved as input evidence.
 
