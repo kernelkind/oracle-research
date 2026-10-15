@@ -199,6 +199,13 @@ An entry may supply `generation_policy` to override the collection default;
 its saved record must match that exact policy hash, preserving earlier receipts.
 Natural EOS uses `stop_policy: "natural_eos"` with both phase budgets null;
 legacy policies retain positive phase budgets without `stop_policy`.
+For a completed manual directory, supply `--saved-generations GENERATIONS`
+with one `--model-output MODEL` and `--generation-version VERSION`. Native
+preparation derives its collection index from `inputs.json`, the exact complete
+cohort in `generation.complete.json`, and the saved answer/runtime hashes.
+Repeat `--generation-source FILE` to bind additional immutable source receipts.
+The index and selection publish together after validation; failures leave no
+selection directory. Existing JSON collections retain their original contract.
 `prepare-distillation-automatic-grading --evaluation EVALUATION --output DIR`
 then freezes core requests directly from unrun evaluations; the existing single
 `run-distillation-automatic-grading DIR` advances every dependency. Ordinary
