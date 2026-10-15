@@ -360,20 +360,64 @@ def source_review(state_paths, notes_per_source, output):
     hashes = [hashlib.sha256(p.read_bytes()).hexdigest() for p in binaries]
     if len(set(hashes)) != 1:
         raise ValueError('source HDBSCAN executables differ')
-    ids = list(combined['items'])
-    request, mapping = hdbscan.request_for(combined, ids, vectors)
     provenance = dict(sources=[dict(state_path=str(p),
                                    state_sha256=hashlib.sha256(p.read_bytes()).hexdigest(),
                                    selection=selection)
                               for p, selection in zip(paths, selections, strict=True)],
                       hdbscan_binary=str(binaries[0]), hdbscan_binary_sha256=hashes[0],
-                      configuration=request['hdbscan_configuration'],
                       new_model_calls=0, new_encodings=0)
+    result = _run_review(combined, vectors, binaries[0], output, provenance)
+    result['original_entries'] = sum(s['original_entries'] for s in selections)
+    return result
+
+
+def section_review(state_path, section_id, output, *, include_unassigned=False):
+    """Recluster only original entries from one section and optional noise."""
+    state_path = Path(state_path).resolve()
+    baseline = saved_review(state_path)
+    state = json.loads(state_path.read_text())
+    sections = {f'S{i+1:02d}': s for i, s in enumerate(baseline['sections'])}
+    if section_id not in sections:
+        raise ValueError('unknown original epsilon section: ' + section_id)
+    group_ids = sections[section_id]['groups']
+    section_entries = {i for g in baseline['groups'] if g['id'] in group_ids
+                       for i in g['original_ids']}
+    assigned = {i for g in baseline['groups'] for i in g['original_ids']}
+    originals = state['families'][0]['rounds'][0]['current']
+    unassigned = set(originals)-assigned if include_unassigned else set()
+    selected = section_entries | unassigned
+    ids = [i for i in originals if i in selected]
+    original_rows = [o for o in state['originals'] if o['id'] in selected]
+    note_ids = {o['local']['note_id'] for o in original_rows}
+    pool = dict(generation_policy=state['generation_policy'], originals=original_rows,
+                note_ids=[n for n in state['note_ids'] if n in note_ids],
+                items={i: state['items'][i] for i in ids})
+    binary = Path(state['hdbscan_binary']).resolve()
+    provenance = dict(sources=[dict(state_path=str(state_path),
+        state_sha256=baseline['provenance']['state_sha256'], selection=dict(
+            section=section_id, group_ids=group_ids, source_ids=ids,
+            section_entry_count=len(section_entries), unassigned_entry_count=len(unassigned),
+            include_unassigned=include_unassigned, excluded_grouped_entry_count=len(assigned-section_entries),
+            note_ids=pool['note_ids']))], original_hdbscan=baseline['provenance'],
+        hdbscan_binary=str(binary), hdbscan_binary_sha256=hashlib.sha256(binary.read_bytes()).hexdigest(),
+        code_sources={str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in
+                      [Path(__file__).resolve(), Path(hdbscan.__file__).resolve()]},
+        new_model_calls=0, new_encodings=0)
+    result = _run_review(pool, _vectors(state, ids), binary, Path(output).resolve(), provenance)
+    result['original_entries'] = len(ids)
+    return result
+
+
+def _run_review(pool, vectors, binary, output, provenance):
+    """Execute the same native numerical clustering for a prepared vector pool."""
+    ids = list(pool['items'])
+    request, mapping = hdbscan.request_for(pool, ids, vectors)
+    provenance['configuration'] = request['hdbscan_configuration']
     output.mkdir(parents=True, exist_ok=False)
     (output/'sources.json').write_text(json.dumps(provenance, indent=2)+'\n')
     request_path = output/'request.json'
     request_path.write_text(json.dumps(request, ensure_ascii=False)+'\n')
-    result = subprocess.run([str(binaries[0]), str(request_path)],
+    result = subprocess.run([str(binary), str(request_path)],
                             capture_output=True, check=False)
     (output/'stderr.txt').write_bytes(result.stderr)
     if result.returncode:
@@ -385,11 +429,10 @@ def source_review(state_paths, notes_per_source, output):
                       request_sha256=hashlib.sha256(request_path.read_bytes()).hexdigest(),
                       result=str(output/'result.json'),
                       result_sha256=hashlib.sha256(result.stdout).hexdigest())
-    review = group_review(response, request, mapping, combined, provenance)
-    review.update(original_entries=sum(s['original_entries'] for s in selections),
-                  encoded_entries=len(vectors),
-                  assigned_entries=sum(g['entries'] for g in review['groups']))
-    return review
+    result = group_review(response, request, mapping, pool, provenance)
+    result.update(encoded_entries=len(vectors),
+                  assigned_entries=sum(g['entries'] for g in result['groups']))
+    return result
 
 
 def write_review(result, output, *, title, name='groups'):
@@ -416,23 +459,35 @@ def write_review(result, output, *, title, name='groups'):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('state', type=Path, nargs='+')
-    parser.add_argument('--notes-per-source', type=int,
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument('--notes-per-source', type=int,
                         help='recluster the first N notes of each saved source using their exact vectors')
+    mode.add_argument('--section', help='recluster only original entries from one saved epsilon section')
+    parser.add_argument('--include-unassigned', action='store_true',
+                        help='also include original unassigned entries; requires --section')
     parser.add_argument('--output', required=True, type=Path)
+    parser.add_argument('--name', default='groups', help='unique SVG and table filename stem')
     parser.add_argument('--title', default='HDBSCAN groups · automatic epsilon candidate')
     args = parser.parse_args()
-    if args.notes_per_source is not None:
+    if args.include_unassigned and args.section is None:
+        parser.error('--include-unassigned requires --section')
+    if args.section is not None:
+        if len(args.state) != 1:
+            parser.error('--section requires one saved native state')
+        result = section_review(args.state[0], args.section, args.output,
+                                include_unassigned=args.include_unassigned)
+    elif args.notes_per_source is not None:
         result = source_review(args.state, args.notes_per_source, args.output)
     else:
         if len(args.state) != 1:
             parser.error('multiple states require --notes-per-source')
         result = saved_review(args.state[0])
         args.output.mkdir(parents=True, exist_ok=False)
-    write_review(result, args.output, title=args.title)
+    write_review(result, args.output, title=args.title, name=args.name)
     print(json.dumps(dict(groups=len(result['groups']), sections=len(result['sections']),
                           epsilon=result['selection']['epsilon'],
                           represented_notes=result['represented_notes'],
-                          input_notes=result['input_notes'], svg=str(args.output/'groups.svg'))))
+                          input_notes=result['input_notes'], svg=str(args.output/(args.name+'.svg')))))
 
 
 if __name__ == '__main__':
