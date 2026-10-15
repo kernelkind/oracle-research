@@ -370,11 +370,50 @@ The validation report SHA-256 is
 `a9a5be338027fa052c864a3347d5f07b99f8bf98620c2cd8f898a5ce5b125206`.
 The grading worktree is frozen at Oracle `dc8c43f6` and its isolated runner at
 `36dfcf63`; retain both for their absolute source, prompt and receipt paths.
-Only pass 3's saved **200 test answers** are now opened for grading, with the
-same 200 teacher policies already imported. Its collection has no invalid
-outputs. Semantic test grades remain pending; pass 2's test collection remains
-sealed. Test results will not revise checkpoint selection, and these previously
-examined notes remain a reused benchmark rather than a fresh final holdout.
+Only pass 3's saved **200 test answers** were opened after checkpoint selection,
+using the same 200 teacher policies as the original test grading. Pass 2's test
+collection remains sealed. These previously examined notes are a reused
+benchmark rather than a fresh final holdout.
+
+**Selected test grading complete, October 15:** all **200 pass-3 answers** now
+have both finite grades, with zero manual reviews or pending judgments. Compare
+the existing pass-1 grades on exactly the same 200 note IDs; both old invalid
+answers remain in the denominator at zero.
+
+| Qwen version | Test correctness | Test coverage | Invalid outputs |
+| --- | ---: | ---: | ---: |
+| Pass 1 / checkpoint 1,000 | 88.41% | 44.72% | 2 |
+| Pass 3 / checkpoint 3,000 | 91.18% | 44.62% | 0 |
+
+The test coverage change is **−0.10 percentage points**, with a paired
+note-bootstrap 95% interval of **−3.09 to +3.01 points**. Correctness increases
+by **2.77 points**, with an interval of **+0.20 to +5.35 points**. These are
+20,000 paired resamples with seed 20261015, excluding grader uncertainty.
+The additional passes improve observed correctness without improving
+completeness on this benchmark. Test results do not revise the validation-based
+checkpoint selection or establish production approval; the larger completeness
+goal remains unmet.
+
+Independent verification checks all **7,952 protected new-test source hashes**
+and all **8,967 original-test source hashes**, identical note IDs, score
+fractions and the dated selection receipt preceding test access. All **400 new
+graded answers** are complete: 200 validation plus 200 selected-test answers.
+No saved model answer was regenerated. Native test grading completed **743
+batches and 494 collections**; the process exited successfully. It remained
+inside the 32 GiB, zero-swap boundary; observations recorded a **20.4 GiB peak**
+and zero OOM events. Existing native retries recovered HTTP 429/500/502,
+HTTP/2 GOAWAY and a server error, preserving the failed provider receipts.
+No additional GPU rental was required for grading.
+
+Test artifacts are under the same grading root:
+`selected-test/automatic/grades.json`,
+`selected-test/completion-verification.json`,
+`selected-test/paired-differences.txt` and the observer/retry evidence.
+The selected-test report SHA-256 is
+`b146863c978675a72a9493f0046862e2efa83f088e27006ddedb44a7461157b8`.
+Retain the frozen grading worktree and runner for these absolute source and
+receipt paths. Further training, data changes and a fresh holdout remain
+separate decisions.
 
 The native volume-setup path sends the full 1.53GB transport twice: first to
 its staging directory for volume admission, then to the working directory.
