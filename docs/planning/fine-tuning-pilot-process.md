@@ -1658,7 +1658,7 @@ source and inputs. This records launch, not completed results or quality.
 
 The sampled collection freezes all twenty original note identities with **no
 greedy-answer reuse**. The launch selects only `--note-index 20 --note-index 34`
-and `--max-num-active-seqs 2`; the eight model-runner slots remain a ceiling.
+and `--max-num-active-seqs 2`; the configured GPU sequence ceiling remains eight.
 Resuming with those selectors validates and skips their saved answers without
 generating the other notes. The full `generation.complete.json` marker requires
 all twenty answers, so completing this two-note diagnostic does not mark the
