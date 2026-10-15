@@ -105,6 +105,32 @@ class SavedSourceSelectionTests(unittest.TestCase):
 
 
 class SectionSourceSelectionTests(unittest.TestCase):
+    def test_saved_later_round_uses_its_own_pool_tree_and_cut_without_rerunning(self):
+        from sse_multivector.test_hierarchy_generation_v5 import V5ConstructionTests
+
+        native = V5ConstructionTests('runTest')
+        native.setUp()
+        self.addCleanup(native.doCleanups)
+        state = native.construct(native.prepare(count=43, bend=True))
+        state_path = native.native.root/'v5/state.json'
+        before = state_path.read_bytes()
+        round_ = state['families'][0]['rounds'][1]
+        self.assertNotEqual(round_['current'], state['families'][0]['rounds'][0]['current'])
+        output = native.native.root/'second-root'
+        completed = subprocess.run([sys.executable, '-m', 'sse_multivector.hdbscan_epsilon_review',
+            str(state_path), '--round', '1', '--output', str(output),
+            '--name', 'second-root'], cwd=native_fixtures.PROJECT,
+            text=True, capture_output=True)
+        self.assertEqual(completed.returncode, 0, completed.stdout+completed.stderr)
+        result = json.loads((output/'analysis.json').read_text())
+        self.assertEqual(result['provenance']['round_index'], 1)
+        self.assertEqual(result['provenance']['result'], round_['hdbscan']['result'])
+        self.assertEqual([g['original_ids'] for g in result['groups']], round_['groups'])
+        self.assertEqual(result['selection']['epsilon'], round_['selection']['epsilon'])
+        self.assertEqual(result['sections'], round_['selection']['sections'])
+        self.assertTrue((output/'second-root.svg').exists())
+        self.assertEqual(state_path.read_bytes(), before)
+
     def test_native_cli_selects_one_original_section_plus_noise_without_synthetic_nodes(self):
         native = native_fixtures.HierarchyGenerationV3Tests('runTest')
         native.setUp()

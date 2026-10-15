@@ -123,11 +123,14 @@ def group_review(response, request, mapping, state, provenance):
                 omitted_note_ids=sorted(set(state['note_ids'])-covered))
 
 
-def saved_review(state_path):
+def saved_review(state_path, *, round_index=0):
     state_path = Path(state_path).resolve()
     state = json.loads(state_path.read_text())
     check_state(state, verify_current_code=False)
-    round_ = state['families'][0]['rounds'][0]
+    rounds = state['families'][0]['rounds']
+    if type(round_index) is not int or not 0 <= round_index < len(rounds):
+        raise ValueError('unknown saved root round: ' + str(round_index))
+    round_ = rounds[round_index]
     ids = round_['current']
     vectors = _vectors(state, ids)
     hdbscan.check_round(state, state['families'][0], round_, vectors)
@@ -137,6 +140,8 @@ def saved_review(state_path):
     provenance = dict(state_path=str(state_path),
                       state_sha256=hashlib.sha256(state_path.read_bytes()).hexdigest(),
                       **evidence, configuration=request['hdbscan_configuration'])
+    if round_index:
+        provenance['round_index'] = round_index
     return group_review(response, request, mapping, state, provenance)
 
 
@@ -376,12 +381,16 @@ def main():
     mode.add_argument('--notes-per-source', type=int,
                         help='recluster the first N notes of each saved source using their exact vectors')
     mode.add_argument('--section', help='recluster only original entries from one saved epsilon section')
+    mode.add_argument('--round', type=int, default=0, dest='round_index',
+                        help='render a saved root round (zero-based), without reclustering')
     parser.add_argument('--include-unassigned', action='store_true',
                         help='also include original unassigned entries; requires --section')
     parser.add_argument('--output', required=True, type=Path)
     parser.add_argument('--name', default='groups', help='unique SVG and table filename stem')
     parser.add_argument('--title', default='HDBSCAN groups · automatic epsilon candidate')
     args = parser.parse_args()
+    if args.round_index < 0:
+        parser.error('--round must be nonnegative')
     if args.include_unassigned and args.section is None:
         parser.error('--include-unassigned requires --section')
     if args.section is not None:
@@ -394,7 +403,7 @@ def main():
     else:
         if len(args.state) != 1:
             parser.error('multiple states require --notes-per-source')
-        result = saved_review(args.state[0])
+        result = saved_review(args.state[0], round_index=args.round_index)
         args.output.mkdir(parents=True, exist_ok=False)
     write_review(result, args.output, title=args.title, name=args.name)
     print(json.dumps(dict(groups=len(result['groups']), sections=len(result['sections']),
