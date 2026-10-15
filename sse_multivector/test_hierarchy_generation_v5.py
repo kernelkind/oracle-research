@@ -305,6 +305,34 @@ class V5ConstructionTests(unittest.TestCase):
                          interrupted['v5']['membership_passes'][0]['canonical_items'])
         generation.check_state(state)
 
+    def test_v53_checkpoints_allow_other_unstarted_leaf_group_families(self):
+        from sse_multivector import hierarchy_generation as generation
+        spec = self.prepare(count=25)
+        cfg = json.loads(spec.read_text())
+        cfg['generation_policy'] = 'hierarchy-generation-v5.3'
+        spec = self.native.write('v53.json', cfg)
+        binary = self.native.root/'hdbscan-fixture'
+        code = binary.read_text().replace(
+            'n=len(ids); k=len(groups)',
+            'if "/memberships/" in sys.argv[1]: groups=[]\n'
+            'n=len(ids); k=len(groups)')
+        code = code.replace('clusters=[', '''if k==8:
+    edges=[]
+    for parent,children,value in [
+        (n,[n+1,n+2],1), (n+1,[n+3,n+4],2), (n+2,[n+5,n+6],2),
+        (n+3,leaves[:2],4), (n+4,leaves[2:4],4),
+        (n+5,leaves[4:6],4), (n+6,leaves[6:],4)]:
+        edges.extend({"parent":parent,"child":child,"child_size":3,"lambda":value}
+                     for child in children)
+clusters=[''')
+        binary.write_text(code)
+        state = self.construct(spec)
+        families = [f for f in state['families'] if 'leaf_groups' in f]
+        self.assertGreater(len(families), 1)
+        self.assertTrue(all(f['complete'] for f in families))
+        self.assertTrue(all(p['applied'] for p in state['v5']['membership_passes']))
+        generation.check_state(state)
+
     def test_recursive_children_use_original_entries_and_parent_scope(self):
         from sse_multivector import hierarchy_generation as generation
         state = self.construct(self.prepare(count=43))

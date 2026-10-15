@@ -469,12 +469,14 @@ def check_state(state, *, verify_current_code=True):
                     or not 2 <= len(family['leaf_groups']) <= state['max_siblings']
                     or family['rounds']):
                 raise ValueError('V5 leaf groups differ from the final parent')
-            current = family['leaf_groups']
             if family['complete'] or 'membership_pass' in family:
+                current = family['leaf_groups']
                 if len(family_nodes) != len(current):
                     raise ValueError('V5 leaf groups were not all exposed')
                 for identifier, item in zip(family_nodes, current, strict=True):
                     events.setdefault(identifier, []).append(dict(item=item, groups=[item], leaf=True))
+            elif family_nodes:
+                raise ValueError('V5 leaf groups appeared before lineup publication')
         if current != family['current']:
             raise ValueError('V5 current pool changed')
         for identifier in family_nodes:
