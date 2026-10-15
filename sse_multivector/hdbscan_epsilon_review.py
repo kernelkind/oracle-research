@@ -235,6 +235,10 @@ def prepare_section_source(source, base, read, read_bytes):
     """Load one reviewed root section from its original named native groups."""
     from experiment_runner import experiment as workflow
 
+    if isinstance(source, dict) and 'replacement_review' in source:
+        from . import hdbscan_section_replacement
+        return hdbscan_section_replacement.prepare_source(source, base, read, read_bytes)
+
     if (set(source) != {'schema_version', 'epsilon_review', 'section'}
             or type(source['schema_version']) is not int or source['schema_version'] != 1
             or not isinstance(source['epsilon_review'], str)

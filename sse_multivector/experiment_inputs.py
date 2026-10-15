@@ -75,7 +75,7 @@ def prepare_file(dataset, path, template, load_report=None, *, preparation_conte
         return prepare({**dataset, 'adapter': 'generic'}, dict(cases=cases), template), sources, preparation
     if dataset['adapter'] in {'hierarchy_pair_consolidation', 'hierarchy_group_consolidation'}:
         if (dataset['adapter'] == 'hierarchy_group_consolidation'
-                and isinstance(source, dict) and 'epsilon_review' in source):
+                and isinstance(source, dict) and {'epsilon_review', 'replacement_review'} & source.keys()):
             from . import hdbscan_epsilon_review
             cases, preparation = hdbscan_epsilon_review.prepare_section_source(
                 source, path.parent, read, read_bytes)

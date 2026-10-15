@@ -1166,7 +1166,7 @@ def code_files(dataset):
     if dataset['adapter'] == 'hierarchy_node_pairs':
         names += ['hierarchy_node_pair_consistency.py']
     if dataset['adapter'] == 'hierarchy_group_consolidation':
-        names += ['hdbscan_epsilon_review.py', 'hierarchy_hdbscan.py']
+        names += ['hdbscan_epsilon_review.py', 'hdbscan_section_replacement.py', 'hierarchy_hdbscan.py']
     names += ['canonical_trial.py', 'canonical_receipts.py', 'hierarchy_node_pairs.py', 'canonical_graph_search.py', 'hierarchy_generation.py']
     names += ['corpus_inputs.py', 'canonical_candidate_selection.py', 'canonical_candidate_measurement.py', 'canonical_comparison_policy.py', 'canonical_selection_ranking.py', 'canonical_hierarchy_audit.py', 'canonical_hierarchy_shape.py', 'canonical_hierarchy_viewer.py', 'canonical_policy_evaluation.py', 'subject_matching_probe.py']
     if dataset['adapter'] in {'bounded_parent_guides', 'bounded_parent_comparisons'}:

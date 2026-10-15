@@ -13,6 +13,117 @@ from sse_multivector import worker
 
 
 class SectionReplacementTests(unittest.TestCase):
+    def test_next_section_names_changed_groups_reuses_exact_groups_and_keeps_original_filter(self):
+        native = fixtures.HierarchyGenerationV3Tests('runTest')
+        native.setUp()
+        self.addCleanup(native.doCleanups)
+        spec = native.prepare_v41(count=82)
+        binary = native.root/'hdbscan-fixture'
+        from sse_multivector import hierarchy_generation, hierarchy_hdbscan
+        initial = native.state()
+        original_request, _ = hierarchy_hdbscan.request_for(initial, initial['families'][0]['current'],
+            hierarchy_generation._vectors(initial, initial['families'][0]['current']))
+        opaque_ids = sorted(i['opaque_id'] for i in original_request['inputs'])
+        original_groups = [opaque_ids[i:i+3] for i in range(0, len(opaque_ids)-2, 3)]
+        binary.write_text(binary.read_text().replace(
+            '1/((k-i-1)/10)', '1/(((k-i-1)/10)**0.3)').replace(
+            'n=len(ids); k=len(groups)',
+            f'if len(ids) != 82:\n    groups=[g for g in {original_groups!r} if set(g) <= set(ids)]\n'
+            'n=len(ids); k=len(groups)\nif n != 82 and k > 2:\n'
+            '    groups[0][-1], groups[1][-1] = groups[1][-1], groups[0][-1]'))
+        native.cli('prepare-hierarchy', 'v41', '--spec', spec)
+        native.cli('run-hierarchy', 'v41')
+        state = json.loads((native.root/'v41/state.json').read_text())
+        analysis = review.saved_review(native.root/'v41/state.json')
+        first = next(s for s in analysis['sections'] if len(s['groups']) >= 2)
+        label = f"S{analysis['sections'].index(first)+1:02d}"
+        native.write('epsilon.json', analysis)
+        native.write('section.json', dict(schema_version=1, epsilon_review='epsilon.json', section=label))
+        specification = deepcopy(state['consolidation_spec'])
+
+        def prepare_model(name, source):
+            native.write(name+'.source.json', source)
+            native.write(name+'.spec.json', {**specification, 'dataset': dict(
+                adapter='hierarchy_group_consolidation', path=name+'.source.json')})
+            native.cli('prepare', name, '--spec', name+'.spec.json')
+
+        prepare_model('first-section', dict(schema_version=1, epsilon_review='epsilon.json', section=label))
+        native.cli('run', 'first-section')
+
+        def replacement(*args):
+            completed = subprocess.run([sys.executable, '-m',
+                'sse_multivector.hdbscan_section_replacement', *map(str, args)],
+                cwd=fixtures.PROJECT, capture_output=True, text=True)
+            self.assertEqual(completed.returncode, 0, completed.stdout+completed.stderr)
+            return completed
+
+        replacement('prepare', native.root/'first', '--experiment', native.root/'first-section', '--case', label)
+        first_plan = json.loads((native.root/'first/replacement.json').read_text())['plan']
+        with patch('sse_multivector.worker.OfficialSseEncoder', return_value=fixtures.FixtureEncoder()):
+            worker.run_worker(first_plan['pool']['encodings'][-1]['config'])
+        replacement('collect', native.root/'first')
+        replacement('prepare', native.root/'filtered', '--from-replacement', native.root/'first',
+                    '--exclude-unassigned')
+        replacement('collect', native.root/'filtered')
+        derived = json.loads((native.root/'filtered/analysis.json').read_text())
+        selected = next(s for s in derived['sections'] if len(s['groups']) >= 3)
+        second_label = f"S{derived['sections'].index(selected)+1:02d}"
+        source = dict(schema_version=1, replacement_review=str(native.root/'filtered/analysis.json'),
+                      section=second_label, stage='groups')
+        prepare_model('changed-groups', source)
+        changed = json.loads(native.cli('show', 'changed-groups', '--json').stdout)
+        self.assertEqual(len(changed['cases']), 2)
+        self.assertTrue(all(len(json.loads(c['inputs']['INPUT_JSON'])['nodes']) == 3
+                            for c in changed['cases']))
+        self.assertTrue(all('parent' not in json.loads(c['inputs']['INPUT_JSON']) for c in changed['cases']))
+        pending_source = dict(source, stage='section', group_experiment=str(native.root/'changed-groups'))
+        native.write('pending.source.json', pending_source)
+        native.write('pending.spec.json', {**specification, 'dataset': dict(
+            adapter='hierarchy_group_consolidation', path='pending.source.json')})
+        pending = native.cli('prepare', 'pending', '--spec', 'pending.spec.json', ok=False)
+        self.assertIn('group definition requires one valid native result', pending.stderr)
+        native.cli('run', 'changed-groups')
+        source.update(stage='section', group_experiment=str(native.root/'changed-groups'))
+        prepare_model('second-section', source)
+        second = json.loads(native.cli('show', 'second-section', '--case', second_label).stdout)
+        payload = json.loads(second['inputs']['INPUT_JSON'])
+        self.assertEqual(len(payload['nodes']), len(selected['groups']))
+        producers = second['evidence']['group_nodes']
+        self.assertEqual(sum(p['reused'] for p in producers), len(selected['groups'])-2)
+        for witness in producers:
+            saved = json.loads(native.cli('show', witness['producer']['experiment'],
+                '--case', witness['producer']['case']).stdout)
+            self.assertEqual(payload['nodes'][selected['groups'].index(witness['group'])], saved['parsed'])
+        native.cli('run', 'second-section')
+        replacement('prepare', native.root/'second', '--experiment', native.root/'second-section',
+                    '--case', second_label)
+        before = json.loads((native.root/'filtered/replacement.json').read_text())['plan']
+        after = json.loads((native.root/'second/replacement.json').read_text())['plan']
+        removed = {i for g in derived['groups'] if g['id'] in selected['groups'] for i in g['original_ids']}
+        self.assertEqual(after['current_ids'], [i for i in before['current_ids'] if i not in removed]+['R00002'])
+        self.assertEqual(after['excluded_unassigned_ids'], before['excluded_unassigned_ids'])
+        self.assertTrue(set(after['excluded_unassigned_ids']).isdisjoint(after['current_ids']))
+        ungrouped = set(before['current_ids'])-{i for g in derived['groups'] for i in g['original_ids']}
+        self.assertTrue(ungrouped)
+        self.assertTrue(ungrouped <= set(after['current_ids']))
+        # This controlled teacher returns the same definition, so reuse its vector too.
+        self.assertEqual(len(after['pool']['encodings']), len(before['pool']['encodings']))
+        self.assertEqual(after['pool']['items']['R00002']['vector_key'],
+                         before['pool']['items']['R00001']['vector_key'])
+        if 'R00001' not in removed:
+            self.assertEqual(after['pool']['items']['R00001'], before['pool']['items']['R00001'])
+        replacement('collect', native.root/'second')
+        final = json.loads((native.root/'second/analysis.json').read_text())
+        self.assertEqual(final['replacement']['id'], 'R00002')
+        self.assertEqual(final['provenance']['new_encodings'], 0)
+        original_ids = {o for i in removed for o in before['pool']['items'][i]['original_ids']}
+        self.assertEqual(set(final['replacement']['original_ids']), original_ids)
+        self.assertEqual(json.loads((native.root/'v41/state.json').read_text()), state)
+        derived['groups'][0]['titles'] = ['Altered visualization']
+        native.write('filtered/analysis.json', derived)
+        tampered = native.cli('prepare', 'tampered-next', '--spec', 'changed-groups.spec.json', ok=False)
+        self.assertIn('replacement review differs from saved native evidence', tampered.stderr)
+
     def test_replace_all_members_keep_noise_and_count_original_note_support(self):
         native = fixtures.HierarchyGenerationV3Tests('runTest')
         native.setUp()
