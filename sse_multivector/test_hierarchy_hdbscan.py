@@ -2,7 +2,10 @@
 
 from copy import deepcopy
 import json
+from pathlib import Path
+import tempfile
 import unittest
+from unittest.mock import patch
 
 from sse_multivector import hierarchy_hdbscan as hdbscan
 
@@ -39,6 +42,50 @@ def fixture(groups=7, distances=None):
 
 
 class HdbscanSectionTests(unittest.TestCase):
+    def test_coordinator_reuses_results_across_advances_but_not_across_runs(self):
+        from sse_multivector import experiment as workflow
+        response, request, mapping = fixture(7)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory)/'result.json'
+            path.write_text(json.dumps(response))
+            read_bytes = Path.read_bytes
+            reads = []
+
+            def counted(source):
+                reads.append(source)
+                return read_bytes(source)
+
+            with patch.object(Path, 'read_bytes', counted):
+                with hdbscan.source_scope():
+                    for _ in range(3):
+                        with workflow.report_scope():
+                            self.assertEqual(hdbscan.members(hdbscan.read_result(path), request, mapping),
+                                             hdbscan.members(response, request, mapping))
+                self.assertEqual(reads, [path])
+                with hdbscan.source_scope():
+                    hdbscan.read_result(path)
+                self.assertEqual(reads, [path, path])
+
+    def test_compact_result_preserves_every_consumed_field_and_the_raw_source(self):
+        from sse_multivector import experiment as workflow
+        response, request, mapping = fixture(7)
+        expected = deepcopy(response)
+        response['artifact']['result']['algorithm_result'].update(
+            mutual_reachability_distances=[0.0] * 100, minimum_spanning_tree=[], labels=[])
+        response['artifact']['canonical_fine_output_json'] = 'unused diagnostics'
+        response['artifact']['result']['fine_output']['unassigned'] = []
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory)/'result.json'
+            raw = json.dumps(response).encode()
+            path.write_bytes(raw)
+            with workflow.report_scope() as files:
+                compact = hdbscan.read_result(path)
+                self.assertEqual(compact, expected)
+                self.assertEqual(hdbscan.project(compact, request, mapping),
+                                 hdbscan.project(response, request, mapping))
+                self.assertEqual(files.sha256(path), hdbscan.trial._hash(path))
+            self.assertEqual(path.read_bytes(), raw)
+
     def test_v42_rejects_groups_below_four_and_mismatched_controls(self):
         response, request, mapping = fixture(3)
         request["hdbscan_configuration"] = hdbscan.CONFIG_V42

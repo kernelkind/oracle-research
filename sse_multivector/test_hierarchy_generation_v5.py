@@ -6,6 +6,7 @@ from copy import deepcopy
 from pathlib import Path
 import unittest
 from unittest.mock import patch
+from threading import Barrier, Lock
 
 from sse_multivector import hierarchy_hdbscan as hdbscan
 from sse_multivector.test_hierarchy_hdbscan import fixture
@@ -42,6 +43,88 @@ class V5ConstructionTests(unittest.TestCase):
             min_samples=3, min_cluster_size=2, selection_method='excess_of_mass'))
         self.assertEqual(len(state['experiments']), 2)  # Bootstrap + group names.
         generation.check_state(state)
+
+    def test_independent_parent_definitions_prepare_separate_native_batches(self):
+        from sse_multivector import hierarchy_generation_v5 as generation_v5
+        state = self.construct(self.prepare())
+        parents = [n['id'] for n in state['nodes'][:2]]
+        originals = [o['id'] for o in state['originals']]
+        for parent in parents:
+            generation_v5._definition(state, originals[:3], parent, 'group')
+            generation_v5._definition(state, originals[3:6], parent, 'group')
+        before = len(state['experiments'])
+        calls = self.native.calls()
+        generation_v5._prepare_definitions(self.native.root/'v5', state)
+        batches = state['experiments'][before:]
+        actual = [{json.loads(inputs['INPUT_JSON'])['parent']['title']
+                   for inputs in record['inputs'].values()} for record in batches]
+        self.assertEqual(len(batches), 2, 'unrelated parents share a batch completion barrier')
+        self.assertTrue(all(len(group) == 1 for group in actual))
+        self.assertEqual(self.native.calls(), calls)
+
+    def test_native_advancement_reads_compact_clustering_results(self):
+        from sse_multivector import hierarchy_generation as generation
+        state = self.construct(self.prepare(count=43))
+        before = (self.native.root/'v5/state.json').read_bytes()
+        with patch.object(generation.workflow, 'read', wraps=generation.workflow.read) as read:
+            generation.advance(self.native.root/'v5', 'Validate complete saved hierarchy')
+        reads = [c for c in read.call_args_list if Path(c.args[0]).name == 'result.json']
+        self.assertTrue(reads)
+        self.assertTrue(all(c.kwargs.get('project') is not None for c in reads),
+                        'unused distance matrices are parsed and retained as full results')
+        self.assertEqual((self.native.root/'v5/state.json').read_bytes(), before)
+
+    def test_cached_result_cannot_hide_a_changed_raw_clustering_file(self):
+        from sse_multivector import hierarchy_generation as generation
+        state = self.construct(self.prepare(count=43))
+        path = Path(state['families'][0]['rounds'][0]['hdbscan']['result'])
+        with generation.workflow.report_scope() as files:
+            hdbscan.read_result(path)
+            stamp, stat = files._stamp(path), files._stamp
+            raw = path.read_bytes()
+            changed = raw.replace(b'"min_samples":3', b'"min_samples":4', 1)
+            self.assertNotEqual(raw, changed)
+            path.write_bytes(changed)
+            with patch.object(files, '_stamp', side_effect=lambda p: stamp if Path(p) == path else stat(p)):
+                with self.assertRaisesRegex(ValueError, 'saved HDBSCAN evidence changed'):
+                    generation.check_state(state, verify_receipts=False)
+
+    def test_ready_native_batches_all_start_before_waiting(self):
+        from sse_multivector import hierarchy_generation as generation
+        directory = self.native.root/'concurrent'
+        directory.mkdir()
+        names = [str(directory/f'batch-{i}') for i in range(5)]
+        barrier, lock, completed = Barrier(5, timeout=10), Lock(), set()
+
+        def teacher(_directory, path, *_args):
+            barrier.wait()
+            with lock:
+                completed.add(str(path))
+
+        def advance(*_args):
+            with lock:
+                done = len(completed) == len(names)
+            return dict(status='complete' if done else 'constructing',
+                        experiments=[] if done else names, encodings=[],
+                        generation_policy='hierarchy-generation-v5',
+                        canonical_nodes=0, original_l1s=0)
+
+        with patch.object(generation, '_native_teacher', side_effect=teacher), \
+                patch.object(generation, '_native_advance', side_effect=advance):
+            result = generation.run(directory)
+        self.assertEqual(result['execution_status'], 'complete')
+        self.assertEqual(result['errors'], [])
+        self.assertEqual(completed, set(names))
+
+    def test_completed_run_advances_without_restarting_the_python_process(self):
+        from sse_multivector import hierarchy_generation as generation
+        self.construct(self.prepare())
+        directory = self.native.root/'v5'
+        before = (directory/'state.json').read_bytes()
+        with patch.object(generation.subprocess, 'run', side_effect=AssertionError('unnecessary advancement subprocess')):
+            result = generation.run(directory)
+        self.assertEqual(result['execution_status'], 'complete')
+        self.assertEqual((directory/'state.json').read_bytes(), before)
 
     def construct(self, spec, name='v5'):
         from sse_multivector import hierarchy_generation as generation

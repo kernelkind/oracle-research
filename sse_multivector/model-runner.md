@@ -1858,9 +1858,12 @@ it blocks only when no original topic has a usable meaning. V3.1/V3.2 report dis
 `notes_not_in_hierarchy`; a complete build may represent fewer input notes.
 An all-rejected round finishes without preparing an empty model batch.
 Failed or malformed cases retain their inputs and diagnostic evidence;
-independent families continue. Advancement and teacher execution use fresh
-shared-launcher processes. Runner failures back off for 5, 10, 20, 40, then
-60 seconds, repeating at 60 seconds until recovery or interruption. Advancement
+independent families continue. Local advancement normally runs inside the hierarchy coordinator. Its bounded
+cache retains compact unchanged HDBSCAN evidence, while whole-file hashes and
+all graph checks still run. Transient advancement failures fall back to a fresh
+shared-launcher process; teacher execution always uses that fresh CLI path.
+Runner failures back off for 5, 10, 20, 40, then 60 seconds, repeating at
+60 seconds until recovery or interruption. Advancement
 requires valid frozen state and receipts before retrying; execution requires
 unsent cases without terminal case or latest-warmup failures. The same experiment
 resumes without resetting native model-call retry limits. Malformed answers,

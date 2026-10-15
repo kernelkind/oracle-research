@@ -99,14 +99,24 @@ If it is a note's only topic, that note is reported in
 inventory and null answer remain evidence. Construction remains blocked when
 no original topic has a usable meaning.
 
-Ready native batches are submitted immediately; the shared runner owns provider
-concurrency, exact answer reuse, usage and retry limits. Original and synthetic
+Ready definitions for each enclosing canonical parent form independent native
+batches, so one branch can advance while another batch is running. Every ready
+batch is submitted immediately; the shared runner owns provider concurrency,
+exact answer reuse, usage and retry limits. Original and synthetic
 vectors reuse identical text/span identities. Definitions preserve native
 producer receipts and stage provenance. Atomic advancement validates saved
 trees, cuts, original eligibility, replacement ownership, canonical versions,
-parent fields and direct note associations before saving state. The existing
-exponential backoff handles recoverable runner outages. No new transport,
-coordinator cap or provider retry mechanism is introduced.
+parent fields and direct note associations before saving state. Local advancement runs in the existing coordinator, retaining a bounded compact
+view of unchanged HDBSCAN evidence between steps. The raw files remain unchanged;
+whole-file hashes and all membership, tree, cut and graph checks still run.
+Unused distance matrices and numerical diagnostics are excluded from the read
+cache. Binary vector reads expand only requested rows into Python floats.
+`advance-timings.jsonl` records actual advancement durations and recovery mode.
+
+Transient advancement failures retry through the fresh shared CLI and its
+existing exponential backoff, so a repaired runner can be loaded. Teacher
+execution keeps that fresh CLI path. No outer coordinator or provider cap is
+introduced.
 
 Historical V3/V4 definitions retain their frozen policies and settings on
 resume. They do not acquire V5's algorithm or parameters. HR27 and V5's

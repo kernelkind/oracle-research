@@ -60,13 +60,17 @@ def _prepare_definitions(directory, state):
     ready = [(k, d) for k, d in state['v5']['definitions'].items() if 'producer' not in d]
     if not ready:
         return False
-    cases = [dict(id='D'+key, inputs=dict(INPUT_JSON=json.dumps(d['payload'], ensure_ascii=False)),
-                  evidence=dict(stage=d['stage'], members=d['members'], parent=d['parent']))
-             for key, d in ready]
-    index = generation._experiment(directory, state, 'consolidation', state['consolidation_spec'],
-                                   dict(cases=cases), 'hierarchy_group_consolidation')
+    by_parent = {}
     for key, definition in ready:
-        definition['producer'] = dict(experiment=index, case='D'+key)
+        by_parent.setdefault(definition['parent'], []).append((key, definition))
+    for definitions in by_parent.values():
+        cases = [dict(id='D'+key, inputs=dict(INPUT_JSON=json.dumps(d['payload'], ensure_ascii=False)),
+                      evidence=dict(stage=d['stage'], members=d['members'], parent=d['parent']))
+                 for key, d in definitions]
+        index = generation._experiment(directory, state, 'consolidation', state['consolidation_spec'],
+                                       dict(cases=cases), 'hierarchy_group_consolidation')
+        for key, definition in definitions:
+            definition['producer'] = dict(experiment=index, case='D'+key)
     return True
 
 
@@ -180,7 +184,7 @@ def _step(directory, state, family):
             _finish(state, family)
             return True
         request, mapping = hdbscan.request_for(state, round_['current'], vectors)
-        tree = hdbscan.project(workflow.read(round_['hdbscan']['result']), request, mapping)
+        tree = hdbscan.project(hdbscan.read_result(round_['hdbscan']['result']), request, mapping)
         round_['selection'] = hdbscan.select_sections(tree, state['max_siblings'])
         round_.update(proposals(state, round_, state['max_siblings']))
         family['rounds'].append(round_)
@@ -299,7 +303,7 @@ def check_state(state, *, verify_current_code=True):
             hdbscan.check_round(state, family, round_, vectors)
             if round_['groups']:
                 request, mapping = hdbscan.request_for(state, current, vectors)
-                tree = hdbscan.project(workflow.read(round_['hdbscan']['result']), request, mapping)
+                tree = hdbscan.project(hdbscan.read_result(round_['hdbscan']['result']), request, mapping)
                 if round_['selection'] != hdbscan.select_sections(tree, state['max_siblings']):
                     raise ValueError('V5 section cut changed')
                 planned = proposals(state, round_, state['max_siblings'])

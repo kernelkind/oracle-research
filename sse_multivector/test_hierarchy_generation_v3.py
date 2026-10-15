@@ -6,6 +6,7 @@ import math
 import os
 from pathlib import Path
 import subprocess
+import tracemalloc
 import unittest
 from unittest.mock import patch
 
@@ -64,6 +65,39 @@ class HierarchyGenerationV3Tests(unittest.TestCase):
     setUp = fixtures.ExperimentTests.setUp
     write = fixtures.ExperimentTests.write
     calls = fixtures.ExperimentTests.calls
+
+    def test_reading_one_vector_does_not_expand_all_binary_rows_into_python_floats(self):
+        from sse_multivector import hierarchy_generation as generation
+        spec = self.configure(count=32)
+        self.automatic_runner()
+        config = json.loads((self.root/'worker.json').read_text())
+        dimensions = 32768
+        config['model']['dimensions'] = dimensions
+        self.write('worker.json', config)
+        self.cli('prepare-hierarchy', 'trial', '--spec', spec)
+        self.cli('run', self.state()['experiments'][0]['experiment'], env={'FAKE_V3': '1'})
+        self.cli('advance-hierarchy', 'trial', '--comment', 'Collect fixture meanings')
+        state = self.state()
+
+        class WideEncoder:
+            def encode(self, notes):
+                for note in notes:
+                    for subject in note.subjects:
+                        yield worker.EncodedSubject(note_id=note.note_id, subject_id=subject.subject_id,
+                            vector=(1.0,)*dimensions, selected_token_indices=(1,),
+                            selected_token_ids=(101,), token_count=3)
+
+        with patch('sse_multivector.worker.OfficialSseEncoder', return_value=WideEncoder()):
+            worker.run_worker(state['encodings'][0]['config'])
+        generation._collect_encodings(state)
+        tracemalloc.start()
+        try:
+            vectors = generation._vectors(state, [next(iter(state['items']))])
+            _, peak = tracemalloc.get_traced_memory()
+        finally:
+            tracemalloc.stop()
+        self.assertEqual(tuple(vectors[0]), (1.0,)*dimensions)
+        self.assertLess(peak, 12*1024*1024, 'reading one row expanded every other vector')
 
     def cli(self, *args, ok=True, env=None):
         result = subprocess.run(
@@ -1609,9 +1643,12 @@ print(json.dumps({"schema_version":1,"candidate_identity":"hdbscan-explicit-conf
         ]
         self.assertEqual(
             [r["delay_seconds"] for r in events if r["event"] == "backoff"],
-            [0.001, 0.002],
+            [0.001],
         )
         self.assertEqual(events[-1]["event"], "recovered")
+        timings = [json.loads(line) for line in
+                   (self.root/'trial/advance-timings.jsonl').read_text().splitlines()]
+        self.assertTrue(any(r['mode'] == 'subprocess-recovery' and r.get('initial_error') for r in timings))
 
     def test_runner_execution_outage_has_capped_backoff_and_no_model_resampling(self):
         from sse_multivector import hierarchy_generation as generation

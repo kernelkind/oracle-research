@@ -18,6 +18,7 @@ import struct
 import sys
 import tempfile
 import subprocess
+import time
 from datetime import datetime, timezone
 from threading import Event, Thread
 
@@ -575,9 +576,13 @@ def _encoding_result(state, index):
     receipt_hash = trial._hash(receipt_path)
     if job.get("receipt_sha256", receipt_hash) != receipt_hash:
         raise ValueError("saved hierarchy worker receipt changed")
-    return receipt_hash, tuple(
-        struct.iter_unpack("<" + "f" * config.model.dimensions, raw)
-    )
+    if sys.byteorder == 'little':
+        values = memoryview(raw).cast('f')
+        rows = tuple(values[i:i + config.model.dimensions]
+                     for i in range(0, len(values), config.model.dimensions))
+    else:
+        rows = tuple(struct.iter_unpack('<' + 'f' * config.model.dimensions, raw))
+    return receipt_hash, rows
 
 
 def _collect_encodings(state):
@@ -694,7 +699,7 @@ def _vectors(state, ids):
         index = reference["encoding"]
         if index not in batches:
             batches[index] = _encoding_result(state, index)[1]
-        vectors.append(batches[index][reference["ordinal"]])
+        vectors.append(tuple(batches[index][reference["ordinal"]]))
     return vectors
 
 
@@ -1512,14 +1517,22 @@ def _native_command(
 
 
 def _native_advance(directory, comment, stop):
-    invocation = _native_command(
-        directory, ["advance-hierarchy", str(directory), "--comment", comment], stop
-    )
-    return (
-        json.loads((invocation / "stdout.log").read_text())
-        if invocation is not None
-        else summary(workflow.read(directory / "state.json"))
-    )
+    started = time.monotonic()
+    event = dict(command='advance-hierarchy', mode='in-process')
+    try:
+        result = advance(directory, comment)
+    except (workflow.engine.RunnerError, OSError, ImportError) as error:
+        # A fresh shared CLI can pick up a repaired runner. Its existing
+        # exponential backoff validates the saved state before retrying.
+        event.update(mode='subprocess-recovery', initial_error=str(error))
+        invocation = _native_command(
+            directory, ['advance-hierarchy', str(directory), '--comment', comment], stop)
+        result = (json.loads((invocation/'stdout.log').read_text()) if invocation is not None
+                  else summary(workflow.read(directory/'state.json')))
+    event.update(elapsed_seconds=time.monotonic()-started, status=result['status'],
+                 observed_at_utc=datetime.now(timezone.utc).isoformat())
+    workflow.engine._append_json_line(directory/'advance-timings.jsonl', event)
+    return result
 
 
 def _native_teacher(directory, experiment, budget, upgrade_reason, stop, max_provider_attempts=None):
@@ -1561,13 +1574,15 @@ def run(
     max_provider_attempts=None,
 ):
     """Coordinate ordinary native batches and one SSE worker; no provider limiter."""
+    from . import hierarchy_hdbscan
+
     directory = Path(directory).resolve()
     if max_provider_attempts is not None and (type(max_provider_attempts) is not int or max_provider_attempts < 1):
         raise ValueError('max_provider_attempts must be a positive integer')
     budget = Path(attempt_budget).resolve() if attempt_budget is not None else None
     if budget is not None:
         workflow.engine.PersistentAttemptBudget(budget).remaining()
-    with (directory / ".hierarchy-run.lock").open("a") as lock:
+    with (directory / ".hierarchy-run.lock").open("a") as lock, hierarchy_hdbscan.source_scope():
         try:
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError as error:

@@ -1,6 +1,8 @@
 """Source-bound HDBSCAN groups and numerical cuts of their saved hierarchy."""
 
 from collections import defaultdict
+from contextlib import contextmanager
+from contextvars import ContextVar
 import hashlib
 import json
 import math
@@ -23,6 +25,47 @@ SECTION_CONFIGS = {
     "hierarchy-generation-v4.4": CONFIG_V44,
     "hierarchy-generation-v5": CONFIG,
 }
+_RESULT_FILES = ContextVar('hierarchy_hdbscan_result_files', default=None)
+
+
+@contextmanager
+def source_scope():
+    """Bounded immutable-result reads shared by one hierarchy coordinator."""
+    if _RESULT_FILES.get() is not None:
+        yield
+        return
+    token = _RESULT_FILES.set(workflow.engine.ReceiptFiles())
+    try:
+        yield
+    finally:
+        _RESULT_FILES.reset(token)
+
+
+def _hierarchy_fields(response):
+    """Retain the fields used by hierarchy checks, not unused quadratic data."""
+    artifact = response.get('artifact') if isinstance(response, dict) else None
+    result = artifact.get('result') if isinstance(artifact, dict) else None
+    algorithm = result.get('algorithm_result') if isinstance(result, dict) else None
+    if not isinstance(algorithm, dict):
+        return response
+    retained = dict(result, algorithm_result={
+        k: v for k, v in algorithm.items() if k in ('vector_count', 'clusters', 'condensed_tree')})
+    if isinstance(retained.get('fine_output'), dict):
+        retained['fine_output'] = {k: v for k, v in retained['fine_output'].items() if k == 'segments'}
+    return dict(response, artifact=dict(
+        {k: v for k, v in artifact.items() if k != 'canonical_fine_output_json'}, result=retained))
+
+
+def read_result(path):
+    """Reuse a compact parsed view within the native operation's bounded cache.
+
+    The complete source remains unchanged and its full-file hash is still checked.
+    Unused numerical diagnostics remain in the source rather than the read cache.
+    """
+    files = _RESULT_FILES.get()
+    if files is not None:
+        return files.json(Path(path), project=_hierarchy_fields)
+    return workflow.read(path, project=_hierarchy_fields)
 
 
 def section_plan(response, request, mapping, max_siblings):
@@ -165,7 +208,7 @@ def section_plan(response, request, mapping, max_siblings):
 
 def plan_for(state, round_, vectors):
     request, mapping = request_for(state, round_["current"], vectors)
-    return section_plan(workflow.read(round_["hdbscan"]["result"]), request,
+    return section_plan(read_result(round_["hdbscan"]["result"]), request,
                         mapping, state["max_siblings"])
 
 
@@ -236,7 +279,7 @@ def round_for(directory, state, family, vectors):
         decoded = json.loads(result.stdout)
         members(decoded, request, mapping)
         trial._save_once(result_path, decoded)
-    groups = members(workflow.read(result_path), request, mapping)
+    groups = members(read_result(result_path), request, mapping)
     assigned = {i for group in groups for i in group}
     return dict(
         current=ids, groups=groups,
@@ -254,7 +297,7 @@ def check_round(state, family, round_, vectors):
             or trial._hash(evidence["result"]) != evidence["result_sha256"]
             or workflow.read(evidence["request"]) != request):
         raise ValueError("saved HDBSCAN evidence changed")
-    groups = members(workflow.read(evidence["result"]), request, mapping)
+    groups = members(read_result(evidence["result"]), request, mapping)
     assigned = {i for group in groups for i in group}
     if (round_["groups"] != groups
             or round_["cases"] != {
