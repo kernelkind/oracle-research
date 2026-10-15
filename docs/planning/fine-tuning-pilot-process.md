@@ -193,6 +193,14 @@ context. The host's older PyTorch 2.8 reproduces an existing physical-batch
 numerical tolerance failure on unchanged `main`; that same test passes in the
 pinned VM without relaxing its tolerance.
 
+**Further Vast audit corrections, October 14:** the cold-start watcher now
+keeps polling `instance_starting` until the same instance runs and its results
+are retrieved. The failing-first production-flow test and all 151 shared
+controller regressions pass. Cache download/verification inside the continuation
+and volume capacity/cost admission are being corrected next. Rebuild the input
+package and image after these corrections; the preceding VM receipts do not
+qualify the changed runtime for launch.
+
 Before renting, publish the matching image privately, select a currently
 available volume and same-host GPU offer, confirm capacity for both the 150GB
 volume and 30GB instance disk, and reconcile/admit both budget commitments.

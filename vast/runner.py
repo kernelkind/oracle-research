@@ -5370,7 +5370,7 @@ def run_watch(context: Context, approval: str | None) -> dict[str, object]:
                         with contextlib.suppress(OperationError, OSError):
                             atomic_json(context.path("progressive/status.json"), state, replace=True)
                         print(f"background copy failed: {error}", file=sys.stderr, flush=True)
-                if result.get("state") not in ("running", "preparing", "remote_access_pending"):
+                if result.get("state") not in ("instance_starting", "running", "preparing", "remote_access_pending"):
                     return result
                 print("watch status: " + json.dumps(result, sort_keys=True), file=sys.stderr, flush=True)
                 time.sleep(30 if command_requires_completion(context) else

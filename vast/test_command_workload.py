@@ -1218,6 +1218,32 @@ class CommandWorkloadTest(unittest.TestCase):
         self.assertEqual(fixture.provider()["worker_start_calls"], 1)
         self.assertEqual(fixture.provider()["destroy_calls"], 0)
 
+    def test_watch_continues_cold_start_into_work_and_retrieval_on_the_same_instance(self):
+        self.spec['limits']['work_seconds'] = None
+        fixture = self.lifecycle_fixture()
+        fixture.set_provider(crash_on_first_show_instance=True)
+        self.assertNotEqual(fixture.invoke_with_tty_secret('run').returncode, 0)
+        fixture.set_instance(actual_status='loading')
+        context = self.module.Context.load(argparse.Namespace(
+            root=self.root, config=self.config, operation='run'))
+        phase = 0
+        def advance(_seconds):
+            nonlocal phase
+            if phase == 0:
+                fixture.set_instance(actual_status='running')
+                phase = 1
+            elif phase == 1 and fixture.provider()['worker_start_calls']:
+                fixture.set_provider(remote_status='terminal')
+                phase = 2
+        with mock.patch.dict(os.environ, fixture.environment), \
+                mock.patch.object(self.module.time, 'sleep', side_effect=advance):
+            result = self.module.run_watch(context, None)
+        self.assertEqual(result['state'], 'retrieved')
+        self.assertEqual(fixture.provider()['create_calls'], 1)
+        self.assertEqual(fixture.provider()['worker_start_calls'], 1)
+        self.assertEqual(fixture.provider()['destroy_calls'], 0)
+        self.assertTrue((self.root / 'launch/retrieval-verification.json').is_file())
+
     def test_watch_resumes_shared_run_until_retrieval_without_second_approval(self):
         self.freeze()
         states = [{'state': 'preparing'}, {'state': 'running'}, {'state': 'retrieved'}]
