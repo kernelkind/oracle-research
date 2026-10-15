@@ -1512,3 +1512,34 @@ batch's complete fresh API-equivalent cost is $0.0194672. These are separate
 invocation figures, not a final all-stage total or subscription cash charges.
 Incremental cash charge remains zero. The workbook records Running status;
 the checked review UI and final accounting remain due after construction.
+
+The user-authorized performance continuation is integrated in generator
+`6bbca210` (combined checkpoint `d08ebcf6`) and shared runner `36dfcf6`.
+At the 93-node handover, the active model batch finished before the old
+coordinator was stopped. All 48 existing receipt ledgers were preserved;
+[handover evidence](../../../oracle-mvp-hierarchy-hr30-final-v1/target/hierarchy-hr30-v5-final-v1/performance-handover.json)
+records their hashes and zero active provider requests. Construction continues
+against the same native directory from the frozen
+`oracle-mvp-hierarchy-hr30-performance-v1` source worktree, using the native
+reviewed source-upgrade path. No saved successful answer was resampled.
+
+The fix retains bounded compact HDBSCAN evidence across local advancements,
+omitting unused numerical diagnostics from the read cache while preserving raw
+files and whole-file hashes. Binary vector reads expand only requested rows.
+Each canonical parent's ready definitions form an independent native batch;
+the coordinator submits all ready batches before waiting, with the shared
+runner retaining its request limit. Transient local failures still recover
+through the fresh shared CLI and its exponential backoff.
+
+[Matched validation evidence](../../../oracle-mvp-hierarchy-hr30-performance-v1/target/hr30-performance-benchmark-v1/validation-after.json)
+uses the identical frozen 34-node, 24-round state, SHA-256
+`292302dd81ddfd5624f7a50b91f6d1f5dae4a2e34440620a02ecf5be7e8193b3`.
+The earlier two checks took 38.72 and 38.83 seconds. The new cold check took
+35.51 seconds, followed by 14.44, 14.06 and 14.04 seconds with cached immutable
+evidence. This is a roughly 64% reduction for repeated validation, not a
+whole-construction wall-time claim. No inference was performed for the check.
+At the later 102-node checkpoint, all 38 result views fit in 10,360,964 retained
+bytes; the 901,125,385-byte source remained unchanged. Initial actual resumed
+advancements took approximately 58–61 seconds versus the preceding 100–102
+seconds; these are different construction stages. `advance-timings.jsonl`
+retains actual durations and whether isolated recovery was required.
