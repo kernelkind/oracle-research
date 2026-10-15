@@ -46,6 +46,11 @@ titles and meanings; never send original local L1 titles and meanings directly
 to canonical-node consolidation. Preserve the group-definition stage and its
 evidence even when exact saved group definitions are reused.
 
+If a selected section contains exactly one group, reuse that group's generated
+title and explicit meaning directly as the canonical node. Generate the group
+definition first if it is missing; do not make an extra canonical consolidation
+call with one group.
+
 For canonical consolidation beneath an existing node, supply that enclosing
 node's title and fixed explicit meaning as `parent`. The proposed child must
 cover the supplied group meanings in full and fit wholly within that parent.
@@ -72,13 +77,6 @@ viewing L2S1's notes. The child limit must not remove those note associations.
 
 These are unresolved implementation choices, not approved changes:
 
-- The current one-group section shortcut sends its member definitions directly
-  to a section-definition case. V5 requires generated group definitions as the
-  canonical consolidation input. For a selected section with just one group,
-  settle whether to reuse its generated group definition directly or perform
-  another consolidation call with that one group. Grouped-v1 currently requires
-  two or more input nodes. This question does not reopen the approved use of
-  already named groups as leaves when the stopping condition is met.
 - The current bend implementation requires at least three retained distance
   levels and a positive bend. It has no fallback. A parent with more than six
   groups can still have too few distinct distance levels or no positive bend;
