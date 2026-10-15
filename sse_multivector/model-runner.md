@@ -1804,7 +1804,10 @@ Read help through the shared stable launcher from the task worktree:
 `consolidation_spec` and `worker_config`. New definitions default to
 `hierarchy-generation-v5` and also require `hdbscan_binary`; set the policy
 explicitly for reproducibility. Optional `bootstrap_hierarchy` reuses matching
-saved meanings and original vectors. Explicit historical generation policies
+saved meanings and original vectors. V5 can reuse completed Bootstrap before
+encoding finishes and can extend the client deadline without changing the
+completed producers or their recorded settings. Missing vectors are encoded
+normally; other Bootstrap controls must still match. Explicit historical generation policies
 remain supported, and frozen legacy definitions without a policy keep their
 saved V3 behavior. The frozen policy cannot change on resume. Current data must originate from
 ASv6.100 or an explicitly approved later AS version. The teacher specs retain
@@ -1847,8 +1850,10 @@ State is saved atomically. Resume reuses completed native answers and SSE jobs,
 including after interrupted runs. A null Bootstrap meaning retains its entry,
 answer and receipt, finishes other independent Bootstrap work and is skipped
 from construction. `skipped_bootstrap` reports these entries. Root construction
-remains blocked if any selected note has no non-null L1 meaning, preserving
-selected-note coverage before cosine filtering. V3.1/V3.2 report discarded pairs as
+remains blocked under historical policies if any selected note has no non-null
+L1 meaning, preserving selected-note coverage before cosine filtering. V5 skips
+these unresolved topics and reports omitted notes in `notes_not_in_hierarchy`;
+it blocks only when no original topic has a usable meaning. V3.1/V3.2 report discarded pairs as
 `discarded_by_cutoff` and missing final leaf-note coverage as
 `notes_not_in_hierarchy`; a complete build may represent fewer input notes.
 An all-rejected round finishes without preparing an empty model batch.

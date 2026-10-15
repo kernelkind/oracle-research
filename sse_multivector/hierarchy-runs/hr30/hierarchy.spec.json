@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "generation_policy": "hierarchy-generation-v5",
-  "corpus": "../../../target/hierarchy-hr30-v5-thousand-note-v1/subject-collection/subjects.json",
+  "corpus": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr30-v5/target/hierarchy-hr30-v5-thousand-note-v1/subject-collection/subjects.json",
   "note_ids": [
     "99e6a5148b40b59013d8a391f6f593cb8791c167eb445cf1f49c1565cefdbb92",
     "e0f4c41291e1f3185c07579131eb92c0feb77057b12e93e51bb9eceec500b24f",
@@ -1005,8 +1005,9 @@
     "49481795dabf5f69e762edc107b2c57b4fd204b371c35c4c1840b5fa189e46d6"
   ],
   "local_schema_version": 4,
-  "bootstrap_spec": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr26-v41/sse_multivector/hierarchy-runs/hr26/bootstrap.spec.json",
-  "consolidation_spec": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr26-v41/sse_multivector/hierarchy-runs/hr26/consolidation.spec.json",
+  "bootstrap_spec": "bootstrap.spec.json",
+  "consolidation_spec": "consolidation.spec.json",
   "worker_config": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr26-v41/sse_multivector/hierarchy-runs/hr26/worker-config.json",
-  "hdbscan_binary": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hdbscan-l1-probe-v1/target/hdbscan-l1-v1/fine-segmentation-candidate"
+  "hdbscan_binary": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hdbscan-l1-probe-v1/target/hdbscan-l1-v1/fine-segmentation-candidate",
+  "bootstrap_hierarchy": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr30-v5/target/hierarchy-hr30-v5-thousand-note-v1/HR30-resumed-v1/state.json"
 }

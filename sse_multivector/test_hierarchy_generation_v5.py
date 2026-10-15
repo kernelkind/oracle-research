@@ -154,6 +154,23 @@ class V5ConstructionTests(unittest.TestCase):
         self.assertEqual([o['title'] for o in state['originals']],
                          [o['title'] for o in self.native.state()['originals']])
 
+    def test_unresolved_only_topic_does_not_block_other_notes(self):
+        from sse_multivector import hierarchy_generation as generation
+        spec = self.native.prepare_v41(count=10, encode=False, null_first=True)
+        cfg = json.loads(spec.read_text())
+        cfg['generation_policy'] = 'hierarchy-generation-v5'
+        del cfg['bootstrap_hierarchy']
+        spec = self.native.write('v5.json', cfg)
+        state = self.construct(spec)
+        report = generation.summary(state)
+        self.assertEqual(len(state['note_ids']), 10)
+        self.assertEqual(len(state['originals']), 10)
+        self.assertIsNone(state['originals'][0]['meaning'])
+        self.assertNotIn('L00001', state['items'])
+        self.assertIn('n0', report['notes_not_in_hierarchy'])
+        self.assertEqual([row['case'] for row in report['skipped_bootstrap']], ['L00001'])
+        generation.check_state(state)
+
     def test_finished_lineup_does_not_encode_representatives_with_nothing_left_to_add(self):
         spec = self.prepare(count=24)
         binary = self.native.root/'hdbscan-fixture'

@@ -87,6 +87,17 @@ definition supplies `corpus`, ordered `note_ids`, `local_schema_version: 4`,
 Set `generation_policy: hierarchy-generation-v5` explicitly for reproducibility;
 omission selects V5 for new preparation. Optional `bootstrap_hierarchy` reuses a
 matching saved Bootstrap-v133 checkpoint and original vectors.
+Completed Bootstrap answers can be reused before encoding finishes; V5 reuses
+completed encoder jobs and schedules the missing vectors normally. A longer
+client timeout is also compatible with completed Bootstrap reuse when every
+other input and control matches. Original producer receipts retain their actual
+timeout. HR30 sets one-hour timeouts for new Bootstrap and consolidation requests.
+
+A valid null Bootstrap answer is skipped and reported in `skipped_bootstrap`.
+If it is a note's only topic, that note is reported in
+`notes_not_in_hierarchy`; it does not block the other notes. The complete input
+inventory and null answer remain evidence. Construction remains blocked when
+no original topic has a usable meaning.
 
 Ready native batches are submitted immediately; the shared runner owns provider
 concurrency, exact answer reuse, usage and retry limits. Original and synthetic

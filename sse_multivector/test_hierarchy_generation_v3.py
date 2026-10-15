@@ -434,7 +434,7 @@ class HierarchyGenerationV3Tests(unittest.TestCase):
         self.cli("run", experiment)
         self.cli("advance-hierarchy", "trial", "--comment", "Collect Bootstrap title and meaning")
 
-    def prepare_v4_root_probe(self, count=21, unique=False):
+    def prepare_v4_root_probe(self, count=21, unique=False, encode=True, null_first=False):
         spec = self.configure_v32(count=count)
         if unique:
             code = '''if "ambiguities" in properties:
@@ -447,9 +447,18 @@ class HierarchyGenerationV3Tests(unittest.TestCase):
 '''
             self.runner.write_text(self.runner.read_text().replace(
                 '\nif stage == "prompt":\n', '\n'+code+'if stage == "prompt":\n'))
+        if null_first:
+            code = '''if "ambiguities" in properties and "Original post 0" in prompt:
+    value=json.loads(os.environ["FAKE_RUNNER_PROMPT_RESPONSE"])
+    value.update(title=None, meaning=None, evidence=[])
+    os.environ["FAKE_RUNNER_PROMPT_RESPONSE"]=json.dumps(value)
+'''
+            self.runner.write_text(self.runner.read_text().replace(
+                '\nif stage == "prompt":\n', '\n'+code+'if stage == "prompt":\n'))
         self.cli("prepare-hierarchy", "trial", "--spec", spec)
         self.collect_title_bootstrap()
-        self.encode_pending()
+        if encode:
+            self.encode_pending()
         binary = self.root / "hdbscan-fixture"
         binary.write_text('''#!/usr/bin/env python3
 import json, sys
@@ -488,6 +497,61 @@ print(json.dumps({"schema_version":1,"candidate_identity":"hdbscan-explicit-conf
         self.assertEqual(state["encodings"], source["encodings"])
         self.assertEqual(self.calls(), prior_calls)
 
+    def test_v5_reuses_completed_bootstrap_when_only_deadline_is_extended(self):
+        base = json.loads(self.spec.read_text())
+        base['runner']['timeout_seconds'] = 600
+        self.spec.write_text(json.dumps(base))
+        spec = self.prepare_v41(count=9)
+        source = self.state()
+        prior_calls = self.calls()
+        cfg = json.loads(spec.read_text())
+        cfg['generation_policy'] = 'hierarchy-generation-v5'
+        bootstrap = json.loads((self.root / 'bootstrap.json').read_text())
+        old_timeout = bootstrap['runner']['timeout_seconds']
+        bootstrap['runner']['timeout_seconds'] = old_timeout + 3600
+        self.write('bootstrap-longer.json', bootstrap)
+        cfg['bootstrap_spec'] = 'bootstrap-longer.json'
+        changed = self.write('longer.json', cfg)
+        self.cli('prepare-hierarchy', 'longer', '--spec', changed)
+        state = json.loads((self.root / 'longer/state.json').read_text())
+        self.assertEqual(state['experiments'][0], source['experiments'][0])
+        self.assertEqual(state['vectors'], source['vectors'])
+        self.assertEqual(state['bootstrap_spec']['runner']['timeout_seconds'], old_timeout + 3600)
+        self.assertEqual(source['bootstrap_spec']['runner']['timeout_seconds'], old_timeout)
+        for field, value in [('timeout_seconds', old_timeout / 2), ('model', 'different/model')]:
+            with self.subTest(field=field):
+                incompatible = json.loads(json.dumps(bootstrap))
+                incompatible['runner'][field] = value
+                self.write('bootstrap-incompatible.json', incompatible)
+                cfg['bootstrap_spec'] = 'bootstrap-incompatible.json'
+                changed = self.write('incompatible.json', cfg)
+                result = self.cli('prepare-hierarchy', 'incompatible', '--spec', changed, ok=False)
+                self.assertIn('matching saved Bootstrap', result.stderr)
+        self.assertEqual(self.calls(), prior_calls)
+
+    def test_v5_reuses_completed_bootstrap_before_encoding_is_finished(self):
+        from sse_multivector import hierarchy_generation as generation
+        spec = self.prepare_v41(count=9, encode=False)
+        cfg = json.loads(spec.read_text())
+        cfg['generation_policy'] = 'hierarchy-generation-v5'
+        spec = self.write('v5.json', cfg)
+        source_path = self.root / 'trial/state.json'
+        before = source_path.read_bytes()
+        source = self.state()
+        self.assertTrue(source['experiments'][0]['complete'])
+        self.assertFalse(source['encodings'][0]['complete'])
+        prior_calls = self.calls()
+        self.cli('prepare-hierarchy', 'v4', '--spec', spec)
+        prepared = json.loads((self.root / 'v4/state.json').read_text())
+        self.assertEqual(prepared['experiments'][0], source['experiments'][0])
+        self.assertEqual(prepared['encodings'], [])
+        self.assertEqual(self.calls(), prior_calls)
+        with patch('sse_multivector.worker.OfficialSseEncoder', return_value=FixtureEncoder()), \
+                patch.dict(os.environ, FAKE_RUNNER_LOG=str(self.log)):
+            result = generation.run(self.root / 'v4')
+        self.assertEqual(result['status'], 'complete')
+        self.assertEqual(source_path.read_bytes(), before)
+
     def test_v4_root_probe_repeats_groups_and_counts_distinct_note_loss(self):
         from sse_multivector import hierarchy_generation as generation
         spec = self.prepare_v4_root_probe()
@@ -522,8 +586,9 @@ print(json.dumps({"schema_version":1,"candidate_identity":"hdbscan-explicit-conf
         self.assertIn("saved HDBSCAN evidence changed", result.stderr)
         self.assertEqual(self.calls(), prior)
 
-    def prepare_v41(self, count=43, unique=False, tied=False):
-        spec = self.prepare_v4_root_probe(count=count, unique=unique)
+    def prepare_v41(self, count=43, unique=False, tied=False, encode=True, null_first=False):
+        spec = self.prepare_v4_root_probe(count=count, unique=unique, encode=encode,
+                                          null_first=null_first)
         binary = self.root / "hdbscan-fixture"
         binary.write_text('''#!/usr/bin/env python3
 import json, sys

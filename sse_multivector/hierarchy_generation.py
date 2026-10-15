@@ -373,24 +373,34 @@ def prepare(spec_path, directory, history_root=None):
         source_path = workflow.resolve(cfg["bootstrap_hierarchy"], spec_path.parent)
         source_state = workflow.read(source_path)
         check_state(source_state, verify_current_code=False)
+        saved_bootstrap = deepcopy(source_state["bootstrap_spec"])
+        saved_timeout = saved_bootstrap["runner"].get("timeout_seconds")
+        timeout = teacher_specs["bootstrap_spec"]["runner"].get("timeout_seconds")
+        # A longer client deadline does not change a completed meaning. Keep
+        # the original producer and its actual deadline in the saved receipt.
+        if (policy == POLICY_V5 and type(saved_timeout) in (int, float) and type(timeout) in (int, float)
+                and math.isfinite(timeout) and 0 < saved_timeout <= timeout):
+            saved_bootstrap["runner"]["timeout_seconds"] = timeout
         if (source_state["generation_policy"] not in (POLICY_V32, *SECTION_POLICIES, POLICY_V5)
                 or source_state["note_ids"] != cfg["note_ids"]
                 or [{k: o[k] for k in ("id", "local", "subject")}
                     for o in source_state["originals"]] != originals
-                or source_state["bootstrap_spec"] != teacher_specs["bootstrap_spec"]
+                or saved_bootstrap != teacher_specs["bootstrap_spec"]
                 or source_state["worker_config"] != worker_config
                 or not source_state["experiments"][0].get("complete")):
             raise ValueError("V4 requires matching saved Bootstrap-v133 inputs and controls")
         state["bootstrap_hierarchy"] = str(source_path)
         sources[str(source_path)] = trial._hash(source_path)
         state["experiments"] = [deepcopy(source_state["experiments"][0])]
-        state["encodings"] = deepcopy(source_state["encodings"])
+        state["encodings"] = deepcopy([
+            e for e in source_state["encodings"] if policy != POLICY_V5 or e.get("complete")])
         state["vectors"] = deepcopy(source_state["vectors"])
-        for o in source_state["originals"]:
-            if o.get("meaning") is not None:
-                key = _vector_key(dict(subject=o["title"], meaning=o["meaning"]))
-                if key not in state["vectors"]:
-                    raise ValueError("saved Bootstrap-v133 original vector is missing")
+        if policy != POLICY_V5:
+            for o in source_state["originals"]:
+                if o.get("meaning") is not None:
+                    key = _vector_key(dict(subject=o["title"], meaning=o["meaning"]))
+                    if key not in state["vectors"]:
+                        raise ValueError("saved Bootstrap-v133 original vector is missing")
         directory.mkdir(parents=True)
         workflow.write(directory / "state.json", state)
         return summary(state)
@@ -872,7 +882,8 @@ def _schedule(directory, state):
             for original in state["originals"]
             if original["meaning"] is not None
         }
-        if set(state["note_ids"]) - represented:
+        if (not represented or state["generation_policy"] != POLICY_V5
+                and set(state["note_ids"]) - represented):
             state.update(
                 status="blocked_bootstrap",
                 unresolved=[
@@ -1147,8 +1158,10 @@ def check_state(state, *, verify_receipts=True, verify_current_code=True):
             raise ValueError("V4 root-test controls or scope changed")
         if expected_source is not None:
             source = workflow.read(expected_source)
+            saved_encodings = [e for e in source["encodings"]
+                               if state["generation_policy"] != POLICY_V5 or e.get("complete")]
             if (state["experiments"][0] != source["experiments"][0]
-                    or state["encodings"][:len(source["encodings"])] != source["encodings"]
+                    or state["encodings"][:len(saved_encodings)] != saved_encodings
                     or (state["generation_policy"] in SECTION_POLICIES and (
                         state["encodings"] != source["encodings"] or state["vectors"] != source["vectors"]))):
                 raise ValueError("reused Bootstrap or encoder producer changed")
