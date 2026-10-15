@@ -1643,9 +1643,9 @@ and a **separate two-note diagnostic on notes 20 and 34**. Its sampler uses
 `xhigh`, natural EOS within 262,144 context tokens, the 96 GiB CUDA ceiling,
 40 GiB cache pool and 20 GiB host-memory watchdog remain fixed. Diagnostic
 outputs and receipts remain separate from the fifteen greedy answers; no
-saved greedy record is replaced. This authorizes only **two diagnostic
-generation calls**. A full twenty-note sampled quality comparison remains
-open.
+saved greedy record is replaced. That initial approval covered only **two
+diagnostic generation calls**; the full twenty-note sampled comparison was
+not yet approved.
 
 The greedy stop is verified at **14:02:46 UTC**: all fifteen local and remote
 saved-answer hashes remain unchanged, the generation unit is inactive, and no
@@ -1679,13 +1679,28 @@ GPU reservation reaches **90.48 GiB**, and host available RAM is approximately
 23.5 GiB during steady decoding (sampled minimum **23.39 GiB**). After exit,
 no GPU compute process remains and idle host availability returns to 117.9 GiB.
 Local/remote answer hashes match; native metadata, prompt, policy, runtime,
-token/EOS and output-format validation pass. Only two sampled answers exist;
-eighteen remain pending and no full-collection completion marker is written.
+token/EOS and output-format validation pass. At diagnostic completion, only two
+sampled answers existed; eighteen remained pending and no full-collection
+completion marker had been written.
 
 Both notes were still unfinished at **159,427 greedy tokens** when the user
 approved stopping them. These two sampled completions do not establish
-causality, semantic quality or generalization. No semantic grading has run,
-and the remaining eighteen sampled generations are not authorized.
+causality, semantic quality or generalization. At diagnostic completion, no
+semantic grading had run and the remaining eighteen generations were not yet
+authorized.
+
+**Approved twenty-note sampled comparison — October 15.** The user then approves
+generating the remaining **eighteen sampled answers**, followed by grading all
+twenty with the existing grader. The sampler, `xhigh`, original prompts, weights
+and memory limits remain unchanged; model selection remains open.
+
+Generation resumes at **15:49:05 UTC** under the same sampled unit, with frozen
+source and inputs unchanged. The note 20 and 34 hashes remain unchanged and
+their saved answers are validated and skipped. Concurrent GPU admissions return
+to eight, with the fixed **40 GiB** cache, **96 GiB** CUDA and CPU limits, and
+active **20 GiB** host-memory watchdog. The separate stdout log is
+`generation-remaining-20261015.log`; the local receipt is
+`target/qwen-thinking-20-sampled-20261015/remaining-launch.json`.
 
 The twenty-note thinking comparison is incomplete; grading has not started.
 Report paired correctness, coverage, invalid outputs, thought/final
