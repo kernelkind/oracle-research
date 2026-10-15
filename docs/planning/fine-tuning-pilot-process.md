@@ -1702,7 +1702,29 @@ active **20 GiB** host-memory watchdog. The separate stdout log is
 `generation-remaining-20261015.log`; the local receipt is
 `target/qwen-thinking-20-sampled-20261015/remaining-launch.json`.
 
-The twenty-note thinking comparison is incomplete; grading has not started.
+**Twenty-note generation complete — October 15.** All twenty sampled answers
+finish at natural EOS without truncation. The native completion marker matches
+every answer hash; the earlier nineteen hashes remain unchanged as the last
+answer arrives. CPU validation passes the frozen prompt, policy, runtime,
+source, export metadata, token accounting and production output format checks.
+The collection contains **260,554 thought tokens**, **40,770 final tokens** and
+twenty closing-think tokens: **301,344 generated tokens**, **832 subjects** and
+**zero format errors**.
+
+| Session | New answers | Generation minutes | Observed active wall minutes |
+| --- | ---: | ---: | ---: |
+| Initial diagnostic | 2 | 78.34 | 80.73 |
+| Remaining notes | 18 | 203.63 | 205.98 |
+
+Generation time is the last saved answer's elapsed session time; wall time spans
+the watchdog's first active and first inactive observations. Both sessions exit
+successfully, with zero cache preemptions. Across **1,709** watchdog samples,
+available host RAM stays above **23.18 GiB**; peak logged CUDA reservation is
+**90.48 GiB**. No GPU compute process remains after exit. The ignored receipt
+`target/qwen-thinking-20-sampled-20261015/full-validation.json` retains hashes,
+per-note counts and session evidence. This validates provenance and format;
+semantic grading has not started and model selection remains open.
+
 The separate manual handoff uses native `prepare-distillation-review-trial
 --saved-generations GENERATIONS --model-output MODEL --generation-version VERSION`.
 It requires the complete frozen cohort and `generation.complete.json`, binds
@@ -1712,8 +1734,9 @@ without constructing review data manually. Additional immutable receipts use
 Report paired correctness, coverage, invalid outputs, thought/final
 token counts and GX10 elapsed time after the completed manual grader handoff.
 These exposed validation notes provide a small screen, not unseen-note
-accuracy or proof that the full test exceeds 90%. Different generation
-hardware also prevents attributing every difference to thinking alone.
+accuracy or proof that the full test exceeds 90%. Different generation hardware
+and the changed thinking sampler prevent attributing every difference to
+thinking alone.
 Selecting a family, expanding the screen and the real fine-tune remain open.
 Ignored artifacts are retained in
 `oracle-mvp-qwen-thinking-gx10/target/qwen-thinking-20-20261014/` and
