@@ -1654,7 +1654,7 @@ The stop receipt is retained under
 `target/qwen-thinking-20-natural-20261014/generation.stopped-sampler-change.json`.
 The separate `qwen-thinking-20-sampled-20261015` generation unit launches at
 **14:09:40 UTC**, with its memory watchdog active and independently frozen
-source and inputs. This records launch, not completed results or quality.
+source and inputs.
 
 The sampled collection freezes all twenty original note identities with **no
 greedy-answer reuse**. The launch selects only `--note-index 20 --note-index 34`
@@ -1663,6 +1663,29 @@ Resuming with those selectors validates and skips their saved answers without
 generating the other notes. The full `generation.complete.json` marker requires
 all twenty answers, so completing this two-note diagnostic does not mark the
 full collection complete or authorize the remaining eighteen generations.
+
+**Two-note diagnostic results — October 15.** Both selected notes finish at
+natural EOS with `truncated=false`:
+
+| Note | Thought tokens | Final tokens | Total tokens | Subjects | Elapsed generation seconds |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 34 | 7,519 | 761 | 8,281 | 17 | 2,006.68 |
+| 20 | 15,221 | 4,444 | 19,666 | 90 | 4,700.15 |
+
+Elapsed times share the generation-session start. The unit exits successfully
+with status 0 at approximately **15:30:24 UTC**, about **81 minutes** after
+launch; generation takes **78.3 minutes**. There are zero cache preemptions,
+GPU reservation reaches **90.48 GiB**, and host available RAM is approximately
+23.5 GiB during steady decoding (sampled minimum **23.39 GiB**). After exit,
+no GPU compute process remains and idle host availability returns to 117.9 GiB.
+Local/remote answer hashes match; native metadata, prompt, policy, runtime,
+token/EOS and output-format validation pass. Only two sampled answers exist;
+eighteen remain pending and no full-collection completion marker is written.
+
+Both notes were still unfinished at **159,427 greedy tokens** when the user
+approved stopping them. These two sampled completions do not establish
+causality, semantic quality or generalization. No semantic grading has run,
+and the remaining eighteen sampled generations are not authorized.
 
 The twenty-note thinking comparison is incomplete; grading has not started.
 Report paired correctness, coverage, invalid outputs, thought/final
