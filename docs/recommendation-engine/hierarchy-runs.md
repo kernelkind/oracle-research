@@ -1925,4 +1925,26 @@ The [frozen definition](../../sse_multivector/hierarchy-runs/hr35/hierarchy.spec
 and [native state](../../../oracle-mvp-hierarchy-hr35-v53/target/hierarchy-hr35-v53-thousand-note-v1/HR35/state.json)
 retain exact controls. Initial execution source is d2c13d78, shared coordinator
 36dfcf63 and frozen teacher transport 1cfdd6a7. Construction, final coverage,
-semantic review and native accounting are pending. No review UI requested.
+semantic review and final native accounting are pending. No review UI requested.
+
+The root lineup checkpoint has six roots and **670 distinct notes beneath
+roots**. The additional root membership pass clustered each root with the
+same 5,662 globally untracked entries and added **zero entries** to every root.
+Its combined advancement, including child-family preparation and native checks,
+took **1,313.087 seconds (21m 53s)**. These are observed costs for this stage,
+not a pure clustering benchmark or a final construction duration. Six child
+families were then prepared; recursive construction remains running. The exact
+[before-pass checkpoint](../../../oracle-mvp-hierarchy-hr35-v53/target/hierarchy-hr35-v53-thousand-note-v1/HR35/root-lineup-before-membership-state.json)
+and [after-pass checkpoint](../../../oracle-mvp-hierarchy-hr35-v53/target/hierarchy-hr35-v53-thousand-note-v1/HR35/root-lineup-after-membership-state.json)
+preserve this bounded negative result without another teacher run.
+
+[Native root-definition accounting](../../../oracle-mvp-hierarchy-hr35-v53/target/hierarchy-hr35-v53-thousand-note-v1/usage-root-definitions.json)
+records 179 valid cases across 12 consolidation batches: **79 fresh attempts
+including warmups, 110 exact reuses, zero failures/retries and complete fresh
+usage**. Fresh API-equivalent cost is **$0.3163536**, with zero incremental
+subscription cash charge. Tokens: 40,588 uncached input, 101,376 cached input
+and 22,504 output, including 15,515 reasoning tokens. These are the root-definition
+stage only; copied Bootstrap dispatches are historical, and final child-stage
+accounting remains pending. HR30 used V5, so any eventual HR30-to-HR35 difference
+combines V5.1, V5.2 and V5.3 changes and newly required model answers; it cannot
+isolate a V5.3-only gain.
