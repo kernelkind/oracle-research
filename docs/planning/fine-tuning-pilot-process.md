@@ -1605,6 +1605,39 @@ The manual twelve-note generation starts at **22:43 UTC**, preserving eight
 answers for an initial **8/20 (40%)**. Its source copy, policy and input hashes
 are frozen separately from the repository checkout; grading has not started.
 
+**Provisional audit and status — October 15, 10:55 UTC.** The latest verified
+snapshot at 10:55:42 UTC has **15/20 saved (75%)**: eight reused answers and
+seven new natural completions, with four requests running and one waiting.
+Long generations are approximately **131,000 tokens**; note 74 is waiting at
+115,006 generated tokens after one cache preemption. GPU reservation is
+**90.42 GiB**, with approximately **23.5 GiB host RAM available**. The seven new
+records have parseable final JSON, one closing thinking marker, natural EOS and
+no truncation. Their reasoning spans 5,143–20,837 tokens; four exceed the old
+16,384-token cap. Repeated outline drafts occur in completed reasoning, but do
+not establish a decoder loop. Unfinished reasoning text is unavailable, so
+length alone does not establish repetition or its cause.
+
+Inputs and export metadata bind `Qwen/Qwen3.8-27B` revision
+`1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0`. Its exported generation defaults enable
+sampling at `temperature=1.0`, `top_p=0.95`, `top_k=20`; the
+[exact pinned model card](https://huggingface.co/Qwen/Qwen3.8-27B/blob/1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0/README.md#best-practices)
+recommends those thinking settings with `presence_penalty=0.0` and
+`repetition_penalty=1.0`. The controlled thinking screen and saved thinking-off
+baseline instead use greedy decoding; the current driver explicitly selects
+`temperature=0`, `top_p=1`, `top_k=-1`. The exact card discusses reducing endless
+repetition but does not explicitly prohibit greedy decoding. The
+[official older-Qwen3 quickstart](https://qwen.readthedocs.io/en/latest/getting_started/quickstart.html#transformers)
+does warn that greedy thinking can degrade performance and cause endless
+repetition. This is related-family evidence, not a demonstrated cause of these
+unfinished Qwen3.8 generations.
+
+Existing handling marks native context-limit stops as truncated and
+automatically assigns zero correctness and coverage. Only the final answer is
+graded; reasoning drafts remain evidence artifacts. A proposed two-case
+diagnostic using the recommended sampler is **not approved**: no sampler change
+or additional generation calls have been launched, and all current greedy
+artifacts remain retained.
+
 Generation is incomplete and grading has not started. Report paired
 correctness, coverage, invalid outputs, thought/final
 token counts and GX10 elapsed time after the completed manual grader handoff.
