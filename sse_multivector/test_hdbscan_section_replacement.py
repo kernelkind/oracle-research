@@ -135,6 +135,27 @@ class SectionReplacementTests(unittest.TestCase):
         joint_view = json.loads((native.root/'combined/combined-roots.json').read_text())
         self.assertEqual([r['slots'] for r in joint_view['roots']], [[1], [2], [3]])
         self.assertEqual(joint_view['root_count'], 3)
+        joint_analysis = json.loads((native.root/'combined/analysis.json').read_text())
+        joint_groups = {g['id']: g for g in joint_analysis['groups']}
+        original_groups = {frozenset(s['original_ids']) for s in
+                           state['hdbscan_sections']['sections'] if s['group']}
+        single_after_round = next(s for s in joint_analysis['sections'] if len(s['groups']) == 1
+            and frozenset(joint_groups[s['groups'][0]]['original_ids']) in original_groups)
+        after_label = f"S{joint_analysis['sections'].index(single_after_round)+1:02d}"
+        prepare_model('after-round-model', dict(schema_version=1,
+            replacement_review=str(native.root/'combined/analysis.json'), section=after_label, stage='section'))
+        after_case = json.loads(native.cli('show', 'after-round-model', '--case', after_label).stdout)
+        after_producer = after_case['evidence']['group_nodes'][0]['producer']
+        replacement('prepare', native.root/'after-round-pool', '--experiment', after_producer['experiment'],
+                    '--case', after_producer['case'], '--replacement-review', native.root/'combined/analysis.json',
+                    '--section', after_label)
+        after_plan = json.loads((native.root/'after-round-pool/replacement.json').read_text())['plan']
+        self.assertEqual(after_plan['replacement_ids'], [after_plan['replacement_id']])
+        self.assertEqual([c['id'] for c in after_plan['root_changes']], [after_plan['replacement_id']])
+        replacement('collect', native.root/'after-round-pool')
+        replacement('roots', native.root/'after-round-pool', '--name', 'continued-roots')
+        continued = json.loads((native.root/'after-round-pool/continued-roots.json').read_text())
+        self.assertEqual([r['slots'] for r in continued['roots']], [[1], [2], [3], [4]])
         native.write('overlap.json', dict(proposals, proposals=[proposals['proposals'][0]]*2))
         overlap = subprocess.run([sys.executable, '-m', 'sse_multivector.hdbscan_root_round',
             'prepare', str(native.root/'overlap'), '--source', str(native.root/'overlap.json')],
