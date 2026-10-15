@@ -38,6 +38,7 @@ original notes. Parameters describe the settings actually used.
 | HR31 | 100 | ASv6.100 | V5.1 | bootstrap-v133 | consolidated-grouped-v1 | — |
 | HR32 | 200 | ASv6.100 | V5.1 | bootstrap-v133 | consolidated-grouped-v1 | — |
 | HR33 | 200 | ASv6.100 | V5.2 | bootstrap-v133 | consolidated-grouped-v1 | — |
+| HR34 | 200 | ASv6.100 | V5.3 | bootstrap-v133 | consolidated-grouped-v1 | — |
 
 **Same notes:** HR03/HR10/HR14/HR16/HR19/HR20/HR21/HR27 use the same ordered 50-note selection.
 HR05/HR08/HR09/HR13/HR15/HR17/HR18 use its same ordered first 24 notes. HR04 uses
@@ -53,7 +54,8 @@ answers and vectors, changing only their two explicitly recorded HDBSCAN
 parameters.
 
 HR33 uses HR32's exact ordered 200-note corpus, saved Bootstrap meanings and
-vectors, changing section ranking to V5.2 at every level.
+vectors, changing section ranking to V5.2 at every level. HR34 reuses that
+same corpus and saved meanings/vectors with V5.3 membership expansion.
 
 **Selection and stopping:**
 
@@ -109,8 +111,10 @@ vectors, changing section ranking to V5.2 at every level.
   sibling lineup, including non-roots. Each sibling's original entries are
   clustered with the same frozen global untracked pool. Shared groups add
   untracked entries to that sibling; existing memberships, meanings and native
-  producer evidence stay unchanged. New definitions default to V5.3. No official
-  hierarchy run has been generated with this version yet.
+  producer evidence stay unchanged. New definitions default to V5.3. HR34
+  completed with 68 nodes and 199/200 notes beneath roots, versus HR33's 189.
+  A new Beverages and drinking membership has a scope mismatch; coverage does
+  not establish semantic quality.
 - HR14/HR16 omit two null Bootstrap meanings. HR17 had none. Answers and receipts
   remain saved; the original selected note set is preserved as input evidence.
 
@@ -649,3 +653,16 @@ cd /home/dev/src/notedeck_worktrees/algos
 
 Press L on a leaf to show its notes.
 [Full result and evidence](hierarchy-runs.md#hr33--hr32-corpus-with-higen-v52).
+
+## HR34 — 200 notes · HiGen V5.3
+
+Complete on HR33's exact corpus and saved Bootstrap meanings/vectors: 68 nodes,
+six roots, at most six children and five levels. All 62 edges narrow observed
+note sets. Root coverage is 199/200, gaining ten notes and losing none against
+HR33. Fourteen completed lineups each received the new global-untracked
+membership pass. Native validation passed after a checkpoint validator fix.
+Bodily reduction of consumed substances joined Beverages and drinking;
+this agent-assessed scope mismatch remains for review. No manual repair.
+
+**Review UI not generated: it has not been requested.**
+[Full result and evidence](hierarchy-runs.md#hr34--hr33-corpus-with-higen-v53).

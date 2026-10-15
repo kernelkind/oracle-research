@@ -15,6 +15,13 @@ full V5.2 run, [HR33](hierarchy-runs.md#hr33--hr32-corpus-with-higen-v52),
 completed with 67 nodes and 189/200 notes beneath roots, versus HR32's 70 nodes
 and 176/200. Fifteen notes gained root placement and two lost it. Native checks
 and the review UI check passed; semantic quality remains for review.
+The first full V5.3 run, [HR34](hierarchy-runs.md#hr34--hr33-corpus-with-higen-v53),
+completed on HR33's exact corpus and saved meanings with 68 nodes and 199/200
+notes beneath roots: ten gained placement, none lost it. All 14 membership
+passes finished and all 62 edges narrow observed note sets. Native checks
+passed after a tested checkpoint-validator fix. A new Bodily reduction of
+consumed substances membership under Beverages and drinking is an agent-assessed
+scope mismatch; coverage gain does not establish quality preservation.
 Bootstrap-v133 supplies original L1
 titles and explicit meanings. Consolidated-grouped-v1 names groups and broader
 sections. Offline native-workflow tests cover construction and recovery.

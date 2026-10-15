@@ -1801,3 +1801,95 @@ notes. The workbook was updated, reopened and verified with previous cells
 preserved. Retain the execution worktree for frozen source, receipts, vectors
 and the launchable UI. Next, review the new root choices and the two lost notes
 before claiming semantic improvement.
+
+## HR34 — HR33 corpus with HiGen V5.3
+
+Complete in **34m 00s**, from the first native execution-settings record to
+terminal run-summary write, including the validator fix and resume. This is the
+same ordered 200-note corpus as HR33: 100 food/drink and 100 music notes,
+ASv6.100 subjects, Bootstrap-v133 and Consolidated-grouped-v1. Model/settings,
+angular HDBSCAN (min_samples=3, min_cluster_size=2, EOM), title-only SSE pooling,
+section cuts and recursive stopping rules are unchanged. All 1,527 Bootstrap
+answers (1,520 non-null), 1,549 vector identities and 24 completed encoder jobs
+were reused. No new Bootstrap or encoder calls were needed.
+
+V5.3 adds the approved membership pass after every completed sibling lineup,
+at roots and deeper levels. Each sibling's accumulated original entries are
+clustered with the same frozen global untracked pool. A shared HDBSCAN group
+adds untracked entries to that sibling; no synthetic representative or bend
+cut is used in this pass. Existing memberships, fixed meanings and original
+producer evidence remain unchanged.
+
+**199/200 notes are beneath roots**, compared with HR33's 189. Ten gained
+placement (N016, N039, N044, N055, N068, N070, N088, N115, N117 and N182 in
+input order); none lost it. N065 remains outside the roots. Root counts include
+supporting notes and recursive descendants, deduplicated within each root.
+The saved top-container direct-note list is not counted as root coverage.
+
+| Root | Notes |
+| --- | ---: |
+| Media and communication · C00001 | 95 |
+| Food and living organisms · C00002 | 80 |
+| Human experience · C00003 | 73 |
+| Food and dietary lifestyles · C00004 | 44 |
+| Media and communication · C00005 | 47 |
+| Money and payment systems · C00006 | 16 |
+
+The graph has **68 canonical nodes, 62 edges, six roots, 55 leaves and five
+levels**, with at most six children per node. All 14 sibling lineups and their
+membership passes finished. All 62 edges strictly narrow observed note sets.
+The membership passes recorded 139 additions across node/entry pairs, covering
+126 distinct original entries; entries can join multiple siblings in one
+frozen pass. Native construction/receipt checks passed. The structural audit
+flags only the missing N065 (as both a coverage and individual-access violation),
+so `structural_constraints_met` is false. Structural checks do not certify
+semantic correctness.
+One inherited Bootstrap diagnostic quote error and seven null meanings remain
+recorded; neither was resampled or repaired.
+
+**Scope qualification:** C00015, Beverages and drinking, acquired L00630,
+Bodily reduction of consumed substances (N088), through a group containing
+Drinks, Drinking, Sipping, Beer and Slush drinks. The added meaning describes
+post-ingestion bodily reduction; the canonical meaning describes drinks and
+drinking. This is a concrete agent-assessed scope mismatch requiring review,
+not new human gold or an assignment of prompt/policy fault. Coverage gain
+therefore does not establish quality preservation. No manual memberships,
+meanings or prompts were changed to hide this result.
+
+The first invocation stopped with `V5 current pool changed` while validating an
+unstarted leaf family during another family's durable membership checkpoint.
+The minimal production-path regression reproduced the error. Commit 4abff451
+fixes the validator to distinguish unpublished original pools from published
+leaf groups; 41 V5 constructor tests passed. The run resumed from its checkpoint
+with execution-source cherry-pick bf7801bc and an explicit native source-upgrade
+record. Inputs, policy, prompts and saved receipts were unchanged. Repeated
+local validation and membership clustering dominated runtime; this was not a
+teacher failure.
+
+[Fresh consolidation accounting](../../../oracle-mvp-hierarchy-hr34-v53/target/hierarchy-hr34-v53-two-hundred-note-v1/usage-new.json)
+records **7 actual attempts including warmups, 161 exact answer reuses,
+165 valid cases across 31 batches, zero failures/retries and complete fresh
+usage**. Fresh tokens: 4,471 uncached input, 7,680 cached input and 1,649 output,
+including 1,198 reasoning tokens. Fresh API-equivalent cost is **$0.0262000**;
+incremental subscription cash charge is zero. Producer-inclusive consolidation
+cost is $0.8775908. This low fresh cost reflects exact reuse, not policy savings.
+[All-producer accounting](../../../oracle-mvp-hierarchy-hr34-v53/target/hierarchy-hr34-v53-two-hundred-note-v1/usage-all-producers.json)
+has known generation subtotal $12.5674308 with eight historical failed-call
+usages missing; its complete cost remains unknown. Copied Bootstrap attempts
+are historical, not newly dispatched calls.
+
+The [frozen definition](../../sse_multivector/hierarchy-runs/hr34/hierarchy.spec.json),
+[native state](../../../oracle-mvp-hierarchy-hr34-v53/target/hierarchy-hr34-v53-two-hundred-note-v1/HR34/state.json),
+[code provenance](../../../oracle-mvp-hierarchy-hr34-v53/target/hierarchy-hr34-v53-two-hundred-note-v1/HR34/code-provenance.json),
+[structural audit](../../../oracle-mvp-hierarchy-hr34-v53/target/hierarchy-hr34-v53-two-hundred-note-v1/HR34/structural-audit.json),
+[coverage comparison](../../../oracle-mvp-hierarchy-hr34-v53/target/hierarchy-hr34-v53-two-hundred-note-v1/HR34/root-coverage-comparison.json)
+and [exact scope witness](../../../oracle-mvp-hierarchy-hr34-v53/target/hierarchy-hr34-v53-two-hundred-note-v1/HR34/new-membership-scope-review.json)
+retain source-bound results. State SHA-256:
+`cb01fdebbc28c605ad86c9a16c8ac79209c1a26f4c7ed95a4f86f41a14f927e4`.
+Initial execution source was 7159bb54, final source bf7801bc, shared coordinator
+36dfcf63 and frozen teacher transport 1cfdd6a7. All ready independent batches
+used the native shared 30-request queue; one-hour deadlines and no attempt
+ceiling were preserved. The workbook was updated, reopened and verified.
+No review UI was requested or generated. Retain the execution worktree for
+frozen sources, receipts, clustering evidence and vectors. The next useful
+review is the saved scope mismatch before claiming semantic improvement.

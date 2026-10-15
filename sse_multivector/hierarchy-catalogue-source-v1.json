@@ -8919,6 +8919,82 @@
           "sha256": "0352528241b47c11f785be397f6ecb283dfa84c23334e616f61eca184f71cf48"
         }
       ]
+    },
+    {
+      "version_id": "HR34",
+      "name": "ASv6.100 200-note HiGen V5.3 — HR33 corpus / Bootstrap-v133 / Consolidated-grouped-v1",
+      "root": "../../oracle-mvp-hierarchy-hr34-v53",
+      "artifact_path": "target/hierarchy-hr34-v53-two-hundred-note-v1/HR34/state.json",
+      "sha256": "cb01fdebbc28c605ad86c9a16c8ac79209c1a26f4c7ed95a4f86f41a14f927e4",
+      "code_provenance": {
+        "sidecar": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr34-v53/target/hierarchy-hr34-v53-two-hundred-note-v1/HR34/code-provenance.json",
+        "git": {
+          "oracle": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr34-v53",
+            "git_commit": "bf7801bc1d92491b20eab8d075fb8d57b83d6b3e",
+            "uncommitted_source": false
+          },
+          "runner_coordinator": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/experiment-runner",
+            "git_commit": "36dfcf6390eaaa5e46fff07cba7581003b8877a4",
+            "uncommitted_source": false
+          },
+          "bootstrap_transport": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/experiment-runner-hr26-source-v1",
+            "git_commit": "1cfdd6a76a9910b2c9dea0ca395f825b90485f7e",
+            "uncommitted_source": false
+          },
+          "consolidation_transport": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/experiment-runner-hr26-source-v1",
+            "git_commit": "1cfdd6a76a9910b2c9dea0ca395f825b90485f7e",
+            "uncommitted_source": false
+          }
+        }
+      },
+      "experimental_parameters": {
+        "baseline": "HR33",
+        "generation_policy": "hierarchy-generation-v5.3",
+        "dataset": {
+          "subject_prompt": "ASv6.100",
+          "notes": 200
+        },
+        "definition": {
+          "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr34-v53/sse_multivector/hierarchy-runs/hr34/hierarchy.spec.json",
+          "sha256": "758802d8b47828f44cbe313dfee92576098a949798d92a5a4c4434c5360ab3cd"
+        },
+        "parameter_ledger": {
+          "path": "docs/recommendation-engine/hierarchy-parameters.csv",
+          "row": "HR34"
+        },
+        "native_usage": {
+          "fresh": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr34-v53/target/hierarchy-hr34-v53-two-hundred-note-v1/usage-new.json",
+          "all_producers": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr34-v53/target/hierarchy-hr34-v53-two-hundred-note-v1/usage-all-producers.json",
+          "scope": "Fresh consolidation: 7 attempts including warmups, 161 exact reuses, complete usage. Copied Bootstrap dispatches are historical; all-producer generation has eight historical missing failed-call usages."
+        },
+        "qualification": "Native construction/source/receipt validation passed after recorded pending-leaf validator fix. 199 notes beneath roots (10 gained versus HR33; none lost), N065 unclaimed; all 62 edges strictly narrow observed note sets. Agent-assessed Bodily reduction of consumed substances -> Beverages and drinking membership has a scope mismatch; no semantic approval or quality-preserving savings claim. No review UI requested or generated."
+      },
+      "related_outputs": [
+        {
+          "label": "Native completion summary",
+          "path": "target/hierarchy-hr34-v53-two-hundred-note-v1/HR34/run-summary.json",
+          "sha256": "c71c96a5a0266494f90c05c1897422920cd6060590cf427306996a3bfeb1b0bf"
+        },
+        {
+          "label": "Structural audit",
+          "path": "target/hierarchy-hr34-v53-two-hundred-note-v1/HR34/structural-audit.json",
+          "sha256": "327562f4fa2017dfeadf49df3e4ba756ad3fcd5e10ee58c32e70b1ac062b6aa8"
+        },
+        {
+          "label": "Root coverage comparison with HR33",
+          "path": "target/hierarchy-hr34-v53-two-hundred-note-v1/HR34/root-coverage-comparison.json",
+          "sha256": "b50886eb5296ba2370e122b9ecea6d405ceefbf83db83acf21a4095e5b6fd3d4"
+        },
+        {
+          "label": "New membership scope witness",
+          "path": "target/hierarchy-hr34-v53-two-hundred-note-v1/HR34/new-membership-scope-review.json",
+          "sha256": "5f9f8c7dcda24fa87ceb6071de02f6e3f76227d312bee7bb3a11b5629c3adf8e"
+        }
+      ]
     }
   ]
 }
