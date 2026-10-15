@@ -32,9 +32,9 @@ class Tokenizer:
         return messages[0]["content"] + "<think>\n"
 
 
-def fixture(directory, reuse=True):
+def fixture(directory, reuse=True, indexes=(0, 6)):
     old, new = Path(directory) / "old", Path(directory) / "new"
-    notes = [dict(index=i, note_id=f"note-{i}", messages=[dict(role="user", content=f"post{i}")]) for i in (0, 6)]
+    notes = [dict(index=i, note_id=f"note-{i}", messages=[dict(role="user", content=f"post{i}")]) for i in indexes]
     old_policy = dict(thought_budget_tokens=4, final_budget_tokens=3, max_context_tokens=20,
                       batch_size=8, enable_thinking=True, do_sample=False, reasoning_effort="xhigh")
     original = dict(seed="fixed", model="fixture", revision="pinned", checkpoint=1000,
@@ -66,6 +66,48 @@ def fixture(directory, reuse=True):
             sha256=manual.digest(path), index=0, note_id="note-0", generation_policy=old_policy))
     manual.write(new / "inputs.json", inputs)
     return old, new, inputs
+
+
+@contextlib.contextmanager
+def generation_runtime():
+    class Engine:
+        def __init__(self):
+            self.added = []; self.position = 0
+            scheduler = types.SimpleNamespace(requests={}, running=[], waiting=[],
+                kv_cache_manager=types.SimpleNamespace(usage=0.1))
+            self.engine_core = types.SimpleNamespace(engine_core=types.SimpleNamespace(scheduler=scheduler))
+        def add_request(self, key, prompt, sampling):
+            self.added.append(key)
+            self.sampling = sampling
+        def has_unfinished_requests(self):
+            return self.position < 2
+        def step(self):
+            self.position += 1
+            delta = [7, 8, 9, 10, 7] if self.position == 1 else [11, 8, 12]
+            return [types.SimpleNamespace(request_id=key, finished=self.position == 2,
+                outputs=[types.SimpleNamespace(token_ids=delta, finish_reason="stop" if self.position == 2 else None)])
+                for key in self.added]
+    engines, arguments, fractions = [], [], []
+    def create(*args, **kwargs):
+        engine = Engine()
+        engines.append(engine)
+        arguments.append(args[0])
+        return engine
+    torch = types.ModuleType("torch"); torch.set_num_threads = torch.manual_seed = lambda *args: None
+    torch.backends = types.SimpleNamespace(cuda=types.SimpleNamespace(matmul=types.SimpleNamespace(
+        allow_tf32=False, allow_bf16_reduced_precision_reduction=True)))
+    torch.cuda = types.SimpleNamespace(set_per_process_memory_fraction=lambda value, device: fractions.append(value),
+        get_device_properties=lambda *args: types.SimpleNamespace(total_memory=128 * 1024**3),
+        get_device_name=lambda *args: "fixture", memory_reserved=lambda: 0)
+    vllm = types.ModuleType("vllm"); vllm.EngineArgs = vllm.SamplingParams = lambda **kwargs: types.SimpleNamespace(**kwargs)
+    vllm.LLMEngine = types.SimpleNamespace(from_engine_args=create)
+    params = types.ModuleType("vllm.sampling_params"); params.RequestOutputKind = types.SimpleNamespace(DELTA="delta")
+    transformers = types.ModuleType("transformers")
+    transformers.AutoTokenizer = types.SimpleNamespace(from_pretrained=lambda *args, **kwargs: Tokenizer())
+    modules = {"torch": torch, "vllm": vllm, "transformers": transformers, "vllm.sampling_params": params}
+    with patch.dict(sys.modules, modules), patch.dict(os.environ, {"VLLM_ENABLE_V1_MULTIPROCESSING": "0"}), \
+            patch.object(manual.importlib.metadata, "version", return_value="fixture"), contextlib.redirect_stdout(io.StringIO()):
+        yield engines, arguments, fractions
 
 
 class ManualGenerationTests(unittest.TestCase):
@@ -115,44 +157,10 @@ class ManualGenerationTests(unittest.TestCase):
     def test_generation_and_completed_resume_use_actual_control_flow(self):
         with tempfile.TemporaryDirectory() as directory:
             old, new, inputs = fixture(directory)
-            class Engine:
-                def __init__(self):
-                    self.added = []; self.position = 0
-                    scheduler = types.SimpleNamespace(requests={}, running=[], waiting=[],
-                        kv_cache_manager=types.SimpleNamespace(usage=0.1))
-                    self.engine_core = types.SimpleNamespace(engine_core=types.SimpleNamespace(scheduler=scheduler))
-                def add_request(self, key, prompt, sampling):
-                    self.added.append(key)
-                    self.sampling = sampling
-                def has_unfinished_requests(self):
-                    return self.position < 2
-                def step(self):
-                    self.position += 1
-                    delta = [7, 8, 9, 10, 7] if self.position == 1 else [11, 8, 12]
-                    return [types.SimpleNamespace(request_id="6", finished=self.position == 2,
-                        outputs=[types.SimpleNamespace(token_ids=delta, finish_reason="stop" if self.position == 2 else None)])]
-            engine = Engine(); loads = []; arguments = []
-            def create(*args, **kwargs):
-                loads.append(1)
-                arguments.append(args[0])
-                return engine
-            torch = types.ModuleType("torch"); torch.set_num_threads = torch.manual_seed = lambda *args: None
-            torch.backends = types.SimpleNamespace(cuda=types.SimpleNamespace(matmul=types.SimpleNamespace(
-                allow_tf32=False, allow_bf16_reduced_precision_reduction=True)))
-            fractions = []
-            torch.cuda = types.SimpleNamespace(set_per_process_memory_fraction=lambda value, device: fractions.append(value),
-                get_device_properties=lambda *args: types.SimpleNamespace(total_memory=128 * 1024**3),
-                get_device_name=lambda *args: "fixture", memory_reserved=lambda: 0)
-            vllm = types.ModuleType("vllm"); vllm.EngineArgs = vllm.SamplingParams = lambda **kwargs: types.SimpleNamespace(**kwargs)
-            vllm.LLMEngine = types.SimpleNamespace(from_engine_args=create)
-            params = types.ModuleType("vllm.sampling_params"); params.RequestOutputKind = types.SimpleNamespace(DELTA="delta")
-            transformers = types.ModuleType("transformers")
-            transformers.AutoTokenizer = types.SimpleNamespace(from_pretrained=lambda *args, **kwargs: Tokenizer())
-            modules = {"torch": torch, "vllm": vllm, "transformers": transformers, "vllm.sampling_params": params}
-            with patch.dict(sys.modules, modules), patch.dict(os.environ, {"VLLM_ENABLE_V1_MULTIPROCESSING": "0"}), \
-                    patch.object(manual.importlib.metadata, "version", return_value="fixture"), contextlib.redirect_stdout(io.StringIO()):
+            with generation_runtime() as (engines, arguments, fractions):
                 with patch.object(sys, "argv", ["manual-generation", str(new), "--max-num-active-seqs", "4"]):
                     manual.main()
+                engine = engines[0]
                 self.assertEqual(engine.added, ["6"])
                 self.assertEqual(arguments[0].max_num_seqs, 8)
                 self.assertEqual(arguments[0].max_num_active_seqs, 4)
@@ -167,9 +175,57 @@ class ManualGenerationTests(unittest.TestCase):
                 self.assertEqual(record["reasoning_tokens"], 5)
                 saved = manual.digest(new / "generations/note-0006/subjects.json")
                 manual.run(new, max_num_active_seqs=2)
-                self.assertEqual(loads, [1])
+                self.assertEqual(len(engines), 1)
                 self.assertEqual(fractions, [0.75])
                 self.assertEqual(manual.digest(new / "generations/note-0006/subjects.json"), saved)
+
+    def test_explicit_sampled_policy_is_validated(self):
+        with tempfile.TemporaryDirectory() as directory:
+            _, new, inputs = fixture(directory, reuse=False)
+            inputs["generation_policy"].update(do_sample=True, temperature=1.0, top_p=0.95,
+                top_k=20, min_p=0.0, presence_penalty=0.0, repetition_penalty=1.0)
+            manual.write(new / "inputs.json", inputs)
+            self.assertEqual(manual.load_inputs(new)[0]["generation_policy"], inputs["generation_policy"])
+            inputs["generation_policy"]["top_p"] = 0.5
+            manual.write(new / "inputs.json", inputs)
+            with self.assertRaisesRegex(ValueError, "sampling parameters"):
+                manual.load_inputs(new)
+
+    def test_selected_notes_stay_partial_then_resume_without_redo(self):
+        for sampled in (False, True):
+            with self.subTest(sampled=sampled), tempfile.TemporaryDirectory() as directory:
+                _, new, inputs = fixture(directory, reuse=False, indexes=(0, 20, 34))
+                if sampled:
+                    inputs["generation_policy"].update(do_sample=True, temperature=1.0, top_p=0.95,
+                        top_k=20, min_p=0.0, presence_penalty=0.0, repetition_penalty=1.0)
+                    manual.write(new / "inputs.json", inputs)
+                frozen = manual.digest(new / "inputs.json")
+                with generation_runtime() as (engines, _, _):
+                    with patch.object(sys, "argv", ["manual-generation", str(new),
+                            "--note-index", "20", "--note-index", "34"]):
+                        manual.main()
+                    self.assertEqual(engines[0].added, ["20", "34"])
+                    self.assertFalse((new / "generation.complete.json").exists())
+                    sampling = vars(engines[0].sampling)
+                    expected = dict(temperature=1.0, top_p=0.95, top_k=20, min_p=0.0,
+                        presence_penalty=0.0, repetition_penalty=1.0) if sampled else dict(temperature=0, top_p=1, top_k=-1)
+                    self.assertEqual({key: sampling[key] for key in expected}, expected)
+                    self.assertIsNone(sampling["max_tokens"])
+                    paths = [new / f"generations/note-{index:04}/subjects.json" for index in (20, 34)]
+                    saved = {path: manual.digest(path) for path in paths}
+                    for path in paths:
+                        record = manual.read(path)
+                        self.assertEqual(record["generation_policy_sha256"], manual.policy_digest(inputs["generation_policy"]))
+                    manual.run(new, note_indexes=[20, 34])
+                    self.assertEqual(len(engines), 1)
+                    self.assertFalse((new / "generation.complete.json").exists())
+                    with self.assertRaisesRegex(ValueError, "Unknown note index"):
+                        manual.run(new, note_indexes=[99])
+                    manual.run(new)
+                    self.assertEqual(engines[1].added, ["0"])
+                    self.assertEqual(len(manual.read(new / "generation.complete.json")), 3)
+                    self.assertEqual({path: manual.digest(path) for path in paths}, saved)
+                    self.assertEqual(manual.digest(new / "inputs.json"), frozen)
 
     def test_preemption_snapshot_keeps_finished_counts(self):
         request = types.SimpleNamespace(num_preemptions=2, num_computed_tokens=8)

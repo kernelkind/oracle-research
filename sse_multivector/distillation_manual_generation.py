@@ -97,6 +97,19 @@ def engine_settings(policy, merged, *, max_num_active_seqs=None):
         load_format="safetensors", generation_config="vllm", seed=17, disable_log_stats=True)
 
 
+def sampling_settings(policy):
+    require(type(policy.get("do_sample")) is bool, "Expected an explicit sampling policy")
+    if not policy["do_sample"]:
+        return dict(temperature=0, top_p=1, top_k=-1)
+    approved = dict(temperature=1.0, top_p=0.95, top_k=20, min_p=0.0,
+                    presence_penalty=0.0, repetition_penalty=1.0)
+    settings = {key: policy.get(key) for key in approved}
+    require(settings == approved and type(settings["top_k"]) is int
+        and all(type(value) in (int, float) for value in settings.values()),
+        "Expected the approved sampling parameters")
+    return settings
+
+
 def load_inputs(directory):
     directory = Path(directory).resolve()
     inputs = read(directory / "inputs.json")
@@ -111,8 +124,9 @@ def load_inputs(directory):
     policy = inputs["generation_policy"]
     require(policy.get("stop_policy") == "natural_eos" and policy.get("thought_budget_tokens") is None
         and policy.get("final_budget_tokens") is None and policy.get("enable_thinking") is True
-        and policy.get("do_sample") is False and policy.get("reasoning_effort") == "xhigh",
+        and policy.get("reasoning_effort") == "xhigh",
         "Expected the approved natural-EOS thinking policy")
+    sampling_settings(policy)
     require(type(policy["gpu_memory_limit_bytes"]) is int and policy["gpu_memory_limit_bytes"] > 0
         and type(policy["kv_cache_memory_bytes"]) is int
         and 0 < policy["kv_cache_memory_bytes"] < policy["gpu_memory_limit_bytes"], "Invalid memory limits")
@@ -241,17 +255,26 @@ def cache_snapshot(engine, last_seen):
         request_counters=dict(last_seen))
 
 
-def run(directory, *, max_num_active_seqs=None):
+def run(directory, *, max_num_active_seqs=None, note_indexes=None):
     from transformers import AutoTokenizer
     directory = Path(directory).resolve()
     loaded = load_inputs(directory)
-    _, _, original_path, merged = loaded
+    inputs, _, original_path, merged = loaded
+    selected = {note["index"] for note in inputs["notes"]} if note_indexes is None else set(note_indexes)
+    require(all(type(index) is int for index in selected)
+        and selected <= {note["index"] for note in inputs["notes"]}, "Unknown note index")
     tokenizer = AutoTokenizer.from_pretrained(merged, local_files_only=True, trust_remote_code=False)
-    inputs, merged, closing, eos, pending, paths = prepare(directory, tokenizer, loaded)
+    inputs, merged, closing, eos, all_pending, paths = prepare(directory, tokenizer, loaded)
+    pending = {key: value for key, value in all_pending.items() if int(key) in selected}
+    saved = len(paths) - len(all_pending)
     settings = engine_settings(inputs["generation_policy"], merged, max_num_active_seqs=max_num_active_seqs)
     if not pending:
-        complete(directory, paths)
-        print("GENERATION COMPLETE; saved answers verified, no model loaded", flush=True)
+        if not all_pending:
+            complete(directory, paths)
+            print("GENERATION COMPLETE; saved answers verified, no model loaded", flush=True)
+        else:
+            print("GENERATION PARTIAL; selected answers verified, no model loaded",
+                json.dumps(dict(saved=saved, total=len(paths), remaining=len(all_pending))), flush=True)
         return
     import torch
     from vllm import EngineArgs, LLMEngine, SamplingParams
@@ -271,6 +294,7 @@ def run(directory, *, max_num_active_seqs=None):
         script_sha256=digest(__file__), merged_manifest_sha256=digest(merged / "export-provenance.json"),
         packages={name: importlib.metadata.version(name) for name in ("torch", "transformers", "vllm")},
         pid=os.getpid(), gpu=torch.cuda.get_device_name(0), engine_settings=settings,
+        selected_note_indexes=sorted(selected),
         gpu_allocator_budget_bytes=gpu_budget, model_load_seconds=time.monotonic() - started,
         eos_token_ids=eos, closing_think_token_id=closing, generation_policy=policy,
         environment={name: os.environ.get(name) for name in ("VLLM_ENABLE_V1_MULTIPROCESSING",
@@ -279,13 +303,12 @@ def run(directory, *, max_num_active_seqs=None):
         tf32_matmul=torch.backends.cuda.matmul.allow_tf32)
     write(runtime_path, runtime)
     runtime_identity = dict(path=runtime_path.name, sha256=digest(runtime_path))
-    sampling = SamplingParams(temperature=0, top_p=1, top_k=-1, max_tokens=None,
+    sampling = SamplingParams(**sampling_settings(policy), max_tokens=None,
         stop_token_ids=eos, ignore_eos=False, detokenize=False, skip_special_tokens=False,
         include_stop_str_in_output=True, output_kind=RequestOutputKind.DELTA, seed=17, watermarking=False)
     states = {key: GeneratedTokens(closing, eos) for key in pending}
     for key, (_, token_ids, _, _) in pending.items():
         engine.add_request(key, {"prompt_token_ids": token_ids}, sampling)
-    saved = len(paths) - len(pending)
     last_report, tick, counters = 0.0, time.monotonic(), {}
     print("Engine ready", json.dumps(dict(saved=saved, pending=len(pending), seconds=runtime["model_load_seconds"])), flush=True)
     while engine.has_unfinished_requests():
@@ -324,9 +347,12 @@ def run(directory, *, max_num_active_seqs=None):
     require(not states, "Engine ended with missing answers")
     require(digest(directory / "inputs.json") == runtime["input_sha256"]
         and digest(original_path) == inputs["original_inputs"]["sha256"], "Inputs changed during generation")
-    prepare(directory, tokenizer, loaded)
-    complete(directory, paths)
-    print("GENERATION COMPLETE", flush=True)
+    _, _, _, _, remaining, _ = prepare(directory, tokenizer, loaded)
+    if not remaining:
+        complete(directory, paths)
+        print("GENERATION COMPLETE", flush=True)
+    else:
+        print("GENERATION PARTIAL", json.dumps(dict(saved=saved, total=len(paths), remaining=len(remaining))), flush=True)
 
 
 def main():
@@ -335,8 +361,11 @@ def main():
     parser.add_argument("--max-num-active-seqs", type=int,
         help="Execution-only active request limit, 1..batch_size (default: batch_size); "
              "may be reduced on resume without changing inputs or saved-answer policy.")
+    parser.add_argument("--note-index", dest="note_indexes", type=int, action="append",
+        help="Generate only this note index; repeat to select several. Inputs stay unchanged, "
+             "and completion requires every input note (default: all pending notes).")
     args = parser.parse_args()
-    run(args.input_directory, max_num_active_seqs=args.max_num_active_seqs)
+    run(args.input_directory, max_num_active_seqs=args.max_num_active_seqs, note_indexes=args.note_indexes)
 
 
 if __name__ == "__main__":
