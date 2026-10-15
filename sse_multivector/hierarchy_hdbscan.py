@@ -26,6 +26,7 @@ SECTION_CONFIGS = {
     "hierarchy-generation-v5": CONFIG,
     "hierarchy-generation-v5.1": CONFIG,
     "hierarchy-generation-v5.2": CONFIG,
+    "hierarchy-generation-v5.3": CONFIG,
 }
 _RESULT_FILES = ContextVar('hierarchy_hdbscan_result_files', default=None)
 

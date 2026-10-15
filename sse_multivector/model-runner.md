@@ -1741,7 +1741,7 @@ browsing exports do not establish official status. The previous `H0001`–`H0701
 diagnostic inventory IDs are withdrawn and must not be reused.
 
 New native hierarchy definitions use
-[HiGen V5.2](../docs/recommendation-engine/hierarchy-generation-v5.md). It uses
+[HiGen V5.3](../docs/recommendation-engine/hierarchy-generation-v5.md). It uses
 Bootstrap-v133 titles/meanings, angular HDBSCAN with `min_samples=3` and
 `min_cluster_size=2`, the middle-80% positive-bend cut and the approved cut
 fallbacks. At every level it ranks sections by distinct notes not already
@@ -1757,11 +1757,14 @@ parent. Model requests use the shared runner and exact native reuse; no new
 provider transport or concurrency cap is added. Frozen historical policies
 retain their original behavior.
 
-The approved [membership additions after a sibling lineup](../docs/recommendation-engine/hierarchy-generation-v5.md#approved-membership-additions-after-a-sibling-lineup)
+V5.3's [membership additions after a sibling lineup](../docs/recommendation-engine/hierarchy-generation-v5.md#approved-membership-additions-after-a-sibling-lineup)
 use global untracked original entries for an additional HDBSCAN clustering
 against each completed sibling's original entries, at every depth. Shared
-groups add memberships while preserving existing ones. This follow-up design
-is not yet implemented or activated in the frozen V5.2 policy.
+groups add memberships while preserving existing memberships, meanings and
+producer evidence. The validated global pool is checkpointed for recovery;
+all siblings use that same pool. The pass uses saved vectors without extra
+teacher calls. Child trees use the expanded memberships. Frozen V5.2 runs do
+not acquire this pass.
 
 The shared canonical constructor also retains
 [hierarchy generation V3, V3.1 and V3.2](../docs/recommendation-engine/hierarchy-generation-v3.md):
@@ -1812,7 +1815,7 @@ Read help through the shared stable launcher from the task worktree:
 `prepare-hierarchy DIRECTORY --spec SPEC` takes a schema-1 definition containing
 `corpus`, `note_ids`, `local_schema_version` (4), `bootstrap_spec`,
 `consolidation_spec` and `worker_config`. New definitions default to
-`hierarchy-generation-v5.2` and also require `hdbscan_binary`; set the policy
+`hierarchy-generation-v5.3` and also require `hdbscan_binary`; set the policy
 explicitly for reproducibility. Optional `bootstrap_hierarchy` reuses matching
 saved meanings and original vectors, including producers from V5. V5 versions
 can reuse completed Bootstrap before encoding finishes and can extend the client

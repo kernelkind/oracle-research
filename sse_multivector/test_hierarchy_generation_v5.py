@@ -135,6 +135,176 @@ class V5ConstructionTests(unittest.TestCase):
         self.assertEqual(result['status'], 'complete', result)
         return json.loads((self.native.root/name/'state.json').read_text())
 
+    def test_v53_adds_global_untracked_members_after_all_roots_are_built(self):
+        from sse_multivector import hierarchy_generation as generation
+
+        spec = self.prepare(count=10)
+        cfg = json.loads(spec.read_text())
+        del cfg['generation_policy']
+        self.native.write('v5.json', cfg)
+        binary = self.native.root/'hdbscan-fixture'
+        source = self.native.state()
+        request, _ = hdbscan.request_for(source, list(source['items']),
+                                       generation._vectors(source, list(source['items'])))
+        noise = max(i['opaque_id'] for i in request['inputs'])
+        binary.write_text(binary.read_text().replace(
+            'n=len(ids); k=len(groups)',
+            'if "/memberships/" in sys.argv[1]:\n'
+            '    ordered=[i["opaque_id"] for i in r["inputs"]]\n'
+            f'    noise={noise!r}\n'
+            '    groups=[[next(i for i in ordered if i != noise), noise]]\n'
+            'n=len(ids); k=len(groups)'))
+        state = self.construct(spec)
+        originals = {i for n in state['nodes'] for i in state['items'][n['item']]['original_ids']}
+        untracked = set(state['v5']['eligible_ids']) - originals
+        self.assertEqual(len(untracked), 1)
+        for node in state['nodes']:
+            self.assertTrue(untracked <= set(node['original_ids']),
+                            'a shared HDBSCAN group did not add its untracked entry')
+            self.assertTrue(set(state['items'][node['item']]['original_ids']) <= set(node['original_ids']))
+        self.assertEqual(state['generation_policy'], 'hierarchy-generation-v5.3')
+        self.assertEqual(len(state['experiments']), 2, 'membership grouping added model calls')
+        self.assertEqual(state['families'][0]['direct_original_ids'], [])
+        record = state['v5']['membership_passes'][0]
+        self.assertEqual(set(record['untracked_ids']), untracked)
+        self.assertEqual(set(record['rounds']), set(state['families'][0]['nodes']))
+        for identifier, round_ in record['rounds'].items():
+            node = next(n for n in state['nodes'] if n['id'] == identifier)
+            before = state['items'][node['item']]['original_ids']
+            self.assertEqual(round_['current'], sorted(set(before) | untracked))
+            self.assertEqual(record['additions'][identifier], sorted(untracked))
+            self.assertTrue(set(before) & set(round_['unassigned']),
+                            'fixture must exercise preservation of old ungrouped members')
+        self.assertEqual(len(generation.summary(state)['hdbscan_membership_passes']), 1)
+        generation.check_state(state)
+        for change, message in [('pool', 'global untracked'), ('addition', 'shared group'),
+                                ('membership', 'canonical membership')]:
+            with self.subTest(tampering=change):
+                altered = deepcopy(state)
+                if change == 'pool':
+                    altered['v5']['membership_passes'][0]['untracked_ids'] = []
+                elif change == 'addition':
+                    altered['v5']['membership_passes'][0]['additions'][state['nodes'][0]['id']] = []
+                else:
+                    node = altered['nodes'][0]
+                    node['original_ids'].remove(next(iter(untracked)))
+                    node['entries'] = [altered['originals'][int(i[1:])-1]['local']
+                                       for i in node['original_ids']]
+                with self.assertRaisesRegex(ValueError, message):
+                    generation.check_state(altered, verify_receipts=False)
+        before = (self.native.root/'v5/state.json').read_bytes()
+        calls = self.native.calls()
+        with patch.object(hdbscan, 'round_for', side_effect=AssertionError('repeated membership pass')):
+            generation.run(self.native.root/'v5')
+        self.assertEqual((self.native.root/'v5/state.json').read_bytes(), before)
+        self.assertEqual(self.native.calls(), calls)
+        cfg['generation_policy'] = 'hierarchy-generation-v5.2'
+        frozen = self.construct(self.native.write('v52.json', cfg), 'v52')
+        self.assertNotIn('membership_passes', frozen['v5'])
+        self.assertFalse(untracked & {i for n in frozen['nodes'] for i in n['original_ids']})
+        self.assertEqual(self.native.calls(), calls, 'unchanged teacher answers were not reused')
+
+    def test_v53_untracked_only_groups_do_not_add_membership(self):
+        spec = self.prepare(count=11)
+        cfg = json.loads(spec.read_text())
+        cfg['generation_policy'] = 'hierarchy-generation-v5.3'
+        spec = self.native.write('v53.json', cfg)
+        from sse_multivector import hierarchy_generation as generation
+        source = self.native.state()
+        request, _ = hdbscan.request_for(source, list(source['items']),
+                                       generation._vectors(source, list(source['items'])))
+        noise = sorted(i['opaque_id'] for i in request['inputs'])[-2:]
+        binary = self.native.root/'hdbscan-fixture'
+        binary.write_text(binary.read_text().replace(
+            'n=len(ids); k=len(groups)',
+            f'if "/memberships/" in sys.argv[1]: groups=[{noise!r}]\n'
+            'n=len(ids); k=len(groups)'))
+        state = self.construct(spec)
+        record = state['v5']['membership_passes'][0]
+        self.assertEqual(len(record['untracked_ids']), 2)
+        self.assertTrue(all(not v for v in record['additions'].values()))
+        self.assertEqual(set(state['families'][0]['direct_original_ids']), set(record['untracked_ids']))
+        for node in state['nodes']:
+            self.assertEqual(node['original_ids'], state['items'][node['item']]['original_ids'])
+
+    def test_v53_children_use_global_untracked_entries_outside_the_parent_pool(self):
+        from sse_multivector import hierarchy_generation as generation
+        spec = self.prepare(count=43, bend=True)
+        cfg = json.loads(spec.read_text())
+        cfg['generation_policy'] = 'hierarchy-generation-v5.3'
+        spec = self.native.write('v53.json', cfg)
+        source = self.native.state()
+        request, mapping = hdbscan.request_for(source, list(source['items']),
+                                             generation._vectors(source, list(source['items'])))
+        noise = max(i['opaque_id'] for i in request['inputs'])
+        original = mapping[noise]
+        binary = self.native.root/'hdbscan-fixture'
+        binary.write_text(binary.read_text().replace(
+            'n=len(ids); k=len(groups)',
+            f'noise={noise!r}\n'
+            'if "/memberships/" in sys.argv[1]:\n'
+            '    groups=[]\n'
+            '    if "/F00000/" not in sys.argv[1] and noise in ids:\n'
+            '        groups=[[next(i for i in ids if i != noise), noise]]\n'
+            'else:\n'
+            '    eligible=[i for i in ids if i != noise]\n'
+            '    groups=[eligible[i:i+3] for i in range(0,len(eligible)-2,3)]\n'
+            'n=len(ids); k=len(groups)'))
+        state = self.construct(spec)
+        nodes = {n['id']: n for n in state['nodes']}
+        matches = [(p, n) for p in state['v5']['membership_passes']
+                   for n, ids in p['additions'].items() if original in ids]
+        self.assertTrue(matches, 'no child recovered the global untracked entry')
+        for record, identifier in matches:
+            family = next(f for f in state['families'] if f['id'] == record['family'])
+            self.assertIsNotNone(family['parent'])
+            self.assertNotIn(original, family['original_ids'])
+            self.assertIn(original, nodes[identifier]['original_ids'])
+        root_pass = state['v5']['membership_passes'][0]
+        self.assertTrue(all(not ids for ids in root_pass['additions'].values()))
+        generation.check_state(state)
+
+    def test_v53_failed_membership_clustering_preserves_a_resumable_frozen_pool(self):
+        from sse_multivector import hierarchy_generation as generation
+        spec = self.prepare(count=10)
+        cfg = json.loads(spec.read_text())
+        cfg['generation_policy'] = 'hierarchy-generation-v5.3'
+        spec = self.native.write('v53.json', cfg)
+        marker = self.native.root/'membership-failed-once'
+        binary = self.native.root/'hdbscan-fixture'
+        binary.write_text(binary.read_text().replace(
+            'r=json.load(open(sys.argv[1]))',
+            'from pathlib import Path\n'
+            f'marker=Path({str(marker)!r})\n'
+            'if "/memberships/C00002/" in sys.argv[1] and not marker.exists():\n'
+            '    marker.write_text("failed once")\n'
+            '    sys.stderr.write("temporary local clustering failure")\n'
+            '    sys.exit(1)\n'
+            'r=json.load(open(sys.argv[1]))'))
+        directory = self.native.root/'v53'
+        generation.prepare(spec, directory)
+        with patch('sse_multivector.worker.OfficialSseEncoder', return_value=native_fixtures.FixtureEncoder()), \
+                patch.dict(os.environ, FAKE_RUNNER_LOG=str(self.native.log)):
+            with self.assertRaisesRegex(ValueError, 'temporary local clustering failure'):
+                generation.run(directory)
+            interrupted = json.loads((directory/'state.json').read_text())
+            self.assertEqual(len(interrupted['v5'].get('membership_passes', [])), 1,
+                             'global membership inputs were not checkpointed before clustering')
+            self.assertFalse(interrupted['families'][0]['complete'])
+            self.assertFalse(interrupted['v5']['membership_passes'][0]['applied'])
+            generation.check_state(interrupted)
+            results = directory/'F00000/memberships/C00001/hdbscan-00000/result.json'
+            before, calls = results.read_bytes(), self.native.calls()
+            result = generation.run(directory)
+        self.assertEqual(result['status'], 'complete')
+        self.assertEqual(self.native.calls(), calls)
+        self.assertEqual(results.read_bytes(), before)
+        state = json.loads((directory/'state.json').read_text())
+        self.assertTrue(state['v5']['membership_passes'][0]['applied'])
+        self.assertEqual(state['v5']['membership_passes'][0]['canonical_items'],
+                         interrupted['v5']['membership_passes'][0]['canonical_items'])
+        generation.check_state(state)
+
     def test_recursive_children_use_original_entries_and_parent_scope(self):
         from sse_multivector import hierarchy_generation as generation
         state = self.construct(self.prepare(count=43))
@@ -248,7 +418,7 @@ class V5ConstructionTests(unittest.TestCase):
         self.assertEqual([n['original_ids'] for n in second['nodes']],
                          [n['original_ids'] for n in state['nodes']])
 
-    def test_new_preparation_defaults_to_v52_and_recurses_with_initial_noise(self):
+    def test_new_preparation_defaults_to_v53_and_recurses_with_initial_noise(self):
         from sse_multivector import hierarchy_generation as generation
 
         spec = self.prepare(count=43, bend=True)
@@ -256,7 +426,7 @@ class V5ConstructionTests(unittest.TestCase):
         del cfg['generation_policy']
         self.native.write('v5.json', cfg)
         state = self.construct(spec)
-        self.assertEqual(state['generation_policy'], 'hierarchy-generation-v5.2')
+        self.assertEqual(state['generation_policy'], 'hierarchy-generation-v5.3')
         family = state['families'][0]
         first = family['rounds'][0]
         self.assertTrue(first['unassigned'])
@@ -304,7 +474,7 @@ class V5ConstructionTests(unittest.TestCase):
         calls = self.native.calls()
         cfg = json.loads(spec.read_text())
         cfg['bootstrap_hierarchy'] = str(source_path)
-        for version in ('v5.1', 'v5.2'):
+        for version in ('v5.1', 'v5.2', 'v5.3'):
             with self.subTest(version=version):
                 cfg['generation_policy'] = f'hierarchy-generation-{version}'
                 spec = self.native.write(f'{version}.json', cfg)
@@ -323,7 +493,8 @@ class V5ConstructionTests(unittest.TestCase):
 
         spec = self.prepare()
         cfg = json.loads(spec.read_text())
-        for policy in ('hierarchy-generation-v5.1', 'hierarchy-generation-v5.2'):
+        for policy in ('hierarchy-generation-v5.1', 'hierarchy-generation-v5.2',
+                       'hierarchy-generation-v5.3'):
             with self.subTest(policy=policy):
                 cfg.update(generation_policy=policy,
                            v5_options=dict(include_original_unassigned=False))
