@@ -39,6 +39,7 @@ original notes. Parameters describe the settings actually used.
 | HR32 | 200 | ASv6.100 | V5.1 | bootstrap-v133 | consolidated-grouped-v1 | — |
 | HR33 | 200 | ASv6.100 | V5.2 | bootstrap-v133 | consolidated-grouped-v1 | — |
 | HR34 | 200 | ASv6.100 | V5.3 | bootstrap-v133 | consolidated-grouped-v1 | — |
+| HR35 | 1,000 | ASv6.100 | V5.3 | bootstrap-v133 | consolidated-grouped-v1 | — |
 
 **Same notes:** HR03/HR10/HR14/HR16/HR19/HR20/HR21/HR27 use the same ordered 50-note selection.
 HR05/HR08/HR09/HR13/HR15/HR17/HR18 use its same ordered first 24 notes. HR04 uses
@@ -673,3 +674,10 @@ Press L on a leaf to show its notes. The offline viewer check passed: 68
 canonical nodes plus the display container, 199 notes, and no direct notes
 above the roots.
 [Full result and evidence](hierarchy-runs.md#hr34--hr33-corpus-with-higen-v53).
+
+## HR35 — 1,000 notes · HiGen V5.3
+
+Running on HR30's exact corpus with its completed Bootstrap meanings and saved
+vectors. Native V5.3 construction and final accounting are pending.
+**Review UI not generated: it has not been requested.**
+[Current state and controls](hierarchy-runs.md#hr35--hr30-thousand-note-corpus-with-higen-v53).

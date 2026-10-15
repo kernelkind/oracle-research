@@ -1899,3 +1899,30 @@ The workbook's review command was updated and verified. Retain the execution
 worktree for frozen sources, receipts, clustering evidence, vectors and the
 launchable UI. The next useful
 review is the saved scope mismatch before claiming semantic improvement.
+
+## HR35 — HR30 thousand-note corpus with HiGen V5.3
+
+**Running.** User-authorized V5.3 construction on HR30's exact ordered 1,000
+notes: its original 200 food/drink and music notes, then 800 ASv6.100 training
+posts, preserving the approved author exclusion and saved order. The corpus
+has 603 authors. The native definition reuses the completed HR30 checkpoint's
+7,036 Bootstrap-v133 answers (6,991 non-null), 6,944 saved vector identities and
+26 completed encoder jobs; canonical construction starts empty. One note has
+no non-null original meaning and remains an explicit input qualification.
+
+Consolidated-grouped-v1, GPT-6.1 Sol medium/subscription SSE, one-hour deadlines,
+HDBSCAN angular/min_samples=3/min_cluster_size=2/EOM, title-only SSE pooling,
+section cuts and recursive group-leaf stopping are unchanged. V5.3 adds the
+approved global-untracked membership pass after every sibling lineup. All ready
+independent model batches use the shared 30-request queue; no outer batch cap,
+model-attempt ceiling, prompt edit, manual placement or UI update is introduced.
+Native exact reuse uses HR30's existing request history. HR30's saved graph has
+123 canonical nodes and 582 distinct notes beneath roots; this is the coverage
+baseline, not semantic gold.
+
+The [frozen definition](../../sse_multivector/hierarchy-runs/hr35/hierarchy.spec.json),
+[input controls](../../../oracle-mvp-hierarchy-hr35-v53/target/hierarchy-hr35-v53-thousand-note-v1/input-controls.json)
+and [native state](../../../oracle-mvp-hierarchy-hr35-v53/target/hierarchy-hr35-v53-thousand-note-v1/HR35/state.json)
+retain exact controls. Initial execution source is d2c13d78, shared coordinator
+36dfcf63 and frozen teacher transport 1cfdd6a7. Construction, final coverage,
+semantic review and native accounting are pending. No review UI requested.
