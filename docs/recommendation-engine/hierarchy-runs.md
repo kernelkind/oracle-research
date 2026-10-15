@@ -1659,3 +1659,49 @@ for frozen source, receipts, vectors and the launchable review UI.
 
 Next, review the top-only notes and overlapping root headings before claiming
 that V5.1 improves this corpus's browsing hierarchy.
+
+### HR32 — extra root pass, chat diagnostic
+
+The user requested one extra tree after all six roots exist, containing their
+final synthetic representatives plus the remaining unclaimed entries. This is
+a roots-only diagnostic, not an activated HiGen policy or a new official HR run.
+The original HR32 state and review UI remain unchanged; children were not rebuilt.
+
+Reused frozen HR32 vectors and the production encoding/clustering/cut functions
+from its isolated source. The final root lacked a saved vector, so one local
+SSE job encoded it; no teacher requests were made. The pool had **six synthetic
+roots and 1,036 remaining original entries**. The extra HDBSCAN tree selected
+109 groups and left 512 inputs unassigned. The ordinary positive-bend rule
+selected epsilon **0.8975458306**, producing 88 temporary sections.
+
+Only one selected section contained root representatives: group 51 held
+**C3 Human experience, C6 Human life, and L00957 Causation of human actions
+(N129)**. The original entry was added to both roots' belongings. The C3–C6
+relationship was excluded: neither root inherited the other's existing
+belongings, and no extra root or parent link was introduced. The other four
+root representatives were unassigned. Root titles and meanings were retained.
+
+| Root | Distinct notes before | After | Added original entries |
+| --- | ---: | ---: | ---: |
+| C3 · Human experience | 55 | 56 | 1 |
+| C6 · Human life | 33 | 33 | 1 |
+
+All other root memberships are unchanged. N129 already belonged beneath C1 and
+C5, and was already a supporting note of C6 through another entry. Consequently
+**distinct root coverage stays 176/200, with 24 notes still top-only**. The pass
+adds two root-entry associations but recovers no previously uncovered notes.
+
+The [separate root-membership result](../../../oracle-mvp-hr32-root-additions-v1/target/hr32-root-additions-v1/root-memberships.json)
+retains exact old/new entry and note sets, the excluded root pair, and hashes
+of the [clustering round](../../../oracle-mvp-hr32-root-additions-v1/target/hr32-root-additions-v1/round.json)
+and [tree](../../../oracle-mvp-hr32-root-additions-v1/target/hr32-root-additions-v1/tree.json).
+Input HR32 state SHA-256 remains
+`8c1ce5ce1ce05b5210a0d134c25ab6083b59d56859f3bca7297ead4f4044e50c`.
+Native tree/receipt checks, the six-root membership and root-link exclusion
+checks, and before/after coverage assertions passed. One initial local analysis
+assertion rejected an unused seventh-root proposal from the normal pre-limit
+selector; the amendments-only pass excludes such proposals and reused its
+saved vector/tree outputs without recomputation. This was not a teacher or
+hierarchy-construction failure. The original experiment workbook row remains
+the original HR32 result; this diagnostic does not replace it. Retain the
+worktree for the saved diagnostic, additional encoder receipt and frozen links.
