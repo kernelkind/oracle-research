@@ -2585,6 +2585,13 @@ adds native project commands: `prepare-distillation-review-trial`,
 `show-distillation-review-trial`, `assess-distillation-review`,
 `freeze-distillation-review-assessments`, `prepare-distillation-review-evaluation`,
 `run-distillation-review-evaluation` and `show-distillation-review-evaluation`.
+For completed manual generations, `prepare-distillation-review-trial MANIFEST
+--saved-generations GENERATIONS --model-output MODEL --generation-version VERSION
+--output DIR` derives and freezes the collection index without inference.
+The complete seeded cohort, input/completion hashes and referenced runtime
+receipts are required; `--generation-source FILE` binds extra immutable receipts.
+Existing JSON collection imports remain supported. Failed imports publish no
+selection directory, and invalid/truncated model answers retain their zero scores.
 The `distillation_review_evaluation` adapter retains complete saved validation
 answers and all numbered occurrences, routes trusted exact results mechanically,
 and delegates requests, reuse, warmups, retry handling and receipts to the shared

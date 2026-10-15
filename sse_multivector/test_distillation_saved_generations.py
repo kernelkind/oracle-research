@@ -53,6 +53,128 @@ class DistillationSavedGenerationTests(unittest.TestCase):
             generations=sources, additional_sources={}))
         return fixture, manifest, collection
 
+    def directory_fixture(self, *, name="directory"):
+        fixture, manifest, collection = self.fixture(name=name)
+        value = run.read_json(collection)
+        directory = collection.parent
+        policy = dict(value["generation_policy"], do_sample=True, stop_policy="natural_eos",
+                      thought_budget_tokens=None, final_budget_tokens=None, temperature=1.0)
+        notes = []
+        for reference in value["generations"]:
+            saved = run.read_json(reference["path"])
+            notes.append(dict(index=reference["index"], note_id=saved["note_id"], messages=saved["messages"]))
+        inputs = dict(schema_version=1, seed=value["seed"], model=saved["model"], revision=saved["revision"],
+            dataset_sha256=value["dataset"]["sha256"], checkpoint=1,
+            checkpoint_sha256=value["checkpoint"]["sha256"], notes=notes,
+            checkpoint_files={"adapter_model.safetensors": run.sha256(
+                Path(value["checkpoint"]["path"]) / "adapter_model.safetensors")},
+            generation_policy=value["generation_policy"])
+        original = directory / "original-inputs.json"
+        run.write_json(original, inputs)
+        inputs = dict(inputs, generation_policy=policy, reused_generations=[],
+            original_inputs=dict(path=original.name, sha256=run.sha256(original)))
+        run.write_json(directory / "inputs.json", inputs)
+        source = directory / "actual-driver.py"
+        source.write_text("# Saved generating source; ingestion never executes it.\n")
+        runtime = directory / "runtime.json"
+        run.write_json(runtime, dict(model=inputs["model"], revision=inputs["revision"],
+            checkpoint_sha256=inputs["checkpoint_sha256"], input_sha256=run.sha256(directory / "inputs.json"),
+            generation_policy=policy, script_sha256=run.sha256(source)))
+        marker = {}
+        for reference in value["generations"]:
+            saved = run.read_json(reference["path"])
+            saved.update(index=reference["index"], generation_policy_sha256=hashlib.sha256(json.dumps(policy,
+                sort_keys=True, separators=(",", ":")).encode()).hexdigest(),
+                runtime_receipt=dict(path=runtime.name, sha256=run.sha256(runtime)))
+            path = directory / "generations" / f"note-{reference['index']:04}" / "subjects.json"
+            run.write_json(path, saved)
+            marker[str(path.relative_to(directory))] = run.sha256(path)
+        run.write_json(directory / "generation.complete.json", marker)
+        return fixture, manifest, Path(value["model_output"]["path"]), directory, source
+
+    def test_native_directory_import_freezes_complete_sources_without_handmade_index(self):
+        from sse_multivector import distillation_review_evaluation as evaluation
+        fixture, manifest, model, directory, source = self.directory_fixture()
+        original = {str(p): run.sha256(p) for p in directory.rglob("subjects.json")}
+        destination = self.root / "selection"
+        fixture.native("prepare-distillation-review-trial", manifest, "--model-output", model,
+            "--saved-generations", directory, "--generation-version", "checkpoint-1-thinking-on-sampled",
+            "--generation-source", source, "--output", destination)
+        loaded = trial.load_trial(destination / "selection.json")
+        self.assertEqual(len(loaded["random"]["answers"]), 2)
+        self.assertEqual(loaded["random"]["totals"]["invalid_outputs"], 1)
+        self.assertTrue(loaded["generation_policy"]["do_sample"])
+        self.assertEqual({row["version"] for row in loaded["random"]["answers"]}, {"checkpoint-1-thinking-on-sampled"})
+        for path in (directory / "inputs.json", directory / "generation.complete.json",
+                     directory / "runtime.json", directory / "original-inputs.json", source):
+            self.assertEqual(loaded["sources"][str(path)], run.sha256(path))
+        self.assertEqual({p: run.sha256(p) for p in original}, original)
+        worker = self.root / "fake-runner"
+        worker.write_text((fixtures.PROJECT.parent / "experiment-runner/tests/fixtures/fake-runner.py").read_text())
+        worker.chmod(0o755)
+        calls = self.root / "calls.json"
+        fixture.native("prepare-distillation-review-evaluation", destination / "selection.json",
+            "--output", self.root / "evaluation", "--actual-edges-only", "--runner-binary", worker,
+            "--reasoning-effort", "high", "--support-reasoning-effort", "medium",
+            "--relationship-prompt", fixtures.PROJECT / "sse_multivector/distillation-review-v1/relationship-prompt-v10.md",
+            "--relationship-prompt-id", "DSLv10", environment=dict(os.environ, FAKE_RUNNER_LOG=str(calls)))
+        report = evaluation.report(self.root / "evaluation")
+        self.assertEqual({r["id"] for r in report["random"]["answers"]},
+                         {r["id"] for r in loaded["random"]["answers"]})
+        invalid = next(r for r in report["random"]["answers"] if r["errors"])
+        self.assertEqual({k: v["value"] for k, v in invalid["scores"].items()}, {"correctness": 0.0, "coverage": 0.0})
+        self.assertFalse(calls.exists())
+        marker = directory / "generation.complete.json"
+        marker.write_bytes(marker.read_bytes() + b"\n")
+        with self.assertRaisesRegex(ValueError, "trial source hash differs"):
+            trial.load_trial(destination / "selection.json")
+
+    def test_directory_import_rejects_missing_or_changed_receipts_without_publishing_selection(self):
+        for defect in ("incomplete", "response", "runtime", "input", "checkpoint", "cohort"):
+            with self.subTest(defect=defect):
+                _, manifest, model, directory, source = self.directory_fixture(name=defect)
+                marker = directory / "generation.complete.json"
+                mapping = run.read_json(marker)
+                if defect == "incomplete":
+                    del mapping[next(iter(mapping))]
+                    run.write_json(marker, mapping)
+                elif defect == "response":
+                    path = directory / next(iter(mapping))
+                    path.write_bytes(path.read_bytes() + b"\n")
+                elif defect == "runtime":
+                    path = directory / "runtime.json"
+                    path.write_bytes(path.read_bytes() + b"\n")
+                elif defect == "input":
+                    value = run.read_json(directory / "inputs.json")
+                    value["notes"][0]["messages"][0]["content"] += " Changed."
+                    run.write_json(directory / "inputs.json", value)
+                elif defect == "checkpoint":
+                    checkpoint = model / "checkpoints/checkpoint-1/adapter_model.safetensors"
+                    checkpoint.write_bytes(b"Changed weight bytes.")
+                else:
+                    # A self-consistent smaller cohort must still preserve the
+                    # original seed's sample, rather than selecting by completion.
+                    value = run.read_json(directory / "inputs.json")
+                    chosen = list(mapping)[-1]
+                    value["notes"] = value["notes"][-1:]
+                    del value["original_inputs"]
+                    run.write_json(directory / "inputs.json", value)
+                    runtime = run.read_json(directory / "runtime.json")
+                    runtime["input_sha256"] = run.sha256(directory / "inputs.json")
+                    run.write_json(directory / "runtime.json", runtime)
+                    saved = run.read_json(directory / chosen)
+                    saved["runtime_receipt"]["sha256"] = run.sha256(directory / "runtime.json")
+                    run.write_json(directory / chosen, saved)
+                    for filename in mapping:
+                        if filename != chosen:
+                            (directory / filename).unlink()
+                    run.write_json(marker, {chosen: run.sha256(directory / chosen)})
+                output = self.root / ("selection-" + defect)
+                with self.assertRaisesRegex(ValueError, "seeded validation sample" if defect == "cohort" else ".*"):
+                    trial.prepare_trial(manifest, [model], output, saved_generations=directory,
+                        generation_version="checkpoint-1-thinking-on-sampled", generation_sources=[source])
+                self.assertFalse(output.exists())
+
     def test_native_manual_collection_keeps_original_subset_and_invalid_output(self):
         _, manifest, collection = self.fixture()
         prepared = trial.prepare_trial(manifest, [], self.root / "selection", saved_generations=collection)

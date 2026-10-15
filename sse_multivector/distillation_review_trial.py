@@ -7,9 +7,11 @@ split freezes only the saved baseline and final checkpoint answers.
 from collections import Counter, defaultdict
 import hashlib
 import json
+import os
 from pathlib import Path
 import random
 import re
+import tempfile
 
 from . import distillation_review_preview as preview
 from . import distillation_review as review
@@ -175,6 +177,90 @@ def _generation_policy_hash(policy):
         separators=(",", ":"), allow_nan=False).encode()).hexdigest()
 
 
+def _directory_collection(manifest_path, model_output, directory, version, additional_sources):
+    """Index a complete saved cohort without rewriting its answers or receipts."""
+    sources = {}
+
+    def read(path, checksum=None):
+        return preview._decode(preview._read(path, sources, checksum))
+
+    inputs_path = directory / "inputs.json"
+    inputs = read(inputs_path)
+    if type(inputs.get("schema_version")) is not int or inputs["schema_version"] != 1:
+        raise ValueError("expected manual generation inputs schema_version 1")
+    if "original_inputs" in inputs:
+        reference = inputs["original_inputs"]
+        review._fields(reference, {"path", "sha256"}, "original manual inputs")
+        original = read(review.engine._resolve_path(reference["path"], "original manual inputs", directory),
+                        reference["sha256"])
+        for key in ("seed", "model", "revision", "checkpoint", "checkpoint_sha256", "dataset_sha256", "notes"):
+            if inputs[key] != original[key]:
+                raise ValueError("original manual generation inputs differ: " + key)
+        if inputs.get("checkpoint_files") != original.get("checkpoint_files"):
+            raise ValueError("original manual generation checkpoint files differ")
+    notes = inputs["notes"]
+    if (not isinstance(notes, list) or not notes
+            or any(not isinstance(n, dict) or type(n.get("index")) is not int for n in notes)
+            or len({n["index"] for n in notes}) != len(notes)
+            or len({n["note_id"] for n in notes}) != len(notes)):
+        raise ValueError("invalid complete manual generation cohort")
+    reused = inputs.get("reused_generations", [])
+    if not isinstance(reused, list) or any(not isinstance(row, dict) for row in reused):
+        raise ValueError("invalid reused manual generations")
+    reused_by_index = {row["index"]: row for row in reused}
+    if len(reused_by_index) != len(reused) or set(reused_by_index) - {n["index"] for n in notes}:
+        raise ValueError("reused manual generations differ from complete cohort")
+    definitions, expected_marker, new_paths = [], {}, set()
+    for note in notes:
+        index = note["index"]
+        if index in reused_by_index:
+            definition = dict(reused_by_index[index])
+            path = review.engine._resolve_path(definition["path"], "reused manual generation", directory)
+            saved = read(path, definition["sha256"])
+        else:
+            path = directory / "generations" / f"note-{index:04}" / "subjects.json"
+            saved = read(path)
+            new_paths.add(path)
+            definition = dict(path=str(path), sha256=sources[str(path)], index=index, note_id=note["note_id"])
+        policy = definition.get("generation_policy", inputs["generation_policy"])
+        if (any(saved.get(key) != note[key] for key in ("index", "note_id", "messages"))
+                or definition["note_id"] != note["note_id"]
+                or saved.get("generation_policy_sha256") != _generation_policy_hash(policy)
+                or any(saved.get(key) != inputs[key] for key in ("model", "revision", "checkpoint_sha256"))):
+            raise ValueError("manual generation input, model or policy differs from frozen source")
+        if "runtime_receipt" in saved:
+            reference = saved["runtime_receipt"]
+            review._fields(reference, {"path", "sha256"}, "manual generation runtime")
+            runtime_root = path.parents[2]
+            runtime = read(review.engine._resolve_path(reference["path"], "manual generation runtime", runtime_root),
+                           reference["sha256"])
+            runtime_inputs = read(runtime_root / "inputs.json", runtime["input_sha256"])
+            if (runtime["generation_policy"] != policy
+                    or runtime_inputs["generation_policy"] != policy or note not in runtime_inputs["notes"]
+                    or any(runtime[key] != inputs[key] for key in ("model", "revision", "checkpoint_sha256"))):
+                raise ValueError("manual generation runtime differs from frozen source")
+        definition["path"] = str(path)
+        definitions.append(definition)
+        expected_marker[os.path.relpath(path, directory)] = sources[str(path)]
+    marker = read(directory / "generation.complete.json")
+    if marker != expected_marker or set((directory / "generations").rglob("subjects.json")) != new_paths:
+        raise ValueError("manual generation completion marker differs from complete cohort")
+    for path in additional_sources:
+        preview._read(Path(path).expanduser().resolve(), sources)
+    checkpoint = model_output / "checkpoints" / f"checkpoint-{inputs['checkpoint']}"
+    if "checkpoint_files" in inputs:
+        sealed_files = read(checkpoint / "complete.json", inputs["checkpoint_sha256"])
+        for filename, checksum in inputs["checkpoint_files"].items():
+            if sealed_files.get(filename) != checksum:
+                raise ValueError("manual checkpoint file differs from sealed checkpoint")
+    return dict(schema_version=1, origin="manual_generations",
+        dataset=dict(path=str(manifest_path), sha256=inputs["dataset_sha256"]),
+        model_output=dict(path=str(model_output), sha256=run.sha256(model_output / "manifest.json")),
+        checkpoint=dict(cursor=inputs["checkpoint"], path=str(checkpoint), sha256=inputs["checkpoint_sha256"]),
+        version=version, seed=inputs["seed"], generation_policy=inputs["generation_policy"],
+        generations=definitions, additional_sources=sources)
+
+
 def _saved_report(manifest_path, collection_path, *, verify_checkpoint=False):
     """Bind a complete manual collection to original validation inputs."""
     sources = {}
@@ -277,20 +363,46 @@ def _saved_report(manifest_path, collection_path, *, verify_checkpoint=False):
 
 
 def prepare_trial(manifest_path, model_outputs, output, *, random_count=None, hard_count=None,
-                  seed="DS-final-20261009", split="evaluation", saved_generations=None):
+                  seed="DS-final-20261009", split="evaluation", saved_generations=None,
+                  generation_version=None, generation_sources=None):
     """Verify and freeze disjoint complete-answer samples without inference."""
     if saved_generations is not None:
-        if model_outputs or split != "evaluation" or random_count is not None or hard_count is not None:
-            raise ValueError("saved generations already fix the validation subset; do not supply model outputs or sampling counts")
+        if split != "evaluation" or random_count is not None or hard_count is not None:
+            raise ValueError("saved generations already fix the validation subset; do not supply sampling counts")
         directory = Path(output).expanduser().resolve()
         if directory.exists():
             raise ValueError("trial output already exists; frozen selection cannot be overwritten")
-        report = _saved_report(Path(manifest_path).expanduser().resolve(),
-            Path(saved_generations).expanduser().resolve(), verify_checkpoint=True)
+        manifest_path = Path(manifest_path).expanduser().resolve()
+        saved_generations = Path(saved_generations).expanduser().resolve()
+        value = None
+        if saved_generations.is_dir():
+            if len(model_outputs or []) != 1 or generation_version is None:
+                raise ValueError("a manual generation directory requires one model output and --generation-version")
+            value = _directory_collection(manifest_path, Path(model_outputs[0]).expanduser().resolve(),
+                saved_generations, generation_version, generation_sources or [])
+        elif model_outputs or generation_version is not None or generation_sources:
+            raise ValueError("JSON saved generations already fix model, version and additional sources")
+        directory.parent.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(prefix=".manual-trial-", dir=directory.parent) as temporary:
+            staging = Path(temporary)
+            collection = saved_generations
+            if value is not None:
+                collection = staging / "manual-collection.json"
+                run.write_json(collection, value)
+            report = _saved_report(manifest_path, collection, verify_checkpoint=True)
+            if value is not None:
+                final_collection = str(directory / collection.name)
+                report["sources"][final_collection] = report["sources"].pop(str(collection))
+                report["saved_generations"]["path"] = final_collection
+            run.write_json(staging / "selection.json", report)
+            run.write_json(staging / "selection.complete.json", {"selection.json": run.sha256(staging / "selection.json")})
+            if directory.exists():
+                raise ValueError("trial output already exists; frozen selection cannot be overwritten")
+            staging.rename(directory)
         path = directory / "selection.json"
-        run.write_json(path, report)
-        run.write_json(directory / "selection.complete.json", {"selection.json": run.sha256(path)})
         return dict(report, selection_path=str(path))
+    if not model_outputs or generation_version is not None or generation_sources:
+        raise ValueError("supply model outputs or --saved-generations; generation bindings require a saved directory")
     random_count = 50 if random_count is None else random_count
     hard_count = 10 if hard_count is None else hard_count
     if (type(random_count) is not int or random_count < 0 or type(hard_count) is not int or hard_count < 0

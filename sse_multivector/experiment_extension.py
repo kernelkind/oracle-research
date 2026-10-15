@@ -612,10 +612,12 @@ def add_commands(commands):
     p.add_argument('manifest', type=Path)
     p.add_argument('--split', choices=('evaluation', 'test'), default='evaluation',
                    help='test explicitly opens saved baseline and final-checkpoint test answers')
-    group = p.add_mutually_exclusive_group(required=True)
-    group.add_argument('--model-output', type=Path, action='append')
-    group.add_argument('--saved-generations', type=Path,
-                       help='import all answers from a source-bound manual validation collection')
+    p.add_argument('--model-output', type=Path, action='append')
+    p.add_argument('--saved-generations', type=Path,
+                   help='import a JSON collection or completed manual generation directory')
+    p.add_argument('--generation-version', help='review version for a saved directory; requires one --model-output')
+    p.add_argument('--generation-source', type=Path, action='append',
+                   help='additional immutable receipt/source to bind for a saved directory; repeat as needed')
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--random-count', type=int)
     p.add_argument('--hard-count', type=int)
@@ -867,7 +869,8 @@ def handle_command(args):
         from . import distillation_review_trial
         result = distillation_review_trial.prepare_trial(args.manifest, args.model_output, args.output,
             random_count=args.random_count, hard_count=args.hard_count, seed=args.seed, split=args.split,
-            saved_generations=args.saved_generations)
+            saved_generations=args.saved_generations, generation_version=args.generation_version,
+            generation_sources=args.generation_source)
         print(json.dumps({key: result[key] for key in ('selection_path', 'inference_calls', 'selection_policy')}, indent=2))
     elif args.command in {'show-distillation-review-trial', 'assess-distillation-review', 'freeze-distillation-review-assessments', 'prepare-distillation-review-inventory'}:
         from . import distillation_review_assessment as assessment

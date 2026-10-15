@@ -1703,6 +1703,12 @@ active **20 GiB** host-memory watchdog. The separate stdout log is
 `target/qwen-thinking-20-sampled-20261015/remaining-launch.json`.
 
 The twenty-note thinking comparison is incomplete; grading has not started.
+The separate manual handoff uses native `prepare-distillation-review-trial
+--saved-generations GENERATIONS --model-output MODEL --generation-version VERSION`.
+It requires the complete frozen cohort and `generation.complete.json`, binds
+the actual input, answer and runtime hashes, and derives its collection index
+without constructing review data manually. Additional immutable receipts use
+`--generation-source`; failed validation publishes no selection directory.
 Report paired correctness, coverage, invalid outputs, thought/final
 token counts and GX10 elapsed time after the completed manual grader handoff.
 These exposed validation notes provide a small screen, not unseen-note
