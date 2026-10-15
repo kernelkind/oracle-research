@@ -834,8 +834,12 @@ offline. Cold startup remains watched on the same instance. The matching input
 package and image pass the interrupted-pass/container-replacement rehearsal
 with local recovery using tiny CPU models. The rehearsal also freezes the
 shared input/parser dependency.
-Pinned-runtime/SSH verification and the actual Qwen tokenizer check pass;
-matching image publication, fresh offer and ledger admission precede rental.
+Pinned-runtime/SSH verification and the actual Qwen tokenizer check pass.
+The user authorized launch preparation; the matching image is published
+privately, with all 23 runtime source hashes verified and anonymous access
+denied.  Current offers require more than the approved $30 ceiling. A proposed
+$43 maximum and the required read-only image pull credential remain pending;
+fresh offer/volume verification and committed budget admission precede rental.
 No continuation rental or full-model run has started. New labels, final training
 volume, mask training and production adoption remain outside this approval.
 The older three-family/two-GPU directions below describe the completed pilot.

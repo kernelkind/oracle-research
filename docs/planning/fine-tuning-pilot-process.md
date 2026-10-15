@@ -261,10 +261,27 @@ rejects changed capacity before GPU creation, and cache admission checks free
 space before starting any model subprocess, reusing valid files and repairing
 only corrupt files.
 
-Before renting, publish the matching image privately, select a currently
-available volume and same-host GPU offer, confirm capacity for both the 150GB
-volume and 30GB instance disk, and reconcile/admit both budget commitments.
-Do not assume the October 6 volumes still exist or remain usable. Actual Qwen
+**Launch preparation, October 14:** the user authorized proceeding. The matching
+image is published privately at
+`docker.io/kernelkind/oracle-mvp@sha256:6c8c9ed527538bc8db86e78e20eae6989867f671c8c5b957bc1626f8ac5e58af`.
+All 23 runtime source hashes match `inputs-v6`; anonymous manifest access is
+denied. Publication receipts are in the task worktree at
+`target/qwen-continuation-v1/launch-20261014/`. A separate read-only Docker Hub
+pull credential is still required for Vast; the local write credential is not
+sent to the provider.
+
+ The main pilot's GPU
+charge is $133.907. The final backup storage cost was $0.888. The posted working-storage charge was $16.361.   
+
+The current market has no offer passing the launch checks within the approved
+$30 ceiling. Offer 47457221 on machine 146648 passes every other saved check at
+$1.657444/hour, with a matching 150GB volume quoted at $0.013889/hour. A proposed
+$43 ceiling with a $1.66 hourly limit covers the unchanged 24-hour allowance,
+transfer allowances and separate $1.50 storage reserve; this increase is pending
+user approval. Recheck availability before creating either resource. The $30
+profile remains authoritative until that decision. Before renting, confirm
+capacity for both the volume and 30GB instance disk, and admit/commit both
+budget reservations.  Actual Qwen
 CUDA preparation occurs on the same rental before main training. No continuation
 rental, full-model generation or grading has started. Retain the task worktree
 for the prepared inputs and verified image, and the isolated shared checkout
