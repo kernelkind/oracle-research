@@ -1320,3 +1320,38 @@ links the checked UI and native usage. The primary XLSX is updated with Complete
 status, 200 input notes and 198 output notes. The official catalogue preserves
 the final state and generation commits. Original model answers and the blocked
 checkpoint remain available alongside the completed artifacts.
+
+## HR27 — HR21 controls with HiGen V5
+
+Completed in **3m 19s** using HR21's exact ordered 50 notes, corpus, teacher
+specifications, Bootstrap-v133 answers and original vectors. Only the generation
+policy changed to V5. Model: GPT-6.1 Sol medium on the subscription SSE route;
+HDBSCAN: min_samples=3, min_cluster_size=2, excess-of-mass, angular distance.
+The frozen [definition](../../sse_multivector/hierarchy-runs/hr27/hierarchy.spec.json)
+and [execution provenance](../../../oracle-mvp-hierarchy-hr27-v5/target/hierarchy-hr27-v5-fifty-note-v1/execution-provenance.json)
+preserve the exact bindings.
+
+The final graph has **22 canonical nodes, four roots and 46/50 reachable notes**,
+matching HR21's note coverage. Of these, 43 occur under canonical roots and
+three are available only directly at the top. Nineteen notes have a direct
+top-level association, including overlap with roots. Root headings are Daily
+life, Human life, Substances and their handling, and Nostr ecosystem. The final
+root round reported one section containing multiple existing representatives;
+it preserved those canonical nodes separately and retained unclaimed notes.
+Native state, source, receipt and construction validation passed. Repeated Food
+and eating headings and broad root meanings remain review qualifications;
+this does not establish semantic accuracy or improved browsing quality.
+
+[New-call native accounting](../../../oracle-mvp-hierarchy-hr27-v5/target/hierarchy-hr27-v5-fifty-note-v1/usage-new.json)
+records **24 fresh requests including seven warmups**, 15 exact consolidation
+reuses, zero failures/retries and **$0.116818 API-equivalent cost**. Fresh usage
+is 18,053 uncached input, 24,320 cached input and 7,828 output tokens, including
+5,667 reasoning tokens. All 326 Bootstrap answers were reused directly.
+[Producer-inclusive accounting](../../../oracle-mvp-hierarchy-hr27-v5/target/hierarchy-hr27-v5-fifty-note-v1/usage-all-producers.json)
+has a known $2.6971572 subtotal; four historical failed requests lack usage,
+so its complete total is unknown. Incremental subscription cash charge is zero.
+
+The user-requested [review launcher](../../../oracle-mvp-hierarchy-hr27-v5/target/hr27-review-ui-v1/launch.sh)
+passed the existing UI's offline check from /tmp (22 nodes and 46 original
+notes). Workbook status, coverage and launch command were reopened and verified.
+The execution worktree is retained for frozen source and receipt bindings.

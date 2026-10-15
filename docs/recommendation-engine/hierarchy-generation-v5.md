@@ -3,8 +3,10 @@
 V5 is the default for new native hierarchy definitions. It implements the
 approved recursive replacement process. Bootstrap-v133 supplies original L1
 titles and explicit meanings. Grouped-consolidation-v1 names groups and broader
-sections. Offline native-workflow tests cover construction and recovery;
-no real V5 hierarchy experiment or semantic qualification is claimed here.
+sections. Offline native-workflow tests cover construction and recovery.
+The first matched-control run, [HR27](hierarchy-runs.md#hr27--hr21-controls-with-higen-v5),
+completed with 22 nodes and 46/50 reachable notes; semantic quality remains
+for review.
 
 | Setting | V5 value |
 | --- | --- |
@@ -96,6 +98,5 @@ exponential backoff handles recoverable runner outages. No new transport,
 coordinator cap or provider retry mechanism is introduced.
 
 Historical V3/V4 definitions retain their frozen policies and settings on
-resume. They do not acquire V5's algorithm or parameters. Record the first
-actual V5 run and this version description in the hierarchy workbook when
-that separately authorized experiment completes.
+resume. They do not acquire V5's algorithm or parameters. HR27 and V5's
+version description are recorded in the hierarchy workbook.

@@ -8515,6 +8515,70 @@
           "displayed_note_id_lists": false
         }
       }
+    },
+    {
+      "version_id": "HR27",
+      "name": "ASv6.100 50-note HiGen V5 — HR21 matched controls / Bootstrap-v133 / Consolidated-grouped-v1",
+      "root": "../../oracle-mvp-hierarchy-hr27-v5",
+      "artifact_path": "target/hierarchy-hr27-v5-fifty-note-v1/HR27/state.json",
+      "sha256": "1a3da19f5e418364707d478b76af5457217f975f8097ade8ccf0d809111729de",
+      "related_outputs": [
+        {
+          "label": "HR27 review hierarchy",
+          "path": "target/hr27-review-ui-v1/hierarchy.json",
+          "sha256": "a2ca8babab099df20f9211b20fd59a1fc8726a32a3af580a03ce75ab6d566f2c"
+        },
+        {
+          "label": "HR27 original notes",
+          "path": "target/hr27-review-ui-v1/notes.json",
+          "sha256": "79bf709a86278fa59ec7198fe2e46b1fdf67a7b5b7dd5d14c083504e197475bb"
+        }
+      ],
+      "code_provenance": {
+        "sidecar": {
+          "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr27-v5/target/hierarchy-hr27-v5-fifty-note-v1/HR27/code-provenance.json",
+          "sha256": "e70c3d9598f66750dea6ad84fe8ef0e0d77a2964f64c95676c9cdb187eb569a3"
+        },
+        "git": {
+          "oracle": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr27-v5",
+            "git_commit": "9805c149e1c6038fe59bdf028eb6ec65d6a8530e",
+            "uncommitted_source": false
+          },
+          "runner_coordinator": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/experiment-runner",
+            "git_commit": "1cfdd6a76a9910b2c9dea0ca395f825b90485f7e",
+            "uncommitted_source": false
+          },
+          "bootstrap_transport": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/experiment-runner-hr15-hr16-source-v1",
+            "git_commit": "9d956b3a2d12b5f2ab190501a6f7b49b9e1d43e3",
+            "uncommitted_source": false
+          },
+          "consolidation_transport": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/experiment-runner-hr21-hr22-source-v1",
+            "git_commit": "e7dd09fac055cb22148118fe8157ad729ca82f66",
+            "uncommitted_source": false
+          }
+        }
+      },
+      "experimental_parameters": {
+        "baseline": "HR21",
+        "generation_policy": "hierarchy-generation-v5",
+        "definition": {
+          "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr27-v5/sse_multivector/hierarchy-runs/hr27/hierarchy.spec.json",
+          "sha256": "e331d55b6b52ca5ae863d1d218a1650fea3b6201029b95ae87266696181cbdac"
+        },
+        "parameter_ledger": {
+          "path": "docs/recommendation-engine/hierarchy-parameters.csv",
+          "row": "HR27"
+        },
+        "native_usage": {
+          "fresh": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr27-v5/target/hierarchy-hr27-v5-fifty-note-v1/usage-new.json",
+          "producer_inclusive": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr27-v5/target/hierarchy-hr27-v5-fifty-note-v1/usage-all-producers.json"
+        },
+        "qualification": "Native structural validation passed; no human semantic approval. Three notes are reachable only directly at the top."
+      }
     }
   ]
 }

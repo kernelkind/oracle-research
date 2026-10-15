@@ -154,6 +154,13 @@
       "artifact_path": "target/hierarchy-hr26-v41-two-hundred-note-v1/HR26/state.json",
       "sha256": "21e8ac5c59b800ddfef058ef3fec03e56c0c993782aba6a8876e443e83acda71",
       "family": "Hierarchy"
+    },
+    {
+      "version_id": "HR27",
+      "identity": "daa184b052ae59de38a8e49fa750e0a893c0ed9890e309a0a5e4115fee69a426",
+      "artifact_path": "target/hierarchy-hr27-v5-fifty-note-v1/HR27/state.json",
+      "sha256": "1a3da19f5e418364707d478b76af5457217f975f8097ade8ccf0d809111729de",
+      "family": "Hierarchy"
     }
   ]
 }

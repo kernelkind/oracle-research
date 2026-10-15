@@ -31,8 +31,9 @@ original notes. Parameters describe the settings actually used.
 | HR24 | 100 | ASv6.100 | V4.3 | bootstrap-v133 | consolidated-grouped-v1 | — |
 | HR25 | 100 | ASv6.100 | V4.4 | bootstrap-v133 | consolidated-grouped-v1 | — |
 | HR26 | 200 | ASv6.100 | V4.1 | bootstrap-v133 | consolidated-grouped-v1 | — |
+| HR27 | 50 | ASv6.100 | V5 | bootstrap-v133 | consolidated-grouped-v1 | — |
 
-**Same notes:** HR03/HR10/HR14/HR16/HR19/HR20/HR21 use the same ordered 50-note selection.
+**Same notes:** HR03/HR10/HR14/HR16/HR19/HR20/HR21/HR27 use the same ordered 50-note selection.
 HR05/HR08/HR09/HR13/HR15/HR17/HR18 use its same ordered first 24 notes. HR04 uses
 its first 12; HR11 and HR12 use selected 6- and 12-note subsets of the 24,
 so HR12's set differs from HR04's. HR06/HR07 use older ASv6.48 inputs and are
@@ -504,3 +505,15 @@ artifact root. The blocked snapshot and recovery authorization remain saved.
 Reusable definition: `sse_multivector/hierarchy-runs/hr26/hierarchy.spec.json`.
 Retain the original run, recovery-source and shared-runner worktrees for frozen
 bindings, artifacts and reproducibility.
+
+## HR27 — 50 notes · HiGen V5
+
+HR21's exact corpus, original Bootstrap-v133 answers, encoder receipts and
+teacher settings; only generation policy changed. Complete in 3m 19s: 22 nodes,
+four roots and 46/50 reachable notes, including three available only directly
+at the top. Structural validation passed; semantic quality remains for review.
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos
+./oracle-mvp-hierarchy-hr27-v5/target/hr27-review-ui-v1/launch.sh
+```
