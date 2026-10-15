@@ -7,6 +7,14 @@ Implementation and deployment details are recorded below.
 
 ## Status and scope
 
+**Current-use scope, October 15:** the current system uses only **L1 roots of
+each local SP hierarchy**. The [L1-only test comparison](../docs/planning/fine-tuning-pilot-process.md#l1-only-test-results-october-15)
+records correctness and both all-root and required-root completeness for all
+three pilot families, before/after the first pass, and selected Qwen pass 3.
+The continuation and local grading are complete. These root scores matter to
+current use and remain distinct from full-hierarchy quality; the analysis does
+not change the validation-based selection or approve production adoption.
+
 **Current direction, October 14:** the three-family subjects-only pilot has
 completed training, generation and semantic grading. Qwen3.8-27B is selected for
 two further complete passes from its saved final 1,000-note checkpoint on one

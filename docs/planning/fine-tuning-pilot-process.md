@@ -14,6 +14,103 @@ compare each final 1,000-note adapter with its untuned baseline. Model selection
 for continued subject training is now Qwen, as approved below. The completed
 comparison itself performed no additional training or student generation.
 
+**Current-use scope clarified October 15:** the current system uses only **L1,
+the roots of each note's local SP hierarchy**. The [L1-only comparison](#l1-only-test-results-october-15)
+therefore matters directly to current use. Keep these scores separate from the
+full-hierarchy grades below.
+
+## L1-only test results (October 15)
+
+The user requested both all-root and required-only completeness, then extended
+the calculation to the other pilot models. This is an offline slice of the saved
+grades on the **same 200 previously examined ASv6.100 test notes**, with no new
+model calls, student generation or semantic judgments. It includes each family's
+untuned baseline and final one-pass adapter, plus the validation-selected Qwen
+pass-3 adapter. Qwen pass 2's test collection remains sealed.
+
+L1 entries have numbers without a dot, such as `1` and `2`; `1.1` is excluded.
+This matches the current hierarchy generator's original local L1 inventory.
+Local roots need not have equal generality across notes or remain roots of the
+global hierarchy.
+
+- **L1 correctness:** supported returned L1 entries divided by returned L1
+  entries, using the existing subject-support judgments. L1 has no incoming
+  parent relationship to grade. A supported root can be correct without matching
+  a teacher root.
+- **All-root completeness:** teacher meaning groups containing at least one
+  L1 entry that have an equivalent returned L1 entry, divided by all such groups.
+  This includes broad roots marked optional in the full-hierarchy grader.
+- **Required-root completeness:** the same calculation restricted to those
+  root meaning groups already marked required. Existing meaning groups and
+  required flags are preserved; duplicate teacher meanings count once.
+
+Matching uses the accepted saved DSM equivalence judgments, including mechanical
+exact-wording matches. A matching L2-or-deeper entry does not count. This slice
+measures whether a meaning appears at L1; it excludes the full-hierarchy check
+that the meaning appears beneath every compatible heading. The all-root view
+measures coverage of the teacher's root choices; it does not make every optional
+generalization mandatory.
+
+All percentages are arithmetic means of per-note fractions over **all 200 notes**.
+Invalid outputs score zero on both metrics. The one valid empty untuned-Qwen
+answer also scores zero: the note has teacher roots and no returned roots.
+
+| Model and checkpoint | L1 correctness | All-root completeness | Required-root completeness | Invalid outputs |
+| --- | ---: | ---: | ---: | ---: |
+| Qwen3.8-27B untuned | 66.96% | 42.12% | 58.13% | 43 |
+| Qwen3.8-27B pass 1 / checkpoint 1,000 | 96.08% | 61.63% | 79.39% | 2 |
+| Qwen3.8-27B selected pass 3 / checkpoint 3,000 | 97.51% | 57.07% | 76.99% | 0 |
+| Gemma 4 31B dense untuned | 93.69% | 46.21% | 65.22% | 3 |
+| Gemma 4 31B dense pass 1 / checkpoint 1,000 | 96.55% | 55.03% | 70.49% | 2 |
+| Gemma 4 26B-A4B MoE untuned | 88.04% | 42.90% | 55.97% | 5 |
+| Gemma 4 26B-A4B MoE pass 1 / checkpoint 1,000 | 89.81% | 55.75% | 73.64% | 11 |
+
+The reference contains **1,293 root meaning groups**, of which **512 are
+required**. All 200 notes have teacher roots, but **34 have no required root
+meaning**. Following the existing empty-denominator rule, a valid answer scores
+100% required-root completeness on those 34 notes; an invalid answer still scores
+zero. To expose that effect, the same required-root metric averaged only over
+the **166 notes with at least one required root** is:
+
+| Model and checkpoint | Required-root completeness, 166-note subset |
+| --- | ---: |
+| Qwen3.8-27B untuned | 51.96% |
+| Qwen3.8-27B pass 1 | 75.17% |
+| Qwen3.8-27B selected pass 3 | 72.28% |
+| Gemma 4 31B dense untuned | 58.10% |
+| Gemma 4 31B dense pass 1 | 64.45% |
+| Gemma 4 26B-A4B MoE untuned | 47.55% |
+| Gemma 4 26B-A4B MoE pass 1 | 68.84% |
+
+Qwen pass 1 has the highest observed L1 completeness under both denominators.
+The extra two Qwen passes raise observed L1 correctness by **1.43 percentage
+points**, while all-root completeness falls **4.56 points** and required-root
+completeness falls **2.41 points**. Pass 3 returns 1,302 L1 entries across these
+notes, versus pass 1's 1,430. This retrospective test slice does not revise the
+checkpoint selection made on validation or establish production adoption.
+The full-hierarchy measurements remain useful separate evidence.
+
+Verification covers all **1,400 answers** across seven model/version combinations,
+including 66 invalid outputs retained at zero. All versions use identical note
+IDs, teacher rows and frozen meaning groups. It checks **9,748 accepted L1
+matching judgments** against their exact input/output hashes and saved native
+receipt digests, and rehashes **117 analysis inputs**. Required-root matches also
+agree independently with the saved coverage findings; direct fractions agree
+with production scoring, and the earlier Qwen-only results reproduce exactly.
+
+The existing test reports retain their original source seals:
+`test-1200/automatic/grades.json` SHA-256
+`d6d040c9f2f98e1a2ce17827132efc679cfdffab0ccdb70221783424ab0146f6`,
+and selected pass 3 SHA-256
+`b146863c978675a72a9493f0046862e2efa83f088e27006ddedb44a7461157b8`.
+The ignored per-note analysis and verification receipts are retained in
+`oracle-mvp-qwen-continuation-grading-v1/target/pilot-l1-results-v1/` as
+`analysis.json` and `verification.json`; the analysis SHA-256 is
+`00606286eb66dbc8e3c3a54662bad102ffacc43d0fc30875dff6139aa284cc9d`.
+The frozen grading worktrees and runners remain necessary for the original
+source, policy and provider-receipt paths. No additional GPU or paid grading
+resource was used.
+
 ## Approved Qwen continuation (October 14)
 
 The user selected **Qwen3.8-27B**, approved **two additional complete passes over

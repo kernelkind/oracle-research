@@ -21,8 +21,14 @@ throughout preparation, training, baselines, checkpoints and the final test.
 1,000 notes. All 1,800 validation answers and all 1,200 reserved-test answers
 have correctness and coverage grades, with zero manual reviews. The
 [completed 200-note test](fine-tuning-pilot-process.md#completed-test-grading-october-14)
-compares each final adapter with its untuned baseline. Model selection remains
-open. The pilot-specific label teacher
+compares each final adapter with its untuned baseline. The user subsequently
+selected Qwen for a two-pass continuation; its validation-selected pass-3 test
+grading is complete. **Current use is L1 only**, as clarified October 15. The
+[L1-only comparison](fine-tuning-pilot-process.md#l1-only-test-results-october-15)
+records correctness and both all-root and required-root completeness for all
+three families' untuned/final checkpoints and Qwen pass 3. Full-hierarchy scores
+remain separate evidence; these reused test notes do not establish production
+adoption. The pilot-specific label teacher
 was approved independently of the still-open release teacher selection.
 The dated qualification records below retain the prompt-development evidence.
 Semantic review happens outside the GPU rental. Initial October 8 qualification
