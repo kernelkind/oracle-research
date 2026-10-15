@@ -301,6 +301,16 @@ operation and artifacts, and the isolated shared checkout for its exact runtime
 source binding. Maintain launch receipts and status through a separate
 integration worktree without editing the active experiment's source.
 
+The native volume-setup path sends the full 1.53GB transport twice: first to
+its staging directory for volume admission, then to the working directory.
+The first copy completed and passed all manifest checks. The second connection
+nearly stalled around 0.35GB; the host had ample free space and no disk or memory
+pressure. Before any model worker started, the local watcher and stalled upload
+were stopped, the partial copy was preserved, and the complete verified staging
+copy was copied within the same volume. The native `_remote-verify-transfer` command then rechecked every transport file, launch binding and reserved-ledger receipt before the exact local transfer receipt was recorded and `run --watch` restarted. Native verification passed; no GPU replacement, model recipe change or training restart occurred. Receipts
+are in `launch-20261014/transfer-repair/`. This was an operational recovery;
+the frozen controller still contains the duplicate-upload behavior.
+
 **Two-GPU execution approved October 5:** keep each complete student on one
 **96GB RTX PRO 6000**. GPU 0 runs Gemma dense; GPU 1 runs Qwen, then Gemma MoE.
 All three prep checks and all three baselines must pass before training starts.
