@@ -1543,3 +1543,58 @@ bytes; the 901,125,385-byte source remained unchanged. Initial actual resumed
 advancements took approximately 58–61 seconds versus the preceding 100–102
 seconds; these are different construction stages. `advance-timings.jsonl`
 retains actual durations and whether isolated recovery was required.
+
+## HR31 — HR28 corpus with HiGen V5.1
+
+Complete in **10m 54s** from the native execution-settings timestamp to the
+terminal run-summary write, excluding preparation and historical producer work.
+HR31 uses HR28's exact ordered 100-note ASv6.100 corpus, 733 saved Bootstrap-v133
+answers (728 non-null), original vectors and matching synthetic-vector receipts
+from the completed HR28 roots-only chat trial. No new Bootstrap samples were
+requested. Consolidated-grouped-v1, GPT-6.1 Sol medium, SSE, HDBSCAN
+min_samples=3/min_cluster_size=2, EOM and the title-only SSE encoding are unchanged.
+V5.1 retains initially unassigned original entries for subsequent root rounds.
+This is full recursive construction, with no roots-only override.
+
+The final graph has **72 canonical nodes, 66 edges, six roots and all 100 notes
+beneath actual roots**. There are no top-container-only or omitted notes.
+All 20 sibling families are finished; the maximum is six children and four
+canonical levels, with 54 leaves. By comparison, HR28 placed 87 notes beneath
+roots, seven only at the top and omitted six. This is observed coverage, not
+semantic approval or a claim that the broader headings improve browsing.
+Root headings and note counts are Food and animals (60), Attitudes and behavior
+(27), Natural and human worlds (82), Families and children (8), Physical reality
+and human experience (47), and Materials, processes and products (16). Counts
+overlap across roots. The completed root definitions and memberships exactly
+match the prior HR28 V5.1 roots-only chat trial.
+
+[Fresh consolidation accounting](../../../oracle-mvp-hierarchy-hr31-v51/target/hierarchy-hr31-v51-hundred-note-v1/usage-new.json)
+records **112 actual attempts including warmups/retries, 86 exact answer reuses,
+and ten recovered failures** across 39 batches/161 cases. All cases are valid;
+there are no terminal failures. Known fresh usage is 55,122 uncached input,
+129,152 cached input and 31,879 output tokens, including 22,650 reasoning tokens.
+The known API-equivalent subtotal is **$0.4419492**. All ten failed attempts lack
+usage, so the full total is unknown. Reasoning is already included in output.
+[Producer-inclusive accounting](../../../oracle-mvp-hierarchy-hr31-v51/target/hierarchy-hr31-v51-hundred-note-v1/usage-all-producers.json)
+traces historical Bootstrap and reused consolidation producers: its known
+subtotal is $6.614126, with 14 missing usages and no complete total. Its copied
+Bootstrap dispatch counts are historical, not new HR31 calls. Incremental
+subscription cash charge is zero; reuse is not a measured policy saving.
+
+New requests use one-hour deadlines and no attempt-budget or per-case attempt
+maximum override. Independent ready branches were submitted immediately to the
+shared 30-request queue. Frozen Oracle code is ea862d83, shared coordinator
+36dfcf63 and teacher transport e7dd09fa. The
+[frozen definition](../../sse_multivector/hierarchy-runs/hr31/hierarchy.spec.json),
+[native state](../../../oracle-mvp-hierarchy-hr31-v51/target/hierarchy-hr31-v51-hundred-note-v1/HR31/state.json),
+[code provenance](../../../oracle-mvp-hierarchy-hr31-v51/target/hierarchy-hr31-v51-hundred-note-v1/HR31/code-provenance.json)
+and [terminal validation](../../../oracle-mvp-hierarchy-hr31-v51/target/hierarchy-hr31-v51-hundred-note-v1/HR31/terminal-validation.json)
+retain exact source, receipt and graph controls. Native construction and source
+validation passed; the final run-summary has no errors or unresolved results.
+
+The user-requested [review UI](hierarchy-review-commands.md#hr31--100-notes--higen-v51)
+reuses the existing viewer binary and passed its offline check from /tmp:
+72 canonical nodes plus one display container, 100 notes. Press L on a leaf to
+show its notes. The comparison workbook was updated, reopened and verified,
+preserving all other rows and version descriptions. Retain the execution
+worktree for frozen source, receipts, vectors and the launchable review UI.

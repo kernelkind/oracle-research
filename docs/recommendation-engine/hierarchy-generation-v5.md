@@ -10,7 +10,10 @@ titles and explicit meanings. Consolidated-grouped-v1 names groups and broader
 sections. Offline native-workflow tests cover construction and recovery.
 The first V5 matched-control run, [HR27](hierarchy-runs.md#hr27--hr21-controls-with-higen-v5),
 completed with 22 nodes and 46/50 reachable notes; semantic quality remains
-for review.
+for review. The first full V5.1 run, [HR31](hierarchy-runs.md#hr31--hr28-corpus-with-higen-v51),
+completed on HR28’s exact corpus with 72 nodes and all 100 notes beneath its six
+roots, compared with 87 under HR28’s roots. Its checked review UI is available;
+this coverage result does not establish semantic approval.
 
 | Setting | V5.1 value |
 | --- | --- |

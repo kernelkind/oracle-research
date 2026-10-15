@@ -8707,6 +8707,71 @@
           "sha256": "d38dbb84f5bcf0de77ef1ffe35e46fb17a0c3103a6de8259900d0b60e96152bc"
         }
       ]
+    },
+    {
+      "version_id": "HR31",
+      "name": "ASv6.100 100-note HiGen V5.1 — HR28 corpus / Bootstrap-v133 / Consolidated-grouped-v1",
+      "root": "../../oracle-mvp-hierarchy-hr31-v51",
+      "artifact_path": "target/hierarchy-hr31-v51-hundred-note-v1/HR31/state.json",
+      "sha256": "4abb45e12009e8a3df415d4187c7e22ab72b9cce44b64ba9389525687bc4e175",
+      "code_provenance": {
+        "sidecar": {
+          "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr31-v51/target/hierarchy-hr31-v51-hundred-note-v1/HR31/code-provenance.json",
+          "sha256": "31e8ecf1d5329b07e46b347d3a96ffdf358676a00d69cb0a83b462c66c34b6e9"
+        },
+        "git": {
+          "oracle": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr31-v51",
+            "git_commit": "ea862d83060e2a3fce70e2ba76e2d9890ade7b2c",
+            "uncommitted_source": false
+          },
+          "runner_coordinator": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/experiment-runner",
+            "git_commit": "36dfcf6390eaaa5e46fff07cba7581003b8877a4",
+            "uncommitted_source": false
+          },
+          "bootstrap_transport": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/experiment-runner-hr21-hr22-source-v1",
+            "git_commit": "e7dd09fac055cb22148118fe8157ad729ca82f66",
+            "uncommitted_source": false
+          },
+          "consolidation_transport": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/experiment-runner-hr21-hr22-source-v1",
+            "git_commit": "e7dd09fac055cb22148118fe8157ad729ca82f66",
+            "uncommitted_source": false
+          }
+        }
+      },
+      "experimental_parameters": {
+        "baseline": "HR28",
+        "generation_policy": "hierarchy-generation-v5.1",
+        "definition": {
+          "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr31-v51/sse_multivector/hierarchy-runs/hr31/hierarchy.spec.json",
+          "sha256": "b54a72149bc38fa5cdb375be7e05808b0deb9a48a9c484ddaaf86e4acb8c5879"
+        },
+        "parameter_ledger": {
+          "path": "docs/recommendation-engine/hierarchy-parameters.csv",
+          "row": "HR31"
+        },
+        "native_usage": {
+          "fresh": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr31-v51/target/hierarchy-hr31-v51-hundred-note-v1/usage-new.json",
+          "all_producers": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr31-v51/target/hierarchy-hr31-v51-hundred-note-v1/usage-all-producers.json",
+          "scope": "Fresh totals include consolidation only; copied Bootstrap counts remain historical. All-producer generation_usage traces Bootstrap and reused consolidation. Missing failed usages prevent complete totals."
+        },
+        "qualification": "Native validation and user-requested UI check passed. All 100 notes beneath actual roots; no top-only or omitted notes. No human semantic approval, quality-preserving savings claim or guarantee for other corpora."
+      },
+      "related_outputs": [
+        {
+          "label": "HR31 review hierarchy",
+          "path": "target/hr31-review-ui-v1/hierarchy.json",
+          "sha256": "90b3b876f7d8b2f9e2df9106c1b0699ad85a1e5f8780fb5d3e91448e61021bc2"
+        },
+        {
+          "label": "HR31 original notes",
+          "path": "target/hr31-review-ui-v1/notes.json",
+          "sha256": "51c90fd5813bda223bd65b22990c50b30d67d4cd4b62acfbb5ff403c0cea6ee8"
+        }
+      ]
     }
   ]
 }
