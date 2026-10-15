@@ -1,8 +1,11 @@
-# HiGen V5.2 — recursive HDBSCAN construction
+# HiGen V5.3 — recursive HDBSCAN construction
 
-V5.2 is the default for new native hierarchy definitions. At every level, it
-ranks sections by distinct notes not already covered by existing siblings in
-that lineup. V5.1 ranked by total distinct notes. V5.2 retains V5.1's eligibility
+V5.3 is the default for new native hierarchy definitions. After each sibling
+lineup finishes, it runs the additional membership clustering described below,
+using global untracked original entries. V5.2 retains its frozen behavior without
+this pass. At every level, V5.2 and V5.3 rank sections by distinct notes not
+already covered by existing siblings in that lineup. V5.1 ranked by total
+distinct notes. V5.2 and V5.3 retain V5.1's eligibility
 rule: entries left unassigned by the first root clustering remain available for
 subsequent root rounds.
 Historical V5 excludes those entries unless its experimental eligibility
@@ -26,11 +29,12 @@ completed with 70 nodes and all 200 notes accessible, but only 176 beneath
 actual roots and 24 top-only. Retaining initial noise does not guarantee root
 coverage or a monotonic improvement over V5’s 177 notes beneath roots.
 
-| Setting | V5.2 value |
+| Setting | V5.3 value |
 | --- | --- |
-| Frozen policy | `hierarchy-generation-v5.2` |
+| Frozen policy | `hierarchy-generation-v5.3` |
 | Section ranking | Distinct notes not already covered by existing siblings in the same lineup |
 | Original root eligibility | All non-null original L1 definitions, including initially unassigned entries |
+| After each sibling lineup | Add global untracked entries sharing an HDBSCAN group with a sibling's existing original members |
 | HDBSCAN distance | Angular mutual reachability |
 | `min_samples` | 3 |
 | `min_cluster_size` | 2 |
@@ -110,8 +114,9 @@ remains historical evidence.
 
 ## Children and stopping
 
-After the entire sibling lineup finishes, descend into its final nodes.
-An unamended node with two through six assigned groups exposes those named
+After the entire sibling lineup and its membership pass finish, descend into
+its final nodes. An unamended node with no membership additions and two through
+six assigned groups exposes those named
 groups directly as leaf nodes. A one-group canonical node is already a leaf.
 Leaf groups expose notes, without expanding into original L1 or local L2 nodes.
 
@@ -125,8 +130,7 @@ If local clustering leaves entries unassigned, their notes remain on the parent.
 
 ## Approved membership additions after a sibling lineup
 
-Status: user-approved follow-up design, not implemented in V5.2. Existing
-construction, frozen experiment results and canonical memberships remain unchanged.
+Implemented in V5.3; frozen V5 through V5.2 runs keep their original behavior.
 
 After completing a sibling lineup, run an additional HDBSCAN clustering for
 each canonical node in that lineup. Its inputs are that node's accumulated
@@ -134,7 +138,8 @@ original local entries, including amendments, plus the global untracked original
 entries. Global untracked means entries not belonging to any canonical node in
 the hierarchy; it is not limited to leftovers from the current parent's local
 pool. These entries may already belong to HDBSCAN groups that were never added
-to a canonical node.
+to a canonical node. Freeze the same global pool for every sibling in this
+pass, so an entry matching several siblings can join each one.
 
 When a selected HDBSCAN group contains both an existing original member of the
 current canonical node and a global untracked entry, add that untracked entry
@@ -143,10 +148,24 @@ does not establish an addition. A connection higher in the HDBSCAN tree is not
 the shared-group criterion. Use original entries rather than synthetic
 representatives, without a bend cut for this additional clustering.
 
-Apply this after root lineups and non-root sibling lineups. Preserve every
-existing membership, including when an existing member becomes ungrouped in
-the additional clustering. Implementation and validation of this approved
-follow-up remain pending; this record does not activate a new frozen policy.
+Apply this after root lineups and non-root sibling lineups, before constructing
+their children. Preserve every existing membership, including when an existing
+member becomes ungrouped in the additional clustering. The pass adds no teacher
+calls or encodings: it uses saved original vectors. It does not regenerate
+canonical titles, meanings or their original producer evidence.
+
+Record the frozen global pool, canonical item snapshot, per-node HDBSCAN
+requests/results and exact additions in `v5.membership_passes`. Canonical
+`original_ids` and `entries` include the additions; the original construction
+items and version histories remain unchanged. Ancestors reach the added notes
+through their descendant relationships. A node requiring further subdivision
+starts its child tree from its expanded membership.
+
+Checkpoint the validated snapshot before clustering. Resume a pending pass
+before advancing other lineups, reuse completed clustering results, and apply
+all siblings' additions together. A failed or interrupted pass preserves its
+inputs rather than rebuilding them from a later global pool. Native validation
+reproduces every addition from its shared-group evidence.
 
 ## Native workflow
 
@@ -154,8 +173,8 @@ Use the ordinary `prepare-hierarchy`, `advance-hierarchy` and `run-hierarchy`
 commands through the shared stable launcher from a task worktree. The schema-1
 definition supplies `corpus`, ordered `note_ids`, `local_schema_version: 4`,
 `bootstrap_spec`, `consolidation_spec`, `worker_config` and `hdbscan_binary`.
-Set `generation_policy: hierarchy-generation-v5.2` explicitly for reproducibility;
-omission selects V5.2 for new preparation. Optional `bootstrap_hierarchy` reuses a
+Set `generation_policy: hierarchy-generation-v5.3` explicitly for reproducibility;
+omission selects V5.3 for new preparation. Optional `bootstrap_hierarchy` reuses a
 matching saved Bootstrap-v133 checkpoint and original vectors.
 Completed Bootstrap answers can be reused before encoding finishes. V5 versions
 reuse completed encoder jobs and schedule the missing vectors normally. A longer
@@ -194,7 +213,7 @@ version description are recorded in the hierarchy workbook.
 
 ## Experimental roots-only iterations
 
-V5 through V5.2 definitions may freeze an optional `v5_options` object. Both supported
+V5 through V5.3 definitions may freeze an optional `v5_options` object. Both supported
 fields are booleans:
 
 - `roots_only`: finish after the root lineup, without preparing children;
@@ -202,7 +221,7 @@ fields are booleans:
 - `include_original_unassigned`: keep all non-null original entries eligible,
   including entries unassigned by the first root clustering. The first tree
   and root selection are unchanged; subsequent root pools retain those entries.
-  This legacy trial option defaults to false in V5. V5.1 and V5.2 always retain those
+  This legacy trial option defaults to false in V5. V5.1 through V5.3 always retain those
   entries without an option and reject an explicit false override.
 
 The user adopted the eligibility change as V5.1 after roots-only chat trials.

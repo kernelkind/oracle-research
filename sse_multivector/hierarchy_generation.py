@@ -39,7 +39,8 @@ POLICY_V44 = "hierarchy-generation-v4.4"
 POLICY_V5 = "hierarchy-generation-v5"
 POLICY_V51 = "hierarchy-generation-v5.1"
 POLICY_V52 = "hierarchy-generation-v5.2"
-V5_POLICIES = (POLICY_V5, POLICY_V51, POLICY_V52)
+POLICY_V53 = "hierarchy-generation-v5.3"
+V5_POLICIES = (POLICY_V5, POLICY_V51, POLICY_V52, POLICY_V53)
 SECTION_POLICIES = (POLICY_V41, POLICY_V42, POLICY_V43, POLICY_V44)
 HDBSCAN_POLICIES = (POLICY_V4_ROOTS, *SECTION_POLICIES, *V5_POLICIES)
 TITLE_POLICIES = (POLICY_V32, *HDBSCAN_POLICIES)
@@ -170,6 +171,13 @@ def summary(state):
                 dict(family=f['id'], parent=f['parent'], round=i+1,
                      selection=r['selection'], conflicting_sections=r.get('conflicting_sections', []))
                 for f in state['families'] for i, r in enumerate(f['rounds'])]
+            if state['generation_policy'] == POLICY_V53:
+                result['hdbscan_membership_passes'] = [
+                    dict(family=p['family'], untracked_entries=len(p['untracked_ids']),
+                         nodes=[dict(node=n, inputs=len(r['current']), groups=len(r['groups']),
+                                     added_original_ids=p['additions'][n])
+                                for n, r in p['rounds'].items()])
+                    for p in state.get('v5', {}).get('membership_passes', [])]
         if state["generation_policy"] in SECTION_POLICIES:
             result["hdbscan_section_cuts"] = state.get("hdbscan_sections", {}).get("cuts", [])
     return result
@@ -261,7 +269,7 @@ def prepare(spec_path, directory, history_root=None):
         "consolidation_spec",
         "worker_config",
     }
-    policy = cfg.get("generation_policy", POLICY_V52) if isinstance(cfg, dict) else None
+    policy = cfg.get("generation_policy", POLICY_V53) if isinstance(cfg, dict) else None
     if policy == POLICY_V4_ROOTS:
         fields |= {"bootstrap_hierarchy", "hdbscan_binary"}
     elif policy in (*SECTION_POLICIES, *V5_POLICIES):
@@ -279,7 +287,7 @@ def prepare(spec_path, directory, history_root=None):
         or not isinstance(options, dict)
         or set(options) - {'roots_only', 'include_original_unassigned'}
         or any(type(value) is not bool for value in options.values())
-        or (policy in (POLICY_V51, POLICY_V52)
+        or (policy in (POLICY_V51, POLICY_V52, POLICY_V53)
             and options.get('include_original_unassigned') is False)
         or policy not in (POLICY, POLICY_V31, *TITLE_POLICIES)
         or type(cfg["schema_version"]) is not int
@@ -1265,9 +1273,11 @@ def check_state(state, *, verify_receipts=True, verify_current_code=True):
                 raise ValueError("synthetic input differs from native producer")
     for node in state["nodes"]:
         item = state["items"][node["item"]]
+        fields = ("subject", "meaning") if state["generation_policy"] == POLICY_V53 else (
+            "subject", "meaning", "original_ids")
         if any(
-            node[k] != item[k] for k in ("subject", "meaning", "original_ids")
-        ) or node["entries"] != [originals[i]["local"] for i in item["original_ids"]]:
+            node[k] != item[k] for k in fields
+        ) or node["entries"] != [originals[i]["local"] for i in node["original_ids"]]:
             raise ValueError("canonical node differs from final construction item")
         if state["generation_policy"] in (*SECTION_POLICIES, *V5_POLICIES):
             continue

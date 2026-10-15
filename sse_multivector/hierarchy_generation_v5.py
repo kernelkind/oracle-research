@@ -1,4 +1,4 @@
-"""Recursive V5 through V5.2 selection using native definitions and saved trees.
+"""Recursive V5 through V5.3 selection using native definitions and saved trees.
 
 This module prepares work and consumes receipts. The shared runner remains the
 only teacher executor; the ordinary hierarchy coordinator submits ready work.
@@ -21,7 +21,8 @@ def _notes(state, originals):
 
 
 def _include_original_unassigned(state):
-    return (state['generation_policy'] in (generation.POLICY_V51, generation.POLICY_V52)
+    return (state['generation_policy'] in (generation.POLICY_V51, generation.POLICY_V52,
+                                         generation.POLICY_V53)
             or state.get('v5_options', {}).get('include_original_unassigned', False))
 
 
@@ -80,7 +81,7 @@ def _prepare_definitions(directory, state):
 
 
 def proposals(state, round_, max_siblings=6):
-    """Rank sections by notes, excluding existing siblings' notes in V5.2."""
+    """Rank sections by notes, excluding existing siblings' notes from V5.2."""
     items = state['items']
     existing = {items[i]['owner']: i for i in round_['current'] if 'owner' in items[i]}
     sections = round_['selection']['sections']
@@ -100,7 +101,8 @@ def proposals(state, round_, max_siblings=6):
             available.append(row)
     remaining = max_siblings-len(existing)
     covered = (set(_notes(state, _originals(state, existing.values())))
-               if state.get('generation_policy') == generation.POLICY_V52 else set())
+               if state.get('generation_policy') in (generation.POLICY_V52, generation.POLICY_V53)
+               else set())
 
     def score(proposal):
         return len(set(_notes(state, _originals(state, proposal['members']))) - covered)
@@ -138,7 +140,52 @@ def _publish(state, family, item_id, groups, owner=None, *, leaf=False):
     return owner
 
 
-def _finish(state, family):
+def _membership_additions(round_, existing, untracked):
+    existing, untracked = set(existing), set(untracked)
+    return sorted({i for group in round_['groups'] if existing.intersection(group)
+                   for i in group if i in untracked})
+
+
+def _add_memberships(directory, state, family):
+    """Freeze one global pool for all siblings; preserve native definition evidence."""
+    nodes = {n['id']: n for n in state['nodes']}
+    passes = state['v5'].setdefault('membership_passes', [])
+    if 'membership_pass' not in family:
+        claimed = {i for node in nodes.values() for i in node['original_ids']}
+        untracked = [i for i in state['v5']['eligible_ids'] if i not in claimed]
+        family['membership_pass'] = len(passes)
+        passes.append(dict(family=family['id'], canonical_items=[n['item'] for n in state['nodes']],
+                           untracked_ids=untracked, rounds={}, additions={}, applied=False))
+        # Persist the snapshot before external work. A failed run must not rebuild
+        # its global pool after unrelated model batches finish in the meantime.
+        if untracked and family['nodes']:
+            _prepare_definitions(directory, state)
+            generation.check_state(state, verify_receipts=False)
+            workflow.write(directory/'state.json', state)
+    record = passes[family['membership_pass']]
+    untracked = record['untracked_ids']
+    if untracked:
+        for identifier in family['nodes']:
+            node = nodes[identifier]
+            ids = sorted(set(node['original_ids']) | set(untracked))
+            inputs = dict(id=family['id']+'-'+identifier, current=ids, rounds=[])
+            destination = directory/family['id']/'memberships'/identifier
+            destination.mkdir(parents=True, exist_ok=True)
+            round_ = hdbscan.round_for(destination, state, inputs, generation._vectors(state, ids))
+            record['rounds'][identifier] = round_
+            record['additions'][identifier] = _membership_additions(
+                round_, node['original_ids'], untracked)
+    # Apply together: a match with one sibling must not remove another sibling's input.
+    for identifier, added in record['additions'].items():
+        node = nodes[identifier]
+        node['original_ids'] = sorted(set(node['original_ids']) | set(added))
+        node['entries'] = [state['originals'][int(i[1:])-1]['local'] for i in node['original_ids']]
+    record['applied'] = True
+
+
+def _finish(directory, state, family):
+    if state['generation_policy'] == generation.POLICY_V53:
+        _add_memberships(directory, state, family)
     nodes = {n['id']: n for n in state['nodes']}
     covered = {o for n in family['nodes'] for o in nodes[n]['original_ids']}
     eligible = set(state['v5']['eligible_ids'])
@@ -157,7 +204,8 @@ def _finish(state, family):
             continue
         generation._new_family(state, identifier, node['original_ids'])
         child_family = state['families'][-1]
-        if len(node['versions']) == 1 and len(node['groups']) <= state['max_siblings']:
+        if (len(node['versions']) == 1 and len(node['groups']) <= state['max_siblings']
+                and node['original_ids'] == state['items'][node['item']]['original_ids']):
             # Already-known groups are the leaf stopping case, not a new section level.
             child_family['leaf_groups'] = list(node['groups'])
         # Otherwise the next level starts from original entries and gets a fresh tree.
@@ -171,14 +219,14 @@ def _step(directory, state, family):
         for item in family['leaf_groups']:
             _publish(state, family, item, [item], leaf=True)
         family['current'] = list(family['leaf_groups'])
-        _finish(state, family)
+        _finish(directory, state, family)
         return True
     if family['rounds'] and not family['rounds'][-1].get('applied'):
         round_ = family['rounds'][-1]
     else:
         if (len(family['nodes']) >= state['max_siblings'] or not family['current']
                 or family['nodes'] and all('owner' in state['items'][i] for i in family['current'])):
-            _finish(state, family)
+            _finish(directory, state, family)
             return True
         generation._prepare_encoding(directory, state, family['current'])
         if any(state['items'][i]['vector_key'] not in state['vectors'] for i in family['current']):
@@ -195,7 +243,7 @@ def _step(directory, state, family):
                 family['current'] = []
             family['rounds'].append(dict(round_, selection=None, proposals=[], applied=True,
                                          after=list(family['current'])))
-            _finish(state, family)
+            _finish(directory, state, family)
             return True
         request, mapping = hdbscan.request_for(state, round_['current'], vectors)
         tree = hdbscan.project(hdbscan.read_result(round_['hdbscan']['result']), request, mapping)
@@ -209,7 +257,7 @@ def _step(directory, state, family):
             state['v5']['original_unassigned_ids'] = list(round_['unassigned'])
     if not round_['proposals']:
         round_.update(applied=True, after=list(family['current']))
-        _finish(state, family)
+        _finish(directory, state, family)
         return True
     changed = False
     for proposal in round_['proposals']:
@@ -242,13 +290,18 @@ def _step(directory, state, family):
     round_.update(applied=True, after=list(family['current']))
     if (len(family['nodes']) >= state['max_siblings']
             or round_['selection']['rule'] in ('largest-groups-v5', 'group-leaves-v5')):
-        _finish(state, family)
+        _finish(directory, state, family)
     return True
 
 
 def schedule(directory, state):
     state.setdefault('v5', dict(definitions={}))
     while True:
+        pending = next((f for f in state['families']
+                        if not f['complete'] and 'membership_pass' in f), None)
+        if pending is not None:
+            _finish(directory, state, pending)
+            continue
         changed = _collect_definitions(state)
         for family in list(state['families']):
             changed = _step(directory, state, family) or changed
@@ -257,6 +310,68 @@ def schedule(directory, state):
             break
     if all(f['complete'] for f in state['families']):
         state['status'] = 'complete'
+
+
+def _check_memberships(state):
+    """Reproduce additions from the frozen global pool and unchanged group receipts."""
+    nodes = {n['id']: n for n in state['nodes']}
+    families = {f['id']: f for f in state['families']}
+    passes = state['v5'].get('membership_passes', [])
+    seen, completed, additions, previous_count = set(), set(), {}, 0
+    for index, record in enumerate(passes):
+        family = families.get(record['family'])
+        if (family is None or family['id'] in seen or type(record.get('applied')) is not bool
+                or family['complete'] != record['applied']
+                or family.get('membership_pass') != index):
+            raise ValueError('V5.3 membership pass differs from completed sibling lineup')
+        seen.add(family['id'])
+        items = record['canonical_items']
+        if (len(items) < previous_count or len(items) > len(nodes)
+                or any(i not in state['items'] for i in items)):
+            raise ValueError('V5.3 membership snapshot changed')
+        previous_count = len(items)
+        owners = [state['items'][i].get('owner') for i in items]
+        if owners != [n['id'] for n in state['nodes'][:len(items)]]:
+            raise ValueError('V5.3 membership snapshot omitted canonical nodes')
+        snapshot = dict(zip(owners, items, strict=True))
+        if (any(i not in [v['item'] for v in nodes[n]['versions']] for n, i in snapshot.items())
+                or any(snapshot.get(n) != nodes[n]['item'] for n in family['nodes'])):
+            raise ValueError('V5.3 membership snapshot changed canonical definitions')
+        claimed = {o for i in items for o in state['items'][i]['original_ids']}
+        claimed.update(o for group in additions.values() for o in group)
+        untracked = [i for i in state['v5']['eligible_ids'] if i not in claimed]
+        if record['untracked_ids'] != untracked:
+            raise ValueError('V5.3 global untracked membership pool changed')
+        if not record['applied']:
+            if index != len(passes)-1 or record['rounds'] or record['additions']:
+                raise ValueError('V5.3 pending membership snapshot changed')
+            continue
+        completed.add(family['id'])
+        expected_nodes = set(family['nodes']) if untracked else set()
+        if set(record['rounds']) != expected_nodes or set(record['additions']) != expected_nodes:
+            raise ValueError('V5.3 membership clustering omitted a sibling')
+        for identifier in expected_nodes:
+            before = state['items'][nodes[identifier]['item']]['original_ids']
+            round_ = record['rounds'][identifier]
+            ids = sorted(set(before) | set(untracked))
+            if round_['current'] != ids:
+                raise ValueError('V5.3 membership clustering inputs changed')
+            inputs = dict(id=family['id']+'-'+identifier)
+            hdbscan.check_round(state, inputs, round_, generation._vectors(state, ids))
+            expected = _membership_additions(round_, before, untracked)
+            if record['additions'][identifier] != expected:
+                raise ValueError('V5.3 membership addition lacks a shared group')
+            additions[identifier] = expected
+    if completed != {f['id'] for f in state['families'] if f['complete']}:
+        raise ValueError('V5.3 completed lineup lacks its membership pass')
+    for family in state['families']:
+        if ('membership_pass' in family) != (family['id'] in seen):
+            raise ValueError('V5.3 membership pass reference changed')
+    for identifier, node in nodes.items():
+        expected = sorted(set(state['items'][node['item']]['original_ids'])
+                          | set(additions.get(identifier, [])))
+        if node['original_ids'] != expected:
+            raise ValueError('V5.3 canonical membership differs from its shared groups')
 
 
 def check_state(state, *, verify_current_code=True):
@@ -355,7 +470,7 @@ def check_state(state, *, verify_current_code=True):
                     or family['rounds']):
                 raise ValueError('V5 leaf groups differ from the final parent')
             current = family['leaf_groups']
-            if family['complete']:
+            if family['complete'] or 'membership_pass' in family:
                 if len(family_nodes) != len(current):
                     raise ValueError('V5 leaf groups were not all exposed')
                 for identifier, item in zip(family_nodes, current, strict=True):
@@ -384,6 +499,10 @@ def check_state(state, *, verify_current_code=True):
         if any(not set(state['items'][a['item']]['original_ids']) <= set(state['items'][b['item']]['original_ids'])
                for a, b in zip(versions, versions[1:])):
             raise ValueError('V5 amendment lost original associations')
+    if state['generation_policy'] == generation.POLICY_V53:
+        _check_memberships(state)
+    elif 'membership_passes' in data or any('membership_pass' in f for f in state['families']):
+        raise ValueError('membership passes require V5.3')
     child_parents = [f['parent'] for f in state['families'] if f['parent'] is not None]
     expected_parents = [n['id'] for n in state['nodes'] if not n['leaf']
                         and families[n['family']]['complete']

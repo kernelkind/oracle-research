@@ -102,9 +102,15 @@ vectors, changing section ranking to V5.2 at every level.
   unclaimed top-only notes. Top-container access does not establish root coverage.
 - V5.2: V5.1's construction, ranking sections at every level by distinct notes
   not already covered by existing siblings in that lineup. Saved section order
-  breaks ties. This is the default for new definitions. HR33 completed with
+  breaks ties. This was the default for new definitions until V5.3. HR33 completed with
   67 nodes and 189/200 notes beneath roots; 15 gained placement and two lost it
   compared with HR32. Native validation and the review UI check passed.
+- V5.3: V5.2 plus an additional HDBSCAN membership pass after each completed
+  sibling lineup, including non-roots. Each sibling's original entries are
+  clustered with the same frozen global untracked pool. Shared groups add
+  untracked entries to that sibling; existing memberships, meanings and native
+  producer evidence stay unchanged. New definitions default to V5.3. No official
+  hierarchy run has been generated with this version yet.
 - HR14/HR16 omit two null Bootstrap meanings. HR17 had none. Answers and receipts
   remain saved; the original selected note set is preserved as input evidence.
 
