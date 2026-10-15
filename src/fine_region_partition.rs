@@ -3,6 +3,7 @@
 use std::cmp::Ordering;
 use std::collections::{BTreeSet, BinaryHeap};
 
+use rayon::prelude::*;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
@@ -30,19 +31,27 @@ impl CosineMatrix {
 
         let count = vectors.len();
         let mut values = vec![0.0; count * count];
-        for left in 0..count {
-            values[left * count + left] = 1.0;
-            for right in (left + 1)..count {
-                let cosine = vectors[left]
-                    .iter()
-                    .zip(vectors[right].iter())
-                    .map(|(left, right)| left * right)
-                    .sum::<f64>();
-                let cosine = normalize_cosine(cosine)?;
-                values[left * count + right] = cosine;
-                values[right * count + left] = cosine;
-            }
+        let results = values
+            .par_chunks_mut(count)
+            .enumerate()
+            .map(|(left, row)| {
+                row[left] = 1.0;
+                for right in (left + 1)..count {
+                    let cosine = vectors[left]
+                        .iter()
+                        .zip(vectors[right].iter())
+                        .map(|(left, right)| left * right)
+                        .sum::<f64>();
+                    let cosine = normalize_cosine(cosine)?;
+                    row[right] = cosine;
+                }
+                Ok(())
+            })
+            .collect::<Vec<Result<()>>>();
+        for result in results {
+            result?;
         }
+        mirror_upper_triangle(&mut values, count);
         Ok(Self { count, values })
     }
 
@@ -69,6 +78,14 @@ impl CosineMatrix {
             }
         }
         minimum
+    }
+}
+
+pub(crate) fn mirror_upper_triangle(values: &mut [f64], count: usize) {
+    for left in 0..count {
+        for right in left + 1..count {
+            values[right * count + left] = values[left * count + right];
+        }
     }
 }
 

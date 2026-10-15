@@ -12,6 +12,53 @@ fn unit_vector(angle: f64) -> Vec<f64> {
 }
 
 #[test]
+fn hdbscan_cli_preserves_exact_output_across_explicit_thread_counts() {
+    let root = tempfile::tempdir_in("/dev/shm").unwrap();
+    let request_path = root.path().join("request.json");
+    let inputs = (0..256)
+        .map(|i| {
+            json!({
+                "opaque_id": format!("{:064x}", i + 1),
+                "normalized_vector": unit_vector(i as f64 * 0.019),
+            })
+        })
+        .collect::<Vec<_>>();
+    fs::write(
+        &request_path,
+        serde_json::to_vec(&json!({
+            "schema_version": 1, "candidate": "hdbscan",
+            "source_vector_manifest_sha256": "a".repeat(64),
+            "normalized_vector_sha256": "b".repeat(64),
+            "hdbscan_configuration": {"min_samples":3,"min_cluster_size":2,
+                                      "selection_method":"excess_of_mass"},
+            "inputs": inputs,
+        }))
+        .unwrap(),
+    )
+    .unwrap();
+    let mut expected = None;
+    for threads in [1, 4] {
+        let output = Command::new(env!("CARGO_BIN_EXE_fine-segmentation-candidate"))
+            .arg(&request_path)
+            .arg("--threads")
+            .arg(threads.to_string())
+            .output()
+            .unwrap();
+        assert!(
+            output.status.success(),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+        assert!(output.stderr.is_empty());
+        if let Some(expected) = &expected {
+            assert_eq!(&output.stdout, expected);
+        } else {
+            expected = Some(output.stdout);
+        }
+    }
+}
+
+#[test]
 fn candidate_cli_runs_the_frozen_snn_boundary_in_a_fresh_process() {
     let root = tempfile::tempdir_in("/dev/shm").expect("temporary directory");
     let request_path = root.path().join("request.json");

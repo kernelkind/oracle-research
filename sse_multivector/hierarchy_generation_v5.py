@@ -169,9 +169,10 @@ def _add_memberships(directory, state, family):
         # Each job reads the same frozen state and writes its own directory.
         # This pool runs local clustering only; teacher admission remains with
         # the shared runner. Start every ready sibling before collecting results.
-        with ThreadPoolExecutor(max_workers=len(family['nodes'])) as pool:
+        with ThreadPoolExecutor(max_workers=min(hdbscan.cpu_workers(), len(family['nodes']))) as pool:
             jobs = []
-            for identifier in family['nodes']:
+            budget = hdbscan.cpu_workers()
+            for ordinal, identifier in enumerate(family['nodes']):
                 node = nodes[identifier]
                 ids = sorted(set(node['original_ids']) | set(untracked))
                 inputs = dict(id=family['id']+'-'+identifier, current=ids, rounds=[])
@@ -179,7 +180,9 @@ def _add_memberships(directory, state, family):
                 destination.mkdir(parents=True, exist_ok=True)
                 vectors = generation._vectors(state, ids)
                 jobs.append((identifier, pool.submit(
-                    hdbscan.round_for, destination, state, inputs, vectors)))
+                    hdbscan.round_for, destination, state, inputs, vectors,
+                    workers=max(1, budget//len(family['nodes'])
+                                + (ordinal < budget % len(family['nodes']))))))
             for identifier, job in jobs:
                 round_ = job.result()
                 record['rounds'][identifier] = round_
@@ -322,7 +325,7 @@ def schedule(directory, state):
         state['status'] = 'complete'
 
 
-def _check_memberships(state):
+def _check_memberships(state, numerical_checks):
     """Reproduce additions from the frozen global pool and unchanged group receipts."""
     nodes = {n['id']: n for n in state['nodes']}
     families = {f['id']: f for f in state['families']}
@@ -367,7 +370,7 @@ def _check_memberships(state):
             if round_['current'] != ids:
                 raise ValueError('V5.3 membership clustering inputs changed')
             inputs = dict(id=family['id']+'-'+identifier)
-            hdbscan.check_round(state, inputs, round_, generation._vectors(state, ids))
+            numerical_checks.append((inputs, round_))
             expected = _membership_additions(round_, before, untracked)
             if record['additions'][identifier] != expected:
                 raise ValueError('V5.3 membership addition lacks a shared group')
@@ -425,6 +428,7 @@ def check_state(state, *, verify_current_code=True):
         raise ValueError('unexpected V5 native producer')
     canonical = set()
     events = {}
+    numerical_checks = []
     for family in state['families']:
         parent = family['parent']
         expected = ([o['id'] for o in state['originals'] if o.get('meaning') is not None]
@@ -440,13 +444,8 @@ def check_state(state, *, verify_current_code=True):
         for round_ in family['rounds']:
             if round_['current'] != current:
                 raise ValueError('V5 round does not follow previous replacement')
-            vectors = generation._vectors(state, current)
-            hdbscan.check_round(state, family, round_, vectors)
+            numerical_checks.append((dict(id=family['id']), round_))
             if round_['groups']:
-                request, mapping = hdbscan.request_for(state, current, vectors)
-                tree = hdbscan.project(hdbscan.read_result(round_['hdbscan']['result']), request, mapping)
-                if round_['selection'] != hdbscan.select_sections(tree, state['max_siblings']):
-                    raise ValueError('V5 section cut changed')
                 planned = proposals(state, round_, state['max_siblings'])
                 actual = [{k: p[k] for k in ('groups', 'members', 'owner')} for p in round_['proposals']]
                 if actual != planned['proposals'] or round_['conflicting_sections'] != planned['conflicting_sections']:
@@ -512,9 +511,10 @@ def check_state(state, *, verify_current_code=True):
                for a, b in zip(versions, versions[1:])):
             raise ValueError('V5 amendment lost original associations')
     if state['generation_policy'] == generation.POLICY_V53:
-        _check_memberships(state)
+        _check_memberships(state, numerical_checks)
     elif 'membership_passes' in data or any('membership_pass' in f for f in state['families']):
         raise ValueError('membership passes require V5.3')
+    hdbscan.check_rounds(state, numerical_checks)
     child_parents = [f['parent'] for f in state['families'] if f['parent'] is not None]
     expected_parents = [n['id'] for n in state['nodes'] if not n['leaf']
                         and families[n['family']]['complete']

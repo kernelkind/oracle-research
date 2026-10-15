@@ -603,6 +603,10 @@ def add_commands(commands):
     p.add_argument('--attempt-budget', type=Path,
                    help='optional explicitly supplied persistent attempt allowance')
     p.add_argument('--comment', default='Automated hierarchy generation')
+    p.add_argument('--cpu-workers', type=int,
+                   help='local CPU budget; default leaves four available CPUs for other work')
+    p.add_argument('--hdbscan-binary', type=Path,
+                   help='reviewed replacement numerical executable; requires --runner-upgrade-reason')
     p.add_argument('--runner-upgrade-reason',
                    help='record an explicitly reviewed construction/adapter code fix; frozen data stays unchanged')
     p = commands.add_parser('summarize-experiments', help='summarize native saved usage across experiments; no inference')
@@ -856,7 +860,8 @@ def handle_command(args):
             result = hierarchy_generation.prepare(args.spec, args.directory, args.history_root)
         elif args.command == 'run-hierarchy':
             result = hierarchy_generation.run(args.directory, args.attempt_budget, args.comment,
-                                             args.runner_upgrade_reason, args.max_provider_attempts)
+                                             args.runner_upgrade_reason, args.max_provider_attempts,
+                                             cpu_workers=args.cpu_workers, hdbscan_binary=args.hdbscan_binary)
         else:
             result = hierarchy_generation.advance(args.directory, args.comment)
         print(json.dumps(result, ensure_ascii=False, indent=2))

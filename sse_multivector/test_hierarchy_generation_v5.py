@@ -4,6 +4,8 @@ import json
 import os
 from copy import deepcopy
 from pathlib import Path
+import subprocess
+import sys
 import unittest
 from unittest.mock import patch
 from threading import Barrier, Lock
@@ -75,6 +77,62 @@ class V5ConstructionTests(unittest.TestCase):
         self.assertTrue(all(c.kwargs.get('project') is not None for c in reads),
                         'unused distance matrices are parsed and retained as full results')
         self.assertEqual((self.native.root/'v5/state.json').read_bytes(), before)
+
+    def test_native_validation_uses_processes_for_independent_saved_rounds(self):
+        from concurrent.futures import ProcessPoolExecutor
+        from sse_multivector import hierarchy_generation as generation, hierarchy_hdbscan
+        self.construct(self.prepare(count=43))
+        before = (self.native.root/'v5/state.json').read_bytes()
+        with (hierarchy_hdbscan.cpu_scope(2),
+              patch.object(hierarchy_hdbscan, '_PARALLEL_MIN_VECTORS', 1, create=True),
+              patch.object(hierarchy_hdbscan, 'ProcessPoolExecutor',
+                           wraps=ProcessPoolExecutor, create=True) as pools):
+            generation.advance(self.native.root/'v5', 'Validate independent numerical evidence concurrently')
+        pools.assert_called()
+        self.assertEqual((self.native.root/'v5/state.json').read_bytes(), before)
+
+    def test_native_resume_records_explicit_binary_upgrade_and_cpu_budget(self):
+        self.construct(self.prepare(count=43))
+        before = (self.native.root/'v5/state.json').read_bytes()
+        saved = json.loads(before)
+        replacement = self.native.root/'parallel-hdbscan'
+        replacement.write_bytes(Path(saved['hdbscan_binary']).read_bytes()+b'\n# parallel runtime\n')
+        replacement.chmod(0o755)
+        result = json.loads(self.native.cli(
+            'run-hierarchy', 'v5', '--hdbscan-binary', str(replacement),
+            '--cpu-workers', '2', '--runner-upgrade-reason', 'Reviewed exact numerical runtime upgrade').stdout)
+        self.assertEqual(result['status'], 'complete')
+        state = json.loads((self.native.root/'v5/state.json').read_bytes())
+        self.assertEqual(state['nodes'], saved['nodes'])
+        self.assertEqual(state['hdbscan_binary'], str(replacement))
+        self.assertIn(saved['hdbscan_binary'], state['sources'])
+        self.assertIn(str(replacement), state['sources'])
+        self.assertEqual(state['source_upgrades'][-1]['hdbscan_binary'],
+                         dict(before=saved['hdbscan_binary'], after=str(replacement)))
+        settings = [json.loads(line) for line in
+                    (self.native.root/'v5/execution-settings.jsonl').read_text().splitlines()]
+        self.assertEqual(settings[-1]['cpu_workers'], 2)
+        state['source_upgrades'][-1]['hdbscan_binary']['before'] = str(replacement)
+        with self.assertRaisesRegex(ValueError, 'executable upgrade history changed'):
+            from sse_multivector import hierarchy_generation as generation
+            generation.check_state(state, verify_receipts=False)
+
+    def test_cpu_scope_limits_children_and_restores_original_affinity(self):
+        import os
+        from sse_multivector import hierarchy_hdbscan
+        if not hasattr(os, 'sched_getaffinity'):
+            self.skipTest('CPU affinity is unavailable')
+        before = os.sched_getaffinity(0)
+        with hierarchy_hdbscan.cpu_scope(min(2, len(before))) as count:
+            self.assertEqual(count, min(2, len(before)))
+            self.assertEqual(len(os.sched_getaffinity(0)), count)
+            observed = subprocess.check_output(
+                [sys.executable, '-c', 'import os; print(len(os.sched_getaffinity(0)))'], text=True)
+            self.assertEqual(int(observed), count)
+        self.assertEqual(os.sched_getaffinity(0), before)
+        with self.assertRaisesRegex(ValueError, 'positive integer'):
+            with hierarchy_hdbscan.cpu_scope(0):
+                self.fail('zero CPU budget accepted')
 
     def test_hdbscan_scope_retains_larger_saved_views_without_reparsing(self):
         state = self.construct(self.prepare(count=10))

@@ -1174,8 +1174,20 @@ def check_state(state, *, verify_receipts=True, verify_current_code=True):
         from . import hierarchy_hdbscan
         expected_source = (str(workflow.resolve(cfg["bootstrap_hierarchy"], definition.parent))
                            if "bootstrap_hierarchy" in cfg else None)
+        expected_binary = str(workflow.resolve(cfg['hdbscan_binary'], definition.parent))
+        for upgrade in state.get('source_upgrades', []):
+            replacement = upgrade.get('hdbscan_binary')
+            if replacement is not None:
+                if (set(replacement) != {'before', 'after'}
+                        or replacement['before'] != expected_binary
+                        or expected_binary not in state['sources']
+                        or replacement['after'] not in state['sources']
+                        or upgrade['after'].get(replacement['after'])
+                           != state['sources'][replacement['after']]):
+                    raise ValueError('HDBSCAN executable upgrade history changed')
+                expected_binary = replacement['after']
         if (state.get("bootstrap_hierarchy") != expected_source
-                or state["hdbscan_binary"] != str(workflow.resolve(cfg["hdbscan_binary"], definition.parent))
+                or state["hdbscan_binary"] != expected_binary
                 or (verify_current_code and
                     str(Path(hierarchy_hdbscan.__file__).resolve()) not in state["sources"])
                 or (not verify_current_code and
@@ -1395,7 +1407,9 @@ def advance(directory, comment):
         return summary(state)
 
 
-def _resume_sources(directory, reason):
+def _resume_sources(directory, reason, hdbscan_binary=None):
+    if hdbscan_binary is not None and reason is None:
+        raise ValueError('an HDBSCAN executable upgrade requires a reviewed runner upgrade reason')
     if reason is None:
         return
     if not isinstance(reason, str) or not reason.strip():
@@ -1430,7 +1444,17 @@ def _resume_sources(directory, reason):
             if old != new or state["sources"][old] != digest:
                 before[old] = state["sources"][old]
                 after[new] = digest
-        if not after:
+        replacement = None
+        if hdbscan_binary is not None:
+            if state['generation_policy'] not in HDBSCAN_POLICIES:
+                raise ValueError('HDBSCAN executable upgrade requires an HDBSCAN hierarchy')
+            binary = str(Path(hdbscan_binary).resolve())
+            if not Path(binary).is_file():
+                raise ValueError('replacement HDBSCAN executable is missing')
+            if binary != state['hdbscan_binary']:
+                replacement = dict(before=state['hdbscan_binary'], after=binary)
+                after[binary] = trial._hash(binary)
+        if not after and replacement is None:
             return
         for record in state["experiments"]:
             _, config, _ = workflow.load(record["experiment"])
@@ -1438,14 +1462,16 @@ def _resume_sources(directory, reason):
                 raise ValueError(
                     "finish active experiments before upgrading construction code"
                 )
-        state.setdefault("source_upgrades", []).append(
-            dict(
+        event = dict(
                 reason=reason,
                 before=before,
                 after=after,
                 graph_sha256=workflow.inputs.digest(state["nodes"]),
             )
-        )
+        if replacement is not None:
+            event['hdbscan_binary'] = replacement
+            state['hdbscan_binary'] = replacement['after']
+        state.setdefault('source_upgrades', []).append(event)
         for path in before:
             del state["sources"][path]
         state["sources"].update(after)
@@ -1599,6 +1625,7 @@ def run(
     comment="Automated hierarchy generation",
     runner_upgrade_reason=None,
     max_provider_attempts=None,
+    *, cpu_workers=None, hdbscan_binary=None,
 ):
     """Coordinate ordinary native batches and one SSE worker; no provider limiter."""
     from . import hierarchy_hdbscan
@@ -1609,7 +1636,8 @@ def run(
     budget = Path(attempt_budget).resolve() if attempt_budget is not None else None
     if budget is not None:
         workflow.engine.PersistentAttemptBudget(budget).remaining()
-    with (directory / ".hierarchy-run.lock").open("a") as lock, hierarchy_hdbscan.source_scope():
+    with ((directory / ".hierarchy-run.lock").open("a") as lock,
+          hierarchy_hdbscan.source_scope(), hierarchy_hdbscan.cpu_scope(cpu_workers) as cpu_limit):
         try:
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError as error:
@@ -1623,10 +1651,11 @@ def run(
         workflow.engine._append_json_line(
             directory / "execution-settings.jsonl",
             dict(settings, max_provider_attempts=max_provider_attempts,
+                 cpu_workers=cpu_limit,
                  runner_upgrade_reason=runner_upgrade_reason,
                  observed_at_utc=datetime.now(timezone.utc).isoformat()),
         )
-        _resume_sources(directory, runner_upgrade_reason)
+        _resume_sources(directory, runner_upgrade_reason, hdbscan_binary)
         active, attempted, errors = {}, set(), []
         stop = Event()
         result = _native_advance(directory, comment, stop)

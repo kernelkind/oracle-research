@@ -1235,6 +1235,7 @@ dependencies = [
  "ort",
  "profiling",
  "ratatui",
+ "rayon",
  "serde",
  "serde_json",
  "sha2",

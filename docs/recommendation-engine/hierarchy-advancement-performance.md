@@ -85,3 +85,24 @@ equivalence check, not a semantic accuracy or model-cost improvement claim.
 Production-path tests first reproduced serialized-job failure and compact-view
 eviction. The final 118 hierarchy/HDBSCAN/V3 checks and 24 shared receipt-reader
 checks pass, including corruption detection and completed-result recovery.
+
+## Multicore continuation
+
+The user authorized using 24 of this machine's 28 CPUs, leaving four for other
+work. Native `run-hierarchy --cpu-workers 24` records the runtime budget; its
+default leaves four available CPUs. Linux affinity is limited for the
+coordinator and inherited by newly started children, then restored on exit.
+Simultaneous membership clusterings divide this budget. Provider queue
+admission remains separate.
+
+Independent saved HDBSCAN rounds and their section cuts are rechecked in
+worker processes when their combined input count reaches 1,024 vectors. Small
+checks stay inline. Workers receive the same immutable state snapshot, rebuild
+the expected requests, hash complete evidence files and reproduce all groups
+and cuts; validation verdicts are not retained between advancements. No model
+request or placement depends on the numerical worker-completion order.
+
+An explicit `--hdbscan-binary` replacement requires a reviewed
+`--runner-upgrade-reason` and settled teacher batches. The native upgrade
+records old and new paths/hashes and the unchanged graph hash, preserving
+the original executable and saved results. It does not edit frozen definitions.

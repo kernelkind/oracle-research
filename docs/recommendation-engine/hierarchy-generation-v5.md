@@ -179,6 +179,13 @@ using the same frozen pool and separate output directories. Results are
 collected in sibling order and applied together. A failed sibling preserves
 other completed results for resume. This local concurrency does not limit
 teacher submissions or change the shared runner's provider queue.
+The local CPU budget is divided across simultaneous membership jobs, rather
+than allocating the full budget to each job. `run-hierarchy --cpu-workers 24`
+uses at most 24 available CPUs; its default leaves four available CPUs for
+other work. On Linux the coordinator and newly started children inherit the
+limited CPU affinity. Independent saved numerical checks use worker processes
+for large inputs, preserving all request, result, group and cut checks. Small
+inputs are checked inline.
 
 ## Native workflow
 
@@ -227,6 +234,11 @@ introduced.
 Historical definitions retain their frozen policies and settings on resume.
 They do not acquire a later version's eligibility or ranking rules. HR27 and V5's
 version description are recorded in the hierarchy workbook.
+An explicitly reviewed numerical executable replacement uses
+`run-hierarchy --hdbscan-binary PATH --runner-upgrade-reason REASON`. Source
+upgrades record its old and new paths and hashes and the unchanged graph hash;
+both executables remain source-bound. Existing numerical results are reused.
+Exact-output verification is required before adopting a runtime replacement.
 
 ## Experimental roots-only iterations
 

@@ -135,6 +135,7 @@ memmap2 = "=0.9.11"
 nostrdb = { git = "https://github.com/kernelkind/nostrdb-rs", rev = "aca2f66e3579dee0c9245e4c66100dd12cd940d6" }
 ort = { version = "=2.0.0-rc.12", default-features = false, features = ["api-24", "cuda", "load-dynamic", "std"] }
 profiling = "1.0"
+rayon = "=1.12.0"
 ratatui = { version = "=0.30.2", default-features = false, features = ["crossterm_0_29", "unstable-rendered-line-info"] }
 unicode-width = "0.2"
 serde = { version = "1", features = ["derive"] }

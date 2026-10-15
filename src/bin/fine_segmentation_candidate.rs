@@ -22,7 +22,7 @@ use serde_json::Value;
 use thiserror::Error;
 
 const SCHEMA_VERSION: u32 = 1;
-const USAGE: &str = "usage: fine-segmentation-candidate REQUEST.json";
+const USAGE: &str = "usage: fine-segmentation-candidate REQUEST.json [--threads N]";
 
 type Result<T> = std::result::Result<T, CliError>;
 
@@ -89,10 +89,38 @@ fn main() -> ExitCode {
 
 fn run() -> Result<Response> {
     let arguments = env::args_os().skip(1).collect::<Vec<_>>();
-    let [request_path] = arguments.as_slice() else {
-        return Err(invalid(USAGE));
+    let (request_path, threads) = match arguments.as_slice() {
+        [path] => (path, None),
+        [path, flag, count] if flag == "--threads" => {
+            let count = count
+                .to_str()
+                .and_then(|value| value.parse::<usize>().ok())
+                .filter(|count| *count > 0)
+                .ok_or_else(|| invalid(USAGE))?;
+            (path, Some(count))
+        }
+        _ => return Err(invalid(USAGE)),
     };
-    let request_path = Path::new(request_path);
+    let threads = threads
+        .or_else(|| {
+            env::var("RAYON_NUM_THREADS")
+                .ok()
+                .and_then(|value| value.parse::<usize>().ok())
+                .filter(|count| *count > 0)
+        })
+        .unwrap_or_else(|| {
+            std::thread::available_parallelism()
+                .map(|count| count.get().saturating_sub(4).max(1))
+                .unwrap_or(1)
+        });
+    let pool = rayon::ThreadPoolBuilder::new()
+        .num_threads(threads)
+        .build()
+        .map_err(|error| invalid(format!("cannot create numerical worker pool: {error}")))?;
+    pool.install(|| run_request(Path::new(request_path)))
+}
+
+fn run_request(request_path: &Path) -> Result<Response> {
     let bytes = fs::read(request_path).map_err(|source| CliError::Read {
         path: request_path.to_path_buf(),
         source,

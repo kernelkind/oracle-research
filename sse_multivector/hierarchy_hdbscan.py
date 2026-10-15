@@ -1,11 +1,14 @@
 """Source-bound HDBSCAN groups and numerical cuts of their saved hierarchy."""
 
 from collections import defaultdict
+from concurrent.futures import ProcessPoolExecutor
 from contextlib import contextmanager
 from contextvars import ContextVar
 import hashlib
 import json
 import math
+import multiprocessing
+import os
 from pathlib import Path
 import struct
 import subprocess
@@ -30,6 +33,71 @@ SECTION_CONFIGS = {
 }
 _RESULT_FILES = ContextVar('hierarchy_hdbscan_result_files', default=None)
 _RESULT_CACHE_BYTES = 1024 * 1024 * 1024
+_CPU_WORKERS = ContextVar('hierarchy_cpu_workers', default=None)
+_PARALLEL_MIN_VECTORS = 1024
+_VALIDATION_STATE = None
+
+
+def cpu_workers():
+    configured = _CPU_WORKERS.get()
+    if configured is not None:
+        return configured
+    available = (len(os.sched_getaffinity(0)) if hasattr(os, 'sched_getaffinity')
+                 else os.cpu_count() or 1)
+    return max(1, available - 4)
+
+
+@contextmanager
+def cpu_scope(workers=None):
+    """Share one local CPU budget; provider request admission is independent."""
+    workers = cpu_workers() if workers is None else workers
+    if type(workers) is not int or workers < 1:
+        raise ValueError('cpu_workers must be a positive integer')
+    affinity = os.sched_getaffinity(0) if hasattr(os, 'sched_getaffinity') else None
+    workers = min(workers, len(affinity) if affinity else os.cpu_count() or 1)
+    token = _CPU_WORKERS.set(workers)
+    try:
+        if affinity is not None:
+            os.sched_setaffinity(0, sorted(affinity)[:workers])
+        yield workers
+    finally:
+        if affinity is not None:
+            os.sched_setaffinity(0, affinity)
+        _CPU_WORKERS.reset(token)
+
+
+def _validation_worker_init(state):
+    global _VALIDATION_STATE
+    _VALIDATION_STATE = state
+
+
+def _validate_saved_round(job, state=None):
+    from . import hierarchy_generation as generation
+    family, round_ = job
+    state = _VALIDATION_STATE if state is None else state
+    with source_scope(), workflow.report_scope():
+        vectors = generation._vectors(state, round_['current'])
+        check_round(state, family, round_, vectors)
+        if round_.get('selection') is not None and round_['groups']:
+            request, mapping = request_for(state, round_['current'], vectors)
+            tree = project(read_result(round_['hdbscan']['result']), request, mapping)
+            if round_['selection'] != select_sections(tree, state['max_siblings']):
+                raise ValueError('V5 section cut changed')
+
+
+def check_rounds(state, jobs):
+    """Recheck every saved numerical result, using independent worker processes."""
+    workers = min(cpu_workers(), len(jobs))
+    if workers > 1 and sum(len(r['current']) for _, r in jobs) >= _PARALLEL_MIN_VECTORS:
+        with ProcessPoolExecutor(max_workers=workers,
+                                 mp_context=multiprocessing.get_context('spawn'),
+                                 initializer=_validation_worker_init, initargs=(state,)) as pool:
+            futures = [pool.submit(_validate_saved_round, job) for job in jobs]
+            for future in futures:
+                future.result()
+    else:
+        for job in jobs:
+            _validate_saved_round(job, state)
 
 
 @contextmanager
@@ -270,7 +338,7 @@ def members(response, request, mapping):
     return [[mapping[i] for i in group] for group in segments]
 
 
-def round_for(directory, state, family, vectors):
+def round_for(directory, state, family, vectors, *, workers=None):
     ids = list(family["current"])
     request, mapping = request_for(state, ids, vectors)
     destination = directory / f"hdbscan-{len(family['rounds']):05d}"
@@ -278,8 +346,9 @@ def round_for(directory, state, family, vectors):
     request_path, result_path = destination / "request.json", destination / "result.json"
     trial._save_once(request_path, request)
     if not result_path.exists():
+        environment = dict(os.environ, RAYON_NUM_THREADS=str(cpu_workers() if workers is None else workers))
         result = subprocess.run([state["hdbscan_binary"], str(request_path)],
-                                capture_output=True, check=False)
+                                capture_output=True, check=False, env=environment)
         (destination / "stderr.txt").write_bytes(result.stderr)
         if result.returncode:
             raise ValueError("HDBSCAN command failed: " + result.stderr.decode(errors="replace"))

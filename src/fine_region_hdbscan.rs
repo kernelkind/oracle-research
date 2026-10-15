@@ -28,10 +28,11 @@
 
 use std::collections::{BTreeMap, BTreeSet, VecDeque};
 
+use rayon::prelude::*;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
-use crate::fine_region_partition::CosineMatrix;
+use crate::fine_region_partition::{CosineMatrix, mirror_upper_triangle};
 
 pub type Result<T> = std::result::Result<T, HdbscanError>;
 
@@ -319,7 +320,7 @@ fn validate(vector_count: usize, config: HdbscanConfig) -> Result<()> {
 fn angular_distances(cosines: &CosineMatrix) -> Result<Vec<f64>> {
     let count = cosines.count();
     let mut distances = vec![0.0; count * count];
-    for left in 0..count {
+    let results = distances.par_chunks_mut(count).enumerate().map(|(left, row)| {
         for right in (left + 1)..count {
             let cosine = cosines
                 .get(left, right)
@@ -333,19 +334,22 @@ fn angular_distances(cosines: &CosineMatrix) -> Result<Vec<f64>> {
                     "identical vector directions at input ordinals {left} and {right}; deduplicate embeddings before HDBSCAN*"
                 )));
             }
-            distances[left * count + right] = distance;
-            distances[right * count + left] = distance;
+            row[right] = distance;
         }
+        Ok(())
+    }).collect::<Vec<Result<()>>>();
+    for result in results {
+        result?;
     }
+    mirror_upper_triangle(&mut distances, count);
     Ok(distances)
 }
 
 fn core_distances(distances: &[f64], count: usize, min_samples: usize) -> Vec<f64> {
-    (0..count)
-        .map(|point| {
-            let mut neighborhood = (0..count)
-                .map(|other| distances[point * count + other])
-                .collect::<Vec<_>>();
+    distances
+        .par_chunks(count)
+        .map(|row| {
+            let mut neighborhood = row.to_vec();
             neighborhood.sort_by(f64::total_cmp);
             neighborhood[min_samples - 1]
         })
@@ -358,15 +362,18 @@ fn mutual_reachability_distances(
     count: usize,
 ) -> Vec<f64> {
     let mut mutual = vec![0.0; count * count];
-    for left in 0..count {
-        for right in left..count {
-            let value = distances[left * count + right]
-                .max(core_distances[left])
-                .max(core_distances[right]);
-            mutual[left * count + right] = value;
-            mutual[right * count + left] = value;
-        }
-    }
+    mutual
+        .par_chunks_mut(count)
+        .enumerate()
+        .for_each(|(left, row)| {
+            for right in left..count {
+                let value = distances[left * count + right]
+                    .max(core_distances[left])
+                    .max(core_distances[right]);
+                row[right] = value;
+            }
+        });
+    mirror_upper_triangle(&mut mutual, count);
     mutual
 }
 
