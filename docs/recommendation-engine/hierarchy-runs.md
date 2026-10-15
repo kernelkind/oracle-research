@@ -1463,14 +1463,16 @@ answer reuse does not write new references into earlier runs' histories.
 Prompts, model and numerical controls match HR29: Bootstrap-v133,
 Consolidated-grouped-v1, GPT-6.1 Sol medium on subscription SSE; HDBSCAN angular,
 min_samples=3, min_cluster_size=2 and excess-of-mass. The shared runner owns
-request concurrency, caching, exact reuse and two-attempt provider recovery.
-There is no total attempt cap or paid fallback. Meanings/vectors for new
-entries are generated through the existing automated native V5 constructor;
+request concurrency, caching, exact reuse and provider recovery. The initial
+invocation used a two-attempt limit; the autonomous continuation has no attempt
+cap or paid fallback. New Bootstrap and consolidation requests use one-hour
+client deadlines; completed producers retain their original settings.
+Meanings/vectors for new entries are generated through the existing automated native V5 constructor;
 no alternate constructor, source-prompt edit or manual graph assembly is used.
 
 [Definition](../../sse_multivector/hierarchy-runs/hr30/hierarchy.spec.json),
 [selection evidence](../../../oracle-mvp-hierarchy-hr30-v5/target/hierarchy-hr30-v5-thousand-note-v1/selection.json),
-[resumed native state](../../../oracle-mvp-hierarchy-hr30-v5/target/hierarchy-hr30-v5-thousand-note-v1/HR30-resumed-v1/state.json),
+[continuation state](../../../oracle-mvp-hierarchy-hr30-final-v1/target/hierarchy-hr30-v5-final-v1/HR30/state.json),
 and [execution provenance](../../../oracle-mvp-hierarchy-hr30-v5/target/hierarchy-hr30-v5-thousand-note-v1/execution-provenance.json)
 preserve the run. Its execution worktree remains frozen. The initial invocation
 stopped after **68m 54s**, with **7,035 valid answers and one failed case, L01813**.
@@ -1481,8 +1483,8 @@ text is not substituted for a validated answer. The initial invocation stopped
 before encoding, clustering or canonical-node construction. Two diagnostic
 quote errors remain nonblocking under the existing Bootstrap diagnostic contract.
 
-The repository's ordinary retry rule forbids local-timeout retries. The user
-explicitly instructed "you MUST retry" on 2026-10-15. A one-case native
+The initial retry rule excluded local-timeout retries. The user later removed
+that rule and explicitly instructed "you MUST retry" on 2026-10-15. A one-case native
 [recovery batch](../../../oracle-mvp-hierarchy-hr30-v5/target/hierarchy-hr30-v5-thousand-note-v1/bootstrap-timeout-recovery-v1/report.json)
 succeeded with one fresh Bootstrap request and one automatic warmup. Its complete
 request identity exactly matches the failed request; the failed receipt and
@@ -1491,8 +1493,17 @@ available and valid.** A fresh native construction state uses the same frozen
 definition and exact-request history, reusing those answers rather than
 resampling them. The original stopped state remains saved separately.
 
-This is a scoped recovery exception, not a change to the ordinary retry policy.
-No prompt, constructor or runner code changed. The initial invocation's
+The continuation uses tested V5 recovery support: it retains completed meanings
+when only the client timeout increases, schedules missing vectors, and skips
+valid unresolved topics instead of blocking other notes. One post containing
+only `#2100Rocks` and two opaque links has a valid null answer for its only
+topic; that note's omission is reported without inventing a meaning. Prompt
+wording and the original 1,000-note inventory remain unchanged. The shared
+runner also retains one large historical source manifest while validating
+reused receipts, avoiding repeated parsing of the 199 MB Bootstrap manifest.
+All native receipt and source checks remain required.
+
+The initial invocation's
 [native usage](../../../oracle-mvp-hierarchy-hr30-v5/target/hierarchy-hr30-v5-thousand-note-v1/usage-blocked.json)
 records 5,514 fresh attempts, including one warmup and the failed request,
 plus 1,523 exact reuses. Its known API-equivalent subtotal is $39.571576;

@@ -105,8 +105,9 @@ use SSE for hierarchy construction.
 
 **Execution:** HR11–HR30 use prefix caching, automatic warming and exact-request
 answer reuse. Seed/temperature are unspecified; no explicit output-token cap.
-Normally at most two provider attempts per case across resumes, temporary
-provider errors only; HR14 and HR30 had approved recovery exceptions. HR22 used a
+The earlier runs used at most two provider attempts per case across resumes;
+HR14 and HR30 had approved recovery exceptions. The autonomous HR30 continuation
+has no attempt cap and uses one-hour Bootstrap/consolidation deadlines. HR22 used a
 scoped replacement checkpoint for one invalid evidence quote, preserving the
 strict validator and original prompts.
 
@@ -561,7 +562,9 @@ cd /home/dev/src/notedeck_worktrees/algos
 
 Running after user-authorized recovery of one local 600-second timeout.
 All 7,036 Bootstrap answers are available and valid; native V5 construction
-has resumed through exact reuse, with the original failed receipt preserved.
+has resumed from the completed producer, with the original failed receipt
+preserved. New request deadlines are one hour. The valid unresolved topic in
+the `#2100Rocks` post is skipped and its note omission is reported.
 There is no review UI yet.
 
 [Current state and evidence](hierarchy-runs.md#hr30--approved-1000-note-higen-v5-experiment).
