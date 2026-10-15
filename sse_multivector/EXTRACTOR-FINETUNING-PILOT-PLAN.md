@@ -39,7 +39,9 @@ all 23 runtime source hashes verified and anonymous access denied. The user
 approved the $43 maximum and proceeding with launch. The profile selects one
 600W Server card, the same type used by the successful pilot, at up to
 $1.66/hour; all other admission checks remain fixed. Read-only image pulling and push-scope rejection checks pass. Fresh offer/volume verification and committed budget admission precede rental.
-No continuation run has started.
+The continuation uses a 150GB local model-cache volume. Actual
+Qwen CUDA preparation is the next model gate. Training completion and new
+semantic grading are unconfirmed; the active experiment's source remains frozen.
 The dated setup directions below retain the earlier experiments' scope and
 evidence and do not require repeating Gemma checks or untuned baselines for Qwen.
 
