@@ -1603,7 +1603,8 @@ same worker process. Model initialization and both benchmark phases take
 209 seconds, excluding input verification. Diagnostic outputs are not graded.
 The manual twelve-note generation starts at **22:43 UTC**, preserving eight
 answers for an initial **8/20 (40%)**. Its source copy, policy and input hashes
-are frozen separately from the repository checkout; grading has not started.
+are frozen separately from the repository checkout; grading had not started at
+that launch.
 
 **Provisional audit and status — October 15, 10:55 UTC.** The latest verified
 snapshot at 10:55:42 UTC has **15/20 saved (75%)**: eight reused answers and
@@ -1723,7 +1724,7 @@ available host RAM stays above **23.18 GiB**; peak logged CUDA reservation is
 **90.48 GiB**. No GPU compute process remains after exit. The ignored receipt
 `target/qwen-thinking-20-sampled-20261015/full-validation.json` retains hashes,
 per-note counts and session evidence. This validates provenance and format;
-semantic grading has not started and model selection remains open.
+semantic grading was still pending at generation completion.
 
 The separate manual handoff uses native `prepare-distillation-review-trial
 --saved-generations GENERATIONS --model-output MODEL --generation-version VERSION`.
@@ -1731,8 +1732,37 @@ It requires the complete frozen cohort and `generation.complete.json`, binds
 the actual input, answer and runtime hashes, and derives its collection index
 without constructing review data manually. Additional immutable receipts use
 `--generation-source`; failed validation publishes no selection directory.
-Report paired correctness, coverage, invalid outputs, thought/final
-token counts and GX10 elapsed time after the completed manual grader handoff.
+
+**Completed sampled comparison — October 15.** The existing automatic grader
+finishes all **20/20** answers with valid correctness and coverage scores and
+**zero manual reviews**. Means below use the same twenty notes and the original
+1,000-note checkpoint's saved thinking-OFF answers:
+
+| Metric | Thinking OFF | Sampled thinking ON | Change, percentage points |
+| --- | ---: | ---: | ---: |
+| Correctness | 86.78% | 83.35% | -3.42 |
+| Coverage | 38.54% | 38.78% | +0.24 |
+
+The native run records **1,232 questions in 72 batches**, including fourteen
+final matching and two final coverage judgments. It exits successfully at
+**19:34:32 UTC**, about ten minutes after launch. The largest captured grader
+memory peak is **7.82 GiB** within its **32 GiB** boundary; minimum recorded host
+availability is **104.23 GiB**, with no OOM or swap use. Native grades are retained
+at `target/qwen-thinking-20-sampled-20261015/grading/automatic/grades.json`.
+
+Native usage records **186 reused reviewer answers** and **1,135 attempts**,
+including 36 failed attempts that all recover, with zero final failures.
+Known fresh grading usage is **878,420 input
+tokens**, of which **554,112 (63.08%)** are cached, and **284,783 output tokens**.
+The known catalogue-cost subtotal is **$4.66**, excluding 36 attempts without
+usage; this is not a reconciled provider charge. Source-provenance calls and
+older reused work are not counted as new work in these token totals.
+
+Sampled thinking uses **301,344 generated tokens**, versus **25,450** for the
+paired OFF answers (**11.84 times** as many), and **4 hours 47 minutes** of summed
+active GX10 wall time across the two sessions. On this screen, the additional
+thinking compute does not improve mean correctness; model selection remains open.
+
 These exposed validation notes provide a small screen, not unseen-note
 accuracy or proof that the full test exceeds 90%. Different generation hardware
 and the changed thinking sampler prevent attributing every difference to
