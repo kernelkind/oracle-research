@@ -37,6 +37,7 @@ original notes. Parameters describe the settings actually used.
 | HR30 | 1,000 | ASv6.100 | V5 | bootstrap-v133 | consolidated-grouped-v1 | — |
 | HR31 | 100 | ASv6.100 | V5.1 | bootstrap-v133 | consolidated-grouped-v1 | — |
 | HR32 | 200 | ASv6.100 | V5.1 | bootstrap-v133 | consolidated-grouped-v1 | — |
+| HR33 | 200 | ASv6.100 | V5.2 | bootstrap-v133 | consolidated-grouped-v1 | — |
 
 **Same notes:** HR03/HR10/HR14/HR16/HR19/HR20/HR21/HR27 use the same ordered 50-note selection.
 HR05/HR08/HR09/HR13/HR15/HR17/HR18 use its same ordered first 24 notes. HR04 uses
@@ -50,6 +51,9 @@ HR23 uses HR22’s exact ordered 100 notes, all 733 saved Bootstrap answers and
 original vectors. HR24 and HR25 reuse that same frozen corpus, all Bootstrap
 answers and vectors, changing only their two explicitly recorded HDBSCAN
 parameters.
+
+HR33 uses HR32's exact ordered 200-note corpus, saved Bootstrap meanings and
+vectors, changing section ranking to V5.2 at every level.
 
 **Selection and stopping:**
 
@@ -98,8 +102,9 @@ parameters.
   unclaimed top-only notes. Top-container access does not establish root coverage.
 - V5.2: V5.1's construction, ranking sections at every level by distinct notes
   not already covered by existing siblings in that lineup. Saved section order
-  breaks ties. This is the default for new definitions; offline checks pass,
-  but no full V5.2 hierarchy has been generated yet.
+  breaks ties. This is the default for new definitions. HR33 completed with
+  67 nodes and 189/200 notes beneath roots; 15 gained placement and two lost it
+  compared with HR32. Native validation and the review UI check passed.
 - HR14/HR16 omit two null Bootstrap meanings. HR17 had none. Answers and receipts
   remain saved; the original selected note set is preserved as input evidence.
 
@@ -620,3 +625,21 @@ cd /home/dev/src/notedeck_worktrees/algos
 
 Press L on a leaf to show its notes.
 [Full result and evidence](hierarchy-runs.md#hr32--hr29-corpus-with-higen-v51).
+
+## HR33 — 200 notes · HiGen V5.2
+
+HR32's exact ordered corpus, prompts, Bootstrap meanings and saved vectors.
+Sections rank by notes not already covered by existing siblings at every level.
+Complete: 67 canonical nodes, six roots, at most six children and five levels.
+The UI shows 189 notes beneath roots; 11 unclaimed notes stay in saved evidence.
+Compared with HR32, 15 gained root placement and two lost it. All 14 lineups
+finished, all 61 edges strictly narrow note sets, and native/UI checks passed.
+Semantic quality remains for review.
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos
+./oracle-mvp-hierarchy-hr33-v52/target/hr33-review-ui-v1/launch.sh
+```
+
+Press L on a leaf to show its notes.
+[Full result and evidence](hierarchy-runs.md#hr33--hr32-corpus-with-higen-v52).

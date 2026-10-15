@@ -8847,6 +8847,78 @@
           "sha256": "b91ff25df042e4153b44d2e9a7555c8612df508513fffbd28d94700ed020416c"
         }
       ]
+    },
+    {
+      "version_id": "HR33",
+      "name": "ASv6.100 200-note HiGen V5.2 — HR32 corpus / Bootstrap-v133 / Consolidated-grouped-v1",
+      "root": "../../oracle-mvp-hierarchy-hr33-v52",
+      "artifact_path": "target/hierarchy-hr33-v52-two-hundred-note-v1/HR33/state.json",
+      "sha256": "12cb1d2ff1255ac95cb2d58690c37c4f0b5fed7cf18925164dcbc5123a41696b",
+      "code_provenance": {
+        "sidecar": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr33-v52/target/hierarchy-hr33-v52-two-hundred-note-v1/HR33/code-provenance.json",
+        "git": {
+          "oracle": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr33-v52",
+            "git_commit": "159ca516859f6a27bc821ad6a769f054ccc08312",
+            "uncommitted_source": false
+          },
+          "runner_coordinator": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/experiment-runner",
+            "git_commit": "36dfcf6390eaaa5e46fff07cba7581003b8877a4",
+            "uncommitted_source": false
+          },
+          "bootstrap_transport": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/experiment-runner-hr26-source-v1",
+            "git_commit": "1cfdd6a76a9910b2c9dea0ca395f825b90485f7e",
+            "uncommitted_source": false
+          },
+          "consolidation_transport": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/experiment-runner-hr26-source-v1",
+            "git_commit": "1cfdd6a76a9910b2c9dea0ca395f825b90485f7e",
+            "uncommitted_source": false
+          }
+        }
+      },
+      "experimental_parameters": {
+        "baseline": "HR32",
+        "generation_policy": "hierarchy-generation-v5.2",
+        "definition": {
+          "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr33-v52/sse_multivector/hierarchy-runs/hr33/hierarchy.spec.json",
+          "sha256": "43abbdad8d8805d8ce811da1c45cbfa07dfa6a8abe67eaa1c692c1048091f0b7"
+        },
+        "parameter_ledger": {
+          "path": "docs/recommendation-engine/hierarchy-parameters.csv",
+          "row": "HR33"
+        },
+        "native_usage": {
+          "fresh": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr33-v52/target/hierarchy-hr33-v52-two-hundred-note-v1/usage-new.json",
+          "all_producers": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr33-v52/target/hierarchy-hr33-v52-two-hundred-note-v1/usage-all-producers.json",
+          "scope": "Fresh totals include consolidation only with complete usage; copied Bootstrap dispatches remain historical. All-producer generation usage has eight historical missing failed-call usages."
+        },
+        "qualification": "Native validation and UI check passed: 189 notes beneath roots, 11 unclaimed hidden. Compared with HR32, 15 notes gained root placement and two lost it. No human semantic approval or quality-preserving savings claim."
+      },
+      "related_outputs": [
+        {
+          "label": "Review hierarchy (HR33)",
+          "path": "target/hr33-review-ui-v1/hierarchy.json",
+          "sha256": "dcf5e203a60eb0af13f34f2ba690bc5e48648d03b0e0eec2770dde9df66a32ef"
+        },
+        {
+          "label": "Original-note browser (HR33)",
+          "path": "target/hr33-review-ui-v1/notes.json",
+          "sha256": "777e201bdcae796e1cf20e81c4a027b3eb9558a1dd5c96961c6f3364b2fa027f"
+        },
+        {
+          "label": "Terminal validation",
+          "path": "target/hierarchy-hr33-v52-two-hundred-note-v1/HR33/terminal-validation.json",
+          "sha256": "c094a626a81ab62745ff6239e27d3d81a3fc7dfb3dd520b2591943fa976ee4d7"
+        },
+        {
+          "label": "Root coverage comparison with HR32",
+          "path": "target/hierarchy-hr33-v52-two-hundred-note-v1/HR33/root-coverage-comparison.json",
+          "sha256": "0352528241b47c11f785be397f6ecb283dfa84c23334e616f61eca184f71cf48"
+        }
+      ]
     }
   ]
 }

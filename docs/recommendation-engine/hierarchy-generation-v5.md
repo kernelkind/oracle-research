@@ -7,8 +7,11 @@ rule: entries left unassigned by the first root clustering remain available for
 subsequent root rounds.
 Historical V5 excludes those entries unless its experimental eligibility
 option was explicitly enabled. The recursive replacement process, prompts,
-clustering parameters, cuts and stopping rules are otherwise unchanged. V5.2's
-ranking is checked offline; no full V5.2 hierarchy has been generated yet.
+clustering parameters, cuts and stopping rules are otherwise unchanged. The first
+full V5.2 run, [HR33](hierarchy-runs.md#hr33--hr32-corpus-with-higen-v52),
+completed with 67 nodes and 189/200 notes beneath roots, versus HR32's 70 nodes
+and 176/200. Fifteen notes gained root placement and two lost it. Native checks
+and the review UI check passed; semantic quality remains for review.
 Bootstrap-v133 supplies original L1
 titles and explicit meanings. Consolidated-grouped-v1 names groups and broader
 sections. Offline native-workflow tests cover construction and recovery.

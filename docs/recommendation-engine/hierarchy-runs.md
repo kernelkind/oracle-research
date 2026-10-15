@@ -1724,3 +1724,80 @@ output count and command reflect the new 176-note view. Exact source/export
 hashes and canonical-node equality are saved in
 [export verification](../../../oracle-mvp-hierarchy-root-container-notes-v1/target/hr32-root-container-review-v1/export-verification.json).
 Retain this task worktree for that launchable UI and verification evidence.
+
+## HR33 — HR32 corpus with HiGen V5.2
+
+Complete in **11m 12s**, measured from the first native execution-settings
+record to the terminal run-summary write, including local runtime recovery.
+HR33 retains HR32's exact ordered 200-note corpus, ASv6.100 subjects,
+Bootstrap-v133, Consolidated-grouped-v1, GPT-6.1 Sol medium/SSE, one-hour
+deadlines, angular HDBSCAN (min_samples=3, min_cluster_size=2, EOM), title-only
+SSE pooling, numerical cuts and recursive stopping rules. V5.2 changes section
+ranking at every level to distinct notes not already covered by existing
+siblings, preserving saved order for ties. All 1,527 Bootstrap answers
+(1,520 non-null), 1,542 vector identities and 20 completed encoder jobs were
+reused from HR32; there were no new Bootstrap calls.
+
+The graph has **67 canonical nodes, 61 edges, six roots and 54 leaves**. All
+14 sibling lineups finished, with at most six children and five canonical
+levels. Native source, receipt and construction checks passed. All 61 edges
+strictly narrow distinct-note sets. The terminal summary is complete with no
+errors or unresolved cases; structural checks do not certify semantic quality.
+
+**189 notes are beneath roots**, versus HR32's 176. Fifteen gained root
+placement and two lost it (N117 and N182 in the fixed input order). Eleven
+remain unclaimed at root level and are hidden by the review exporter; they
+remain in the saved constructor evidence. The
+[source-bound coverage comparison](../../../oracle-mvp-hierarchy-hr33-v52/target/hierarchy-hr33-v52-two-hundred-note-v1/HR33/root-coverage-comparison.json)
+retains exact gained, lost and uncovered note IDs. No manual repair or shaping
+was applied. Root names and distinct-note counts are:
+
+| Root | Notes |
+| --- | ---: |
+| Media and communication · C00001 | 89 |
+| Food and living organisms · C00002 | 73 |
+| Human experience · C00003 | 55 |
+| Food and dietary lifestyles · C00004 | 41 |
+| Media and communication · C00005 | 38 |
+| Money and payment systems · C00006 | 16 |
+
+Counts overlap; identically titled roots are distinct saved nodes.
+
+[Fresh consolidation accounting](../../../oracle-mvp-hierarchy-hr33-v52/target/hierarchy-hr33-v52-two-hundred-note-v1/usage-new.json)
+records **64 actual attempts including warmups, 116 exact answer reuses,
+164 valid cases across 31 batches, and zero failures/retries or missing usage**.
+Fresh tokens are 41,753 uncached input, 82,048 cached input and 16,763 output,
+including 10,331 reasoning tokens. Fresh API-equivalent cost is **$0.2593408**;
+incremental subscription cash charge is zero. Consolidation producer-inclusive
+cost is $0.8593448.
+[All-producer accounting](../../../oracle-mvp-hierarchy-hr33-v52/target/hierarchy-hr33-v52-two-hundred-note-v1/usage-all-producers.json)
+has known generation subtotal $12.5491848, with eight historical failed-call
+usages missing, so its complete total is unknown. Copied Bootstrap dispatch
+counts are historical. Reuse differs from HR32; no policy-only cost saving or
+quality-preserving saving is claimed.
+
+The first launch used a Python environment without torch/transformers and
+stopped at the first newly required SSE job, before vector output. Native
+resume retained completed teacher answers and used the installed Python
+3.13.12 / torch 2.13.0+cpu / transformers 4.57.1 / tokenizers 0.22.2 environment.
+The resumed invocation took 7m 37s. Logs and
+[local recovery evidence](../../../oracle-mvp-hierarchy-hr33-v52/target/hierarchy-hr33-v52-two-hundred-note-v1/local-runtime-recovery.json)
+are preserved; this was not a model failure or a prompt/settings change.
+
+Frozen execution source is 159ca516, shared coordinator 36dfcf63 and original
+teacher transport 1cfdd6a7. All ready independent branches were submitted
+immediately through the shared 30-request queue, with no attempt-budget or
+per-case attempt override. The
+[frozen definition](../../sse_multivector/hierarchy-runs/hr33/hierarchy.spec.json),
+[native state](../../../oracle-mvp-hierarchy-hr33-v52/target/hierarchy-hr33-v52-two-hundred-note-v1/HR33/state.json),
+[code provenance](../../../oracle-mvp-hierarchy-hr33-v52/target/hierarchy-hr33-v52-two-hundred-note-v1/HR33/code-provenance.json)
+and [terminal validation](../../../oracle-mvp-hierarchy-hr33-v52/target/hierarchy-hr33-v52-two-hundred-note-v1/HR33/terminal-validation.json)
+retain controls and exact hashes. The state SHA-256 is
+`12cb1d2ff1255ac95cb2d58690c37c4f0b5fed7cf18925164dcbc5123a41696b`.
+The user-requested [review UI](hierarchy-review-commands.md#hr33--200-notes--higen-v52)
+reuses the existing binary and passed its offline check from /tmp: 67 canonical
+nodes plus one display container, 189 original notes, no top-container direct
+notes. The workbook was updated, reopened and verified with previous cells
+preserved. Retain the execution worktree for frozen source, receipts, vectors
+and the launchable UI. Next, review the new root choices and the two lost notes
+before claiming semantic improvement.
