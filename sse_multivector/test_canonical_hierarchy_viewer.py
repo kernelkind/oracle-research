@@ -71,6 +71,31 @@ class CanonicalHierarchyViewerTests(unittest.TestCase):
         self.assertFalse((self.root / 'changed').exists())
         self.assertEqual(fixtures.ExperimentTests.calls(self), [])
 
+    def test_top_container_excludes_notes_outside_roots_and_preserves_node_notes(self):
+        path = self.source()
+        state = json.loads(path.read_text())
+        state['direct_note_ids'] = ['unused', 'n1']
+        path.write_text(json.dumps(state))
+        original = path.read_bytes()
+
+        self.cli('export-canonical-viewer', 'trial', '--output', 'viewer')
+
+        view = json.loads((self.root / 'viewer/hierarchy.json').read_text())
+        nodes = {node['node_id']: node for node in view['nodes']}
+        self.assertEqual(nodes['VIEW_ROOT']['note_ids'], [])
+        self.assertEqual(nodes['VIEW_ROOT']['children'], ['C002', 'C001'])
+        self.assertEqual(nodes['C002']['note_ids'], ['N003'])
+        self.assertEqual(nodes['C003']['note_ids'], ['N001'])
+        self.assertEqual(view['notes'], [
+            {'note_id': 'n1', 'note_short_id': 'N001'},
+            {'note_id': 'n3', 'note_short_id': 'N003'}])
+        self.assertEqual(json.loads((self.root / 'viewer/notes.json').read_text()), {
+            'notes': [
+                {'note_id': 'n1', 'text': 'First original\npost.'},
+                {'note_id': 'n3', 'text': 'Third original post. '}]})
+        self.assertEqual(path.read_bytes(), original)
+        self.assertEqual(fixtures.ExperimentTests.calls(self), [])
+
     def test_export_uses_the_finished_menu_and_preserves_the_raw_graph(self):
         from sse_multivector.canonical_hierarchy_shape import finish_nodes
         path = self.source()

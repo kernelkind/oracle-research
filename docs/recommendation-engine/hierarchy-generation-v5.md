@@ -72,14 +72,19 @@ sections can still advance. Unclaimed original notes remain on the parent.
 Finish the lineup at six children, when only existing representatives remain,
 or when its sections provide no further new node or amendment. Do not encode
 or recluster a finished lineup merely to regroup existing representatives.
-The implementation keeps notes from unclaimed eligible entries directly on the
-parent, including the display container above the roots. That top-container
-fallback is not approved root placement; its final handling remains unresolved.
-Count coverage beneath actual roots separately from top-container access.
-V5.1 changes eligibility, not this fallback, and does not guarantee that every
-note will be assigned to a root. Canonical nodes retain
-all their supporting note associations, not just the notes left outside their
-children. The existing viewer export includes root-container notes.
+The constructor keeps notes from unclaimed eligible entries directly on the
+parent. At root level, those associations remain in the saved state's
+`direct_note_ids`; they are not approved root placement. V5.1 changes eligibility
+and does not guarantee that every note will be assigned to a root.
+Canonical nodes retain all their supporting note associations, not just the
+notes left outside their children.
+
+New review exports give the display-only top container no direct notes and
+include only notes represented beneath canonical roots. Notes outside children
+remain available inside canonical nodes. This is a review-export rule: it does
+not alter construction, canonical memberships or saved hierarchy evidence.
+Historical exports may still expose top-container notes; their recorded coverage
+remains historical evidence.
 
 ## Children and stopping
 

@@ -93,9 +93,9 @@ parameters.
   HR28 corpora covered 50/50 and 100/100 notes under actual roots, respectively;
   they are not new official HR runs or semantic approval. Full construction
   remains recursive. HR31 completed with 72 nodes and 100/100 notes beneath
-  its six actual roots. HR32 completed with 70 nodes and 200 accessible notes,
-  but only 176 beneath roots; 24 remain top-only. Top-container access does not
-  establish root coverage.
+  its six actual roots. HR32 completed with 70 nodes; its original export
+  exposed 200 notes. New exports show only the 176 beneath roots, hiding 24
+  unclaimed top-only notes. Top-container access does not establish root coverage.
 - HR14/HR16 omit two null Bootstrap meanings. HR17 had none. Answers and receipts
   remain saved; the original selected note set is preserved as input evidence.
 
@@ -603,13 +603,15 @@ Press L on a leaf to show its notes.
 HR29's exact ordered corpus and saved Bootstrap-v133 meanings/vectors; unchanged
 Consolidated-grouped-v1 and numerical controls. Complete in 15m 24s: 70 canonical
 nodes, six roots, at most six canonical children and five canonical levels.
-All 200 notes are accessible, but only 176 occur beneath roots; 24 remain
-available only directly at the top container. Native validation and UI check
-passed. Root placement and semantic quality remain for review.
+The current review export shows the 176 notes beneath roots. The 24 top-only
+notes remain in saved construction evidence and are hidden by the review UI.
+All 70 canonical nodes, meanings and memberships match the original export.
+Native validation and the updated UI check passed. Root placement and semantic
+quality remain for review.
 
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos
-./oracle-mvp-hierarchy-hr32-v51/target/hr32-review-ui-v1/launch.sh
+./oracle-mvp-hierarchy-root-container-notes-v1/target/hr32-root-container-review-v1/launch.sh
 ```
 
 Press L on a leaf to show its notes.

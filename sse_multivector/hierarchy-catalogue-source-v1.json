@@ -8823,16 +8823,26 @@
           "all_producers": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr32-v51/target/hierarchy-hr32-v51-two-hundred-note-v1/usage-all-producers.json",
           "scope": "Fresh totals include consolidation only with complete usage; copied Bootstrap counts remain historical. All-producer generation_usage includes historical Bootstrap/reuse sources and has eight missing failed-call usages."
         },
-        "qualification": "Native validation and UI check passed. 200 notes accessible, only 176 beneath actual roots, 24 top-container-only. No human semantic approval or quality-preserving savings claim; root coverage is one below HR29."
+        "qualification": "Native validation passed. Original export exposed 200 notes: 176 beneath roots and 24 top-only. Current review export shows only the 176 beneath roots; canonical nodes and saved state are unchanged. No human semantic approval or quality-preserving savings claim."
       },
       "related_outputs": [
         {
-          "label": "HR32 review hierarchy",
+          "label": "HR32 current review hierarchy; empty top container",
+          "path": "../oracle-mvp-hierarchy-root-container-notes-v1/target/hr32-root-container-review-v1/hierarchy.json",
+          "sha256": "fc57cdfe494e92ba74c64d1f7046f6cc798d9cfacf3e1427c054173217b941d6"
+        },
+        {
+          "label": "HR32 current review notes; canonical notes only",
+          "path": "../oracle-mvp-hierarchy-root-container-notes-v1/target/hr32-root-container-review-v1/notes.json",
+          "sha256": "de680b2e46b06f350a51b4ae89bd1b8e274b60cbc5278c825764db95dcf208e4"
+        },
+        {
+          "label": "HR32 original review hierarchy",
           "path": "target/hr32-review-ui-v1/hierarchy.json",
           "sha256": "2d65b98bdd20fb0b03ad3c3d0b838c209e6394c5bd455257d5d83178ac7bb5cd"
         },
         {
-          "label": "HR32 original notes",
+          "label": "HR32 original review notes",
           "path": "target/hr32-review-ui-v1/notes.json",
           "sha256": "b91ff25df042e4153b44d2e9a7555c8612df508513fffbd28d94700ed020416c"
         }

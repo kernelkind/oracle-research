@@ -203,16 +203,19 @@ class V5ConstructionTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, 'invalid hierarchy generation spec'):
                     generation.prepare(spec, self.native.root/'invalid')
 
-    def test_original_noise_is_excluded_but_leftover_notes_survive_viewer_export(self):
+    def test_leftover_notes_stay_in_state_but_not_the_viewer_container(self):
         from sse_multivector.canonical_hierarchy_viewer import export_viewer
         state = self.construct(self.prepare(count=22, tied=True))
         self.assertEqual(len(state['nodes']), 6)
         self.assertEqual(len(state['v5']['original_unassigned_ids']), 1)
         self.assertEqual(len(state['direct_note_ids']), 3)
+        state_path = self.native.root/'v5/state.json'
+        original = state_path.read_bytes()
         result = export_viewer(self.native.root/'v5', self.native.root/'viewer')
-        self.assertEqual(result['note_count'], 21)
+        self.assertEqual(result['note_count'], 18)
         view = json.loads(Path(result['hierarchy']).read_text())
-        self.assertEqual(len(view['nodes'][0]['note_ids']), 3)
+        self.assertEqual(view['nodes'][0]['note_ids'], [])
+        self.assertEqual(state_path.read_bytes(), original)
 
     def test_amendment_retains_ownership_and_later_noise_stays_eligible(self):
         from sse_multivector import hierarchy_generation as generation
@@ -274,7 +277,8 @@ class V5ConstructionTests(unittest.TestCase):
         generation.check_state(state)
         from sse_multivector.canonical_hierarchy_viewer import export_viewer
         viewer = export_viewer(self.native.root/'v5', self.native.root/'v51-viewer')
-        self.assertEqual(viewer['note_count'], len(state['note_ids']))
+        self.assertEqual(len(state['note_ids']), 43)
+        self.assertEqual(viewer['note_count'], 41)
 
     def test_v51_reuses_saved_v5_bootstrap_and_vectors_without_mutating_the_source(self):
         from sse_multivector import hierarchy_generation as generation

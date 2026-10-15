@@ -1612,10 +1612,11 @@ HDBSCAN min_samples=3/min_cluster_size=2, EOM and title-only SSE pooling are
 unchanged. V5.1 retains initially unassigned original entries for later root
 rounds; this is full recursive construction without a roots-only override.
 
-The final graph has **70 canonical nodes, 64 edges, six roots and 200 accessible
-notes**. **Only 176 notes occur beneath actual roots; 24 are available only at
-the top container.** None is omitted from the UI. All 15 sibling families are
-finished, with 56 leaves, at most six canonical children and five canonical
+The final graph has **70 canonical nodes, 64 edges and six roots**. The original
+review export exposed 200 notes: **176 beneath actual roots and 24 only at the
+top container**. The updated review export described below hides those 24;
+no construction evidence or canonical memberships were changed. All 15 sibling
+families are finished, with 56 leaves, at most six canonical children and five canonical
 levels. Native source, receipt and construction checks passed; the terminal
 run-summary contains no errors or unresolved results. This does not establish
 acceptable root placement or semantic approval. The retained top-container
@@ -1705,3 +1706,21 @@ saved vector/tree outputs without recomputation. This was not a teacher or
 hierarchy-construction failure. The original experiment workbook row remains
 the original HR32 result; this diagnostic does not replace it. Retain the
 worktree for the saved diagnostic, additional encoder receipt and frozen links.
+
+### HR32 — review container correction
+
+The user requested hiding notes outside roots in the first display container.
+The fix is in `canonical_hierarchy_viewer.py`, not the HiGen constructor or
+canonical memberships. New exports give `VIEW_ROOT` no direct notes and include
+only notes represented by canonical nodes. Canonical nodes still expose their
+own notes outside children. The original HR32 state remains byte-identical.
+
+The updated [review export](hierarchy-review-commands.md#hr32--200-notes--higen-v51)
+contains the same 70 canonical nodes, meanings, edges and memberships, with
+176 visible notes and six roots. Its existing viewer binary passed the offline
+check from /tmp; no model calls or constructor runs were made. The prior
+200-note export remains saved as historical evidence. The spreadsheet's current
+output count and command reflect the new 176-note view. Exact source/export
+hashes and canonical-node equality are saved in
+[export verification](../../../oracle-mvp-hierarchy-root-container-notes-v1/target/hr32-root-container-review-v1/export-verification.json).
+Retain this task worktree for that launchable UI and verification evidence.

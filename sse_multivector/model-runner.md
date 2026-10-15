@@ -1879,8 +1879,12 @@ editing or rebinding its sources.
 
 Inspect saved results with the existing `export-canonical-viewer` command only
 when requested. Exported headings show the topic and canonical node ID; the
-navigation menu shows note counts. Supporting note IDs remain available for
-note browsing without being enumerated in headings or details.
+navigation menu shows note counts. The display-only top container has no direct
+notes: exports include only notes represented beneath canonical roots. Notes
+outside children remain available inside canonical nodes. Saved constructor
+state, including root-level unclaimed-note evidence, is unchanged. Supporting
+note IDs remain available for note browsing without being enumerated in headings
+or details.
 Offline export verifies the saved constructor sources and receipts and may run
 from a different checkout; advancing construction still requires its bound
 checkout or a reviewed source upgrade.
