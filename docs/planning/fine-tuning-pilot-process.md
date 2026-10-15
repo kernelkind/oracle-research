@@ -288,7 +288,7 @@ runtime hashes. The VM is stopped. Actual Qwen CUDA preparation remains the
 first model gate on the paid rental.
 
  The main pilot's GPU
-charge is $133.907. The final backup storage cost was $0.888. The posted working-storage charge was $16.361.   
+charge is $133.907. The final backup storage cost was $0.888. The posted working-storage charge was $16.361.  
 
 The user approved the $43 ceiling with a $1.66 hourly limit, covering the
 unchanged 24-hour allowance, transfer allowances and separate $1.50 storage
