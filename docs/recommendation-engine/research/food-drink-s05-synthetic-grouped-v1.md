@@ -109,5 +109,5 @@ unassigned inputs, including Food and domestic animals: they derive from
 originally grouped entries. The next pool therefore contains 217 inputs
 (`255 - 39 + 1`), with the original 361 unassigned entries still excluded.
 The existing synthetic definition, original associations, HDBSCAN settings and
-epsilon rule stay unchanged. This is the approved experiment plan, not a claim
-that the S10 calls or replacement have already completed.
+epsilon rule stay unchanged. The [completed S10 replacement](food-drink-s10-synthetic-grouped-v1.md)
+records the two calls, exact reuse, retained inputs and new numerical result.
