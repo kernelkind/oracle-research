@@ -1645,8 +1645,24 @@ and a **separate two-note diagnostic on notes 20 and 34**. Its sampler uses
 outputs and receipts remain separate from the fifteen greedy answers; no
 saved greedy record is replaced. This authorizes only **two diagnostic
 generation calls**. A full twenty-note sampled quality comparison remains
-open. This records approval and intended execution, not a verified stop or
-launch.
+open.
+
+The greedy stop is verified at **14:02:46 UTC**: all fifteen local and remote
+saved-answer hashes remain unchanged, the generation unit is inactive, and no
+GPU compute process remains. Idle host available RAM returns to **117.9 GiB**.
+The stop receipt is retained under
+`target/qwen-thinking-20-natural-20261014/generation.stopped-sampler-change.json`.
+The separate `qwen-thinking-20-sampled-20261015` generation unit launches at
+**14:09:40 UTC**, with its memory watchdog active and independently frozen
+source and inputs. This records launch, not completed results or quality.
+
+The sampled collection freezes all twenty original note identities with **no
+greedy-answer reuse**. The launch selects only `--note-index 20 --note-index 34`
+and `--max-num-active-seqs 2`; the eight model-runner slots remain a ceiling.
+Resuming with those selectors validates and skips their saved answers without
+generating the other notes. The full `generation.complete.json` marker requires
+all twenty answers, so completing this two-note diagnostic does not mark the
+full collection complete or authorize the remaining eighteen generations.
 
 The twenty-note thinking comparison is incomplete; grading has not started.
 Report paired correctness, coverage, invalid outputs, thought/final
