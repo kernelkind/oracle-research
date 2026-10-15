@@ -111,6 +111,37 @@ class SectionReplacementTests(unittest.TestCase):
                 '--case', witness['producer']['case']).stdout)
             self.assertEqual(payload['nodes'][selected['groups'].index(witness['group'])], saved['parsed'])
         native.cli('run', 'second-section')
+        # Independently named disjoint sections must apply together without losing either result.
+        proposals = dict(schema_version=1, replacement_review=str(native.root/'filtered/analysis.json'),
+            proposals=[dict(experiment=str(native.root/'second-section'), case=second_label),
+                       dict(experiment=producer['experiment'], case=producer['case'], section=single_label)])
+        native.write('round.json', proposals)
+        combined = subprocess.run([sys.executable, '-m', 'sse_multivector.hdbscan_root_round',
+            'prepare', str(native.root/'combined'), '--source', str(native.root/'round.json')],
+            cwd=fixtures.PROJECT, capture_output=True, text=True)
+        self.assertEqual(combined.returncode, 0, combined.stdout+combined.stderr)
+        joint = json.loads((native.root/'combined/replacement.json').read_text())['plan']
+        self.assertEqual(joint['replacement_ids'], ['R00002', 'R00003'])
+        self.assertEqual(len(joint['root_changes']), 2)
+        expected_removed = {i for g in derived['groups']
+                            if g['id'] in selected['groups']+single['groups'] for i in g['original_ids']}
+        before = json.loads((native.root/'filtered/replacement.json').read_text())['plan']
+        self.assertEqual(joint['current_ids'],
+            [i for i in before['current_ids'] if i not in expected_removed]+['R00002', 'R00003'])
+        self.assertEqual(joint['excluded_unassigned_ids'], before['excluded_unassigned_ids'])
+        self.assertEqual(len(joint['pool']['encodings']), len(before['pool']['encodings']))
+        replacement('collect', native.root/'combined')
+        replacement('roots', native.root/'combined', '--name', 'combined-roots')
+        joint_view = json.loads((native.root/'combined/combined-roots.json').read_text())
+        self.assertEqual([r['slots'] for r in joint_view['roots']], [[1], [2], [3]])
+        self.assertEqual(joint_view['root_count'], 3)
+        native.write('overlap.json', dict(proposals, proposals=[proposals['proposals'][0]]*2))
+        overlap = subprocess.run([sys.executable, '-m', 'sse_multivector.hdbscan_root_round',
+            'prepare', str(native.root/'overlap'), '--source', str(native.root/'overlap.json')],
+            cwd=fixtures.PROJECT, capture_output=True, text=True)
+        self.assertNotEqual(overlap.returncode, 0)
+        self.assertIn('overlap', overlap.stderr)
+        self.assertFalse((native.root/'overlap').exists())
         replacement('prepare', native.root/'second', '--experiment', native.root/'second-section',
                     '--case', second_label)
         before = json.loads((native.root/'filtered/replacement.json').read_text())['plan']

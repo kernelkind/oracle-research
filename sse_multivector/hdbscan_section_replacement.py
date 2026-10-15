@@ -347,7 +347,8 @@ def prepare_source(source, base, read, read_bytes):
         purpose='Name reviewed groups, then their synthetic section; preserve saved hierarchies.')
 
 
-def _prepare_next(directory, experiment, case, *, source=None):
+def _section_result(experiment, case, *, source=None):
+    """Validate one section result and freeze all of its exact source evidence."""
     evidence = case['evidence']
     reuse = source is not None
     if not reuse and evidence.get('stage') != 'section':
@@ -384,6 +385,12 @@ def _prepare_next(directory, experiment, case, *, source=None):
         raise ValueError('replacement producer differs from the reviewed section')
     _saved_case(experiment, case['id'], read_bytes)
     prior = _load_replacement(Path(evidence['replacement_review']).parent)
+    return evidence, sources, prior
+
+
+def _prepare_next(directory, experiment, case, *, source=None):
+    reuse = source is not None
+    evidence, sources, prior = _section_result(experiment, case, source=source)
     pool = prior['pool']
     generation._collect_encodings(pool)
     removed = evidence['input_ids']
@@ -400,7 +407,7 @@ def _prepare_next(directory, experiment, case, *, source=None):
                                     original_ids=origins)
     for path in [Path(__file__), Path(review.__file__), Path(generation.__file__),
                  Path(worker.__file__), Path(review.hdbscan.__file__)]:
-        read_bytes(path)
+        sources[str(path.resolve())] = sha(path)
     pool['sources'] = {str(Path(worker.__file__).resolve()): sha(worker.__file__)}
     directory.mkdir(parents=True, exist_ok=False)
     first_new_encoding = len(pool['encodings'])
@@ -438,17 +445,20 @@ def write_roots(directory, *, name='proposed-roots'):
             raise ValueError('root lineage preparation changed')
     active, next_slot = {}, 1
     for plan in reversed(chain):
-        identifier = plan.get('replacement_id', 'R00001')
-        if identifier in active:
-            continue  # A filtering-only preparation preserves the existing root.
-        absorbed = [active.pop(i) for i in plan.get('removed_input_ids', []) if i in active]
-        if absorbed:
-            slots = sorted({s for r in absorbed for s in r['slots']})
-            version = 1+max(r['version'] for r in absorbed)
-        else:
-            slots, version = [next_slot], 1
-            next_slot += 1
-        active[identifier] = dict(slots=slots, version=version)
+        changes = plan.get('root_changes', [dict(id=plan.get('replacement_id', 'R00001'),
+                                               removed_input_ids=plan.get('removed_input_ids', []))])
+        for change in changes:
+            identifier = change['id']
+            if identifier in active:
+                continue  # A filtering-only preparation preserves the existing root.
+            absorbed = [active.pop(i) for i in change['removed_input_ids'] if i in active]
+            if absorbed:
+                slots = sorted({s for r in absorbed for s in r['slots']})
+                version = 1+max(r['version'] for r in absorbed)
+            else:
+                slots, version = [next_slot], 1
+                next_slot += 1
+            active[identifier] = dict(slots=slots, version=version)
     records = analysis.get('replacements', [analysis['replacement']])
     roots = sorted([dict(r, **active[r['id']]) for r in records], key=lambda r: r['slots'])
     notes = sorted({n for r in roots for n in r['note_ids']})
