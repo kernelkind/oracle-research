@@ -35,7 +35,8 @@ container-replacement rehearsal with local recovery using tiny CPU models.
 Pinned-runtime/SSH rehearsal and the actual Qwen tokenizer check pass. Launch
 preparation is authorized, and the matching image is published privately with
 all 23 runtime source hashes verified and anonymous access denied. No current
-offer passes within the approved $30 ceiling. A proposed $43 maximum remains pending; fresh offer/volume verification and committed budget admission precede rental.
+offer passes within the approved $30 ceiling. A proposed $43 maximum remains
+pending. Read-only image pulling and push-scope rejection checks pass. Fresh offer/volume verification and committed budget admission precede rental.
 No continuation run has started.
 The dated setup directions below retain the earlier experiments' scope and
 evidence and do not require repeating Gemma checks or untuned baselines for Qwen.

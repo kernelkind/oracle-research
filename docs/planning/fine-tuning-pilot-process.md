@@ -266,9 +266,8 @@ image is published privately at
 `docker.io/kernelkind/oracle-mvp@sha256:6c8c9ed527538bc8db86e78e20eae6989867f671c8c5b957bc1626f8ac5e58af`.
 All 23 runtime source hashes match `inputs-v6`; anonymous manifest access is
 denied. Publication receipts are in the task worktree at
-`target/qwen-continuation-v1/launch-20261014/`. A separate read-only Docker Hub
-pull credential is still required for Vast; the local write credential is not
-sent to the provider.
+`target/qwen-continuation-v1/launch-20261014/`. 
+Credential permission checks recorded mode 0600. Pull authentication and the private image manifest checks returned HTTP 200, while a push-scope request returned HTTP 401.  Authenticate with pull scope first: a rejected push-scope request does not establish that the token is invalid. Do not send a write credential to the provider. Only the spending decision remains pending.
 
  The main pilot's GPU
 charge is $133.907. The final backup storage cost was $0.888. The posted working-storage charge was $16.361.   
