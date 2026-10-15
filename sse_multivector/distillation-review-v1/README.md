@@ -22,17 +22,23 @@ All 40,607 semantic judgments and 911 native batches are complete. The
 [test results and runner repair record](../../docs/planning/fine-tuning-pilot-process.md#completed-test-grading-october-14)
 report means, retained invalid outputs, frozen provenance and verification.
 Qwen's final coverage is 44.7%, dense Gemma's 40.8% and MoE Gemma's 39.4%;
-correctness is 88.4%, 88.5% and 83.3%, respectively. Model selection remains
-open. Execution takes about nine hours including handovers and provider
-waits; this does not establish the eight-hour fresh-run target. The protected
-workload reaches its 32 GiB boundary through cache reclamation with no
+correctness is 88.4%, 88.5% and 83.3%, respectively. These are full-hierarchy
+scores. The current system uses only local L1 roots, as clarified October 15;
+the [L1-only comparison](../../docs/planning/fine-tuning-pilot-process.md#l1-only-test-results-october-15)
+reports correctness and both all-root and required-root completeness from the
+saved judgments, with no new inference. Qwen was subsequently selected for
+continuation, and its validation-selected pass-3 test grading is complete.
+Execution of the original test grading takes about nine hours including
+handovers and provider waits; this does not establish the eight-hour fresh-run
+target. The protected workload reaches its 32 GiB boundary through cache reclamation with no
 recorded OOM events.
 
 The user also approved a [manual Qwen thinking-on screen on 20 validation
 notes](../../docs/planning/fine-tuning-pilot-process.md#approved-qwen-thinking-screen-october-14).
 After GX10 generation, a separate native import hands those answers to the
 unchanged grader and compares them with the same notes' saved thinking-off
-grades. This adds no generation automation and leaves model selection open.
+grades. This adds no generation automation and does not change the subsequent
+Qwen continuation selection.
 
 The approved **DCSv1** wording completes a
 [four-note positive-placement challenge](#dcsv1-four-note-positive-placement-challenge-october-11):

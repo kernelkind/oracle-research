@@ -802,6 +802,20 @@ stages or approve a dataset size, hardware rental or spending allocation.
 
 ## Two separate model pilots
 
+**October 15 current-use scope clarified:** the current system uses only **L1,
+the roots of each note's local SP hierarchy**. Report L1 correctness and
+completeness separately when assessing the distilled model for current use.
+The user requested both completeness over every teacher root meaning and the
+subset already marked required, then the same comparison for the other pilot
+models. The [saved 200-note L1 comparison](fine-tuning-pilot-process.md#l1-only-test-results-october-15)
+records all three families' untuned/final results and selected Qwen pass 3.
+Only equivalent meanings returned at L1 count toward this completeness slice;
+L2-or-deeper matches are excluded. Preserve the original teacher meaning groups,
+required flags and invalid-output zeros. Report the effect of notes with no
+required roots explicitly. The full-hierarchy grades remain separate evidence;
+this analysis does not change the selected checkpoint, SP, training recipe or
+production-adoption status. Further training decisions remain open.
+
 **October 14 Qwen continuation approved:** continue the selected Qwen3.8-27B
 final 1,000-note checkpoint for two further complete passes over the same notes,
 retaining the complete optimizer/RNG state, ASv6.100, splits and numerical recipe.
