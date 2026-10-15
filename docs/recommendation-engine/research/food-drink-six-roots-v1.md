@@ -73,14 +73,23 @@ directly on the parent, deduplicating note IDs. For example, while generating
 children beneath L2S1, those notes remain attached to L2S1 and appear when
 viewing L2S1's notes. The child limit must not remove those note associations.
 
-### Questions identified before implementation
+### Approved cut fallbacks
 
-These are unresolved implementation choices, not approved changes:
+For nodes with more than six groups, try the middle-80% bend rule first. If
+there are fewer than three retained distance levels or no positive bend, use
+the previous V4 six-section cut: split at successive merge distances, stopping
+before the next split would produce more than six sections. Equal-distance
+joins split together, so this cut can yield fewer than six sections.
 
-- The current bend implementation requires at least three retained distance
-  levels and a positive bend. It has no fallback. A parent with more than six
-  groups can still have too few distinct distance levels or no positive bend;
-  the intended handling of that case remains open.
+If that cut also cannot produce two through six sections because a tied split
+jumps directly from one section to more than six, use the six largest groups
+as leaves and retain the remaining groups' notes directly on the parent.
+Largest still means distinct supporting notes. Preserve the existing canonical
+associations and the six-child limit when applying these fallbacks.
+
+These are approved V5 design rules. The existing numerical review tool still
+has no bend fallback, and V4's implementation still blocks on an impossible
+tied split. This documentation change does not alter either implementation.
 
 ## Starting evidence and round construction
 
