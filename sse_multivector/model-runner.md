@@ -1757,6 +1757,12 @@ parent. Model requests use the shared runner and exact native reuse; no new
 provider transport or concurrency cap is added. Frozen historical policies
 retain their original behavior.
 
+The approved [membership additions after a sibling lineup](../docs/recommendation-engine/hierarchy-generation-v5.md#approved-membership-additions-after-a-sibling-lineup)
+use global untracked original entries for an additional HDBSCAN clustering
+against each completed sibling's original entries, at every depth. Shared
+groups add memberships while preserving existing ones. This follow-up design
+is not yet implemented or activated in the frozen V5.2 policy.
+
 The shared canonical constructor also retains
 [hierarchy generation V3, V3.1 and V3.2](../docs/recommendation-engine/hierarchy-generation-v3.md):
 Bootstrap all original local L1s, encode each heading with its explicit meaning

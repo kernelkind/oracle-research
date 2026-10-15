@@ -123,6 +123,31 @@ containing the representative cannot replace its earlier internal entries.
 Repeat the same selection, consolidation and replacement process recursively.
 If local clustering leaves entries unassigned, their notes remain on the parent.
 
+## Approved membership additions after a sibling lineup
+
+Status: user-approved follow-up design, not implemented in V5.2. Existing
+construction, frozen experiment results and canonical memberships remain unchanged.
+
+After completing a sibling lineup, run an additional HDBSCAN clustering for
+each canonical node in that lineup. Its inputs are that node's accumulated
+original local entries, including amendments, plus the global untracked original
+entries. Global untracked means entries not belonging to any canonical node in
+the hierarchy; it is not limited to leftovers from the current parent's local
+pool. These entries may already belong to HDBSCAN groups that were never added
+to a canonical node.
+
+When a selected HDBSCAN group contains both an existing original member of the
+current canonical node and a global untracked entry, add that untracked entry
+to the current node's membership. A group containing only untracked entries
+does not establish an addition. A connection higher in the HDBSCAN tree is not
+the shared-group criterion. Use original entries rather than synthetic
+representatives, without a bend cut for this additional clustering.
+
+Apply this after root lineups and non-root sibling lineups. Preserve every
+existing membership, including when an existing member becomes ungrouped in
+the additional clustering. Implementation and validation of this approved
+follow-up remain pending; this record does not activate a new frozen policy.
+
 ## Native workflow
 
 Use the ordinary `prepare-hierarchy`, `advance-hierarchy` and `run-hierarchy`
