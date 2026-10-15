@@ -17,6 +17,52 @@ from test_generalization import FAKE_COMMAND
 
 
 class CommandWorkloadTest(unittest.TestCase):
+    def test_volume_admission_requires_inventory_capacity_retention_and_committed_storage(self):
+        from datetime import timedelta
+        self.spec['local_volume'] = {'id': 881, 'machine_id': self.offer['machine_id']}
+        self.spec['environment']['HF_HOME'] = '/workspace/oracle-full-build/model-cache'
+        self.spec['volume_reservation'] = {'reservation_id': 'volume-fixture', 'minimum_size_gb': 150,
+            'planning_retention_hours': 36, 'maximum_charge_cents': 150}
+        self.freeze()
+        self.assertEqual(self.context.config['volume_reservation'], self.spec['volume_reservation'])
+        row = {'id': 881, 'machine_id': self.offer['machine_id'], 'disk_space': 150,
+               'storage_total_cost': .04, 'instances': [], 'status': 'created'}
+        ledger = runner.read_json(self.ledger)
+        entry = {'kind': 'vast_volume_reservation', 'status': 'reserved', 'reservation_id': 'volume-fixture',
+            'volume_id': 881, 'machine_id': row['machine_id'], 'size_gb': 150, 'quoted_hourly_usd': .04,
+            'planning_retention_hours': 36, 'maximum_charge_cents': 150, 'recorded_at_utc': runner.utc_text()}
+        with mock.patch.object(self.module, 'vast_json', return_value=[row]) as inventory:
+            with self.assertRaisesRegex(self.module.OperationError, 'storage reservation'):
+                self.module.verify_volume_reservation(self.context, ledger)
+            ledger.update(entries=[entry], outstanding_commitments_cents=150)
+            runner.atomic_json(self.ledger, ledger, replace=True)
+            with self.assertRaisesRegex(self.module.OperationError, 'committed'):
+                self.module.verify_volume_reservation(self.context, ledger)
+            message = self.base / 'volume-commit-message'
+            message.write_text('Reserve simulated storage\n')
+            for args in (['init', '--quiet'], ['add', self.ledger.name],
+                         ['-c', 'user.name=Test', '-c', 'user.email=test@example.invalid',
+                          'commit', '--quiet', '-F', str(message)]):
+                subprocess.run(['git', '-C', str(self.base), *args], check=True, capture_output=True)
+            proof = self.module.verify_volume_reservation(self.context, ledger)
+            self.assertEqual(proof['volume_id'], 881)
+            self.assertEqual(proof['maximum_charge_cents'], 150)
+            inventory.assert_called_with(['show', 'volumes', '--raw'])
+            underfunded = {**ledger, 'outstanding_commitments_cents': 1000, 'entries': [entry, {
+                'kind': 'vast_run_reservation', 'status': 'reserved', 'evidence_path': str(self.root),
+                'maximum_charge_cents': 1000}]}
+            with self.assertRaisesRegex(self.module.OperationError, 'fully outstanding'):
+                self.module.verify_volume_reservation(self.context, underfunded)
+            for field, value in (('disk_space', 149), ('machine_id', 999), ('storage_total_cost', .05),
+                                 ('storage_total_cost', None), ('instances', [42]), ('status', 'deleting')):
+                with self.subTest(field=field, value=value), \
+                        mock.patch.object(self.module, 'vast_json', return_value=[{**row, field: value}]), \
+                        self.assertRaises(self.module.OperationError):
+                    self.module.verify_volume_reservation(self.context, ledger)
+            expired = {**entry, 'recorded_at_utc': runner.utc_text(runner.utc_now()-timedelta(hours=35))}
+            with self.assertRaisesRegex(self.module.OperationError, 'retention'):
+                self.module.verify_volume_reservation(self.context, {**ledger, 'entries': [expired]})
+
     def test_hardware_status_reports_both_gpus_with_identity(self):
         self.freeze()
         observation = subprocess.CompletedProcess([], 0,
@@ -900,7 +946,7 @@ class CommandWorkloadTest(unittest.TestCase):
             package.freeze(self.spec, self.root, self.ledger)
         self.assertFalse(self.root.exists())
 
-    def lifecycle_fixture(self):
+    def lifecycle_fixture(self, volume=False):
         import test_vast_full_build as original
         fixture = original.VastFullBuildCliTest()
         fixture.setUp()
@@ -914,6 +960,10 @@ class CommandWorkloadTest(unittest.TestCase):
         command = command.replace('"ssh_host": "fake.example",',
             '"public_ipaddr": "198.51.100.42", "ports": {"22/tcp": [{"HostPort": "35960"}]},\n'
             '        "ssh_host": "fake.example",')
+        command = command.replace('if tool == "vastai":\n', 'if tool == "vastai":\n'
+            '    if args[:2] == ["show", "volumes"]:\n'
+            '        print(json.dumps(state.get("volumes", [])))\n'
+            '        raise SystemExit(0)\n')
         for name in ("docker", "tar", "vastai", "uvx", "ssh", "ssh-keygen", "nvidia-smi"):
             (fixture.bin / name).write_text(command)
         offer_result = subprocess.run([str(fixture.bin / "vastai"), "search", "offers"],
@@ -922,6 +972,26 @@ class CommandWorkloadTest(unittest.TestCase):
                          image="docker.io/kernelkind/oracle-mvp@sha256:" + "9" * 64, disk_gb=200,
                          outputs=["result.bin"])
         self.spec["limits"]["maximum_hourly_usd"] = 1.36
+        if volume:
+            machine = self.spec['offer']['machine_id']
+            self.spec['local_volume'] = {'id': 881, 'machine_id': machine}
+            self.spec['volume_reservation'] = {'reservation_id': 'volume-fixture', 'minimum_size_gb': 150,
+                'planning_retention_hours': 36, 'maximum_charge_cents': 150}
+            self.spec['environment']['HF_HOME'] = '/workspace/oracle-full-build/model-cache'
+            fixture.set_provider(volumes=[{'id': 881, 'machine_id': machine, 'disk_space': 150,
+                'storage_total_cost': .04, 'instances': [], 'status': 'created'}])
+            ledger = runner.read_json(self.ledger)
+            ledger.update(outstanding_commitments_cents=150, entries=[{'kind': 'vast_volume_reservation',
+                'status': 'reserved', 'reservation_id': 'volume-fixture', 'volume_id': 881,
+                'machine_id': machine, 'size_gb': 150, 'quoted_hourly_usd': .04,
+                'planning_retention_hours': 36, 'maximum_charge_cents': 150, 'recorded_at_utc': runner.utc_text()}])
+            runner.atomic_json(self.ledger, ledger, replace=True)
+            message = self.base / 'volume-commit-message'
+            message.write_text('Reserve simulated volume\n')
+            for args in (['init', '--quiet'], ['add', self.ledger.name],
+                         ['-c', 'user.name=Test', '-c', 'user.email=test@example.invalid',
+                          'commit', '--quiet', '-F', str(message)]):
+                subprocess.run(['git', '-C', str(self.base), *args], check=True, capture_output=True)
         self.freeze()
         configuration = runner.read_json(self.config)
         configuration["timing"] = fixture.operation_contract()["timing"]
@@ -933,8 +1003,8 @@ class CommandWorkloadTest(unittest.TestCase):
         self.assertNotEqual(missing.returncode, 0)
         self.assertEqual(fixture.provider()["create_calls"], 0)
         ledger = runner.read_json(self.ledger)
-        ledger["outstanding_commitments_cents"] = 1000
-        ledger["entries"] = [{**prepared["reservation"], "reservation_id": "fixture", "status": "reserved"}]
+        ledger["outstanding_commitments_cents"] += 1000
+        ledger["entries"].append({**prepared["reservation"], "reservation_id": "fixture", "status": "reserved"})
         runner.atomic_json(self.ledger, ledger, replace=True)
         message = self.base / "commit-message"
         message.write_text("Reserve simulated command workload\n")
@@ -942,6 +1012,16 @@ class CommandWorkloadTest(unittest.TestCase):
                      ["-c", "user.name=Test", "-c", "user.email=test@example.invalid", "commit", "--quiet", "-F", str(message)]):
             subprocess.run(["git", "-C", str(self.base), *args], check=True, capture_output=True)
         return fixture
+
+    def test_volume_is_rechecked_before_gpu_creation_after_prepare(self):
+        fixture = self.lifecycle_fixture(volume=True)
+        selected = dict(fixture.provider()['volumes'][0])
+        fixture.set_provider(volumes=[{**selected, 'disk_space': 149}])
+        rejected = fixture.invoke('run')
+        self.assertNotEqual(rejected.returncode, 0)
+        self.assertIn('volume capacity', rejected.stderr)
+        self.assertEqual(fixture.provider()['create_calls'], 0)
+        self.assertFalse((self.root / 'launch/create-request-attempted.txt').exists())
 
     def test_command_prepare_and_run_reject_local_ssh_failure_without_spending(self):
         fixture = self.lifecycle_fixture()

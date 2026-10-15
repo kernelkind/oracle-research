@@ -170,12 +170,16 @@ def download(manifest_path, output):
     output = Path(output)
     output.mkdir(parents=True, exist_ok=True)
     home = Path(os.environ['HF_HOME']).resolve()
+    identity = home.parent / 'volume-identity.json'
+    if not identity.is_file():
+        raise ValueError('download workload requires the verified persistent volume')
     home.mkdir(parents=True, exist_ok=True)
     probe = home / '.download-write-probe'
     probe.write_bytes(b'persistent cache write/read check')
     readable = probe.read_bytes() == b'persistent cache write/read check'
     probe.unlink()
-    identity = home.parent / 'volume-identity.json'
+    if not readable:
+        raise ValueError('persistent cache write/read check failed')
     write_json(output / 'volume.json', {'cache_path': str(home), 'write_read_verified': readable,
         'volume_root': str(home.parent),
         'volume_identity': read_json(identity) if identity.exists() else None,
@@ -316,9 +320,6 @@ def main():
         result = {'package_sha256': prepare(args.config, args.output, args.reserve_bytes)}
     elif args.operation == 'download':
         job = verify_package(args.package)
-        home = Path(os.environ['HF_HOME']).resolve()
-        if not (home.parent / 'volume-identity.json').exists():
-            raise ValueError('download workload requires the verified persistent volume')
         result = download(args.package / job['cache_manifest'], args.output)
     elif args.operation == 'verify':
         result = verify(args.manifest, args.output)

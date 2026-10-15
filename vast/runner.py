@@ -5728,6 +5728,16 @@ def validate_command_context(context: Context) -> None:
                 or any(type(v) is not int or v <= 0 for v in volume.values())
                 or volume["machine_id"] != context.config["selected_offer"]["machine_id"]):
             raise OperationError("local volume must belong to the selected physical machine")
+    if 'volume_reservation' in context.config:
+        reservation = required_object(context.config, 'volume_reservation')
+        if ('local_volume' not in context.config or set(reservation) != {
+                'reservation_id', 'minimum_size_gb', 'planning_retention_hours', 'maximum_charge_cents'}):
+            raise OperationError('volume reservation requires a bound local volume and explicit storage limits')
+        required_string(reservation, 'reservation_id')
+        for field in ('minimum_size_gb', 'planning_retention_hours', 'maximum_charge_cents'):
+            required_positive_int(reservation, field)
+        if reservation['planning_retention_hours'] * 3600 < context.config['session_seconds']:
+            raise OperationError('volume retention must cover the planned rental')
     if "volume_recovery" in context.config:
         recovery = required_object(context.config, "volume_recovery")
         if "local_volume" not in context.config:
@@ -5864,6 +5874,81 @@ def command_budget(context: Context) -> dict[str, object]:
     return ledger
 
 
+def verify_volume_reservation(context: Context, ledger: dict[str, object]) -> dict[str, object] | None:
+    """Admit an existing volume using fresh provider facts and committed storage funding."""
+    if 'volume_reservation' not in context.config:
+        return None
+    policy = context.config['volume_reservation']
+    volume = context.config['local_volume']
+    inventory = vast_json(['show', 'volumes', '--raw'])
+    if not isinstance(inventory, list) or any(not isinstance(row, dict) for row in inventory):
+        raise OperationError('complete volume inventory is required')
+    matches = [row for row in inventory if str(row.get('id')) == str(volume['id'])]
+    if len(matches) != 1:
+        raise OperationError('selected local volume is absent or ambiguous')
+    row, = matches
+    if (str(row.get('machine_id')) != str(volume['machine_id']) or row.get('status') != 'created'
+            or row.get('instances') != []):
+        raise OperationError('local volume must be created, detached and on the selected machine')
+    try:
+        capacity = full_build_package.decimal_field(row, 'disk_space')
+        rate = full_build_package.decimal_field(row, 'storage_total_cost')
+    except ValueError as error:
+        raise OperationError('volume capacity and storage price must be known') from error
+    if capacity < policy['minimum_size_gb'] or rate < 0:
+        raise OperationError('volume capacity or storage price is outside the approved limits')
+    all_entries = ledger.get('entries')
+    if not isinstance(all_entries, list) or any(not isinstance(e, dict) for e in all_entries):
+        raise OperationError('storage reservation ledger entries are invalid')
+    entries = [e for e in all_entries if e.get('reservation_id') == policy['reservation_id']]
+    reservations = [e for e in entries if e.get('kind') == 'vast_volume_reservation' and e.get('status') == 'reserved']
+    if len(reservations) != 1:
+        raise OperationError('one matching storage reservation is required')
+    entry, = reservations
+    created = [e for e in entries if e.get('kind') == 'vast_volume_created'
+               and e.get('volume_id') == volume['id'] and e.get('machine_id') == volume['machine_id']]
+    if (entry.get('machine_id') != volume['machine_id']
+            or entry.get('volume_id') != volume['id'] and len(created) != 1
+            or entry.get('maximum_charge_cents') != policy['maximum_charge_cents']):
+        raise OperationError('storage reservation differs from the selected volume or allowance')
+    try:
+        approved_rate = full_build_package.decimal_field(entry, 'quoted_hourly_usd')
+        size = full_build_package.decimal_field(entry, 'size_gb')
+        hours = required_positive_int(entry, 'planning_retention_hours')
+        start = datetime.fromisoformat(required_string(entry, 'recorded_at_utc'))
+        if start.utcoffset() != timedelta(0):
+            raise ValueError('storage reservation must use UTC')
+    except (ValueError, TypeError) as error:
+        raise OperationError('storage reservation price, capacity or retention is invalid') from error
+    now = utc_now()
+    deadline = start + timedelta(hours=hours)
+    if start > now or hours < policy['planning_retention_hours'] or deadline < now + timedelta(seconds=context.config['session_seconds']):
+        raise OperationError('storage reservation retention does not cover the planned rental')
+    if (size < policy['minimum_size_gb'] or capacity < size or rate > approved_rate or approved_rate < 0
+            or approved_rate * hours * 100 > policy['maximum_charge_cents']):
+        raise OperationError('volume price or capacity exceeds the storage reservation')
+    remaining = entry['maximum_charge_cents']
+    for event in entries:
+        remaining += required_nonnegative_int(event, 'added_commitment_cents') if 'added_commitment_cents' in event else 0
+        remaining -= required_nonnegative_int(event, 'released_commitment_cents') if 'released_commitment_cents' in event else 0
+    instance_commitment = sum(required_positive_int(e, 'maximum_charge_cents') for e in all_entries
+        if e.get('kind') == 'vast_run_reservation' and e.get('status') == 'reserved'
+        and e.get('evidence_path') == str(context.root))
+    if (remaining != policy['maximum_charge_cents']
+            or ledger['outstanding_commitments_cents'] < remaining + instance_commitment):
+        raise OperationError('storage reservation is no longer fully outstanding')
+    try:
+        committed = completed_process(['git', '-C', str(context.ledger.parent), 'show', 'HEAD:' + context.ledger.name]).stdout
+    except OperationError as error:
+        raise OperationError('storage reservation ledger must be committed') from error
+    if committed != context.ledger.read_bytes():
+        raise OperationError('storage reservation ledger must be committed')
+    return {'volume_id': volume['id'], 'machine_id': volume['machine_id'], 'size_gb': str(capacity),
+            'quoted_hourly_usd': str(rate), 'reservation_id': policy['reservation_id'],
+            'maximum_charge_cents': policy['maximum_charge_cents'], 'planning_retention_hours': hours,
+            'reassess_before_utc': utc_text(deadline), 'observed_at_utc': utc_text(now)}
+
+
 def prepare_command_plan(context: Context) -> dict[str, object]:
     with operation_lock(context.root):
         verify_reviewed_artifacts(context)
@@ -5871,6 +5956,7 @@ def prepare_command_plan(context: Context) -> dict[str, object]:
         verify_image(context)
         completed_process(["tar", "--version"])
         ledger = command_budget(context)
+        volume = verify_volume_reservation(context, ledger)
         query, offer = select_offer(context)
         if any(row.get("label") == context.label for row in sanitized_live_instances()):
             raise OperationError("a live instance already uses the operation label")
@@ -5879,6 +5965,8 @@ def prepare_command_plan(context: Context) -> dict[str, object]:
             ledger[k] for k in ("actual_spend_cents", "outstanding_commitments_cents", "reserved_remaining_work_cents"))}
         ensure_retrieval_destination(context)
         plan = plan_document(context, query, offer, projection, sha256_file(context.ledger))
+        if volume is not None:
+            plan['volume_reservation'] = volume
         digest = hashlib.sha256(canonical_json(plan)).hexdigest()
         path = context.approval_dir / f"{digest}.json"
         atomic_json(path, plan)
@@ -5889,6 +5977,10 @@ def prepare_command_plan(context: Context) -> dict[str, object]:
 
 
 def reserve_command_workload(context: Context, plan: dict[str, object]) -> dict[str, object]:
+    if not context.path('launch/create-request-attempted.txt').exists():
+        volume = verify_volume_reservation(context, command_budget(context))
+        if volume is not None:
+            atomic_json(context.path('launch/volume-reservation-verification.json'), volume, replace=True)
     receipt_path = context.path("launch/full-build-reservation.json")
     if receipt_path.exists():
         receipt = read_json(receipt_path)

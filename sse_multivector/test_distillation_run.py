@@ -952,6 +952,58 @@ class TinyWorkflowTests(unittest.TestCase):
         self.assertEqual(checked["candidates"]["continuation"]["training"], {"examples": 12, "updates": 4})
         self.assertFalse((retrieved / "continuation/baseline").exists())
 
+        # A public-model parent must carry its pinned cache files and download
+        # them in the same rental. Keep this real parent for the SSH rehearsal.
+        from sse_multivector.test_distillation_cache import fixture_hub
+        files = {str(p.relative_to(Path(original['model']))): p.read_bytes()
+                 for p in Path(original['model']).rglob('*') if p.is_file()}
+        remote = {**original, 'model': 'fixture/cached', 'revision': 'a'*40}
+        remote_path = root / 'remote-continuation-parent.json'
+        remote_parent = root / 'remote-continuation-parent'
+        distillation_run.write_json(remote_path, remote)
+        distillation_run.write_json(root / 'remote-parent-volume/volume-identity.json',
+                                   {'id': 880, 'machine_id': 12})
+        with fixture_hub(files) as (port, requests):
+            env = {**os.environ, 'HF_HOME': str(root / 'remote-parent-volume/model-cache'),
+                   'HF_ENDPOINT': f'http://127.0.0.1:{port}',
+                   'HF_HUB_OFFLINE': '0', 'TRANSFORMERS_OFFLINE': '0'}
+            commands = [[sys.executable, '-m', 'sse_multivector.distillation_cache', 'prepare',
+                '--config', str(remote_path), '--reserve-bytes', str(32*1024*1024),
+                '--output', str(root / 'remote-continuation-cache')],
+                [sys.executable, '-m', 'sse_multivector.distillation_cache', 'download',
+                 '--package', str(root / 'remote-continuation-cache'),
+                 '--output', str(root / 'remote-parent-download')]]
+            for command in commands:
+                result = subprocess.run(command, env=env, capture_output=True, text=True, timeout=30)
+                self.assertEqual(result.returncode, 0, result.stderr)
+            result = subprocess.run([sys.executable, '-m', 'sse_multivector.distillation_run', str(remote_path),
+                '--output', str(remote_parent)], env={**env, 'HF_HUB_OFFLINE': '1', 'TRANSFORMERS_OFFLINE': '1'},
+                capture_output=True, text=True, timeout=120)
+            self.assertEqual(result.returncode, 0, result.stderr)
+        # The parent is sealed and the SSH phase starts with its own cold cache.
+        # Keep Hub symlinks out of the workflow's immutable evidence package.
+        shutil.rmtree(root / 'remote-parent-volume')
+        remote_preparation = {**preparation, 'model': remote['model'], 'revision': remote['revision']}
+        remote_prep_path = root / 'remote-continuation-preparation.json'
+        distillation_run.write_json(remote_prep_path, remote_preparation)
+        with self.assertRaisesRegex(ValueError, 'cache manifest'):
+            deploy.prepare_continuation(remote_parent, prepared, remote_prep_path,
+                root / 'remote-without-cache', name='qwen')
+        cache_path = root / 'remote-continuation-cache/model-cache.json'
+        manifest = distillation_run.read_json(cache_path)
+        manifest['models'].append({**manifest['models'][0], 'model': 'fixture/unused'})
+        distillation_run.write_json(cache_path, manifest)
+        remote_package = root / 'remote-continuation-package'
+        subprocess.run([sys.executable, '-m', 'sse_multivector.distillation_deploy', 'prepare-continuation',
+            '--parent-run', str(remote_parent), '--data', str(prepared),
+            '--preparation-config', str(remote_prep_path), '--name', 'qwen',
+            '--cache-manifest', str(cache_path), '--output', str(remote_package)],
+            check=True, capture_output=True, timeout=30)
+        self.assertTrue(deploy.verify_package(remote_package)['download_cache'])
+        selected = distillation_run.read_json(remote_package / 'model-cache.json')
+        self.assertEqual([m['model'] for m in selected['models']], ['fixture/cached'])
+        self.assertEqual(selected['reserve_bytes'], 32*1024*1024)
+
     def test_subject_preparation_saves_cache_measurement_before_memory_rejection(self):
         import shutil
         prepared = self.root / "failed-cache-data"

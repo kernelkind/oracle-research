@@ -821,10 +821,14 @@ The [continuation and pilot-failure audit](fine-tuning-pilot-process.md#approved
 records the measured estimate, verified parent and required preparation.
 Explicit parent-checkpoint continuation, both test collections, offline
 completion verification and a one-card launch profile are implemented. The
-profile now rejects launches without an explicit volume binding; CLI volume
-IDs must identify the selected physical machine. The matching input package
-and image are regenerated and verified locally, including container replacement
-with a retained volume and offline cache reuse. The
+profile rejects launches without an explicit volume binding and storage
+reservation ID. Fresh volume inventory, capacity, price, remaining retention
+and separately committed storage funding are checked during native preparation
+and again before GPU creation. The same rental downloads and verifies only
+Qwen's pinned files before matched preparation; model subprocesses then run
+offline. Cold startup remains watched on the same instance. The matching input
+package and image pass the combined volume/continuation/replacement rehearsal
+locally with tiny CPU models. The
 clean-runtime rehearsal also now freezes the shared input/parser dependency.
 Pinned-runtime/SSH verification and the actual Qwen tokenizer check pass;
 matching image publication, fresh offer and ledger admission precede rental.

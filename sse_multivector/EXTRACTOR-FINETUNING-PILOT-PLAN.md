@@ -20,10 +20,13 @@ artifacts, then end the rental before local grading and checkpoint selection. Th
 is the current operational plan. It preserves ASv6.100, the splits and numerical
 recipe. The production workflow now supports explicit parent-checkpoint
 continuation, both test collections and offline completeness verification.
-The Qwen-only launch profile requires an explicit volume binding and rejects a
-different host. The shared dependency is frozen. The matching input package
-and image are regenerated and verified locally, including volume recovery and
-offline cache reuse after container replacement.
+The Qwen-only launch profile requires an explicit volume binding and a matching
+committed storage reservation. Fresh capacity, price and remaining retention
+are checked before GPU creation. The same rental verifies/downloads Qwen's
+pinned cache before any preparation; model subprocesses then run offline.
+Cold image startup remains watched on the same instance. The shared dependency
+is frozen. The matching inputs and image pass the combined
+continuation/volume/replacement rehearsal with tiny CPU models.
 Pinned-runtime/SSH rehearsal and the actual Qwen tokenizer check pass; matching
 image publication, fresh offer and ledger admission precede rental.
 No continuation run has started.
@@ -63,7 +66,8 @@ notes. The 1,000 train / 100 validation / 200 test split was approved October 4.
 Task 18's preliminary training setup
 is complete. The subjects-only worker and background copier are implemented
 and the three-family GPU run has completed. The new two-pass continuation
-still needs the production-workflow support recorded above.
+has production-workflow support; image publication and budget admission remain
+pending.
 Task 29 needs 01 + 18, not the larger-pilot data
 in 05, and its findings inform 06 without becoming a new completion gate.
 Splitting the tracking does not change the experiments or spending approvals.

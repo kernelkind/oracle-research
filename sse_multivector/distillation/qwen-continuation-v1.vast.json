@@ -5,6 +5,8 @@
   "disk_gb": 30,
   "require_local_volume": true,
   "local_volume_maximum_usd": 1.5,
+  "local_volume_minimum_gb": 150,
+  "local_volume_retention_hours": 36,
   "worker_timeout_seconds": null,
   "rental_hours": 24,
   "inbound_gb": 80,

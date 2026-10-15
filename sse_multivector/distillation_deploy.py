@@ -98,12 +98,14 @@ def validate_gpu_assignments(assignments, names):
 
 
 def prepare(config_paths, output, timeout_seconds=None, through="report", preparation_configs=None,
-            gpu_assignments=None, cache_manifest=None):
+            gpu_assignments=None, cache_manifest=None, download_cache=False):
     """Copy only explicit inputs; no source code, credentials or host config."""
     if (timeout_seconds is not None and (type(timeout_seconds) is not int or timeout_seconds <= 0)
             or not config_paths or through not in ("preflight", "baseline", "train", "report", "preparation")):
         raise ValueError("runs and a positive timeout or no timeout are required")
     output = Path(output).resolve()
+    if type(download_cache) is not bool or download_cache and cache_manifest is None:
+        raise ValueError("cache download requires a cache manifest")
     if gpu_assignments is not None:
         validate_gpu_assignments(gpu_assignments, [Path(path).stem for path in config_paths])
     configurations = list(map(read_json, config_paths))
@@ -196,6 +198,8 @@ def prepare(config_paths, output, timeout_seconds=None, through="report", prepar
         if cache_manifest is not None:
             shutil.copyfile(cache_manifest, staging / "model-cache.json")
             job["cache_manifest"] = "model-cache.json"
+        if download_cache:
+            job["download_cache"] = True
         write_json(staging / "job.json", job)
         write_manifest(staging, staging / "manifest.json", "distillation-inputs")
         staging.rename(output)
@@ -205,7 +209,8 @@ def prepare(config_paths, output, timeout_seconds=None, through="report", prepar
     return sha256(output / "manifest.json")
 
 
-def prepare_continuation(parent_run, data, preparation_config, output, *, name, additional_passes=2):
+def prepare_continuation(parent_run, data, preparation_config, output, *, name, additional_passes=2,
+                         cache_manifest=None):
     """Derive a single-model package from sealed training state, without inference."""
     if type(additional_passes) is not int or additional_passes < 1:
         raise ValueError("additional passes must be positive")
@@ -213,6 +218,15 @@ def prepare_continuation(parent_run, data, preparation_config, output, *, name, 
         raise ValueError("invalid continuation run name")
     parent_run = Path(parent_run).resolve()
     original = read_json(parent_run / "manifest.json")["config"]
+    cache = None
+    if not Path(original['model']).is_dir():
+        if cache_manifest is None:
+            raise ValueError('remote continuation requires a pinned model cache manifest')
+        from sse_multivector.distillation_cache import validate
+        cache = validate(read_json(cache_manifest))
+        cache['models'] = [model for model in cache['models']
+                          if (model['model'], model['revision']) == (original['model'], original['revision'])]
+        validate(cache)
     if "continuation" in original or "preparation" in original:
         raise ValueError("continuation requires an original subject pilot")
     count = original["training_milestones"][-1]
@@ -229,7 +243,11 @@ def prepare_continuation(parent_run, data, preparation_config, output, *, name, 
         pilot_path, prep_path = root / "configs" / (name + ".json"), root / "preparation" / (name + ".json")
         write_json(pilot_path, config)
         write_json(prep_path, preparation)
-        return prepare([pilot_path], output, preparation_configs=[prep_path], gpu_assignments={name: 0})
+        selected_cache = root / 'model-cache.json' if cache is not None else None
+        if selected_cache is not None:
+            write_json(selected_cache, cache)
+        return prepare([pilot_path], output, preparation_configs=[prep_path], gpu_assignments={name: 0},
+                       cache_manifest=selected_cache, download_cache=selected_cache is not None)
 
 
 def verify_package(package):
@@ -240,6 +258,13 @@ def verify_package(package):
         raise ValueError("container code or dependencies differ from the prepared package")
     if "gpu_assignments" in job:
         validate_gpu_assignments(job["gpu_assignments"], [Path(path).stem for path in job["runs"]])
+    if 'download_cache' in job and (job['download_cache'] is not True or 'cache_manifest' not in job):
+        raise ValueError('cache download requires a cache manifest')
+    for path in job['runs']:
+        config = read_json(package / path)
+        if ('continuation' in config and not (package / config['model']).is_dir()
+                and not job.get('download_cache')):
+            raise ValueError('remote continuation requires its pinned cache download')
     if "cache_manifest" in job:
         from sse_multivector.distillation_cache import bind
         if job["cache_manifest"] != "model-cache.json":
@@ -312,8 +337,14 @@ def execute(package, output):
     previous_interrupt = signal.signal(signal.SIGINT, interrupt) if deadline is None else None
     try:
         if "cache_manifest" in job:
-            from sse_multivector.distillation_cache import verify
-            verify(package / job["cache_manifest"], output / "cache-verification.json")
+            from sse_multivector.distillation_cache import download, verify
+            if job.get('download_cache'):
+                state.update(stage='download', preparation=False)
+                write_json(output / 'deployment.json', state)
+                receipt = download(package / job['cache_manifest'], output / 'model-cache')
+                write_json(output / 'cache-verification.json', receipt)
+            else:
+                verify(package / job["cache_manifest"], output / "cache-verification.json")
         if assignments and visible is not None and (len(visible.split(",")) <= max(assignments.values())
                 or any(not value.strip() for value in visible.split(","))):
             raise ValueError("GPU assignments exceed the inherited CUDA_VISIBLE_DEVICES")
@@ -504,10 +535,13 @@ def status(output):
     return result
 
 
-def verify_results(package, output):
+def verify_results(package, output, *, expected_volume=None):
     """Recheck retrieved comparisons locally; no GPU, generation or provider calls."""
     package, output = Path(package), Path(output)
     job = verify_package(package)
+    if job.get('download_cache'):
+        from sse_multivector.distillation_cache import verify_results as verify_cache_results
+        verify_cache_results(package / job['cache_manifest'], output / 'model-cache', expected_volume)
     results = {}
     for relative in job["runs"]:
         config = read_json(package / relative)
@@ -541,7 +575,7 @@ def review_completion(package, operation):
     # Check transfer integrity first, then account for every baseline/checkpoint/
     # evaluation. Neither a worker's exit code nor its own report is sufficient.
     runner.verify_command_results(context, candidate)
-    checked = verify_results(package, candidate / "work/results")
+    checked = verify_results(package, candidate / "work/results", expected_volume=context.config.get('local_volume'))
     write_json(operation / "launch/completion-integrity.json", checked)
     review = {"complete": True, "instance_id": instance_id,
         "operation_contract_sha256": sha256(context.config_path),
@@ -578,6 +612,8 @@ def main():
     continuation_parser.add_argument("--preparation-config", type=Path, required=True)
     continuation_parser.add_argument("--name", required=True)
     continuation_parser.add_argument("--additional-passes", type=int, default=2)
+    continuation_parser.add_argument("--cache-manifest", type=Path,
+        help="pinned model files; the selected model downloads and verifies on the same rental")
     continuation_parser.add_argument("--output", type=Path, required=True)
     offer_parser = commands.add_parser("check-offer", help="validate a saved quote without renting")
     offer_parser.add_argument("--settings", type=Path, required=True)
@@ -598,7 +634,8 @@ def main():
         result = status(args.output)
     elif args.operation == "prepare-continuation":
         result = {"package_sha256": prepare_continuation(args.parent_run, args.data,
-            args.preparation_config, args.output, name=args.name, additional_passes=args.additional_passes)}
+            args.preparation_config, args.output, name=args.name, additional_passes=args.additional_passes,
+            cache_manifest=args.cache_manifest)}
     elif args.operation == "prepare":
         result = {"package_sha256": prepare(args.config, args.output, args.timeout_seconds, args.through,
                                              args.preparation_config,

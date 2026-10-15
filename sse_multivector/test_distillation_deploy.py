@@ -13,6 +13,46 @@ from sse_multivector.test_distillation_data import DistillationDataTests
 
 
 class PackageTests(unittest.TestCase):
+    def test_same_rental_download_checks_space_and_repairs_cache_before_any_candidate(self):
+        import hashlib
+        from sse_multivector import distillation_cache as cache
+        from sse_multivector.test_distillation_cache import fixture_hub
+        files = {'config.json': b'{}', 'model.safetensors': b'complete weights'}
+        with tempfile.TemporaryDirectory() as temporary, fixture_hub(files) as (port, requests):
+            root = Path(temporary)
+            DistillationDataTests().prepare(root)
+            config = root / 'candidate.json'
+            write_json(config, {'data': str(root / 'prepared'), 'mask_prompt': str(root / 'masks.txt'),
+                'model': 'fixture/cached', 'revision': 'a'*40, 'device': 'cpu'})
+            manifest = root / 'model-cache.json'
+            write_json(manifest, {'version': 1, 'reserve_bytes': 64, 'models': [{
+                'model': 'fixture/cached', 'revision': 'a'*40, 'files': [
+                    {'path': name, 'size': len(value), 'sha256': hashlib.sha256(value).hexdigest()}
+                    for name, value in files.items()]}]})
+            package = root / 'inputs'
+            deploy.prepare([config], package, through='preflight', cache_manifest=manifest, download_cache=True)
+            write_json(root / 'volume/volume-identity.json', {'id': 881, 'machine_id': 12})
+            with patch.dict(os.environ, {'HF_HOME': str(root / 'volume/model-cache'),
+                    'HF_ENDPOINT': f'http://127.0.0.1:{port}'}), \
+                    patch.object(deploy, 'run_process', return_value=subprocess.CompletedProcess([], 0)) as child:
+                with patch.object(cache.shutil, 'disk_usage', return_value=type('Usage', (), {'free': 0})()):
+                    with self.assertRaisesRegex(ValueError, 'model download failed'):
+                        deploy.execute(package, root / 'too-small')
+                child.assert_not_called()
+                self.assertFalse(requests)
+                self.assertEqual(deploy.execute(package, root / 'complete')['state'], 'complete')
+                self.assertEqual(child.call_args.kwargs['env']['HF_HUB_OFFLINE'], '1')
+                self.assertTrue(cache.verify_results(manifest, root / 'complete/model-cache')['complete'])
+                record = read_json(manifest)['models'][0]
+                weights = cache.hub_file(record, record['files'][1], offline=True)
+                weights.write_bytes(b'corrupt')
+                before = len(requests)
+                self.assertEqual(deploy.execute(package, root / 'repaired')['state'], 'complete')
+                self.assertEqual(weights.read_bytes(), files['model.safetensors'])
+                fetched = [path for method, path, auth in requests[before:] if method == 'GET']
+                self.assertEqual(len(fetched), 1)
+                self.assertTrue(fetched[0].endswith('/model.safetensors'))
+
     def test_missing_or_corrupt_download_cache_blocks_every_candidate(self):
         import hashlib
         from gte.full_build_package import write_manifest
@@ -852,7 +892,7 @@ class SharedSSHTests(unittest.TestCase):
 
     def run_package(self, inputs, root, expected=0, stop=False, copy_while_running=False,
                     continue_after_checkpoint=False, local_volume=False, recover_from=None,
-                    download_only=False, environment=None, reuse_work=True):
+                    download_only=False, environment=None, reuse_work=True, settings_path=None):
         import argparse
         import importlib.util
         import shutil
@@ -865,7 +905,7 @@ class SharedSSHTests(unittest.TestCase):
         ledger = root.parent / (root.name + '-ledger.json')
         write_json(ledger, {'lifetime_cap_cents': 100000, 'actual_spend_cents': 0,
             'outstanding_commitments_cents': 0, 'reserved_remaining_work_cents': 0, 'entries': []})
-        settings, offer = quote()
+        settings, offer = quote(settings_path)
         if download_only:
             from sse_multivector.distillation_cache import verify_package
             job = verify_package(inputs)
@@ -875,6 +915,8 @@ class SharedSSHTests(unittest.TestCase):
         settings['offer_equals']['num_gpus'] = offer['num_gpus'] = gpu_count
         if local_volume:
             settings['local_volume'] = {'id': 881, 'machine_id': offer['machine_id']}
+            if settings.get('local_volume_maximum_usd'):
+                settings['volume_reservation_id'] = 'volume-fixture'
         if recover_from is not None:
             settings['recover_from'] = str(recover_from)
             settings['label'] += '-replacement'
@@ -1093,16 +1135,32 @@ class SharedSSHTests(unittest.TestCase):
                 self.assertTrue(verify_saved(run / f'checkpoints/checkpoint-{milestone}'))
                 self.assertTrue(verify_saved(run / f'evaluations/checkpoint-{milestone}'))
 
+    @unittest.skipUnless(os.environ.get('DISTILLATION_CONTINUATION_STAGE') == 'seed',
+                         'requires the single-model volume continuation rehearsal')
     def test_single_model_continuation_transfers_parent_and_requires_both_test_collections(self):
+        import socket
         from vast import runner
+        from sse_multivector.test_distillation_cache import fixture_hub
         source = Path(os.environ['DISTILLATION_TEST_OUTPUT'])
         root = Path(os.environ['DISTILLATION_DEPLOY_OUTPUT']) / 'single-model-continuation'
         root.mkdir(parents=True)
         inputs = root / 'inputs'
-        deploy.prepare_continuation(source / 'continuation-parent-archived', source / 'continuation-data',
-            source / 'continuation-preparation.json', inputs, name='qwen')
+        deploy.prepare_continuation(source / 'remote-continuation-parent', source / 'continuation-data',
+            source / 'remote-continuation-preparation.json', inputs, name='qwen',
+            cache_manifest=source / 'remote-continuation-cache/model-cache.json')
         self.assertEqual(deploy.verify_package(inputs)['gpu_assignments'], {'qwen': 0})
-        result = self.run_package(inputs, root / 'operation')
+        self.assertTrue(deploy.verify_package(inputs)['download_cache'])
+        model = Path(read_json(source / 'config.json')['model'])
+        files = {str(p.relative_to(model)): p.read_bytes() for p in model.rglob('*') if p.is_file()}
+        with socket.create_connection(('target', 22)) as connection:
+            address = connection.getsockname()[0]
+        settings = Path(__file__).parent / 'distillation/qwen-continuation-v1.vast.json'
+        with fixture_hub(files, '0.0.0.0') as (port, requests):
+            result = self.run_package(inputs, root / 'operation', local_volume=True, settings_path=settings,
+                environment={'HF_ENDPOINT': f'http://{address}:{port}', 'HF_HUB_DISABLE_XET': '1'})
+        self.assertTrue(any(method == 'GET' and path.endswith('.safetensors')
+                            for method, path, auth in requests))
+        self.assertTrue(read_json(result / 'model-cache/volume.json')['write_read_verified'])
         checked = deploy.verify_results(inputs, result)['candidates']['qwen']
         self.assertEqual(checked['training'], {'examples': 12, 'updates': 4})
         self.assertEqual(set(checked['test']), {'review_status', 'baseline', 'checkpoint-8', 'checkpoint-12'})
@@ -1117,6 +1175,45 @@ class SharedSSHTests(unittest.TestCase):
             deploy.review_completion(inputs, root / 'operation')
         missing.write_bytes(saved)
         self.assertTrue(deploy.review_completion(inputs, root / 'operation')['complete'])
+        receipt = result / 'model-cache/verification.json'
+        saved = receipt.read_bytes()
+        receipt.unlink()
+        with self.assertRaises((OSError, ValueError, runner.OperationError)):
+            deploy.review_completion(inputs, root / 'operation')
+        receipt.write_bytes(saved)
+        self.assertTrue(deploy.review_completion(inputs, root / 'operation')['complete'])
+        volume_path = result / 'model-cache/volume.json'
+        original = volume_path.read_bytes()
+        volume = read_json(volume_path)
+        volume['volume_identity']['id'] += 1
+        write_json(volume_path, volume)
+        with self.assertRaises((OSError, ValueError, runner.OperationError)):
+            deploy.review_completion(inputs, root / 'operation')
+        volume_path.write_bytes(original)
+        self.assertTrue(deploy.review_completion(inputs, root / 'operation')['complete'])
+
+    @unittest.skipUnless(os.environ.get('DISTILLATION_CONTINUATION_STAGE') == 'recover',
+                         'requires single-model container replacement')
+    def test_single_model_continuation_reuses_volume_after_container_replacement_offline(self):
+        import socket
+        from urllib.parse import urlparse
+        from sse_multivector.distillation_run import file_hashes
+        root = Path(os.environ['DISTILLATION_DEPLOY_OUTPUT']) / 'single-model-continuation'
+        old = root / 'operation'
+        write_json(old / 'launch/destruction-confirmation.json', {'instance_id': 'offline-fixture',
+            'absent_from_complete_inventory': True, 'absence_observations': 2})
+        before = file_hashes(old / 'result/work/results/qwen')
+        environment = read_json(old / 'operation-contract.json')['workload']['environment']
+        endpoint = urlparse(environment['HF_ENDPOINT'])
+        with self.assertRaises(OSError):
+            socket.create_connection((endpoint.hostname, endpoint.port), timeout=1)
+        result = self.run_package(root / 'inputs', root / 'replacement', local_volume=True, recover_from=old,
+            settings_path=Path(__file__).parent / 'distillation/qwen-continuation-v1.vast.json',
+            environment=environment)
+        self.assertEqual(file_hashes(result / 'qwen'), before)
+        self.assertTrue(all(r['reused'] for r in read_json(result / 'model-cache/verification.json')['files']))
+        self.assertTrue(read_json(root / 'replacement/launch/volume-prepared.json')['remote_receipt']['recovered'])
+        self.assertTrue(deploy.review_completion(root / 'inputs', root / 'replacement')['complete'])
 
     def test_subject_pilot_continues_saved_checkpoint_and_refreshes_retrieval_over_ssh(self):
         policy = {'budget_bytes': 8*1024*1024, 'workspace_bytes': 0,

@@ -69,6 +69,8 @@ def freeze(spec: dict, root: Path, ledger: Path) -> Path:
     config = root / "operation-contract.json"
     if "local_volume" in spec:
         document["local_volume"] = spec["local_volume"]
+    if "volume_reservation" in spec:
+        document["volume_reservation"] = spec["volume_reservation"]
     context = runner.Context(root, config, ledger, document)
     context.validate()
     runner.validate_offer(context, offer, str(offer.get("id")))

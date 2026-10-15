@@ -292,6 +292,27 @@ docker run --rm --network distillation-local \
   --entrypoint /opt/distillation-venv/bin/python notedeck-distillation:local -m unittest -v \
   sse_multivector.test_distillation_deploy.SharedSSHTests.test_cached_models_survive_replacement_and_run_two_worker_prep_and_pilot_offline
 docker logs distillation-target > "$result_dir/cache-pilot-target.log" 2>&1
+# The actual continuation profile must cold-download its one model, prepare,
+# continue from its sealed parent and retain both new test collections on one
+# mounted volume. Replace the container and repeat offline from saved work.
+docker rm -f distillation-target
+docker volume rm "$recovery_volume"
+docker volume create "$recovery_volume"
+start_target -v "$recovery_volume":/workspace
+docker run --rm --network distillation-local \
+  -e DISTILLATION_TEST_OUTPUT=/results/workflow -e DISTILLATION_DEPLOY_OUTPUT=/results/deployment-tests \
+  -e DISTILLATION_SSH_TARGET=/results/ssh-target.json -e DISTILLATION_CONTINUATION_STAGE=seed -v "$result_dir":/results \
+  --entrypoint /opt/distillation-venv/bin/python notedeck-distillation:local -m unittest -v \
+  sse_multivector.test_distillation_deploy.SharedSSHTests.test_single_model_continuation_transfers_parent_and_requires_both_test_collections
+docker logs distillation-target > "$result_dir/continuation-original.log" 2>&1
+docker rm -f distillation-target
+start_target -v "$recovery_volume":/workspace
+docker run --rm --network distillation-local \
+  -e DISTILLATION_TEST_OUTPUT=/results/workflow -e DISTILLATION_DEPLOY_OUTPUT=/results/deployment-tests \
+  -e DISTILLATION_SSH_TARGET=/results/ssh-target.json -e DISTILLATION_CONTINUATION_STAGE=recover -v "$result_dir":/results \
+  --entrypoint /opt/distillation-venv/bin/python notedeck-distillation:local -m unittest -v \
+  sse_multivector.test_distillation_deploy.SharedSSHTests.test_single_model_continuation_reuses_volume_after_container_replacement_offline
+docker logs distillation-target > "$result_dir/continuation-replacement.log" 2>&1
 rm "$result_dir/deployment-key" "$result_dir/deployment-key.pub"
 """,
 }

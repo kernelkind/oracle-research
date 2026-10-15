@@ -13,6 +13,8 @@ def make_spec(settings, offer, package, image):
     required_gpus = max(job.get('gpu_assignments', {}).values(), default=0) + 1
     if offer['num_gpus'] < required_gpus:
         raise ValueError(f'package requires {required_gpus} GPUs')
+    if job.get('download_cache') and 'local_volume' not in settings:
+        raise ValueError('model download requires a local volume')
     return _make_spec(settings, offer, package, image, job,
         'sse_multivector.distillation_deploy', 'execute',
         all('training_milestones' in read_json(Path(package) / path) for path in job['runs']))
@@ -72,6 +74,14 @@ def _make_spec(settings, offer, package, image, job, module, action, resumable):
             raise ValueError('local volume must identify the selected physical machine')
         spec['local_volume'] = dict(volume)
         spec['environment']['HF_HOME'] = '/workspace/oracle-full-build/model-cache'
+        if settings.get('local_volume_maximum_usd', 0):
+            reservation_id = settings.get('volume_reservation_id')
+            if not isinstance(reservation_id, str) or not reservation_id.strip():
+                raise ValueError('local volume requires a committed storage reservation ID')
+            spec['volume_reservation'] = {'reservation_id': reservation_id,
+                'minimum_size_gb': settings['local_volume_minimum_gb'],
+                'planning_retention_hours': settings['local_volume_retention_hours'],
+                'maximum_charge_cents': int(Decimal(str(settings['local_volume_maximum_usd'])) * 100)}
         if 'recover_from' in settings:
             spec['recover_from'] = settings['recover_from']
             for key in ('reuse_work', 'recovery_reason'):
@@ -91,6 +101,7 @@ def main():
     parser.add_argument('--download-only', action='store_true', help='one-GPU persistent model cache job')
     parser.add_argument('--local-volume-id', type=int, help='existing persistent Vast local volume')
     parser.add_argument('--local-volume-machine-id', type=int, help='physical machine owning that volume')
+    parser.add_argument('--volume-reservation-id', help='committed vast_volume_reservation ledger entry')
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     if (args.local_volume_id is None) != (args.local_volume_machine_id is None):
@@ -103,6 +114,8 @@ def main():
         if 'local_volume' in settings and settings['local_volume'] != volume:
             parser.error('CLI volume differs from the volume already bound in settings')
         settings['local_volume'] = volume
+    if args.volume_reservation_id is not None:
+        settings['volume_reservation_id'] = args.volume_reservation_id
     builder = make_cache_spec if args.download_only else make_spec
     write_json(args.output, builder(settings, read_json(args.offer), args.package, args.image))
 

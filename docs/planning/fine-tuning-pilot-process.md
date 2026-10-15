@@ -109,14 +109,26 @@ verification requires both collections, their raw/parsed answers and receipts,
 and all planned training-note uses and updates. Reruns reuse saved answers and
 complete checkpoints, including when publication of the first test is interrupted.
 
+Remote continuation preparation requires `--cache-manifest`. It selects only
+the parent's pinned model and revision from the pilot's existing manifest and
+freezes `download_cache` in the package. On the same rental, before any model
+preparation or training, the worker verifies its volume identity and write/read
+access, checks free space, downloads missing files and repairs corrupt files
+using the existing cache workflow. Good files are reused. Required free space
+includes all missing files, the largest temporary file and the manifest's
+32GiB reserve for saved work. Qwen's 26 pinned files total 55,586,035,724 bytes;
+the package includes no Gemma downloads. All model subprocesses then run with
+Hub access disabled. Offline completion verification also requires complete
+download/checksum receipts and the selected volume's identity.
+
 Use [the Qwen continuation Vast profile](../../sse_multivector/distillation/qwen-continuation-v1.vast.json)
 with one 96GB card, 30GB instance disk and a persistent local volume for the
 model cache, inputs, checkpoints and results. Plan for a 150GB volume; select it
 with the GPU host, since a Vast local volume only attaches on its physical
-machine. The profile rejects an unbound volume. Supply both
-`--local-volume-id` and `--local-volume-machine-id` when creating the workload
-specification, or bind the same `local_volume` object in launch settings. A
-different machine is rejected before any provider action. The existing shared
+machine. The profile rejects an unbound volume. Supply
+`--local-volume-id`, `--local-volume-machine-id` and `--volume-reservation-id`
+when creating the workload specification, or bind the corresponding launch
+settings. A different machine is rejected before any provider action. The existing shared
 launcher uses `--link-volume` with `--mount-path /workspace`, verifies the mount
 and volume identity, and keeps work under `/workspace/oracle-full-build` with
 `HF_HOME=/workspace/oracle-full-build/model-cache`.
@@ -127,8 +139,17 @@ and transfers plus $1.50 separately for the volume**, within the same **$30
 total**, including failed attempts. `check_offer` includes both allowances;
 the frozen instance contract receives only the $28.50 ceiling. Reconcile and
 record the volume's separate ledger commitment before creation or continued
-retention. Its current rate and intended retention must fit $1.50, including
-detached time after instance deletion; a current storage quote is still needed.
+retention. The profile requires at least 150GB and a 36-hour storage reservation
+within $1.50, including detached time after instance deletion. Native launch
+preparation queries `show volumes --raw` and requires a created, detached volume
+on the selected machine, sufficient capacity and a known hourly rate covered
+by one matching committed `vast_volume_reservation`. The entry must identify
+the volume directly or through its `vast_volume_created` receipt, fund the full
+allowance separately from the instance, and leave at least the full planned
+rental before its retention deadline. These checks run again before GPU
+creation, including when an instance reservation was already recorded. A
+changed price, capacity, attachment, funding or expired retention blocks
+creation. Fresh provider facts and a reconciled ledger are still needed.
 The setup allowance is $5; $27 of instance spending calls for cost review.
 Work has no automatic timeout. Machine 146170 is excluded. The profile uses
 managed SSH with
@@ -152,10 +173,11 @@ isolated at `experiment-runner-qwen-continuation-v1`, commit `1cfdd6a7`.
 The real input package was prepared locally and mechanically verified: one Qwen
 run, one preparation, 1,000 distinct training notes, 3,000 total note uses,
 milestones 2,000/3,000, expected final 375 updates and 600 new answers. Artifacts
-belong in the task worktree under `target/qwen-continuation-v1/`; `inputs-v4` is
-the current package, bound to the required-volume runtime. The volume profile
-changes the source identity; earlier packages and images must not be used for
-this launch. All current runtime source hashes match the rebuilt VM image.
+belong in the task worktree under `target/qwen-continuation-v1/`; `inputs-v5` is
+the current package with the Qwen-only cache manifest and download enabled.
+These corrections change the runtime identity; earlier packages and images
+must not be used for this launch. The matching rebuilt image passes local
+qualification.
 
 To prepare another immutable package, use a fresh output directory:
 
@@ -168,38 +190,45 @@ python3 -m sse_multivector.distillation_deploy prepare-continuation \
   --parent-run "$pilot/operation/result/work/results/qwen" \
   --data "$pilot/pilot-package/data/$dataset" \
   --preparation-config "$pilot/source-configs/preparation-configs/qwen.json" \
+  --cache-manifest "$pilot/pilot-package/model-cache.json" \
   --name qwen --additional-passes 2 \
   --output target/qwen-continuation-v1/inputs-next
 ```
 
-**Verification complete, October 14:** the required-volume update passes 55
-local contract checks and nine targeted Vast failure regressions. The pinned
-PyTorch **2.12.1+cu130** VM reuses verified evidence for the unchanged 10
-architecture and 50 workflow tests. Its updated deployment batch passes with
-58 tests, five skipped; four cache tests and four
-explicit volume/replacement/download/handoff tests also pass. Those four
-handoffs cover four deployment skips. Qwen's saved tokenizer separately passes
+**Verification complete, October 14:** the corrections pass 55 local contract
+checks, 153 shared controller regressions and nine checks against the pinned
+Vast CLI. The pinned PyTorch **2.12.1+cu130** VM reuses verified evidence for
+the unchanged 10 architecture and 50 workflow tests. Its updated deployment
+batch passes with 60 tests, seven skipped; four cache tests and six explicit
+volume/replacement/download/handoff tests also pass. Those six handoffs cover
+six deployment skips. These model rehearsals use tiny CPU models. Qwen's saved
+tokenizer separately passes
 the actual 1,000 training, 100 validation and 200 test inputs: maximum complete
 training length 18,114, answer length 8,452 and validation/test prompts
 9,608/9,584 tokens. Thinking remains off. No full model weights are loaded for
 this tokenizer check.
 
-The real SSH continuation transfers its parent, produces both checkpoints and
-both reserved test collections, and rejects completion approval if a first-pass
-test answer is missing. The VM is stopped and its verified image export is at
-`target/qwen-continuation-v1/vm/attempt-1792022543813223028/results/container.tar.gz`.
-Every prepared `inputs-v4` runtime source hash matches that image's frozen build
+The real SSH continuation uses the current one-card profile and a mounted
+volume, cold-downloads its pinned model, runs matched preparation, continues
+its sealed parent and produces both checkpoints and both reserved test
+collections. A replacement container then recovers the same volume with the
+download server unavailable, reuses every cached file and preserves all saved
+Qwen results byte for byte. Completion approval rejects missing first-pass test
+answers, missing cache receipts and a mismatched volume identity. The VM is
+stopped and its verified image export is at
+`target/qwen-continuation-v1/vm/attempt-1792026288165394763/results/container.tar.gz`.
+Every prepared `inputs-v5` runtime source hash matches that image's frozen build
 context. The host's older PyTorch 2.8 reproduces an existing physical-batch
 numerical tolerance failure on unchanged `main`; that same test passes in the
 pinned VM without relaxing its tolerance.
 
-**Further Vast audit corrections, October 14:** the cold-start watcher now
+The cold-start watcher now
 keeps polling `instance_starting` until the same instance runs and its results
-are retrieved. The failing-first production-flow test and all 151 shared
-controller regressions pass. Cache download/verification inside the continuation
-and volume capacity/cost admission are being corrected next. Rebuild the input
-package and image after these corrections; the preceding VM receipts do not
-qualify the changed runtime for launch.
+are retrieved. Its production-flow regression verifies one instance creation,
+one worker start and retrieval without a second invocation. Volume admission
+rejects changed capacity before GPU creation, and cache admission checks free
+space before starting any model subprocess, reusing valid files and repairing
+only corrupt files.
 
 Before renting, publish the matching image privately, select a currently
 available volume and same-host GPU offer, confirm capacity for both the 150GB

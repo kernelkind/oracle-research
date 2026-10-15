@@ -13,12 +13,13 @@ from sse_multivector.distillation_run import read_json, write_json
 from sse_multivector.test_distillation_data import DistillationDataTests
 
 
-def quote():
-    settings = read_json(Path(__file__).parent / 'distillation/vast-launch.json')
+def quote(settings_path=None):
+    settings = read_json(settings_path or Path(__file__).parent / 'distillation/vast-launch.json')
+    storage = .24 * settings['disk_gb'] / 720
     return settings, {**settings['offer_equals'], **settings['offer_minimums'],
         **settings['offer_maximums'], 'id': 123, 'machine_id': 12, 'bundle_id': 23,
-        'driver_version': '595.58.03', 'dph_base': 1.5, 'storage_cost': .24,
-        'storage_total_cost': .1}
+        'driver_version': '595.58.03', 'dph_base': settings['offer_maximums']['dph_total']-storage,
+        'storage_cost': .24, 'storage_total_cost': storage}
 
 
 class WorkloadTests(unittest.TestCase):
@@ -76,6 +77,10 @@ class WorkloadTests(unittest.TestCase):
                 'model': 'example/qwen', 'revision': 'a' * 40, 'training_milestones': [1, 2]})
             deploy.prepare([config], root / 'inputs', gpu_assignments={'qwen': 0})
             settings['local_volume'] = {'id': 881, 'machine_id': offer['machine_id']}
+            with self.assertRaisesRegex(ValueError, 'storage reservation ID'):
+                vast.make_spec(settings, offer, root / 'inputs',
+                               settings['image_repository'] + '@sha256:' + '4' * 64)
+            settings['volume_reservation_id'] = 'volume-fixture'
             spec = vast.make_spec(settings, offer, root / 'inputs',
                                  settings['image_repository'] + '@sha256:' + '4' * 64)
             self.assertEqual(spec['local_volume'], settings['local_volume'])
@@ -90,6 +95,8 @@ class WorkloadTests(unittest.TestCase):
             self.assertEqual(contract['limits']['setup_cost_micro_usd'], 5_000_000)
             self.assertEqual(contract['limits']['reservation_ceiling_micro_usd'], 28_500_000)
             self.assertEqual(contract['local_volume'], settings['local_volume'])
+            self.assertEqual(contract['volume_reservation'], {'reservation_id': 'volume-fixture',
+                'minimum_size_gb': 150, 'planning_retention_hours': 36, 'maximum_charge_cents': 150})
             # The independent volume commitment and instance ceiling share $30.
             self.assertEqual(spec['limits']['maximum_charge_cents'] +
                              int(settings['local_volume_maximum_usd'] * 100), 3000)
@@ -133,7 +140,13 @@ class WorkloadTests(unittest.TestCase):
             self.assertNotEqual(wrong.returncode, 0)
             self.assertIn('selected physical machine', wrong.stderr)
             self.assertFalse((root / 'spec.json').exists())
-            subprocess.run(command + ['--local-volume-machine-id', '12'],
+            unfunded = subprocess.run(command + ['--local-volume-machine-id', '12'],
+                                      capture_output=True, text=True)
+            self.assertNotEqual(unfunded.returncode, 0)
+            self.assertIn('storage reservation ID', unfunded.stderr)
+            self.assertFalse((root / 'spec.json').exists())
+            subprocess.run(command + ['--local-volume-machine-id', '12',
+                                     '--volume-reservation-id', 'volume-fixture'],
                            check=True, capture_output=True, text=True)
             spec = read_json(root / 'spec.json')
             self.assertEqual(spec['local_volume'], {'id': 881, 'machine_id': 12})

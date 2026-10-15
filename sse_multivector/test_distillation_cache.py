@@ -98,6 +98,7 @@ class CacheTests(unittest.TestCase):
         with fixture_hub(files) as (port, requests), tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             manifest = root / 'manifest.json'
+            write_json(root / 'volume-identity.json', {'id': 881, 'machine_id': 12})
             write_json(manifest, {'version': 1, 'reserve_bytes': 0, 'models': [{
                 'model': 'fixture/cached', 'revision': 'a'*40, 'files': [
                     {'path': n, 'size': len(p), 'sha256': hashlib.sha256(p).hexdigest()}
@@ -128,6 +129,7 @@ class CacheTests(unittest.TestCase):
             with tempfile.TemporaryDirectory() as temporary:
                 root = Path(temporary)
                 manifest = root / 'manifest.json'
+                cache.write_json(root / 'volume-identity.json', {'id': 881, 'machine_id': 12})
                 manifest.write_text(json.dumps({'version': 1, 'reserve_bytes': 0, 'models': [{
                     'model': 'fixture/cached', 'revision': revision,
                     'files': [{'path': n, 'size': len(p), 'sha256': hashlib.sha256(p).hexdigest()}
