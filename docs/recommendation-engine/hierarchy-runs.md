@@ -1443,7 +1443,8 @@ bindings and receipts.
 
 ## HR30 — approved 1,000-note HiGen V5 experiment
 
-Authorized autonomous construction and review-UI goal; **running**. Preserve
+Authorized autonomous construction and review-UI goal; **running after recovery
+of one local Bootstrap timeout**. Preserve
 HR29's exact ordered 200 notes, exclude all 122 training posts by author
 `4fc2e3f74d5e66b63116d5d6984fc6dd7f338d0965828b4d211e6ef43ce93886`,
 and append the first 800 remaining notes in the frozen SP training order.
@@ -1469,8 +1470,34 @@ no alternate constructor, source-prompt edit or manual graph assembly is used.
 
 [Definition](../../sse_multivector/hierarchy-runs/hr30/hierarchy.spec.json),
 [selection evidence](../../../oracle-mvp-hierarchy-hr30-v5/target/hierarchy-hr30-v5-thousand-note-v1/selection.json),
-[native state](../../../oracle-mvp-hierarchy-hr30-v5/target/hierarchy-hr30-v5-thousand-note-v1/HR30/state.json),
+[resumed native state](../../../oracle-mvp-hierarchy-hr30-v5/target/hierarchy-hr30-v5-thousand-note-v1/HR30-resumed-v1/state.json),
 and [execution provenance](../../../oracle-mvp-hierarchy-hr30-v5/target/hierarchy-hr30-v5-thousand-note-v1/execution-provenance.json)
-preserve the active run. Its execution worktree remains frozen. This record
-will be completed with native usage, output coverage and the requested checked
-review UI after construction. The primary workbook records Running status.
+preserve the run. Its execution worktree remains frozen. The initial invocation
+stopped after **68m 54s**, with **7,035 valid answers and one failed case, L01813**.
+That case received HTTP 200 and streamed JSON text, but the client aborted at
+its frozen 600-second timeout
+without a successful terminal event. Its failed receipt remains unchanged; raw
+text is not substituted for a validated answer. The initial invocation stopped
+before encoding, clustering or canonical-node construction. Two diagnostic
+quote errors remain nonblocking under the existing Bootstrap diagnostic contract.
+
+The repository's ordinary retry rule forbids local-timeout retries. The user
+explicitly instructed "you MUST retry" on 2026-10-15. A one-case native
+[recovery batch](../../../oracle-mvp-hierarchy-hr30-v5/target/hierarchy-hr30-v5-thousand-note-v1/bootstrap-timeout-recovery-v1/report.json)
+succeeded with one fresh Bootstrap request and one automatic warmup. Its complete
+request identity exactly matches the failed request; the failed receipt and
+other 7,035 answers remain unchanged. **All 7,036 Bootstrap answers are now
+available and valid.** A fresh native construction state uses the same frozen
+definition and exact-request history, reusing those answers rather than
+resampling them. The original stopped state remains saved separately.
+
+This is a scoped recovery exception, not a change to the ordinary retry policy.
+No prompt, constructor or runner code changed. The initial invocation's
+[native usage](../../../oracle-mvp-hierarchy-hr30-v5/target/hierarchy-hr30-v5-thousand-note-v1/usage-blocked.json)
+records 5,514 fresh attempts, including one warmup and the failed request,
+plus 1,523 exact reuses. Its known API-equivalent subtotal is $39.571576;
+the failed request lacks usage, so the complete total is unknown. The recovery
+batch's complete fresh API-equivalent cost is $0.0194672. These are separate
+invocation figures, not a final all-stage total or subscription cash charges.
+Incremental cash charge remains zero. The workbook records Running status;
+the checked review UI and final accounting remain due after construction.

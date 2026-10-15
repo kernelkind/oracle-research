@@ -34,6 +34,7 @@ original notes. Parameters describe the settings actually used.
 | HR27 | 50 | ASv6.100 | V5 | bootstrap-v133 | consolidated-grouped-v1 | — |
 | HR28 | 100 | ASv6.100 | V5 | bootstrap-v133 | consolidated-grouped-v1 | — |
 | HR29 | 200 | ASv6.100 | V5 | bootstrap-v133 | consolidated-grouped-v1 | — |
+| HR30 | 1,000 | ASv6.100 | V5 | bootstrap-v133 | consolidated-grouped-v1 | — |
 
 **Same notes:** HR03/HR10/HR14/HR16/HR19/HR20/HR21/HR27 use the same ordered 50-note selection.
 HR05/HR08/HR09/HR13/HR15/HR17/HR18 use its same ordered first 24 notes. HR04 uses
@@ -102,10 +103,10 @@ using the same title-only pooling with their meaning as context. HR03/HR06/HR07 
 standalone subject vectors, also with a 512-token maximum. Traversal/V2 did not
 use SSE for hierarchy construction.
 
-**Execution:** HR11–HR29 use prefix caching, automatic warming and exact-request
+**Execution:** HR11–HR30 use prefix caching, automatic warming and exact-request
 answer reuse. Seed/temperature are unspecified; no explicit output-token cap.
 Normally at most two provider attempts per case across resumes, temporary
-provider errors only; HR14 had an approved recovery exception. HR22 used a
+provider errors only; HR14 and HR30 had approved recovery exceptions. HR22 used a
 scoped replacement checkpoint for one invalid evidence quote, preserving the
 strict validator and original prompts.
 
@@ -555,3 +556,12 @@ cd /home/dev/src/notedeck_worktrees/algos
 ```
 
 [Full result and evidence](hierarchy-runs.md#hr29--hr26-controls-with-higen-v5).
+
+## HR30 — 1,000 notes · HiGen V5
+
+Running after user-authorized recovery of one local 600-second timeout.
+All 7,036 Bootstrap answers are available and valid; native V5 construction
+has resumed through exact reuse, with the original failed receipt preserved.
+There is no review UI yet.
+
+[Current state and evidence](hierarchy-runs.md#hr30--approved-1000-note-higen-v5-experiment).
