@@ -8629,8 +8629,20 @@
           "fresh": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr28-v5/target/hierarchy-hr28-v5-hundred-note-v1/usage-new.json",
           "producer_inclusive": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr28-v5/target/hierarchy-hr28-v5-hundred-note-v1/usage-all-producers.json"
         },
-        "qualification": "Native validation passed; no human semantic approval. Seven notes are reachable only directly at the top. No review UI requested."
-      }
+        "qualification": "Native validation passed; no human semantic approval. Seven notes are reachable only directly at the top. User-requested review UI exported and passed its offline check."
+      },
+      "related_outputs": [
+        {
+          "label": "HR28 review hierarchy",
+          "path": "target/hr28-review-ui-v1/hierarchy.json",
+          "sha256": "14c56bfbb17b8e472e7f49e76772cf69e39053dd265f840065d9acaec9e2b560"
+        },
+        {
+          "label": "HR28 original notes",
+          "path": "target/hr28-review-ui-v1/notes.json",
+          "sha256": "a6965a46327568c75c199c98ed12650c1d59d6d1b3892b33b76ce8806771a7aa"
+        }
+      ]
     },
     {
       "version_id": "HR29",
@@ -8681,8 +8693,20 @@
           "fresh": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr29-v5/target/hierarchy-hr29-v5-two-hundred-note-v1/usage-new.json",
           "scope": "Fresh totals exclude copied historical Bootstrap; generation_usage includes original consolidation producers behind exact reuse, also excluding Bootstrap."
         },
-        "qualification": "Native validation passed; no human semantic approval. Twenty-one notes are reachable only directly at the top. No review UI requested."
-      }
+        "qualification": "Native validation passed; no human semantic approval. Twenty-one notes are reachable only directly at the top. User-requested review UI exported and passed its offline check."
+      },
+      "related_outputs": [
+        {
+          "label": "HR29 review hierarchy",
+          "path": "target/hr29-review-ui-v1/hierarchy.json",
+          "sha256": "5e23f4f96f642d447a22b82b6515786b5414cd54e4b8fb478de3e4b12d07781a"
+        },
+        {
+          "label": "HR29 original notes",
+          "path": "target/hr29-review-ui-v1/notes.json",
+          "sha256": "d38dbb84f5bcf0de77ef1ffe35e46fb17a0c3103a6de8259900d0b60e96152bc"
+        }
+      ]
     }
   ]
 }

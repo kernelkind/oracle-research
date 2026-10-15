@@ -1394,8 +1394,8 @@ The frozen [definition](../../sse_multivector/hierarchy-runs/hr28/hierarchy.spec
 [execution provenance](../../../oracle-mvp-hierarchy-hr28-v5/target/hierarchy-hr28-v5-hundred-note-v1/execution-provenance.json)
 and [terminal validation](../../../oracle-mvp-hierarchy-hr28-v5/target/hierarchy-hr28-v5-hundred-note-v1/terminal-validation.json)
 retain controls and evidence. Workbook status and coverage were reopened and
-verified. No review UI was requested or generated. Retain the execution
-worktree for frozen source and receipt bindings.
+verified. The user-requested standalone review UI passed its offline check
+from /tmp. Retain the execution worktree for frozen source and receipt bindings.
 
 ## HR29 — HR26 controls with HiGen V5
 
@@ -1437,5 +1437,6 @@ The frozen [definition](../../sse_multivector/hierarchy-runs/hr29/hierarchy.spec
 [execution provenance](../../../oracle-mvp-hierarchy-hr29-v5/target/hierarchy-hr29-v5-two-hundred-note-v1/execution-provenance.json)
 and [terminal validation](../../../oracle-mvp-hierarchy-hr29-v5/target/hierarchy-hr29-v5-two-hundred-note-v1/terminal-validation.json)
 retain exact controls and evidence. Workbook status and coverage were reopened
-and verified. No review UI was requested or generated. Retain this execution
-worktree and baseline sources for frozen bindings and receipts.
+and verified. The user-requested standalone review UI passed its offline check
+from /tmp. Retain this execution worktree and baseline sources for frozen
+bindings and receipts.

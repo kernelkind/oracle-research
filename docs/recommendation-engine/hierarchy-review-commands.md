@@ -534,7 +534,11 @@ cd /home/dev/src/notedeck_worktrees/algos
 HR22's exact ordered corpus, original meanings/vectors and teacher controls.
 Complete in 19m 26s: 52 canonical nodes, six roots and 94/100 reachable notes,
 including seven available only directly at the top. Native validation passed.
-Review UI not prepared; no refresh was requested.
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos
+./oracle-mvp-hierarchy-hr28-v5/target/hr28-review-ui-v1/launch.sh
+```
 
 [Full result and evidence](hierarchy-runs.md#hr28--hr22-controls-with-higen-v5).
 
@@ -543,7 +547,11 @@ Review UI not prepared; no refresh was requested.
 HR26's exact ordered corpus, original meanings/vectors and teacher controls;
 ordinary two-attempt provider limit. Complete in 24m 32s: 66 canonical nodes,
 six roots and 198/200 reachable notes, including 21 available only directly
-at the top. Native validation passed. Review UI not prepared; no refresh
-was requested.
+at the top. Native validation passed.
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos
+./oracle-mvp-hierarchy-hr29-v5/target/hr29-review-ui-v1/launch.sh
+```
 
 [Full result and evidence](hierarchy-runs.md#hr29--hr26-controls-with-higen-v5).
