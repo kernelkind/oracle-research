@@ -264,6 +264,33 @@ class V5ConstructionTests(unittest.TestCase):
         self.assertTrue(all(not ids for ids in root_pass['additions'].values()))
         generation.check_state(state)
 
+    def test_v53_independent_membership_jobs_start_before_waiting(self):
+        spec = self.prepare(count=10)
+        cfg = json.loads(spec.read_text())
+        cfg['generation_policy'] = 'hierarchy-generation-v5.3'
+        spec = self.native.write('v53.json', cfg)
+        started = self.native.root/'membership-jobs-started'
+        started.mkdir()
+        binary = self.native.root/'hdbscan-fixture'
+        binary.write_text(binary.read_text().replace(
+            'r=json.load(open(sys.argv[1]))',
+            'from pathlib import Path\n'
+            'import time\n'
+            'if "/memberships/" in sys.argv[1]:\n'
+            f'    started=Path({str(started)!r})\n'
+            '    (started/Path(sys.argv[1]).parents[1].name).touch()\n'
+            '    deadline=time.monotonic()+5\n'
+            '    while len(list(started.iterdir())) < 3:\n'
+            '        if time.monotonic() >= deadline:\n'
+            '            sys.stderr.write("membership jobs were serialized")\n'
+            '            sys.exit(1)\n'
+            '        time.sleep(.01)\n'
+            'r=json.load(open(sys.argv[1]))'))
+        state = self.construct(spec)
+        self.assertEqual(len(list(started.iterdir())), 3)
+        self.assertEqual(state['status'], 'complete')
+        self.assertTrue(state['v5']['membership_passes'][0]['applied'])
+
     def test_v53_failed_membership_clustering_preserves_a_resumable_frozen_pool(self):
         from sse_multivector import hierarchy_generation as generation
         spec = self.prepare(count=10)
@@ -295,10 +322,14 @@ class V5ConstructionTests(unittest.TestCase):
             generation.check_state(interrupted)
             results = directory/'F00000/memberships/C00001/hdbscan-00000/result.json'
             before, calls = results.read_bytes(), self.native.calls()
+            other = directory/'F00000/memberships/C00003/hdbscan-00000/result.json'
+            self.assertTrue(other.exists(), 'successful sibling work was abandoned after another failed')
+            other_before = other.read_bytes()
             result = generation.run(directory)
         self.assertEqual(result['status'], 'complete')
         self.assertEqual(self.native.calls(), calls)
         self.assertEqual(results.read_bytes(), before)
+        self.assertEqual(other.read_bytes(), other_before)
         state = json.loads((directory/'state.json').read_text())
         self.assertTrue(state['v5']['membership_passes'][0]['applied'])
         self.assertEqual(state['v5']['membership_passes'][0]['canonical_items'],

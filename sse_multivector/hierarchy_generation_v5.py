@@ -5,6 +5,7 @@ only teacher executor; the ordinary hierarchy coordinator submits ready work.
 """
 
 import json
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 from . import hierarchy_generation as generation
@@ -164,17 +165,26 @@ def _add_memberships(directory, state, family):
             workflow.write(directory/'state.json', state)
     record = passes[family['membership_pass']]
     untracked = record['untracked_ids']
-    if untracked:
-        for identifier in family['nodes']:
-            node = nodes[identifier]
-            ids = sorted(set(node['original_ids']) | set(untracked))
-            inputs = dict(id=family['id']+'-'+identifier, current=ids, rounds=[])
-            destination = directory/family['id']/'memberships'/identifier
-            destination.mkdir(parents=True, exist_ok=True)
-            round_ = hdbscan.round_for(destination, state, inputs, generation._vectors(state, ids))
-            record['rounds'][identifier] = round_
-            record['additions'][identifier] = _membership_additions(
-                round_, node['original_ids'], untracked)
+    if untracked and family['nodes']:
+        # Each job reads the same frozen state and writes its own directory.
+        # This pool runs local clustering only; teacher admission remains with
+        # the shared runner. Start every ready sibling before collecting results.
+        with ThreadPoolExecutor(max_workers=len(family['nodes'])) as pool:
+            jobs = []
+            for identifier in family['nodes']:
+                node = nodes[identifier]
+                ids = sorted(set(node['original_ids']) | set(untracked))
+                inputs = dict(id=family['id']+'-'+identifier, current=ids, rounds=[])
+                destination = directory/family['id']/'memberships'/identifier
+                destination.mkdir(parents=True, exist_ok=True)
+                vectors = generation._vectors(state, ids)
+                jobs.append((identifier, pool.submit(
+                    hdbscan.round_for, destination, state, inputs, vectors)))
+            for identifier, job in jobs:
+                round_ = job.result()
+                record['rounds'][identifier] = round_
+                record['additions'][identifier] = _membership_additions(
+                    round_, nodes[identifier]['original_ids'], untracked)
     # Apply together: a match with one sibling must not remove another sibling's input.
     for identifier, added in record['additions'].items():
         node = nodes[identifier]
