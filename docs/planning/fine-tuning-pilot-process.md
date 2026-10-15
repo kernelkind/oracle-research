@@ -342,6 +342,16 @@ uncertainty and include zero; validation does not establish a reliable gain.
 In validation, two additional passes have not produced the large completeness
 increase sought.
 
+The fixed validation inventory contains **845 required meaning groups**.
+Pass 1 covers **341** and pass 3 covers **347**: six additional groups across
+the 100 notes. These pooled counts differ from the primary score, which
+averages each note's coverage equally. Of pass 3's **498 uncovered groups**,
+**390** have no recorded matching returned subject; **108** have matches but
+missing required headings. These are saved grader findings, not new semantic
+adjudications. The remaining failures warrant examining which required
+meanings and parent headings are absent; this does not establish a new training
+recipe or authorize additional training.
+
 The new report has **200 finite grade pairs, zero manual reviews and zero
 pending judgments**. Independent verification checks all **5,448 protected
 new-source hashes** and all **6,138 pass-1 source hashes**, identical note IDs,
@@ -354,7 +364,8 @@ native retry policy; no grader settings or saved model answers changed.
 Artifacts remain under
 `oracle-mvp-qwen-continuation-grading-v1/target/qwen-continuation-grading-v1/`:
 `validation/automatic/grades.json`, `validation/completion-verification.json`,
-`validation/paired-differences.txt` and the dated `checkpoint-selection.txt`.
+`validation/paired-differences.txt`, `validation/coverage-findings.txt` and the
+dated `checkpoint-selection.txt`.
 The validation report SHA-256 is
 `a9a5be338027fa052c864a3347d5f07b99f8bf98620c2cd8f898a5ce5b125206`.
 The grading worktree is frozen at Oracle `dc8c43f6` and its isolated runner at
