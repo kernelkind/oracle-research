@@ -1440,3 +1440,37 @@ retain exact controls and evidence. Workbook status and coverage were reopened
 and verified. The user-requested standalone review UI passed its offline check
 from /tmp. Retain this execution worktree and baseline sources for frozen
 bindings and receipts.
+
+## HR30 — approved 1,000-note HiGen V5 experiment
+
+Authorized autonomous construction and review-UI goal; **running**. Preserve
+HR29's exact ordered 200 notes, exclude all 122 training posts by author
+`4fc2e3f74d5e66b63116d5d6984fc6dd7f338d0965828b4d211e6ef43ce93886`,
+and append the first 800 remaining notes in the frozen SP training order.
+This yields 1,000 distinct notes from 603 authors, with at most 27 per author.
+No validation/test IDs are selected. All selected subjects are saved ASv6.100
+teacher outputs: 7,036 original L1s, of which 5,509 come from the additions.
+
+The ordinary native collector joins the six completed AS source experiments
+without inference. Its source collection retains 1,500 source records; the
+frozen hierarchy definition selects exactly the approved 1,000. Unselected
+records never become Bootstrap requests or encoder inputs. The selection
+evidence records original corpus, training manifest, exclusion and order.
+Native reuse references were copied unchanged into HR30's own history so
+answer reuse does not write new references into earlier runs' histories.
+
+Prompts, model and numerical controls match HR29: Bootstrap-v133,
+Consolidated-grouped-v1, GPT-6.1 Sol medium on subscription SSE; HDBSCAN angular,
+min_samples=3, min_cluster_size=2 and excess-of-mass. The shared runner owns
+request concurrency, caching, exact reuse and two-attempt provider recovery.
+There is no total attempt cap or paid fallback. Meanings/vectors for new
+entries are generated through the existing automated native V5 constructor;
+no alternate constructor, source-prompt edit or manual graph assembly is used.
+
+[Definition](../../sse_multivector/hierarchy-runs/hr30/hierarchy.spec.json),
+[selection evidence](../../../oracle-mvp-hierarchy-hr30-v5/target/hierarchy-hr30-v5-thousand-note-v1/selection.json),
+[native state](../../../oracle-mvp-hierarchy-hr30-v5/target/hierarchy-hr30-v5-thousand-note-v1/HR30/state.json),
+and [execution provenance](../../../oracle-mvp-hierarchy-hr30-v5/target/hierarchy-hr30-v5-thousand-note-v1/execution-provenance.json)
+preserve the active run. Its execution worktree remains frozen. This record
+will be completed with native usage, output coverage and the requested checked
+review UI after construction. The primary workbook records Running status.
