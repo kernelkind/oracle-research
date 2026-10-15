@@ -74,6 +74,21 @@ class V5ConstructionTests(unittest.TestCase):
                         'unused distance matrices are parsed and retained as full results')
         self.assertEqual((self.native.root/'v5/state.json').read_bytes(), before)
 
+    def test_hdbscan_scope_retains_larger_saved_views_without_reparsing(self):
+        state = self.construct(self.prepare(count=10))
+        result = Path(state['families'][0]['rounds'][0]['hdbscan']['result'])
+        response = json.loads(result.read_text())
+        response['artifact']['manifest']['description'] = 'x' * (6 * 1024 * 1024)
+        paths = [self.native.root/f'large-result-{i}.json' for i in range(3)]
+        for path in paths:
+            path.write_text(json.dumps(response))
+        with hdbscan.source_scope(), patch.object(hdbscan.json, 'loads', wraps=json.loads) as decode:
+            for _ in range(2):
+                for path in paths:
+                    value = hdbscan.read_result(path)
+                    self.assertEqual(value['artifact']['manifest'], response['artifact']['manifest'])
+            self.assertEqual(decode.call_count, 3, 'saved clustering views were repeatedly parsed')
+
     def test_cached_result_cannot_hide_a_changed_raw_clustering_file(self):
         from sse_multivector import hierarchy_generation as generation
         state = self.construct(self.prepare(count=43))

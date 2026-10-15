@@ -1375,10 +1375,12 @@ def check_state(state, *, verify_receipts=True, verify_current_code=True):
 
 
 def advance(directory, comment):
+    from . import hierarchy_hdbscan
+
     if not isinstance(comment, str) or not comment.strip():
         raise ValueError("an advancement comment is required")
     directory = Path(directory).resolve()
-    with workflow.locked(directory), workflow.report_scope():
+    with workflow.locked(directory), workflow.report_scope(), hierarchy_hdbscan.source_scope():
         state = workflow.read(directory / "state.json")
         check_state(state, verify_receipts=False)
         before = deepcopy(state)

@@ -29,6 +29,7 @@ SECTION_CONFIGS = {
     "hierarchy-generation-v5.3": CONFIG,
 }
 _RESULT_FILES = ContextVar('hierarchy_hdbscan_result_files', default=None)
+_RESULT_CACHE_BYTES = 1024 * 1024 * 1024
 
 
 @contextmanager
@@ -37,7 +38,10 @@ def source_scope():
     if _RESULT_FILES.get() is not None:
         yield
         return
-    token = _RESULT_FILES.set(workflow.engine.ReceiptFiles())
+    # Large membership trees retain several MiB per compact view. The ordinary
+    # receipt reader's 16 MiB default repeatedly evicts those immutable views.
+    token = _RESULT_FILES.set(workflow.engine.ReceiptFiles(
+        projected_cache_bytes=_RESULT_CACHE_BYTES))
     try:
         yield
     finally:
