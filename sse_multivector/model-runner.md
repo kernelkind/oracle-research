@@ -2585,6 +2585,17 @@ final checkpoint only, totaling 1,200 saved answers. Native preview and trial
 preparation require explicit `--split test` for this access; their default
 remains validation. Test preparation verifies the original test collection,
 generation policy and final checkpoint identity, without loading weights.
+Continuation review additionally verifies the original parent manifest, plan
+and checkpoint metadata, the unchanged recipe and the exact additional complete
+passes. `prepare-distillation-review-trial --parent-run DIR` resolves a relocated
+parent only when its frozen hashes match; it never rewrites the training
+manifest. Validation defaults to the continuation's added checkpoints.
+`--model-version VERSION` selects saved versions before opening their answers;
+continuation `--split test` requires exactly one explicit checkpoint. The
+selection freezes the parent path and selected versions and revalidates them
+on load. Unselected test collections stay outside review. Original pilot test
+selection remains baseline and final checkpoint only. Invalid saved answers
+remain in the selected cohort and its denominator.
 Use the same frozen DSMv3, DSSv2, DSLv10 and DCSv1 grading configuration,
 teacher-only requirement rules, native eligible prefix warming and 32 GiB
 zero-swap process boundary. Test grading completed October 14: all 1,200

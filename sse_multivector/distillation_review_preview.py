@@ -3,7 +3,8 @@
 Only the selected split is decoded; evaluation remains the default. The mixed
 reference ledger is hash checked as opaque bytes, then identity headers establish
 which rows may be decoded. Explicit test previews use baseline and final only.
-Distinct semantic inputs describe theoretical request grouping under one fixed
+Continuation tests require one explicitly selected checkpoint. Distinct
+semantic inputs describe theoretical request grouping under one fixed
 prompt and settings per check; this command prepares no reviewer requests.
 """
 from collections import Counter
@@ -11,6 +12,7 @@ import hashlib
 import json
 import math
 from pathlib import Path
+import random
 import statistics
 
 from . import distillation_review as review
@@ -138,7 +140,7 @@ def _note_workload(row, teacher, *, allow_ancestor_paths=True):
     return work
 
 
-def _model_plan(output, manifest, sources):
+def _model_plan(output, manifest, sources, *, parent_run=None):
     saved = _decode(_read(output / "manifest.json", sources))
     plan = _decode(_read(output / "training-plan.json", sources))
     seal = _decode(_read(output / "provenance.complete.json", sources))
@@ -147,6 +149,11 @@ def _model_plan(output, manifest, sources):
     if saved["dataset"] != manifest:
         raise ValueError("model dataset differs from frozen validation manifest")
     config = saved["config"]
+    if "continuation" in config:
+        _continuation_plan(config, plan, manifest, sources, parent_run=parent_run)
+        return config, plan
+    if parent_run is not None:
+        raise ValueError("parent run requires a continuation model")
     milestones = config["training_milestones"]
     if (not isinstance(milestones, list) or not milestones
             or any(type(m) is not int or m < 1 for m in milestones)
@@ -161,6 +168,63 @@ def _model_plan(output, manifest, sources):
             or not isinstance(config["revision"], str) or not config["revision"]):
         raise ValueError("model identity is missing")
     return config, plan
+
+
+def _continuation_plan(config, plan, manifest, sources, *, parent_run=None):
+    """Verify relocated parent metadata and exact passes without opening weights."""
+    binding = config["continuation"]
+    review._fields(binding, {"parent_run", "manifest_sha256", "plan_sha256", "checkpoint_sha256"},
+                   "continuation parent binding")
+    parent = Path(parent_run or binding["parent_run"]).expanduser().resolve()
+    frozen = _decode(_read(parent / "manifest.json", sources, binding["manifest_sha256"]))
+    if "continuation" in frozen["config"] or "preparation" in frozen["config"]:
+        raise ValueError("continuation parent must be an original subject pilot")
+    original, parent_plan = _model_plan(parent, manifest, sources)
+    if sources[str(parent / "training-plan.json")] != binding["plan_sha256"]:
+        raise ValueError("continuation parent training plan differs")
+    cursor = parent_plan["milestones"][-1]
+    checkpoint = parent / "checkpoints" / f"checkpoint-{cursor}"
+    if run.sha256(checkpoint / "complete.json") != binding["checkpoint_sha256"]:
+        raise ValueError("continuation parent checkpoint differs")
+    _checkpoint(parent, cursor, parent_plan, sources)
+    omitted = {"data", "training_milestones", "continuation"}
+    recipe = lambda value: {k: v for k, v in {"evaluation_tasks": ["subjects"], **value}.items()
+                            if k not in omitted}
+    if recipe(config) != recipe(original):
+        raise ValueError("continuation recipe differs from parent")
+    ids = manifest["train_note_ids"]
+    data = dict(train=[dict(note_id=i, task="subjects") for i in ids])
+    if run.subject_training_plan(data, original) != parent_plan:
+        raise ValueError("continuation parent training plan differs")
+    milestones = config["training_milestones"]
+    if (not isinstance(milestones, list) or not milestones
+            or any(type(m) is not int for m in milestones)
+            or milestones != [cursor + len(ids) * (i + 1) for i in range(len(milestones))]):
+        raise ValueError("continuation milestones must add complete passes")
+    order = list(parent_plan["note_ids"])
+    for index in range(len(milestones)):
+        block = list(ids)
+        random.Random(config["seed"] + index + 1).shuffle(block)
+        order.extend(block)
+    if plan != dict(note_ids=order, milestones=parent_plan["milestones"] + milestones,
+                    examples_per_update=parent_plan["examples_per_update"]):
+        raise ValueError("continuation training plan differs from frozen passes")
+
+
+def _review_versions(config, plan, split, selected=None):
+    continuation = "continuation" in config
+    milestones = config["training_milestones"] if continuation else plan["milestones"]
+    if split == "test" and not continuation:
+        milestones = milestones[-1:]
+    allowed = ([] if continuation else ["baseline"]) + [f"checkpoint-{m}" for m in milestones]
+    if continuation and split == "test" and (selected is None or len(selected) != 1):
+        raise ValueError("continuation test review requires one explicit selected checkpoint")
+    if selected is None:
+        return allowed
+    if (not isinstance(selected, list) or not selected or len(set(selected)) != len(selected)
+            or any(version not in allowed for version in selected)):
+        raise ValueError("review model versions differ from available checkpoints")
+    return selected
 
 
 def _checkpoint(output, cursor, plan, sources):
@@ -359,7 +423,8 @@ def _timing(directories, checks, templates, sources):
               "median/p90 scenarios are not confidence bounds.")
 
 
-def preview(manifest_path, model_outputs, *, estimate=False, timing_experiments=(), split="evaluation"):
+def preview(manifest_path, model_outputs, *, estimate=False, timing_experiments=(), split="evaluation",
+            parent_run=None, model_versions=None):
     """Verify the selected saved stages and count all three review checks."""
     if split not in ("evaluation", "test"):
         raise ValueError("expected evaluation or test split")
@@ -375,10 +440,10 @@ def preview(manifest_path, model_outputs, *, estimate=False, timing_experiments=
     manifest, evaluation, teachers = _validation(manifest_path, sources, split=split)
     total, models = _Workload(), []
     for output in outputs:
-        config, plan = _model_plan(output, manifest, sources)
+        config, plan = _model_plan(output, manifest, sources, parent_run=parent_run)
         model_work, versions, baseline_plan = _Workload(), [], None
-        milestones = plan["milestones"] if split == "evaluation" else plan["milestones"][-1:]
-        stages = [("baseline", None)] + [(f"checkpoint-{m}", m) for m in milestones]
+        stages = [(version, None if version == "baseline" else int(version.removeprefix("checkpoint-")))
+                  for version in _review_versions(config, plan, split, model_versions)]
         for version, cursor in stages:
             directory = _stage(output, version, split=split)
             if cursor is not None:
@@ -408,8 +473,11 @@ def preview(manifest_path, model_outputs, *, estimate=False, timing_experiments=
                 raise ValueError("review preview accounting differs from saved validation stage")
             versions.append(dict(version=version, totals=stage_work.summary(), notes=notes))
             model_work.include(stage_work)
-        models.append(dict(output=str(output), model=config["model"], revision=config["revision"],
-                           totals=model_work.summary(), versions=versions))
+        model = dict(output=str(output), model=config["model"], revision=config["revision"],
+                     totals=model_work.summary(), versions=versions)
+        if "continuation" in config:
+            model["parent_run"] = str(Path(parent_run or config["continuation"]["parent_run"]).expanduser().resolve())
+        models.append(model)
         total.include(model_work)
     estimates = (_estimates(total, teachers, sources, timing_experiments) if estimate else None)
     for module in (Path(__file__), Path(review.__file__), Path(run.__file__)):

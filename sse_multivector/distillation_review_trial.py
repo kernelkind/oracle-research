@@ -2,7 +2,8 @@
 
 Sampling uses saved answer structure and source identities, never reviewer
 outputs. The preview verifier decodes evaluation by default; an explicit test
-split freezes only the saved baseline and final checkpoint answers.
+split freezes only the saved baseline and final checkpoint answers for original
+pilots; continuation test review freezes one explicitly selected checkpoint.
 """
 from collections import Counter, defaultdict
 import hashlib
@@ -38,8 +39,9 @@ def _prior_notes(sources):
     return notes
 
 
-def _population(manifest_path, outputs, *, split="evaluation"):
-    verified = preview.preview(manifest_path, outputs, split=split)
+def _population(manifest_path, outputs, *, split="evaluation", parent_run=None, model_versions=None):
+    verified = preview.preview(manifest_path, outputs, split=split, parent_run=parent_run,
+                               model_versions=model_versions)
     sources = dict(verified["sources"])
     manifest, evaluation, teachers = preview._validation(manifest_path, sources, split=split)
     # Identity headers and the complete ledger hash have already been checked.
@@ -364,9 +366,11 @@ def _saved_report(manifest_path, collection_path, *, verify_checkpoint=False):
 
 def prepare_trial(manifest_path, model_outputs, output, *, random_count=None, hard_count=None,
                   seed="DS-final-20261009", split="evaluation", saved_generations=None,
-                  generation_version=None, generation_sources=None):
+                  generation_version=None, generation_sources=None, parent_run=None, model_versions=None):
     """Verify and freeze disjoint complete-answer samples without inference."""
     if saved_generations is not None:
+        if parent_run is not None or model_versions is not None:
+            raise ValueError("saved generations cannot override model versions or continuation parent")
         if split != "evaluation" or random_count is not None or hard_count is not None:
             raise ValueError("saved generations already fix the validation subset; do not supply sampling counts")
         directory = Path(output).expanduser().resolve()
@@ -413,7 +417,8 @@ def prepare_trial(manifest_path, model_outputs, output, *, random_count=None, ha
     directory = Path(output).expanduser().resolve()
     if directory.exists():
         raise ValueError("trial output already exists; frozen selection cannot be overwritten")
-    verified, sources, candidates, versions = _population(manifest_path, outputs, split=split)
+    verified, sources, candidates, versions = _population(manifest_path, outputs, split=split,
+        parent_run=parent_run, model_versions=model_versions)
     if random_count + hard_count > len(candidates):
         raise ValueError("not enough complete validation answers for the requested trial")
     rng = random.Random(seed)
@@ -423,7 +428,9 @@ def prepare_trial(manifest_path, model_outputs, output, *, random_count=None, ha
     challenge_rows = [_answer(c, "challenge", sources, pattern=p) for c, p in challenge_answers]
     preview._read(Path(__file__).resolve(), sources)
     report = dict(schema_version=2, inference_calls=0, dataset=verified["dataset"],
-        model_outputs=[dict(output=m["output"], model=m["model"], revision=m["revision"])
+        model_outputs=[dict(output=m["output"], model=m["model"], revision=m["revision"],
+                            **({"parent_run": m["parent_run"]} if "parent_run" in m else {}),
+                            **({"versions": model_versions} if model_versions is not None else {}))
                        for m in verified["models"]], sources=sources, settings=SETTINGS,
         population=verified["totals"], selection_policy=dict(seed=seed, random_count=random_count,
             hard_count=hard_count, version_quotas=quotas,
@@ -484,10 +491,11 @@ def load_trial(path):
         output = Path(model["output"])
         if (split == "evaluation" and "test" in output.parts) or str(output) in models:
             raise ValueError("invalid trial model source")
-        config, plan = preview._model_plan(output, manifest, sources)
+        config, plan = preview._model_plan(output, manifest, sources, parent_run=model.get("parent_run"))
         if (model["model"], model["revision"]) != (config["model"], config["revision"]):
             raise ValueError("trial model identity differs")
-        models[str(output)] = model_index, config, plan
+        allowed = preview._review_versions(config, plan, split, model.get("versions"))
+        models[str(output)] = model_index, config, plan, allowed
     stages, candidates, seen = {}, [], set()
     for cohort in ("random", "challenge"):
         rows = report[cohort]["answers"]
@@ -501,11 +509,9 @@ def load_trial(path):
                     or not 0 <= index < len(evaluation) or generation["note_id"] != evaluation[index]["note_id"]):
                 raise ValueError("trial answer IDs or generation identities differ")
             seen.add(row["id"])
-            model_index, config, plan = models[row["model_output"]]
+            model_index, config, plan, versions = models[row["model_output"]]
             output = Path(row["model_output"])
             version = row["version"]
-            milestones = plan["milestones"] if split == "evaluation" else plan["milestones"][-1:]
-            versions = {"baseline"} | {f"checkpoint-{m}" for m in milestones}
             key = f"M{model_index:02}-{version}"
             stage = preview._stage(output, version, split=split)
             if (version not in versions or row["id"] != f"{key}-N{index:04}" or row["version_key"] != key

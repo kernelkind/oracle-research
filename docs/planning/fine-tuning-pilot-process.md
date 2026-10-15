@@ -294,13 +294,31 @@ The user approved the $43 ceiling with a $1.66 hourly limit, covering the
 unchanged 24-hour allowance, transfer allowances and separate $1.50 storage
 reserve. The earlier workstation offer disappeared. The continuation configuration uses a single 600W RTX PRO 6000 Server card quoted at $1.413889/hour, 193,450 MB host RAM, and a 150GB volume at $0.041667/hour. The
 profile now selects this same card type as the pilot, preserving every RAM,
-reliability, driver and transfer check.  The October 15 continuation used a **150GB local volume** and a 30GB instance disk.    Worker attempt **001** is downloading Qwen's pinned files to the local volume; the native watcher and progressive copier are active. Actual Qwen CUDA preparation follows the verified download
-on this rental before main training; neither CUDA preparation nor training
-completion is confirmed yet.
-No new grading has started. Retain the task worktree for the active frozen
-operation and artifacts, and the isolated shared checkout for its exact runtime
-source binding. Maintain launch receipts and status through a separate
-integration worktree without editing the active experiment's source.
+reliability, driver and transfer check.  The October 15 continuation used a **150GB local volume** and a 30GB instance disk.    Worker attempt **001** downloaded Qwen's pinned files to the local volume.
+
+**Continuation complete, October 15:** matched CUDA preparation, both additional
+passes and all 600 new answers completed on that same worker attempt. Local
+verification accounts for all 250 additional updates and 2,000 note uses, both
+permanent checkpoints including optimizer/RNG state, changed finite adapter
+weights, every raw/parsed answer, receipts, input bindings and file seals.
+Checkpoint 2,000 has 100 validation answers, including two invalid outputs;
+checkpoint 3,000 has 100 validation answers with no parsing failures. These
+counts do not establish semantic completeness. New test contents and scores
+remain sealed.    The conservative rental/transfer estimate plus the full storage allowance is **$29.35 of $43**. The verification record is
+`oracle-mvp-qwen-continuation-v1/target/qwen-continuation-v1/launch-20261014/final-operation-verification.json`.
+
+The user authorized local validation grading, comparison with pass 1, checkpoint
+selection and then grading only the selected checkpoint's saved 200 test answers.
+Use the existing teacher requirements and DSMv3/DSSv2/DSLv10/DCSv1 settings.
+No new grading result or checkpoint selection is established yet. Retain the
+training worktree and isolated runner for artifact paths and frozen bindings;
+perform grading in `oracle-mvp-qwen-continuation-grading-v1`, with a separate
+isolated runner. The native review importer verifies the continuation's parent
+hashes and exact repeated-note plan. `--parent-run` resolves the saved rental
+path to the unchanged local parent; `--model-version` fixes which saved
+checkpoint may be opened. Continuation test preparation requires exactly one
+explicit checkpoint, leaving other test collections sealed. Grading requires
+no GPU rental or regenerated answers.
 
 The native volume-setup path sends the full 1.53GB transport twice: first to
 its staging directory for volume admission, then to the working directory.
