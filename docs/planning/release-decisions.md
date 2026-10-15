@@ -810,9 +810,13 @@ Use one 96GB RTX PRO 6000 under a new **$30 maximum total charge**, with a
 the volume and GPU to the same physical host, mounting at `/workspace`. The
 profile reserves $28.50 for the instance/transfers and $1.50 separately for
 volume retention, including detached storage time; both commitments and failed
-attempts count toward $30. At the end of each pass, save the continuing
-checkpoint and generate the same 100 validation
-and 200 test answers: 200 new validation and 400 new test answers in total.
+attempts count toward $30. Save recovery state every 16 optimizer updates
+(128 notes), retaining only the latest two verified checkpoints on the local
+volume. These intermediate checkpoints are excluded from SSH copying and
+terminal retrieval. Verify the next save before removing the oldest; resume
+the latest valid state after worker/container failure. At the end of each pass,
+save the continuing checkpoint and generate the same 100 validation and 200
+test answers: 200 new validation and 400 new test answers in total.
 Retrieve and mechanically verify every required artifact, then terminate the
 single rental. Grade validation locally, select the checkpoint without reviewing
 new test content or scores, and grade only its saved test answers. Grading
@@ -827,9 +831,9 @@ and separately committed storage funding are checked during native preparation
 and again before GPU creation. The same rental downloads and verifies only
 Qwen's pinned files before matched preparation; model subprocesses then run
 offline. Cold startup remains watched on the same instance. The matching input
-package and image pass the combined volume/continuation/replacement rehearsal
-locally with tiny CPU models. The
-clean-runtime rehearsal also now freezes the shared input/parser dependency.
+package and image pass the interrupted-pass/container-replacement rehearsal
+with local recovery using tiny CPU models. The rehearsal also freezes the
+shared input/parser dependency.
 Pinned-runtime/SSH verification and the actual Qwen tokenizer check pass;
 matching image publication, fresh offer and ledger admission precede rental.
 No continuation rental or full-model run has started. New labels, final training

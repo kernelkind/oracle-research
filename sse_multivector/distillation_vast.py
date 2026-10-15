@@ -74,6 +74,8 @@ def _make_spec(settings, offer, package, image, job, module, action, resumable):
             raise ValueError('local volume must identify the selected physical machine')
         spec['local_volume'] = dict(volume)
         spec['environment']['HF_HOME'] = '/workspace/oracle-full-build/model-cache'
+        if module == 'sse_multivector.distillation_deploy' and resumable:
+            spec['environment']['ORACLE_RUN_RECOVERY_DIR'] = '/workspace/oracle-full-build/recovery-checkpoints'
         if settings.get('local_volume_maximum_usd', 0):
             reservation_id = settings.get('volume_reservation_id')
             if not isinstance(reservation_id, str) or not reservation_id.strip():

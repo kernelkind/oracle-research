@@ -85,6 +85,8 @@ class WorkloadTests(unittest.TestCase):
                                  settings['image_repository'] + '@sha256:' + '4' * 64)
             self.assertEqual(spec['local_volume'], settings['local_volume'])
             self.assertEqual(spec['environment']['HF_HOME'], '/workspace/oracle-full-build/model-cache')
+            self.assertEqual(spec['environment']['ORACLE_RUN_RECOVERY_DIR'],
+                             '/workspace/oracle-full-build/recovery-checkpoints')
             ledger = root / 'ledger.json'
             write_json(ledger, {'lifetime_cap_cents': 100000, 'actual_spend_cents': 0,
                 'outstanding_commitments_cents': 0, 'reserved_remaining_work_cents': 0, 'entries': []})

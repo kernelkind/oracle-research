@@ -313,6 +313,26 @@ docker run --rm --network distillation-local \
   --entrypoint /opt/distillation-venv/bin/python notedeck-distillation:local -m unittest -v \
   sse_multivector.test_distillation_deploy.SharedSSHTests.test_single_model_continuation_reuses_volume_after_container_replacement_offline
 docker logs distillation-target > "$result_dir/continuation-replacement.log" 2>&1
+# Interrupt inside a pass, replace the container and resume the two checkpoints
+# stored outside retrieved work on the same mounted volume.
+docker rm -f distillation-target
+docker volume rm "$recovery_volume"
+docker volume create "$recovery_volume"
+start_target -v "$recovery_volume":/workspace
+docker run --rm --network distillation-local \
+  -e DISTILLATION_TEST_OUTPUT=/results/workflow -e DISTILLATION_DEPLOY_OUTPUT=/results/deployment-tests \
+  -e DISTILLATION_SSH_TARGET=/results/ssh-target.json -e DISTILLATION_RECOVERY_STAGE=seed -v "$result_dir":/results \
+  --entrypoint /opt/distillation-venv/bin/python notedeck-distillation:local -m unittest -v \
+  sse_multivector.test_distillation_deploy.SharedSSHTests.test_interrupted_continuation_keeps_recovery_checkpoints_only_on_volume
+docker logs distillation-target > "$result_dir/local-recovery-original.log" 2>&1
+docker rm -f distillation-target
+start_target -v "$recovery_volume":/workspace
+docker run --rm --network distillation-local \
+  -e DISTILLATION_TEST_OUTPUT=/results/workflow -e DISTILLATION_DEPLOY_OUTPUT=/results/deployment-tests \
+  -e DISTILLATION_SSH_TARGET=/results/ssh-target.json -e DISTILLATION_RECOVERY_STAGE=recover -v "$result_dir":/results \
+  --entrypoint /opt/distillation-venv/bin/python notedeck-distillation:local -m unittest -v \
+  sse_multivector.test_distillation_deploy.SharedSSHTests.test_replacement_continues_from_local_recovery_without_replaying_the_pass
+docker logs distillation-target > "$result_dir/local-recovery-replacement.log" 2>&1
 rm "$result_dir/deployment-key" "$result_dir/deployment-key.pub"
 """,
 }

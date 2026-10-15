@@ -16,6 +16,22 @@ from sse_multivector import distillation_data
 
 
 class DataContractTests(unittest.TestCase):
+    def test_recovery_requires_a_verified_volume_outside_retrieved_work(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            volume = Path(temporary)
+            output = volume / 'work/results/qwen'
+            distillation_run.write_json(output / 'manifest.json', {'frozen': True})
+            with patch.dict(os.environ, {'HF_HOME': str(volume / 'model-cache'),
+                                        'ORACLE_RUN_RECOVERY_DIR': str(volume / 'recovery-checkpoints')}):
+                with self.assertRaisesRegex(ValueError, 'verified persistent volume'):
+                    distillation_run.subject_recovery_directory(output)
+                distillation_run.write_json(volume / 'volume-identity.json', {'id': 881, 'machine_id': 12})
+                self.assertEqual(distillation_run.subject_recovery_directory(output),
+                    volume / 'recovery-checkpoints' / distillation_run.sha256(output / 'manifest.json'))
+                with patch.dict(os.environ, {'ORACLE_RUN_RECOVERY_DIR': str(output / 'recovery')}), \
+                        self.assertRaisesRegex(ValueError, 'outside work'):
+                    distillation_run.subject_recovery_directory(output)
+
     def test_preparation_memory_checks_include_reserved_test_input_shapes(self):
         data = {"train": [{"note_id": str(i)} for i in range(3)],
                 "evaluation": [{"note_id": "validation"}], "test": [{"note_id": "reserved-test"}]}
@@ -1003,6 +1019,110 @@ class TinyWorkflowTests(unittest.TestCase):
         selected = distillation_run.read_json(remote_package / 'model-cache.json')
         self.assertEqual([m['model'] for m in selected['models']], ['fixture/cached'])
         self.assertEqual(selected['reserve_bytes'], 32*1024*1024)
+
+    def test_local_recovery_rotates_two_checkpoints_and_resumes_exact_training(self):
+        import shutil
+        import torch
+        from safetensors.torch import load_file
+        root = self.root / 'local-recovery'
+        source = distillation_run.read_json(self.root / 'source.json')['notes'][0]
+        annotated = distillation_run.read_json(self.root / 'annotations.json')['notes'][0]
+        for filename, row in [('source.json', source), ('annotations.json', annotated)]:
+            distillation_run.write_json(root / filename, {'notes': [
+                {**row, 'note_id': str(i), 'pubkey': str(i), 'text': row['text'] + f' {i}'}
+                for i in range(642)]})
+        splits = root / 'splits.json'
+        distillation_run.write_json(splits, {'train': list(map(str, range(640))),
+            'validation': ['640'], 'test': ['641']})
+        prepared = root / 'data'
+        distillation_data.prepare(root / 'source.json', root / 'annotations.json',
+            self.root / 'subjects.txt', None, 'AS-test', None, 1, 'test', prepared,
+            tasks=('subjects',), splits_path=splits)
+        original = {k: v for k, v in self.config.items() if k not in
+            ('mask_prompt', 'max_steps', 'save_steps', 'subject_fraction', 'mask_batch_size')}
+        original.update(data=str(prepared), training_milestones=[640], batch_size=1,
+            gradient_accumulation_steps=8, evaluation_tasks=['subjects'], max_new_tokens={'subjects': 120},
+            subject_batching={'budget_bytes': 8*1024*1024, 'workspace_bytes': 0,
+                             'prefill_bytes_per_token': 1024, 'attention_matrix_count': 4})
+        parent = root / 'parent'
+        config_path = root / 'parent.json'
+        distillation_run.write_json(config_path, original)
+        distillation_run.run(config_path, parent)
+        previous = parent / 'checkpoints/checkpoint-640'
+        config = {**original, 'training_milestones': [1280], 'continuation': {
+            'parent_run': str(parent), 'manifest_sha256': distillation_run.sha256(parent / 'manifest.json'),
+            'plan_sha256': distillation_run.sha256(parent / 'training-plan.json'),
+            'checkpoint_sha256': distillation_run.sha256(previous / 'complete.json')}}
+        config_path = root / 'continuation.json'
+        distillation_run.write_json(config_path, config)
+        reference, output = root / 'reference', root / 'interrupted'
+        for directory in (reference, output):
+            distillation_run.run(config_path, directory, 'preflight')
+        selected = distillation_run.load_data(prepared)
+        plan = distillation_run.read_json(output / 'training-plan.json')
+        expected = distillation_run.train_subject_block(config, self.tokenizer, selected, reference,
+                                                        plan, 1280, previous)
+        volume = root / 'volume'
+        distillation_run.write_json(volume / 'volume-identity.json', {'id': 881, 'machine_id': 12})
+        environment = {'ORACLE_RUN_RECOVERY_DIR': str(volume / 'recovery-checkpoints'),
+                       'HF_HOME': str(volume / 'model-cache')}
+        native_step = torch.optim.AdamW.step
+        completed = []
+        def interrupted_step(optimizer, *args, **kwargs):
+            if len(completed) == 49:
+                raise RuntimeError('injected mid-pass failure')
+            result = native_step(optimizer, *args, **kwargs)
+            completed.append(True)
+            return result
+        with patch.dict(os.environ, environment):
+            with patch.object(torch.optim.AdamW, 'step', interrupted_step), \
+                    self.assertRaisesRegex(RuntimeError, 'injected mid-pass failure'):
+                distillation_run.train_subject_block(config, self.tokenizer, selected, output,
+                                                    plan, 1280, previous)
+            recovery = volume / 'recovery-checkpoints' / distillation_run.sha256(output / 'manifest.json')
+            saved = sorted(recovery.glob('checkpoint-*'), key=lambda p: int(p.name.split('-')[1]))
+            self.assertEqual([p.name for p in saved], ['checkpoint-896', 'checkpoint-1024'])
+            before = {p.name: distillation_run.file_hashes(p) for p in saved}
+            native_verify = distillation_run.verify_saved
+            def failed_publication(directory):
+                return False if '.partial-' in Path(directory).name else native_verify(directory)
+            with patch.object(distillation_run, 'verify_saved', side_effect=failed_publication), \
+                    self.assertRaisesRegex(ValueError, 'publication hash mismatch'):
+                distillation_run.train_subject_block(config, self.tokenizer, selected, output,
+                                                    plan, 1280, previous)
+            self.assertEqual({p.name: distillation_run.file_hashes(p) for p in saved}, before)
+            # A killed writer may leave a partial directory. A corrupt newest
+            # complete checkpoint must fall back to the preceding verified one.
+            partial = recovery / 'checkpoint-1152.partial-interrupted'
+            partial.mkdir()
+            (partial / 'adapter_model.safetensors').write_bytes(b'incomplete')
+            (saved[-1] / 'adapter_model.safetensors').write_bytes(b'corrupt')
+            resumed_steps = []
+            def resumed_step(optimizer, *args, **kwargs):
+                resumed_steps.append(True)
+                return native_step(optimizer, *args, **kwargs)
+            with patch.object(torch.optim.AdamW, 'step', resumed_step):
+                actual = distillation_run.train_subject_block(config, self.tokenizer, selected, output,
+                                                              plan, 1280, previous)
+            self.assertEqual(len(resumed_steps), 48)
+            self.assertEqual(sorted(p.name for p in recovery.iterdir()),
+                             ['checkpoint-1024', 'checkpoint-1152'])
+            self.assertTrue(all(native_verify(p) for p in recovery.iterdir()))
+        torch.testing.assert_close(load_file(str(actual / 'adapter_model.safetensors')),
+                                   load_file(str(expected / 'adapter_model.safetensors')), rtol=0, atol=0)
+        actual_state, expected_state = [torch.load(p / 'training-state.pt', weights_only=True)
+                                        for p in (actual, expected)]
+        for key in ('optimizer', 'schedule'):
+            torch.testing.assert_close(actual_state[key], expected_state[key], rtol=0, atol=0)
+        torch.testing.assert_close(actual_state['random']['torch'], expected_state['random']['torch'], rtol=0, atol=0)
+        for key in ('python', 'numpy', 'cuda'):
+            self.assertEqual(actual_state['random'][key], expected_state['random'][key])
+        self.assertEqual(len(distillation_run.read_json(actual / 'training.json')['updates_this_block']), 80)
+        self.assertEqual([p.name for p in (output / 'checkpoints').iterdir()], ['checkpoint-1280'])
+        preparation = {**original, 'training_milestones': [1, 3], 'preparation': {
+            'max_new_tokens': 4, 'cache_fill_tokens': 16, 'train_note_ids': ['0', '1', '2'],
+            'evaluation_note_ids': ['640']}}
+        distillation_run.write_json(root / 'preparation.json', preparation)
 
     def test_subject_preparation_saves_cache_measurement_before_memory_rejection(self):
         import shutil

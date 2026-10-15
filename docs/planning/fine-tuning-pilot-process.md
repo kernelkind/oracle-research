@@ -109,6 +109,27 @@ verification requires both collections, their raw/parsed answers and receipts,
 and all planned training-note uses and updates. Reruns reuse saved answers and
 complete checkpoints, including when publication of the first test is interrupted.
 
+**Local recovery approved October 14:** save training state every 16 optimizer
+updates (128 notes) within each pass and retain only the two latest verified
+recovery checkpoints. They contain adapters, Adam/schedule state, RNG and the
+exact consumed-note cursor; they do not duplicate the base model. The launch
+binds `ORACLE_RUN_RECOVERY_DIR` to
+`/workspace/oracle-full-build/recovery-checkpoints`, with each run identified by
+its frozen manifest hash. This directory is on the mounted local volume,
+outside `work`, so intermediate checkpoints enter neither progressive SSH
+copying nor terminal retrieval. Keep the permanent 2,000/3,000-note checkpoints
+and their existing retrieval and evaluation behavior.
+
+Write, sync and verify a new checkpoint before publishing it and removing the
+oldest recovery. On continuation, reuse the newest verified recovery for the
+unfinished block; ignore corrupt or incomplete saves and fall back to the
+preceding valid checkpoint. Abandoned partial writes are cleaned before
+resuming. Only updates since the recovery need repeating. The saved Qwen
+checkpoint is 1,421,963,152 bytes: two recoveries use about 2.8GB, temporarily
+4.3GB while writing a replacement, separately from permanent checkpoints.
+SSH traffic does not increase for these intermediate saves. This protects
+worker/container recovery while the local volume remains usable.
+
 Remote continuation preparation requires `--cache-manifest`. It selects only
 the parent's pinned model and revision from the pilot's existing manifest and
 freezes `download_cache` in the package. On the same rental, before any model
@@ -173,11 +194,11 @@ isolated at `experiment-runner-qwen-continuation-v1`, commit `1cfdd6a7`.
 The real input package was prepared locally and mechanically verified: one Qwen
 run, one preparation, 1,000 distinct training notes, 3,000 total note uses,
 milestones 2,000/3,000, expected final 375 updates and 600 new answers. Artifacts
-belong in the task worktree under `target/qwen-continuation-v1/`; `inputs-v5` is
+belong in the task worktree under `target/qwen-continuation-v1/`; `inputs-v6` is
 the current package with the Qwen-only cache manifest and download enabled.
 These corrections change the runtime identity; earlier packages and images
-must not be used for this launch. The matching rebuilt image passes local
-qualification.
+must not be used for this launch. The matching image passes the interrupted-pass
+and container-replacement rehearsal with local recovery.
 
 To prepare another immutable package, use a fresh output directory:
 
@@ -195,14 +216,14 @@ python3 -m sse_multivector.distillation_deploy prepare-continuation \
   --output target/qwen-continuation-v1/inputs-next
 ```
 
-**Verification complete, October 14:** the corrections pass 55 local contract
-checks, 153 shared controller regressions and nine checks against the pinned
-Vast CLI. The pinned PyTorch **2.12.1+cu130** VM reuses verified evidence for
-the unchanged 10 architecture and 50 workflow tests. Its updated deployment
-batch passes with 60 tests, seven skipped; four cache tests and six explicit
-volume/replacement/download/handoff tests also pass. Those six handoffs cover
-six deployment skips. These model rehearsals use tiny CPU models. Qwen's saved
-tokenizer separately passes
+**Verification complete, October 14:** local recovery passes 92 local contract
+and data checks, plus the exact-training continuation test. The shared controller
+and CLI are unchanged from the preceding 153 controller regressions and nine
+pinned-CLI checks. The pinned PyTorch **2.12.1+cu130** VM verifies 10 architecture
+and 52 workflow tests. Its updated deployment batch passes with 62 tests, nine
+skipped; four cache tests and eight explicit volume/replacement/download/handoff
+tests also pass. Those eight handoffs cover eight deployment skips. These
+model rehearsals use tiny CPU models. Qwen's saved tokenizer separately passes
 the actual 1,000 training, 100 validation and 200 test inputs: maximum complete
 training length 18,114, answer length 8,452 and validation/test prompts
 9,608/9,584 tokens. Thinking remains off. No full model weights are loaded for
@@ -216,11 +237,21 @@ download server unavailable, reuses every cached file and preserves all saved
 Qwen results byte for byte. Completion approval rejects missing first-pass test
 answers, missing cache receipts and a mismatched volume identity. The VM is
 stopped and its verified image export is at
-`target/qwen-continuation-v1/vm/attempt-1792026288165394763/results/container.tar.gz`.
-Every prepared `inputs-v5` runtime source hash matches that image's frozen build
+`target/qwen-continuation-v1/vm/attempt-1792029436887070644/results/container.tar.gz`.
+Every prepared `inputs-v6` runtime source hash matches that image's frozen build
 context. The host's older PyTorch 2.8 reproduces an existing physical-batch
 numerical tolerance failure on unchanged `main`; that same test passes in the
 pinned VM without relaxing its tolerance.
+
+The local recovery test injects a mid-pass failure after three intermediate
+saves, verifies two-checkpoint retention, rejects a failed replacement save and
+falls back after corrupting the newest checkpoint. Resumed adapters, Adam,
+schedule and RNG match uninterrupted training exactly. The SSH rehearsal then
+interrupts before the first permanent checkpoint, verifies that neither SSH
+inventory includes recovery files, replaces the container and resumes from the
+latest volume checkpoint. Its first new update follows that saved cursor, with
+only the remaining updates performed before the required milestones and both
+test collections pass completion review.
 
 The cold-start watcher now
 keeps polling `instance_starting` until the same instance runs and its results

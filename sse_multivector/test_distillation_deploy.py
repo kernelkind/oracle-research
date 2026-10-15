@@ -1,4 +1,5 @@
 """Exercise the production deployment package and SSH operator."""
+import json
 import os
 from pathlib import Path
 import subprocess
@@ -892,7 +893,8 @@ class SharedSSHTests(unittest.TestCase):
 
     def run_package(self, inputs, root, expected=0, stop=False, copy_while_running=False,
                     continue_after_checkpoint=False, local_volume=False, recover_from=None,
-                    download_only=False, environment=None, reuse_work=True, settings_path=None):
+                    download_only=False, environment=None, reuse_work=True, settings_path=None,
+                    stop_after_recovery=False):
         import argparse
         import importlib.util
         import shutil
@@ -959,6 +961,23 @@ class SharedSSHTests(unittest.TestCase):
                 'rm -rf /workspace/oracle-full-build/work /workspace/oracle-full-build/package /workspace/oracle-full-build/preparation-attempts'])
         def call(operation, *args):
             return module.remote_json(context, key, endpoint, operation, *args)
+        def recovery_inventory():
+            import shlex
+            script = """import json,pathlib
+records=[]
+for seal in pathlib.Path('/workspace/oracle-full-build/recovery-checkpoints').glob('*/checkpoint-*/complete.json'):
+    if '.partial-' in seal.parent.name:
+        continue
+    try:
+        metadata=json.loads((seal.parent/'training.json').read_text())
+        records.append({'path':str(seal.parent),'cursor':metadata['cursor'],'updates':metadata['updates']})
+    except FileNotFoundError:
+        pass
+print(json.dumps(records))
+"""
+            response = module.completed_process([*module.ssh_arguments(context, key, endpoint),
+                shlex.join([deploy.REMOTE_PYTHON, '-c', script])])
+            return json.loads(response.stdout)
         self.assertTrue(call('_remote-verify-transfer')['verified'])
         deadline = time.monotonic() + 240
         while not call('_remote-prepare').get('prepared'):
@@ -984,6 +1003,10 @@ class SharedSSHTests(unittest.TestCase):
             call('_remote-stop', '--attempt', attempt_id)
         while True:
             state = call('_remote-status', '--attempt', attempt_id)
+            if stop_after_recovery and not interruption_requested and len(recovery_inventory()) == 2:
+                call('_remote-stop', '--attempt', attempt_id, '--incomplete-stop-approval',
+                     'Interrupt the SSH rehearsal after two local recovery checkpoints')
+                interruption_requested = True
             if continue_after_checkpoint and not interruption_requested:
                 checkpoints = state.get('progress', {}).get('candidates', {}).get('first', {}).get('checkpoints', [])
                 if checkpoints:
@@ -1010,9 +1033,17 @@ class SharedSSHTests(unittest.TestCase):
             if state['state'] == 'terminal':
                 break
             self.assertLess(time.monotonic(), deadline)
-            time.sleep(.1 if continue_after_checkpoint else .5)
+            time.sleep(.1 if continue_after_checkpoint or stop_after_recovery else .5)
         (root / 'result.next').mkdir(exist_ok=True)
         module.ensure_retrieved(context, 'offline-fixture', key, endpoint, attempt_id)
+        if stop_after_recovery:
+            self.assertTrue(interruption_requested)
+            saved = recovery_inventory()
+            self.assertEqual(len(saved), 2)
+            write_json(root / 'local-recovery.json', {'checkpoints': saved})
+            self.assertFalse(any('recovery-checkpoints' in r['path']
+                for r in read_json(root / 'launch/retrieval-verification.json')['work_files']))
+            self.assertFalse(any('recovery-checkpoints' in r['path'] for r in call('_remote-progress')['files']))
         if continue_after_checkpoint:
             self.assertTrue(interruption_requested, state)
             self.assertNotEqual(state['exit_status'], 0)
@@ -1214,6 +1245,51 @@ class SharedSSHTests(unittest.TestCase):
         self.assertTrue(all(r['reused'] for r in read_json(result / 'model-cache/verification.json')['files']))
         self.assertTrue(read_json(root / 'replacement/launch/volume-prepared.json')['remote_receipt']['recovered'])
         self.assertTrue(deploy.review_completion(root / 'inputs', root / 'replacement')['complete'])
+
+    @unittest.skipUnless(os.environ.get('DISTILLATION_RECOVERY_STAGE') == 'seed',
+                         'requires local intermediate checkpoint interruption')
+    def test_interrupted_continuation_keeps_recovery_checkpoints_only_on_volume(self):
+        from transformers import AutoTokenizer
+        from sse_multivector.distillation_run import encode_example, load_data
+        source = Path(os.environ['DISTILLATION_TEST_OUTPUT']) / 'local-recovery'
+        root = Path(os.environ['DISTILLATION_DEPLOY_OUTPUT']) / 'local-recovery'
+        root.mkdir(parents=True)
+        preparation = read_json(source / 'preparation.json')
+        tokenizer = AutoTokenizer.from_pretrained(preparation['model'])
+        rows = load_data(source / 'data')['train']
+        longest = max(rows, key=lambda row: len(encode_example(tokenizer, row, preparation['max_length'])['input_ids']))
+        preparation['preparation']['train_note_ids'] = [longest['note_id']] + [
+            row['note_id'] for row in rows if row['note_id'] != longest['note_id']][:2]
+        write_json(root / 'preparation.json', preparation)
+        inputs = root / 'inputs'
+        deploy.prepare_continuation(source / 'parent', source / 'data', root / 'preparation.json',
+                                    inputs, name='qwen')
+        result = self.run_package(inputs, root / 'operation', expected=1, local_volume=True,
+            settings_path=Path(__file__).parent / 'distillation/qwen-continuation-v1.vast.json',
+            stop_after_recovery=True)
+        self.assertFalse(list((result / 'qwen/checkpoints').glob('*/complete.json')))
+        self.assertTrue((result / 'qwen/subject-training-updates.jsonl').is_file())
+
+    @unittest.skipUnless(os.environ.get('DISTILLATION_RECOVERY_STAGE') == 'recover',
+                         'requires container replacement during an unfinished training pass')
+    def test_replacement_continues_from_local_recovery_without_replaying_the_pass(self):
+        root = Path(os.environ['DISTILLATION_DEPLOY_OUTPUT']) / 'local-recovery'
+        old = root / 'operation'
+        saved = read_json(old / 'local-recovery.json')['checkpoints']
+        cursor = max(record['cursor'] for record in saved)
+        write_json(old / 'launch/destruction-confirmation.json', {'instance_id': 'offline-fixture',
+            'absent_from_complete_inventory': True, 'absence_observations': 2})
+        result = self.run_package(root / 'inputs', root / 'replacement', local_volume=True, recover_from=old,
+            settings_path=Path(__file__).parent / 'distillation/qwen-continuation-v1.vast.json')
+        updates = [json.loads(line) for line in (result / 'qwen/subject-training-updates.jsonl').read_text().splitlines()]
+        resumed = [r for r in updates if r['attempt_id'] == '002' and r['cursor'] <= 1280]
+        self.assertEqual(resumed[0]['cursor'], cursor + 8)
+        self.assertEqual(len(resumed), (1280-cursor)//8)
+        self.assertEqual(sorted(p.name for p in (result / 'qwen/checkpoints').iterdir()),
+                         ['checkpoint-1280', 'checkpoint-1920'])
+        self.assertTrue(deploy.review_completion(root / 'inputs', root / 'replacement')['complete'])
+        self.assertFalse(any('recovery-checkpoints' in r['path'] for r in
+            read_json(root / 'replacement/launch/retrieval-verification.json')['work_files']))
 
     def test_subject_pilot_continues_saved_checkpoint_and_refreshes_retrieval_over_ssh(self):
         policy = {'budget_bytes': 8*1024*1024, 'workspace_bytes': 0,

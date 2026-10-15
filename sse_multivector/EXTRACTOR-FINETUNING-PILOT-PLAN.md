@@ -20,13 +20,18 @@ artifacts, then end the rental before local grading and checkpoint selection. Th
 is the current operational plan. It preserves ASv6.100, the splits and numerical
 recipe. The production workflow now supports explicit parent-checkpoint
 continuation, both test collections and offline completeness verification.
+Recovery state saves every 16 optimizer updates (128 notes), retaining two
+verified checkpoints on the local volume outside the retrieved work directory.
+Intermediate saves are not copied over SSH. A new save verifies before the
+oldest is removed; worker/container continuation reuses the latest valid state.
+Permanent 2,000/3,000-note checkpoints and evaluation behavior are unchanged.
 The Qwen-only launch profile requires an explicit volume binding and a matching
 committed storage reservation. Fresh capacity, price and remaining retention
 are checked before GPU creation. The same rental verifies/downloads Qwen's
 pinned cache before any preparation; model subprocesses then run offline.
 Cold image startup remains watched on the same instance. The shared dependency
-is frozen. The matching inputs and image pass the combined
-continuation/volume/replacement rehearsal with tiny CPU models.
+is frozen. The matching inputs and image pass an interrupted-pass and
+container-replacement rehearsal with local recovery using tiny CPU models.
 Pinned-runtime/SSH rehearsal and the actual Qwen tokenizer check pass; matching
 image publication, fresh offer and ledger admission precede rental.
 No continuation run has started.

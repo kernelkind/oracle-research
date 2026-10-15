@@ -938,7 +938,7 @@ def training_random_state(state=None):
             "cuda": torch.cuda.get_rng_state_all() if torch.cuda.is_available() else []}
 
 
-def subject_checkpoint_metadata(checkpoint, output, plan):
+def subject_checkpoint_metadata(checkpoint, output, plan, *, recovery=False):
     """A file seal alone cannot establish full checkpoint coverage or counters."""
     checkpoint, output = Path(checkpoint), Path(output)
     required = {"training-state.pt", "training.json", "adapter_model.safetensors", "adapter_config.json"}
@@ -948,21 +948,109 @@ def subject_checkpoint_metadata(checkpoint, output, plan):
         raise ValueError("subject checkpoint hash mismatch")
     metadata = read_json(checkpoint / "training.json")
     cursor = metadata["cursor"]
-    if (type(cursor) is not int or cursor not in plan["milestones"]
+    if (type(cursor) is not int or cursor <= 0 or cursor > len(plan['note_ids'])
             or checkpoint.name != f"checkpoint-{cursor}"
             or metadata["consumed_note_ids"] != plan["note_ids"][:cursor]
             or metadata["manifest_sha256"] != sha256(output / "manifest.json")
             or metadata["plan_sha256"] != sha256(output / "training-plan.json")):
         raise ValueError("subject checkpoint identity or cursor differs")
+    if recovery:
+        start = max([0] + [n for n in plan['milestones'] if n < cursor])
+        if cursor in plan['milestones'] or (cursor-start) % plan['examples_per_update']:
+            raise ValueError('recovery checkpoint must end at a complete intermediate update')
+    elif cursor not in plan['milestones']:
+        raise ValueError('subject checkpoint is not a training milestone')
     start, expected_updates = 0, 0
     for stop in plan["milestones"]:
-        expected_updates += math.ceil((stop-start)/plan["examples_per_update"])
-        start = stop
-        if stop == cursor:
+        expected_updates += math.ceil((min(stop, cursor)-start)/plan["examples_per_update"])
+        if cursor <= stop:
             break
+        start = stop
     if type(metadata["updates"]) is not int or metadata["updates"] != expected_updates:
         raise ValueError("subject checkpoint update count differs")
     return metadata
+
+
+def subject_recovery_directory(output):
+    """Keep rotating training state on the volume, outside retrieved work."""
+    setting = os.environ.get('ORACLE_RUN_RECOVERY_DIR')
+    if setting is None:
+        return None
+    directory = Path(setting).resolve()
+    volume = Path(os.environ.get('HF_HOME', '')).resolve().parent
+    if (not (volume / 'volume-identity.json').is_file() or directory == volume
+            or not directory.is_relative_to(volume) or directory.is_relative_to(volume / 'work')):
+        raise ValueError('local recovery requires its verified persistent volume outside work')
+    return directory / sha256(Path(output) / 'manifest.json')
+
+
+def subject_training_state(checkpoint, metadata, identity):
+    import torch
+    state = torch.load(Path(checkpoint) / 'training-state.pt', map_location='cpu', weights_only=True)
+    if (state['identity'] != identity
+            or any(state[key] != metadata[key] for key in
+                   ('cursor', 'updates', 'supervised_tokens', 'consumed_note_ids'))):
+        raise ValueError('subject training checkpoint identity or cursor differs')
+    return state
+
+
+def save_subject_checkpoint(model, tokenizer, config, checkpoint, state, identity, metrics, seconds):
+    import torch
+    staging = checkpoint.with_name(checkpoint.name + f'.partial-{time.time_ns()}')
+    try:
+        model.save_pretrained(staging)
+        tokenizer.save_pretrained(staging)
+        state.update(identity=identity, random=training_random_state())
+        torch.save(state, staging / 'training-state.pt')
+        write_json(staging / 'training.json', {**identity, 'cursor': state['cursor'], 'updates': state['updates'],
+            'supervised_tokens': state['supervised_tokens'], 'consumed_note_ids': state['consumed_note_ids'],
+            'updates_this_block': metrics, 'seconds': seconds,
+            'trainable_parameters': sum(p.numel() for p in model.parameters() if p.requires_grad),
+            'peak_cuda_allocated_bytes': torch.cuda.max_memory_allocated() if config['device'] == 'cuda' else None,
+            'peak_cuda_reserved_bytes': torch.cuda.max_memory_reserved() if config['device'] == 'cuda' else None})
+        for path in staging.iterdir():
+            if path.is_file():
+                with path.open('rb') as source:
+                    os.fsync(source.fileno())
+        write_json(staging / 'complete.json', file_hashes(staging))
+        if not verify_saved(staging):
+            raise ValueError('subject checkpoint publication hash mismatch')
+        descriptor = os.open(staging, os.O_RDONLY | os.O_DIRECTORY)
+        try:
+            os.fsync(descriptor)
+        finally:
+            os.close(descriptor)
+        # Recomputing from the preceding valid recovery may replace a corrupt
+        # directory. Its replacement is complete before anything is removed.
+        if checkpoint.exists():
+            shutil.rmtree(checkpoint)
+        staging.rename(checkpoint)
+        descriptor = os.open(checkpoint.parent, os.O_RDONLY | os.O_DIRECTORY)
+        try:
+            os.fsync(descriptor)
+        finally:
+            os.close(descriptor)
+    except Exception:
+        shutil.rmtree(staging, ignore_errors=True)
+        raise
+    return checkpoint
+
+
+def rotate_subject_recovery(directory, checkpoint, output, plan):
+    keep = [checkpoint]
+    candidates = sorted((p for p in directory.iterdir() if re.fullmatch(r'checkpoint-[0-9]+', p.name)),
+                        key=lambda p: int(p.name.split('-')[1]), reverse=True)
+    for path in candidates:
+        if path == checkpoint:
+            continue
+        if len(keep) < 2:
+            try:
+                subject_checkpoint_metadata(path, output, plan, recovery=True)
+                keep.append(path)
+            except (OSError, ValueError, KeyError):
+                pass
+        if path not in keep:
+            shutil.rmtree(path)
 
 
 def train_subject_block(config, tokenizer, data, output, plan, milestone, previous=None):
@@ -985,15 +1073,33 @@ def train_subject_block(config, tokenizer, data, output, plan, milestone, previo
                 metadata = subject_checkpoint_metadata(previous, output, plan)
         else:
             metadata = subject_checkpoint_metadata(previous, output, plan)
-        state = torch.load(Path(previous) / "training-state.pt", map_location="cpu", weights_only=True)
-        if (state["identity"] != previous_identity
-                or any(state[key] != metadata[key] for key in ("cursor", "updates", "supervised_tokens", "consumed_note_ids"))):
-            raise ValueError("subject training checkpoint identity or cursor differs")
+        state = subject_training_state(previous, metadata, previous_identity)
     if milestone <= state["cursor"] or milestone not in plan["milestones"]:
         raise ValueError("subject training block must advance to the next milestone")
     next_index = plan["milestones"].index(state["cursor"]) + 1 if state["cursor"] else 0
     if plan["milestones"][next_index] != milestone:
         raise ValueError("subject training cannot skip a milestone")
+    block_updates, metrics, elapsed = state['updates'], [], 0.
+    recovery = subject_recovery_directory(output) if 'preparation' not in config else None
+    if recovery is not None:
+        recovery.mkdir(parents=True, exist_ok=True)
+        for partial in recovery.glob('checkpoint-*.partial-*'):
+            shutil.rmtree(partial)
+        candidates = sorted((p for p in recovery.iterdir() if re.fullmatch(r'checkpoint-[0-9]+', p.name)),
+                            key=lambda p: int(p.name.split('-')[1]), reverse=True)
+        for checkpoint in candidates:
+            if not state['cursor'] < int(checkpoint.name.split('-')[1]) < milestone:
+                continue
+            try:
+                metadata = subject_checkpoint_metadata(checkpoint, output, plan, recovery=True)
+                resumed = subject_training_state(checkpoint, metadata, identity)
+            except (OSError, ValueError, KeyError, RuntimeError, EOFError) as error:
+                print(f'ignoring invalid recovery checkpoint {checkpoint}: {error}', file=sys.stderr, flush=True)
+                continue
+            previous, state = checkpoint, resumed
+            metrics, elapsed = list(metadata['updates_this_block']), metadata['seconds']
+            print(f'resuming subject training from {checkpoint.name}', flush=True)
+            break
     set_seed(config["seed"])
     model = subject_training_model(config, previous)
     if previous is None and "preparation" in config and config.get("fused_linear_cross_entropy", False):
@@ -1013,7 +1119,6 @@ def train_subject_block(config, tokenizer, data, output, plan, milestone, previo
         training_random_state(state["random"])
     by_id = {row["note_id"]: row for row in data["train"]}
     collator = DataCollatorForSeq2Seq(tokenizer, padding=True, label_pad_token_id=-100)
-    metrics = []
     started = time.monotonic()
     if config["device"] == "cuda":
         torch.cuda.reset_peak_memory_stats()
@@ -1059,25 +1164,17 @@ def train_subject_block(config, tokenizer, data, output, plan, milestone, previo
                 log.flush()
                 os.fsync(log.fileno())
             print(json.dumps({"stage": "subject training", **metrics[-1]}), flush=True)
+            if recovery is not None and state['cursor'] < milestone and (state['updates']-block_updates) % 16 == 0:
+                state.update(optimizer=optimizer.state_dict(), schedule=schedule.state_dict())
+                checkpoint = save_subject_checkpoint(model, tokenizer, config,
+                    recovery / f"checkpoint-{state['cursor']}", state, identity, metrics,
+                    elapsed + time.monotonic()-started)
+                rotate_subject_recovery(recovery, checkpoint, output, plan)
         optimizer.zero_grad(set_to_none=True)
         checkpoint = output / "checkpoints" / f"checkpoint-{milestone}"
-        staging = checkpoint.with_name(checkpoint.name + f".partial-{time.time_ns()}")
-        model.save_pretrained(staging)
-        tokenizer.save_pretrained(staging)
-        state.update(identity=identity, optimizer=optimizer.state_dict(), schedule=schedule.state_dict(),
-                     random=training_random_state())
-        torch.save(state, staging / "training-state.pt")
-        write_json(staging / "training.json", {**identity, "cursor": state["cursor"], "updates": state["updates"],
-            "supervised_tokens": state["supervised_tokens"], "consumed_note_ids": state["consumed_note_ids"],
-            "updates_this_block": metrics, "seconds": time.monotonic()-started,
-            "trainable_parameters": sum(p.numel() for p in parameters),
-            "peak_cuda_allocated_bytes": torch.cuda.max_memory_allocated() if config["device"] == "cuda" else None,
-            "peak_cuda_reserved_bytes": torch.cuda.max_memory_reserved() if config["device"] == "cuda" else None})
-        write_json(staging / "complete.json", file_hashes(staging))
-        if not verify_saved(staging):
-            raise ValueError("subject checkpoint publication hash mismatch")
-        staging.rename(checkpoint)
-        return checkpoint
+        state.update(optimizer=optimizer.state_dict(), schedule=schedule.state_dict())
+        return save_subject_checkpoint(model, tokenizer, config, checkpoint, state, identity, metrics,
+                                       elapsed + time.monotonic()-started)
     finally:
         del model, optimizer, schedule, parameters, state
         gc.collect()
