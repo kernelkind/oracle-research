@@ -1,6 +1,7 @@
 # Continue manual section replacement to six roots
 
-Status: authorized experimental continuation, not an activated HiGen version.
+Status: completed six-root experiment, stopped at the requested observation
+point; not an activated HiGen version.
 The user requested continuing the same process until six roots exist, then
 observing that result before settling complete-coverage or sixth-root rules.
 The protected `MY-NOTES_10-12.md` is read-only and remains unedited.
@@ -59,3 +60,95 @@ runs use `oracle-mvp-food-drink-six-roots-rounds-v1` under the same directory.
 Retain both worktrees' ignored `target/food-drink-six-roots-v1` evidence and their
 referenced sources. Native usage summaries distinguish fresh calls from exact
 saved definitions; API-equivalent cost is not an incremental subscription bill.
+
+## Completed six-root snapshot
+
+All four growth rounds completed. Slot2v2 was established first from the four
+mental-state additions. The first growth round created Nostr and amended slot 2
+with the ten People/Humans entries; the second created Coffee; the third created
+Biology and daily life and amended Coffee; the fourth created Cognition and
+expression and amended the first root. No deeper canonical level was generated.
+
+| Slot | Version | Final title | Distinct notes | Original entries |
+|---|---:|---|---:|---:|
+| 1 | 2 | Food and Domestic Life | 58 | 117 |
+| 2 | 3 | Humans and human life | 34 | 53 |
+| 3 | 1 | Nostr ecosystem | 24 | 26 |
+| 4 | 2 | Biological products and beverages | 29 | 38 |
+| 5 | 1 | Biology and daily life | 21 | 28 |
+| 6 | 1 | Cognition and expression | 20 | 26 |
+
+Note counts overlap. The six roots together represent **89 of 94 eligible
+notes**, with **288 of 367 originally grouped entries** associated with a root.
+The remaining **79 original entries**, including five eligible notes absent
+from all roots, remain in the input pool. All 367 original associations are
+preserved exactly across roots plus remaining entries; the original 361
+unassigned entries stay excluded. The source corpus contains 100 notes; the
+original grouped-only inclusion rule makes 94 eligible for this experiment.
+Reaching six roots therefore did not complete either note or entry coverage.
+
+| Checkpoint | Input vectors | Selected groups | Sections | Epsilon | Notes under retained roots |
+|---|---:|---:|---:|---:|---:|
+| S10 starting point | 217 | 39 | 32 | 0.942519 | 71 |
+| Slot2v2 amendment | 213 | 38 | 31 | 0.942519 | 73 |
+| Round 1: three roots | 178 | 35 | 29 | 0.942519 | 76 |
+| Round 2: four roots | 153 | 32 | 20 | 1.093721 | 82 |
+| Round 3: five roots | 114 | 24 | 15 | 1.144814 | 86 |
+| Round 4: six roots | 85 | 18 | 5 | 1.288263 | 89 |
+
+The six retained roots and latest clustering are separate views. In the final
+clustering G09 contains roots 1, 2 and 5, and S01 contains fourteen selected
+groups. Roots 3, 4 and 6 are currently unassigned by HDBSCAN but remain accepted
+roots and clustering inputs. This is not a semantic equivalence or containment
+judgment. The selected epsilon increased as the pool changed; no isolated
+experiment establishes which change caused the broader sections.
+
+The names and scopes also broadened during construction. For example, Coffee
+beverages became Biological products and beverages after joining tea,
+tomatoes/tallow and drinking-related entries. Biology and daily life came from
+chicken/egg and breakfast/morning/sleep groups. Preserve these actual outcomes
+for review rather than silently substituting different groups or definitions.
+
+## Actual cost and verification
+
+The native `usage-final.json` summary covers the Slot2v2 amendment and four new
+growth rounds: **10 fresh attempts, 10 valid results, zero failures, retries,
+warmups or missing usages**. All use unchanged grouped-v1/Sol 6.1 medium.
+There are 18,223 input tokens, zero cache reads/writes, and 6,094 output tokens
+including 4,249 reasoning tokens. Fresh API-equivalent catalog cost is
+**$0.097386**; incremental subscription cash charge is zero.
+
+Seventeen distinct native original group definitions are reused as inputs.
+These are source references, not seventeen reused dispatch cases; the runner's
+case-reuse count is zero. Their historical costs, original Bootstrap work and
+earlier S05/S10 calls are outside the fresh subtotal. Eight synthetic vectors
+are newly encoded across five SSE jobs; retained input vectors are reused.
+This is not a matched end-hierarchy quality or operational-savings comparison.
+
+Round support was developed with a failing production-path test and landed at
+12efc6a7. Its integration checks verify shared source identity, disjoint
+membership, original eligibility, exact native result reuse and combined root
+history; overlapping sections fail before a destination is created. A later
+single-section continuation regression first failed on inherited round IDs,
+then passed with metadata fix e3623abc. Seventeen focused/native checks passed
+in the task/integration worktrees and on combined local main. Historical
+experiment bindings remain unchanged; the metadata fix was integrated
+separately.
+
+The final ignored evidence directory is
+`target/food-drink-six-roots-v1/round-04/recluster` in
+`oracle-mvp-food-drink-six-roots-rounds-v1`. Files
+`food-drink-six-roots-final.svg`, `.png`, `.md` and `.json` show the six retained
+roots, complete fixed meanings, support and versions. The separate
+`food-drink-six-roots-final-clustering.svg`, `.png` and `.md` show the latest
+HDBSCAN tree and remaining input groups. Both SVGs were rendered and visually
+inspected. Native plans, worker receipts, HDBSCAN results and source hashes are
+preserved alongside them; the usage summary is one directory tree above at
+`target/food-drink-six-roots-v1/usage-final.json`.
+
+Keep both experiment worktrees and their referenced sources for immutable
+receipts, vectors and absolute bindings. No official HR ID was assigned and
+the hierarchy UI was not refreshed. The temporary metadata-fix worktree was
+removed after its tested changes landed on main. Stop model calls here as
+requested. Next, review the broad root meanings and remaining-entry coverage
+before choosing what happens after the sixth root.
