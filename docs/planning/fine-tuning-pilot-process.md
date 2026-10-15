@@ -1633,13 +1633,23 @@ unfinished Qwen3.8 generations.
 
 Existing handling marks native context-limit stops as truncated and
 automatically assigns zero correctness and coverage. Only the final answer is
-graded; reasoning drafts remain evidence artifacts. A proposed two-case
-diagnostic using the recommended sampler is **not approved**: no sampler change
-or additional generation calls have been launched, and all current greedy
-artifacts remain retained.
+graded; reasoning drafts remain evidence artifacts.
 
-Generation is incomplete and grading has not started. Report paired
-correctness, coverage, invalid outputs, thought/final
+**Approved sampler diagnostic — October 15.** The user approves stopping the
+five unfinished greedy attempts while preserving all fifteen saved answers,
+and a **separate two-note diagnostic on notes 20 and 34**. Its sampler uses
+`temperature=1.0`, `top_p=0.95`, `top_k=20`, `min_p=0.0`,
+`presence_penalty=0.0`, `repetition_penalty=1.0`. Weights, original prompts,
+`xhigh`, natural EOS within 262,144 context tokens, the 96 GiB CUDA ceiling,
+40 GiB cache pool and 20 GiB host-memory watchdog remain fixed. Diagnostic
+outputs and receipts remain separate from the fifteen greedy answers; no
+saved greedy record is replaced. This authorizes only **two diagnostic
+generation calls**. A full twenty-note sampled quality comparison remains
+open. This records approval and intended execution, not a verified stop or
+launch.
+
+The twenty-note thinking comparison is incomplete; grading has not started.
+Report paired correctness, coverage, invalid outputs, thought/final
 token counts and GX10 elapsed time after the completed manual grader handoff.
 These exposed validation notes provide a small screen, not unseen-note
 accuracy or proof that the full test exceeds 90%. Different generation
