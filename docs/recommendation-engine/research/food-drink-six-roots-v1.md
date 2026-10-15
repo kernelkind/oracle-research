@@ -6,11 +6,13 @@ The user requested continuing the same process until six roots exist, then
 observing that result before settling complete-coverage or sixth-root rules.
 The protected `MY-NOTES_10-12.md` is read-only and remains unedited.
 
-## HiGen V5 — approved recursive design, implementation in progress
+## HiGen V5 — approved recursive design and native implementation
 
 The user named this recursive design **HiGen V5**. The following decisions do
 not change the completed six-root evidence or activate its implementation.
-Recursive construction is not implemented by this experiment.
+This completed manual experiment did not construct recursive children. The
+subsequent native implementation is described in
+[HiGen V5](../hierarchy-generation-v5.md); it is the default for new definitions.
 
 Implementation is authorized. V5 uses angular HDBSCAN with
 `min_cluster_size = 2`, `min_samples = 3` and excess-of-mass selection, retaining
@@ -28,10 +30,13 @@ selection, grouped consolidation, replacement and amendment process to generate
 the parent's children. Repeat recursively within each resulting child.
 
 At every level, use the current node's own HDBSCAN tree when constructing its
-next level. Preserve its complete accumulated group membership, including all
-amendments, rather than remapping its entries to groups in the original
-whole-corpus run. In particular, Root 6 uses its six creation groups as leaves;
-its entries spanning seven original groups does not change that decision.
+next level. Build that tree fresh from its accumulated original entries,
+including additions from amendments. Do not splice earlier trees together or
+remap those entries to groups in the original whole-corpus run. The six-group
+leaf stopping rule below still applies: a node already assigned six or fewer
+groups exposes those groups as leaves, without constructing another section
+level. In particular, Root 6 uses its six creation groups as leaves; its entries
+spanning seven original groups does not change that decision.
 
 Choose the largest eligible section by its number of distinct supporting notes.
 Count each note ID once per section, including the original note associations
@@ -97,15 +102,16 @@ The shared numerical module now implements V5's cut and both fallbacks in
 `hierarchy_hdbscan.select_sections`. It returns every section or group so the
 constructor can select by distinct-note count and preserve leftover notes.
 The numerical review tool still uses the original bend-only rule, and frozen
-V4 construction still blocks on an impossible tied split. The production
-recursive V5 constructor is not yet implemented or activated.
+V4 construction still blocks on an impossible tied split. The recursive V5
+constructor uses the shared runner and preserves native request reuse,
+amendment histories, fresh original-entry child pools and direct leftover notes.
+This implementation does not turn the manual screen into semantic approval or
+an actual V5 experiment.
 
-One implementation question remains: after an amendment, the later HDBSCAN
-tree contains a synthetic representative rather than its earlier internal
-groups. Both sets of groups must be preserved, but the connection between
-their trees has not been specified. Do not invent distances, silently replace
-the node's own tree with the original whole-corpus tree, or infer approval for
-rerunning its internal clustering.
+The fresh-tree rule also resolves amendments: use all accumulated original
+entries when constructing the next nonterminal level. Synthetic inputs only
+represent already-created siblings while constructing their current lineup;
+they do not replace original entries in the pool for their own children.
 
 ## Starting evidence and round construction
 

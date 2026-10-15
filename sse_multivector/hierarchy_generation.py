@@ -1,4 +1,4 @@
-"""Native V3 variants and V4 variants of HDBSCAN hierarchy construction.
+"""Native hierarchy construction, including recursive HiGen V5.
 
 The shared experiment runner owns teacher transport, caching and accounting.
 Preparation and advancement only freeze inputs and collect saved results.
@@ -35,8 +35,9 @@ POLICY_V41 = "hierarchy-generation-v4.1"
 POLICY_V42 = "hierarchy-generation-v4.2"
 POLICY_V43 = "hierarchy-generation-v4.3"
 POLICY_V44 = "hierarchy-generation-v4.4"
+POLICY_V5 = "hierarchy-generation-v5"
 SECTION_POLICIES = (POLICY_V41, POLICY_V42, POLICY_V43, POLICY_V44)
-HDBSCAN_POLICIES = (POLICY_V4_ROOTS, *SECTION_POLICIES)
+HDBSCAN_POLICIES = (POLICY_V4_ROOTS, *SECTION_POLICIES, POLICY_V5)
 TITLE_POLICIES = (POLICY_V32, *HDBSCAN_POLICIES)
 MAX_SIBLINGS = 6
 MIN_NOTES = 2
@@ -150,12 +151,20 @@ def summary(state):
                     notes_before=len(before), notes_after=len(after),
                     lost_note_ids=[n for n in state["note_ids"] if n in before - after],
                 ))
-        represented = {e["note_id"] for n in state["nodes"] for e in n["entries"]}
+        represented = ({e["note_id"] for n in state["nodes"] for e in n["entries"]}
+                       | set(state.get("direct_note_ids", [])))
         result["notes_not_in_hierarchy"] = (
             [n for n in state["note_ids"] if n not in represented]
             if state["status"] == "complete" else None)
         result["scope"] = ("roots only" if state["generation_policy"] == POLICY_V4_ROOTS
                            else "hierarchy down to original HDBSCAN groups")
+        if state['generation_policy'] == POLICY_V5:
+            result['scope'] = 'recursive fresh HDBSCAN trees with group leaves'
+            result['direct_note_ids'] = state.get('direct_note_ids', [])
+            result['hdbscan_section_cuts'] = [
+                dict(family=f['id'], parent=f['parent'], round=i+1,
+                     selection=r['selection'], conflicting_sections=r.get('conflicting_sections', []))
+                for f in state['families'] for i, r in enumerate(f['rounds'])]
         if state["generation_policy"] in SECTION_POLICIES:
             result["hdbscan_section_cuts"] = state.get("hdbscan_sections", {}).get("cuts", [])
     return result
@@ -247,13 +256,13 @@ def prepare(spec_path, directory, history_root=None):
         "consolidation_spec",
         "worker_config",
     }
-    policy = cfg.get("generation_policy", POLICY) if isinstance(cfg, dict) else None
+    policy = cfg.get("generation_policy", POLICY_V5) if isinstance(cfg, dict) else None
     if policy == POLICY_V4_ROOTS:
         fields |= {"bootstrap_hierarchy", "hdbscan_binary"}
-    elif policy in SECTION_POLICIES:
+    elif policy in (*SECTION_POLICIES, POLICY_V5):
         fields |= {"hdbscan_binary"}
     allowed_fields = (fields, fields | {"generation_policy"})
-    if policy in SECTION_POLICIES:
+    if policy in (*SECTION_POLICIES, POLICY_V5):
         allowed_fields += (fields | {"bootstrap_hierarchy"},
                            fields | {"bootstrap_hierarchy", "generation_policy"})
     if (
@@ -310,7 +319,7 @@ def prepare(spec_path, directory, history_root=None):
     if policy in TITLE_POLICIES:
         bootstrap = teacher_specs["bootstrap_spec"]
         if bootstrap["prompt"]["id"] != "Hierarchy-bootstrap-v133":
-            raise ValueError("hierarchy generation V3.2 requires Hierarchy-bootstrap-v133")
+            raise ValueError(f"{policy} requires Hierarchy-bootstrap-v133")
         schema = bootstrap["runner"].get("output_schema")
         output_fields = {"ambiguities", "resolutions", "meaning", "title", "evidence"}
         if (
@@ -318,7 +327,7 @@ def prepare(spec_path, directory, history_root=None):
             or set(schema.get("properties", {})) != output_fields
             or set(schema.get("required", [])) != output_fields
         ):
-            raise ValueError("hierarchy generation V3.2 requires the Bootstrap title output schema")
+            raise ValueError(f"{policy} requires the Bootstrap title output schema")
     config_path = workflow.resolve(cfg["worker_config"], spec_path.parent)
     worker_config = _worker_template(config_path)
     sources[str(config_path)] = trial._hash(config_path)
@@ -354,14 +363,17 @@ def prepare(spec_path, directory, history_root=None):
         from . import hierarchy_hdbscan
         state["hdbscan_binary"] = str(workflow.resolve(cfg["hdbscan_binary"], spec_path.parent))
         if teacher_specs["consolidation_spec"]["prompt"]["id"] != "Hierarchy-consolidated-grouped-v1":
-            raise ValueError("V4 requires Hierarchy-consolidated-grouped-v1")
+            raise ValueError(f"{policy} requires Hierarchy-consolidated-grouped-v1")
         for path in (Path(state["hdbscan_binary"]), Path(hierarchy_hdbscan.__file__)):
             sources[str(path.resolve())] = trial._hash(path)
+        if policy == POLICY_V5:
+            path = Path(__file__).with_name("hierarchy_generation_v5.py").resolve()
+            sources[str(path)] = trial._hash(path)
     if policy in HDBSCAN_POLICIES and "bootstrap_hierarchy" in cfg:
         source_path = workflow.resolve(cfg["bootstrap_hierarchy"], spec_path.parent)
         source_state = workflow.read(source_path)
         check_state(source_state, verify_current_code=False)
-        if (source_state["generation_policy"] not in (POLICY_V32, *SECTION_POLICIES)
+        if (source_state["generation_policy"] not in (POLICY_V32, *SECTION_POLICIES, POLICY_V5)
                 or source_state["note_ids"] != cfg["note_ids"]
                 or [{k: o[k] for k in ("id", "local", "subject")}
                     for o in source_state["originals"]] != originals
@@ -888,6 +900,10 @@ def _schedule(directory, state):
     if state["generation_policy"] in SECTION_POLICIES:
         _schedule_v41(directory, state)
         return
+    if state["generation_policy"] == POLICY_V5:
+        from . import hierarchy_generation_v5
+        hierarchy_generation_v5.schedule(directory, state)
+        return
     while True:
         changed = False
         ready = []
@@ -1099,7 +1115,8 @@ def check_state(state, *, verify_receipts=True, verify_current_code=True):
     definition = Path(state["definition"])
     cfg = workflow.read(definition)
     if (
-        state["generation_policy"] != cfg.get("generation_policy", POLICY)
+        state["generation_policy"] != cfg.get("generation_policy",
+            POLICY_V5 if state["generation_policy"] == POLICY_V5 else POLICY)
         or state["max_siblings"] != MAX_SIBLINGS
         or state["min_notes"] != MIN_NOTES
         or state["note_ids"] != cfg["note_ids"]
@@ -1124,8 +1141,9 @@ def check_state(state, *, verify_receipts=True, verify_current_code=True):
                     str(Path(hierarchy_hdbscan.__file__).resolve()) not in state["sources"])
                 or (not verify_current_code and
                     sum(Path(p).name == "hierarchy_hdbscan.py" for p in state["sources"]) != 1)
-                or len(state["families"]) > 1
-                or any(f["parent"] is not None for f in state["families"])):
+                or (state["generation_policy"] != POLICY_V5 and (
+                    len(state["families"]) > 1
+                    or any(f["parent"] is not None for f in state["families"])))):
             raise ValueError("V4 root-test controls or scope changed")
         if expected_source is not None:
             source = workflow.read(expected_source)
@@ -1218,7 +1236,7 @@ def check_state(state, *, verify_receipts=True, verify_current_code=True):
             node[k] != item[k] for k in ("subject", "meaning", "original_ids")
         ) or node["entries"] != [originals[i]["local"] for i in item["original_ids"]]:
             raise ValueError("canonical node differs from final construction item")
-        if state["generation_policy"] in SECTION_POLICIES:
+        if state["generation_policy"] in (*SECTION_POLICIES, POLICY_V5):
             continue
         family = next(f for f in state["families"] if f["id"] == node["family"])
         if (
@@ -1231,8 +1249,11 @@ def check_state(state, *, verify_receipts=True, verify_current_code=True):
     by_id = {n["id"]: n for n in state["nodes"]}
     if state["generation_policy"] in SECTION_POLICIES:
         _check_v41(state)
+    elif state["generation_policy"] == POLICY_V5:
+        from . import hierarchy_generation_v5
+        hierarchy_generation_v5.check_state(state, verify_current_code=verify_current_code)
     for family in state["families"]:
-        if state["generation_policy"] in SECTION_POLICIES:
+        if state["generation_policy"] in (*SECTION_POLICIES, POLICY_V5):
             continue
         expected = (
             [
@@ -1340,6 +1361,8 @@ def _resume_sources(directory, reason):
         state = workflow.read(directory / "state.json")
         names = CODE_FILES + (('hierarchy_hdbscan.py',)
                               if state['generation_policy'] in HDBSCAN_POLICIES else ())
+        if state['generation_policy'] == POLICY_V5:
+            names += ('hierarchy_generation_v5.py',)
         bound = {
             name: [
                 p
@@ -1466,7 +1489,7 @@ def _native_command(
         event.update(delay_seconds=delay, failures=failures)
         workflow.engine._append_json_line(directory / "runner-backoff.jsonl", event)
         print(
-            f"Hierarchy V3: shared runner failed; retrying in {delay:g}s; diagnostics: {invocation}",
+            f"Hierarchy: shared runner failed; retrying in {delay:g}s; diagnostics: {invocation}",
             file=sys.stderr,
         )
         if stop.wait(delay):

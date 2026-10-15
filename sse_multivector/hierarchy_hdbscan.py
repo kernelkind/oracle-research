@@ -21,6 +21,7 @@ SECTION_CONFIGS = {
     "hierarchy-generation-v4.2": CONFIG_V42,
     "hierarchy-generation-v4.3": CONFIG_V43,
     "hierarchy-generation-v4.4": CONFIG_V44,
+    "hierarchy-generation-v5": CONFIG,
 }
 
 

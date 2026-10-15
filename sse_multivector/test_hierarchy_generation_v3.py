@@ -159,6 +159,7 @@ class HierarchyGenerationV3Tests(unittest.TestCase):
                 bootstrap_spec="bootstrap.json",
                 consolidation_spec="consolidation.json",
                 worker_config="worker.json",
+                generation_policy="hierarchy-generation-v3",
             ),
         )
 

@@ -35,6 +35,7 @@ def export_viewer(directory, output):
         raise ValueError('canonical viewer roots differ from saved parents')
     selected = {note for node in nodes.values()
                 for note in [*(e['note_id'] for e in node['entries']), *node.get('note_ids', [])]}
+    selected.update(state.get('direct_note_ids', []))
     corpus_path = Path(state['corpus'])
     if str(corpus_path) not in state['sources']:
         raise ValueError('canonical viewer corpus is not source-bound')
@@ -55,7 +56,7 @@ def export_viewer(directory, output):
     notes_bytes = (json.dumps({'notes': originals}, ensure_ascii=False, indent=2) + '\n').encode()
     qualification = state.get('shape', {}).get('qualification', '')
     view_nodes = [{'node_id': 'VIEW_ROOT', 'label': directory.name,
-        'children': roots, 'note_ids': [], 'analysis':
+        'children': roots, 'note_ids': [short_ids[n] for n in state.get('direct_note_ids', [])], 'analysis':
         'Display-only container for canonical roots. Not a canonical node.\n\n'
         f"Source: {state_path}\nState SHA-256: {hashlib.sha256(state_bytes).hexdigest()}\n"
         f"Status: {state['status']}; not human gold.\n"

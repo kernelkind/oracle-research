@@ -1,5 +1,9 @@
 # HiGen V4.2 — hierarchy from one HDBSCAN tree
 
+New construction uses [HiGen V5](hierarchy-generation-v5.md). This document
+describes frozen V4 settings, still-used experiment evidence and native resume
+compatibility; it does not select V4 for new definitions.
+
 Status: approved V4.2 setting; native construction is implemented. V4.2 changes
 only `min_cluster_size` from two to four. All other V4.1 settings and stages
 remain unchanged. HR23 completed using HR22’s exact 100-note inputs and saved

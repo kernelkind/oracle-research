@@ -1,9 +1,191 @@
 """V5 cuts and construction through the production hierarchy workflow."""
 
+import json
+import os
+from copy import deepcopy
+from pathlib import Path
 import unittest
+from unittest.mock import patch
 
 from sse_multivector import hierarchy_hdbscan as hdbscan
 from sse_multivector.test_hierarchy_hdbscan import fixture
+from sse_multivector import test_hierarchy_generation_v3 as native_fixtures
+
+
+class V5ConstructionTests(unittest.TestCase):
+    def setUp(self):
+        self.native = native_fixtures.HierarchyGenerationV3Tests('runTest')
+        self.native.setUp()
+        self.addCleanup(self.native.doCleanups)
+
+    def prepare(self, count=9, tied=False, bend=False):
+        path = self.native.prepare_v41(count=count, tied=tied)
+        if bend:
+            binary = self.native.root/'hdbscan-fixture'
+            binary.write_text(binary.read_text().replace(
+                '1/((k-i-1)/10)', '1/(10-.01*i if i<k-5 else max(.01,(k-i-1)/10))'))
+        cfg = json.loads(path.read_text())
+        cfg['generation_policy'] = 'hierarchy-generation-v5'
+        return self.native.write('v5.json', cfg)
+
+    def test_native_v5_keeps_small_groups_as_leaves_and_freezes_three_two(self):
+        from sse_multivector import hierarchy_generation as generation
+        spec = self.prepare()
+        self.native.cli('prepare-hierarchy', 'v5', '--spec', spec)
+        result = json.loads(self.native.cli('run-hierarchy', 'v5').stdout)
+        state = json.loads((self.native.root/'v5/state.json').read_text())
+        self.assertEqual(result['status'], 'complete')
+        self.assertEqual(len(state['nodes']), 3)
+        self.assertTrue(all(n['leaf'] for n in state['nodes']))
+        request = json.loads(Path(state['families'][0]['rounds'][0]['hdbscan']['request']).read_text())
+        self.assertEqual(request['hdbscan_configuration'], dict(
+            min_samples=3, min_cluster_size=2, selection_method='excess_of_mass'))
+        self.assertEqual(len(state['experiments']), 2)  # Bootstrap + group names.
+        generation.check_state(state)
+
+    def construct(self, spec, name='v5'):
+        from sse_multivector import hierarchy_generation as generation
+        self.native.cli('prepare-hierarchy', name, '--spec', spec)
+        with patch('sse_multivector.worker.OfficialSseEncoder', return_value=native_fixtures.FixtureEncoder()), \
+                patch.dict(os.environ, FAKE_RUNNER_LOG=str(self.native.log)):
+            result = generation.run(self.native.root/name)
+        self.assertEqual(result['status'], 'complete', result)
+        return json.loads((self.native.root/name/'state.json').read_text())
+
+    def test_recursive_children_use_original_entries_and_parent_scope(self):
+        from sse_multivector import hierarchy_generation as generation
+        state = self.construct(self.prepare(count=43))
+        deeper = [f for f in state['families'] if f['parent'] is not None and f['rounds']]
+        self.assertTrue(deeper)
+        nodes = {n['id']: n for n in state['nodes']}
+        for family in deeper:
+            self.assertEqual(family['rounds'][0]['current'], nodes[family['parent']]['original_ids'])
+            self.assertTrue(all(i.startswith('L') for i in family['rounds'][0]['current']))
+        self.assertTrue(any(d['stage'] == 'section' for d in state['v5']['definitions'].values()))
+        for d in state['v5']['definitions'].values():
+            if d['stage'] == 'section':
+                self.assertTrue(all(i.startswith('T') for i in d['members']))
+            if d['parent'] is not None:
+                p = nodes[d['parent']]
+                self.assertEqual(d['payload']['parent'], dict(title=p['subject'], meaning=p['meaning']))
+        generation.check_state(state)
+
+    def test_original_noise_is_excluded_but_leftover_notes_survive_viewer_export(self):
+        from sse_multivector.canonical_hierarchy_viewer import export_viewer
+        state = self.construct(self.prepare(count=22, tied=True))
+        self.assertEqual(len(state['nodes']), 6)
+        self.assertEqual(len(state['v5']['original_unassigned_ids']), 1)
+        self.assertEqual(len(state['direct_note_ids']), 3)
+        result = export_viewer(self.native.root/'v5', self.native.root/'viewer')
+        self.assertEqual(result['note_count'], 21)
+        view = json.loads(Path(result['hierarchy']).read_text())
+        self.assertEqual(len(view['nodes'][0]['note_ids']), 3)
+
+    def test_amendment_retains_ownership_and_later_noise_stays_eligible(self):
+        from sse_multivector import hierarchy_generation as generation
+        state = self.construct(self.prepare(count=43, bend=True))
+        root_family = state['families'][0]
+        self.assertGreater(len(root_family['rounds']), 1)
+        self.assertTrue(any(len(n['versions']) > 1 for n in state['nodes']))
+        later_noise = 0
+        for round_ in root_family['rounds'][1:]:
+            later_noise += len(round_['unassigned'])
+            removed = {i for p in round_['proposals'] for i in p['members']}
+            for i in round_['unassigned']:
+                if i not in removed:
+                    self.assertIn(i, round_['after'])
+            for p in round_['proposals']:
+                if p['owner'] is not None:
+                    self.assertEqual(p['node'], p['owner'])
+        self.assertGreater(later_noise, 0)
+        generation.check_state(state)
+
+    def test_complete_resume_and_identical_second_run_reuse_native_answers(self):
+        from sse_multivector import hierarchy_generation as generation
+        spec = self.prepare()
+        state = self.construct(spec)
+        before = self.native.calls()
+        generation.run(self.native.root/'v5')
+        self.assertEqual(self.native.calls(), before)
+        second = self.construct(spec, 'second')
+        self.assertEqual(self.native.calls(), before)
+        self.assertEqual([n['original_ids'] for n in second['nodes']],
+                         [n['original_ids'] for n in state['nodes']])
+
+    def test_new_preparation_defaults_to_v5(self):
+        spec = self.prepare()
+        cfg = json.loads(spec.read_text())
+        del cfg['generation_policy']
+        self.native.write('v5.json', cfg)
+        state = self.construct(spec)
+        self.assertEqual(state['generation_policy'], 'hierarchy-generation-v5')
+
+    def test_all_initial_noise_finishes_without_inventing_groups(self):
+        from sse_multivector import hierarchy_generation as generation
+        spec = self.prepare()
+        binary = self.native.root/'hdbscan-fixture'
+        binary.write_text(binary.read_text().replace(
+            'groups=[ids[i:i+3] for i in range(0,len(ids)-2,3)]', 'groups=[]'))
+        directory = self.native.root/'v5'
+        generation.prepare(spec, directory)
+        result = generation.advance(directory, 'Collect empty HDBSCAN result')
+        self.assertEqual(result['status'], 'complete')
+        state = json.loads((directory/'state.json').read_text())
+        self.assertEqual(state['nodes'], [])
+        self.assertEqual(state['v5']['eligible_ids'], [])
+        self.assertEqual(state['direct_note_ids'], [])
+
+    def test_changed_leaf_membership_is_rejected_before_advancing(self):
+        from sse_multivector import hierarchy_generation as generation
+        state = self.construct(self.prepare())
+        altered = deepcopy(state)
+        altered['nodes'][0]['groups'] = []
+        with self.assertRaisesRegex(ValueError, 'group|version'):
+            generation.check_state(altered, verify_receipts=False)
+
+    def test_fresh_bootstrap_path_uses_native_reuse_and_the_ordinary_encoder(self):
+        spec = self.prepare()
+        cfg = json.loads(spec.read_text())
+        del cfg['bootstrap_hierarchy']
+        self.native.write('v5.json', cfg)
+        state = self.construct(spec)
+        self.assertNotIn('bootstrap_hierarchy', state)
+        self.assertTrue(state['encodings'])
+        self.assertEqual([o['title'] for o in state['originals']],
+                         [o['title'] for o in self.native.state()['originals']])
+
+    def test_finished_lineup_does_not_encode_representatives_with_nothing_left_to_add(self):
+        spec = self.prepare(count=24)
+        binary = self.native.root/'hdbscan-fixture'
+        binary.write_text(binary.read_text().replace(
+            '1/((k-i-1)/10)', '1/[10,9.99,9.98,1,.5,.3,.1][i]'))
+        original_jobs = len(self.native.state()['encodings'])
+        state = self.construct(spec)
+        self.assertEqual(len(state['families'][0]['nodes']), 4)
+        self.assertEqual(len(state['encodings']), original_jobs)
+
+
+class V5SelectionTests(unittest.TestCase):
+    def test_largest_counts_distinct_notes_instead_of_original_entries(self):
+        from sse_multivector.hierarchy_generation_v5 import proposals
+        groups = [[f'L{i+1:05d}' for i in range(10)], ['L00011', 'L00012']]+[[f'L{i+1:05d}'] for i in range(12, 17)]
+        ids = [i for g in groups for i in g]
+        state = dict(items={i: dict(original_ids=[i]) for i in ids}, originals=[
+            dict(id=i, local=dict(note_id='one note' if i in groups[0] else i)) for i in ids])
+        round_ = dict(current=ids, groups=groups, selection=dict(
+            rule='trimmed-bend-10-percent-v1',
+            sections=[dict(groups=[i+1]) for i in range(7)]))
+        result = proposals(state, round_)
+        self.assertEqual([p['members'] for p in result['proposals']], [['L00011', 'L00012']])
+
+    def test_existing_representatives_never_become_a_new_merged_canonical_node(self):
+        from sse_multivector.hierarchy_generation_v5 import proposals
+        state = dict(items=dict(R1=dict(owner='C1'), R2=dict(owner='C2'), L1={}))
+        round_ = dict(current=['R1', 'R2', 'L1'], groups=[['R1', 'R2', 'L1']],
+                      selection=dict(rule='group-leaves-v5', sections=[dict(groups=[1])]))
+        result = proposals(state, round_)
+        self.assertEqual(result['proposals'], [])
+        self.assertEqual(result['conflicting_sections'], [dict(groups=[0], owners=['C1', 'C2'])])
 
 
 class V5CutTests(unittest.TestCase):
