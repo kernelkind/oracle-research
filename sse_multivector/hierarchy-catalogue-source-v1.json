@@ -8971,7 +8971,7 @@
           "all_producers": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr34-v53/target/hierarchy-hr34-v53-two-hundred-note-v1/usage-all-producers.json",
           "scope": "Fresh consolidation: 7 attempts including warmups, 161 exact reuses, complete usage. Copied Bootstrap dispatches are historical; all-producer generation has eight historical missing failed-call usages."
         },
-        "qualification": "Native construction/source/receipt validation passed after recorded pending-leaf validator fix. 199 notes beneath roots (10 gained versus HR33; none lost), N065 unclaimed; all 62 edges strictly narrow observed note sets. Agent-assessed Bodily reduction of consumed substances -> Beverages and drinking membership has a scope mismatch; no semantic approval or quality-preserving savings claim. No review UI requested or generated."
+        "qualification": "Native construction/source/receipt validation passed after recorded pending-leaf validator fix. 199 notes beneath roots (10 gained versus HR33; none lost), N065 unclaimed; all 62 edges strictly narrow observed note sets. Agent-assessed Bodily reduction of consumed substances -> Beverages and drinking membership has a scope mismatch; no semantic approval or quality-preserving savings claim. User-requested review UI passed its offline check: 68 canonical nodes plus display container, 199 notes, no top-container direct notes; original state unchanged."
       },
       "related_outputs": [
         {
@@ -8993,6 +8993,16 @@
           "label": "New membership scope witness",
           "path": "target/hierarchy-hr34-v53-two-hundred-note-v1/HR34/new-membership-scope-review.json",
           "sha256": "5f9f8c7dcda24fa87ceb6071de02f6e3f76227d312bee7bb3a11b5629c3adf8e"
+        },
+        {
+          "label": "Review hierarchy (HR34)",
+          "path": "target/hr34-review-ui-v1/hierarchy.json",
+          "sha256": "3725e47a4dbe031d56172ac0c44799941d6cd7a476fb8fddacad52576389e0ed"
+        },
+        {
+          "label": "Original-note browser (HR34)",
+          "path": "target/hr34-review-ui-v1/notes.json",
+          "sha256": "cba323c9f18bab12f1fefc950cf47360c6ea4232be19e86569c88ae4b2d33fda"
         }
       ]
     }

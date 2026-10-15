@@ -664,5 +664,12 @@ membership pass. Native validation passed after a checkpoint validator fix.
 Bodily reduction of consumed substances joined Beverages and drinking;
 this agent-assessed scope mismatch remains for review. No manual repair.
 
-**Review UI not generated: it has not been requested.**
+```bash
+cd /home/dev/src/notedeck_worktrees/algos
+./oracle-mvp-hierarchy-hr34-v53/target/hr34-review-ui-v1/launch.sh
+```
+
+Press L on a leaf to show its notes. The offline viewer check passed: 68
+canonical nodes plus the display container, 199 notes, and no direct notes
+above the roots.
 [Full result and evidence](hierarchy-runs.md#hr34--hr33-corpus-with-higen-v53).

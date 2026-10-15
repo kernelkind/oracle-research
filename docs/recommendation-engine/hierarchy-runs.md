@@ -1890,6 +1890,12 @@ Initial execution source was 7159bb54, final source bf7801bc, shared coordinator
 36dfcf63 and frozen teacher transport 1cfdd6a7. All ready independent batches
 used the native shared 30-request queue; one-hour deadlines and no attempt
 ceiling were preserved. The workbook was updated, reopened and verified.
-No review UI was requested or generated. Retain the execution worktree for
-frozen sources, receipts, clustering evidence and vectors. The next useful
+The subsequently requested [review UI](hierarchy-review-commands.md#hr34--200-notes--higen-v53)
+uses the existing binary and passed its offline check from /tmp: 68 canonical
+nodes plus the display container, 199 original notes, no top-container direct
+notes. All 55 leaves have notes; L opens the selected leaf's notes. The exported
+hierarchy preserves the saved meanings, memberships and original state hash.
+The workbook's review command was updated and verified. Retain the execution
+worktree for frozen sources, receipts, clustering evidence, vectors and the
+launchable UI. The next useful
 review is the saved scope mismatch before claiming semantic improvement.
