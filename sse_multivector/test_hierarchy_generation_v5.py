@@ -366,6 +366,32 @@ class V5ConstructionTests(unittest.TestCase):
         self.assertEqual(state['status'], 'complete')
         self.assertTrue(state['v5']['membership_passes'][0]['applied'])
 
+    def test_v53_membership_results_are_processed_in_separate_cpu_processes(self):
+        spec = self.prepare(count=10)
+        cfg = json.loads(spec.read_text())
+        cfg['generation_policy'] = 'hierarchy-generation-v5.3'
+        spec = self.native.write('v53.json', cfg)
+        started = self.native.root/'membership-parents'
+        started.mkdir()
+        binary = self.native.root/'hdbscan-fixture'
+        binary.write_text(binary.read_text().replace(
+            'r=json.load(open(sys.argv[1]))',
+            'from pathlib import Path\nimport os,time\n'
+            'if "/memberships/" in sys.argv[1]:\n'
+            f'    started=Path({str(started)!r})\n'
+            '    (started/Path(sys.argv[1]).parents[1].name).write_text(str(os.getppid()))\n'
+            '    deadline=time.monotonic()+5\n'
+            '    while len(list(started.iterdir())) < 3:\n'
+            '        if time.monotonic() >= deadline:\n'
+            '            raise RuntimeError("membership workers did not start together")\n'
+            '        time.sleep(.01)\n'
+            'r=json.load(open(sys.argv[1]))'))
+        state = self.construct(spec)
+        parents = [p.read_text() for p in started.iterdir()]
+        self.assertEqual(len(parents), 3)
+        self.assertEqual(len(set(parents)), 3, 'all result parsing shares one Python process')
+        self.assertEqual(state['status'], 'complete')
+
     def test_v53_failed_membership_clustering_preserves_a_resumable_frozen_pool(self):
         from sse_multivector import hierarchy_generation as generation
         spec = self.prepare(count=10)

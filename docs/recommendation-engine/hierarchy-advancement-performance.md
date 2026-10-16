@@ -140,4 +140,20 @@ Evidence remains ignored under `target/multicore-validation-replay-v1/`,
 `target/multicore-numerical-replay-v1/` and
 `target/multicore-numerical-replay-v2/` in
 `oracle-mvp-hr35-multicore-replay-v1`. Native hierarchy regression verification
-on local main passes 121 tests; the relevant Rust suite passes 50 tests.
+passes 122 tests; the relevant Rust suite passes 50 tests.
+
+Membership construction now also uses the numerical process workers, replacing
+the thread pool. This includes request preparation and large JSON result
+processing, which otherwise shares one Python GIL after the Rust jobs finish.
+The same local CPU budget is divided across native clusterings. Sibling-order
+collection and atomic membership application are preserved; failures retain
+other completed results for resume.
+
+A native test first recorded one shared parent process for all three sibling
+jobs, then passed with three distinct worker parents. Concurrent-start and
+failure/resume tests also pass. Reusing the six complete real root results
+through the process-based production path took 10.758 seconds and returned
+every saved round, request hash and result hash exactly, without another
+clustering invocation or teacher call. This is a reuse-path check, not a fresh
+construction benchmark. Evidence is retained under
+`target/membership-process-checks/` in `oracle-mvp-hierarchy-hr35-results`.

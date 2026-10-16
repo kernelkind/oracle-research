@@ -5,7 +5,6 @@ only teacher executor; the ordinary hierarchy coordinator submits ready work.
 """
 
 import json
-from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 from . import hierarchy_generation as generation
@@ -169,25 +168,21 @@ def _add_memberships(directory, state, family):
         # Each job reads the same frozen state and writes its own directory.
         # This pool runs local clustering only; teacher admission remains with
         # the shared runner. Start every ready sibling before collecting results.
-        with ThreadPoolExecutor(max_workers=min(hdbscan.cpu_workers(), len(family['nodes']))) as pool:
-            jobs = []
-            budget = hdbscan.cpu_workers()
-            for ordinal, identifier in enumerate(family['nodes']):
-                node = nodes[identifier]
-                ids = sorted(set(node['original_ids']) | set(untracked))
-                inputs = dict(id=family['id']+'-'+identifier, current=ids, rounds=[])
-                destination = directory/family['id']/'memberships'/identifier
-                destination.mkdir(parents=True, exist_ok=True)
-                vectors = generation._vectors(state, ids)
-                jobs.append((identifier, pool.submit(
-                    hdbscan.round_for, destination, state, inputs, vectors,
-                    workers=max(1, budget//len(family['nodes'])
-                                + (ordinal < budget % len(family['nodes']))))))
-            for identifier, job in jobs:
-                round_ = job.result()
-                record['rounds'][identifier] = round_
-                record['additions'][identifier] = _membership_additions(
-                    round_, nodes[identifier]['original_ids'], untracked)
+        jobs = []
+        budget = hdbscan.cpu_workers()
+        for ordinal, identifier in enumerate(family['nodes']):
+            node = nodes[identifier]
+            ids = sorted(set(node['original_ids']) | set(untracked))
+            inputs = dict(id=family['id']+'-'+identifier, current=ids, rounds=[])
+            destination = directory/family['id']/'memberships'/identifier
+            destination.mkdir(parents=True, exist_ok=True)
+            workers = max(1, budget//len(family['nodes'])
+                          + (ordinal < budget % len(family['nodes'])))
+            jobs.append((destination, inputs, workers))
+        for identifier, round_ in zip(family['nodes'], hdbscan.cluster_rounds(state, jobs), strict=True):
+            record['rounds'][identifier] = round_
+            record['additions'][identifier] = _membership_additions(
+                round_, nodes[identifier]['original_ids'], untracked)
     # Apply together: a match with one sibling must not remove another sibling's input.
     for identifier, added in record['additions'].items():
         node = nodes[identifier]

@@ -35,7 +35,7 @@ _RESULT_FILES = ContextVar('hierarchy_hdbscan_result_files', default=None)
 _RESULT_CACHE_BYTES = 1024 * 1024 * 1024
 _CPU_WORKERS = ContextVar('hierarchy_cpu_workers', default=None)
 _PARALLEL_MIN_VECTORS = 1024
-_VALIDATION_STATE = None
+_NUMERICAL_STATE = None
 
 
 def cpu_workers():
@@ -66,15 +66,15 @@ def cpu_scope(workers=None):
         _CPU_WORKERS.reset(token)
 
 
-def _validation_worker_init(state):
-    global _VALIDATION_STATE
-    _VALIDATION_STATE = state
+def _numerical_worker_init(state):
+    global _NUMERICAL_STATE
+    _NUMERICAL_STATE = state
 
 
 def _validate_saved_round(job, state=None):
     from . import hierarchy_generation as generation
     family, round_ = job
-    state = _VALIDATION_STATE if state is None else state
+    state = _NUMERICAL_STATE if state is None else state
     with source_scope(), workflow.report_scope():
         vectors = generation._vectors(state, round_['current'])
         check_round(state, family, round_, vectors)
@@ -91,13 +91,30 @@ def check_rounds(state, jobs):
     if workers > 1 and sum(len(r['current']) for _, r in jobs) >= _PARALLEL_MIN_VECTORS:
         with ProcessPoolExecutor(max_workers=workers,
                                  mp_context=multiprocessing.get_context('spawn'),
-                                 initializer=_validation_worker_init, initargs=(state,)) as pool:
+                                 initializer=_numerical_worker_init, initargs=(state,)) as pool:
             futures = [pool.submit(_validate_saved_round, job) for job in jobs]
             for future in futures:
                 future.result()
     else:
         for job in jobs:
             _validate_saved_round(job, state)
+
+
+def _cluster_round(job):
+    from . import hierarchy_generation as generation
+    directory, inputs, workers = job
+    with source_scope(), workflow.report_scope():
+        return round_for(directory, _NUMERICAL_STATE, inputs,
+                         generation._vectors(_NUMERICAL_STATE, inputs['current']), workers=workers)
+
+
+def cluster_rounds(state, jobs):
+    """Run independent clustering and result processing without a shared Python GIL."""
+    with ProcessPoolExecutor(max_workers=min(cpu_workers(), len(jobs)),
+                             mp_context=multiprocessing.get_context('spawn'),
+                             initializer=_numerical_worker_init, initargs=(state,)) as pool:
+        pending = [pool.submit(_cluster_round, job) for job in jobs]
+        return [future.result() for future in pending]
 
 
 @contextmanager

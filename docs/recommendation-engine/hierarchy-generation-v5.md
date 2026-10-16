@@ -175,7 +175,9 @@ inputs rather than rebuilding them from a later global pool. Native validation
 reproduces every addition from its shared-group evidence.
 
 Independent sibling membership clusterings run concurrently on local CPUs,
-using the same frozen pool and separate output directories. Results are
+using the same frozen pool and separate output directories. Request preparation,
+clustering, and large-result parsing/writing run in separate worker processes,
+so Python's GIL does not serialize siblings' result handling. Results are
 collected in sibling order and applied together. A failed sibling preserves
 other completed results for resume. This local concurrency does not limit
 teacher submissions or change the shared runner's provider queue.
