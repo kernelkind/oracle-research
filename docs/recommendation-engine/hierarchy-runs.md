@@ -1926,7 +1926,9 @@ The [frozen definition](../../sse_multivector/hierarchy-runs/hr35/hierarchy.spec
 and [native state](../../../oracle-mvp-hierarchy-hr35-v53/target/hierarchy-hr35-v53-thousand-note-v1/HR35/state.json)
 retain exact controls. Initial execution source is d2c13d78, shared coordinator
 36dfcf63 and frozen teacher transport 1cfdd6a7. The native run exited zero with
-`execution_status=complete` and no terminal errors. No review UI requested.
+`execution_status=complete` and no terminal errors. The subsequently requested
+[review UI](hierarchy-review-commands.md#hr35--1000-notes--higen-v53) exposes
+the saved hierarchy without changing its meanings or memberships.
 
 The root lineup checkpoint has six roots and **670 distinct notes beneath
 roots**. The additional root membership pass clustered each root with the
@@ -2003,9 +2005,13 @@ answers. Its original-generation accounting is historical: 7,563 calls and a
 known $53.3270764 catalog subtotal, with six missing usages. It is not new HR35
 spending or a measured policy saving.
 
-The comparison workbook was updated and reopened. Retain the execution and
-performance-evidence worktrees for frozen sources, receipts, vectors, original
-and replacement numerical executables, and linked replay evidence. The next
+The requested review UI passed its offline check from `/tmp`: 169 canonical
+nodes plus the display container, 718 original notes and no direct notes above
+roots. All 128 leaves have notes; L opens their notes. Meanings, memberships and
+the saved state hash are unchanged. The workbook review command was updated
+and reopened. Retain the execution and performance-evidence worktrees for frozen
+sources, receipts, vectors, original and replacement numerical executables, and
+linked replay evidence. The next
 semantic check is the 12 notes lost against HR30. The observed remaining
 runtime costs are recorded in
 [advancement performance](hierarchy-advancement-performance.md#observed-costs-at-hr35-completion).

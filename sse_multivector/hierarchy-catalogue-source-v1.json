@@ -9089,7 +9089,7 @@
           "all_producers": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr35-v53/target/hierarchy-hr35-v53-thousand-note-v1/usage-all-producers.json",
           "scope": "Fresh consolidation: 398 attempts including warmups and retries, 110 exact reuses, 427 valid cases, two recovered failures with unknown usage; $1.5345656 known catalog subtotal, complete cost unknown. All-producer originals include historical Bootstrap generation; six original failed-call usages are missing. Incremental subscription cash charge is zero."
         },
-        "qualification": "Native construction exited zero with no terminal errors. 169 nodes, 163 strictly narrowing edges, six roots, max six children, four levels; 718 notes beneath roots, 282 outside. Versus HR30: 148 gained, 12 lost, 570 retained. Overall audit coverage requirement is unmet; meanings are ungraded. The completion summary legacy missing-note field includes hidden top-container associations; use audit note_coverage. HR30 used V5, so this combines V5.1/V5.2/V5.3 effects, not an isolated V5.3 or quality-preserving savings result. No review UI requested."
+        "qualification": "Native construction exited zero with no terminal errors. 169 nodes, 163 strictly narrowing edges, six roots, max six children, four levels; 718 notes beneath roots, 282 outside. Versus HR30: 148 gained, 12 lost, 570 retained. Overall audit coverage requirement is unmet; meanings are ungraded. The completion summary legacy missing-note field includes hidden top-container associations; use audit note_coverage. HR30 used V5, so this combines V5.1/V5.2/V5.3 effects, not an isolated V5.3 or quality-preserving savings result. User-requested review UI passes its offline check: 169 canonical nodes plus display container, 718 original notes, all 128 leaves have notes, no direct notes above roots. Saved state is unchanged."
       },
       "related_outputs": [
         {
@@ -9126,6 +9126,21 @@
           "label": "Numerical runtime provenance",
           "path": "target/numerical-runtime-multicore-v1/provenance.json",
           "sha256": "021d2af8b7f1e67359173b3a0e02746763925b6f3eba92e67295b292baf49d08"
+        },
+        {
+          "label": "Review hierarchy (HR35)",
+          "path": "target/hr35-review-ui-v1/hierarchy.json",
+          "sha256": "eb935b457e824cb4387ce5b814da556856dab846d2a1adbaa9fef29785bf8839"
+        },
+        {
+          "label": "Original-note browser (HR35)",
+          "path": "target/hr35-review-ui-v1/notes.json",
+          "sha256": "008c5f1397bafc996b6dc0492c09559c34abd4adf9d17962eafc133ee08d105c"
+        },
+        {
+          "label": "Offline viewer check (HR35)",
+          "path": "target/hr35-review-ui-v1/check.txt",
+          "sha256": "ae5960bafc1025b73f85813257cb80d9e04a09319a9fc8912bc6a858d48012c3"
         }
       ]
     }

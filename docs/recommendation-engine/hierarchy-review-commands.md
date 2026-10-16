@@ -681,5 +681,14 @@ Construction completed on HR30's exact corpus using its saved Bootstrap
 meanings and vectors: 169 nodes, six roots, at most six children and four levels.
 All 163 edges narrow observed note sets. Root coverage is 718/1,000, gaining
 148 notes and losing 12 against HR30; semantic review remains pending.
-**Review UI not generated: it has not been requested.**
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos
+./oracle-mvp-hierarchy-hr35-v53/target/hr35-review-ui-v1/launch.sh
+```
+
+Press L on a leaf to show its notes. The review contains 169 canonical nodes
+plus the display container and 718 original notes, with no direct notes above
+the roots. The offline viewer check passed; all 128 leaves have notes. The saved
+hierarchy and its meanings remain unchanged.
 [Current state and controls](hierarchy-runs.md#hr35--hr30-thousand-note-corpus-with-higen-v53).
