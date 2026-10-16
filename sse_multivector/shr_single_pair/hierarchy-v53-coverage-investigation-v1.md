@@ -2,9 +2,9 @@
 
 Status: experimental findings, 2026-10-16. This is not a new HiGen version,
 production policy, human judgment set, or approval to change existing meanings.
-No provider calls, hierarchy modifications, or UI updates were made. The final,
-separately authorized pooling comparison generated 608 local SSE vectors; the
-earlier numerical panels used saved vectors only.
+No provider calls, hierarchy modifications, or UI updates were made. Separately
+authorized full-meaning and first-sentence comparisons generated 608 and 912 local
+SSE vectors, respectively; the earlier numerical panels used saved vectors only.
 
 ## Current scope and finding
 
@@ -17,8 +17,10 @@ controls. Their hypothetical coverage gains are not an allowed automatic solutio
 
 The saved-vector connection audit rejects the tested branch expansion rule. The
 subsequent controlled full-meaning comparison improves known-root ranking but
-worsens the difficult Food scope checks. Neither supplies a qualified admission
-rule. HR35 still has 718 reachable notes; no additions were applied.
+worsens the difficult Food scope checks. First-sentence pooling does not resolve
+that tradeoff: it loses known-root first-place results and worsens those Food
+ordering checks. Neither supplies a qualified admission rule. HR35 still has 718
+reachable notes; no additions were applied.
 
 ## Frozen source and baseline
 
@@ -595,3 +597,107 @@ The one-off evaluation scripts are tied to this frozen packet and do not replace
 the production encoder or hierarchy constructor. All numerical source bindings
 remain unchanged after synchronization with local main. No policy was activated;
 actual reachable coverage is still 718 notes.
+
+## First-sentence pooling on the same cases
+
+The user requested testing the first sentence of the explicit meaning. This
+comparison retains all 304 input texts unchanged: `title + "\n\n" + full meaning`.
+It pools title, full-meaning and first-sentence tokens separately from the same
+contextual states. This changes the vector selection, not the canonical meaning
+or supplied context. The frozen checkpoint, projection, runtime, 512-token limit
+and eight-input batch size match the preceding run. Execution again used local
+CPU with four allocated cores reserved; there were no LLM calls or training.
+
+Sentence boundaries follow sentence-ending punctuation, preserving initialisms
+and common abbreviations. The saved Federal Reserve definition retains the
+internal `U.S.` rather than treating it as a sentence ending. All 128 shortened
+definitions and their exact removed suffixes are retained for inspection; the
+other 176 are already one sentence. All six root definitions have multiple
+sentences. The longest complete contextual input remains 344 tokens.
+
+The plan, 99 assessed combinations, Food controls and 170-entry reference set
+were frozen unchanged before encoding. The production worker returned 912
+vectors. Its 608 title/full-meaning controls reproduce the preceding run
+exactly; all 176 first-sentence/full-meaning identity controls also match
+exactly. Source hashes, request/receipt identities, vector hashes and selected
+UTF-8 spans passed validation. The earlier 302 historical title replays still
+pass. These checks establish a controlled representation comparison, not
+semantic qualification of the cases.
+
+### Results and which side causes the loss
+
+| Local entry pooled text | Root pooled text | Known-fitting root first | Known-fitting root in first three | Original Food orderings | Expanded Food orderings |
+|---|---|---:|---:|---:|---:|
+| Title | Title | 63 / 99 | 78 / 99 | 64 / 78 | 328 / 364 |
+| Full meaning | Full meaning | 87 / 99 | 97 / 99 | 53 / 78 | 327 / 364 |
+| First sentence | Full meaning | 84 / 99 | 98 / 99 | 50 / 78 | 285 / 364 |
+| Full meaning | First sentence | 70 / 99 | 95 / 99 | 50 / 78 | 332 / 364 |
+| First sentence | First sentence | 69 / 99 | 94 / 99 | 49 / 78 | 314 / 364 |
+
+The two mixed-side rows are supplementary calculations on the same saved
+vectors, not separately tuned policies. All nine local/root selection
+combinations are retained. Most first-place ranking loss occurs when root
+pooling is shortened. Keeping full root pooling and shortening only the local
+entry loses four first-place results (Discounts, Tea, Bots and Desires) and gains
+one (reproductive Eggs). How-to guides improves from fourth to third. That small
+top-three gain does not establish better admission or coverage.
+
+Root first sentences can omit substantial scope rather than just examples.
+Food's first sentence names food, production, culinary culture, preparation,
+preservation, provision and consumption. Later sentences explicitly define
+food and include beverages, equipment, food-service operations and food-related
+communication. Those sentences remain encoder context, but are no longer pooled
+when selecting only its first sentence.
+
+With both sides using the first sentence, a known-root entry appears among the
+first five reference results in 94/99 cases, versus 95/99 for full meanings.
+Keeping full reference meanings and shortening only the incoming entry gives
+96/99. These are retrieval measurements in the fixed reference set, not a
+demonstration of reliable containment.
+
+### What the sentence boundary does and does not isolate
+
+Caffeine is already one sentence, including its optional consumption through
+foods, drinks **or other preparations**. With full root pooling, its Food score
+therefore remains exactly 0.537832, above all focused valid Food examples.
+First-sentence selection is not equivalent to selecting a required defining
+class: optional examples and uses can occur within that sentence, while later
+sentences can add admitted kinds or required distinctions.
+
+Eggs contrasts also change unevenly:
+
+| Definition pair | Full meaning cosine | First-sentence cosine |
+|---|---:|---:|
+| Reproductive/decorative Eggs versus culinary Eggs | 0.6528 | 0.7480 |
+| Reproductive/decorative Eggs versus Eggs as food | 0.6710 | 0.5876 |
+| Culinary Eggs versus Eggs as food | 0.7704 | 0.7713 |
+
+Removing the decorative-egg sentence makes one generic/culinary pair more
+similar and the other less similar. The culinary pair stays close. Publication
+versus Publishing improves from 0.3903 to 0.4451, still below title pooling's
+0.7934. This is not a consistent solution to the observed meaning distinctions.
+No acceptance threshold or production representation was selected. Actual
+reachable HR35 coverage remains 718 notes.
+
+### First-sentence evidence
+
+Retained ignored directory in this task worktree:
+
+```
+target/food-halves-v1/first-sentence-pooling-v1/
+```
+
+- `plan.json`, `worker-request.json`, `worker-config.json`: frozen source,
+  evaluation and native encoder bindings; plan SHA256
+  `ba980f6219a2895be690518bd3b61f08c5d667f4b3d964c989657f2151b95f79`.
+- `sentence-boundaries.json`: every selected first sentence and removed suffix.
+- `preflight.json`, `worker-result/`: validated inputs, native receipt and vectors.
+- `results.json`: all three representations, exact replay checks and scope pairs.
+- `supplementary-factorial.json`: all nine local/root selection combinations,
+  with every score and ranking; no fitted acceptance threshold.
+- `local-sentence-rank-changes.json`: the six changed known-root rankings when
+  shortening only local pooling, with the exact selected and removed text.
+- `verification.json`: final protected-source, span, receipt and replay checks.
+
+These are frozen local encoding diagnostics, not another hierarchy construction
+or a new HiGen policy. No production encoder behavior changed.
