@@ -230,3 +230,45 @@ Other panels are retained as rejected hypotheses, not additional independent
 semantic trials. Local numerical work used saved vectors and text only. No prompt,
 constructor, transport, budget, source corpus or historical receipt was changed.
 The task worktree remains necessary for these evidence paths.
+
+## Authorized follow-up: separate note coverage pass
+
+The user authorized pursuing the separate coverage pass after the preceding
+findings. An offline test changed the prediction unit from original entries to
+whole notes, keeping all canonical meanings, original memberships and graph
+edges unchanged. Two input views were compared with the same TF-IDF/linear-SVM
+settings: source-post text with URLs removed, and all eligible explicit meanings
+for the note. No provider calls or new encodings were made.
+
+Training uses the 718 currently reachable notes and their saved root memberships.
+Five-fold note-held-out calibration uses the maximum negative out-of-fold margin.
+These labels remain incomplete: absence from one root is not a reliable semantic
+negative. This test isolates whether changing the prediction unit alone resolves
+the earlier failure; it does not qualify those labels.
+
+The frozen agent-reviewed screen contains 68 valid note/root pairs and three
+abstention cases: caffeine-only intake, weather-only, and general plants under
+Food. Every screen note is outside the training notes. The positive screen was
+selected during earlier investigations and is not a representative recall set.
+
+| Input | Proposed new notes | Reviewed positive routes recovered | Abstention violations | Unreviewed proposed pairs |
+|---|---:|---:|---:|---:|
+| Post text | 4 | 1 / 68 | 0 / 3 | 3 |
+| All explicit meanings | 11 | 3 / 68 | 0 / 3 | 8 |
+
+Post-only proposals include Arts assignments for a Prince Harry news headline
+and the bare text “why was he like this?” plus a link. The supplied text does not
+establish artistic or sound-related content. Passing the three abstention cases
+is therefore insufficient. Meanings-only proposals need further review and
+recover too few of the valid controls to qualify the pass. No admission or
+automatic policy is approved by these results.
+
+The next necessary change is calibration against reviewed **note relevance**,
+rather than treating incomplete construction membership as true negative labels.
+This preserves the distinction between placing a whole local topic and adding a
+note with relevant information. It does not justify bypassing evidence.
+
+Follow-up artifacts in the same ignored evidence directory:
+`note-coverage-pass-plan.json`, `note-coverage-pass-results.json`, and
+`note_coverage_pass.py`. The script is a one-off numerical diagnostic, not a
+production constructor or a model-experiment execution path.
