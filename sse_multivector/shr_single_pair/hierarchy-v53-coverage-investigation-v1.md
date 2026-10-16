@@ -3,8 +3,9 @@
 Status: experimental findings, 2026-10-16. This is not a new HiGen version,
 production policy, human judgment set, or approval to change existing meanings.
 No provider calls, hierarchy modifications, or UI updates were made. Separately
-authorized full-meaning and first-sentence comparisons generated 608 and 912 local
-SSE vectors, respectively; the earlier numerical panels used saved vectors only.
+authorized full-meaning, first-sentence and member-support comparisons generated
+608, 912 and 19,896 local SSE vectors, respectively; the earlier numerical panels
+used saved vectors only.
 
 ## Current scope and finding
 
@@ -30,6 +31,13 @@ worsens the difficult Food scope checks. First-sentence pooling does not resolve
 that tradeoff: it loses known-root first-place results and worsens those Food
 ordering checks. Neither supplies a qualified admission rule. HR35 still has 718
 reachable notes; no additions were applied.
+
+The subsequent member-support probe compares each Food case with all 175 original
+entries actually supporting that root. Full-meaning pooling with a fixed,
+moderate background adjustment improves the focused Food ordering count to 69/78.
+All nine remaining ordering failures involve Caffeine. Stronger emphasis on
+near-exact neighbors reverses much of the gain; this remains a probe, not a
+qualified admission method or a measured coverage improvement.
 
 ## Frozen source and baseline
 
@@ -710,3 +718,145 @@ target/food-halves-v1/first-sentence-pooling-v1/
 
 These are frozen local encoding diagnostics, not another hierarchy construction
 or a new HiGen policy. No production encoder behavior changed.
+
+## Member-support and background-adjusted probes
+
+### Actual reference collection and frozen cases
+
+The user authorized literature-informed probes against actual members, rather
+than the synthetic root definition. Food and dining recursively contains 175
+original entries from 89 notes. Of those entries, 137 belong to 15 original
+HDBSCAN groups and 38 were originally ungrouped. All 175 participate. The 38 are
+shown separately as an evidence cohort, not invented as another semantic group.
+Every initial group's individual support calculations remain available.
+
+The query set contains the same 26 previously assessed fitting Food entries and
+28 outside controls, including the 13 focused Coffee/Tea/Bread/Wine examples and
+six original difficult controls. All 54 queries are absent from the reference
+collection. These are provisional prior agent assessments, not independently
+validated human gold. Saved reference membership is also not semantic gold.
+
+The background is all 6,991 eligible original entries, not just entries under
+other roots. It includes omitted Coffee and other potentially fitting entries;
+it supplies a comparison distribution, not negative labels. The exact query is
+excluded from its background. A supplementary calculation excludes all entries
+from the query's source note from both the reference and background collections.
+
+### Two declared numerical probes
+
+The member-affinity component of
+[Tip-Adapter (2022)](https://arxiv.org/abs/2207.09519) motivates a positive weight
+for each member: `K(q,x) = exp[-beta * (1 - cosine(q,x))]`. Mean affinity over all
+175 Food members is the first score. Mean affinity within each original group
+is retained separately. Using the mean avoids treating a larger group as
+stronger merely because it has more entries.
+
+The second score is `log(mean_food_affinity / mean_background_affinity)`.
+[Bayesian Sets (2005)](https://proceedings.neurips.cc/paper_files/paper/2005/file/182e6c2d3d78eef40e5dac7da77a748f-Paper.pdf)
+motivates comparing support from supplied examples with background support.
+This is a kernel-density-ratio adaptation, not the paper's Bayesian model or
+an estimated probability of containment. Neither full Tip-Adapter nor SetExpan
+or EgoSet is implemented here. No synthetic-root vector contributes to a score.
+
+The plan freezes beta 5.5 as the primary setting, borrowing a published moderate
+Tip-Adapter setting without fitting SSE labels. Beta 1 and 20 are predeclared
+sensitivity probes. No threshold, classifier or representation was fitted or
+selected from the results. Title, full-meaning and first-sentence pooling use
+the same complete `title + "\n\n" + meaning` context.
+
+### Ordering results
+
+Each focused count compares one of 13 fitting entries with one of six outside
+controls: 78 pair orderings from 19 entries, not 78 independent cases.
+
+| Score at beta 5.5 | Title pooling | Full meaning | First sentence |
+|---|---:|---:|---:|
+| Closest member cosine, baseline | 42 / 78 | 42 / 78 | 48 / 78 |
+| Mean similarity-weighted member support | 53 / 78 | 65 / 78 | 59 / 78 |
+| Background-adjusted support | 45 / 78 | **69 / 78** | 63 / 78 |
+
+With all 28 outside controls, full-meaning weighted support orders 351/364 pairs
+correctly; background adjustment orders 355/364. All nine remaining failures are
+Caffeine ranking above valid Coffee, Tea or Wine entries. The other 27 controls
+score below all 13 focused positives. The expanded panel includes many easier
+Basketball and Video games controls, so its percentage is not an independent
+accuracy estimate or stronger evidence than the difficult panel.
+
+Across all 26 previously assessed fitting entries and 28 outside controls,
+adjusted full-meaning support orders 713/728 pairs correctly. Fourteen failures
+involve Caffeine; one involves Chicks ranking above Drinks. Generic
+reproductive/decorative Eggs scores below the culinary Eggs entries. These
+specific distinctions do not establish a general admission boundary.
+
+### Sensitivity and the remaining mechanism
+
+| Beta | Full-meaning member support | Full-meaning adjusted support | Adjusted support excluding the query's whole source note |
+|---|---:|---:|---:|
+| 1 | 64 / 78 | 69 / 78 | 69 / 78 |
+| 5.5 | 65 / 78 | 69 / 78 | 69 / 78 |
+| 20 | 53 / 78 | 23 / 78 | 20 / 78 |
+
+At beta 5.5, the same-note exclusion leaves all focused ordering counts
+unchanged. Eight query notes have Food references removed by this check.
+It does not imply that their individual scores are unchanged.
+
+The sharper beta 20 result exposes a limitation of background adjustment.
+Coffee `L00228` has other omitted Coffee entries at cosine 0.9993, 0.9916 and
+0.9786, while its closest Food reference is `L00445`, Food, at
+0.5731. That reference explicitly defines food as substances suitable for people
+to eat or drink for nourishment. With full-meaning pooling, the Food/background
+support ratio for this Coffee is 2.056 at beta 5.5 but only 0.00496 at beta 20.
+Omitted near-equivalent entries dominate the sharp background calculation.
+This is a failure of that score at that setting, not evidence against Coffee's
+Food relationship. Background adjustment is not uniformly beneficial.
+
+Caffeine remains problematic even with moderate weighting. Its full definition
+has optional consumption through foods, drinks or other preparations. It strongly
+matches actual Food definitions and Diets, although its defining class is a
+chemical stimulant. Its moderate adjusted ratio is 3.156, above nine focused
+beverage examples. The probe exposes this mismatch without resolving it.
+
+### Encoding, controls and evidence
+
+The probe reuses vectors for 302 original entries from the previous exact-text
+packet. The worker encodes 6,617 distinct new contexts and 15 replay contexts, yielding
+19,896 new vectors; further exact-text duplicates share those vectors. All
+three selections share each encoder forward pass. CPU execution reserves four
+allocated cores. Inputs are sorted by length and batched at 32; the longest is
+165 tokens, with no truncation. The backbone, checkpoint, projection and matched
+runtime are unchanged. This uses the existing native worker, not a new provider
+execution path; no LLM inference, training, paid resource or hierarchy change
+was introduced.
+
+All 45 replay vectors pass the frozen limits: maximum absolute error 5.59e-8
+and cosine error 5.94e-14. All 6,991 title vectors also reproduce their native
+historical encodings within maximum cosine error 1.82e-13. Native request,
+receipt, span, model and source hashes pass. Independent scalar summation checks
+the kernel means; reference duplication and equal-set ratio controls pass.
+The calculation stores a 54-by-6,991 cosine matrix per representation, never an
+all-corpus pairwise matrix. A production all-entry pass is not proposed by this
+bounded probe; no hierarchy coverage gain is claimed. HR35 remains at 718 notes.
+
+Retained ignored evidence in this task worktree:
+
+```
+target/food-halves-v1/member-support-probes-v1/
+```
+
+- `plan.json`: frozen cases, references, all background IDs, reuse mappings,
+  formulas and settings; SHA256
+  `502f2b17668e3686270c7f898bd4f7166ff1e1e273763daf3b4f464497bc05fc`.
+- `worker-request.json`, `worker-config.json`, `preflight.json`, `worker-result/`:
+  native encoder inputs, receipt, selections and raw outputs.
+- `cosines.npz`: every query-to-original score, including all 175 references,
+  for all three representations, with exact ID mappings.
+- `scores.json`: every declared weighting setting, original-group cosine
+  ranges and affinities, complete-root support, background support and ratio,
+  nearest reference definitions, and the same-note controls.
+- `metrics.json`: every focused/expanded ordering, including failures; all
+  fixed beta settings and same-note variants remain visible.
+- `reference-group-evidence.json`, `query-evidence.json`: exact source meanings,
+  headings, notes and reference membership.
+- `background-neighbor-diagnostics.json`: exact background connections that
+  explain the sharp Coffee penalty and other selected contrasts.
+- `report.md`, `verification.json`: compact tables and final integrity checks.
