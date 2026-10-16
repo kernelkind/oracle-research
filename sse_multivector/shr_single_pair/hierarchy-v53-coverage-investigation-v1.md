@@ -39,6 +39,11 @@ All nine remaining ordering failures involve Caffeine. Stronger emphasis on
 near-exact neighbors reverses much of the gain; this remains a probe, not a
 qualified admission method or a measured coverage improvement.
 
+Replacing the background with actual members of the other five roots improves
+the focused full-meaning comparison to 77/78 at the same setting. The larger
+panel improves only from 713/728 to 716/728: nine comparisons improve and six
+worsen. This is another diagnostic probe, not adoption of an admission rule.
+
 ## Frozen source and baseline
 
 State:
@@ -860,3 +865,82 @@ target/food-halves-v1/member-support-probes-v1/
 - `background-neighbor-diagnostics.json`: exact background connections that
   explain the sharp Coffee penalty and other selected contrasts.
 - `report.md`, `verification.json`: compact tables and final integrity checks.
+
+## Other-root background probe
+
+The user proposed replacing whole-corpus background similarity with similarity
+to entries belonging to the other roots. This probe changes only that denominator;
+Food's 175 original reference entries, every cosine, every provisional case,
+pooling method, weight setting and source-note control remain fixed. It reuses
+the preceding saved matrices without encoding, LLM calls, training or graph edits.
+
+The five roots contain 1,473 unique original entries: Information 463, Finance
+421, Arts 225, Tools 91 and Life 273. The calculation pools those entries once
+each, so larger roots contribute proportionately more members. Separate per-root
+means and cosine ranges are saved, not replaced with synthetic-root vectors.
+This source has no original-entry overlap between roots, although notes can
+occur under several roots. Other-root membership is comparison evidence, not a
+negative semantic label; an incoming topic can legitimately fit several roots.
+
+The new score is `log(mean_food_affinity / mean_other_root_affinity)`. As before,
+the exact query is excluded from the denominator, and a separate calculation
+excludes its whole source note. No threshold or root-weighting policy is chosen.
+
+| Pooled text, beta 5.5 | Whole-corpus background, focused 78 | Other-root background, focused 78 | Whole-corpus background, expanded 364 | Other-root background, expanded 364 |
+|---|---:|---:|---:|---:|
+| Title | 45 / 78 | 55 / 78 | 309 / 364 | 319 / 364 |
+| Full meaning | 69 / 78 | **77 / 78** | 355 / 364 | 363 / 364 |
+| First sentence | 63 / 78 | 68 / 78 | 344 / 364 | 352 / 364 |
+
+For full meanings, eight focused orderings improve and none worsen. The remaining
+failure is Wine `L04121` scoring below Caffeine `L00225`. The same eight changes
+occur in the 13-by-28 expanded panel. These remain pair orderings over selected
+entries, not independent cases, classification accuracy or measured admissions.
+
+The larger 26-by-28 panel reveals a tradeoff: 713/728 becomes 716/728, with nine
+improved and six worsened comparisons. Newly worsened cases put Chicks above
+Slush drinks or Beverages, generic Eggs above Beverages or Drinks, and Gardening
+above Drinks. All twelve remaining failures and all changed pairs are retained.
+The focused 77/78 result therefore does not establish that the adjustment is
+uniformly better or supplies a safe admission boundary.
+
+The changed reference collection explains the Coffee/Caffeine improvement:
+
+| Entry, full meaning at beta 5.5 | Food / whole-corpus support | Food / other-root support |
+|---|---:|---:|
+| Coffee `L00228` | 2.056 | 3.089 |
+| Coffee `L00560` | 2.042 | 2.976 |
+| Caffeine `L00225` | 3.156 | 2.853 |
+
+Coffee's numerator is unchanged, but its denominator no longer includes omitted
+near-equivalent Coffee entries outside the roots. Caffeine's mean affinity to
+the selected other-root members is higher than its whole-corpus mean, reducing
+its relative Food score. This establishes what changed numerically without
+asserting that either score measures semantic containment.
+
+| Full-meaning beta | Whole corpus, focused 78 | Other roots, focused 78 | Other roots excluding same-post entries |
+|---|---:|---:|---:|
+| 1 | 69 / 78 | 72 / 78 | 72 / 78 |
+| 5.5 | 69 / 78 | 77 / 78 | 77 / 78 |
+| 20 | 23 / 78 | 46 / 78 | 46 / 78 |
+
+The stronger weight remains substantially worse than moderate weighting.
+Excluding source-note matches does not alter the primary full-meaning counts.
+All 972 Food numerator calculations agree with the earlier run; independent
+scalar sums and recombining the five root contributions verify the changed
+denominator. All protected hashes pass. Actual HR35 coverage remains 718 notes.
+
+Retained ignored evidence:
+
+```
+target/food-halves-v1/other-root-background-probe-v1/
+```
+
+- `plan.json`: complete root memberships and frozen calculation; SHA256
+  `eee8a2524eb364622e45f3b57cdbce2d156ea8ee46e4509112f95101297ddc78`.
+- `scores.json`: both denominator scores, all per-root contributions and group
+  scores, all three representations and weight settings, and source-note controls.
+- `metrics.json`: every pair ordering and every improvement/regression.
+- `report.md`, `verification.json`: compact comparisons, all larger-panel
+  failures, sensitivity and integrity checks. Every member cosine remains in
+  the preceding probe's source-bound `cosines.npz`.
