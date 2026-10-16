@@ -1949,12 +1949,12 @@ accounting remains pending. HR30 used V5, so any eventual HR30-to-HR35 differenc
 combines V5.1, V5.2 and V5.3 changes and newly required model answers; it cannot
 isolate a V5.3-only gain.
 
-The current continuation uses Oracle source `9979db8c`, shared coordinator
+The current continuation uses Oracle source `835f91dc`, shared coordinator
 `38561fe` and a verified optimized multicore numerical executable. Its local
 budget is **24 CPUs, leaving four for other system work**. Original numerical
 parameters, prompts, meaning/vector evidence and the frozen `1cfdd6a7` teacher
-transport remain fixed. The recorded upgrade preserved the saved 27-node
-graph and all 53 existing receipt ledgers; both old and new executables remain
+transport remain fixed. The latest recorded upgrade preserved the saved 33-node
+graph and all 67 existing receipt ledgers; both old and new executables remain
 source-bound. The first multicore launch exposed a shared source-entry-point
 bug before model dispatch; its failed invocation is retained and the guarded
 launcher is now integrated. Construction resumed after its production-path
