@@ -174,8 +174,10 @@ at note level, so simply taking the highest lexical score is insufficient.
 
 ## Where to focus next
 
-A sample of 20 notes was drawn before scope review from the 241 omitted notes not
-proposed by the primary classifier, using sorted IDs and `Random(20261016)`.
+A sample of 20 notes was drawn before scope review from the 240 remaining omitted
+notes with eligible meanings that the primary classifier did not propose, using
+sorted IDs and `Random(20261016)`. One additional omitted note has no eligible
+meaning and was outside this sampling population.
 Against the fixed root meanings, agent review found 18 clear existing-root routes,
 one qualified route, and one unresolved case. Examples include Tea → Food,
 Imagination → Life, AI processors → Tools, and Petitions → Information. This small
