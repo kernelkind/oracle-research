@@ -50,18 +50,22 @@ are identical; the larger panel trades one improved ordering for one worsened
 ordering. Unequal root sizes do not explain the main remaining failures on this
 panel. Neither background weighting is selected as a production policy.
 
-The same calculation does not reproduce the Food gain on the Tools transfer
-probe. At beta 5.5, all full-meaning background adjustments score generic Work
-above all nine earlier-assessed fitting omissions. Unadjusted member support
-places two of those nine above Work. This exposes a transfer failure on a narrow
-panel with one previously rejected example, not a general accuracy estimate.
-No new labels, encodings, model calls, training or graph changes were introduced.
+The Work-based Tools failure finding is withdrawn. After viewing the groups and
+Work's complete meaning, the user said, "i don't see a problem w putting work in
+here" and requested reanalysis. Work's exclusion was an earlier agent judgment,
+not established negative evidence. The saved 0/9 count records other entries
+scoring above Work; it does not establish incorrect admissions or a failed
+transfer. There are no established negative controls in this Tools panel, so it
+also cannot establish successful admission discrimination.
 
-Restricting Tools references to the 67 entries in its 14 creation groups raises
-unadjusted full-meaning ordering from 2/9 to 4/9. All three full-meaning background
-adjustments remain at 0/9. The 24 later descendant additions therefore do not
-explain the adjustment's failure on this panel. Cases and backgrounds remain
-unchanged; no new encodings or model calls were needed.
+The reanalysis keeps the requested 67 creation entries, all saved vectors and
+all numerical scores fixed. Work's high similarity is compatible with the user's
+view. A concrete remaining concern is that the other-root denominator penalizes
+an earlier-assessed fitting Bots entry for resembling Social-media bots already
+under Information. Cameras also has weak support among these mostly software
+references. These are diagnostic observations, not demonstrated rejections or
+new admission rules. No new encodings, LLM calls, training or graph changes were
+introduced.
 
 ## Frozen source and baseline
 
@@ -155,7 +159,7 @@ fails the scope controls and does not qualify the method.
 
 Only notes absent from the completed hierarchy are candidates.
 
-| Review result | Count |
+| Historical agent review result | Count |
 |---|---:|
 | Proposed entry/root assignments | 61 |
 | Proposed distinct notes | 41 |
@@ -166,8 +170,12 @@ Only notes absent from the completed hierarchy are candidates.
 | Distinct notes with an agent-supported route | 39 |
 | Additional notes relying on qualified routes | 2 |
 
-Rejected: generic **Work** under Tools and techniques. That same note has an
-accepted **Code** route, so rejecting Work does not lose the note.
+The historical agent review rejected generic **Work** under Tools and techniques.
+The user later challenged that exclusion after inspecting the actual groups;
+Work is no longer usable as a negative control. The frozen review counts above
+describe the earlier assessment, not current semantic judgments. Its Code route
+already represented the same note, so removing this unsupported rejection does
+not itself change the historical distinct-note coverage calculation.
 
 Qualified: two AI-field meanings, a Master of Music credential, and nonmonetary
 value-for-value contributions. The credential's note also has a clear Piano
@@ -179,11 +187,10 @@ increase, recovering 13.8% of the 282 omitted notes. Including qualified proposa
 would give 759. Neither count is an applied result. Do not report quality
 preservation from this review alone.
 
-A useful operational distinction is to consider an omitted note once and retain
-its best supporting entry for each proposed root, rather than admit every
-positively scored entry. This avoids redundant unsupported evidence such as
-Work when Code provides the stronger valid route. It is not a semantic guarantee:
-a highest-scoring union can still contain an out-of-scope alternative.
+The historical best-route calculation counts an omitted note once per proposed
+root. It does not establish that another entry for the same note is invalid;
+the withdrawn Work rejection supplies no reason to exclude Work in favor of
+Code. No trained classifier or best-route admission policy is selected.
 
 ## Focused label correction: Food
 
@@ -1024,6 +1031,9 @@ target/food-halves-v1/equal-root-background-probe-v1/
 
 ## Tools member-support transfer probe
 
+Status: the original Work-based correctness grading is withdrawn. The numerical
+calculations remain intact; see the reanalysis below for the current conclusion.
+
 The user authorized checking whether the Food member-support result generalizes
 to another root using saved vectors and earlier assessed cases. The target is
 Tools and techniques `C00005`. Its 91 recursively supporting original entries
@@ -1033,20 +1043,19 @@ eligible original entries or the 1,557 originals under the other five roots.
 No synthetic-root vector is compared. The root definition is used only to check
 that prior scope judgments concern the same fixed meaning.
 
-The nine fitting cases reuse the earlier omission reviews; the outside case
-reuses an explicit rejection from
+The nine earlier-assessed fitting cases reuse the omission reviews. Work's
+original negative label came from
 `coverage-investigation-v2/completed-definition-membership-agent-review.json`.
-These are prior agent assessments, not new human gold or new inferred labels.
-Other-root membership does not establish exclusion from Tools.
+The user subsequently challenged that exclusion. These earlier agent assessments
+are not human gold. Other-root membership does not establish exclusion from Tools.
 
-| Prior assessment | Original entries |
+| Current evidence status | Original entries |
 |---|---|
-| Fits Tools | Open-source software `L01598`; AI agents `L02182`; Bots `L02188` and `L02610`; AI processors `L02882`; Apps `L03672`; Servers `L03830`; Code `L04036`; Cameras `L04837` |
-| Outside Tools | Work `L04032` |
+| Earlier agent assessment: fits Tools | Open-source software `L01598`; AI agents `L02182`; Bots `L02188` and `L02610`; AI processors `L02882`; Apps `L03672`; Servers `L03830`; Code `L04036`; Cameras `L04837` |
+| Exclusion challenged by the user; not a negative control | Work `L04032` |
 | Qualified, not graded | Artificial intelligence `L02375` and `L06971` |
 
-The Work judgment distinguishes performing tasks from the means used to perform
-them. Its complete definition is: "Work is activity involving the performance
+Work's complete definition is: "Work is activity involving the performance
 of tasks toward producing a result or accomplishing an objective, including
 tasks performed by people or software agents." The two AI field definitions
 remain qualified because they include study as well as technologies; their
@@ -1055,9 +1064,9 @@ scores are retained without treating either as a positive or negative.
 The same three pooling methods, kernel, beta values and background calculations
 are reused without fitting a threshold. Candidate and reference pooling match
 in the primary calculation; all retain the same complete title-plus-meaning
-encoder context. The table counts fitting entries scoring above Work, out of
-nine. These comparisons reuse one outside example and are not nine independent
-negative tests.
+encoder context. The table retains the historical count of nine other entries
+scoring above Work. This is a relative ordering, not a correctness count. There
+is no established requirement that these entries must outrank Work.
 
 | Score, beta 5.5 | Title | Full meaning | First sentence |
 |---|---:|---:|---:|
@@ -1084,8 +1093,8 @@ numerical penalty for resemblance elsewhere, not proof of semantic membership
 in those other roots. The score used for ordering is the logarithm of the ratio;
 taking that logarithm does not change the ordering.
 
-The denominator is not the only failure. Work already outranks seven fitting
-entries on raw support. Its nearest Tools members include Software tools
+Work also outranks seven earlier-assessed fitting entries on raw support. That
+ordering is not itself an error. Its nearest Tools members include Software tools
 `L06913` at cosine 0.7775, Software makers `L01435` at 0.7437, Tools `L04303` at
 0.7343 and Software developers `L03051` at 0.7189. Their definitions describe
 helping perform tasks, creating software or performing technical work. Apps'
@@ -1093,31 +1102,33 @@ nearest member is Tools `L01154` at 0.8039, whose definition explicitly includes
 digital programs for carrying out tasks. These are actual member comparisons.
 They do not isolate which clause causes the Work score.
 
-Cameras exposes another limitation: its nearest Tools member is Computational
+Cameras has weak member similarity: its nearest Tools member is Computational
 performance `L02213` at 0.4943, followed by Computer peripherals `L01629` at
 0.4080. The references are predominantly software and computing entries, but
 they also include three general Tools definitions admitting physical implements.
 The evidence therefore does not justify attributing the weak Camera score only
 to missing reference coverage.
 
-The primary full-meaning failure persists when the candidate's entire source
-note is excluded. At beta 1, pooled and equal-root adjustments still give 0/9;
+The primary full-meaning relative orderings persist when the candidate's entire
+source note is excluded. At beta 1, pooled and equal-root adjustments give 0/9;
 whole-corpus adjustment gives 1/9, or 0/9 with source-note exclusion. At beta 20,
 all three adjusted variants give 1/9, while raw member support gives 5/9. There
-is no consistent gain across the fixed sensitivities and no selected winner.
+is no basis for calling a larger Work-relative count better, and no selected
+winner.
 
 A supplementary calculation separates candidate pooling from reference pooling
 using all nine combinations of the three saved representations. This is a
 post-hoc mechanism check, not an independently frozen method comparison.
 With full-meaning candidate pooling, every reference-pooling choice still gives
 0/9 for all three background adjustments at beta 5.5. Merely changing reference
-pooling does not resolve this failure. All matching-pooling combinations
-reproduce the primary scores exactly.
+pooling does not change those Work-relative orderings. All matching-pooling
+combinations reproduce the primary scores exactly.
 
 All nine protected source hashes and all output hashes pass. Independent scalar
 kernel sums and recombination of individual-root contributions verify the
 calculations. Nine shared query/representation cosine rows exactly reproduce
-the preceding Food probe. Qualified cases never enter the graded pair counts.
+the preceding Food probe. Qualified cases never enter the saved pair calculations;
+none of these Work-relative pair counts is a valid semantic grade.
 Actual HR35 coverage remains 718 reachable notes. There were no new encoder or
 LLM calls, training runs, hierarchy modifications or UI updates.
 
@@ -1132,17 +1143,17 @@ target/food-halves-v1/tools-member-support-probes-v1/
   `17e5cbf161ef196c0d3afb6033aaaffda19217a4653841a0f8b18e2b7dc86b48`.
 - `cosines.npz`, `scores.json`: complete query-to-corpus cosines, per-group
   ranges and support, every background contribution and all fixed settings.
-- `metrics.json`: every fitting-versus-Work ordering, including all failures.
+- `metrics.json`: every fitting-versus-Work ordering. Its historical `correct`
+  fields record relative scores, not current semantic correctness.
 - `reference-group-evidence.json`, `query-evidence.json`: original definitions,
   grouping and review provenance, with the qualified cases separate.
 - `supplementary-pooling-factorial.json`: all candidate/reference combinations,
   their scores and matching-pooling reproduction checks.
 - `report.md`, `verification.json`: compact results and integrity evidence.
 
-The Food improvement has not generalized to this Tools scope boundary. This
-does not select a different pooling policy for Tools or establish an admission
-rule. The general problem remains distinguishing task-related resemblance from
-membership while retaining genuine instruments such as Cameras.
+This panel does not establish whether the Food gain generalizes to Tools. It
+contains no established non-fitting examples after withdrawal of Work's negative
+label. No pooling policy, threshold or admission rule is selected from it.
 
 ## Tools creation-group references only
 
@@ -1153,19 +1164,21 @@ version, no amendments and no additions from its own final membership pass.
 The other 24 recursive references entered through later descendant membership
 passes; they are excluded from this calculation.
 
-Only Tools' reference collection changes. The twelve queries, nine prior fitting
-assessments, one prior Work rejection and two ungraded AI-field qualifications
-remain identical. Saved title, full-meaning and first-sentence vectors, their
-complete encoder context, beta values and source-note exclusions remain fixed.
+Only Tools' reference collection changes. The twelve queries and their historical
+source assessments remain identical. Work's prior rejection is retained as
+provenance, not a current negative label. Saved title, full-meaning and
+first-sentence vectors, their complete encoder context, beta values and
+source-note exclusions remain fixed.
 The whole-corpus background and all five other-root member collections also
 remain unchanged. This compares original entries, not synthetic root or group
 definition vectors. Each retained entry has equal weight in the mean; groups
 with more entries contribute proportionately more weight.
 
-The table counts fitting entries scoring above the same Work control at beta
+The table counts other entries scoring above Work at beta
 5.5. Each cell shows the previous 91-reference result followed by the result
-using only the 67 creation entries. It remains a narrow, prior-agent-assessed
-panel with one outside example, not general admission accuracy.
+using only the 67 creation entries. The counts are descriptive relative
+orderings; a larger count is not established as better. This panel has no
+established outside example and supplies no admission-accuracy estimate.
 
 | Score | Title, 91 to 67 | Full meaning, 91 to 67 | First sentence, 91 to 67 |
 |---|---:|---:|---:|
@@ -1179,8 +1192,8 @@ Apps, Bots `L02188`, Code and Servers now exceed Work on raw full-meaning member
 support; previously only Apps and Servers did. The new pooled-background ratios
 are still 8.798 for Work, 6.910 for Apps, 6.719 for Bots `L02188`, 6.672 for Code
 and 3.941 for Servers. Thus every background adjustment still puts Work above
-all nine fitting entries. Removing later additions improves raw support on this
-setting but does not explain or repair the adjusted-score failure.
+all nine earlier-assessed fitting entries. Removing later additions changes the
+raw ranking but does not establish better or worse admission quality.
 
 Excluding each query's whole source note leaves all primary full-meaning counts
 unchanged. At beta 1, raw support gives 1/9 and all three adjusted variants give
@@ -1214,3 +1227,89 @@ target/food-halves-v1/tools-initial-groups-probe-v1/
 - `calculate.py`, `report.md`, `verification.json`: source-bound calculation,
   compact comparisons and integrity checks. Original cosine matrices remain in
   the preceding probe's ignored evidence directory.
+
+## Tools reanalysis after withdrawal of Work's negative label
+
+The user requested reanalysis after saying they saw no problem with Work in this
+collection. That statement invalidates using the earlier agent rejection as the
+deciding negative control. It does not create a new immutable canonical meaning
+or independently certify all possible Work memberships. The frozen plans,
+receipts, scores and earlier review records remain unchanged. A separate evidence
+record withdraws the Work-based grading and preserves the user's exact statement.
+
+The current probe therefore has nine earlier agent-assessed fitting candidates,
+Work whose exclusion is challenged, two qualified AI fields and zero established
+negative controls. The original 90 metric groups each contain nine comparisons
+with Work. Their saved `correct` and `correct_order` fields mean only that the
+other entry scores higher than Work; none is an established fit-versus-nonfit
+accuracy measure. The prior 0/9 failure claim is withdrawn, without replacing it
+with a success claim.
+
+The actual score comparison, using only the 67 creation entries, full-meaning
+pooling and beta 5.5, is:
+
+| Candidate | Tools / pooled-other-root mean-affinity ratio |
+|---|---:|
+| Work `L04032` | 8.798 |
+| Apps `L03672` | 6.910 |
+| Bots `L02188` | 6.719 |
+| Code `L04036` | 6.672 |
+| Open-source software `L01598` | 6.446 |
+| AI processors `L02882` | 6.190 |
+| AI agents `L02182` | 4.940 |
+| Servers `L03830` | 3.941 |
+| Cameras `L04837` | 1.177 |
+| Bots `L02610` | 0.890 |
+
+The ratio divides mean kernel affinity to Tools' original members by mean
+affinity to the other roots' original members. It is not a probability or a
+validated admission threshold. The two qualified AI fields retain scores of
+4.837 and 2.950 in the complete evidence but remain outside semantic grading.
+
+Work's strongest creation-group supports come from Software developers `G171`,
+Practical tools `G100`, Computer code `G172`, Applied technology `G146` and
+Software agents `G153`. Its high score is compatible with the user's view of
+these task-oriented topics. There is no demonstrated error to fix by forcing
+Work below the other candidates or deleting its software-agent example.
+
+The Bots entry `L02610` supplies a more concrete mechanism to investigate. Its
+definition describes software agents performing tasks automatically, with
+publishing quotations on social media as an optional example. Its closest
+Tools creation member is Software agents `L03613`, cosine 0.5789. It matches
+Social-media bots `L06128`, already under Information, at 0.8565. That other
+entry's definition explicitly describes software programs automatically
+performing social-media actions. Information contributes 69.26% of this query's
+pooled other-root affinity sum. Similarity to this legitimate software-related
+entry increases the denominator and lowers the Tools-relative ratio to 0.890.
+This demonstrates a penalty for cross-root similarity; it does not establish
+that the candidate should be excluded from Tools or that the optional example
+caused the effect. No clause ablation was performed.
+
+Cameras has mean Tools affinity 0.01167 and other-root affinity approximately
+0.00992. Its closest retained Tools member is Data cables `L06061` at 0.3770;
+its closest other-root member is Videos `L00232` at 0.6891. This is weak support
+from the selected Tools members plus a strong association with moving-image
+media. Neither observation settles containment, and no implemented admission
+threshold has actually rejected Cameras in this probe.
+
+The useful conclusion is narrower than the withdrawn failure claim: Work does
+not invalidate this method, and comparison with other roots can reduce scores
+for useful overlapping topics. Before judging admission quality, establish
+actual non-fitting controls and check how evidence from relevant member groups
+is combined without treating another-root match as exclusion. This reanalysis
+does not choose or run a new aggregation method, make model calls, train, modify
+the hierarchy or change coverage.
+
+Retained ignored correction evidence:
+
+```
+target/food-halves-v1/tools-reanalysis-v1/
+```
+
+- `plan.json`: exact user statement, withdrawn negative-control status and hashes
+  of the unchanged preceding results; SHA256
+  `b720654d45fbe4725189dc88d2c7ce01f746e6fb63d106af7a55b672e89af2c4`.
+- `analysis.json`: all twelve unchanged candidate scores, current assessment
+  status, original group supports and exact nearest-member connections.
+- `verification.json`: protected-input hashes, preserved old scores/metrics and
+  confirmation that no established negative controls remain in this Tools panel.
