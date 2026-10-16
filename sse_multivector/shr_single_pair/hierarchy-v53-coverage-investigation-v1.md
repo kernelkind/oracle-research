@@ -4,19 +4,19 @@ Status: experimental findings, 2026-10-16. This is not a new HiGen version,
 production policy, human judgment set, or approval to change existing meanings.
 No provider calls, new encodings, hierarchy modifications, or UI updates were made.
 
-## Decision supported by this investigation
+## Current scope and finding
 
 Prioritize recovering omitted notes that already fit the existing roots, using
 full explicit meanings. Do not treat another root's membership as a negative
-semantic label, or treat a shared density cluster as containment. The tested
-classifiers and clustering alternatives are **not qualified for automatic adoption**.
+semantic label, or treat a shared density cluster as containment. The user has
+explicitly excluded LLM calls and training from this investigation. The classifier
+panels below are rejected methods; their separately reviewed cases remain useful
+controls. Their hypothetical coverage gains are not an allowed automatic solution.
 
-There is a useful partial candidate: a full-meaning text classifier proposed 41
-previously unreachable notes. Reviewing every proposed entry/root assignment
-supports 39 notes without the identified scope qualifications. This is a
-counterfactual 718 → 757, not a generated hierarchy or human-validated result.
-The classifier still fails semantic controls; the review is not proof of a general
-admission rule. The remaining gap is substantial.
+The saved-vector connection audit at the end of this document rejects the tested
+branch expansion rule. No recovery policy is qualified, and HR35 still has 718
+reachable notes. The numerical evidence supports testing the vector representation
+before another tree-cut sweep, not changing the hierarchy or forcing all notes in.
 
 ## Frozen source and baseline
 
@@ -98,7 +98,7 @@ Forced six-way partitions, ordinary linkage cuts, graph community methods and
 block models also produced misleading mixtures. Mechanical coverage of 976 or
 999 notes does not establish useful categories or valid membership.
 
-## Strongest partial result
+## Rejected classifier panel and retained case evidence
 
 The primary text screen uses stemmed full explicit meanings, TF-IDF unigrams and
 bigrams, and six independent linear SVMs. It does not duplicate the heading in
@@ -172,7 +172,7 @@ in it. This is a design proposal, not a change to the approved membership contra
 It still needs valid topic evidence: the caffeine counterexample remains a failure
 at note level, so simply taking the highest lexical score is insufficient.
 
-## Where to focus next
+## Existing-root scope review
 
 A sample of 20 notes was drawn before scope review from the 240 remaining omitted
 notes with eligible meanings that the primary classifier did not propose, using
@@ -192,10 +192,10 @@ names human/animal biology. Communication *about* those things does not turn the
 things themselves into communication. These cases need different root coverage,
 not relaxed admission into an existing fixed meaning.
 
-The next experiment should distinguish these two failure classes and evaluate
-new-note/root routes against the actual fixed meanings. Reusing construction
-membership as semantic truth would train the next method to repeat the misses.
-No new provider calls are proposed by this finding.
+The current investigation focuses on the reviewed cases that fit existing roots.
+The Weather and Plants examples establish limits of that scope; they are not a
+request to generate more roots. The saved-vector audit below evaluates numerical
+connections without using construction membership as semantic truth.
 
 ## Evidence and reproduction
 
@@ -231,10 +231,11 @@ semantic trials. Local numerical work used saved vectors and text only. No promp
 constructor, transport, budget, source corpus or historical receipt was changed.
 The task worktree remains necessary for these evidence paths.
 
-## Authorized follow-up: separate note coverage pass
+## Rejected note-level classifier panel
 
-The user authorized pursuing the separate coverage pass after the preceding
-findings. An offline test changed the prediction unit from original entries to
+The user authorized investigating a separate coverage pass. That did not establish
+approval of classifier training; the user subsequently explicitly ruled it out.
+The rejected offline test changed the prediction unit from original entries to
 whole notes, keeping all canonical meanings, original memberships and graph
 edges unchanged. Two input views were compared with the same TF-IDF/linear-SVM
 settings: source-post text with URLs removed, and all eligible explicit meanings
@@ -263,12 +264,149 @@ is therefore insufficient. Meanings-only proposals need further review and
 recover too few of the valid controls to qualify the pass. No admission or
 automatic policy is approved by these results.
 
-The next necessary change is calibration against reviewed **note relevance**,
-rather than treating incomplete construction membership as true negative labels.
-This preserves the distinction between placing a whole local topic and adding a
-note with relevant information. It does not justify bypassing evidence.
+Changing the prediction unit did not resolve the admission failures. Further
+classifier training or calibration is outside the current scope. The retained
+review cases can be used to evaluate deterministic calculations on saved vectors.
 
 Follow-up artifacts in the same ignored evidence directory:
 `note-coverage-pass-plan.json`, `note-coverage-pass-results.json`, and
 `note_coverage_pass.py`. The script is a one-off numerical diagnostic, not a
 production constructor or a model-experiment execution path.
+
+## Saved-vector connection audit
+
+This follow-up uses only saved SSE vectors, fixed definitions and deterministic
+calculations. No LLM requests, training, new encodings, hierarchy changes or UI
+updates occurred. It verifies ASv6.100 provenance for all 1,000 source notes and
+the frozen HR35 state hash above. Scope judgments are prior agent assessments,
+not independently validated human gold.
+
+### What whole-branch expansion necessarily brings along
+
+Construct average linkage on the existing 687-group density-separation matrix.
+For every group and root, trace the first merge connecting it to any of that
+root's original reference groups. Keep all original group memberships fixed.
+
+| Desired Food group | Incoming branch groups | Food-side branch groups | Merge distance | Other members brought along |
+|---|---:|---:|---:|---|
+| G142 Bread and bread preparation | 10 | 18 | 1.279689 | G145 includes Chicks and Chickens without a food restriction |
+| G309 Coffee | 10 | 18 | 1.279689 | Same resulting 28-group branch |
+| G529 Wine | 10 | 18 | 1.279689 | Same resulting 28-group branch |
+| G207 Drinks and Beverages | 10 | 18 | 1.279689 | Same resulting 28-group branch |
+| G644 Pizza and Pizza Day | 2 | 28 | 1.320454 | G224 includes Italy and Gianni Infantino |
+| G095 Tea and tea culture | 25 | 118 | 1.463172 | The same incoming branch includes G402 Motor vehicles |
+
+Distances are the existing angular density-separation values, in radians. They
+are not normalized confidence scores. Every one of the 686 linkage joins was
+independently checked against its full cross-branch mean distance.
+
+The Tea result is stronger than a poorly chosen cutoff: every subtree containing
+Tea and any original Food reference group necessarily contains Motor vehicles.
+Choosing several such subtrees does not remove those intervening members.
+Likewise, the inspected 28-group branch is not clean at entry level: `L00667`
+defines Chicks as young chickens, without a food-production or culinary role.
+Grouping a relevant member does not establish containment of every other member.
+
+These are limits of whole-subtree admission on this particular tree, not proof
+that all graph or clustering methods fail.
+
+### One automatic rule, unchanged across all roots
+
+The rule was written before execution: start from each root's original reference
+groups, ascend while a branch introduces no reference group exclusive to another
+root, and union the maximal branches. No fitted parameters or scope labels choose
+the cut. Existing reference groups are preserved.
+
+| Root | Reference groups | Selected groups | Previously reviewed positive entry routes selected |
+|---|---:|---:|---:|
+| Information, communication and relationships | 51 | 110 | 0 / 11 |
+| Finance, technology and society | 37 | 158 | 16 / 34 |
+| Arts, sound and communication | 19 | 66 | 0 / 3 |
+| Food and dining | 15 | 143 | 1 / 1 |
+| Tools and techniques | 14 | 36 | 4 / 9 |
+| Life and experience | 34 | 74 | 0 / 16 |
+
+The reviewed routes come from the earlier proposal review and the separately
+drawn scope sample. These are descriptive checks on a selected agent-reviewed
+panel, not a general recall estimate or independent human-gold validation.
+
+On the separate focused Food panel, the rule selects all 13 positive entries but
+also two of six outside-scope entries: generic reproductive/decorative Eggs and
+general Gardening. It includes the Dogs, Animals and Motor vehicles groups.
+Tools retrieves four of its six earlier group probes, missing Web technologies
+and Digital security.
+
+This rejects the rule. The proposed overlapping interpretation also fails a
+structural check: with disjoint root reference sets, the rule's outputs on one
+tree cannot overlap. G444 Web technologies is an Information reference and a
+plausible Tools topic; its Information membership cannot justify excluding Tools.
+Avoiding other roots is not a semantic boundary.
+
+The 133 omitted notes occurring in the selected Food branches are therefore not
+reported as recovered notes. No additions were applied.
+
+### Direct vector matching does not resolve the scope controls
+
+Nearest existing recursive Food-member cosine gives Coffee `L00228` 0.3604,
+whereas the caffeine-only `L00225` scores 0.3775. The same cutoff cannot admit
+that Coffee entry while rejecting that caffeine example.
+
+An additional diagnostic uses each root's latest already encoded synthetic
+representative, selected without consulting outcomes. Five roots have one;
+Life has none. Food's saved representative is an earlier definition, so its scores
+are diagnostic rather than results for the exact final immutable meaning.
+
+Food-representative cosine scores are 0.2298 for Coffee, 0.1696 for Tea, and
+0.2945 for generic reproductive/decorative Eggs. It does not supply a useful
+single cutoff for those cases either. Exact title-and-meaning reuse, and exact
+saved-vector reuse, provide zero new-note matches.
+
+### Verified input representation and its next test
+
+The actual frozen encoder request supplies `title + "\n\n" + explicit meaning`
+but selects only the title's byte span for pooling. The meaning is context, not
+the selected text. Actual request rows for Coffee, Tea and three Eggs entries
+were verified against their saved identities and byte spans.
+
+| Saved pair | Cosine |
+|---|---:|
+| Reproductive/decorative Eggs versus culinary Eggs | 0.98738 |
+| Reproductive/decorative Eggs versus Eggs as food | 0.96038 |
+| Culinary Eggs versus Eggs as food | 0.92776 |
+| Two Coffee beverage definitions | 0.99834 |
+
+The scope distinction is weak in these saved similarities, and matching the same
+heading can outrank a pair sharing the culinary role. This does not prove the
+encoder ignores context, nor prove a different representation will succeed.
+
+The proposed next test is a controlled comparison of title pooling with pooling
+the full existing explicit meaning, using the same frozen SSE encoder and the
+same fixed positive and outside-scope cases. No wording, root scope, training or
+LLM changes are proposed. That would require new SSE encodings and has not been
+performed or approved by this saved-vector investigation. Its purpose is to test
+the representation before further cutoff changes, not to promise full coverage.
+
+### Retained numerical evidence
+
+Ignored artifact directory in the retained task worktree:
+
+```
+target/food-halves-v1/root-connection-audit-v1/
+```
+
+- `plan.json`: frozen inputs, control IDs, rule and scope before execution.
+- `tree.json`, `traces.json`: one compact tree and every group/root connection.
+- `group-evidence.json`: every original group's titles and fixed meanings.
+- `rule-results.json`, `unchanged-root-checks.json`, `rule-limitations.json`:
+  all selected memberships, descriptive controls and the overlap limitation.
+- `entry-diagnostics.json`: nearest Food members for every focused scope case.
+- `representative-plan.json`, `representative-results.json`: frozen synthetic
+  version selection and every eligible entry's direct cosine.
+- `scope-pair-diagnostics.json`, `encoding-input-verification.json`: matched
+  scope pairs and actual frozen pooling-span verification.
+- `exact-reuse-results.json`, `verification.json`: reuse and numerical checks.
+
+The one-off `calculate.py` is tied to this frozen HR35 packet; it is not a
+production constructor or provider-execution script. Dense all-pairs linkage is
+a bounded diagnostic here, not a proposed construction step at arbitrary scale.
+The source hierarchy hash is unchanged and actual reachable coverage remains 718.
