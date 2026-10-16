@@ -1401,7 +1401,13 @@ def advance(directory, comment):
         _collect_encodings(state)
         _schedule(directory, state)
         _skip_unused_encodings(state)
-        check_state(state, verify_receipts=False)
+        if state['status'] == 'complete' and before['status'] != 'complete':
+            # One independent final numerical audit; later unchanged advancements
+            # reuse successful checks only inside their current run scope.
+            with hierarchy_hdbscan.source_scope(isolated=True):
+                check_state(state, verify_receipts=False)
+        else:
+            check_state(state, verify_receipts=False)
         if state != before:
             workflow.write(directory / "state.json", state)
         return summary(state)
@@ -1706,7 +1712,8 @@ def run(
                         ImportError,
                     ) as error:
                         errors.append(dict(kind=kind, path=path, error=str(error)))
-                result = _native_advance(directory, comment, stop)
+                if result["status"] != "complete":
+                    result = _native_advance(directory, comment, stop)
                 print(
                     result["generation_policy"] + ": "
                     + json.dumps(
@@ -1726,7 +1733,6 @@ def run(
         finally:
             for future, (kind, path, thread) in active.items():
                 thread.join()
-        result = _native_advance(directory, comment, stop)
         result["execution_status"] = (
             result["status"] if result["status"] == "complete" else "blocked"
         )

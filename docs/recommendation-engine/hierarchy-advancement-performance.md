@@ -13,8 +13,9 @@ The shared runner now provides operation-scoped parsed files, validated frozen
 plans and receipt indexes. Changed file metadata invalidates the cached read.
 Collection uses one isolated scope per experiment batch: its producer files
 are shared across that batch's cases, then released. Advancement's remaining
-reads have their own surrounding scope. No validation verdict survives an
-advancement. All original receipt and bound-review checks remain in place.
+reads have their own surrounding scope. Model receipt verdicts are not retained
+across advancements. Numerical validation now has a separate run-scoped cache,
+described below. Original receipt and bound-review checks remain in place.
 
 ## Matched offline measurement
 
@@ -99,7 +100,8 @@ Independent saved HDBSCAN rounds and their section cuts are rechecked in
 worker processes when their combined input count reaches 1,024 vectors. Small
 checks stay inline. Workers receive the same immutable state snapshot, rebuild
 the expected requests, hash complete evidence files and reproduce all groups
-and cuts; validation verdicts are not retained between advancements. No model
+and cuts. Successful numerical checks can now be reused within a run while
+their evidence and controls remain unchanged, as described below. No model
 request or placement depends on the numerical worker-completion order.
 
 An explicit `--hdbscan-binary` replacement requires a reviewed
@@ -176,7 +178,89 @@ so independent model work can wait behind the local checks.
 Large diagnostic tables are still serialized into numerical outputs and fully
 decoded before `_hierarchy_fields` retains the consumed fields. The saved
 676,422,679-byte result and 2,036,262-byte retained view quantify that excess.
-Worker processes also rebuild their read scopes for validation. Avoiding the
-unused output and reviewing repeated completed-state advancements are future
-performance investigations; this run retained every check. The successful
+Worker processes also rebuild their read scopes for validation. The completed
+run retained the unused output and repeated completed-state advancements;
+the subsequent fixes are described below. The successful
 kernel and replay measurements above do not establish an end-to-end speedup.
+
+## Compact numerical output and unchanged-evidence validation
+
+The user approved all three fixes: compact numerical output, reuse of successful
+checks for unchanged evidence, and stopping advancement once construction is
+complete. Generation policies, prompts, numerical parameters and membership
+rules are unchanged. No model requests or hierarchy regeneration were required.
+
+`fine-segmentation-candidate REQUEST.json --hierarchy-output` returns
+`hdbscan-hierarchy-output-v1`. It retains selected groups, their condensed tree,
+input/alias mappings and source/configuration metadata. The artifact builder
+hashes the compact result directly; it does not first serialize the dense
+distance table. The original full-output command remains supported. HiGen
+requests compact output for newly computed rounds and accepts both formats.
+A historical executable that rejects the new flag with its exact old usage
+message falls back to its original command. Existing requests/results stay
+unchanged. The compact-output benefit requires the updated executable;
+continuations use the existing reviewed binary-upgrade mechanism.
+
+Successful numerical checks are retained only inside the current source scope,
+which spans one automatic construction run. Each identity includes frozen
+source bindings and executable, numerical policy/configuration, sibling limit,
+the round's inputs/groups/cases/unassigned entries/selection, vector references
+and complete encoding-job records. Request, result, encoding config/request,
+receipt and raw-vector files are checked by device, inode, size and nanosecond
+modification/change times. New or changed dependencies trigger full validation;
+files changed during validation are rejected. Only successful checks are
+retained. Structural and model-receipt checks still run normally. A new process
+or standalone operation starts empty, and the transition to `complete` performs
+an independent full numerical validation before saving. Explicit audits outside
+a running construction do not inherit its successful checks.
+
+The coordinator drains remaining jobs and writes accounting after completion,
+without another advancement. It also no longer performs an unconditional final
+advancement after leaving its scheduling loop. Production-path tests cover
+already-complete runs and completion while another submitted job is draining.
+
+### Saved HR35 checks
+
+Measurements use the exact 6,059-entry C00001 membership request, SHA-256
+`03be56dc247c8d6674e59cab9789fbaf2b13999ff02de33b088be88554161de9`.
+The same release binary ran full/compact/compact/full, with 24 threads on CPUs
+0–23. These are two observations per format under ordinary host load.
+
+| Measurement | Full output | Compact output | Reduction |
+| --- | ---: | ---: | ---: |
+| Output bytes | 676,422,678 | 2,621,160 | 99.61% |
+| Mean command wall time | 3.205 s | 1.095 s | 65.83% |
+| Mean command peak RSS | 1,910,392 KiB | 1,064,250 KiB | 44.29% |
+
+All consumed result fields, including groups, tree, aliases and memberships,
+match between formats and the original saved HR35 result. Compact response
+identity and its result checksum differ intentionally. Output size differs
+slightly from the earlier 2,036,262-byte reader projection because the complete
+compact artifact also retains selected-output metadata and unassigned IDs.
+
+The full saved HR35 state then passed production `check_state` with all 215
+numerical rounds: 141.846 seconds. A second check of that unchanged state within
+the same run scope passed in 2.793 seconds. Original source bindings and receipts
+remain frozen; offline checking verifies those files while allowing the new
+checkout to execute the check.
+This measures initial full validation versus successful-check reuse, not a
+matched old/new end-to-end generation. HR35's state SHA-256 remains
+`aac564fa745ac4a1d753e3f96af0a8bfa56c9bafe9b751a992a8cd5f81d2dd79`.
+
+[Numerical comparison](../../../oracle-mvp-hierarchy-compact-validation-v1/target/hierarchy-performance-v1/numerical-comparison.json),
+[validation comparison](../../../oracle-mvp-hierarchy-compact-validation-v1/target/hierarchy-performance-v1/validation-comparison.json)
+and [native compact-round check](../../../oracle-mvp-hierarchy-compact-validation-v1/target/hierarchy-performance-v1/native-compact-round-check.json)
+are retained in the task worktree with the original numerical outputs. The
+native round used the identical request hash, returned identical groups and
+unassigned entries, and passed the production result validator in 6.621 seconds
+including vector loading, preparation and saved-result validation.
+
+Final verification passes 130 Python and 27 Rust checks, including changed
+results with restored modification times, altered vectors/rounds, fresh-scope
+revalidation, historical-binary fallback and completion while jobs drain.
+An initial 129-test Python run had one extra-backoff-count failure in an
+existing runner-outage test; its isolated rerun and final full 130-test run
+passed. Retry policy was not changed. No
+end-to-end hierarchy runtime, semantic-quality or model-cost improvement is
+claimed from these component measurements. The existing HR35 review UI and
+718-note coverage are unchanged.

@@ -20,7 +20,7 @@ use crate::fine_region_candidate::{
     SnnCandidateRun, run_hdbscan_candidate, run_hdbscan_cross_note_candidate,
     run_hdbscan_cross_note_edges_candidate, run_snn_candidate,
 };
-use crate::fine_region_hdbscan::HdbscanConfig;
+use crate::fine_region_hdbscan::{CondensedTreeEdge, HdbscanCluster, HdbscanConfig};
 use crate::fine_region_snn::SnnConfig;
 
 const CANDIDATE_ADAPTER_SOURCE: &[u8] = include_bytes!("fine_region_candidate.rs");
@@ -166,6 +166,45 @@ pub struct CandidateArtifact<Parameters, CandidateRun> {
 pub type SnnCandidateArtifact = CandidateArtifact<SnnConfig, SnnCandidateRun>;
 pub type HdbscanCandidateArtifact = CandidateArtifact<HdbscanConfig, HdbscanCandidateRun>;
 pub type HdbscanCrossNoteCandidateArtifact = CandidateArtifact<HdbscanConfig, HdbscanCandidateRun>;
+
+/// Numerical fields consumed by recursive hierarchy construction. Dense distance
+/// tables remain working memory rather than part of the serialized result.
+#[derive(Debug, Serialize)]
+pub struct HdbscanHierarchyResult {
+    pub vector_count: usize,
+    pub clusters: Vec<HdbscanCluster>,
+    pub condensed_tree: Vec<CondensedTreeEdge>,
+}
+
+pub fn build_hdbscan_hierarchy_artifact(
+    inputs: &[FineRegionCandidateInput],
+    source_vector_manifest_sha256: &str,
+    normalized_vector_sha256: &str,
+    config: &HdbscanConfig,
+) -> Result<CandidateArtifact<HdbscanConfig, FineRegionCandidateRun<HdbscanHierarchyResult>>> {
+    validate_source_hashes(source_vector_manifest_sha256, normalized_vector_sha256)?;
+    let run = run_hdbscan_candidate(inputs, *config)?;
+    let result = FineRegionCandidateRun {
+        algorithm_result: HdbscanHierarchyResult {
+            vector_count: run.canonical_unique_ids.len(),
+            clusters: run.algorithm_result.clusters,
+            condensed_tree: run.algorithm_result.condensed_tree,
+        },
+        input_contract_version: run.input_contract_version,
+        fine_output_selector_version: run.fine_output_selector_version,
+        canonical_unique_ids: run.canonical_unique_ids,
+        alias_groups: run.alias_groups,
+        fine_output: run.fine_output,
+    };
+    assemble_artifact(
+        inputs,
+        source_vector_manifest_sha256,
+        normalized_vector_sha256,
+        *config,
+        result,
+        HDBSCAN_CONTRACT,
+    )
+}
 
 pub fn build_snn_candidate_artifact(
     inputs: &[FineRegionCandidateInput],

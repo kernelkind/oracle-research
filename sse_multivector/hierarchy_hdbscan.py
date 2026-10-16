@@ -32,6 +32,7 @@ SECTION_CONFIGS = {
     "hierarchy-generation-v5.3": CONFIG,
 }
 _RESULT_FILES = ContextVar('hierarchy_hdbscan_result_files', default=None)
+_VALIDATED_ROUNDS = ContextVar('hierarchy_hdbscan_validated_rounds', default=None)
 _RESULT_CACHE_BYTES = 1024 * 1024 * 1024
 _CPU_WORKERS = ContextVar('hierarchy_cpu_workers', default=None)
 _PARALLEL_MIN_VECTORS = 1024
@@ -85,8 +86,53 @@ def _validate_saved_round(job, state=None):
                 raise ValueError('V5 section cut changed')
 
 
+def _validation_identities(state, jobs):
+    """Bind each check to its controls, vector producers and current evidence files."""
+    from . import worker
+    stamp = workflow.engine.ReceiptFiles._stamp
+    sources = workflow.inputs.digest([state['sources'], state['hdbscan_binary']])
+    encodings = {}
+    for _, round_ in jobs:
+        for identifier in round_['current']:
+            reference = state['vectors'][state['items'][identifier]['vector_key']]
+            index = reference['encoding']
+            if index not in encodings:
+                job = state['encodings'][index]
+                config = worker.WorkerConfig.load(Path(job['config']))
+                paths = [Path(job['config']), config.request_path,
+                         config.output_path/'worker-receipt.json',
+                         config.output_path/'raw-vectors.f32le']
+                encodings[index] = workflow.inputs.digest([
+                    job, [(str(p), stamp(p)) for p in paths]])
+    identities = []
+    for family, round_ in jobs:
+        references = []
+        for identifier in round_['current']:
+            key = state['items'][identifier]['vector_key']
+            reference = state['vectors'][key]
+            references.append([identifier, key, reference, encodings[reference['encoding']]])
+        evidence = round_['hdbscan']
+        paths = [Path(evidence['request']), Path(evidence['result'])]
+        controls = {k: round_.get(k) for k in (
+            'current', 'groups', 'cases', 'unassigned', 'unpaired', 'hdbscan', 'selection')}
+        identities.append(workflow.inputs.digest([
+            sources, family['id'], state['generation_policy'], state['max_siblings'],
+            SECTION_CONFIGS.get(state['generation_policy'], CONFIG), controls,
+            references, [(str(p), stamp(p)) for p in paths]]))
+    return identities
+
+
 def check_rounds(state, jobs):
-    """Recheck every saved numerical result, using independent worker processes."""
+    """Validate new or changed numerical evidence once within a source scope."""
+    cache = _VALIDATED_ROUNDS.get()
+    identities = _validation_identities(state, jobs) if cache is not None else None
+    if cache is not None:
+        pending = [(job, identity) for job, identity in zip(jobs, identities, strict=True)
+                   if cache.get(job[1]['hdbscan']['result']) != identity]
+        jobs = [job for job, _ in pending]
+        identities = [identity for _, identity in pending]
+    if not jobs:
+        return
     workers = min(cpu_workers(), len(jobs))
     if workers > 1 and sum(len(r['current']) for _, r in jobs) >= _PARALLEL_MIN_VECTORS:
         with ProcessPoolExecutor(max_workers=workers,
@@ -98,6 +144,11 @@ def check_rounds(state, jobs):
     else:
         for job in jobs:
             _validate_saved_round(job, state)
+    if cache is not None:
+        if identities != _validation_identities(state, jobs):
+            raise ValueError('numerical evidence changed during validation')
+        for job, identity in zip(jobs, identities, strict=True):
+            cache[job[1]['hdbscan']['result']] = identity
 
 
 def _cluster_round(job):
@@ -118,18 +169,20 @@ def cluster_rounds(state, jobs):
 
 
 @contextmanager
-def source_scope():
+def source_scope(*, isolated=False):
     """Bounded immutable-result reads shared by one hierarchy coordinator."""
-    if _RESULT_FILES.get() is not None:
+    if not isolated and _RESULT_FILES.get() is not None:
         yield
         return
     # Large membership trees retain several MiB per compact view. The ordinary
     # receipt reader's 16 MiB default repeatedly evicts those immutable views.
     token = _RESULT_FILES.set(workflow.engine.ReceiptFiles(
         projected_cache_bytes=_RESULT_CACHE_BYTES))
+    checks = _VALIDATED_ROUNDS.set({})
     try:
         yield
     finally:
+        _VALIDATED_ROUNDS.reset(checks)
         _RESULT_FILES.reset(token)
 
 
@@ -327,7 +380,8 @@ def request_for(state, ids, vectors):
 
 def members(response, request, mapping):
     if (response.get("schema_version") != 1
-            or response.get("candidate_identity") != "hdbscan-explicit-config-v1"):
+            or response.get("candidate_identity") not in (
+                "hdbscan-explicit-config-v1", "hdbscan-hierarchy-output-v1")):
         raise ValueError("unexpected HDBSCAN response identity")
     artifact = response["artifact"]
     manifest = artifact["manifest"]
@@ -364,8 +418,14 @@ def round_for(directory, state, family, vectors, *, workers=None):
     trial._save_once(request_path, request)
     if not result_path.exists():
         environment = dict(os.environ, RAYON_NUM_THREADS=str(cpu_workers() if workers is None else workers))
-        result = subprocess.run([state["hdbscan_binary"], str(request_path)],
+        command = [state["hdbscan_binary"], str(request_path)]
+        result = subprocess.run([*command, '--hierarchy-output'],
                                 capture_output=True, check=False, env=environment)
+        # Historical frozen executables predate compact output. Preserve their
+        # resumability without hiding numerical or input errors from newer ones.
+        if result.returncode and result.stderr.strip().endswith(
+                b'usage: fine-segmentation-candidate REQUEST.json [--threads N]'):
+            result = subprocess.run(command, capture_output=True, check=False, env=environment)
         (destination / "stderr.txt").write_bytes(result.stderr)
         if result.returncode:
             raise ValueError("HDBSCAN command failed: " + result.stderr.decode(errors="replace"))

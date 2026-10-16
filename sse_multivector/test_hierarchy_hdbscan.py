@@ -42,6 +42,12 @@ def fixture(groups=7, distances=None):
 
 
 class HdbscanSectionTests(unittest.TestCase):
+    def test_hierarchy_output_preserves_the_same_groups_and_section_cut(self):
+        response, request, mapping = fixture(14)
+        expected = hdbscan.section_plan(response, request, mapping, 6)
+        response['candidate_identity'] = 'hdbscan-hierarchy-output-v1'
+        self.assertEqual(hdbscan.section_plan(response, request, mapping, 6), expected)
+
     def test_coordinator_reuses_results_across_advances_but_not_across_runs(self):
         from sse_multivector import experiment as workflow
         response, request, mapping = fixture(7)

@@ -14,7 +14,8 @@ use oracle_mvp::fine_region_candidate::{
 };
 use oracle_mvp::fine_region_candidate_artifact::{
     build_hdbscan_candidate_artifact, build_hdbscan_cross_note_candidate_artifact,
-    build_hdbscan_cross_note_edges_candidate_artifact, build_snn_candidate_artifact,
+    build_hdbscan_cross_note_edges_candidate_artifact, build_hdbscan_hierarchy_artifact,
+    build_snn_candidate_artifact,
 };
 use oracle_mvp::fine_region_hdbscan::HdbscanConfig;
 use serde::{Deserialize, Serialize};
@@ -22,7 +23,8 @@ use serde_json::Value;
 use thiserror::Error;
 
 const SCHEMA_VERSION: u32 = 1;
-const USAGE: &str = "usage: fine-segmentation-candidate REQUEST.json [--threads N]";
+const USAGE: &str =
+    "usage: fine-segmentation-candidate REQUEST.json [--threads N] [--hierarchy-output]";
 
 type Result<T> = std::result::Result<T, CliError>;
 
@@ -88,7 +90,17 @@ fn main() -> ExitCode {
 }
 
 fn run() -> Result<Response> {
-    let arguments = env::args_os().skip(1).collect::<Vec<_>>();
+    let mut arguments = env::args_os().skip(1).collect::<Vec<_>>();
+    let hierarchy_output = if let Some(index) = arguments
+        .iter()
+        .skip(1)
+        .position(|arg| arg == "--hierarchy-output")
+    {
+        arguments.remove(index + 1);
+        true
+    } else {
+        false
+    };
     let (request_path, threads) = match arguments.as_slice() {
         [path] => (path, None),
         [path, flag, count] if flag == "--threads" => {
@@ -117,10 +129,10 @@ fn run() -> Result<Response> {
         .num_threads(threads)
         .build()
         .map_err(|error| invalid(format!("cannot create numerical worker pool: {error}")))?;
-    pool.install(|| run_request(Path::new(request_path)))
+    pool.install(|| run_request(Path::new(request_path), hierarchy_output))
 }
 
-fn run_request(request_path: &Path) -> Result<Response> {
+fn run_request(request_path: &Path, hierarchy_output: bool) -> Result<Response> {
     let bytes = fs::read(request_path).map_err(|source| CliError::Read {
         path: request_path.to_path_buf(),
         source,
@@ -134,6 +146,26 @@ fn run_request(request_path: &Path) -> Result<Response> {
             "unsupported schema version {}",
             request.schema_version
         )));
+    }
+
+    if hierarchy_output {
+        if request.candidate != "hdbscan" || request.source_note_ids.is_some() {
+            return Err(invalid("--hierarchy-output requires candidate `hdbscan`"));
+        }
+        let artifact = build_hdbscan_hierarchy_artifact(
+            &request.inputs,
+            &request.source_vector_manifest_sha256,
+            &request.normalized_vector_sha256,
+            request
+                .hdbscan_configuration
+                .as_ref()
+                .unwrap_or(&HDBSCAN_CONTROLLED_SUITE_CONFIG_V1),
+        )?;
+        return Ok(Response {
+            schema_version: SCHEMA_VERSION,
+            candidate_identity: "hdbscan-hierarchy-output-v1",
+            artifact: serde_json::to_value(artifact)?,
+        });
     }
 
     if request.hdbscan_configuration.is_some()

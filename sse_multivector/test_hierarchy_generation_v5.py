@@ -78,6 +78,25 @@ class V5ConstructionTests(unittest.TestCase):
                         'unused distance matrices are parsed and retained as full results')
         self.assertEqual((self.native.root/'v5/state.json').read_bytes(), before)
 
+    def test_native_generation_requests_hierarchy_output(self):
+        spec = self.prepare()
+        binary = self.native.root/'hdbscan-fixture'
+        binary.write_text(binary.read_text().replace(
+            'import json, sys',
+            'import json, sys\nassert "--hierarchy-output" in sys.argv[2:], "compact output not requested"'))
+        self.construct(spec)
+
+    def test_legacy_numerical_binary_can_still_resume_with_its_full_output(self):
+        spec = self.prepare()
+        binary = self.native.root/'hdbscan-fixture'
+        binary.write_text(binary.read_text().replace('import json, sys',
+            'import json, sys\n'
+            'if "--hierarchy-output" in sys.argv[2:]:\n'
+            '    print("usage: fine-segmentation-candidate REQUEST.json [--threads N]", file=sys.stderr)\n'
+            '    sys.exit(1)'))
+        state = self.construct(spec)
+        self.assertEqual(state['status'], 'complete')
+
     def test_native_validation_uses_processes_for_independent_saved_rounds(self):
         from concurrent.futures import ProcessPoolExecutor
         from sse_multivector import hierarchy_generation as generation, hierarchy_hdbscan
@@ -200,6 +219,100 @@ class V5ConstructionTests(unittest.TestCase):
             result = generation.run(directory)
         self.assertEqual(result['execution_status'], 'complete')
         self.assertEqual((directory/'state.json').read_bytes(), before)
+
+    def test_completed_run_advances_once_and_still_writes_summary(self):
+        from sse_multivector import hierarchy_generation as generation
+        self.construct(self.prepare())
+        directory = self.native.root/'v5'
+        with patch.object(generation, '_native_advance', wraps=generation._native_advance) as advance:
+            result = generation.run(directory)
+        self.assertEqual(result['execution_status'], 'complete')
+        self.assertEqual(advance.call_count, 1, 'completed hierarchy was advanced again')
+        self.assertEqual(json.loads((directory/'run-summary.json').read_text()), result)
+
+    def test_completion_drains_remaining_jobs_without_another_advancement(self):
+        from threading import Event
+        from sse_multivector import hierarchy_generation as generation
+        directory = self.native.root/'drain'
+        directory.mkdir()
+        started, release, finished = Event(), Event(), Event()
+        calls = []
+
+        def teacher(_directory, path, *_args):
+            if path.name == 'second':
+                started.set()
+                self.assertTrue(release.wait(10))
+                finished.set()
+            else:
+                self.assertTrue(started.wait(10))
+
+        def advance(*_args):
+            calls.append(True)
+            self.assertLessEqual(len(calls), 2, 'completed graph advanced while jobs drained')
+            complete = len(calls) == 2
+            if complete:
+                release.set()
+            return dict(status='complete' if complete else 'constructing',
+                        experiments=[] if complete else [str(directory/'first'), str(directory/'second')],
+                        encodings=[], generation_policy='hierarchy-generation-v5',
+                        canonical_nodes=0, original_l1s=0)
+
+        with patch.object(generation, '_native_teacher', side_effect=teacher), \
+                patch.object(generation, '_native_advance', side_effect=advance):
+            result = generation.run(directory)
+        self.assertTrue(finished.is_set())
+        self.assertEqual(result['execution_status'], 'complete')
+        self.assertEqual(result['errors'], [])
+        self.assertEqual(len(calls), 2)
+
+    def test_unchanged_numerical_evidence_is_validated_once_per_run_scope(self):
+        from sse_multivector import hierarchy_generation as generation
+        self.construct(self.prepare(count=43))
+        directory = self.native.root/'v5'
+        with hdbscan.cpu_scope(1), hdbscan.source_scope(), \
+                patch.object(hdbscan, '_validate_saved_round', wraps=hdbscan._validate_saved_round) as validate:
+            generation.advance(directory, 'Check saved numerical evidence')
+            initial = validate.call_count
+            self.assertGreater(initial, 0)
+            generation.advance(directory, 'Unchanged evidence needs no replay')
+            self.assertEqual(validate.call_count, initial, 'unchanged history was replayed')
+        with hdbscan.cpu_scope(1), \
+                patch.object(hdbscan, '_validate_saved_round', wraps=hdbscan._validate_saved_round) as validate:
+            generation.advance(directory, 'Fresh operation rechecks saved evidence')
+            self.assertGreater(validate.call_count, 0)
+
+    def test_validation_reuse_rejects_changed_results_even_with_restored_mtime(self):
+        from sse_multivector import hierarchy_generation as generation
+        state = self.construct(self.prepare(count=43))
+        path = Path(state['families'][0]['rounds'][0]['hdbscan']['result'])
+        with hdbscan.cpu_scope(1), hdbscan.source_scope():
+            generation.check_state(state, verify_receipts=False)
+            stamp = path.stat()
+            data = path.read_bytes()
+            changed = data.replace(b'"min_samples":3', b'"min_samples":4', 1)
+            self.assertNotEqual(data, changed)
+            path.write_bytes(changed)
+            os.utime(path, ns=(stamp.st_atime_ns, stamp.st_mtime_ns))
+            with self.assertRaisesRegex(ValueError, 'saved HDBSCAN evidence changed'):
+                generation.check_state(state, verify_receipts=False)
+
+    def test_validation_reuse_rejects_changed_vector_file_and_changed_round(self):
+        from sse_multivector import hierarchy_generation as generation, worker
+        state = self.construct(self.prepare(count=43))
+        with hdbscan.cpu_scope(1), hdbscan.source_scope():
+            generation.check_state(state, verify_receipts=False)
+            altered = deepcopy(state)
+            round_ = altered['families'][0]['rounds'][0]
+            round_['groups'][0].reverse()
+            with self.assertRaises(ValueError):
+                generation.check_state(altered, verify_receipts=False)
+            config = worker.WorkerConfig.load(Path(state['encodings'][0]['config']))
+            path = config.output_path/'raw-vectors.f32le'
+            data = bytearray(path.read_bytes())
+            data[0] ^= 1
+            path.write_bytes(data)
+            with self.assertRaisesRegex(ValueError, 'vector hash or shape differs'):
+                generation.check_state(state, verify_receipts=False)
 
     def construct(self, spec, name='v5'):
         from sse_multivector import hierarchy_generation as generation

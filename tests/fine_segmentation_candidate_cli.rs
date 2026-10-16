@@ -12,6 +12,73 @@ fn unit_vector(angle: f64) -> Vec<f64> {
 }
 
 #[test]
+fn hierarchy_output_preserves_groups_tree_and_input_bindings_without_distance_tables() {
+    let root = tempfile::tempdir_in("/dev/shm").unwrap();
+    let path = root.path().join("request.json");
+    let request = json!({
+        "schema_version": 1, "candidate": "hdbscan",
+        "source_vector_manifest_sha256": "a".repeat(64),
+        "normalized_vector_sha256": "b".repeat(64),
+        "hdbscan_configuration": {"min_samples":3,"min_cluster_size":2,
+                                  "selection_method":"excess_of_mass"},
+        "inputs": (0..128).map(|i| json!({
+            "opaque_id": format!("{:064x}", i+1),
+            "normalized_vector": unit_vector(i as f64 * 0.019)
+        })).collect::<Vec<_>>()
+    });
+    fs::write(&path, serde_json::to_vec(&request).unwrap()).unwrap();
+    let full = Command::new(env!("CARGO_BIN_EXE_fine-segmentation-candidate"))
+        .arg(&path)
+        .output()
+        .unwrap();
+    assert!(full.status.success());
+    let compact = Command::new(env!("CARGO_BIN_EXE_fine-segmentation-candidate"))
+        .args([
+            path.to_str().unwrap(),
+            "--hierarchy-output",
+            "--threads",
+            "2",
+        ])
+        .output()
+        .unwrap();
+    assert!(
+        compact.status.success(),
+        "{}",
+        String::from_utf8_lossy(&compact.stderr)
+    );
+    let full_json: Value = serde_json::from_slice(&full.stdout).unwrap();
+    let compact_json: Value = serde_json::from_slice(&compact.stdout).unwrap();
+    assert_eq!(
+        compact_json["candidate_identity"],
+        "hdbscan-hierarchy-output-v1"
+    );
+    for key in ["canonical_input_ids", "canonical_configuration_json"] {
+        assert_eq!(full_json["artifact"][key], compact_json["artifact"][key]);
+    }
+    let a = &full_json["artifact"]["result"];
+    let b = &compact_json["artifact"]["result"];
+    for key in ["canonical_unique_ids", "alias_groups", "fine_output"] {
+        assert_eq!(a[key], b[key]);
+    }
+    for key in ["vector_count", "clusters", "condensed_tree"] {
+        assert_eq!(a["algorithm_result"][key], b["algorithm_result"][key]);
+    }
+    assert_eq!(b["algorithm_result"].as_object().unwrap().len(), 3);
+    assert!(compact.stdout.len() < full.stdout.len() / 5);
+    let repeat = Command::new(env!("CARGO_BIN_EXE_fine-segmentation-candidate"))
+        .args([
+            path.to_str().unwrap(),
+            "--threads",
+            "1",
+            "--hierarchy-output",
+        ])
+        .output()
+        .unwrap();
+    assert!(repeat.status.success());
+    assert_eq!(compact.stdout, repeat.stdout);
+}
+
+#[test]
 fn hdbscan_cli_preserves_exact_output_across_explicit_thread_counts() {
     let root = tempfile::tempdir_in("/dev/shm").unwrap();
     let request_path = root.path().join("request.json");

@@ -1872,8 +1872,22 @@ it blocks only when no original topic has a usable meaning. V3.1/V3.2 report dis
 An all-rejected round finishes without preparing an empty model batch.
 Failed or malformed cases retain their inputs and diagnostic evidence;
 independent families continue. Local advancement normally runs inside the hierarchy coordinator. Its bounded
-cache retains compact unchanged HDBSCAN evidence, while whole-file hashes and
-all graph checks still run. Transient advancement failures fall back to a fresh
+cache retains compact unchanged HDBSCAN evidence. The numerical executable is
+called with `--hierarchy-output`, which emits groups, the condensed tree and
+input/source metadata directly, without serializing unused distance tables.
+Saved full outputs remain readable; historical executables that reject the new
+flag with their exact old usage message retain the original command. Use the
+updated executable for compact output, adopting it through the existing
+reviewed binary-upgrade path for frozen continuations.
+Full numerical checks run on startup/resume, new or changed evidence, and once
+independently when construction transitions to complete. Successful checks of
+unchanged evidence are reused within one automatic run, keyed by complete
+controls, vector producers and file identities including change times. Changed
+files invalidate reuse; standalone audits and resumed processes start fresh.
+Graph and native model-receipt checks still run. Once complete, the coordinator
+drains submitted jobs and writes accounting without advancing the graph again.
+See [measured HR35 checks](../docs/recommendation-engine/hierarchy-advancement-performance.md#compact-numerical-output-and-unchanged-evidence-validation).
+Transient advancement failures fall back to a fresh
 shared-launcher process; teacher execution always uses that fresh CLI path.
 Runner failures back off for 5, 10, 20, 40, then 60 seconds, repeating at
 60 seconds until recovery or interruption. Advancement
