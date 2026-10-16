@@ -50,6 +50,13 @@ are identical; the larger panel trades one improved ordering for one worsened
 ordering. Unequal root sizes do not explain the main remaining failures on this
 panel. Neither background weighting is selected as a production policy.
 
+The same calculation does not reproduce the Food gain on the Tools transfer
+probe. At beta 5.5, all full-meaning background adjustments score generic Work
+above all nine earlier-assessed fitting omissions. Unadjusted member support
+places two of those nine above Work. This exposes a transfer failure on a narrow
+panel with one previously rejected example, not a general accuracy estimate.
+No new labels, encodings, model calls, training or graph changes were introduced.
+
 ## Frozen source and baseline
 
 State:
@@ -1008,3 +1015,125 @@ target/food-halves-v1/equal-root-background-probe-v1/
 - `metrics.json`: every old/new pair ordering and all individual changes.
 - `report.md`, `verification.json`: compact results, complete failure lists,
   sensitivity and integrity checks. These are probes, not admission requirements.
+
+## Tools member-support transfer probe
+
+The user authorized checking whether the Food member-support result generalizes
+to another root using saved vectors and earlier assessed cases. The target is
+Tools and techniques `C00005`. Its 91 recursively supporting original entries
+represent 63 notes: 67 entries belong to 14 initial groups and 24 were initially
+ungrouped. All 91 are used. The comparison background is either all 6,991
+eligible original entries or the 1,557 originals under the other five roots.
+No synthetic-root vector is compared. The root definition is used only to check
+that prior scope judgments concern the same fixed meaning.
+
+The nine fitting cases reuse the earlier omission reviews; the outside case
+reuses an explicit rejection from
+`coverage-investigation-v2/completed-definition-membership-agent-review.json`.
+These are prior agent assessments, not new human gold or new inferred labels.
+Other-root membership does not establish exclusion from Tools.
+
+| Prior assessment | Original entries |
+|---|---|
+| Fits Tools | Open-source software `L01598`; AI agents `L02182`; Bots `L02188` and `L02610`; AI processors `L02882`; Apps `L03672`; Servers `L03830`; Code `L04036`; Cameras `L04837` |
+| Outside Tools | Work `L04032` |
+| Qualified, not graded | Artificial intelligence `L02375` and `L06971` |
+
+The Work judgment distinguishes performing tasks from the means used to perform
+them. Its complete definition is: "Work is activity involving the performance
+of tasks toward producing a result or accomplishing an objective, including
+tasks performed by people or software agents." The two AI field definitions
+remain qualified because they include study as well as technologies; their
+scores are retained without treating either as a positive or negative.
+
+The same three pooling methods, kernel, beta values and background calculations
+are reused without fitting a threshold. Candidate and reference pooling match
+in the primary calculation; all retain the same complete title-plus-meaning
+encoder context. The table counts fitting entries scoring above Work, out of
+nine. These comparisons reuse one outside example and are not nine independent
+negative tests.
+
+| Score, beta 5.5 | Title | Full meaning | First sentence |
+|---|---:|---:|---:|
+| Closest-member cosine | 6 / 9 | 5 / 9 | 0 / 9 |
+| Mean member support | 4 / 9 | 2 / 9 | 1 / 9 |
+| Whole-corpus background adjustment | 3 / 9 | 0 / 9 | 0 / 9 |
+| Other-root pooled background adjustment | 5 / 9 | 0 / 9 | 0 / 9 |
+| Other-root equal-weight adjustment | 7 / 9 | 0 / 9 | 0 / 9 |
+
+Full-meaning support puts Apps and Servers above Work before adjustment. Every
+tested background adjustment reverses both orderings. Apps provides a concrete
+example of the denominator's effect:
+
+| Entry, full meaning and beta 5.5 | Tools mean affinity | Other-root mean affinity | Tools / other-root ratio |
+|---|---:|---:|---:|
+| Apps `L03672` | 0.11154 | 0.01727 | 6.459 |
+| Work `L04032` | 0.08309 | 0.01007 | 8.250 |
+| Code `L04036` | 0.08150 | 0.01365 | 5.970 |
+| Cameras `L04837` | 0.01226 | 0.00992 | 1.236 |
+
+Apps has stronger Tools support than Work, but also greater similarity to members
+elsewhere. Dividing by that background makes Work score higher. This shows a
+numerical penalty for resemblance elsewhere, not proof of semantic membership
+in those other roots. The score used for ordering is the logarithm of the ratio;
+taking that logarithm does not change the ordering.
+
+The denominator is not the only failure. Work already outranks seven fitting
+entries on raw support. Its nearest Tools members include Software tools
+`L06913` at cosine 0.7775, Software makers `L01435` at 0.7437, Tools `L04303` at
+0.7343 and Software developers `L03051` at 0.7189. Their definitions describe
+helping perform tasks, creating software or performing technical work. Apps'
+nearest member is Tools `L01154` at 0.8039, whose definition explicitly includes
+digital programs for carrying out tasks. These are actual member comparisons.
+They do not isolate which clause causes the Work score.
+
+Cameras exposes another limitation: its nearest Tools member is Computational
+performance `L02213` at 0.4943, followed by Computer peripherals `L01629` at
+0.4080. The references are predominantly software and computing entries, but
+they also include three general Tools definitions admitting physical implements.
+The evidence therefore does not justify attributing the weak Camera score only
+to missing reference coverage.
+
+The primary full-meaning failure persists when the candidate's entire source
+note is excluded. At beta 1, pooled and equal-root adjustments still give 0/9;
+whole-corpus adjustment gives 1/9, or 0/9 with source-note exclusion. At beta 20,
+all three adjusted variants give 1/9, while raw member support gives 5/9. There
+is no consistent gain across the fixed sensitivities and no selected winner.
+
+A supplementary calculation separates candidate pooling from reference pooling
+using all nine combinations of the three saved representations. This is a
+post-hoc mechanism check, not an independently frozen method comparison.
+With full-meaning candidate pooling, every reference-pooling choice still gives
+0/9 for all three background adjustments at beta 5.5. Merely changing reference
+pooling does not resolve this failure. All matching-pooling combinations
+reproduce the primary scores exactly.
+
+All nine protected source hashes and all output hashes pass. Independent scalar
+kernel sums and recombination of individual-root contributions verify the
+calculations. Nine shared query/representation cosine rows exactly reproduce
+the preceding Food probe. Qualified cases never enter the graded pair counts.
+Actual HR35 coverage remains 718 reachable notes. There were no new encoder or
+LLM calls, training runs, hierarchy modifications or UI updates.
+
+Retained ignored evidence:
+
+```
+target/food-halves-v1/tools-member-support-probes-v1/
+```
+
+- `plan.json`: frozen source hashes, complete memberships, prior judgments and
+  fixed calculation; SHA256
+  `17e5cbf161ef196c0d3afb6033aaaffda19217a4653841a0f8b18e2b7dc86b48`.
+- `cosines.npz`, `scores.json`: complete query-to-corpus cosines, per-group
+  ranges and support, every background contribution and all fixed settings.
+- `metrics.json`: every fitting-versus-Work ordering, including all failures.
+- `reference-group-evidence.json`, `query-evidence.json`: original definitions,
+  grouping and review provenance, with the qualified cases separate.
+- `supplementary-pooling-factorial.json`: all candidate/reference combinations,
+  their scores and matching-pooling reproduction checks.
+- `report.md`, `verification.json`: compact results and integrity evidence.
+
+The Food improvement has not generalized to this Tools scope boundary. This
+does not select a different pooling policy for Tools or establish an admission
+rule. The general problem remains distinguishing task-related resemblance from
+membership while retaining genuine instruments such as Cameras.
