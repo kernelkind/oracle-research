@@ -106,3 +106,38 @@ An explicit `--hdbscan-binary` replacement requires a reviewed
 `--runner-upgrade-reason` and settled teacher batches. The native upgrade
 records old and new paths/hashes and the unchanged graph hash, preserving
 the original executable and saved results. It does not edit frozen definitions.
+The shared source launcher requires commit `38561fe` or later: multiprocessing
+imports it as `__mp_main__`, which must not dispatch the parent CLI command.
+A real project-extension process-pool regression reproduces the earlier
+worker-startup failure and passes with its `__main__` guard. The first HR35
+multicore launch exposed this entry-point issue before any teacher calls; its
+failed invocation is preserved and the guarded launcher is now on local main.
+
+### Saved 1,000-note input checks
+
+The exact C00001 membership request contains 6,059 vectors. The optimized
+executable took 8.807 seconds with one thread and 3.287 seconds with 24 threads
+(62.7% less wall time), including request parsing and result serialization.
+All 24 numerical threads accumulated CPU time; they were confined to CPUs
+0–23. One- and 24-thread outputs are byte-identical. This is one sequential
+timing contrast under other host load, not an end-to-end construction estimate.
+
+Compared with the original executable, the 676,422,679-byte saved output differs
+only in its declared HDBSCAN and preprocessing implementation source hashes.
+Replacing exactly those two old hash values with the new source hashes makes
+every other output byte identical, including all numerical diagnostics,
+groups, hierarchy links and scores. Old receipts are not rewritten.
+
+The same frozen six-root checkpoint also passed the native structural audit
+using process-based numerical validation. Audit contents matched the earlier
+report exactly after excluding its trial path and source hashes. Wall time
+was 95.438 seconds versus the earlier 514.106 seconds. Cache behavior,
+coordinator implementation and host load differ, so this does not isolate a
+multicore-only effect. Initial source rebinding took a separate 102.066 seconds.
+No teacher requests were made for these checks.
+
+Evidence remains ignored under `target/multicore-validation-replay-v1/`,
+`target/multicore-numerical-replay-v1/` and
+`target/multicore-numerical-replay-v2/` in
+`oracle-mvp-hr35-multicore-replay-v1`. Native hierarchy regression verification
+on local main passes 121 tests; the relevant Rust suite passes 50 tests.

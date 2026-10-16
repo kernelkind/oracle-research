@@ -223,8 +223,9 @@ cache. Binary vector reads expand only requested rows into Python floats.
 `advance-timings.jsonl` records actual advancement durations and recovery mode.
 The coordinator and standalone advancement retain up to 1 GiB of compact
 serialized HDBSCAN views, releasing them when their scope ends. This is a
-retention budget, not a process-memory limit. It requires shared runner commit
-`132a0cd` or later; ordinary receipt readers keep their 16 MiB default.
+retention budget, not a process-memory limit. The current multicore runtime
+requires shared runner commit `38561fe` or later, including the configurable
+reader limit from `132a0cd`; ordinary receipt readers keep their 16 MiB default.
 
 Transient advancement failures retry through the fresh shared CLI and its
 existing exponential backoff, so a repaired runner can be loaded. Teacher
