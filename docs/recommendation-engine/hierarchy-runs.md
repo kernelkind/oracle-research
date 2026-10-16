@@ -1948,3 +1948,16 @@ stage only; copied Bootstrap dispatches are historical, and final child-stage
 accounting remains pending. HR30 used V5, so any eventual HR30-to-HR35 difference
 combines V5.1, V5.2 and V5.3 changes and newly required model answers; it cannot
 isolate a V5.3-only gain.
+
+The current continuation uses Oracle source `9979db8c`, shared coordinator
+`38561fe` and a verified optimized multicore numerical executable. Its local
+budget is **24 CPUs, leaving four for other system work**. Original numerical
+parameters, prompts, meaning/vector evidence and the frozen `1cfdd6a7` teacher
+transport remain fixed. The recorded upgrade preserved the saved 27-node
+graph and all 53 existing receipt ledgers; both old and new executables remain
+source-bound. The first multicore launch exposed a shared source-entry-point
+bug before model dispatch; its failed invocation is retained and the guarded
+launcher is now integrated. Construction resumed after its production-path
+regression and checkout/executor checks passed. See the
+[real-input numerical and audit checks](hierarchy-advancement-performance.md#saved-1000-note-input-checks).
+Final hierarchy coverage and whole-run accounting remain pending.
