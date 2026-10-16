@@ -157,3 +157,26 @@ every saved round, request hash and result hash exactly, without another
 clustering invocation or teacher call. This is a reuse-path check, not a fresh
 construction benchmark. Evidence is retained under
 `target/membership-process-checks/` in `oracle-mvp-hierarchy-hr35-results`.
+
+### Observed costs at HR35 completion
+
+HR35 completed on source `835f91dc` with the 24-CPU allocation and four CPUs
+left for other work. Multicore execution did not remove all runtime costs.
+One late advancement processing several lineups took 1,095.170 seconds.
+After the first advancement returned `complete`, two further advancements of
+the unchanged completed graph took 302.802 and 306.911 seconds. The coordinator
+advances after collecting finished jobs and again after its loop; each call
+checks the retained numerical evidence before and after collection. The
+[native timing log](../../../oracle-mvp-hierarchy-hr35-v53/target/hierarchy-hr35-v53-thousand-note-v1/HR35/advance-timings.jsonl)
+preserves these events. They are observations with different amounts of work,
+not matched runtime comparisons.
+Batches prepared during an advancement are submitted only after it returns,
+so independent model work can wait behind the local checks.
+
+Large diagnostic tables are still serialized into numerical outputs and fully
+decoded before `_hierarchy_fields` retains the consumed fields. The saved
+676,422,679-byte result and 2,036,262-byte retained view quantify that excess.
+Worker processes also rebuild their read scopes for validation. Avoiding the
+unused output and reviewing repeated completed-state advancements are future
+performance investigations; this run retained every check. The successful
+kernel and replay measurements above do not establish an end-to-end speedup.

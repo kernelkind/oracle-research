@@ -677,7 +677,9 @@ above the roots.
 
 ## HR35 — 1,000 notes · HiGen V5.3
 
-Running on HR30's exact corpus with its completed Bootstrap meanings and saved
-vectors. Native V5.3 construction and final accounting are pending.
+Construction completed on HR30's exact corpus using its saved Bootstrap
+meanings and vectors: 169 nodes, six roots, at most six children and four levels.
+All 163 edges narrow observed note sets. Root coverage is 718/1,000, gaining
+148 notes and losing 12 against HR30; semantic review remains pending.
 **Review UI not generated: it has not been requested.**
 [Current state and controls](hierarchy-runs.md#hr35--hr30-thousand-note-corpus-with-higen-v53).

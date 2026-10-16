@@ -9005,6 +9005,129 @@
           "sha256": "cba323c9f18bab12f1fefc950cf47360c6ea4232be19e86569c88ae4b2d33fda"
         }
       ]
+    },
+    {
+      "version_id": "HR35",
+      "name": "ASv6.100 1000-note HiGen V5.3 — HR30 corpus / Bootstrap-v133 / Consolidated-grouped-v1",
+      "root": "../../oracle-mvp-hierarchy-hr35-v53",
+      "artifact_path": "target/hierarchy-hr35-v53-thousand-note-v1/HR35/state.json",
+      "sha256": "aac564fa745ac4a1d753e3f96af0a8bfa56c9bafe9b751a992a8cd5f81d2dd79",
+      "code_provenance": {
+        "sidecar": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr35-v53/target/hierarchy-hr35-v53-thousand-note-v1/HR35/code-provenance.json",
+        "git": {
+          "oracle": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr35-v53",
+            "git_commit": "835f91dcf6fa8fe4443ee370b8c977d24d9fb752",
+            "uncommitted_source": false
+          },
+          "runner_coordinator": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/experiment-runner",
+            "git_commit": "38561fefc5e72171a2a3ac7bcbef21367da6e4d7",
+            "uncommitted_source": false
+          },
+          "bootstrap_transport": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/experiment-runner-hr26-source-v1",
+            "git_commit": "1cfdd6a76a9910b2c9dea0ca395f825b90485f7e",
+            "uncommitted_source": false
+          },
+          "consolidation_transport": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/experiment-runner-hr26-source-v1",
+            "git_commit": "1cfdd6a76a9910b2c9dea0ca395f825b90485f7e",
+            "uncommitted_source": false
+          }
+        },
+        "initial_git": {
+          "oracle": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr35-v53",
+            "git_commit": "d2c13d78feb904716b1f4ae2e7d0bd38a7102d44",
+            "uncommitted_source": false
+          },
+          "runner_coordinator": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/experiment-runner",
+            "git_commit": "36dfcf6390eaaa5e46fff07cba7581003b8877a4",
+            "uncommitted_source": false
+          },
+          "bootstrap_transport": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/experiment-runner-hr26-source-v1",
+            "git_commit": "1cfdd6a76a9910b2c9dea0ca395f825b90485f7e",
+            "uncommitted_source": false
+          },
+          "consolidation_transport": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/experiment-runner-hr26-source-v1",
+            "git_commit": "1cfdd6a76a9910b2c9dea0ca395f825b90485f7e",
+            "uncommitted_source": false
+          }
+        },
+        "source_upgrade_count": 3,
+        "runtime": {
+          "cpu_workers": 24,
+          "reserved_system_cpus": 4,
+          "numerical_executable": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr35-v53/target/numerical-runtime-multicore-v1/fine-segmentation-candidate",
+          "membership_result_processing": "worker-processes",
+          "numerical_executable_sha256": "877884039e624963a1e4aa5bff360837eb75d3dbaad52ebf828691170c35d007"
+        }
+      },
+      "experimental_parameters": {
+        "baseline": "HR30",
+        "generation_policy": "hierarchy-generation-v5.3",
+        "dataset": {
+          "subject_prompt": "ASv6.100",
+          "notes": 1000,
+          "authors": 603,
+          "selection": "Exact ordered HR30 corpus with the approved author exclusion"
+        },
+        "definition": {
+          "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr35-v53/sse_multivector/hierarchy-runs/hr35/hierarchy.spec.json",
+          "sha256": "819384218e7aca575d49821f0b582b04a21d6c9ea795a8e805439038b2bbfa90"
+        },
+        "parameter_ledger": {
+          "path": "docs/recommendation-engine/hierarchy-parameters.csv",
+          "row": "HR35"
+        },
+        "native_usage": {
+          "fresh": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr35-v53/target/hierarchy-hr35-v53-thousand-note-v1/usage-new.json",
+          "all_producers": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr35-v53/target/hierarchy-hr35-v53-thousand-note-v1/usage-all-producers.json",
+          "scope": "Fresh consolidation: 398 attempts including warmups and retries, 110 exact reuses, 427 valid cases, two recovered failures with unknown usage; $1.5345656 known catalog subtotal, complete cost unknown. All-producer originals include historical Bootstrap generation; six original failed-call usages are missing. Incremental subscription cash charge is zero."
+        },
+        "qualification": "Native construction exited zero with no terminal errors. 169 nodes, 163 strictly narrowing edges, six roots, max six children, four levels; 718 notes beneath roots, 282 outside. Versus HR30: 148 gained, 12 lost, 570 retained. Overall audit coverage requirement is unmet; meanings are ungraded. The completion summary legacy missing-note field includes hidden top-container associations; use audit note_coverage. HR30 used V5, so this combines V5.1/V5.2/V5.3 effects, not an isolated V5.3 or quality-preserving savings result. No review UI requested."
+      },
+      "related_outputs": [
+        {
+          "label": "Native completion summary",
+          "path": "target/hierarchy-hr35-v53-thousand-note-v1/HR35/run-summary.json",
+          "sha256": "7b8b393978a5e7e5ffd8e719fa13581cf231ec4ac0786322049d58960cc36e5e"
+        },
+        {
+          "label": "Structural audit",
+          "path": "target/hierarchy-hr35-v53-thousand-note-v1/HR35/structural-audit.json",
+          "sha256": "1d31d2b5c06c41fee5a98f807e69a10786b6a827601cb44ee2dd1a710be61552"
+        },
+        {
+          "label": "Native consolidation usage",
+          "path": "target/hierarchy-hr35-v53-thousand-note-v1/usage-new.json",
+          "sha256": "5d54035bcc24cbeb616e1001b32c8576a0ff9c8786877f1067b74df0756d7f8e"
+        },
+        {
+          "label": "Native all-producer usage",
+          "path": "target/hierarchy-hr35-v53-thousand-note-v1/usage-all-producers.json",
+          "sha256": "beef6cb754e1055d3b1427c771effbac52e409ead80421cfbebc206128803bc6"
+        },
+        {
+          "label": "Native advancement timings",
+          "path": "target/hierarchy-hr35-v53-thousand-note-v1/HR35/advance-timings.jsonl",
+          "sha256": "679d82a9d523cd384bc6f4260e7df054a6f90dec0738becbeb9f219bae0f7aae"
+        },
+        {
+          "label": "Frozen input controls",
+          "path": "target/hierarchy-hr35-v53-thousand-note-v1/input-controls.json",
+          "sha256": "d2add2498d5ab6dabd15afeb9324e16903e721d295a87cf3f09078e265da07a2"
+        },
+        {
+          "label": "Numerical runtime provenance",
+          "path": "target/numerical-runtime-multicore-v1/provenance.json",
+          "sha256": "021d2af8b7f1e67359173b3a0e02746763925b6f3eba92e67295b292baf49d08"
+        }
+      ]
     }
   ]
 }

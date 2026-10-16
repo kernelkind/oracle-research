@@ -1902,7 +1902,8 @@ review is the saved scope mismatch before claiming semantic improvement.
 
 ## HR35 — HR30 thousand-note corpus with HiGen V5.3
 
-**Running.** User-authorized V5.3 construction on HR30's exact ordered 1,000
+**Construction complete; semantic review pending.** User-authorized V5.3
+construction on HR30's exact ordered 1,000
 notes: its original 200 food/drink and music notes, then 800 ASv6.100 training
 posts, preserving the approved author exclusion and saved order. The corpus
 has 603 authors. The native definition reuses the completed HR30 checkpoint's
@@ -1924,8 +1925,8 @@ The [frozen definition](../../sse_multivector/hierarchy-runs/hr35/hierarchy.spec
 [input controls](../../../oracle-mvp-hierarchy-hr35-v53/target/hierarchy-hr35-v53-thousand-note-v1/input-controls.json)
 and [native state](../../../oracle-mvp-hierarchy-hr35-v53/target/hierarchy-hr35-v53-thousand-note-v1/HR35/state.json)
 retain exact controls. Initial execution source is d2c13d78, shared coordinator
-36dfcf63 and frozen teacher transport 1cfdd6a7. Construction, final coverage,
-semantic review and final native accounting are pending. No review UI requested.
+36dfcf63 and frozen teacher transport 1cfdd6a7. The native run exited zero with
+`execution_status=complete` and no terminal errors. No review UI requested.
 
 The root lineup checkpoint has six roots and **670 distinct notes beneath
 roots**. The additional root membership pass clustered each root with the
@@ -1933,7 +1934,7 @@ same 5,662 globally untracked entries and added **zero entries** to every root.
 Its combined advancement, including child-family preparation and native checks,
 took **1,313.087 seconds (21m 53s)**. These are observed costs for this stage,
 not a pure clustering benchmark or a final construction duration. Six child
-families were then prepared; recursive construction remains running. The exact
+families were then prepared. The exact
 [before-pass checkpoint](../../../oracle-mvp-hierarchy-hr35-v53/target/hierarchy-hr35-v53-thousand-note-v1/HR35/root-lineup-before-membership-state.json)
 and [after-pass checkpoint](../../../oracle-mvp-hierarchy-hr35-v53/target/hierarchy-hr35-v53-thousand-note-v1/HR35/root-lineup-after-membership-state.json)
 preserve this bounded negative result without another teacher run.
@@ -1944,12 +1945,11 @@ including warmups, 110 exact reuses, zero failures/retries and complete fresh
 usage**. Fresh API-equivalent cost is **$0.3163536**, with zero incremental
 subscription cash charge. Tokens: 40,588 uncached input, 101,376 cached input
 and 22,504 output, including 15,515 reasoning tokens. These are the root-definition
-stage only; copied Bootstrap dispatches are historical, and final child-stage
-accounting remains pending. HR30 used V5, so any eventual HR30-to-HR35 difference
-combines V5.1, V5.2 and V5.3 changes and newly required model answers; it cannot
-isolate a V5.3-only gain.
+stage only; copied Bootstrap dispatches are historical. HR30 used V5; the
+HR30-to-HR35 difference combines V5.1, V5.2 and V5.3 changes and newly required
+model answers. It cannot isolate a V5.3-only gain.
 
-The current continuation uses Oracle source `835f91dc`, shared coordinator
+The completed continuation used Oracle source `835f91dc`, shared coordinator
 `38561fe` and a verified optimized multicore numerical executable. Its local
 budget is **24 CPUs, leaving four for other system work**. Original numerical
 parameters, prompts, meaning/vector evidence and the frozen `1cfdd6a7` teacher
@@ -1960,4 +1960,52 @@ bug before model dispatch; its failed invocation is retained and the guarded
 launcher is now integrated. Construction resumed after its production-path
 regression and checkout/executor checks passed. See the
 [real-input numerical and audit checks](hierarchy-advancement-performance.md#saved-1000-note-input-checks).
-Final hierarchy coverage and whole-run accounting remain pending.
+
+The final graph has **169 canonical nodes, six roots, at most six children and
+four levels**. All 42 sibling lineups are complete. All 163 edges strictly
+narrow the observed distinct-note set. **718 of 1,000 notes are beneath roots**;
+282 are outside them. Against HR30's 582 covered notes, this gains 148 and loses
+12, retaining 570. These are coverage observations, not semantic approval.
+The root-lineup checkpoint covered 670 notes; subsequent membership passes
+brought 48 additional notes beneath the roots. Top-container direct notes are
+excluded from these counts and from the existing viewer export.
+The completion summary's legacy `notes_not_in_hierarchy` field includes those
+top-container associations and reports only the one null-only note; it is not
+the root-coverage measure. Use the audit's `note_coverage` for visible coverage.
+
+| Root | Distinct notes, including descendants |
+| --- | ---: |
+| Information, communication and relationships | 313 |
+| Finance, technology and society | 206 |
+| Arts, sound and communication | 134 |
+| Food and dining | 89 |
+| Tools and techniques | 63 |
+| Life and experience | 192 |
+
+Notes shared between roots count once in the 718-note total. The
+[native completion summary](../../../oracle-mvp-hierarchy-hr35-v53/target/hierarchy-hr35-v53-thousand-note-v1/HR35/run-summary.json)
+and [native structural audit](../../../oracle-mvp-hierarchy-hr35-v53/target/hierarchy-hr35-v53-thousand-note-v1/HR35/structural-audit.json)
+retain the full source evidence. The audit's overall coverage requirement is
+not met because 282 selected notes are outside the roots; meanings remain
+ungraded. State SHA-256:
+`aac564fa745ac4a1d753e3f96af0a8bfa56c9bafe9b751a992a8cd5f81d2dd79`.
+
+[Native consolidation accounting](../../../oracle-mvp-hierarchy-hr35-v53/target/hierarchy-hr35-v53-thousand-note-v1/usage-new.json)
+records 427 valid cases across 81 batches: **398 fresh attempts including
+warmups and retries, 110 exact reuses, two recovered failures and no terminal
+case failures**. Two failed attempts lack usage; **$1.5345656 is the known
+fresh API-equivalent subtotal, not a complete cost**. Known tokens are 242,339
+uncached input, 501,376 cached input, zero cache writes and 99,975 output,
+including 65,854 reasoning tokens. Incremental subscription cash charge is zero.
+The [all-producer report](../../../oracle-mvp-hierarchy-hr35-v53/target/hierarchy-hr35-v53-thousand-note-v1/usage-all-producers.json)
+contains 7,463 valid cases and 7,146 reuses, including the 7,036 copied Bootstrap
+answers. Its original-generation accounting is historical: 7,563 calls and a
+known $53.3270764 catalog subtotal, with six missing usages. It is not new HR35
+spending or a measured policy saving.
+
+The comparison workbook was updated and reopened. Retain the execution and
+performance-evidence worktrees for frozen sources, receipts, vectors, original
+and replacement numerical executables, and linked replay evidence. The next
+semantic check is the 12 notes lost against HR30. The observed remaining
+runtime costs are recorded in
+[advancement performance](hierarchy-advancement-performance.md#observed-costs-at-hr35-completion).
