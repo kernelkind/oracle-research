@@ -67,6 +67,15 @@ references. These are diagnostic observations, not demonstrated rejections or
 new admission rules. No new encodings, LLM calls, training or graph changes were
 introduced.
 
+The authorized best-matching-group probe replaces the 67-entry Tools mean with
+the largest of its 14 group means, retaining the other-root denominator. At
+full-meaning beta 5.5, Bots `L02610` selects Software agents and its ratio rises
+from 0.890 to 2.715. Cameras selects Data communication links and rises from
+1.177 to 2.022 despite weak member cosines of 0.377 and 0.113. Every score must
+increase or stay equal by construction; these increases are not measured
+admission improvements. Work remains ungraded, no negative control is invented,
+and no threshold or production rule is selected.
+
 ## Frozen source and baseline
 
 State:
@@ -1313,3 +1322,94 @@ target/food-halves-v1/tools-reanalysis-v1/
   status, original group supports and exact nearest-member connections.
 - `verification.json`: protected-input hashes, preserved old scores/metrics and
   confirmation that no established negative controls remain in this Tools panel.
+
+## Best-matching original Tools group
+
+The user authorized probing whether a narrow candidate obtains more useful
+support from its best-matching Tools group than from the mean across all 67
+creation entries. The original 14 group memberships, twelve cases, saved vectors,
+pooling methods, beta values and source-note exclusions are fixed. The three
+background denominators are copied unchanged. No synthetic group or root vector
+is used: each group score is calculated from its original entry vectors.
+
+For each candidate, calculate the mean of `exp[-beta * (1 - cosine)]` within
+each of the 14 groups, then take the largest mean as the Tools numerator. Exact
+ties use ascending group ID. This is the existing affinity transformation
+followed by a group mean; the selected group need not have the largest raw mean
+cosine. The table uses full-meaning pooling, beta 5.5 and the unchanged pooled
+other-root denominator. Work is not a negative; the two qualified AI-field
+entries remain ungraded in the complete saved evidence.
+
+| Candidate | Selected original group | Group entries | Whole-root ratio | Best-group ratio |
+|---|---|---:|---:|---:|
+| Open-source software `L01598` | G536 Software updates | 3 | 6.446 | 20.717 |
+| AI agents `L02182` | G172 Computer code | 3 | 4.940 | 12.137 |
+| Bots `L02188` | G172 Computer code | 3 | 6.719 | 19.622 |
+| Bots `L02610` | G153 Software agents | 3 | 0.890 | 2.715 |
+| AI processors `L02882` | G100 Practical tools | 3 | 6.190 | 12.692 |
+| Apps `L03672` | G100 Practical tools | 3 | 6.910 | 15.088 |
+| Servers `L03830` | G579 Data communication links | 2 | 3.941 | 9.044 |
+| Work `L04032` | G171 Software developers | 3 | 8.798 | 17.943 |
+| Code `L04036` | G172 Computer code | 3 | 6.672 | 16.711 |
+| Cameras `L04837` | G579 Data communication links | 2 | 1.177 | 2.022 |
+
+For Bots `L02610`, the selected Software agents group is interpretable evidence:
+its three member cosines are 0.5789 and 0.5444 to Software agents, and 0.4024 to
+Operators of software agents. Mean group affinity is 0.07255, versus 0.02379
+across the whole root. The other-root affinity remains 0.02672. Using this
+relevant group therefore avoids much of the dilution from averaging all Tools
+members. The stronger 0.8565 Social-media bots match elsewhere still increases
+the denominator; this probe does not remove the penalty for useful overlap.
+
+Cameras is different. The chosen Data communication links group contains Data
+cables, cosine 0.3770, and Digital connections, 0.1131. Its raw mean cosine is
+only 0.2450. Mean group affinity rises to 0.02005 from whole-root affinity
+0.01167, but this does not create a convincing Camera-specific match. Computer
+technology has a slightly higher raw mean cosine, 0.2583; the existing nonlinear
+affinity transformation nevertheless gives Data communication links the higher
+mean affinity. This distinction is preserved rather than calling the selected
+group the highest mean-cosine group.
+
+The maximum group mean is mathematically at least the entry-weighted mean of
+all groups. Every candidate receives a higher score or a tie regardless of
+semantic fit. All twelve primary selected groups have two or three entries,
+although group sizes range from two to fifteen; the probe does not control
+group-size or maximum-selection effects. A ratio crossing 1 therefore does not
+establish improved recall, precision or valid admission. This Tools panel still
+has no established non-fitting control and supplies no accuracy estimate.
+
+| Full-meaning beta | Bots selected group / ratio | Cameras selected group / ratio |
+|---|---|---|
+| 1 | G153 Software agents / 1.290 | G431 Computer technology / 1.138 |
+| 5.5 | G153 Software agents / 2.715 | G579 Data communication links / 2.022 |
+| 20 | G153 Software agents / 0.985 | G579 Data communication links / 0.710 |
+
+These two cases have identical scores and selections after source-note exclusion
+at each beta. Alternative pooling changes the selected evidence: at beta 5.5,
+title pooling selects Computer technology for Bots `L02610` (ratio 7.260), while
+first-sentence pooling selects Data communication links (1.527). First-sentence
+Cameras also selects Data communication links but reaches 5.816. Those larger
+values are not evidence of better semantic matches. All representations and
+sensitivities remain in the saved evidence; no winner is selected afterward.
+
+Seven protected sources pass their hashes. Independent scalar calculations from
+the saved cosine matrix reproduce all 3,024 group means across 216 candidate
+settings, with maximum absolute error `2.220446049250313e-16`. Entry-weighted
+group means reproduce the prior whole-root scores. All maxima are at least the
+old mean, all backgrounds are unchanged and all output hashes pass. No new
+encoding, LLM inference, training, hierarchy modification or UI update occurred.
+
+Retained ignored evidence:
+
+```
+target/food-halves-v1/tools-best-group-support-v1/
+```
+
+- `plan.json`: frozen method, exact controls and source hashes; SHA256
+  `09d682cfdb6680cf39ddbfd1ed58119504aec9a48207133efc7615e31c78709b`.
+- `scores.json`: all 14 group scores, selected and runner-up groups, selected
+  original entry definitions/cosines and old/new ratios for all backgrounds.
+- `summary.json`: all twelve primary results and complete Bots/Cameras
+  sensitivity checks, without Work-based correctness grading.
+- `calculate.py`, `verification.json`: source-bound calculation and independent
+  numerical integrity checks. This remains a probe, not an admission policy.
