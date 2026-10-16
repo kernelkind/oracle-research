@@ -44,6 +44,12 @@ the focused full-meaning comparison to 77/78 at the same setting. The larger
 panel improves only from 713/728 to 716/728: nine comparisons improve and six
 worsen. This is another diagnostic probe, not adoption of an admission rule.
 
+Giving each other root equal background weight has no net gain at the primary
+full-meaning setting: 77/78 and 716/728 remain the totals. The focused comparisons
+are identical; the larger panel trades one improved ordering for one worsened
+ordering. Unequal root sizes do not explain the main remaining failures on this
+panel. Neither background weighting is selected as a production policy.
+
 ## Frozen source and baseline
 
 State:
@@ -944,3 +950,61 @@ target/food-halves-v1/other-root-background-probe-v1/
 - `report.md`, `verification.json`: compact comparisons, all larger-panel
   failures, sensitivity and integrity checks. Every member cosine remains in
   the preceding probe's source-bound `cosines.npz`.
+
+## Equal-root background weighting probe
+
+The user authorized testing equal weights for the other five roots. The previous
+denominator pooled their 1,473 original entries, so Information's 463 entries
+contributed more total weight than Tools' 91. The new denominator first takes
+each root's mean member affinity, then averages those five means. Every root
+therefore supplies 20%, while members within each root remain equally weighted.
+Food's own 175 references retain their previous weights.
+
+Only this combination of the saved root means changes. All source meanings,
+memberships, vectors, cases, fixed beta values and same-note exclusions remain
+unchanged. The score remains `log(food_support / background_support)`. No new
+encoding, LLM inference, training, hierarchy modification or fitted threshold
+is involved. Both alternatives compare original members, not synthetic roots.
+
+| Pooled text, beta 5.5 | Pooled other-root entries, focused 78 | Equal roots, focused 78 | Pooled entries, all 728 | Equal roots, all 728 |
+|---|---:|---:|---:|---:|
+| Title | 55 / 78 | 54 / 78 | 657 / 728 | 657 / 728 |
+| Full meaning | 77 / 78 | 77 / 78 | 716 / 728 | 716 / 728 |
+| First sentence | 68 / 78 | 69 / 78 | 712 / 728 | 712 / 728 |
+
+For full meanings, none of the focused orderings changes. Caffeine still scores
+above Wine `L04121`. On the broader panel, Drinks `L01143` improves above
+Gardening `L03273`, but Beverages `L06837` worsens below generic Eggs `L02984`.
+The totals conceal this one-for-one exchange. The same exchange occurs when
+all references from the candidate's source note are excluded.
+
+| Full-meaning beta | Pooled entries, focused 78 | Equal roots, focused 78 | Pooled entries, all 728 | Equal roots, all 728 |
+|---|---:|---:|---:|---:|
+| 1 | 72 / 78 | 72 / 78 | 712 / 728 | 711 / 728 |
+| 5.5 | 77 / 78 | 77 / 78 | 716 / 728 | 716 / 728 |
+| 20 | 46 / 78 | 46 / 78 | 644 / 728 | 645 / 728 |
+
+The focused full-meaning outcomes are unchanged at all three fixed settings,
+including the source-note exclusion variant. Small effects on other pooling
+methods or the larger panel do not establish an overall improvement. This probe
+does not support unequal root size as the main remaining mechanism here.
+
+All 972 candidate/setting calculations retain their original Food numerator and
+individual root means. Recombining member counts independently reproduces the
+old denominator; equal-weight means lie between the individual root means and
+are invariant to root order. All input/output hashes and improved/worsened pair
+counts reconcile. Actual HR35 reachable coverage remains 718 notes.
+
+Retained ignored evidence:
+
+```
+target/food-halves-v1/equal-root-background-probe-v1/
+```
+
+- `plan.json`: frozen weighting contrast and protected inputs; SHA256
+  `715d668d6f5bb3638f8ca21c743e17ff3c5090b251bf0396b9393492276aeb9c`.
+- `scores.json`: all original root means, old/new root weights, unchanged Food
+  support and both background scores for every fixed setting.
+- `metrics.json`: every old/new pair ordering and all individual changes.
+- `report.md`, `verification.json`: compact results, complete failure lists,
+  sensitivity and integrity checks. These are probes, not admission requirements.
