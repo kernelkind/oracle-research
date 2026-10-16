@@ -76,6 +76,15 @@ increase or stay equal by construction; these increases are not measured
 admission improvements. Work remains ungraded, no negative control is invented,
 and no threshold or production rule is selected.
 
+The subsequent matched probe takes the best original-group mean in every root,
+instead of comparing Tools' best group with a pooled mean elsewhere. Work still
+has its strongest group support in Tools. Bots `L02610` and Cameras have stronger
+group support in Information, with Tools/strongest-other ratios 0.466 and 0.267.
+These are comparisons of competing evidence, not exclusive assignments or
+rejections. The group-only comparison excludes 350 originally ungrouped accepted
+members on all sides and reports their strongest matches separately. Unequal
+root group counts remain uncontrolled; no admission threshold is selected.
+
 ## Frozen source and baseline
 
 State:
@@ -1413,3 +1422,113 @@ target/food-halves-v1/tools-best-group-support-v1/
   sensitivity checks, without Work-based correctness grading.
 - `calculate.py`, `verification.json`: source-bound calculation and independent
   numerical integrity checks. This remains a probe, not an admission policy.
+
+## Best original group in every root
+
+The user approved calculating the best-matching group in each root and showing
+the scores side by side. The preceding test changed only Tools' numerator: it
+divided a maximum group mean by a mean over all other-root entries. The new
+comparison applies the same maximum-group-mean rule to all six roots, using the
+same saved cosine matrices, kernel, beta values and source-note exclusions.
+Tools' 14 groups and all of its scores remain exactly unchanged.
+
+Each reference group contains the actual recursively supporting originals from
+one initial HDBSCAN group. All selected original groups are complete in this
+saved state; no omitted member is imported from outside a root. Two roots gained
+an additional original group after creation: Information has Friends `G345`, and
+Life has the Truth Social/Truth group `G071`. Those accepted members are retained.
+Originally ungrouped accepted entries are excluded from every root's group
+maximum, rather than combined into an artificial group. Their strongest cosine
+matches are reported separately. Saved membership is not semantic gold.
+
+| Root | Original groups | Grouped original entries | Ungrouped entries excluded from group score |
+|---|---:|---:|---:|
+| Information, communication and relationships | 52 | 392 | 71 |
+| Finance, technology and society | 37 | 328 | 93 |
+| Arts, sound and communication | 19 | 162 | 63 |
+| Food and dining | 15 | 137 | 38 |
+| Tools and techniques | 14 | 67 | 24 |
+| Life and experience | 35 | 212 | 61 |
+| Total | 172 | 1,298 | 350 |
+
+For each root, take the largest group mean of
+`exp[-beta * (1 - cosine)]`. Exact ties use ascending group ID. The following are
+raw mean-affinity scores at full-meaning pooling and beta 5.5; a larger number
+indicates a stronger match under this calculation, not containment. Short column
+labels refer to the full root names in the preceding table. The two AI-field
+cases marked qualified remain ungraded, and Work is not a negative control.
+
+| Candidate | Information | Finance | Arts | Food | Tools | Life |
+|---|---:|---:|---:|---:|---:|---:|
+| Open-source software `L01598` | 0.0451 | 0.0418 | 0.0268 | 0.0171 | 0.2282 | 0.0081 |
+| AI agents `L02182` | 0.0672 | 0.0574 | 0.0349 | 0.0260 | 0.2008 | 0.0487 |
+| Bots `L02188` | 0.1196 | 0.0394 | 0.0306 | 0.0133 | 0.2659 | 0.0455 |
+| Artificial intelligence `L02375`, qualified | 0.0941 | 0.0338 | 0.0531 | 0.0179 | 0.2065 | 0.0915 |
+| Bots `L02610` | 0.1558 | 0.0339 | 0.0182 | 0.0256 | 0.0726 | 0.0502 |
+| AI processors `L02882` | 0.0437 | 0.0226 | 0.0458 | 0.0119 | 0.1520 | 0.0365 |
+| Apps `L03672` | 0.1711 | 0.0289 | 0.0448 | 0.0271 | 0.2606 | 0.0272 |
+| Servers `L03830` | 0.1352 | 0.0554 | 0.0530 | 0.0303 | 0.2061 | 0.0303 |
+| Work `L04032` | 0.0481 | 0.0211 | 0.0215 | 0.0124 | 0.1807 | 0.0201 |
+| Code `L04036` | 0.1477 | 0.0410 | 0.0284 | 0.0096 | 0.2281 | 0.0329 |
+| Cameras `L04837` | 0.0752 | 0.0112 | 0.0270 | 0.0116 | 0.0201 | 0.0328 |
+| Artificial intelligence `L06971`, qualified | 0.1195 | 0.0315 | 0.0476 | 0.0183 | 0.1256 | 0.1640 |
+
+The earlier ratio compared Tools' best group to a pooled other-root mean. The
+new descriptive ratio compares it with the strongest other root's best group:
+
+| Candidate | Tools selected group | Strongest other group, under Information | Previous asymmetric ratio | Matched best-group ratio |
+|---|---|---|---:|---:|
+| Work `L04032` | G171 Software developers | G444 Web interfaces; Web technologies; Web development | 17.943 | 3.756 |
+| Bots `L02610` | G153 Software agents | G019 Social media; social-media platforms, accounts and sharing | 2.715 | 0.466 |
+| Cameras `L04837` | G579 Data cables; Digital connections | G057 Videos and related video entries | 2.022 | 0.267 |
+
+Work's Tools score remains 0.18072, compared with Information's 0.04811. Its
+strong match remains compatible with the user's assessment. Bots' Software
+agents group scores 0.07255, compared with 0.15577 for Information's ten-entry
+social-media group. The respective raw mean cosines are 0.5086 and 0.6471.
+Cameras' Tools group scores 0.02005, compared with 0.07525 for Information's
+fourteen-entry video group; their raw mean cosines are 0.2450 and 0.4961.
+These group scores reveal competing associations without establishing that
+either candidate should lose Tools membership.
+
+Social-media bots `L06128`, the earlier 0.8565 match for Bots, is originally
+ungrouped. It remains in Information but is not included in that root's group
+score. The separate strongest-ungrouped evidence preserves this match explicitly;
+the matched grouped comparison must not be presented as including every accepted
+member. Group counts also differ, giving roots different numbers of groups to
+take a maximum over. This probe does not correct that difference or supply an
+admission boundary. A larger score elsewhere cannot establish exclusion, and
+these Tools cases still have no established non-fitting control.
+
+| Full-meaning beta | Work Tools/strongest-other | Bots Tools/strongest-other | Cameras Tools/strongest-other |
+|---|---:|---:|---:|
+| 1 | 1.273 | 0.871 | 0.785 |
+| 5.5 | 3.756 | 0.466 | 0.267 |
+| 20 | 34.509 | 0.057 | 0.008 |
+
+For these three cases, full-meaning group scores and selected groups remain
+identical after source-note exclusion at every beta. All three pooling methods
+and all fixed settings remain saved; no setting is selected after inspection.
+
+Eight protected source hashes and all output hashes pass. Independent scalar
+kernel means reproduce all 37,152 group calculations across 216 candidate
+settings and 1,296 root results, with maximum absolute error
+`2.220446049250313e-16`. Tools' best-group score exactly reproduces the preceding
+probe in all 216 settings. No encoder or LLM calls, training, hierarchy changes,
+UI update or exclusive root assignment occurred.
+
+Retained ignored evidence:
+
+```
+target/food-halves-v1/all-roots-best-group-support-v1/
+```
+
+- `plan.json`: exact root groups/members, excluded ungrouped IDs, fixed method
+  and source hashes; SHA256
+  `5152a94b206e3892f927574bd8ebd5420f2c548ae110b3d1afe8a9c5542dd228`.
+- `scores.json`: every root/group mean, selected original-entry definitions and
+  cosines, strongest ungrouped evidence and both old/new ratios.
+- `summary.json`: all twelve six-root primary comparisons and the complete
+  Work/Bots/Cameras sensitivity results.
+- `calculate.py`, `verification.json`: source-bound calculation and independent
+  numerical checks. This is a matched score probe, not admission validation.
