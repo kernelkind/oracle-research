@@ -15,6 +15,15 @@ explicitly excluded LLM calls and training from this investigation. The classifi
 panels below are rejected methods; their separately reviewed cases remain useful
 controls. Their hypothetical coverage gains are not an allowed automatic solution.
 
+These comparisons are diagnostic probes, not admission requirements or proposed
+production rules. The user identified comparison with **all groups or nodes
+belonging to a canonical root**, rather than its synthetic definition, as the
+useful direction for probing the relationships. Synthetic-root ranking, including
+87/99, does not demonstrate admission quality. The 170-entry reference check
+samples one original entry per group and does not compare every constituent
+entry. No admission method, score aggregation, pooling policy or implementation
+has been decided through these probes.
+
 The saved-vector connection audit rejects the tested branch expansion rule. The
 subsequent controlled full-meaning comparison improves known-root ranking but
 worsens the difficult Food scope checks. First-sentence pooling does not resolve
