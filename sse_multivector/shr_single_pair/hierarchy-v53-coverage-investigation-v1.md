@@ -2,7 +2,9 @@
 
 Status: experimental findings, 2026-10-16. This is not a new HiGen version,
 production policy, human judgment set, or approval to change existing meanings.
-No provider calls, new encodings, hierarchy modifications, or UI updates were made.
+No provider calls, hierarchy modifications, or UI updates were made. The final,
+separately authorized pooling comparison generated 608 local SSE vectors; the
+earlier numerical panels used saved vectors only.
 
 ## Current scope and finding
 
@@ -13,10 +15,10 @@ explicitly excluded LLM calls and training from this investigation. The classifi
 panels below are rejected methods; their separately reviewed cases remain useful
 controls. Their hypothetical coverage gains are not an allowed automatic solution.
 
-The saved-vector connection audit at the end of this document rejects the tested
-branch expansion rule. No recovery policy is qualified, and HR35 still has 718
-reachable notes. The numerical evidence supports testing the vector representation
-before another tree-cut sweep, not changing the hierarchy or forcing all notes in.
+The saved-vector connection audit rejects the tested branch expansion rule. The
+subsequent controlled full-meaning comparison improves known-root ranking but
+worsens the difficult Food scope checks. Neither supplies a qualified admission
+rule. HR35 still has 718 reachable notes; no additions were applied.
 
 ## Frozen source and baseline
 
@@ -361,7 +363,7 @@ Food-representative cosine scores are 0.2298 for Coffee, 0.1696 for Tea, and
 single cutoff for those cases either. Exact title-and-meaning reuse, and exact
 saved-vector reuse, provide zero new-note matches.
 
-### Verified input representation and its next test
+### Verified input representation before the pooling comparison
 
 The actual frozen encoder request supplies `title + "\n\n" + explicit meaning`
 but selects only the title's byte span for pooling. The meaning is context, not
@@ -379,12 +381,10 @@ The scope distinction is weak in these saved similarities, and matching the same
 heading can outrank a pair sharing the culinary role. This does not prove the
 encoder ignores context, nor prove a different representation will succeed.
 
-The proposed next test is a controlled comparison of title pooling with pooling
-the full existing explicit meaning, using the same frozen SSE encoder and the
-same fixed positive and outside-scope cases. No wording, root scope, training or
-LLM changes are proposed. That would require new SSE encodings and has not been
-performed or approved by this saved-vector investigation. Its purpose is to test
-the representation before further cutoff changes, not to promise full coverage.
+The user subsequently authorized comparing title pooling with pooling the full
+existing explicit meaning, using the same frozen SSE encoder. That comparison
+is reported below. It does not change wording, root scope, hierarchy memberships
+or trained weights and makes no LLM requests.
 
 ### Retained numerical evidence
 
@@ -410,3 +410,188 @@ The one-off `calculate.py` is tied to this frozen HR35 packet; it is not a
 production constructor or provider-execution script. Dense all-pairs linkage is
 a bounded diagnostic here, not a proposed construction step at arbitrary scale.
 The source hierarchy hash is unchanged and actual reachable coverage remains 718.
+
+## Controlled title-versus-meaning pooling comparison
+
+One local native `worker.py` run encoded 304 unchanged definition inputs and
+returned 608 vectors. Each input was processed once; its title tokens and full
+explicit-meaning tokens were pooled separately from the same contextual token
+states. The input text remained `title + "\n\n" + explicit meaning`. The SSE
+backbone, learned projection, checkpoint, 512-token limit and eight-input batch
+size were unchanged. No text was truncated; the longest input was 344 tokens.
+
+The run used CPU, with affinity and numerical thread limits of 24 on this
+28-CPU allocation. No paid resource, provider request, LLM inference or training
+was started. It used the production worker CLI directly, as supported by the
+offline encoder workflow; no prompt experiment or hierarchy was constructed.
+The saved configuration's container label was retained, but this was host CPU
+execution, not a Docker invocation. Historical Torch 2.13.0+cpu, Transformers
+4.57.1 and Tokenizers 0.22.2 versions were matched.
+
+### Controls and reproducibility
+
+The plan was frozen before encoding. It includes all six exact final canonical
+root definitions, 99 assessed fitting entry/root combinations (96 earlier reviews
+and three culinary Eggs contrasts), 28 Food outside-scope controls and a fixed
+reference set of 170 selected entries.
+The reference set uses the lowest still-selected original ID in each original
+root reference group. Scope contrasts add exact saved definition pairs, including
+the three Eggs meanings. Scope assessments are agent judgments, not new human
+gold; the panel is retrospective and deliberately selected.
+
+For 302 inputs with an available historical title vector, the fresh title vector
+reproduced that vector within maximum absolute error 1.64e-7 and cosine error
+2.18e-13. Both are well below the frozen replay limits. Request hashes, receipt
+row identities, raw-vector hashes, model identities, source hashes and actual
+selected token spans passed verification. No hierarchy state or meaning changed.
+
+### Retrieval improves, admission is unresolved
+
+| Known-fitting root ranked first | Title pooling | Meaning pooling |
+|---|---:|---:|
+| Information, communication and relationships | 7 / 11 | 10 / 11 |
+| Finance, technology and society | 16 / 34 | 31 / 34 |
+| Arts, sound and communication | 2 / 3 | 3 / 3 |
+| Food and dining | 23 / 26 | 26 / 26 |
+| Tools and techniques | 8 / 9 | 6 / 9 |
+| Life and experience | 7 / 16 | 11 / 16 |
+| All reviewed combinations | 63 / 99 | 87 / 99 |
+
+The known-fitting root appears among the first three in 78/99 versus 97/99 cases.
+Among the 18 positives from the earlier random-note scope sample, first-place
+counts are 10/18 versus 14/18. These are ranking comparisons, not classification
+accuracy: several roots can legitimately fit one entry, and other roots are not
+assumed to be negative labels.
+
+In the same fixed 170-entry reference set, at least one member of the known root
+appears in the first five results in 93/99 versus 95/99 cases, and in the first
+ten in 95/99 versus 98/99. These measurements do not establish that HDBSCAN
+membership or a full hierarchy would improve.
+
+An additional diagnostic reuses these vectors to separate changing the local
+selection from changing the root selection. This is post-hoc, not a new frozen
+policy test, and generates no further vectors:
+
+| Local selection | Root selection | Known root first | Original Food pair orderings correct |
+|---|---|---:|---:|
+| Title | Title | 63 / 99 | 64 / 78 |
+| Title | Meaning | 73 / 99 | 39 / 78 |
+| Meaning | Title | 63 / 99 | 64 / 78 |
+| Meaning | Meaning | 87 / 99 | 53 / 78 |
+
+Changing only local pooling does not reproduce the overall ranking gain.
+Changing only root pooling also worsens the Food ordering checks. The combined
+result cannot be attributed solely to adding detail to the local definition.
+
+The original difficult Food panel gives the opposite result:
+
+| Food-versus-outside ordering check | Title pooling | Meaning pooling |
+|---|---:|---:|
+| Food example scores above outside example, original six controls | 64 / 78 (82.1%) | 53 / 78 (67.9%) |
+| Same check with all 28 outside controls | 328 / 364 (90.1%) | 327 / 364 (89.8%) |
+| Outside examples incorrectly ranking Food first, original six | 2 / 6 | 3 / 6 |
+| Outside examples incorrectly ranking Food first, all 28 | 5 / 28 | 5 / 28 |
+
+No acceptance threshold was fitted. Neither representation permits one threshold
+to separate all 13 focused Food examples from even the original six controls.
+Meaning pooling ranks Caffeine at 0.5378 against Food, above all focused valid
+Coffee, Tea, Bread and Wine examples; the strongest of those is Bread at 0.4579.
+Caffeine's definition permits consumption through foods, drinks **or other
+preparations**; it does not restrict the chemical to a food role. General
+Gardening also outranks most of the valid examples. Similarity is not containment.
+
+### Meaning-sensitive distinctions improve selectively
+
+| Pair | Title cosine | Meaning cosine |
+|---|---:|---:|
+| Reproductive/decorative Eggs versus culinary Eggs | 0.9874 | 0.6528 |
+| Reproductive/decorative Eggs versus Eggs as food | 0.9604 | 0.6710 |
+| Culinary Eggs versus Eggs as food | 0.9278 | 0.7704 |
+| Social-media platforms versus X social-media platform | 0.5620 | 0.7975 |
+| Emotional comfort versus Coziness | 0.3554 | 0.5716 |
+| Software applications versus Apps | 0.7119 | 0.5211 |
+| Publication versus Publishing | 0.7934 | 0.3903 |
+
+The culinary Eggs pair now outranks the reproductive/culinary pairs, a useful
+specific result. Other clear shared-topic comparisons become less similar.
+This supports further diagnosis, not replacing production pooling or announcing
+quality-preserving recovery.
+
+### Patterns in selected and omitted explicit meanings
+
+A separate descriptive check compares all 1,648 selected original entry/root
+memberships with the 96 prior-reviewed omitted combinations, excluding the
+three added culinary Eggs contrasts. It uses the saved definitions, not new
+labels, training or a fitted word detector.
+
+There is no consistent excess-length pattern: selected meanings have a median
+of 27 words, versus 25 in the reviewed omissions. Within Information the medians
+are 26 and 26; within Tools, 29 and 28; within Food, 26 and 29. The exact phrase
+"including but not limited to" occurs in 549/1,648 selected meanings (33.3%)
+and 20/96 omitted meanings (20.8%). These selected cohorts do not establish a
+population effect, but they do not support excessive verbosity or examples as
+a general distinguishing feature of the reviewed omissions.
+
+The stronger observed pattern is related topics expressed through different
+headings and defining classes:
+
+- Selected **Software applications** says applications are software programs
+  designed to help users perform tasks. Omitted **Apps** says software
+  application programs designed to help users perform particular tasks.
+- Selected **Computer code** and omitted **Code** both define programming
+  instructions specifying a computer program's operations.
+- Selected **Publication** and omitted **Publishing** both describe making
+  content available to the public.
+- Selected **Good wishes** and omitted **Holiday greetings** both explicitly
+  describe expressing goodwill or benevolent wishes.
+- Selected Food entry `L01112` expressly encompasses drinkable substances,
+  prepared dishes and beverages. The omitted Coffee, Tea and Wine entries
+  explicitly define beverages; the meaning connection is already present.
+
+None of the 96 omitted combinations shares an exact case-insensitive heading
+with an original entry selected under that root. This is an observation about
+these reviewed source-entry headings, not all missing entries or synthetic
+canonical headings. Whole topic families can be omitted even when their
+definitions are clear.
+
+The Food examples illustrate that concentration: only 2/175 selected Food
+meanings contain "beverage" or "beverages", compared with 16/23 reviewed Food
+omissions. The omissions were deliberately enriched with drink examples, so
+this is a description of a known missing class, not a prevalence estimate.
+Within Tools, 7/9 omitted meanings explicitly contain "software", although
+only one of their headings does. Those definitions already carry domain
+information not expressed in the short heading.
+
+The Caffeine failure suggests a separate distinction worth testing: a required
+defining class versus an optional use or example. Its food/drink wording is an
+optional use, while Coffee's beverage class is required. The present comparison
+does not isolate which clause causes the high score; a controlled clause-pooling
+ablation would be a new test, not a result or approved policy here.
+
+### Pooling-comparison evidence
+
+Retained ignored directory in the same task worktree:
+
+```
+target/food-halves-v1/full-meaning-pooling-v1/
+```
+
+- `plan.json`, `worker-request.json`, `worker-config.json`: frozen cases,
+  exact text, byte selections, reference membership, model and source identities.
+- `preflight.json`: token-limit and selection validation.
+- `worker-result/`: native worker receipt and 608 raw float32 vectors.
+- `results.json`: every reviewed score, root/reference ranking, Food ordering
+  comparison, scope-pair cosine and historical replay difference.
+- `supplementary-root-ranks.json`: every outside Food control's six-root scores.
+- `supplementary-factorial.json`: all four local/root selection combinations
+  evaluated on the same existing vectors, without tuning an acceptance threshold.
+- `meaning-patterns.json`: all compared IDs, per-root descriptive counts and
+  exact selected/omitted definition pairs.
+- `verification.json`: final source, span, receipt, replay and accounting checks.
+- `preparation-error-v1/`: a duplicate selection-ID error caught by native input
+  validation before inference; corrected globally unique IDs were then frozen.
+
+The one-off evaluation scripts are tied to this frozen packet and do not replace
+the production encoder or hierarchy constructor. All numerical source bindings
+remain unchanged after synchronization with local main. No policy was activated;
+actual reachable coverage is still 718 notes.
