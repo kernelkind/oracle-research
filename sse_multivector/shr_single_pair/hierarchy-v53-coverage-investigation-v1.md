@@ -57,6 +57,12 @@ places two of those nine above Work. This exposes a transfer failure on a narrow
 panel with one previously rejected example, not a general accuracy estimate.
 No new labels, encodings, model calls, training or graph changes were introduced.
 
+Restricting Tools references to the 67 entries in its 14 creation groups raises
+unadjusted full-meaning ordering from 2/9 to 4/9. All three full-meaning background
+adjustments remain at 0/9. The 24 later descendant additions therefore do not
+explain the adjustment's failure on this panel. Cases and backgrounds remain
+unchanged; no new encodings or model calls were needed.
+
 ## Frozen source and baseline
 
 State:
@@ -1137,3 +1143,74 @@ The Food improvement has not generalized to this Tools scope boundary. This
 does not select a different pooling policy for Tools or establish an admission
 rule. The general problem remains distinguishing task-related resemblance from
 membership while retaining genuine instruments such as Cameras.
+
+## Tools creation-group references only
+
+The user requested repeating the Tools probe using only its 14 creation groups.
+These contain 67 original entries from 55 distinct notes, exactly matching
+`C00005.original_ids` in the frozen HR35 state. The root has one definition
+version, no amendments and no additions from its own final membership pass.
+The other 24 recursive references entered through later descendant membership
+passes; they are excluded from this calculation.
+
+Only Tools' reference collection changes. The twelve queries, nine prior fitting
+assessments, one prior Work rejection and two ungraded AI-field qualifications
+remain identical. Saved title, full-meaning and first-sentence vectors, their
+complete encoder context, beta values and source-note exclusions remain fixed.
+The whole-corpus background and all five other-root member collections also
+remain unchanged. This compares original entries, not synthetic root or group
+definition vectors. Each retained entry has equal weight in the mean; groups
+with more entries contribute proportionately more weight.
+
+The table counts fitting entries scoring above the same Work control at beta
+5.5. Each cell shows the previous 91-reference result followed by the result
+using only the 67 creation entries. It remains a narrow, prior-agent-assessed
+panel with one outside example, not general admission accuracy.
+
+| Score | Title, 91 to 67 | Full meaning, 91 to 67 | First sentence, 91 to 67 |
+|---|---:|---:|---:|
+| Closest-member cosine | 6/9 to 6/9 | 5/9 to 5/9 | 0/9 to 0/9 |
+| Mean member support | 4/9 to 2/9 | 2/9 to 4/9 | 1/9 to 1/9 |
+| Whole-corpus background adjustment | 3/9 to 3/9 | 0/9 to 0/9 | 0/9 to 0/9 |
+| Other-root pooled background adjustment | 5/9 to 5/9 | 0/9 to 0/9 | 0/9 to 0/9 |
+| Other-root equal-weight adjustment | 7/9 to 7/9 | 0/9 to 0/9 | 0/9 to 0/9 |
+
+Apps, Bots `L02188`, Code and Servers now exceed Work on raw full-meaning member
+support; previously only Apps and Servers did. The new pooled-background ratios
+are still 8.798 for Work, 6.910 for Apps, 6.719 for Bots `L02188`, 6.672 for Code
+and 3.941 for Servers. Thus every background adjustment still puts Work above
+all nine fitting entries. Removing later additions improves raw support on this
+setting but does not explain or repair the adjusted-score failure.
+
+Excluding each query's whole source note leaves all primary full-meaning counts
+unchanged. At beta 1, raw support gives 1/9 and all three adjusted variants give
+0/9. At beta 20, raw support gives 5/9 and each adjustment gives 1/9. These
+sensitivity counts also remain identical with source-note exclusion. No
+threshold, per-root pooling rule or new admission method is selected. The
+previous supplementary cross-pooling diagnostic is not rerun here; this matched
+repeat covers all primary pooling methods and fixed sensitivity settings.
+
+Independent scalar kernel sums and recombination of the saved individual-group
+means reproduce every new member score. Recomputing the previous 91-entry mean
+from the saved cosine matrix matches all 216 old candidate/settings exactly;
+all saved background values remain exactly equal. Fifteen protected source
+hashes and all output hashes pass. The 90 metric groups retain
+every pair ordering and change. No new encoding, LLM call, training or hierarchy
+modification occurred; HR35 coverage remains unchanged.
+
+Retained ignored evidence:
+
+```
+target/food-halves-v1/tools-initial-groups-probe-v1/
+```
+
+- `plan.json`: source hashes, exact 67 included and 24 excluded IDs, unchanged
+  cases and fixed controls; SHA256
+  `ad872cc0d970bc536815e197bcc1f4afebd69c58817587d288620fdfb837018c`.
+- `scores.json`, `metrics.json`: every new score, unchanged background
+  contribution, old/new ordering and all sensitivity settings.
+- `reference-group-evidence.json`: definitions and provenance for every member
+  of the 14 retained groups.
+- `calculate.py`, `report.md`, `verification.json`: source-bound calculation,
+  compact comparisons and integrity checks. Original cosine matrices remain in
+  the preceding probe's ignored evidence directory.
