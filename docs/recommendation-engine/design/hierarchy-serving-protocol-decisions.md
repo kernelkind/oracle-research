@@ -71,7 +71,7 @@ Fetch that event:
 
 The root list follows `child` tag order in the starting event. A node's child
 list follows its `child` tag order; its notes follow its `e` tag order.
-Descendant notes appear in this node only if their IDs are explicitly listed.
+A node MUST NOT list a note ID that appears in any of its descendants.
 
 Root and immediate-child counts are small. Each node holds at most 500 direct
 note IDs. All lists are complete in their containing event; there is no

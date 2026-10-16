@@ -837,6 +837,13 @@ def add_commands(commands):
     p = commands.add_parser('export-canonical-viewer', help='export saved canonical nodes and original notes for review; no inference')
     p.add_argument('directory', type=Path)
     p.add_argument('--output', type=Path, required=True)
+    p = commands.add_parser('export-canonical-nostr', help='export a saved hierarchy as signed toy-protocol events; offline')
+    p.add_argument('directory', type=Path)
+    p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--secret-key-file', type=Path, required=True)
+    p.add_argument('--nak', default='nak', help='local nak executable')
+    p.add_argument('--created-at', type=int, help='event timestamp; default: current time')
+    p.add_argument('--uuid-namespace', help='reuse this UUID namespace when moving a hierarchy')
     p = commands.add_parser('shape-canonical-trial', help='select saved canonical nodes and witnessed containment edges; no inference')
     p.add_argument('--source', type=Path, required=True)
     p.add_argument('--output', type=Path, required=True)
@@ -1085,6 +1092,16 @@ def handle_command(args):
         except ImportError:
             from canonical_hierarchy_viewer import export_viewer
         print(json.dumps(export_viewer(args.directory, args.output), ensure_ascii=False, indent=2))
+        return 0
+    elif args.command == 'export-canonical-nostr':
+        try:
+            from .canonical_hierarchy_nostr import export_nostr
+        except ImportError:
+            from canonical_hierarchy_nostr import export_nostr
+        result = export_nostr(args.directory, args.output, args.secret_key_file,
+                              nak=args.nak, created_at=args.created_at,
+                              uuid_namespace=args.uuid_namespace)
+        print(json.dumps(result, ensure_ascii=False, indent=2))
         return 0
     elif args.command == 'shape-canonical-trial':
         try:

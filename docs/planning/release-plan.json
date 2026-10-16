@@ -96,7 +96,7 @@
       "track": "release",
       "title": "Build and test hierarchy service code",
       "status": "WAITING",
-      "description": "Deliver service code that serves a saved hierarchy snapshot through the Nostr protocol, with end-to-end local tests and serving instructions.\nThe toy snapshot protocol is agreed; implementation requires separate authorization. Testing needs the reviewed 100-note snapshot. Hosted operation is optional."
+      "description": "Deliver service code that serves a saved hierarchy snapshot through the Nostr protocol, with end-to-end local tests and serving instructions.\nThe toy protocol and offline signed-event exporter are available. Relay service implementation requires separate authorization; testing needs the reviewed 100-note snapshot. Hosted operation is optional."
     },
     {
       "id": "15",

@@ -1921,6 +1921,40 @@ define V3's stopping rule. V3's offline tests verify native orchestration,
 association preservation, pair ordering, recursion, leaf counts and resume.
 Real-model hierarchy quality remains unqualified.
 
+### Offline Nostr export
+
+`export-canonical-nostr` reads a complete saved hierarchy through the same
+source-verified graph reader as the review exporter. It writes signed JSONL
+events for the [toy snapshot protocol](../docs/recommendation-engine/design/hierarchy-serving-protocol-decisions.md):
+regular kind `8680` nodes, children before parents, followed by the replaceable
+kind `18680` starting event. Root and child order follow the saved review graph.
+
+Each node lists only source post IDs absent from all its descendants. This is
+the review UI's "outside children" calculation, including all notes at leaves;
+the constructor's meaning-level `direct_note_ids` field is not used. The display
+container and notes outside the roots are excluded. Note order matches the UI's
+sorted short labels; it does not establish a relevance ranking. Nodes with more
+than 500 direct post IDs are rejected.
+
+Requires local `nak` (used with 0.16.2) and a file containing a hexadecimal secret
+key. Replace `SAVED_HIERARCHY` and `KEY_FILE` with those paths:
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
+python3 sse_multivector/experiment.py export-canonical-nostr \
+  SAVED_HIERARCHY \
+  --secret-key-file KEY_FILE \
+  --output target/hierarchy-events.jsonl
+```
+
+The output file must be new and outside the saved hierarchy directory. Signatures
+and event hashes are verified before writing. The JSON summary gives the author,
+starting event ID, counts, timestamp, UUID namespace and source-state hash.
+UUIDs are stable for an author, saved hierarchy directory and local node ID.
+Reuse the reported `--uuid-namespace` when moving that hierarchy. `--created-at`
+sets an explicit timestamp; its default is the current time. This command
+performs no inference or relay publication.
+
 The following evidence describes historical V2 runs, not the V3 constructor.
 The user-authorized [HR08–HR10 provider trials](../docs/recommendation-engine/hierarchy-runs.md)
 have saved their initial L1 meanings. HR08 has exhausted eligible selection at
