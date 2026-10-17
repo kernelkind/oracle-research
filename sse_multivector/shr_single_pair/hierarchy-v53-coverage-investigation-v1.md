@@ -50,7 +50,7 @@ are provisional saved assessments, not validated admission accuracy. No method
 is adopted and no notes are added. The full experiment and decoder limitations
 are recorded in the neighborhood-fusion section below.
 
-The latest scoring control holds all 25 fused groups and 177 references fixed
+The preceding scoring control holds all 25 fused groups and 177 references fixed
 while switching both candidate and reference vectors between title pooling and
 meaning pooling. Title scoring fixes the three focused raw-score contrasts
 (Eggs/Wildlife, Smartwatches/publisher and camera Reviews/NBA struggles), but is
@@ -60,6 +60,18 @@ meaning-scored notes. Meaning-only scoring was a control, not an approved best
 choice; these results support neither replacing it globally nor treating the
 title cutoff's empty output as a validated conservative policy. Outside entries
 still do not participate in fusion itself. No admission or graph changes occur.
+
+The latest authorized test combines both outsider vectors against the fixed
+accepted connections. It rewards title and meaning matches to accepted entries
+joined by those connections; outsiders never become references or change the
+network. Compared with the same graph calculation using only meanings, the
+combined raw score improves older Tools from 414 to 424 of 456 orderings and
+later Tools from 268 to 274 of 297, but worsens Food from 593 to 590 of 609 and
+155 to 150 of 162. It still places Wildlife above accepted egg decoration.
+A separately defined accepted-reference parity screen flags Servers and Software
+clients; both were already among the earlier meaning-only candidates. This is
+not a new coverage gain or an adopted admission rule. Its new reference scale
+and three unavailable small-group scales are explicit below.
 
 The user clarified the interpretation for this investigation: "the root is not
 about food only. it does not have a fixed meaning yet." Its saved title and
@@ -4001,12 +4013,11 @@ contains useful complementary information, but substituting it globally loses
 broader-panel orderings and all ten cutoff selections. More cutoff tuning on
 these same selected cases would not establish general admission quality.
 
-The next useful test would include the outside entries alongside the root's
-reference entries in both title and meaning fusion networks, then report which
-outside entries share resulting groups with existing root members. That would
-test both representations during the actual cross-pool grouping, instead of
-keeping outsiders absent from fusion and varying only a later score. This is
-a proposed numerical probe, not a new membership policy or work begun here.
+Including outsiders in the reference networks was proposed at this point, but
+the subsequent discussion identified the risk of outsiders reshaping the
+accepted reference. The user instead authorized a query-only combination with
+accepted networks and groups held fixed, reported below. No outsider is inserted
+into a reference network and no such insertion is approved by this record.
 
 Ignored evidence:
 
@@ -4029,3 +4040,172 @@ target/food-halves-v1/fused-group-title-meaning-scoring-v1/
 This probe makes zero LLM calls, encodings, clustering runs, training runs,
 hierarchy changes or UI updates. Completed maintained findings land on local
 `main`. The worktree remains for frozen vector paths and ignored evidence.
+
+## Combining outside title and meaning against fixed accepted connections
+
+The user authorized testing both outside vectors together while preserving the
+accepted reference. All 25 groups, 177 accepted reference entries, original
+fused weights, source meanings, query entries and saved assessments remain
+unchanged. No outsider is included in fusion, HDBSCAN or a reference vector set.
+No accepted entry is removed or redefined. There are no new model calls,
+encodings, clustering runs, training, graph placements or UI updates.
+
+### Frozen query rule and controls
+
+The experimental `sse_multivector/fixed_reference_query.py` computes support
+from the two query vectors and the already-saved accepted connections. For each
+group, let `t_i` be the outsider's title affinity to accepted entry `i`, `m_j`
+its meaning affinity to accepted entry `j`, and `C_ij` their fixed connection.
+Both affinities use the unchanged kernel `exp[-5.5 * (1 - cosine)]`.
+
+The combined score is:
+
+```
+sqrt(sum(C_ij * t_i * m_j) / sum(C_ij))
+```
+
+Self-connections and connections between entries from the same source note are
+excluded. All entries from the query's own source note are also excluded. This
+lets title and meaning match different accepted entries when those entries have
+a saved connection. No outside connection is written back. Every query is
+independent of other queries, and swapping its two views preserves the score
+because the accepted connections are symmetric.
+
+Matched single-view controls substitute `t_i * t_j` or `m_i * m_j` into exactly
+the same weighted calculation. A separate control combines both views at each
+same reference entry, `sqrt(mean(t_i * m_i))`, without accepted connections.
+It uses the same eligible groups. This is the stated square-root-of-mean-product
+control, not a claim to have tested every arithmetic vector blend.
+
+The primary comparison uses the largest raw group score. Formulas and controls
+were frozen before query scores were calculated. No weights, thresholds or
+labels are fitted. This custom query rule is not published SNF inference or a
+Nyström implementation. The literature confirms that extending a fixed graph
+to new inputs is a separate problem, but does not validate this proposed score:
+[Bengio et al., 2003](https://proceedings.neurips.cc/paper/2003/hash/cf05968255451bdefe3c5bc64d550517-Abstract.html).
+
+### Raw ranking results
+
+The following counts useful entries above provisionally unsupported entries on
+the unchanged overlapping panels. They are dependent ordering checks, not
+semantic accuracy or recovered notes. Qualified and unresolved judgments stay
+separate in the saved results.
+
+| Saved panel | Root | Title through connections | Meaning through connections | Both through connections | Both without connections |
+|---|---|---:|---:|---:|---:|
+| Older 142 | Food | 589 / 609 | 593 / 609 | 590 / 609 | 590 / 609 |
+| Older 142 | Tools | 401 / 456 | 414 / 456 | 424 / 456 | 413 / 456 |
+| Later 86 | Food | 143 / 162 | 155 / 162 | 150 / 162 | 148 / 162 |
+| Later 86 | Tools | 261 / 297 | 268 / 297 | 274 / 297 | 271 / 297 |
+| Focused 32 | Food | 12 / 12 | 10 / 12 | 11 / 12 | 12 / 12 |
+| Focused 32 | Tools | 19 / 22 | 16 / 22 | 19 / 22 | 19 / 22 |
+
+Against the meaning-through-connections control, the combined score fixes 26
+older Tools orderings and worsens sixteen; later Tools fixes sixteen and worsens
+ten. Food fixes six and worsens nine on the older panel, then fixes two and
+worsens seven on the later panel. The accepted connections improve Tools over
+the no-connection combination by eleven older and three later orderings, with
+no reversed gains in those two comparisons. Food is less consistent.
+
+The combined raw score places Smartwatches above the publisher (`0.028423`
+versus `0.021172`) and camera Reviews above NBA struggles (`0.050600` versus
+`0.036318`). Egg decoration still falls slightly below Wildlife (`0.032272`
+versus `0.032882`). The combination without accepted connections keeps Eggs
+above Wildlife, so the accepted network does not automatically improve every
+contrast. The egg-decoration note has prior human acceptance; negative-control
+assessments remain agent judgments. Typical Food losses involve Mugs, Tea and
+Coffee falling below previously reviewed unsupported cases.
+
+These results establish some complementary information in the two query views,
+particularly for Tools. They do not establish a better global admission method.
+The prior whole-root mean still has stronger broad-panel counts, using a
+different, larger reference pool. No baseline or unfavorable case is discarded.
+
+### Separate reference-level screen
+
+A graph query score cannot reuse the old internal-cosine denominator as if it
+were the same measurement. The frozen secondary diagnostic instead scores each
+accepted group member with that same query rule, excluding its entire source
+note from both eligible references and connection endpoints. The group's
+reference level is the mean of all these scores. Graph weights remain fixed;
+this is an in-sample reference scale, not an independently held-out semantic
+calibration or a fitted classifier.
+
+If any reference member lacks surviving eligible connections, the group has no
+relative score. Three two-entry Food groups are unavailable: `fused-012`,
+`fused-013` and `fused-014`. The last is the Food pair that supported Milk, Tea
+and Water in the earlier diagnostic. After excluding either member's note,
+there is no remaining pair to evaluate. Their raw scores remain present; no
+missing reference score becomes zero. All methods use the same 22 eligible
+groups for this secondary comparison: twelve Food groups and all ten Tools
+groups, giving 88 available method/group scales and twelve unavailable ones.
+
+The diagnostic divides each outside group score by its reference level and
+takes the largest ratio. Parity at one is tested without tuning, but its scale
+definition differs from the preceding cosine/internal-mean cutoff. Selection
+counts across those different rules are not a controlled measurement of the
+combination alone.
+
+The combined rule selects only Servers `L03830` (`1.045489`) and Software clients
+`L04264` (`1.816696`), both through `fused-009`. Both are existing plausible
+assessments, and both were already among the earlier ten meaning-only candidate
+notes. No new reviewed source note is recovered relative to that earlier set.
+The matched title-through-connections control selects Digital platforms and
+Software clients; meaning-through-connections selects
+nine cases, including one qualified case; the no-connection combination selects
+none. All case identities and original assessments are retained.
+
+### Verification and limits
+
+Six new production-path tests failed first for the missing module, then passed.
+They check explicit weighted-pair arithmetic, support for linked versus
+disconnected matches, view-swap invariance, input immutability, independent
+batch versus separate queries, unavailable self-only graphs and invalid inputs.
+Together with the fusion and existing hierarchy-HDBSCAN tests, 23 checks pass.
+
+Independent scalar verification checks both pooled vectors for all 357 used
+entries, 714 source/vector bindings, 95,226 affinities, all 177 reference folds,
+100 available/unavailable group scales, 4,500 query/group results, 360 query/root
+results, 4,268 ordering records, 48 metric cells, 36 change records and 24 parity
+screens. Maximum scalar discrepancy is `5.995204332975845e-15`. All eighty
+protected source hashes, including the accepted network files, remain unchanged.
+
+The calculation has accepted-reference columns only: no outside entry can
+become a reference or influence another query. An unused outside/outside kernel
+block in the initial arithmetic was removed; its earlier outputs are retained
+under `matrix-simplification-v1/` and replay within `2.220446049250313e-16`, with
+unchanged rankings and selections. The experimental sparse helper takes a
+query-to-reference matrix and fixed accepted graph. With at most `k` query links
+and accepted degree `k`, its intermediate product has at most `Q*k*k` entries
+for `Q` independent queries. The current probe uses groups of at most 21 entries;
+exact affinity retrieval, cached reference-fold work and corpus-scale admission
+remain unqualified. No full-corpus construction or index is introduced.
+
+The useful next investigation is the Food orderings worsened by combining the
+views, before introducing another score or changing the cutoff. That can use
+these saved query/reference meanings and fixed connection contributions. It
+is proposed only; no new source review, labels, rule or inference begins here.
+
+Ignored evidence:
+
+```
+target/food-halves-v1/frozen-reference-combined-query-v1/
+```
+
+`plan.json` freezes the custom rule, matched controls, source-note exclusions,
+reference-level construction and eighty source hashes; SHA256
+`0afea59203625fe644f07a82466f2dc16403c94d8b58a5bb8077710f2348520d`.
+`kernel-matrices.npz`, `reference-fold-scores.json`, `group-scales.json`,
+`all-group-query-scores.json` and `all-root-query-scores.json` preserve every
+term needed to reproduce the scores. `panel-metrics.json`,
+`panel-pair-orderings.json`, `combined-versus-controls.json`,
+`fixed-parity-screen.json` and `distinct-screen-cases.json` preserve every
+ordering and selected/unresolved case. `previous-scoring-controls.json` remains
+an exact copy of the preceding single-view scores. `source-evidence.json`,
+`summary.json` and `verification.json` retain the original evidence, bounded
+accounting and independent checks.
+
+The actual hierarchy still reaches 718 notes. Completed experimental query
+code, tests and maintained findings land on local `main`; the task worktree
+remains for frozen vector paths and ignored evidence. No production policy is
+activated.
