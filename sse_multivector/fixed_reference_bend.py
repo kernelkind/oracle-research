@@ -13,6 +13,7 @@ from collections import Counter
 import math
 
 import numpy as np
+from scipy import sparse
 
 
 def mean_support(affinities, query_notes, reference_notes, group_indices, *, excluded_notes=()):
@@ -40,7 +41,8 @@ def mean_support(affinities, query_notes, reference_notes, group_indices, *, exc
 
 
 def derive_boundary(reference_affinities, reference_notes, group_indices, *,
-                    excluded_notes=(), orientation='x_minus_y', anchor=None):
+                    excluded_notes=(), orientation='x_minus_y', anchor=None,
+                    context_connections=None):
     """Fit the strongest central-80% bend in a reference-only support curve.
 
     Equal scores share a level; trim ceil(10% of distinct levels) from each end.
@@ -52,6 +54,10 @@ def derive_boundary(reference_affinities, reference_notes, group_indices, *,
     member's cross-note support. Keep that point as the fitted upper endpoint;
     retain the original lower trim. Recompute the anchor after note exclusions.
     A member without cross-note support makes this anchored fit unavailable.
+
+    Optional fixed symmetric context_connections restrict curve entries to the
+    remaining group members and their direct positive neighbors. Edge weights
+    select context only; they are never compared with meaning-support scores.
     """
     a = np.asarray(reference_affinities, dtype=float)
     if a.shape != (len(reference_notes), len(reference_notes)):
@@ -66,8 +72,15 @@ def derive_boundary(reference_affinities, reference_notes, group_indices, *,
     scores = mean_support(a, reference_notes, reference_notes, group_indices,
                           excluded_notes=excluded)
     group = [i for i in group_indices if reference_notes[i] not in excluded]
-    context = [i for i, note in enumerate(reference_notes)
-               if note not in excluded and np.isfinite(scores[i])]
+    candidates = range(len(reference_notes))
+    if context_connections is not None:
+        c = sparse.csr_matrix(context_connections, dtype=float)
+        if (c.shape != a.shape or not np.all(np.isfinite(c.data)) or np.any(c.data < 0)
+                or (c-c.T).nnz):
+            raise ValueError('context connections must be aligned, finite, nonnegative and symmetric')
+        candidates = sorted(set(group) | {int(i) for i in c[group, :].nonzero()[1]})
+    context = [i for i in candidates
+               if reference_notes[i] not in excluded and np.isfinite(scores[i])]
     result = dict(status='no_group_reference' if not group else 'insufficient_levels',
                   threshold=None, group_indices=group, context_indices=context,
                   orientation=orientation, curve=[])
@@ -116,7 +129,8 @@ def derive_boundary(reference_affinities, reference_notes, group_indices, *,
 
 
 def qualify_boundary(reference_affinities, reference_notes, group_indices, *,
-                     excluded_notes=(), orientation='x_minus_y', anchor=None):
+                     excluded_notes=(), orientation='x_minus_y', anchor=None,
+                     context_connections=None):
     """Check fixed group members with their entire source note withheld.
 
     Each fold excludes the note from both reference context and group members;
@@ -125,12 +139,13 @@ def qualify_boundary(reference_affinities, reference_notes, group_indices, *,
     excluded = set(excluded_notes)
     group = [i for i in group_indices if reference_notes[i] not in excluded]
     base = derive_boundary(reference_affinities, reference_notes, group,
-                           excluded_notes=excluded, orientation=orientation, anchor=anchor)
+                           excluded_notes=excluded, orientation=orientation, anchor=anchor,
+                           context_connections=context_connections)
     folds = []
     for note in sorted({reference_notes[i] for i in group}):
         boundary = derive_boundary(reference_affinities, reference_notes, group,
                                    excluded_notes=excluded | {note}, orientation=orientation,
-                                   anchor=anchor)
+                                   anchor=anchor, context_connections=context_connections)
         held = [i for i in group if reference_notes[i] == note]
         scores = mean_support(np.asarray(reference_affinities)[held], [note]*len(held),
                               reference_notes, group, excluded_notes=excluded | {note})

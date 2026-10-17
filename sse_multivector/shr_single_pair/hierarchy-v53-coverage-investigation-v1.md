@@ -4885,3 +4885,96 @@ checks and source hashes pass. Evaluation takes 7.1 seconds for these small
 reference pools, not a production scaling qualification. HR35 remains at 718
 reachable notes; no hierarchy or UI changes. Findings/code/tests land on local
 `main`; retain the task worktree for frozen vector and evidence paths.
+
+## Fixed fusion neighbors as curve context: controlled follow-up
+
+The user authorized testing whether each reference curve should use the group's
+existing fusion neighbors rather than every accepted entry in the root. This
+changes the curve population only: fixed groups, graph bytes/weights, meaning
+vectors, query mean-affinity scores, note weighting, member anchors, bend
+orientation and lower trimming rules are preserved. No query enters a graph.
+
+For each group, include its members and their direct positive-edge neighbors
+in the original symmetric fusion graph. No transitive search, new neighbor
+count or weight cutoff is added. In a whole-note fold, first remove the held
+note's group entries, then take the remaining members' neighbors in that same
+unchanged graph, excluding the held note entirely. Graph weights select the
+accepted context; they are never compared numerically with meaning scores.
+The test keeps both bend directions and gated/ungated variants, comparing each
+against exactly the same settings with the full accepted root as context.
+
+Evidence: `target/food-halves-v1/fusion-neighbor-bend-v1-retry1/` in the retained
+`oracle-mvp-hierarchy-food-halves-v1` worktree. Frozen plan SHA256
+`f8c30218a2eb96b2b8a22a992805c292080e1f0ff87b4c55b7d0ad93796fb48a`.
+The original `fusion-neighbor-bend-v1/` attempt failed while serializing NumPy
+integer indices. Preserve its plan, failed source snapshots, stderr and partial
+output. A production-path JSON test reproduces that failure; converting indices
+to native integers fixes it. The retry has the same selection rule and was
+frozen before query outcomes were emitted. No inference, encoding or spending.
+
+The primary was declared as the previous most promising setting: member anchor,
+`y-x`, no hard self-check, now with direct fusion-neighbor context. Same 1,449
+query entries and 281 actually omitted eligible notes; no labels fit a boundary.
+The 137-entry Food curve pools shrink, for example, to 28 entries for general
+Food `fused-014`, 22 for preservation `fused-008` and seven for Eating `fused-010`.
+
+| Saved panel | Root | Plausible: full root → neighbors | Provisional mismatches: full root → neighbors |
+|---|---|---:|---:|
+| Older 142 | Food | 19/21 → 14/21 | 0/29 → 2/29 |
+| Later 86 | Food | 17/18 → 15/18 | 0/9 → 1/9 |
+| Focused 32 | Food | 5/6 → 5/6 | 0/2 → 1/2 |
+| Older 142 | Tools | 26/38 → 16/38 | 1/12 → 1/12 |
+| Later 86 | Tools | 28/33 → 17/33 | 4/9 → 2/9 |
+| Focused 32 | Tools | 9/11 → 5/11 | 1/2 → 1/2 |
+
+These overlapping panels retain agent assessments, not human gold. In
+particular, Tools omissions are not newly certified failures. Qualified and
+unresolved cases remain separate in `panel-metrics.json`. The primary result
+does **not** support adopting neighbor-restricted curves: it loses useful
+saved matches and does not consistently remove suspect selections.
+
+Concrete Food contrasts isolate the effects:
+
+- Coffee L00228 still passes general Food `fused-014`; its score stays
+  `0.084107`, while the boundary rises `0.049184 → 0.071951`.
+- All three human-confirmed rejection entries (Nausea L02276, Blood L06803,
+  JAIA Drake L04019) remain excluded. All four earlier human note controls
+  still match, including the pisanki post through its Eggs entry.
+- Breath L04399 is no longer proposed. This is **abstention**, not a demonstrated
+  semantic distinction: Eating's seven context entries leave fewer than three
+  fitted score levels below the member anchor, so it has no boundary.
+- Gas facilities L06055 remains proposed through preservation `fused-008`.
+  Its score stays `0.047740`, but the boundary becomes more permissive:
+  `0.036132 → 0.022297`. The neighbor version now passes the self-check too.
+- The general Food `fused-006` curve loses its positive bend after restricting
+  context to 36 entries. Steaks L00479 is no longer proposed. Other lost
+  plausible entries include Distinctions between dairy products L00292,
+  Coffee availability L00562, Coffee L00275 and Coffee flavour L00683.
+- Two Wildlife entries, L04627 and L05566, newly pass `fused-007`; its boundary
+  falls `0.075781 → 0.038884`. These remain provisional mismatch assessments,
+  not new human judgments.
+
+Other predeclared settings do not establish a solution. Neighbor `x-y` without
+the gate selects only eight of 21 older plausible Food entries; with the gate,
+zero. Neighbor `y-x` with the gate selects 11/21 versus its full-context control's
+9/21, with zero of 29 older mismatches, but still cannot validate the two-member
+Coffee group. Selecting nothing or suppressing a group because its curve is
+too small is not proof of accurate admission.
+
+The primary proposes 43 actually omitted notes for Food and 53 for Tools,
+overlapping on five: 91 distinct unimplemented proposals. Neither these counts
+nor the clean human controls establish semantic correctness. HR35 remains at
+718 reachable notes; no hierarchy or UI changes. Local context is numerically
+smaller but does not guarantee a tighter or more meaningful bend.
+
+Five new tests initially fail on the missing context option; tests then cover
+direct neighbors only, recomputing context after whole-note removal, unchanged
+edge units/inputs, invalid graphs and serializable result indices. Forty combined
+boundary/query/fusion/HDBSCAN tests pass. Independent scalar verification checks
+100 models, 724 base/fold boundaries, 48,082 reference scores and 144,900 query/
+group scores, with maximum discrepancy `3.06e-16`. Full-root-context models and
+11,592 root decisions replay exactly; **every outsider score is identical across
+contexts**. Graph array bytes, source hashes and query independence checks pass.
+Evaluation takes 6.6 seconds for these small pools; this is not production-scale
+validation. Findings, reusable code and tests land on local `main`. Keep the
+worktree for frozen vector/evidence paths, including the failed attempt.

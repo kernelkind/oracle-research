@@ -1,6 +1,8 @@
+import json
 import unittest
 
 import numpy as np
+from scipy import sparse
 
 from sse_multivector.fixed_reference_bend import derive_boundary, mean_support, qualify_boundary
 
@@ -115,6 +117,54 @@ class FixedReferenceBendTests(unittest.TestCase):
         a, notes = reference()
         with self.assertRaises(ValueError):
             derive_boundary(a, notes, [0, 1], anchor='unknown')
+
+    def test_fusion_context_uses_members_and_direct_neighbors_only(self):
+        a, notes = reference()
+        c = np.eye(9)
+        for i, j in [(0, 2), (1, 3), (3, 4)]:
+            c[i, j] = c[j, i] = .2
+        r = derive_boundary(a, notes, [0, 1], context_connections=sparse.csr_matrix(c))
+        self.assertEqual(r['context_indices'], [0, 1, 2, 3])
+        self.assertNotIn(4, r['context_indices'])
+        json.dumps(r, allow_nan=False)
+
+    def test_exclusion_recomputes_neighbors_from_remaining_members(self):
+        a, notes = reference()
+        c = np.eye(9)
+        for i, j in [(0, 2), (1, 3)]:
+            c[i, j] = c[j, i] = .2
+        r = derive_boundary(a, notes, [0, 1], excluded_notes={'a'},
+                            context_connections=sparse.csr_matrix(c))
+        self.assertEqual(r['group_indices'], [1])
+        self.assertEqual(r['context_indices'], [3])
+
+    def test_whole_note_folds_use_the_same_fixed_connections(self):
+        a, notes = reference()
+        c = np.eye(9)
+        for i, j in [(0, 2), (1, 3)]:
+            c[i, j] = c[j, i] = .2
+        r = qualify_boundary(a, notes, [0, 1], context_connections=sparse.csr_matrix(c))
+        self.assertEqual(r['base']['context_indices'], [0, 1, 2, 3])
+        self.assertEqual(r['folds'][0]['boundary']['context_indices'], [3])
+        self.assertEqual(r['folds'][1]['boundary']['context_indices'], [2])
+
+    def test_context_weight_units_do_not_change_support_or_mutate_graph(self):
+        a, notes = reference()
+        c = sparse.csr_matrix(np.ones((9, 9)))
+        before = c.data.copy(), c.indices.copy(), c.indptr.copy(), a.copy()
+        baseline = derive_boundary(a, notes, [0, 1])
+        local = derive_boundary(a, notes, [0, 1], context_connections=c)
+        scaled = derive_boundary(a, notes, [0, 1], context_connections=c*1000)
+        self.assertEqual(baseline, local)
+        self.assertEqual(local, scaled)
+        for actual, expected in zip([c.data, c.indices, c.indptr, a], before):
+            np.testing.assert_array_equal(actual, expected)
+
+    def test_invalid_context_connections_are_rejected(self):
+        a, notes = reference()
+        for c in [np.eye(8), np.full((9, 9), np.nan), -np.eye(9), np.triu(np.ones((9, 9)))]:
+            with self.assertRaises(ValueError):
+                derive_boundary(a, notes, [0, 1], context_connections=sparse.csr_matrix(c))
 
 
 if __name__ == '__main__':
