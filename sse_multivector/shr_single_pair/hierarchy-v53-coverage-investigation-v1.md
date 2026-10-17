@@ -3402,3 +3402,162 @@ The arithmetic uses two 204-by-204 cosine matrices. The saved original 6,991-row
 HDBSCAN request is read only to verify provenance; no new all-corpus pairwise
 matrix or clustering is computed. Root membership and HR35 state are unchanged,
 with zero applied additions. The worktree remains for source-bound evidence.
+
+## Matched title-versus-meaning reclustering of fixed references
+
+The user authorized regrouping the same saved references under title and
+meaning pooling with identical clustering settings, then repeating the saved
+admission comparisons. This is a numerical diagnostic, not a HiGen run or new
+canonical membership policy. No definitions, roots, source-note judgments,
+hierarchy edges or vector contents change. No LLMs, new encodings, training or
+paid resources are used.
+
+### Frozen controls and native execution
+
+Both arms use exactly the preceding 204 originally grouped references: 137
+Food entries and 67 Tools entries. Each root is clustered separately. The
+original 62 initially ungrouped root references are absent from both clustering
+arms. Both arms preserve input ordering and opaque entry IDs; only the selected
+saved vectors differ. The generic production candidate request builder binds
+each vector to its native row, source text and selected byte span. Four native
+HDBSCAN calls use `min_samples=3`, `min_cluster_size=2`, excess of mass, the
+same frozen angular-distance executable, and six CPU threads each within
+disjoint affinity sets. Four logical CPUs remain reserved.
+
+The old executable rejects the compact-output flag. Four first attempts and
+their stderr are retained, followed by four successful normal-output invocations
+using the existing production compatibility behavior. Request bytes and
+clustering settings stay fixed. These are local numerical processes, not
+provider attempts. Native membership validation checks each result's input
+identities, source hashes, algorithm/configuration and nonoverlapping groups.
+
+The original groups remain a baseline because shrinking the clustering pool
+can itself change a density result. Each grouping is scored with both title
+and meaning vectors. The primary comparison fixes meaning pooling for candidate
+and reference scoring, changing only the new title-derived versus meaning-derived
+groups. Raw best-group means and the preceding relative-group ratio are both
+retained, with the same source-note exclusion and independent-note eligibility.
+All groups are usable here; no unresolved denominator is hidden. The original
+all-root mean remains a separate operational baseline using all 175 Food or
+91 Tools originals, including the 62 absent from the clustering pool. Its
+different reference coverage is explicit; it is not a matched grouping-only
+ablation.
+
+### Grouping changes and reference losses
+
+| Root | Clustering vectors | New groups | References assigned / supplied | Source notes with an assigned reference / supplied |
+|---|---|---:|---:|---:|
+| Food | Title | 15 | 137 / 137 | 76 / 76 |
+| Food | Meaning | 13 | 63 / 137 | 47 / 76 |
+| Tools | Title | 13 | 64 / 67 | 53 / 55 |
+| Tools | Meaning | 7 | 41 / 67 | 37 / 55 |
+
+The title control reproduces all fifteen original Food groups. Twelve original
+Tools groups remain exact, while one changes and three references become
+unassigned. The meaning arm retains 104 of 204 references in groups, leaving
+74 Food and 26 Tools entries unassigned. Those losses are part of the tested
+group-based scoring, not permission to delete memberships or notes from the
+actual hierarchy. Every omitted entry and source-note ID is preserved.
+
+### Ranking improves against the matched group control, not the existing mean
+
+The following uses meaning pooling for scoring throughout. Counts are useful
+entries scoring above agent-assessed unsupported entries, divided by all such
+dependent pairs. They are not accuracy, independent trials or recovered notes.
+The panels overlap and retain their original qualified/unresolved judgments.
+
+| Saved panel | Root | Original-group raw best mean | Reclustered-title raw best mean | Reclustered-meaning raw best mean | Existing all-root mean |
+|---|---|---:|---:|---:|---:|
+| Older 142 | Food | 531 / 609 | 531 / 609 | 583 / 609 | 609 / 609 |
+| Older 142 | Tools | 389 / 456 | 389 / 456 | 415 / 456 | 438 / 456 |
+| Later 86 | Food | 134 / 162 | 134 / 162 | 152 / 162 | 162 / 162 |
+| Later 86 | Tools | 255 / 297 | 259 / 297 | 267 / 297 | 284 / 297 |
+| Focused 32 | Food | 12 / 12 | 12 / 12 | 11 / 12 | 11 / 12 |
+| Focused 32 | Tools | 14 / 22 | 14 / 22 | 16 / 22 | 17 / 22 |
+
+On the older Food panel, meaning-derived groups fix 53 raw-score orderings
+against the matched title groups and worsen one. Tools fixes 39 and worsens
+thirteen. The later panel likewise improves in aggregate. The title-scoring
+crossed controls and all individual ordering changes are retained, rather than
+selecting the best representation after viewing labels.
+
+The relative-group score also improves for Tools against its matched title
+control, from 371 to 428 of 456 older-panel orderings, but remains below the
+existing mean's 438. Food's relative score declines from 587 to 568 of 609.
+Thus regrouping does not rescue normalization generally. No threshold or
+parameter is adjusted after seeing this result.
+
+### Specific gains and unresolved losses
+
+With meaning-derived groups and raw mean scoring:
+
+- Smartwatches scores `0.05736364`, just above Sports content solutions at
+  `0.05651039`; the publisher rejection remains provisional agent judgment.
+- The camera-review entry scores `0.08827715`, above the publisher. However,
+  the NBA performance-struggles entry scores `0.10019421`, matching the same
+  Testing group, so that retained unsupported example remains stronger.
+- Human-accepted egg decoration scores `0.02625279`, below Wildlife at
+  `0.02769534`. The raw title-group control had kept Eggs above Wildlife.
+
+The meaning arm leaves century-egg Food (`L06359`) and the food-preservation
+mixture (`L00647`) unassigned, losing references that previously supported
+Eggs. Food flying everywhere (`L02407`), responsible for the earlier Wildlife
+near-tie, also becomes unassigned. Removing that one problematic match therefore
+does not resolve the ordering when useful support is lost as well.
+Data cables, Digital connections and Operators of software agents also become
+unassigned; the improved scores do not demonstrate that these were invalid
+reference entries. Root membership and the broader collection's scope remain
+unchanged. No new human approval or rejection is inferred.
+
+The previously frozen relative-score-at-least-one screen selects zero cases
+in all six meaning-scored/reclustered panel-root combinations, including useful
+cases. It is still not a usable ending rule. Better consistency of grouping
+and scoring does not by itself establish an admission boundary.
+
+### Conclusion and next control
+
+Matching the representations helps the group-based ranking relative to a
+matched title-clustering control. It does not justify adoption: many references
+become unassigned, existing all-root means remain stronger on the broad saved
+panels, and the fixed stopping screen admits nothing. No admission or hierarchy
+rule changes.
+
+The next useful control would retain exactly the entries grouped by the meaning
+arm, preserve their previous grouping in one arm and use their new grouping in
+the other, then rescore. This would isolate regrouping from simply discarding
+references. Current results deliberately report both effects together as the
+native clustering outcome; they do not attribute all gains to improved group
+geometry. That follow-up is proposed only and is not run here.
+
+### Evidence
+
+```
+target/food-halves-v1/matched-group-reclustering-v1/
+```
+
+- `plan.json`: fixed root pools, shared identifiers/order, native configuration,
+  crossed scoring controls, exact saved panels and source hashes; SHA256
+  `5c2367ba06dd4000d689c8b3c8df31ba7e598f235b187cf4e19bfdb531b0e276`.
+- Four `C0000*-{title,meaning}/` directories: native requests, source-vector
+  manifests, opaque-ID maps, results and retained failed-format evidence.
+- `execution-attempts.json`, `native-clusterings.json`: actual numerical
+  invocations, every membership, noise entry, title tally and source-note loss.
+- `group-statistics.json`, `all-group-query-scores.json`,
+  `all-root-query-scores.json`: all fixed scales, 27,720 group/query scores
+  and 2,160 root/query scores.
+- `panel-metrics.json`, `panel-pair-orderings.json`,
+  `matched-meaning-scoring-changes.json`, `fixed-unity-screen.json`: all
+  12,804 saved ordering records, improvements/regressions and unchanged screens.
+- `source-evidence.json`, `summary.json`: unchanged titles, full meanings,
+  original posts and bounded experiment accounting.
+- `verification.json`: 43 protected source hashes, 888 source-vector bindings,
+  408 exact native coordinates/selected spans, all four native clusterings,
+  99,770 independent scalar cosine/affinity calculations, 96 group scales,
+  every group/query and root/query score, all 12,804 orderings and both tables.
+  Maximum scale error is `2.886579864025407e-15`; maximum per-group query-score
+  error is `5.329070518200751e-15`. All checks pass; failed-format attempts
+  and successful native results remain bound by hashes.
+
+This small reference regrouping is not a new corpus hierarchy. The native
+canonical graph still reaches 718 notes, with zero additions or removals.
+The worktree remains for its frozen source paths and ignored evidence.
