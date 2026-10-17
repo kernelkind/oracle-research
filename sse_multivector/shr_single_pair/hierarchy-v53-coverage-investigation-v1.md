@@ -2749,9 +2749,10 @@ The broader boundaries also admit known uncertainty. These frozen-boundary tests
 do not validate an automatic ending rule. The source counterexample is not
 repaired by the ranking improvement alone.
 
-The next useful probe is the user's earlier idea of pooling the explicit
-meaning with the original post supplied as encoder context, using this publisher
-case and genuine positive controls. It would add the source distinction the
+The assistant proposed a probe pooling the explicit meaning with the original
+post supplied as encoder context, using this publisher case and genuine positive
+controls. The prior attribution of that proposal to the user was incorrect and
+was explicitly corrected. It would add the source distinction the
 current vectors lack, while retaining the frozen SSE model and excluding LLMs
 and training. Additional encoded tokens and input-length limits would need to
 be measured before a corpus-wide change. That small new-encoding probe is
@@ -2787,3 +2788,156 @@ plus 430 displayed member cosines. Maximum scalar error is
 state pass. No model calls, new encodings, training, threshold activation or
 hierarchy changes occur. Applied note gain remains zero; HR35 still reaches
 718 notes. The worktree remains for these artifacts and frozen source paths.
+
+## Original-post context with unchanged full-meaning pooling
+
+The user authorized a small frozen-SSE probe after the assistant described
+appending each entry's original post to its existing encoder input. This is an
+assistant proposal, not an earlier user suggestion. It tests representation
+only; definitions, root memberships, scoring and judgments remain fixed. No
+LLM requests, training, paid resources or hierarchy changes are involved.
+
+### Frozen comparison
+
+The new text is exactly:
+
+```text
+{title}
+
+{unchanged full explicit meaning}
+
+Original post:
+{unchanged full source post}
+```
+
+Only the explicit meaning's tokens are pooled. Both candidate and reference
+entries receive their own source post. Root references are the actual original
+entries, never synthetic-root vectors. The score remains the arithmetic mean
+of `exp(-5.5 * (1 - cosine))` over each root's references, excluding every
+reference from the candidate's source note.
+
+The fixed panel contains ten Food cases, ten Tools cases and two unassessed
+same-post companions for the sports-publisher case. It deliberately includes
+known useful and misleading matches, two qualified Food cases and two unresolved
+Tools cases. Prior human judgments concern the source notes for culinary Eggs,
+egg decoration and the Easter broadcast; they do not establish universal entry
+or full-meaning labels. Other judgments remain provisional agent assessments.
+This is a selected development panel, not a representative accuracy sample.
+
+Food has 175 original references. One, `L00575` Lunch, would require 532 tokens
+with its full post and therefore exceeds the frozen 512-token limit. It is
+excluded from both baseline and changed comparisons, without truncation. All
+91 Tools references fit. The comparison therefore uses 174 Food and 91 Tools
+references. Two diagnostic queries are already reference entries, so there are
+285 distinct context inputs rather than 287. The longest retained input is
+466 tokens.
+
+The native production worker encodes those 285 inputs and nine exact baseline
+replays. All other baseline vectors are reused from their source-bound saved
+receipts. The checkpoint, tokenizer, Transformers version and projection are
+unchanged. The available host CPU runtime now has Torch `2.14.0+cpu`, versus
+`2.13.0+cpu` in the saved baseline. All nine exact replays pass the frozen
+`1e-5` absolute-vector and `1e-6` cosine-error limits: maximum absolute error
+`2.9802322387695312e-8`, maximum cosine error `5.1181281435219717e-14`.
+Execution reserves four of this allocation's 28 logical CPUs and uses the
+remaining 24. The retained container label is historical configuration identity;
+the actual execution is local host CPU, not a container or rented GPU.
+
+### Results
+
+These are the unchanged mean-affinity scores, not probabilities or admission
+decisions. Scores are computed on the same references before and after adding
+post context; previous cutoffs are not applied to the changed representation.
+
+| Root | Entry | Prior assessment | Without post | With post |
+|---|---|---|---:|---:|
+| Tools | Sports content solutions | Agent-assessed unsupported | 0.03964917 | 0.03834112 |
+| Tools | Artificial intelligence (`L04376`) | Plausible useful route | 0.04901212 | 0.04790427 |
+| Tools | Smartphones (`L02428`) | Plausible useful route | 0.04028745 | 0.04459677 |
+| Tools | Performance struggles (`L02909`) | Agent-assessed unsupported | 0.02228733 | 0.01238927 |
+| Tools | Software clients | Existing member; explicit source software use | 0.05175209 | 0.04773974 |
+| Tools | Servers | Plausible useful route | 0.08494217 | 0.07597406 |
+| Tools | Bots | Plausible useful route | 0.08262039 | 0.07692280 |
+| Tools | Digital platforms | Plausible useful route | 0.08126473 | 0.09389805 |
+| Tools | Actions | Unresolved | 0.03887072 | 0.03966389 |
+| Tools | Analysis | Unresolved | 0.03771790 | 0.03170995 |
+| Food | Egg yolks | Plausible useful route; prior human note acceptance | 0.06628227 | 0.06114379 |
+| Food | Burgers | Plausible useful route | 0.05270246 | 0.04966104 |
+| Food | Chili dishes | Plausible useful route | 0.05762002 | 0.05568041 |
+| Food | Charity dinners | Existing member; explicit source dinner | 0.02376866 | 0.02113232 |
+| Food | Wildlife | Agent-assessed unsupported | 0.01578380 | 0.01435529 |
+| Food | Easter | Prior human source-note rejection | 0.00742598 | 0.00712300 |
+| Food | Eggs (`L02984`, decorated) | Prior human source-note acceptance | 0.01502037 | 0.01430551 |
+| Food | Eggs as food (`L00101`) | Prior human source-note acceptance | 0.07190858 | 0.07088192 |
+| Food | Seasonings | Qualified useful route | 0.04753461 | 0.05551997 |
+| Food | Caffeine | Qualified useful route | 0.04369695 | 0.04360015 |
+
+The NBA performance-struggles score falls 44.4%. Its strongest original Tools
+match, `L04780` Tests, drops from cosine `0.6680` to `0.5539`. This is consistent
+with useful source-context disambiguation on that case, without establishing a
+general mechanism or token-level cause.
+
+The publisher-tagline case motivating the probe barely changes: its score falls
+3.3%. It still matches broad Tools and software-related meanings; its nearest
+Tools reference actually rises from cosine `0.5845` to `0.6210`. The actual
+Field Level Media company entry rises from mean `0.01088093` to `0.01226777`,
+while Basketball stays near `0.0101`. The generic functional definition retains
+a much stronger Tools match than those same-post companions. Post context
+does not resolve this agent-assessed mismatch.
+
+Food's human-accepted egg-decoration case remains slightly below Wildlife.
+Across straightforward useful-versus-unsupported entry pairs, Food stays at
+11 of 12 useful scores higher; Tools stays at 12 of 12. No pair changes order
+in the primary comparison. Qualified Food cases stay at four of four. These
+dependent pair counts only describe the selected panel, not accuracy or a
+validated stopping method.
+
+The frozen supplementary calculations distinguish candidate-context and
+reference-context changes. Adding context only to candidates fixes the one
+Food ordering, while changing both sides does not. This does not qualify that
+asymmetric representation for deployment: the residual gap is small, the
+panel was selected for development, and no new stopping rule was tested. All
+four variants and their individual reference connections are retained.
+
+### Scaling and bounded conclusion
+
+For the 285 distinct retained inputs, token count grows from 11,168 to 51,250:
+`4.5890` times the baseline, or 358.9% more tokens. This measures encoder input
+tokens only, not elapsed-time or API-cost growth. Attention work and batch
+padding also depend on length; no timing multiplier is inferred. Posts are
+repeated for each entry, so this overhead matters at corpus scale even though
+the diagnostic uses local CPU without paid inference.
+
+This small result does not justify adopting post context. It improves one known
+misleading match while leaving the motivating publisher case and a human-reviewed
+Food ordering unresolved, with substantially greater input length. The current
+representation and hierarchy remain unchanged. A useful next investigation is
+to inspect the residual nearest-member connections and determine whether the
+unchanged mean-affinity score can separate useful routes from misleading ones;
+that is a numerical/evidence question, not permission for LLMs or training.
+
+### Evidence
+
+```
+target/food-halves-v1/meaning-post-context-v1/
+```
+
+- `plan.json`: fixed cases, exact source text, reference exclusions, scoring,
+  primary and supplementary variants, runtime controls and source hashes;
+  SHA256 `c7b54e0ff0fe18f72f5c6c93a76e99ebb6cc2481d414a292ec36b0b7afaa951f`.
+- `worker-request.json`, `worker-config.json`, `preflight.json`: native input,
+  exact meaning byte spans and full token-length checks.
+- `worker-result/`: native immutable receipt and 294 raw float32 vectors.
+- `baseline-bindings.json`, `baseline-replay.json`: exact saved baseline
+  mappings and nine numerical runtime controls.
+- `all-scores-and-nearest-members.json`, `case-results.json`,
+  `pair-order-comparisons.json`, `summary.json`: all four variants, every
+  selected case, every pair ordering and unassessed companions.
+- `verification.json`: fourteen protected source hashes, 286 source-text
+  bindings including the excluded Lunch entry, 294 native token/span checks,
+  176 independently summed scores, 880 nearest-member cosines, 28 pair
+  orderings and all twenty displayed table rows. Maximum scalar score error
+  is `9.71445146547012e-17`; all checks pass.
+
+No entry is added to any root, no cutoff is activated, and no review UI is
+refreshed. HR35's frozen state and its 718-note reachability remain unchanged.
