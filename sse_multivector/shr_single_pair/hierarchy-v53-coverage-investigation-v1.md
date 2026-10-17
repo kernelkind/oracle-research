@@ -97,6 +97,14 @@ references. This identifies damage introduced by the graph-ordering stage and
 a premature first dip, not a demonstrated fix or a failure of one isolated
 PageRank operation. No boundary, grouping or admission policy changes.
 
+The user subsequently identified the shared failure mode: outsiders were again
+allowed to alter the comparison structure. The approved direction is to keep
+the accepted fusion setup fixed and evaluate each outsider independently, with
+no fixed numerical admission cutoff. Reordering the large mixed graph is no
+longer the proposed next experiment. A reference-only adaptive boundary is
+outlined at the end as an untested research proposal; no particular new rule
+has been approved or implemented.
+
 The user clarified the interpretation for this investigation: "the root is not
 about food only. it does not have a fixed meaning yet." Its saved title and
 generated definition identify the reference collection; they are not a fixed
@@ -4516,11 +4524,10 @@ the change and must not be reported as proof that PageRank alone is responsible.
 
 Two concrete obstacles are now visible: the first local minimum mistakes a
 brief early increase for an ending, and the graph ordering introduces a long
-delay before a clear direct-support match. The proposed next controlled test
-is the same conductance boundary calculation with direct meaning-support
-ordering, leaving the graph, reference groups, pools and boundary rules fixed.
-It would isolate whether changing that ordering repairs any admission outcomes.
-It is not started or claimed successful by this trace.
+delay before a clear direct-support match. This initially motivated a proposed
+conductance rerun with direct meaning-support ordering. The user's subsequent
+decision below rejects using a graph whose connections depend on the outsider
+pool, so that rerun is withdrawn. No such rerun was started or claimed successful.
 
 ### Evidence and verification
 
@@ -4547,3 +4554,78 @@ No production source behavior changes, new vectors, graph expansions, LLM calls,
 training, paid resources, hierarchy edits or UI updates occur. HR35 still reaches
 718 notes. Maintained findings land on local `main`; the worktree remains for
 frozen source paths and ignored evidence.
+
+## Approved return to fixed fusion references; adaptive-boundary proposal
+
+The user explicitly decided: "we will stick w the fusion setup and evaluate each
+outsider independently. we will not use a fixed cutoff." Accepted fusion groups,
+connections and weights remain the reference; another outsider must not replace
+their neighbors, rescale their connections, supply a path or move the boundary
+used to assess a particular query. Outside-query comparisons continue to use
+meaning vectors. The failed large mixed graph and trace remain evidence, not
+an admission path. No production generator or existing hierarchy changes.
+
+The admission boundary remains unresolved. The following is a research proposal
+for review, not an adopted algorithm or a tested result:
+
+1. Keep the existing fusion reference and direct mean-affinity query score fixed.
+   For an entry `q` and group `G`, average the existing
+   `exp[-5.5 * (1 - meaning_cosine(q, r))]` over available members `r` of `G`.
+   Exclude every reference from `q`'s source note. Do not compare that score
+   directly with a fused edge weight: those measurements have different units.
+2. Calculate that same query score for accepted reference entries, using only
+   the fixed accepted pool of the same root as context. The current pools used
+   to build fusion contain 137 Food and 67 Tools entries; this introduces no
+   previously unaccepted reference. Include the group's surrounding accepted
+   entries, not only its own members. In particular, a two-entry group supplies
+   only one cross-note pair similarity and cannot alone justify a curve bend.
+   Other accepted topics are geometric context, not root-level negatives.
+3. Form a reference-only support curve, ordering these accepted scores and
+   giving each source note equal total weight. Investigate the original bend
+   principle: normalize the axes, inspect the central 80%, and find the largest
+   departure from the endpoint chord marking the end of the strongly supported
+   neighborhood. This must specify and preserve the bend orientation; the old
+   outsider-score bend and the hierarchy split-distance bend are not identical
+   calculations. No outsider score enters this reference curve. A missing bend
+   remains unresolved rather than triggering a hand-selected score or percentile.
+4. Check whether the resulting boundary can recover the group's existing
+   members with their entire source note excluded from both the reference and
+   boundary calculation. A group whose meaning-support geometry cannot support
+   such a boundary remains unavailable for automatic expansion; its accepted
+   memberships are retained. This internal check is necessary, not semantic
+   certification, and does not authorize altering groups or tuning parameters.
+5. Evaluate a new outsider against the resulting group-specific boundaries.
+   Several groups or roots may provide support; there is no exclusive winner
+   or other-root rejection. Boundaries can differ between groups and reference
+   versions, but the same query/reference version must produce the same result
+   when other outsiders are added, removed, duplicated or reordered.
+
+The distinction from earlier failed ending rules is concrete: those bent a
+curve made from the outsiders being selected, or used parity with one reference
+average. This proposal uses accepted-reference structure to derive a local
+boundary and separately checks whether that structure can support it. It is
+still possible for a reference-only bend to give an unsuitable boundary; that
+must be measured rather than assumed away. A weak group must not acquire broad
+admission simply because its reference scores are low.
+
+HDBSCAN's documented
+[fixed-tree prediction](https://hdbscan.readthedocs.io/en/latest/prediction_tutorial.html)
+provides precedent for assessing a query without changing the accepted
+structure. It does not validate this proposed reference-score estimator or
+establish comparable fused/query weight scales. The earlier stock HDBSCAN
+prediction check, which retrieved only two notes, is not recast as a success.
+
+The proposed first check is to inspect these reference-only curves with the
+saved fit/mismatch cases marked but not used to choose a boundary, then test
+the same frozen calculation on Food and Tools. Keep whole-note exclusions,
+human decisions, provisional assessments and unresolved cases separate. Check
+both useful recovery and unwanted admission; selecting nothing is not success.
+Cache reference calculations by their fixed source identity, avoid outsider-to-
+outsider comparisons and retain exact invariance tests. Reference curve work is
+precomputed; no corpus-wide mixed graph is required. Scaling beyond the current
+small reference pools remains unqualified.
+
+No new numerical experiment, encoding, LLM call, training, graph expansion,
+hierarchy edit or UI update is performed for this design discussion. The
+maintained record preserves the approved constraints and the proposal's
+untested status on local `main`.
