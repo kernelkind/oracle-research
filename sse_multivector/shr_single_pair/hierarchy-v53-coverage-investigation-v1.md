@@ -2941,3 +2941,159 @@ target/food-halves-v1/meaning-post-context-v1/
 
 No entry is added to any root, no cutoff is activated, and no review UI is
 refreshed. HR35's frozen state and its 718-note reachability remain unchanged.
+
+## Original members behind the residual score overlaps
+
+The user authorized tracing the remaining matches to original root members
+using saved vectors and judgments. This calculation changes no representation,
+meaning, root, reference, judgment or scoring rule. It makes no new encodings,
+LLM calls or training runs. The sports-publisher and Wildlife rejection labels
+remain provisional agent judgments; the egg-decoration source note has prior
+human acceptance. Root names and synthetic definitions are not fixed admission
+boundaries, and membership in another root is not negative evidence.
+
+The frozen packet covers all 22 preceding context-probe queries and all twelve
+previously reviewed plausible or qualified Tools entries scoring below Sports
+content solutions. This exhaustive selection within that saved review avoids
+selecting only one favorable contrast. Twelve extra entries have no contextual
+encoding, so only their baseline results are calculated. In total there are 34
+query entries, 112 root/query results and 14,870 individual reference affinities.
+Eight fixed pair contrasts yield eleven baseline/context decompositions where
+both representations already exist. Every original-member connection is saved,
+including titles, fixed meanings, source-note IDs and full posts.
+
+### Food: one strong member match changes a near-tie
+
+With the current meaning representation and all 175 Food references, Wildlife
+scores `0.01574462`, while the human-accepted egg-decoration entry `L02984`
+scores `0.01505894`. The gap is `0.0006856848`.
+
+The largest contribution to that gap is one original member:
+
+> `L02407` Food: Food is edible material eaten or intended to be eaten by
+> people or animals for nourishment.
+
+Its source begins "Food flying everywhere" and links a food video. It is not
+an incorrect Food reference. Its meaning vector nevertheless has cosine
+`0.66572` to Wildlife, versus `0.29464` to the decorated-Eggs meaning. Its
+contribution to Wildlife-minus-Eggs is `0.0007907874`, greater than the entire
+gap. The other 174 contributions sum to `-0.0001051026`, favoring Eggs. Removing
+that same reference from both calculations would therefore reverse the order.
+This is an explanation of concentration, not authorization or evidence for
+deleting it, trimming every nearest match, or changing a meaning.
+
+The Wildlife meaning describes non-domesticated animals, including fish. The
+Eggs meaning describes reproductive bodies, embryos, shells and decoration.
+Those exact fixed meanings and their source posts remain in the evidence.
+The numeric comparison establishes a similarity mismatch under the retained
+assessments, not entailment or the word-level cause of an encoder result.
+
+G027, the initial general-Food group, contributes 42.72% of Wildlife's total
+affinity; the 38 initially ungrouped references contribute another 20.82%.
+For Eggs, G027 contributes 42.80%, Cooking 14.16%, and preservation 6.06%.
+The strongest egg-supporting originals include century-egg Food and preservation
+mixtures. Thus the match has real localized support but is not separated by
+the whole-root average. The strong Wildlife reference supplies only 5.77% of
+its total affinity, while still determining which side of this near-tie wins.
+
+The same one-reference sensitivity remains with post context: among the matched
+174 references, Wildlife's lead is `0.0000497779`, while `L02407` contributes
+`0.0006528137` of that lead. All remaining contributions favor Eggs in total.
+The changed-context result uses 174 rather than 175 references because the
+earlier Lunch input exceeded 512 tokens; the matched-baseline replay is retained
+separately so this exclusion is not attributed to a context effect.
+
+### Tools: the publisher match is spread across the root
+
+Sports content solutions scores `0.03964917`. Its nearest original member is:
+
+> `L04060` Tools: Tools are implements or resources designed or used to help
+> carry out tasks or achieve practical goals, including but not limited to
+> physical implements, software and informational resources serving that function.
+
+The source promotes a manifesto as "Sovereign tools for sovereign builders."
+The query itself defines products or services for creating, supplying, managing
+or distributing sports media. Original Software backends, Software dependencies,
+Software tools and Software agents also match. These are broad functional
+connections to actual members, not an accidental match to a synthetic root.
+This evidence does not independently settle the publisher's semantic rejection;
+that assessment is not human gold and cannot silently become a scope rule.
+
+One nearest reference supplies only 2.82% of the publisher's total affinity;
+the nearest ten together supply 21.31%. Technology contributes 21.61%, Software
+11.02%, and the initially ungrouped cohort 24.52%. The result is distributed
+across multiple original groups and notes.
+
+Several previously reviewed useful routes still score lower:
+
+| Entry | Prior assessment | Current Tools score | Root members favoring publisher / useful entry |
+|---|---|---:|---:|
+| Formula 1 upgrades | Plausible | 0.03908263 | 57 / 34 |
+| Infrastructure, flood-management works | Plausible | 0.03574713 | 55 / 36 |
+| Desks for writing/work | Qualified plausible | 0.03473571 | 60 / 31 |
+| Smartwatches | Plausible | 0.03433156 | 56 / 35 |
+| Reviews, camera-review source | Plausible | 0.02729722 | 75 / 16 |
+
+These counts describe per-reference affinity comparisons, not votes or a new
+decision rule. Publisher-versus-Formula-1 is another near-tie that would reverse
+after removing the strongest gap contributor. Publisher-versus-Smartwatches,
+Infrastructure, Desks and Reviews still favors the publisher after omitting
+the five references most responsible for its lead. Those retrospective omissions
+diagnose concentration only and are not a validated pruning rule.
+
+The useful evidence can be concentrated in a smaller portion of the root.
+For the camera-review entry, 24.60% of total affinity comes from Testing;
+its nearest member is Software comparisons at cosine `0.7173`. Formula 1
+upgrades matches Technology tests, Testing and Software updates. Smartwatches
+matches Computer peripherals, Technology and Computers. These are not missing
+connections: they exist in the saved vectors, but contributions from the rest
+of the root can place the broader publisher wording above them.
+
+### What this explains, and what it does not
+
+There are at least two different obstacles to a single whole-root cutoff:
+one unusually strong match can change a narrow margin, and broad similarity
+across a heterogeneous root can exceed a useful specialized match. The former
+does not explain away the latter. Neither nearest-member removal nor changing
+the cutoff is justified by these examples. Previous best-raw-group probes also
+performed worse on the broader saved panel; this finding does not erase that
+negative result or approve switching to the best group.
+
+The next useful numerical test would compare candidate support within each
+original group with how that group's own members relate to one another, keeping
+source-note exclusions. This would test whether strong support is exceptional
+for that particular group, rather than assume that the same raw score has the
+same meaning across Cooking, Testing, Technology and Software. It is a proposal
+for separate authorization, not a trained classifier, proven ending method or
+new production policy. Prior mixed-scope group membership remains evidence,
+not semantic gold; inadequate groups must remain explicit rather than be fitted
+away. No new test is started here.
+
+### Retained evidence
+
+```
+target/food-halves-v1/residual-member-connections-v1/
+```
+
+- `plan.json`: source identities, all twelve additional previously assessed
+  controls and eight fixed contrasts; SHA256
+  `9e733746a068a8088efcbdee781e11d11442038afa5383cb8db5132e2bdfee36`.
+- `source-evidence.json`: every selected original's fixed title/meaning and
+  source post, including all root references.
+- `all-member-contributions.json`: every affinity, mean-score contribution,
+  source-note concentration and original-group contribution.
+- `pair-gap-contributions.json`: all signed per-reference and per-group score
+  differences, plus explicitly retrospective omission diagnostics.
+- `matched-baseline-contributions.json`: exact common-reference baseline for
+  the preceding post-context probe.
+- `summary.json`: bounded counts and unchanged-policy status. The calculation
+  code is a packet-specific arithmetic artifact, not an inference runner.
+- `verification.json`: 24 protected source hashes, 298 original evidence
+  bindings, both exact canonical-root membership sets, 20,698 independently
+  recalculated affinities, 156 query results including the matched baseline,
+  eleven pair gaps, 33 retrospective omission sums, all twelve additional
+  score replays and the five displayed table rows. Maximum cosine/affinity
+  error is `9.992007221626409e-16`; all checks pass.
+
+All source meanings, vector receipts and HR35 state remain unchanged. Applied
+note gain is zero. The worktree remains for source-bound ignored evidence.
