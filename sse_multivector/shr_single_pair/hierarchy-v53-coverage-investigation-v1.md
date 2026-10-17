@@ -37,6 +37,13 @@ its exact scope and source identities are recorded at the end of this document.
 Earlier fit/outside labels and failure counts describe the agent assessments
 used at the time, not current human-reviewed admission quality.
 
+The latest transfer check applies unchanged full-member averaging to Tools and
+techniques. Source review finds nineteen plausible additions among its top twenty
+omitted notes, including three qualified cases; one sparse Actions post remains
+unresolved. These are agent assessments, not measured admission accuracy.
+The quote-bot and camera notes rank lower for Tools, but their potential routes
+through other roots have not been assessed by this check. No additions were made.
+
 The saved-vector connection audit rejects the tested branch expansion rule. The
 subsequent controlled full-meaning comparison improves known-root ranking but
 worsens the difficult Food scope checks. First-sentence pooling does not resolve
@@ -2108,8 +2115,128 @@ target/food-halves-v1/food-baseline-top20-review-v1/
 - `verification.json`: source/output checks, unchanged-score identities and
   exact selection checks.
 
-The next useful test is the same unchanged full-member averaging method on
-Tools and techniques, followed by actual source/member review. Its topic mixture
-differs from this Food collection and therefore provides a stronger transfer
-check than further tuning these same cases. This is a recommendation, not
-authorization to run it or apply additions.
+The user subsequently authorized that unchanged method on Tools and techniques.
+The completed transfer check follows; it does not apply additions.
+
+## Full-member averaging transferred to Tools and techniques
+
+This check keeps the preceding Food method unchanged and uses the same 1,426
+entries from 281 globally omitted notes. One additional omitted note has no
+eligible saved vector and remains unscorable. The target reference is all 91
+original members actually belonging to Tools and techniques `C00005`: 67 in its
+fourteen original groups and 24 admitted originally ungrouped entries, covering
+63 distinct notes. Earlier creation-only Tools probes used 67 references; their
+scores must not be mistaken for this full-member transfer.
+
+For each candidate original entry, transform every full-meaning cosine into
+`exp[-5.5 × (1 − cosine)]`. Divide its mean over the 91 Tools members by its mean
+over all 1,557 members of the other roots. Rank each omitted note by its
+highest-scoring entry. No representation, beta, aggregation or threshold was
+tuned for Tools. All reference comparisons reuse the saved cosine matrix.
+
+The target is its actual collection of member meanings, rather than the
+synthetic root definition. Another-root connection is not negative evidence;
+multiple useful routes are allowed. A plausible note addition does not certify
+containment of every possible use of its winning meaning.
+
+### Top twenty source reviews
+
+| Note rank | Winning entry | Score | Agent assessment from source and actual members |
+|---:|---|---:|---|
+| 1 | L04032 · Work | 8.2497 | Software-agent work and automation; retain the user's correction that Work is not a negative. |
+| 2 | L01598 · Open-source software | 6.4935 | Linux GPU software shim; direct software connection. |
+| 3 | L03672 · Apps | 6.4587 | Application software for user tasks. |
+| 4 | L01538 · Executable files | 6.2188 | Named executable in a game-crash diagnostic. |
+| 5 | L02188 · Bots | 6.0965 | Automated software-agent integration. |
+| 6 | L02882 · AI processors | 5.6216 | Computing hardware; direct Technology connection. |
+| 7 | L06169 · Video gaming | 5.5789 | Controller acquisition, charging and compatibility; supplied meaning includes gaming equipment. |
+| 8 | L02885 · Smartphones | 5.2000 | Computing devices, operating systems and applications. |
+| 9 | L03516 · Microsoft Copilot | 5.1439 | AI-assistant software; matches software-agent/tool members. |
+| 10 | L02252 · Device compatibility | 4.8768 | Game software functioning on a device. |
+| 11 | L04764 · Troubleshooting | 4.8459 | Motherboard diagnostic aids; testing/debugging connection. |
+| 12 | L05381 · Google | 4.8239 | Technology company explicitly included by an actual Technology companies member. |
+| 13 | L04171 · Protocols | 4.8183 | Qualified: plausible procedural/technical extension; source does not establish a computer protocol. |
+| 14 | L01600 · Actions | 4.6350 | Unresolved: “Previous Action: Up” plus uninspected image/video links supplies too little context. |
+| 15 | L02375 · Artificial intelligence | 4.4632 | AI field and technologies; direct Technology/computing connection. |
+| 16 | L05680 · GB Studio | 4.3529 | Qualified: selected topic is a game-development app; post names its palette without establishing use of the app. |
+| 17 | L04878 · Spaces in configuration text | 4.3269 | Detailed software-parser/configuration account. |
+| 18 | L02597 · Product trials | 4.2180 | E Ink device tryout; direct testing connection. |
+| 19 | L06928 · Civil engineering | 3.9768 | Plausible practical-engineering extension through general Technology members. |
+| 20 | L02962 · Apparent system malfunctions | 3.8946 | Qualified: source reports login-system trouble; winning meaning concerns systems generally and leaves an actual fault uncertain. |
+
+Sixteen are straightforward plausible additions, three are qualified plausible
+additions, and Actions remains unresolved. No new definite rejection is
+established. The media in Actions was not inspected, so neither a software/game
+interpretation nor an irrelevant-topic judgment is justified. Civil engineering
+is not rejected merely because the existing references are software-heavy.
+These assessments do not verify the factual claims made in news or other posts.
+They are not nineteen human approvals or measured 95% accuracy.
+
+Actual member links include Work to Software tools `L06913` at cosine 0.77747,
+Video gaming to a Technology meaning including consoles at 0.79644, and Google
+to Technology companies `L06683` at 0.67778. The score averages all 91 members;
+these closest links explain particular results rather than replace that mean.
+
+### Lower-ranked cases and remaining limits
+
+| Original entry | Own entry score | Note's winning entry | Distinct-note rank for Tools |
+|---|---:|---|---:|
+| L03830 · Servers | 3.7271 | L03830 · Servers | 23 |
+| L06971 · Artificial intelligence | 2.7116 | L06971 · Artificial intelligence | 43 |
+| L02610 · Bots | 0.8519 | L02606 · Fictional robots | 76 |
+| L04837 · Cameras | 1.2358 | L04834 · Photography | 186 |
+
+The quote-bot has meaningful subgroup evidence: mean affinity to Tools' Software
+agents group is 0.07255, versus 0.02276 across all 91 Tools members. Its pooled
+other-root mean is higher, 0.02672; Information alone averages 0.06224. Thus
+averaging dilutes a relevant subgroup, and the relative denominator can
+additionally suppress a candidate that overlaps another useful root. That
+Information connection does not invalidate a Tools route. Its note rank uses
+the stronger Fictional robots entry, with score 2.1999, not the Bots score.
+
+Cameras has weaker evidence even among its closest Tools members: Computational
+performance at cosine 0.49432, Computer peripherals at 0.40805 and Data cables
+at 0.37697. Its best Tools group mean is only 0.02005. This is not solely a
+whole-root averaging problem, and does not establish that taking the best group
+would fix retrieval. Its note rank uses Photography, with score 1.3427.
+
+These low Tools positions are not demonstrated global coverage failures: either
+note might obtain a useful route through another root. This task has not ranked
+the remaining roots or established an automatic cutoff. Servers is just outside
+the review window; rank 23 is not a rejection. Earlier panel expectations remain
+provisional, and Work remains compatible with the user's explicit correction.
+
+The next useful check is the unchanged score across the remaining roots,
+assessing whether omitted notes obtain **at least one useful route**, rather
+than requiring every plausible Tools relationship. Recommend that check without
+starting it. No admission rule or hierarchy modification is selected here.
+
+### Verification and retained evidence
+
+Independent verification checks all 1,426 entry scores against scalar sums
+(maximum absolute error `1.509903313490213e-14`), all 281 note ranks, twenty
+source-post/meaning bindings and 100 displayed member cosines. Eleven protected
+source hashes and all four earlier output hashes remain unchanged. The first
+verification also reproduces 72 earlier best-group scores; these are numerical
+controls, not the new full-member scores. Assessment identities and all five
+lower-rank diagnostic records pass their source bindings.
+
+Retained ignored evidence, relative to the investigation worktree:
+
+```
+target/food-halves-v1/tools-full-member-top20-review-v1/
+```
+
+- `plan.json`: unchanged scoring, full references, omitted set and source hashes;
+  SHA256 `d7122767857ba6605d8f3a610a0755f1fab1de0911e242d6cf23ab420ba12dde`.
+- `entry-scores.json`, `note-ranking.json`: all entry scores and distinct-note ranks.
+- `review.json`, `agent-review.json`, `summary.json`: source posts, complete
+  meanings, member evidence and explicitly provisional assessments.
+- `earlier-panel-positions.json`, `diagnostics.json`: twelve earlier case positions
+  and detailed quote-bot, camera, server, Work and open-source software evidence.
+- `verification.json`, `independent-verification.json`: source/output hashes,
+  scalar score checks, rank reconstruction and source/member bindings.
+
+No new vectors, model calls, training or hierarchy changes were made. Applied
+note gain is zero; HR35 remains at 718 reachable notes. The worktree is retained
+for these ignored artifacts and its saved-vector source paths.
