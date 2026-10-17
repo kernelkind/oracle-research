@@ -1,7 +1,8 @@
 # HiGen V5.3 coverage investigation
 
 Status: experimental findings, 2026-10-16. This is not a new HiGen version,
-production policy, human judgment set, or approval to change existing meanings.
+production policy, or approval to change existing meanings. The bounded human
+note-membership decisions below do not validate the older agent-labeled panels.
 No provider calls, hierarchy modifications, or UI updates were made. Separately
 authorized full-meaning, first-sentence and member-support comparisons generated
 608, 912 and 19,896 local SSE vectors, respectively; the earlier numerical panels
@@ -25,6 +26,17 @@ samples one original entry per group and does not compare every constituent
 entry. No admission method, score aggregation, pooling policy or implementation
 has been decided through these probes.
 
+The user clarified the interpretation for this investigation: "the root is not
+about food only. it does not have a fixed meaning yet." Its saved title and
+generated definition identify the reference collection; they are not a fixed
+admission boundary for extending that collection. This clarification does not
+modify HR35 or establish a new production meaning policy. In particular, an
+entry lacking a culinary role is not automatically a negative control here.
+The later G463 note review accepts three proposed additions and rejects L02222;
+its exact scope and source identities are recorded at the end of this document.
+Earlier fit/outside labels and failure counts describe the agent assessments
+used at the time, not current human-reviewed admission quality.
+
 The saved-vector connection audit rejects the tested branch expansion rule. The
 subsequent controlled full-meaning comparison improves known-root ranking but
 worsens the difficult Food scope checks. First-sentence pooling does not resolve
@@ -35,8 +47,9 @@ reachable notes; no additions were applied.
 The subsequent member-support probe compares each Food case with all 175 original
 entries actually supporting that root. Full-meaning pooling with a fixed,
 moderate background adjustment improves the focused Food ordering count to 69/78.
-All nine remaining ordering failures involve Caffeine. Stronger emphasis on
-near-exact neighbors reverses much of the gain; this remains a probe, not a
+All nine remaining ordering disagreements under those labels involve Caffeine.
+Stronger emphasis on near-exact neighbors reverses much of the gain; this remains
+a probe, not a
 qualified admission method or a measured coverage improvement.
 
 Replacing the background with actual members of the other five roots improves
@@ -93,8 +106,9 @@ is under Life and experience and supplies the strongest other-root match for
 all 13 focused Food cases and 20/26 fitting cases. The ratio reduces Food scores
 for resembling this clearly food-related topic. Italy also scores above four
 fitting entries on the ratio despite having weaker positive Food support. The
-probe does not qualify a new admission rule; all saved scope labels remain
-provisional agent assessments, and no new labels or graph changes are made.
+probe does not qualify a new admission rule. Its frozen scope labels were
+provisional agent assessments; the later human review supersedes the generic
+Eggs note's exclusion. Saved scores and graph memberships are unchanged.
 
 ## Frozen source and baseline
 
@@ -230,13 +244,16 @@ proposes eight omitted notes and rejects five separately withheld negative
 entry/root controls. This tests the label assumption rather than another
 clustering algorithm.
 
-Reviewing the full source notes supports seven proposals. The eighth is a real
-coverage error: **Caffeine**, from “I've had a stupid amount of caffeine today and
-I still feel so tired. 4 more hours of work.” Neither the note nor its supplied
-meanings establishes food or drink rather than pills or another preparation.
-The classifier must not be automatically adopted despite passing the five
-negative controls. It also proposes generic Knives, whose complete meaning is
-not culinary; that note independently contains a valid Burgers topic.
+The earlier agent review supported seven proposals and rejected **Caffeine**,
+from “I've had a stupid amount of caffeine today and I still feel so tired.
+4 more hours of work.” It reasoned that neither the note nor its supplied
+meanings established food or drink rather than another preparation. That is no
+longer an established coverage error: the later user clarification does not
+limit the reference collection to a fixed Food definition, and the agent has
+withdrawn Caffeine as a demonstrated negative. This is an agent reassessment,
+not a new human approval of Caffeine. The classifier remains a rejected method.
+It also proposed generic Knives, which the earlier agent review rejected as
+nonculinary; that note independently contains a Burgers topic.
 
 The seven supported Food notes combined with the primary screen's 39 supported
 notes cover **45 distinct previously unreachable notes**, a counterfactual
@@ -411,9 +428,11 @@ The reviewed routes come from the earlier proposal review and the separately
 drawn scope sample. These are descriptive checks on a selected agent-reviewed
 panel, not a general recall estimate or independent human-gold validation.
 
-On the separate focused Food panel, the rule selects all 13 positive entries but
-also two of six outside-scope entries: generic reproductive/decorative Eggs and
-general Gardening. It includes the Dogs, Animals and Motor vehicles groups.
+On the separate focused Food panel, the rule selects all 13 earlier-assessed
+positive entries and two of six earlier-assessed outside entries: generic
+reproductive/decorative Eggs and general Gardening. The later human review
+accepts the generic Eggs note; its selection is not an established error.
+The rule also includes the Dogs, Animals and Motor vehicles groups.
 Tools retrieves four of its six earlier group probes, missing Web technologies
 and Digital security.
 
@@ -572,12 +591,16 @@ The original difficult Food panel gives the opposite result:
 | Outside examples incorrectly ranking Food first, all 28 | 5 / 28 | 5 / 28 |
 
 No acceptance threshold was fitted. Neither representation permits one threshold
-to separate all 13 focused Food examples from even the original six controls.
+to reproduce the earlier separation of all 13 focused Food examples from the
+original six controls. That separation is not current human gold.
 Meaning pooling ranks Caffeine at 0.5378 against Food, above all focused valid
 Coffee, Tea, Bread and Wine examples; the strongest of those is Bread at 0.4579.
 Caffeine's definition permits consumption through foods, drinks **or other
-preparations**; it does not restrict the chemical to a food role. General
-Gardening also outranks most of the valid examples. Similarity is not containment.
+preparations**; it does not restrict the chemical to a food role. That fact no
+longer establishes exclusion from this reference collection. General Gardening
+also outranks most of the earlier-assessed fitting examples. Similarity is not
+containment, but fixed Food containment is not this investigation's admission
+contract either.
 
 ### Meaning-sensitive distinctions improve selectively
 
@@ -1624,7 +1647,7 @@ without establishing strong positive Food evidence.
 
 On the focused panel, the thirty disagreements are concentrated in Caffeine
 (nine pairs), Water (seven), generic Eggs (eleven) and Gardening (three). These
-four scope judgments remain prior agent assessments. The fixed Food definition
+four scope judgments were prior agent assessments. The saved Food definition
 includes food growing, consumption by animals as well as humans, and food-related
 communication. Exact meanings must therefore be considered before calling any
 disagreement a semantic error. Ratings and Docking electronic devices score
@@ -1684,3 +1707,72 @@ target/food-halves-v1/food-all-roots-best-group-support-v1/
   Breakfast's six definitions, the Eggs inversion and the Italy contrasts.
 - `calculate.py`, `verification.json`, `diagnostics-verification.json`:
   source-bound calculation, numerical replay checks and protected evidence.
+
+## Human review of the notes brought by the Eggs group
+
+The user corrected the interpretation before reviewing additions:
+
+> the root is not about food only. it does not have a fixed meaning yet.
+
+Inspect the relationships to the actual member collection, rather than treating
+the existing Food and dining wording as a fixed exclusion rule. Merely ranking
+Eggs above Coffee or Tea is not an admission error; both can belong. The agent's
+claim of eight credible Eggs ordering errors is withdrawn. No negative label is
+inferred from membership in another root.
+
+Generic Eggs `L02984` has full-meaning cosine 0.60792 to Food `L06359`, whose
+definition includes preserved eggs; 0.56348 to Food-preservation mixtures
+`L00647`; 0.46859 to Food `L00002`, whose examples include eggs; and 0.42576 to
+Food ingredients `L00517`, whose examples include duck eggs. These actual-member
+connections make it inappropriate to assume rejection merely because L02984's
+definition describes reproductive bodies and decoration.
+
+Its original HDBSCAN group `G463` contains eight entries from seven notes:
+
+- Culinary Eggs: `L00101`, `L00572`, `L00645`.
+- Egg breakage: `L00138`.
+- Egg yolks: `L00440`.
+- Generic Eggs: `L02984`.
+- Easter: `L02222`, `L02985`.
+
+Three of those notes already occur under the reference root through other
+entries. The remaining four were presented together with their source content
+and current coverage. The user's exact decision was:
+
+> L02222 is a definite rejection. others are fine
+
+The following are **note-level membership decisions for this proposed root
+extension**, not approval of every meaning in G463 or a new fixed root
+definition:
+
+| Group entry or entries | Source note | Presented source content | User decision | Existing coverage |
+|---|---|---|---|---|
+| L00101 · Eggs as food | 612fa3c5bdabd571a01591f3e02bd6a53a80f536a6c0102c243686e162ee291f | Writer avoids preparing eggs, snacks on chocolate, feels sick and reluctantly considers preparing eggs. | Accept | Life and experience |
+| L00440 · Egg yolks | f4c5aa5f18026412caa17c21c3fad6056c82b80de57ad70003074ff622adc496 | “Made my coffee with raw cream and a raw egg yolk today #coffeechain” | Accept | Outside every root |
+| L02984 / L02985 · Eggs / Easter | a2642c01d248df50cc3c06089e8f1a708e3fd9e9df5842e73bffe39593738460 | Traditional Easter pisanki egg-coloring day, with egg-decoration hashtags. | Accept | Outside every root |
+| L02222 · Easter | 67ad78ea623fcd4c0c81e032c49ba1b2055dd85f3e22cc82c6b725a24f1faeb2 | Easter broadcast announcing Christ's resurrection and discussing US military action against Iran. | Reject | Information, communication and relationships |
+
+Thus admitting G463 wholesale would include one explicitly rejected note. A
+high score for its generic Eggs entry cannot validate every member of its
+group. This is a concrete bounded contrast: the egg-decorating note is accepted,
+whereas the Easter broadcast is rejected. Do not turn that into an automatic
+food-only restriction or infer rejection of every other Easter entry.
+
+The three accepted additions would hypothetically add three notes to this root,
+two of them previously outside every root. Their source identities distinguish
+new root membership from new overall reachability. These are not applied gains:
+HR35 remains unchanged at 718 reachable notes.
+
+The 77/78, 63/78 and 48/78 counts remain reproducible measurements against the
+old agent labels, not a ranking of human-validated admission quality. The eight
+focused comparisons that penalized generic Eggs are not current rejection
+evidence. Caffeine's negative label is also withdrawn by agent reassessment;
+that reassessment must not be reported as a human decision. Original score
+files, labels, vectors, source notes and hierarchy evidence remain immutable.
+No prompt, numerical admission rule, HDBSCAN setting or production code was
+changed, and no model calls or new encodings were made.
+
+The next useful probe is to compare the accepted and rejected members of G463
+against the same actual root references, checking whether a whole-group score
+hides the rejected broadcast. This is a recommendation for later authorization,
+not a selected scoring change or a new run.
