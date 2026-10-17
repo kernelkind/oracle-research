@@ -5205,3 +5205,92 @@ reordering/duplication/isolated checks pass. All 47 existing boundary/query/
 fusion/HDBSCAN tests pass. Numerical evaluation takes 2.5 seconds for this
 small reference pool; it is not a production-scale qualification. No algorithm
 change is adopted, no hierarchy/UI is modified, and Tools is not reevaluated.
+
+## Audio technology: which references produce the permissive boundary?
+
+The user authorized inspecting the seven accepted entries in Arts `fused-021`
+against useful-looking art entries and unrelated proposals. This decomposes
+existing calculations only: no group, score, boundary, meaning or hierarchy is
+changed. Evidence is in `target/food-halves-v1/arts-audio-technology-inspection-v1/`;
+its plan precedes the member-pair decomposition and explicitly records that
+the parent experiment's outcomes were already known. Plan SHA256:
+`1e23b4187bf0e975954ac23de60559c59f5f536a848a4dda131ba8b2758585a4`.
+
+The seven references come from **four source notes**, not seven independent
+notes. Audio mixing, Audio equipment and Audio-processing chains share one
+note; Soundpacks and Trying soundpacks share another. The score continues to
+average available entries, while curve positions weight source notes equally.
+This difference is recorded, not changed or established as a causal defect.
+
+| Accepted entry | Meaning in brief | Mean support from the group's other source notes |
+|---|---|---:|
+| L01240 Audio sampling | Reusing recorded sounds in new musical/audio work | 0.146351 |
+| L01350 Audio mixing | Combining and adjusting audio sources | 0.077916 |
+| L01352 Audio equipment | Hardware for capturing, processing or reproducing sound | 0.080304 |
+| L01354 Audio-processing chains | Connected stages processing an audio signal | 0.186572 |
+| L05674 Soundpacks | Bundled sound files for use as audio resources | 0.195305 |
+| L05675 Trying soundpacks | Trial use of soundpacks to experience or assess them | 0.039963 |
+| L06742 Sound presets | Stored sound-generation/processing configurations | 0.190234 |
+
+Trying soundpacks has the weakest cross-note support, so it supplies the
+existing member anchor. That score excludes both entries of its source note,
+including Soundpacks; it is not its similarity to every other group entry.
+This inspection does not establish that its wording causes unwanted admission
+or authorize replacing a valid accepted entry.
+
+The neighbor-context curve has 29 accepted entries. At and below the anchor,
+its decisive levels are:
+
+| Accepted reference | Match to Audio technology | Role in the saved calculation |
+|---|---:|---|
+| Trying soundpacks L05675 | 0.039963 | Weakest member; fitted upper endpoint |
+| Noise L01417 | 0.028591 | Surrounding accepted reference |
+| Musical artists L01349 | 0.021059 | Largest normalized `y-x` bend |
+| Signaling silence L05169 | 0.017688 | Next lower reference; figurative cellular-receptor topic |
+| Noise in communication L02240 | 0.015547 | Surrounding accepted reference |
+| Quietness L02825 | 0.011782 | Surrounding accepted reference |
+
+The rule puts the boundary halfway between Musical artists and Signaling
+silence, **0.019374**. Those entries supply the numerical split; neither is an
+Audio technology group member. All outsiders remain absent from this curve.
+
+| Outside entry | Saved Audio technology score | Passes that boundary |
+|---|---:|---|
+| Master of Music degrees L01379 | 0.078688 | Yes |
+| Voice studios L01380 | 0.049582 | Yes |
+| Pianos L01377 | 0.043437 | Yes |
+| Visual artworks L01896 | 0.040794 | Yes |
+| Photography L03433 | 0.037284 | Yes |
+| Radio stations L01981 | 0.033942 | Yes |
+| Half-lives L00628 | 0.026655 | Yes |
+| Gas facilities L06055 | 0.025862 | Yes |
+| Art L03500 | 0.025073 | Yes |
+| Earthquakes L01799 | 0.024575 | Yes |
+| Distinctions between dairy products L00292 | 0.019992 | Yes |
+| Art galleries L03735 | 0.013131 | No |
+
+Art galleries can fit the root through Artists; its low Audio technology score
+is not independently a root-level failure. Conversely, selecting Art through
+this one group while rejecting Gas facilities is impossible with an increasing
+threshold on this group's current score: Gas facilities ranks higher. The
+earlier all-group capacity result remains consistent because another group can
+supply a route for Art. Boundary changes must be assessed across all routes.
+
+The unwanted scores are not attributable to one high pair alone. Gas facilities
+has kernel matches `0.0455` to Audio-processing chains and `0.0468` to Sound
+presets; the other five pair scores range from `0.0068` to `0.0238`. Their exact
+seven-entry mean is the saved `0.025862`. This is arithmetic evidence, not a
+claim that words such as "processing" caused those vector similarities.
+
+All four whole-note folds pass the neighbor-context member-recovery check.
+That check tests retention of accepted members; it does not test unwanted
+admission. The full-root context instead gives boundary `0.028976` and blocks
+these particular gas/earthquake routes, but it loses several useful routes and
+fails its member-recovery check. No context variant is adopted here.
+
+Save all 10,143 outsider/member kernel cells, exact mean contributions, member
+source-note exclusions, every accepted-reference curve level and selected bend
+coordinates. All 2,898 context-specific saved group means replay exactly; source
+hashes remain unchanged. The first inspection script shadowed Python's stdlib
+`inspect` module; renaming the artifact script fixed the import without changing
+the numerical plan or any production source. No model calls or new vectors.
