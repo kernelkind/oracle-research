@@ -117,7 +117,12 @@ Dining groups member's optional children clause, and automotive Simple habits
 matches routine wording across Diet definitions. These are provisional agent
 assessments of the actual member links, not new human rejections or a fixed
 Food-only boundary. The earlier full-member baseline ranks these cases lower;
-its top twenty have not yet received the same complete review.
+its top twenty now have the same complete source/member review. All twenty are
+provisionally plausible note additions, with four explicit qualifications.
+Eleven notes are shared with the asymmetric top twenty; the nine replacements
+displace its eight weak/unresolved cases and one otherwise plausible coffee
+note. This is a bounded agent review, not measured precision or an automatic
+admission decision.
 
 ## Frozen source and baseline
 
@@ -1952,8 +1957,9 @@ the Egg yolks note at rank 1, the two Bread notes at ranks 2 and 3, and Coffee
 shops at rank 6. These are descriptive rank comparisons using each method's own
 best entry per note. The baseline uses full members whereas the asymmetric
 score uses grouped members; this does not isolate group maximization from the
-reference-cohort change. Its complete top twenty have not received the same
-review, so no comparative precision or general superiority is claimed.
+reference-cohort change. The subsequent complete top-twenty review is recorded
+below; neither these ranks alone nor that agent review establishes comparative
+precision or general superiority.
 
 The earlier human-accepted egg-decorating note ranks 29th under the asymmetric
 method, still through L02984 with its unchanged score 6.1746. The rejected
@@ -1994,7 +2000,116 @@ target/food-halves-v1/food-omitted-note-ranking-v1/
 - `calculate.py`, `verification.json`, `independent-verification.json`: native
   input checks, exact saved-result replays and independent numerical validation.
 
-The next useful step is to inspect the baseline's top twenty with the same
-source/member evidence before changing formulas. That compares actual proposed
-recoveries and avoids adding another mechanism on the strength of a few examples.
-It is a recommendation, not a production decision or a new run.
+The following user-authorized review inspects that baseline's top twenty with
+the same source/member evidence, without changing formulas.
+
+## Source review of the full-member averaging method's top twenty
+
+The user authorized inspecting the existing baseline ranking. This reuses the
+already calculated full-member ratio: mean affinity to all 175 target members
+divided by mean affinity to the 1,473 original members in the other roots. It
+keeps full-meaning pooling, beta 5.5 and the maximum-entry note summary. No score,
+vector, parameter or threshold is changed. The twenty ranked note identities
+and source hashes were frozen before the source-post/member review.
+
+The reference root is a collection that can expand, rather than a fixed Food
+definition. Assessment considers the actual member meanings and original note
+content. It does not reject candidates merely because their supplied meanings
+are not culinary-only, or because the note could fit another root. Nor does a
+plausible note-level addition certify every possible use of its winning
+heading or definition.
+
+| Averaging rank | Winning entry | Score | Asymmetric note rank | Agent review |
+|---:|---|---:|---:|---|
+| 1 | L00440 · Egg yolks | 8.1716 | 9 | Coffee with raw cream and egg yolk; previously human-accepted note. |
+| 2 | L02423 · Bread | 6.4592 | 5 | Homemade buns; direct food/cooking connection. |
+| 3 | L00097 · Bread | 6.2598 | 6 | Preparing sourdough; direct food/cooking connection. |
+| 4 | L00283 · Knives | 6.1765 | 2 | Burger-eating advice; plausible note, with a general-purpose winning Knives meaning. |
+| 5 | L02719 · Chili dishes | 5.7063 | 4 | Actual chili dish; direct prepared-food/ingredient connection. |
+| 6 | L00471 · Coffee shops | 5.3875 | 3 | Coffee-shop customer/policy post; direct restaurant-business connection. |
+| 7 | L00037 · Milk | 5.1437 | 12 | Praise for raw-milk slush; direct beverage/ingredient connection. |
+| 8 | L05709 · Changes in tea culture | 5.0373 | 21 | London's chai culture; connects to cuisine and culinary traditions. |
+| 9 | L00616 · Coffee roasting | 4.3970 | 1 | Personal bean roasting; direct preparation/cooking connection. |
+| 10 | L03724 · Wagamama | 4.3364 | 23 | Restaurant chain promoting a DJ night; plausible business extension, with event focus qualified. |
+| 11 | L02015 · Seasonings | 4.0549 | 20 | Seasoning-brand legal dispute; plausible food-product route, with legal focus qualified. |
+| 12 | L00374 · Coffee beans | 3.8649 | 36 | Grinding coffee beans; direct ingredient/preparation connection. |
+| 13 | L00292 · Distinctions between dairy products | 3.7850 | 14 | Cream versus half-and-half in coffee; direct ingredient-identity connection. |
+| 14 | L00629 · Seed-oil consumer's body | 3.6860 | 27 | Alleged bodily effects of consuming seed oils; dietary-exposure link, with body meaning qualified. |
+| 15 | L05317 · Mugs | 3.6681 | 26 | Mugs for sale; matches existing Dishes/tableware definition directly. |
+| 16 | L00479 · Steaks | 3.5333 | 42 | Steak purchase/pricing post; direct edible meat-cut connection. |
+| 17 | L00267 · Tea | 3.4697 | 31 | Request for hot tea; direct beverage connection. |
+| 18 | L00534 · Tea | 3.2701 | 8 | Hot-tea consumption; direct beverage connection. |
+| 19 | L00562 · Coffee availability | 3.2546 | 38 | Asking whether coffee is available; direct beverage/provision connection. |
+| 20 | L03892 · Ice cream bars | 3.2491 | 50 | Vintage ice-cream advertisement; direct dessert-product connection. |
+
+All twenty are provisionally plausible note additions on this agent review.
+Sixteen have straightforward source/member connections; four need explicit
+qualifications. Knives includes uses beyond dining even though its post is
+about eating burgers. Wagamama's post concerns a student DJ night rather than
+food being served, but its selected topic is the identified restaurant chain.
+Seasonings occurs in a legal/branding story. The seed-oil note supplies a
+dietary-exposure connection, while its selected consumer-body meaning is broader
+than the physiological effects discussed. This review classifies the topic; it
+does not establish the source's biological claim. These are four qualified
+plausible notes, not four definite rejections or silent human approvals.
+
+Actual member links include Changes in tea culture to Food `L01112`, whose
+meaning includes cuisine traditions (cosine 0.73811), and Mugs to Dishes `L00170`,
+whose definition includes kitchen/tableware cups (0.62304). Steaks matches
+prepared/ingredient Food definitions, including L00124 at 0.60151. These are
+specific member connections, without using a synthetic root vector as the
+admission target. The mean score itself uses every member, not only these
+displayed nearest matches.
+
+### Matched comparison and limits
+
+The two twenty-note selections share eleven notes. The averaging method brings
+in nine different notes: Changes in tea culture, Wagamama, Coffee beans, the
+seed-oil consumer's body, Mugs, Steaks, Tea, Coffee availability and Ice cream
+bars. It leaves out all eight previously flagged weak/unresolved connections
+from the asymmetric top twenty. It also leaves out the otherwise plausible
+desk/coffee note whose asymmetric winner was Time after 9 a.m.; that note is
+24th under averaging. Do not count that removal as a quality improvement.
+
+Several shared notes use different winning entries. Averaging selects Knives
+instead of Advice in the burger note, Chili dishes instead of Spiciness,
+Milk instead of Praise for food and drink, Coffee roasting instead of Sipping,
+and Tea instead of Drinking. Thus the comparison concerns both which notes are
+retrieved and which original entries supply their proposed routes.
+
+This larger source review supports retaining full-member averaging as the
+stronger Food-collection ranking candidate for further investigation. It is not
+20/20 measured accuracy, proof of whole-meaning containment, an admission
+threshold or evidence that averaging works equally well for every root. Only
+the pre-existing Egg yolks decision is human-labeled within these twenty; the
+other assessments and qualifications remain the agent's. The root references
+also contain repeated general Food definitions, so this result must not be
+silently generalized to a root with a different topic mixture.
+
+All twenty original post texts, complete winning meanings, unchanged scores and
+ranking identities pass source checks. Thirteen protected source hashes and all
+four review output hashes pass. Per-group affinity contributions plus the
+originally ungrouped-member contribution sum to one for every reviewed case.
+No new scores, encodings, model calls, training or hierarchy changes occur;
+HR35 still reaches 718 notes. There is no applied note gain.
+
+Retained ignored evidence:
+
+```
+target/food-halves-v1/food-baseline-top20-review-v1/
+```
+
+- `plan.json`: fixed earlier ranking, method, scope and source identities; SHA256
+  `03d0993a6ac680f683d3a6676d2cd2b3d0683d051b5afc34f5d0fa0a8e6f77a8`.
+- `review.json`: all twenty source posts, complete meanings, actual member
+  matches, group contributions and prior rank positions.
+- `rank-comparison.json`, `agent-review.json`, `summary.json`: shared/replaced
+  note sets, source-based agent assessments and the four qualifications.
+- `verification.json`: source/output checks, unchanged-score identities and
+  exact selection checks.
+
+The next useful test is the same unchanged full-member averaging method on
+Tools and techniques, followed by actual source/member review. Its topic mixture
+differs from this Food collection and therefore provides a stronger transfer
+check than further tuning these same cases. This is a recommendation, not
+authorization to run it or apply additions.
