@@ -4785,3 +4785,103 @@ keep this subsequent user review separate. The next boundary investigation
 should prioritize excluding the three confirmed unwanted Food selections
 while retaining useful recovery. This review neither changes the scoring rule
 nor authorizes another experiment or a hierarchy edit.
+
+## Member-anchored reference bend: controlled follow-up
+
+The user subsequently authorized: "try this", quoting the proposal to anchor
+boundaries to the group's own members. The test changes the experimental
+reference-curve endpoint; it does not change hierarchy generation, accepted
+fusion groups or weights, meanings, vectors or the outsider mean-affinity score.
+All outsiders remain independent. No model calls, new encodings or training.
+
+Evidence: `target/food-halves-v1/member-anchored-bend-v1/` in the retained
+`oracle-mvp-hierarchy-food-halves-v1` worktree. The plan was frozen before query
+outcomes; SHA256
+`f419225dd8430f8c65feac1fd2150bd834c175d8052ef3ec6fb20d4776e8d584`.
+The same 1,449 queries and fixed 137 Food/67 Tools contextual references are
+used. Historical source bytes remain in Git; the new manifest verifies the
+previous code against commit `a30bcdcf` and binds the changed code separately.
+Old artifacts remain unchanged.
+
+For each group, calculate its own members' mean meaning-affinity scores against
+other source notes in that group. The weakest such score becomes the fitted
+curve's upper endpoint, replacing the previous upper 10% trim. Stronger scores
+are outside the fit, and the original lower `ceil(10% of full distinct levels)`
+trim remains. Recompute the endpoint within every note-exclusion fold. A group
+with no cross-note member support has no anchor; no inherited full-data anchor
+or numerical cutoff is substituted. Fit the bend as before below that endpoint.
+
+Both orientations, with and without the all-fold self-consistency gate, were
+predeclared. The frozen primary remains anchored `x-y` with that gate. Compare
+anchoring against its matching unanchored orientation/gate, rather than
+attributing a change of orientation or gate to anchoring.
+
+| Food, older saved panel | Plausible proposed | Agent-assessed mismatches proposed |
+|---|---:|---:|
+| Unanchored `x-y`, gated: earlier primary | 19/21 | 3/29 |
+| Anchored `x-y`, gated: frozen new primary | 12/21 | 3/29 |
+| Unanchored `y-x`, no gate | 19/21 | 2/29 |
+| Anchored `y-x`, no gate | 19/21 | 0/29 |
+| Unanchored `y-x`, gated | 18/21 | 2/29 |
+| Anchored `y-x`, gated | 9/21 | 0/29 |
+
+The primary does **not** establish improvement: it loses plausible matches and
+replaces the three confirmed errors with three different provisional mismatches
+(Holidays, Travel classes and Visits to Japan). Every anchored variant excludes
+the confirmed Nausea L02276, Blood L06803 and JAIA Drake L04019 selections.
+
+The most promising predeclared diagnostic is anchored `y-x` without the hard
+gate. Its Food result preserves 19/21 plausible cases while removing the two
+mismatches from its matching unanchored control. On the later panel it selects
+17/18 plausible Food cases and zero of nine provisional mismatches; focused
+panel 5/6 and zero of two. The panels overlap and are development evidence,
+not independent accuracy estimates. The earlier Food misses change: Steaks
+L00479 is recovered, while Coffee beans L00374 and low-priority Traditional
+activities L02986 are missed. All four earlier human note controls match,
+including the pisanki note through Eggs L02984 despite missing its Traditional
+activities heading. This does not approve all headings on those posts.
+
+For general Food `fused-014`, anchored `y-x` gives boundary `0.049184`, compared
+with unanchored `y-x` `0.042143` and the old primary `x-y` `0.015549`. Coffee
+L00228 scores `0.084107` and passes. Blood scores `0.046273`, Nausea `0.021513`
+and JAIA Drake `0.017687`; none passes any anchored Food group. However, holding
+out either source of this two-member group leaves one member without cross-note
+support. The hard gate therefore blocks Coffee because the fold cannot be
+evaluated, not because it produces a tested wrong prediction. Ungated results
+retain that limitation rather than claiming the unavailable check passed.
+
+Tools outcomes remain **unconfirmed assessments**, following the user's review.
+Anchored `y-x` without the gate proposes 26/38 older plausible cases and one of
+12 provisional mismatches; later 28/33 and four of nine. The latter entries are
+Analysts, Retrieval, Deadlines and Performance struggles. These are review
+candidates, not newly established human errors. This diagnostic proposes 34
+actually omitted notes for Food and 79 for Tools, overlapping on five: 108
+distinct proposals. They are not applied or certified recoveries.
+
+A post-outcome source inspection prevents declaring the clean saved Food panel
+a solution. The same ungated diagnostic proposes:
+
+- Gas facilities L06055, from a post about an explosion at a Mexico gas
+  facility, through Food-preservation group `fused-008`: score `0.047740`,
+  boundary `0.036132`. The hard gate blocks this group.
+- Breath L04399, from an accident/death post, through Eating group `fused-010`:
+  score `0.055450`, boundary `0.047723`. This group passes the hard gate too.
+
+Neither the supplied meaning nor the post supplies a culinary connection. These
+are new **agent-assessed suspect routes**, preserved in `post-outcome-source-review.json`,
+not human judgments or inputs used to choose the frozen rule. Eating's weakest
+own-member support is `0.403975`; anchoring the curve there still permits a bend
+far below it. Thus changing the upper endpoint alone does not ensure that the
+chosen bend marks the edge of the group's useful neighborhood. The confirmed
+errors are fixed, but automatic admission is still not qualified.
+
+Four new tests first fail on the unsupported anchor option, then pass with the
+minimal experimental change. Thirty-five combined boundary/query/fusion/
+HDBSCAN tests pass. Independent scalar verification checks 100 reference models,
+724 base/fold boundaries, 77,512 curve scores and 144,900 query/group scores;
+maximum discrepancy `3.06e-16`. All unanchored reference models and 11,592
+unanchored root decisions replay exactly. Query reorder/duplicate/isolated
+checks and source hashes pass. Evaluation takes 7.1 seconds for these small
+reference pools, not a production scaling qualification. HR35 remains at 718
+reachable notes; no hierarchy or UI changes. Findings/code/tests land on local
+`main`; retain the task worktree for frozen vector and evidence paths.

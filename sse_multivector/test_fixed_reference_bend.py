@@ -84,6 +84,38 @@ class FixedReferenceBendTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 derive_boundary(a, ['a', 'b'], [0, 1])
 
+    def test_member_anchor_keeps_weakest_member_as_curve_start(self):
+        a = np.full((10, 10), .1)
+        np.fill_diagonal(a, 1)
+        for i, j, score in [(0, 1, .9), (0, 2, .7), (1, 2, .5)]:
+            a[i, j] = a[j, i] = score
+        for j, score in enumerate([.99, .55, .5, .2, .18, .16, .14], 3):
+            a[j, :3] = a[:3, j] = score
+        r = derive_boundary(a, list('abcdefghij'), [0, 1, 2], anchor='members')
+        self.assertAlmostEqual(r['anchor_score'], .6)
+        self.assertEqual(r['fit_start_level'], r['anchor_level'])
+        self.assertAlmostEqual(r['curve'][r['fit_start_level']]['score'], .6)
+        self.assertAlmostEqual(r['threshold'], (.5 + .2)/2)
+
+    def test_member_anchor_cannot_use_same_note_support(self):
+        a, notes = reference()
+        notes[1] = notes[0]
+        r = derive_boundary(a, notes, [0, 1], anchor='members')
+        self.assertEqual(r['status'], 'no_member_anchor')
+        self.assertIsNone(r['threshold'])
+
+    def test_member_anchor_is_reestablished_after_whole_note_exclusion(self):
+        a, notes = reference()
+        r = qualify_boundary(a, notes, [0, 1], anchor='members')
+        self.assertIsNotNone(r['base']['threshold'])
+        self.assertFalse(r['eligible'])
+        self.assertTrue(all(f['boundary']['status']=='no_member_anchor' for f in r['folds']))
+
+    def test_unknown_anchor_is_rejected(self):
+        a, notes = reference()
+        with self.assertRaises(ValueError):
+            derive_boundary(a, notes, [0, 1], anchor='unknown')
+
 
 if __name__ == '__main__':
     unittest.main()

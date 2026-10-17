@@ -40,13 +40,18 @@ def mean_support(affinities, query_notes, reference_notes, group_indices, *, exc
 
 
 def derive_boundary(reference_affinities, reference_notes, group_indices, *,
-                    excluded_notes=(), orientation='x_minus_y'):
+                    excluded_notes=(), orientation='x_minus_y', anchor=None):
     """Fit the strongest central-80% bend in a reference-only support curve.
 
     Equal scores share a level; trim ceil(10% of distinct levels) from each end.
     Normalize cumulative note mass and support drop over the retained endpoints.
     The boundary is midway between the selected score and the next lower score.
     The 1e-12 tolerance only suppresses floating-point bends on straight curves.
+
+    With anchor='members', replace the upper trim by the weakest available
+    member's cross-note support. Keep that point as the fitted upper endpoint;
+    retain the original lower trim. Recompute the anchor after note exclusions.
+    A member without cross-note support makes this anchored fit unavailable.
     """
     a = np.asarray(reference_affinities, dtype=float)
     if a.shape != (len(reference_notes), len(reference_notes)):
@@ -55,6 +60,8 @@ def derive_boundary(reference_affinities, reference_notes, group_indices, *,
         raise ValueError('reference affinities must be symmetric')
     if orientation not in ('x_minus_y', 'y_minus_x'):
         raise ValueError('unknown bend orientation')
+    if anchor not in (None, 'members'):
+        raise ValueError('unknown reference anchor')
     excluded = set(excluded_notes)
     scores = mean_support(a, reference_notes, reference_notes, group_indices,
                           excluded_notes=excluded)
@@ -79,7 +86,16 @@ def derive_boundary(reference_affinities, reference_notes, group_indices, *,
     curve = result['curve']
     trim = math.ceil(.10 * len(curve))
     result['trim_levels_per_end'] = trim
-    retained = curve[trim:len(curve)-trim]
+    fit_start = trim
+    if anchor == 'members':
+        if not all(np.isfinite(scores[i]) for i in group):
+            result['status'] = 'no_member_anchor'
+            return result
+        anchor_score = float(min(scores[i] for i in group))
+        fit_start = next(i for i, level in enumerate(curve) if level['score']==anchor_score)
+        result.update(anchor=anchor, anchor_score=anchor_score, anchor_level=fit_start,
+                      fit_start_level=fit_start)
+    retained = curve[fit_start:len(curve)-trim]
     if len(retained) < 3:
         return result
     first, last = retained[0], retained[-1]
@@ -100,7 +116,7 @@ def derive_boundary(reference_affinities, reference_notes, group_indices, *,
 
 
 def qualify_boundary(reference_affinities, reference_notes, group_indices, *,
-                     excluded_notes=(), orientation='x_minus_y'):
+                     excluded_notes=(), orientation='x_minus_y', anchor=None):
     """Check fixed group members with their entire source note withheld.
 
     Each fold excludes the note from both reference context and group members;
@@ -109,11 +125,12 @@ def qualify_boundary(reference_affinities, reference_notes, group_indices, *,
     excluded = set(excluded_notes)
     group = [i for i in group_indices if reference_notes[i] not in excluded]
     base = derive_boundary(reference_affinities, reference_notes, group,
-                           excluded_notes=excluded, orientation=orientation)
+                           excluded_notes=excluded, orientation=orientation, anchor=anchor)
     folds = []
     for note in sorted({reference_notes[i] for i in group}):
         boundary = derive_boundary(reference_affinities, reference_notes, group,
-                                   excluded_notes=excluded | {note}, orientation=orientation)
+                                   excluded_notes=excluded | {note}, orientation=orientation,
+                                   anchor=anchor)
         held = [i for i in group if reference_notes[i] == note]
         scores = mean_support(np.asarray(reference_affinities)[held], [note]*len(held),
                               reference_notes, group, excluded_notes=excluded | {note})
