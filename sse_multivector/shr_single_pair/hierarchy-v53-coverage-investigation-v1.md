@@ -5294,3 +5294,83 @@ coordinates. All 2,898 context-specific saved group means replay exactly; source
 hashes remain unchanged. The first inspection script shadowed Python's stdlib
 `inspect` module; renaming the artifact script fixed the import without changing
 the numerical plan or any production source. No model calls or new vectors.
+
+## Food and Arts: can another allowed bend reject Gas facilities?
+
+The user authorized tracing the Food Gas facilities route and comparing it
+with Audio technology, keeping both calculations unchanged. Evidence is in
+`target/food-halves-v1/food-arts-gas-boundary-trace-v1/` in the retained worktree;
+plan SHA256
+`e4ded0500aa746db2743b9d09bf3599d6037158e43004c291e4df3930e5ac3c2`.
+The plan records the already-known admission outcomes and precedes the Food
+pair decomposition and enumeration of the existing bend choices. No new rule,
+cutoff, vector, provider call or hierarchy membership is introduced. Gas
+facilities remains a provisional unwanted control, not a new human judgment.
+
+Food preservation `fused-008` has five accepted entries from four source notes:
+three Food preservation entries, Food-preservation mixtures, and Food L06359.
+The last defines food broadly, mentioning preserved century eggs as an example;
+the example does not restrict the whole meaning to preserved foods. Its
+cross-note support `0.047969` is the weakest and supplies the curve anchor.
+The other four accepted-member supports range from `0.140030` to `0.315200`.
+
+Gas facilities L06055 matches Food preservation L00131 at `0.072883`, L00646
+at `0.046922` and L00727 at `0.084368`; the mixture entry matches at `0.026963`
+and generic Food at `0.007562`. The exact five-entry mean is `0.047740`.
+Most of its numerical support comes from the
+preservation entries rather than generic Food. This does not establish which
+words caused those vector matches.
+
+The neighbor-context bend chooses Lunches L00021 (`0.022692`) followed by
+Meals L00608 (`0.021902`), giving midpoint **`0.022297`**. Neither is a member
+of the preservation group. As in Audio technology, a bend among weaker
+surrounding accepted references becomes the group's admission boundary.
+
+Enumerating the existing curve choices reveals a stronger restriction. A
+qualifying `y-x` bend must have positive deviation exceeding the existing
+`1e-12` floating-point tolerance; the anchor and final endpoint have zero
+deviation. Each candidate boundary remains the midpoint to the next lower
+reference score. Retain the original fit interval and note weighting.
+
+| Group / neighbor context | Gas score | Current boundary | Strictest qualifying bend's boundary | Can any qualifying bend reject Gas? |
+|---|---:|---:|---:|---|
+| Food preservation | 0.047740 | 0.022297 | 0.023568 | No |
+| Audio technology | 0.025862 | 0.019374 | 0.024825 | No |
+
+This is enumeration of saved reference-derived candidates, not label-based
+selection of a replacement cutoff. Every qualifying midpoint in each curve
+is at or below Gas's score. Choosing an earlier qualifying bend would therefore
+still admit it through both groups. Both neighbor models also pass their
+whole-note member-recovery checks, so the existing hard gate does not block
+either route.
+
+The constraints differ in an informative way if the positive-deviation
+requirement is hypothetically relaxed, without applying any new boundary:
+
+- In Food's neighbor curve, even the largest midpoint anywhere in the fitted
+  interval is `0.047323`, below Gas. The weakest member `0.047969` is followed
+  by another accepted Food entry at `0.046677`; their midpoint already admits
+  Gas `0.047740`. Reordering which fitted midpoint is chosen cannot reject it.
+- In Audio technology's neighbor curve, the first midpoint is `0.034277`, above
+  Gas. That endpoint has zero bend deviation and is unavailable to the current
+  positive-bend selection. Here the positive-bend constraint is material.
+
+Full-root context is a control, not an adopted rescue. Food's strictest
+qualifying full-context bend gives `0.046901`, still below Gas; allowing
+nonpositive endpoints introduces one midpoint above Gas (`0.047861`). Arts
+full-context already has qualifying cutpoints above Gas and its actual
+`0.028976` boundary blocks this particular route. Both full-context groups
+fail the existing hard self-check. None of these route observations establishes
+the correctness of other admissions or resolves whole-root admission by itself.
+
+The finite score-capacity results remain consistent: arbitrary separate group
+boundaries can separate the saved controls, but the current curve construction
+and allowed midpoint choices cannot realize every such separation. The next
+useful diagnostic is to measure those restrictions across the saved Food and
+Arts controls before choosing another boundary formula; it has not run here.
+
+Saved artifacts retain all member contributions, complete Food curves and
+every considered midpoint/deviation for both groups and contexts. Exact Food
+query-score/anchor replay, direct midpoint enumeration, contribution sums and
+source hashes pass. Existing numerical code and previously accepted meanings
+remain unchanged. No new algorithm is adopted and no notes are added.
