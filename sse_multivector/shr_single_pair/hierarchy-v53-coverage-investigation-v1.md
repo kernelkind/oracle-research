@@ -3266,3 +3266,139 @@ The same exact reference subsets are cached; all 180 queries reuse the 29
 group scales. No all-corpus square matrix or arbitrary-scale implementation is
 proposed. The unchanged hierarchy still reaches 718 notes, with zero applied
 additions. The worktree remains for the source-bound ignored evidence.
+
+## Original-group geometry under title and meaning pooling
+
+The user authorized comparing each original group's internal similarity under
+title pooling and full-meaning pooling. This isolates the representation used
+by the recent admission probes; it does not change HiGen V5.3, rerun clustering,
+change group members or make new semantic judgments. All vectors are reused,
+with no new encodings, LLM calls, training or paid resources.
+
+### Source and matched inputs
+
+The 29 original groups contain 204 entries: 137 Food and 67 Tools references.
+Every represented group is present in full, not partially sampled. Initially
+ungrouped entries have no original group to evaluate and are excluded from
+this geometric consistency check. The encoder sees identical
+`title + "\n\n" + explicit meaning` text in both modes. Only the pooled tokens
+differ: title tokens versus full-meaning tokens, from the same saved forward
+pass, checkpoint and tokenizer.
+
+The production hierarchy code's `_vector_key` and `_prepare_encoding` select
+the title's byte span. This is also checked against the actual original
+native encoding and the normalized vectors submitted to HDBSCAN. The
+production saved-vector reader recovers all 204 original title vectors;
+the later saved title rows replay them within maximum raw error
+`1.043081283569336e-7` and cosine error `1.0380585280245214e-13`. The original
+HDBSCAN payload matches the recovered normalized originals within
+`5.551115123125783e-17`. The mismatch is therefore pooling choice, not the wrong
+source vectors or a new model draw.
+
+For each group, save every distinct-source-note pair's cosine and the unchanged
+kernel affinity. For each member, exclude all references from its source note
+throughout its root's grouped references. Record its nearest reference and
+rank the original groups by average kernel affinity. This second check matters:
+uniformly lower cosines alone would not show that relative neighborhoods changed.
+Different groups are geometric contrasts, not semantic negative labels.
+
+### Internal similarity and relative neighborhoods both change
+
+All 29 groups have lower mean internal cosine under meaning pooling. Across
+groups, the median mean cosine falls from `0.973410` to `0.746523`. This is a
+descriptive representation comparison, not an admission threshold or accuracy.
+
+| Root | Members | Nearest reference in own group, title | Nearest reference in own group, meaning | Own group has highest mean, title | Own group has highest mean, meaning |
+|---|---:|---:|---:|---:|---:|
+| Food | 137 | 137 | 116 | 137 | 96 |
+| Tools | 67 | 67 | 53 | 67 | 46 |
+| Total | 204 | 204 | 169 | 204 | 142 |
+
+Thus 35 members change to a nearest reference in another group, and 62 prefer
+another group's mean. These are changes relative to existing group labels on
+the same references, not 35 or 62 proven semantic errors. Perfect title-mode
+consistency is an in-sample property of groups originally formed in that
+representation, not evidence of general admission accuracy. Most members still
+have a nearest reference within their original group under meaning pooling.
+
+Selected groups illustrate the range; complete results for all 29 are saved:
+
+| Group | Entries | Mean cosine, title | Mean cosine, meaning | Members whose own group has highest mean under meaning pooling |
+|---|---:|---:|---:|---:|
+| G027 — general Food | 53 | 0.973410 | 0.536439 | 21 |
+| G579 — Data cables / Digital connections | 2 | 0.806224 | 0.531579 | 1 |
+| G153 — Software agents / Operators | 3 | 0.978424 | 0.665004 | 3 |
+| G504 — Tests / Testing / Experiments | 9 | 0.868480 | 0.656607 | 7 |
+| G172 — Computer code | 3 | 0.995396 | 0.958534 | 3 |
+| G648 — Software development | 3 | 0.997232 | 0.915990 | 3 |
+
+### Concrete changes behind the weak scales
+
+G579's two members are each other's nearest references under title pooling.
+With meaning pooling, Digital connections (`L06734`) instead has Software
+applications (`L06458`, G058) as its nearest reference, at cosine `0.732648`.
+Data cables (`L06061`) is only its 21st-nearest remaining grouped Tools reference,
+at cosine `0.531579`. Its original group ranks sixth by mean affinity.
+Data cables still has Digital connections as its nearest reference: the
+similarity is symmetric, but their alternative neighbors differ. Treating
+this two-entry set as an interchangeable reference group in the new representation
+is therefore a consequential assumption, not an unchanged geometric fact.
+
+General-Food G027 also changes substantially. Under title pooling all 53 members
+prefer their own group by both checks. Under meaning pooling 47 still have a
+nearest reference in G027, but only 21 prefer its mean over other original
+groups. This agrees with the preceding dilution finding: a related individual
+reference can remain close while the broad group's mean becomes weak.
+
+Software agents is an important counterexample to a complete mismatch diagnosis.
+All three G153 members retain their own group as both nearest-reference group
+and best mean under both representations, despite its lower internal cosine.
+This group nevertheless contributed to bad relative-score orderings in the
+preceding probe. Pooling mismatch therefore does not explain every normalization
+failure, and lower internal affinity alone does not establish that a group is
+wrong or should be split. Computer code and Software development likewise
+retain their relative neighborhoods with much smaller internal changes.
+
+### Bounded conclusion and next test
+
+The original title-based grouping is not geometrically interchangeable with
+the meaning-based admission representation. This supports checking that
+assumption before assigning a universal meaning-space threshold to the old
+groups. It does not establish that meaning vectors are better or worse overall,
+that original memberships are semantically invalid, or that new grouping would
+solve admission. The source definitions, retained judgments and current hierarchy
+remain fixed.
+
+The next useful experiment would rebuild comparison groups with the same
+representation used for scoring, alongside a title-pooling control using the
+same frozen reference pool and clustering settings. Then repeat the saved
+useful/misleading controls. This would test actual admission behavior, rather
+than adopt groups because their internal geometry looks better. It is a proposal
+only: no reclustering or new admission method is run or activated here.
+
+### Retained evidence
+
+```
+target/food-halves-v1/group-pooling-geometry-v1/
+```
+
+- `plan.json`: exact groups, source identities, both pooling choices, replay
+  controls and geometric checks; SHA256
+  `a3a6222cbe865fd8e701e736b3e6addcdea4c6c9b3ca6a764c274c6179341c9b`.
+- `source-evidence.json`, `baseline-bindings.json`, `original-title-replays.json`:
+  unchanged original titles, meanings, full posts and native row provenance.
+- `within-group-pairs.json`, `group-metrics.json`: every one of 1,906
+  unordered cross-note pairs and all 29 group summaries in both modes.
+- `member-neighbor-metrics.json`, `cosines.npz`, `summary.json`: 408 member/mode
+  checks, every ranked group mean and retained bounded cosine matrices.
+- `verification.json`: 38 protected source hashes, 408 native pooling-span
+  bindings, all 204 original-title/HDBSCAN-input replays, 3,812 within-group
+  pair checks, 58 group/mode summaries, 408 member/mode neighborhoods and
+  22,816 independent scalar cosines. Maximum pair-cosine error is
+  `9.992007221626409e-16`; maximum neighbor-group-mean error is
+  `2.1094237467877974e-15`. All checks pass.
+
+The arithmetic uses two 204-by-204 cosine matrices. The saved original 6,991-row
+HDBSCAN request is read only to verify provenance; no new all-corpus pairwise
+matrix or clustering is computed. Root membership and HR35 state are unchanged,
+with zero applied additions. The worktree remains for source-bound evidence.
