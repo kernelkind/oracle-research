@@ -73,7 +73,7 @@ clients; both were already among the earlier meaning-only candidates. This is
 not a new coverage gain or an adopted admission rule. Its new reference scale
 and three unavailable small-group scales are explicit below.
 
-The latest authorized test replaces a constant acceptance score with local graph
+The preceding authorized test replaces a constant acceptance score with local graph
 boundaries around the same 25 accepted fusion groups. A separate meaning-only
 graph contains 6,991 original entries; accepted fusion networks remain unchanged.
 Minimum-conductance expansion is far too broad: it proposes all 281 omitted
@@ -85,6 +85,17 @@ candidate pool. These are unimplemented proposals, not recovered notes or
 semantic certification. Nine seed groups are disconnected within the separate
 meaning graph; the new graph does not automatically preserve the neighborhoods
 formed by title/meaning fusion. No admission method is adopted.
+
+The latest authorized trace follows missed Coffee `L00228` through its previously
+best-matching Food group. Over the same 6,782 reachable nonseed entries, direct
+meaning support puts Coffee 49th; the saved graph ordering puts it 730th and
+moves the provisionally rejected Wildlife from 1,622nd to 408th. The first graph
+minimum stops after eight additions because Beer briefly worsens conductance;
+the next two additions already improve it below that minimum. Coffee has twenty
+coffee-related graph neighbors and no edge to any of the 111 accepted Food
+references. This identifies damage introduced by the graph-ordering stage and
+a premature first dip, not a demonstrated fix or a failure of one isolated
+PageRank operation. No boundary, grouping or admission policy changes.
 
 The user clarified the interpretation for this investigation: "the root is not
 about food only. it does not have a fixed meaning yet." Its saved title and
@@ -4363,9 +4374,10 @@ a cohesive starting neighborhood for meaning-only graph expansion.
 
 The primary method fails. The first-minimum control is a limited conservative
 candidate, with no demonstrated general boundary: local minima omit useful
-cases and change with the graph pool. The next useful investigation is to trace
-one clear missed fit through its group's full curve and inspect the group/graph
-mismatch before proposing another boundary rule. That follow-up is not begun.
+cases and change with the graph pool. This result motivated tracing one clear
+missed fit through its group's full curve and inspecting the group/graph mismatch
+before proposing another boundary rule. The subsequent authorized trace below
+preserves these inputs and rules.
 
 ### Verification, scaling and saved evidence
 
@@ -4415,3 +4427,123 @@ occur. HR35 still reaches 718 notes. Completed experimental code, tests and
 maintained findings land on local `main`; the worktree remains for saved vector
 bindings and ignored evidence. This is neither a new HiGen version nor approval
 to add the twelve candidate notes.
+
+## Tracing a clear missed fit: Coffee
+
+The user authorized tracing one suitable missed entry through its existing
+group's connections and boundary curve. The case is `L00228`, **Coffee**:
+
+> Coffee is a beverage prepared by extracting roasted coffee beans with water.
+
+Its source post reads "More coffee in cool places" followed by an image URL.
+The image was not inspected. Its useful Food route was already assessed as
+plausible; this trace neither creates human gold nor changes that assessment.
+
+The group is chosen before inspecting graph positions: `fused-014`, its strongest
+Food group under the earlier direct mean-affinity calculation. The same group
+also wins its earlier meaning-through-connections raw score. It contains:
+
+| Entry | Fixed explicit meaning |
+|---|---|
+| `L00445` Food | Food is substances suitable for people to eat or drink and intended to provide nourishment, in solid or liquid form. |
+| `L06842` Food | Food encompasses substances and products prepared or used for human consumption by eating or drinking, together with edible ingredients intended for incorporation into those products. It includes but is not limited to protein bars, energy drinks and sweetening ingredients such as the no-calorie sweetener erythritol. |
+
+Both explicitly include drinks. Coffee's cosine similarities to them are
+`0.57308` and `0.52327`; its unchanged direct mean affinity is `0.084107`.
+The accepted fusion network connects the two Food entries, while the separate
+full-corpus meaning-neighbor graph does not. Their weight units differ, so this
+is an edge-presence comparison rather than a comparison of weight magnitudes.
+
+### The first minimum stops before further drink-related entries
+
+The saved first-minimum result keeps the two Food entries and eight additions:
+Energy drinks, Purelife, Caffeine, Food and drinks, Sweet tea, Dark chocolate,
+Food and Drinking. Its next steps are:
+
+| Added position after the two references | Entry | Conductance |
+|---:|---|---:|
+| 7 | Food | 0.788962 |
+| 8 | Drinking — selected first minimum | 0.786004 |
+| 9 | Beer | 0.807964 |
+| 10 | Diets | 0.783893 |
+| 11 | Beer | 0.749093 |
+| 12 | Beverages | 0.725352 |
+| 13 | Beer | 0.643580 |
+
+Beer causes one increase, enough for the first-minimum control to stop. By
+position ten, conductance is already lower than the selected first minimum.
+The chosen set still sends 78.6% of its incident connection weight outside,
+so a local dip does not by itself establish an isolated topic neighborhood.
+No new semantic cutoff is selected from this observation.
+
+Coffee enters at added position **730**, giving a 732-entry prefix. Across all
+fifteen Food groups its earliest position is this same 730; no other first-minimum
+group would recover it. Its twenty actual mutual meaning-neighbor connections
+lead to sixteen Coffee entries plus Coffee brewing, Coffee beans, Coffee
+availability and Taste profiles. None is an accepted Food reference. It has
+zero connection weight to the selected ten-entry first-boundary set; inserting
+Coffee alone there increases conductance from `0.786004` to `0.891479`.
+
+A shortest reciprocal-weight path reaches Coffee through Food, Energy drinks,
+Hot beverages, Coffee brewing and another Coffee entry. These are similarity
+graph connections, **not hierarchy parent relationships**. The direct Food-to-
+Coffee similarities exist in the saved vectors but are absent from the sparse
+mutual-neighbor graph. That graph favors the many close Coffee variants and
+requires several similarity links to reach the broader Food reference.
+
+### Ordering changes, independently of the selected boundary
+
+A post-trace component control orders exactly the same 6,782 reachable nonseed
+entries by their original direct mean affinity to these two Food references.
+It keeps the vectors, accepted group, candidate population and kernel unchanged.
+This is an ordering comparison only; it does not run a new expansion or select
+a new boundary.
+
+| Entry | Direct mean-support position | Saved graph-order position |
+|---|---:|---:|
+| Coffee `L00228` | 49 | 730 |
+| Caffeine `L00225` | 44 | 3 |
+| Wildlife `L04627` | 1,622 | 408 |
+| Easter broadcast `L02222` | 4,632 | 1,861 |
+
+The Wildlife mismatch remains an agent assessment; the Easter note rejection
+comes from the user. These positions are not admission outcomes or precision
+estimates. They show that the graph-ordering stage reverses the Coffee/Wildlife
+ordering and pushes Coffee far behind its direct meaning-support position.
+That stage includes neighbor pruning, local edge scaling, diffusion and degree
+normalization. This control does not isolate which individual operation causes
+the change and must not be reported as proof that PageRank alone is responsible.
+
+Two concrete obstacles are now visible: the first local minimum mistakes a
+brief early increase for an ending, and the graph ordering introduces a long
+delay before a clear direct-support match. The proposed next controlled test
+is the same conductance boundary calculation with direct meaning-support
+ordering, leaving the graph, reference groups, pools and boundary rules fixed.
+It would isolate whether changing that ordering repairs any admission outcomes.
+It is not started or claimed successful by this trace.
+
+### Evidence and verification
+
+All results, including every other Food group's Coffee position, actual
+neighbors, all 111 direct Food-reference matches, insertion contributions,
+the target-alone insertion and the connection path, are saved under:
+
+```
+target/food-halves-v1/local-graph-expansion-coffee-trace-v1/
+```
+
+`plan.json` freezes the case, prior-best-group selection, source bindings and
+trace calculations; SHA256
+`58604e4073de0cc5675c47521386be61a8fea1cd7af3d300acf976b15345230c`.
+`same-population-direct-support-control.json` separately labels the subsequent
+ordering diagnostic. No original plan, group, meaning, graph, curve or case
+assessment is overwritten.
+
+Independent verification preserves ninety source hashes; checks all fifteen
+group positions, eighteen insertion steps, twenty target neighbors and the
+weighted path; and recomputes all 6,991 candidate affinities to verify the four
+same-population rank controls. Maximum sparse-cut discrepancy is `1.01e-11`.
+No production source behavior changes, new vectors, graph expansions, LLM calls,
+training, paid resources, hierarchy edits or UI updates occur. HR35 still reaches
+718 notes. Maintained findings land on local `main`; the worktree remains for
+frozen source paths and ignored evidence.
