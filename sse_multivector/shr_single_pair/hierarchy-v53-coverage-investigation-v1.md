@@ -85,6 +85,17 @@ rejections. The group-only comparison excludes 350 originally ungrouped accepted
 members on all sides and reports their strongest matches separately. Unequal
 root group counts remain uncontrolled; no admission threshold is selected.
 
+Applying that fixed calculation to the saved Food contrasts gives 48/78 focused
+orderings agreeing with the prior assessments, versus 77/78 for the earlier
+root-wide ratio. Removing ungrouped references alone changes none of the 728
+primary full-panel pair orderings. A concrete mechanism is Breakfast: its group
+is under Life and experience and supplies the strongest other-root match for
+all 13 focused Food cases and 20/26 fitting cases. The ratio reduces Food scores
+for resembling this clearly food-related topic. Italy also scores above four
+fitting entries on the ratio despite having weaker positive Food support. The
+probe does not qualify a new admission rule; all saved scope labels remain
+provisional agent assessments, and no new labels or graph changes are made.
+
 ## Frozen source and baseline
 
 State:
@@ -1532,3 +1543,144 @@ target/food-halves-v1/all-roots-best-group-support-v1/
   Work/Bots/Cameras sensitivity results.
 - `calculate.py`, `verification.json`: source-bound calculation and independent
   numerical checks. This is a matched score probe, not admission validation.
+
+## Matched best-group calculation on the Food contrasts
+
+The user authorized applying the preceding same-rule comparison to the saved
+Food fit/nonfit contrasts. All 54 cases and their complete definitions are
+unchanged: 26 earlier agent-assessed Food fits and 28 earlier assessed outside
+cases. The focused panel has 13 Coffee/Tea/Bread/Wine cases and the six original
+outside controls. These labels are not independently validated human gold.
+The Work correction is not replaced with a new presumed negative, and none of
+these Food labels is silently promoted to a user judgment.
+
+The original 172 reference groups from the six-root probe remain fixed, with
+1,298 grouped originals and 350 originally ungrouped accepted members excluded
+from group scores. Food contributes 15 groups with 137 entries; the other roots
+contribute 157 groups with 1,161 entries. The prior root-wide baseline used all
+175 Food references and all 1,473 other-root references, including ungrouped
+members. Every calculation reuses the saved 54-by-6,991 cosine matrices for the
+three pooling methods. The exact query is excluded from every reference
+collection, with a separate control excluding its whole source note. No new
+encoding or LLM call is needed.
+
+The primary score is Food's largest original-group mean affinity divided by
+the strongest other root's largest group mean, using
+`exp[-beta * (1 - cosine)]` with beta 5.5. Controls separate the effects of
+excluding ungrouped references, changing Food's numerator and changing the
+other-root denominator. No root must win exclusively, and no ratio threshold is
+chosen. The following counts mean that an earlier-assessed fitting entry scores
+above an earlier-assessed outside entry. They are dependent pair orderings,
+not independent cases or measured admission accuracy.
+
+| Full-meaning score, beta 5.5 | Focused 13 by 6 | Focused 13 by 28 | All 26 by 28 |
+|---|---:|---:|---:|
+| Prior full-member Food mean / other-root mean | 77/78 | 363/364 | 716/728 |
+| Grouped-only Food mean / grouped-only other-root mean | 77/78 | 363/364 | 716/728 |
+| Best Food group mean, no denominator | 62/78 | 348/364 | 700/728 |
+| Best Food group mean / grouped-only other-root mean | 63/78 | 349/364 | 704/728 |
+| Best Food group mean / strongest other-root best group | 48/78 | 329/364 | 666/728 |
+
+The grouped-only mean control changes none of the 728 primary pair orderings
+relative to the prior full-member ratio. The focused decline is therefore not
+explained by excluding the 38 Food and 312 other-root ungrouped entries. Taking
+Food's best group while retaining a pooled mean denominator introduces fourteen
+additional disagreements on the focused panel. Taking the best group on both
+sides gives one improvement and thirty new disagreements relative to the old
+baseline. All changed pairs and their exact meanings remain saved.
+
+### Breakfast is competing Food-related evidence
+
+The strongest other-root group is Breakfast `G549`, under Life and experience,
+for all 13 focused positives and 20/26 earlier-assessed Food fits. Its six
+original definitions describe the first meal of the day; some explicitly
+include foods and drinks, fried tomatoes, a breakfast burrito with coffee or
+scrambled eggs. Thus its presence under another root does not make a match to
+it evidence against Food membership.
+
+| Entry | Best Food group | Food support | Strongest other group | Other support | Ratio |
+|---|---|---:|---|---:|---:|
+| Coffee `L00228` | G077 Recipes and recipe activities | 0.03115 | Life: G549 Breakfast | 0.02600 | 1.198 |
+| Culinary Eggs `L00572` | G027 Food and related entries | 0.05094 | Life: G549 Breakfast | 0.05701 | 0.894 |
+| Generic reproductive/decorative Eggs `L02984` | G162 Food preservation | 0.03993 | Life: G549 Breakfast | 0.01820 | 2.194 |
+| Italy `L04345` | G566 Diets | 0.01252 | Tools: G579 Data communication links | 0.01012 | 1.238 |
+
+The culinary Eggs definition explicitly concerns edible bird eggs held or used
+as food and foods prepared from them, including scrambled and boiled eggs.
+Generic Eggs has a reproductive-body definition with an optional decorating
+use. Culinary Eggs has stronger positive Food support, but its stronger match
+to Breakfast reverses their ratio ordering. This is a numerical inversion, not
+an independently established error label for generic Eggs.
+
+Italy's complete definition is "Italy (Italia), the sovereign country in Southern
+Europe whose territory includes the Italian Peninsula, Sicily and Sardinia."
+Its Food support is weaker than Coffee's, but the still weaker other-root
+support raises its ratio above Coffee. Italy also outranks Coffee `L00275`,
+Coffee/coffee beans `L00615` and culinary Eggs `L00572` on that ratio. This
+illustrates that the score can increase because competing evidence is weak,
+without establishing strong positive Food evidence.
+
+### Scope labels, sensitivity and limits
+
+On the focused panel, the thirty disagreements are concentrated in Caffeine
+(nine pairs), Water (seven), generic Eggs (eleven) and Gardening (three). These
+four scope judgments remain prior agent assessments. The fixed Food definition
+includes food growing, consumption by animals as well as humans, and food-related
+communication. Exact meanings must therefore be considered before calling any
+disagreement a semantic error. Ratings and Docking electronic devices score
+below every focused Food fit, but the panel alone does not validate a general
+admission boundary.
+
+| Matched best-group score, beta 5.5 | Focused 78 | All 728 |
+|---|---:|---:|
+| Title pooling | 40/78 | 630/728 |
+| Full-meaning pooling | 48/78 | 666/728 |
+| First-sentence pooling | 65/78 | 694/728 |
+
+| Full-meaning beta | Focused 78 | All 728 | All 728 excluding source-note entries |
+|---|---:|---:|---:|
+| 1 | 60/78 | 690/728 | 691/728 |
+| 5.5 | 48/78 | 666/728 | 665/728 |
+| 20 | 32/78 | 611/728 | 613/728 |
+
+Source-note exclusion leaves the focused full-meaning counts unchanged at all
+three beta values. No representation or beta is selected after inspection.
+The comparison retains unequal group counts, excludes ungrouped members from
+group maxima and relies on saved construction memberships as references. Its
+relative score cannot be interpreted as a probability or an exclusive root
+decision. There is no measured hierarchy coverage or admission-quality gain.
+
+The useful finding is that strongest-other-root normalization measures relative
+association with the current reference collections. Genuine Food evidence can
+reside in another root, as Breakfast does here, while a weakly matched candidate
+can have a larger ratio because both its numerator and denominator are weak. This
+probe does not support using that ratio alone to decide Food membership or
+replacing the earlier mean-based probe with a validated best-group rule.
+
+Ten protected source hashes and all output hashes pass. Independent scalar
+summation verifies 167,184 group calculations over 972 candidate/settings and
+5,832 root results, with maximum absolute error `2.220446049250313e-16`.
+All 324 overlapping query/root/settings from the preceding Tools probe reproduce
+exactly. Fifty-four prior baseline cohort counts also reproduce exactly.
+No new encodings, LLM calls, training, hierarchy modification or UI update
+occurred; HR35 coverage remains unchanged.
+
+Retained ignored evidence:
+
+```
+target/food-halves-v1/food-all-roots-best-group-support-v1/
+```
+
+- `plan.json`: frozen cases, original group memberships, controls and source
+  hashes; SHA256
+  `8ea7a9ee27804b58a9a98e9e54b20d848ff3edafe7dc8bde665ee85b41558a91`.
+- `scores.json`: all root/group scores, source-note controls, selected-member
+  cosines, separate ungrouped matches and each comparison score.
+- `metrics.json`: all provisional-label pair orderings and the three cohort
+  counts, without treating those counts as independent accuracy measurements.
+- `query-evidence.json`: exact titles, full meanings, note IDs and prior
+  assessment/provenance for every case.
+- `summary.json`, `diagnostics.json`: primary results, every changed ordering,
+  Breakfast's six definitions, the Eggs inversion and the Italy contrasts.
+- `calculate.py`, `verification.json`, `diagnostics-verification.json`:
+  source-bound calculation, numerical replay checks and protected evidence.
