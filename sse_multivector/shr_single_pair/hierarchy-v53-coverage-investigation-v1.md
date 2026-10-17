@@ -1772,7 +1772,88 @@ files, labels, vectors, source notes and hierarchy evidence remain immutable.
 No prompt, numerical admission rule, HDBSCAN setting or production code was
 changed, and no model calls or new encodings were made.
 
-The next useful probe is to compare the accepted and rejected members of G463
-against the same actual root references, checking whether a whole-group score
-hides the rejected broadcast. This is a recommendation for later authorization,
-not a selected scoring change or a new run.
+The subsequent user-authorized calculation below compares these members against
+the same actual root references. No whole-group admission rule is inferred from
+their individual scores.
+
+## Unchanged asymmetric score on the four reviewed notes
+
+The user authorized testing whether the existing scoring separates the accepted
+additions from the rejected Easter broadcast. The plan was frozen before
+calculating new scores. It fixes full-meaning pooling, beta 5.5, all 172 original
+reference groups and the prior reference memberships. The target side takes
+the largest of 15 original-group mean affinities over 137 grouped members. The
+denominator averages affinity to all 1,161 grouped originals in the other five
+roots. Affinity remains `exp[-5.5 * (1 - cosine)]`. No synthetic-root vector,
+new encoding, label fitting or admission threshold is used.
+
+All eight G463 entries receive diagnostic scores, but only the four reviewed
+notes receive human labels. Each entry uses its complete existing meaning. The
+accepted egg-decorating note has two presented entries: Eggs L02984 and Easter
+L02985. They are reported individually. A separately declared note summary takes
+the maximum score over those two entries, since one valid route can represent
+the note. It does not infer that both entries independently qualify.
+
+| Reviewed note route | Human decision | Best target group | Positive target-group affinity | Pooled other-root affinity | Asymmetric ratio | Prior full-member ratio |
+|---|---|---|---:|---:|---:|---:|
+| L00101 · Eggs as food, chocolate/egg-preparation note | Accept | G027 Food and related entries | 0.111015 | 0.006591 | 16.8423 | 11.0370 |
+| L00440 · Egg yolks, coffee-with-yolk note | Accept | G027 Food and related entries | 0.097517 | 0.008220 | 11.8640 | 8.1716 |
+| L02984 · Eggs, egg-decorating note | Accept note | G162 Food preservation | 0.039933 | 0.006467 | 6.1746 | 2.3448 |
+| L02222 · Easter, religious/political broadcast | Reject | G021 Meals | 0.011292 | 0.004930 | 2.2905 | 1.5189 |
+
+The egg-decorating note's other entry, Easter L02985, scores 2.9532 with Dining
+G632 as its best target group. Its definition explicitly includes decorating
+Easter eggs such as pisanki. The broadcast's Easter L02222 definition instead
+reads: "Easter is the annual Christian feast celebrating the resurrection of
+Jesus Christ from the dead." Its Meals references define food eaten together
+or an eating occasion, with member cosines only 0.1556–0.2127. This is matched
+member evidence, not a claim that the saved root description is immutable or
+that another root's membership rejects the candidate.
+
+All three accepted note additions score above the rejected note under the
+unchanged asymmetric method. The previous full-member mean ratio and the
+symmetric best-group ratio also separate these three note routes from that one
+rejection. Thus this bounded panel does not establish that the asymmetric
+method is superior. The three orderings share one rejected example; they are
+not three independent rejection cases or a general admission-accuracy result.
+Excluding every reference entry from the candidate's source note preserves all
+three orderings for all three score variants. The rejected broadcast's
+asymmetric ratio changes only from 2.29054 to 2.28957 in that control.
+
+The rejected score remains greater than one. A score exceeding the other-root
+average therefore cannot itself mean admission. The result is a useful ordering
+under fixed inputs, not an acceptance cutoff chosen after seeing the answers.
+Likewise, no selected entry's score validates admitting G463 wholesale: it
+contains the explicitly rejected broadcast. Resolving how to use individual
+scores when proposing a whole group remains open.
+
+Raw native rows and selected full-meaning spans were verified for all 6,991
+existing vectors. The new eight-by-6,991 cosine matrix reproduces all four
+overlapping saved query rows to less than `1e-12` maximum absolute error, and
+eight overlapping score/control results reproduce to the same tolerance.
+Independent scalar summation verifies all 2,752 group calculations across
+sixteen entry/control results. Thirteen protected source hashes and all six
+output hashes pass. HR35 remains at 718 reachable notes; no memberships, prompts,
+production code or numerical parameters changed.
+
+Retained ignored numerical evidence:
+
+```
+target/food-halves-v1/g463-human-reviewed-support-v1/
+```
+
+- `plan.json`: prior score identities, raw vector sources, exact human decisions,
+  fixed methods and note-summary rule; SHA256
+  `1dd558e99acaf7ac1ec15128acbfcd0fda911693e5abca751338d78b38b9e54a`.
+- `cosines.npz`, `scores.json`: all eight query rows, group means, nearest actual
+  root members and the unchanged asymmetric/baseline/symmetric scores.
+- `entry-evidence.json`, `reference-evidence.json`, `note-scores.json`: original
+  complete definitions, source note identities and bounded note-level decisions.
+- `calculate.py`, `verification.json`, `independent-verification.json`: native
+  row/span checks, saved-score replays and independent scalar verification.
+
+The next useful test is to inspect actual omitted-note candidates ranked by this
+unchanged method, retaining the broadcast as a known rejected control. That
+would test useful coverage opportunities beyond the same egg examples. It is a
+recommendation, not authorization to apply additions or change the admission
+rule.
