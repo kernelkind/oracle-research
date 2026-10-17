@@ -110,6 +110,15 @@ probe does not qualify a new admission rule. Its frozen scope labels were
 provisional agent assessments; the later human review supersedes the generic
 Eggs note's exclusion. Saved scores and graph memberships are unchanged.
 
+The later unchanged-score ranking covers all 281 currently unreachable notes
+with eligible saved vectors. Inspection of its first twenty notes finds useful
+candidate additions alongside weak connections: generic Children matches one
+Dining groups member's optional children clause, and automotive Simple habits
+matches routine wording across Diet definitions. These are provisional agent
+assessments of the actual member links, not new human rejections or a fixed
+Food-only boundary. The earlier full-member baseline ranks these cases lower;
+its top twenty have not yet received the same complete review.
+
 ## Frozen source and baseline
 
 State:
@@ -1852,8 +1861,140 @@ target/food-halves-v1/g463-human-reviewed-support-v1/
 - `calculate.py`, `verification.json`, `independent-verification.json`: native
   row/span checks, saved-score replays and independent scalar verification.
 
-The next useful test is to inspect actual omitted-note candidates ranked by this
-unchanged method, retaining the broadcast as a known rejected control. That
-would test useful coverage opportunities beyond the same egg examples. It is a
-recommendation, not authorization to apply additions or change the admission
-rule.
+The following user-authorized test ranks actual omitted-note candidates by this
+unchanged method, retaining the broadcast as a known rejected control.
+
+## Unchanged-score ranking of currently unreachable notes
+
+The user authorized ranking omitted notes and inspecting the proposed additions.
+The frozen HR35 roots still reach 718 of 1,000 notes. Of the 282 omitted notes,
+281 have eligible saved explicit meanings and vectors, comprising 1,426 original
+entries. The remaining note has no usable existing meaning/vector and is not
+silently scored. Every eligible omitted entry is included, whether originally
+HDBSCAN-grouped or ungrouped.
+
+The calculation preserves full-meaning pooling, beta 5.5, all 172 reference
+groups and the same asymmetric formula: maximum target-group mean affinity
+divided by pooled other-root grouped-member mean affinity. The target is the
+existing member collection identified as Food and dining; its generated wording
+does not impose a fixed admission boundary. No root must win exclusively.
+Each omitted note is ranked by its highest-scoring eligible entry, with original
+entry ID and note ID resolving ties. No cutoff, new formula or parameter fitting
+is introduced. The earlier full-member mean ratio is retained as the declared
+baseline, with a separate maximum-entry ranking per note.
+
+The source-bound plan was frozen before scoring and selected twenty distinct
+highest-ranked notes for inspection. Their complete source posts, winning
+meanings, alternatives and actual member matches are retained in `review.json`.
+All assessments in the table are agent assessments, except the previously
+human-accepted Egg yolks note; no new human labels are inferred.
+
+| Rank | Winning original entry | Asymmetric score | Best reference group | Source content and assessment |
+|---:|---|---:|---|---|
+| 1 | L00620 · Sipping | 27.4712 | G322 Eating | Coffee roasting/sipping; plausible drinking/consumption connection. |
+| 2 | L00285 · Advice | 27.3614 | G666 Diet | Advice to eat burgers with knife and fork; note is plausible, but Advice's definition is general. |
+| 3 | L00471 · Coffee shops | 18.1564 | G138 Restaurant entries | Coffee-shop laptop policy and customer reaction; direct service/business links. |
+| 4 | L02720 · Spiciness | 14.8156 | G371 Cooking and equipment | Chili dish; plausible food sensory topic, though the references' heat is cooking heat. |
+| 5 | L02423 · Bread | 14.5969 | G371 Cooking and equipment | Homemade buns; plausible connection. |
+| 6 | L00097 · Bread | 14.5058 | G371 Cooking and equipment | Preparing sourdough; plausible connection. |
+| 7 | L00269 · Time after 9 a.m. | 13.3531 | G668 Dinner entries | Desk routine/fetching coffee; note has plausible Coffee route L00275, but its winning time/Dinner link is weak. |
+| 8 | L00535 · Drinking | 13.0415 | G322 Eating | Drinking a gallon of hot tea; plausible consumption connection. |
+| 9 | L00440 · Egg yolks | 11.8640 | G027 Food entries | Coffee with raw cream and egg yolk; previously accepted by the user. |
+| 10 | L06638 · Times of day | 10.4847 | G668 Dinner entries | Cannabis/4:20 post; winning match is timing language rather than a substantive link to meals. |
+| 11 | L01967 · Simple habits | 9.7651 | G666 Diet | Car-maintenance routines; shared habit/pattern wording is a weak connection. |
+| 12 | L00039 · Praise for food and drink | 9.5651 | G666 Diet | Praise for raw-milk slush; plausible appreciation topic. |
+| 13 | L04215 · Children | 8.4209 | G498 Dining experiences/groups | Anne Frank quotation about family separation; match concentrates on optional children wording. |
+| 14 | L00292 · Distinctions between dairy products | 8.3611 | G077 Recipes | Cream versus half-and-half in coffee; plausible ingredient topic. |
+| 15 | L03384 · Children | 7.8036 | G498 Dining experiences/groups | Child imitating martial arts; same optional children match. |
+| 16 | L04399 · Breath | 7.7902 | G322 Eating | Fatal accident/death news; weak mouth/bodily-process similarity. |
+| 17 | L05198 · Children | 7.7291 | G498 Dining experiences/groups | Explaining gay relationships to children; same optional children match. |
+| 18 | L05800 · Travel classes | 7.6280 | G498 Dining experiences/groups | Airline-class controversy; general service/hospitality similarity, usefulness unresolved. |
+| 19 | L02276 · Nausea | 7.3174 | G322 Eating | Video-game-induced nausea; weak bodily/stomach similarity to eating. |
+| 20 | L02015 · Seasonings | 7.2198 | G077 Recipes | Seasoning-brand legal dispute; plausible food-product route, with legal emphasis qualified. |
+
+This review finds eleven plausible additions through their winning entries,
+one plausible note through an alternative Coffee entry, and eight weak or
+unresolved winning connections. These are not twelve measured correct automatic
+admissions or an accuracy estimate. In particular, the coffee note at rank 7
+cannot validate the selected Time after 9 a.m. connection merely because another
+entry provides a plausible route.
+
+### How the large group scores arise
+
+All three Children cases select the same heterogeneous three-entry G498 group:
+two Dining experiences definitions and one Dining groups definition. The latter
+reads, "Dining groups are parties of two or more people dining together, which
+may include children." It contributes 93.05%, 87.70% and 91.28% of those cases'
+winning group affinities. For L04215, its cosine is 0.55770, whereas the other
+two members are -0.00017 and -0.09150. Thus taking a group mean does not ensure
+agreement across its members: the transformed affinity is dominated by one
+optional-mention match. This is a concrete mechanism in the winning group, not
+an ablation proving which scoring change would resolve it.
+
+The automotive Simple habits case is different. Its three Diet member cosines
+are 0.54354–0.58168 and the strongest contributes only 37.74% of the group
+affinity. Shared routine/pattern language is consistent across the group.
+Removing single-member dominance alone would therefore not address all of the
+observed weak connections.
+
+These concerns do not rely on treating the root as Food only. They concern what
+the actual member meanings substantively establish: dining together versus an
+optional participant, or eating patterns versus a generic repeated behavior.
+The user-rejected Easter broadcast remains the only definite rejected control
+in this new ranking test; the additional concerns remain agent assessments.
+
+### Existing baseline and controls
+
+The declared full-member baseline puts the cannabis/Times of day note 77th
+instead of 10th, automotive Simple habits 105th instead of 11th, the Anne Frank
+Children note 76th instead of 13th, and Breath 165th instead of 16th. It retains
+the Egg yolks note at rank 1, the two Bread notes at ranks 2 and 3, and Coffee
+shops at rank 6. These are descriptive rank comparisons using each method's own
+best entry per note. The baseline uses full members whereas the asymmetric
+score uses grouped members; this does not isolate group maximization from the
+reference-cohort change. Its complete top twenty have not received the same
+review, so no comparative precision or general superiority is claimed.
+
+The earlier human-accepted egg-decorating note ranks 29th under the asymmetric
+method, still through L02984 with its unchanged score 6.1746. The rejected
+broadcast retains 2.29054. Of the 281 omitted note maxima, 121 exceed that
+broadcast score. This is not evidence that 121 notes should be admitted or a
+chosen cutoff. The observed weak matches already interleave with useful
+candidates well above it.
+
+All eight G463 entries are retained as controls, producing sixteen exact-query
+and source-note-exclusion score replays to less than `1e-12` absolute error.
+For genuinely omitted notes, no reference entry shares their source note, so
+the same-note exclusion control leaves every score unchanged. No external
+model calls, new SSE encodings, training or hierarchy changes occur.
+
+The numerical matrix is 1,431 queries including controls by 1,648 existing
+reference entries, rather than an all-originals square matrix. Native request
+texts, full-meaning spans and receipt row identities are checked for all 6,991
+saved vectors. Independent scalar checks cover all 246,132 original-group mean
+affinities, both scores for every entry, and both complete note rankings.
+Sixteen frozen source hashes and all saved output hashes pass. HR35 remains
+unchanged at 718 reachable notes.
+
+Retained ignored evidence:
+
+```
+target/food-halves-v1/food-omitted-note-ranking-v1/
+```
+
+- `plan.json`: complete eligible omitted set, fixed methods, original references,
+  controls and twenty-note review selection; SHA256
+  `aa072a794f9adbdd16c6a8658f6f39cf832cff168cf7644b7176cfe3df02f96e`.
+- `entry-scores.json`, `note-ranking.json`, `baseline-note-ranking.json`: all
+  per-entry scores and both distinct-note rankings.
+- `cosines.npz`, `group-support.npz`: every query/reference cosine and every
+  original-group mean used by the calculations.
+- `review.json`, `agent-review.json`, `diagnostics.json`: complete reviewed source
+  evidence, explicitly provisional assessments, contribution shares and controls.
+- `calculate.py`, `verification.json`, `independent-verification.json`: native
+  input checks, exact saved-result replays and independent numerical validation.
+
+The next useful step is to inspect the baseline's top twenty with the same
+source/member evidence before changing formulas. That compares actual proposed
+recoveries and avoids adding another mechanism on the strength of a few examples.
+It is a recommendation, not a production decision or a new run.
