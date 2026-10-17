@@ -1,6 +1,6 @@
 # HiGen V5.3 coverage investigation
 
-Status: experimental findings, 2026-10-16. This is not a new HiGen version,
+Status: experimental findings, 2026-10-17. This is not a new HiGen version,
 production policy, or approval to change existing meanings. The bounded human
 note-membership decisions below do not validate the older agent-labeled panels.
 No provider calls, hierarchy modifications, or UI updates were made. Separately
@@ -61,7 +61,7 @@ choice; these results support neither replacing it globally nor treating the
 title cutoff's empty output as a validated conservative policy. Outside entries
 still do not participate in fusion itself. No admission or graph changes occur.
 
-The latest authorized test combines both outsider vectors against the fixed
+The preceding authorized test combines both outsider vectors against the fixed
 accepted connections. It rewards title and meaning matches to accepted entries
 joined by those connections; outsiders never become references or change the
 network. Compared with the same graph calculation using only meanings, the
@@ -72,6 +72,19 @@ A separately defined accepted-reference parity screen flags Servers and Software
 clients; both were already among the earlier meaning-only candidates. This is
 not a new coverage gain or an adopted admission rule. Its new reference scale
 and three unavailable small-group scales are explicit below.
+
+The latest authorized test replaces a constant acceptance score with local graph
+boundaries around the same 25 accepted fusion groups. A separate meaning-only
+graph contains 6,991 original entries; accepted fusion networks remain unchanged.
+Minimum-conductance expansion is far too broad: it proposes all 281 omitted
+eligible notes for Food and 278 for Tools, including the Easter broadcast the
+user explicitly rejected. A preselected first-local-minimum control proposes
+twelve omitted notes and selects no previously assessed mismatches in the full
+pool, but misses most saved useful cases and changes substantially with the
+candidate pool. These are unimplemented proposals, not recovered notes or
+semantic certification. Nine seed groups are disconnected within the separate
+meaning graph; the new graph does not automatically preserve the neighborhoods
+formed by title/meaning fusion. No admission method is adopted.
 
 The user clarified the interpretation for this investigation: "the root is not
 about food only. it does not have a fixed meaning yet." Its saved title and
@@ -4181,10 +4194,12 @@ for `Q` independent queries. The current probe uses groups of at most 21 entries
 exact affinity retrieval, cached reference-fold work and corpus-scale admission
 remain unqualified. No full-corpus construction or index is introduced.
 
-The useful next investigation is the Food orderings worsened by combining the
-views, before introducing another score or changing the cutoff. That can use
+At this checkpoint, the proposed next investigation was the Food orderings
+worsened by combining the views, before introducing another score or changing
+the cutoff. That can use
 these saved query/reference meanings and fixed connection contributions. It
-is proposed only; no new source review, labels, rule or inference begins here.
+was not started here. The subsequent user-authorized local graph boundary test
+is recorded below; it does not resolve those scoring regressions.
 
 Ignored evidence:
 
@@ -4209,3 +4224,194 @@ The actual hierarchy still reaches 718 notes. Completed experimental query
 code, tests and maintained findings land on local `main`; the task worktree
 remains for frozen vector paths and ignored evidence. No production policy is
 activated.
+
+## Testing local graph boundaries without a constant acceptance score
+
+The user rejected a particular numerical admission cutoff and authorized testing
+local graph expansion around the accepted fusion groups. This test uses the same
+15 Food groups and ten Tools groups, with 111 and 66 accepted reference entries.
+Those memberships, accepted fusion files, meanings and saved case assessments
+remain fixed. A separate graph includes all 6,991 eligible original entries,
+using only their saved full-meaning SSE vectors. Its outside entries participate
+in the new boundary calculation, not in the accepted fusion networks. Nothing
+is written back to either network, a canonical node or the original hierarchy.
+
+### Frozen graph and boundary calculation
+
+The existing `similarity_network_fusion.local_graph` constructs mutual
+20-neighbor connections with its existing local scale multiplier `0.5`.
+Self edges and edges between entries from the same source note are then removed.
+As in that existing constructor, same-note entries may consume places during
+neighbor retrieval before those edges are removed. The full graph has 72,836
+directed non-self edges, 144 connected components and 134 isolated entries.
+Its largest component contains 6,784 entries. No dense all-pairs graph is stored.
+
+For each accepted group independently:
+
+1. Give its source notes equal starting mass, divided among their group entries.
+2. Compute personalized PageRank with continuation `0.85`; divide by graph degree
+   to order nearby entries. The numerical convergence tolerance is `1e-12`, not
+   an admission score.
+3. Keep all original group entries, then examine progressively larger prefixes
+   of that order. Calculate **conductance**: connection weight crossing the set
+   boundary divided by the smaller side's total incident connection weight.
+4. Select the smallest minimum-conductance prefix among those containing at most
+   half the graph's total incident weight. If that constrained minimum has no
+   local valley, propose no additions. A seed-only result is also allowed.
+5. Union the separate group proposals for each root. Roots can overlap; membership
+   in another root never supplies a rejection label.
+
+The preselected secondary control uses the **first local minimum** instead of
+the lowest one. It is reported regardless of whether it looks better. Two
+continuation controls (`0.5`, `0.95`) and two candidate-pool controls were also
+frozen before results. No label selects these settings or boundaries.
+
+This is a seed-preserving adaptation of the conductance sweep described in
+[local graph-clustering research](https://cs.stanford.edu/people/jure/pubs/mappr-kdd17.pdf).
+It does not inherit an unqualified semantic guarantee from that research. Its
+boundary adapts to the graph, but graph construction and diffusion still have
+parameters. Numerical clustering is not semantic model training.
+
+### Minimum conductance is much too broad
+
+| Full-pool result | Food | Tools |
+|---|---:|---:|
+| Original reference entries | 111 | 66 |
+| Proposed omitted entries | 1,305 | 1,193 |
+| Proposed omitted notes, of 281 eligible | 281 | 278 |
+| Later-panel plausible cases selected | 18 / 18 | 28 / 33 |
+| Later-panel agent-assessed mismatches selected | 9 / 9 | 9 / 9 |
+
+The primary rule selects all three human-accepted Food control notes, **and the
+Easter broadcast `L02222` that the user explicitly rejected**. That is a direct
+failure under a human decision, beyond disagreements with provisional agent
+assessments. All 177 accepted entries survive the whole-note seed-removal check,
+but that retention is uninformative when the rule accepts almost everything.
+
+Twenty-one of 25 group expansions select a resolved minimum; four propose no
+additions because the minimum is only a search-limit endpoint. The resolved
+boundaries select roughly 4,600–5,000 entries per group. Low-degree vertices
+allow that many entries within the half-volume condition. Taking the union
+then covers most of the corpus. The calculation finds a broad graph separation,
+not a boundary specific enough for the original accepted topic group.
+
+### First local minima are narrower but not a qualified solution
+
+| Full-pool first-minimum result | Food | Tools |
+|---|---:|---:|
+| Proposed omitted entries | 7 | 8 |
+| Proposed omitted notes | 6 | 6 |
+| Later-panel plausible cases selected | 2 / 18 | 4 / 33 |
+| Later-panel agent-assessed mismatches selected | 0 / 9 | 0 / 9 |
+| Withheld accepted entries recovered | 93 / 111 | 43 / 66 |
+| Withheld accepted notes recovered | 58 / 69 | 40 / 54 |
+
+The two sets cover twelve distinct omitted notes. Food examples include Burgers,
+Coffee shops, Drinking hot tea, Sipping coffee and Spiciness. Tools examples
+include GPU hardware, Open-source software, Executable files, networking
+configuration, Mesh networks and Formula 1 technical upgrades. The full source
+review assesses thirteen of these fifteen entry routes as plausible and two as
+qualified: caffeine without an identified food/drink, and a sparse mesh-device
+conversation. These are agent assessments, not new human gold. The Advice entry
+shares the already-selected burger note, and duplicate entry routes do not add
+extra notes. Software clients is selected in the saved panel but its source note
+is already reachable elsewhere, so it is not among the twelve omitted notes.
+
+The first-minimum control retains the accepted chocolate/egg-preparation note
+through its Chocolate entry, misses the human-accepted egg-yolk/coffee and
+pisanki notes, and excludes the human-rejected Easter broadcast. The earlier
+panels also contain no selected agent-assessed mismatches under this full-pool
+control, but useful-case selection remains low. The overlapping panels are not
+independent accuracy estimates, and omitted positives need not all be recovered.
+
+Each accepted-note check removes that entire note from **every seed group of
+its root**, rather than hiding one duplicate entry. The graph and original group
+discovery remain fixed, so this is a transductive seed-removal control, not an
+independent group-discovery test. The fixed outside-panel query notes do not
+occur in the seed groups.
+
+### Candidate-pool changes alter the boundaries
+
+The smaller pool contains the 177 references, all 1,426 omitted entries, and the
+fixed query controls: 1,607 entries in total. One control rebuilds its graph;
+the other restricts the original full graph without changing retained edge
+weights. Both preserve the same accepted reference groups.
+
+| First-minimum proposals | Food omitted entries / notes | Tools omitted entries / notes |
+|---|---:|---:|
+| Full graph | 7 / 6 | 8 / 6 |
+| Smaller pool, rebuilt graph | 25 / 20 | 24 / 17 |
+| Smaller pool, original retained edges | 25 / 21 | 26 / 18 |
+
+Rebuilding the smaller graph loses one of Food's seven full-pool proposals and
+four of Tools' eight, while adding nineteen and twenty others. It also selects
+the previously agent-assessed Nausea mismatch; the induced control selects Nausea
+and Blood. Those remain agent judgments. This is candidate-pool sensitivity,
+not proof that every changed proposal is wrong. Changing continuation alone is
+less disruptive, but also changes selected entries. No favorable control is
+retrospectively promoted to the primary method.
+
+A further trace identifies an assumption needing attention: **nine of the 25
+fusion groups are disconnected within their own entries in this separate
+meaning-neighbor graph**. Food `fused-014`, the two-entry Food group, has no
+internal edge at all. Tools `fused-009`, the five-entry agents/cables/connections
+group, has only one undirected internal edge; 95.2% of its incident connection
+weight leaves the seed set. Those are properties of this particular sparse
+meaning graph, not proof that the accepted meanings or fusion groups are invalid.
+They show that a neighborhood formed by title/meaning fusion is not automatically
+a cohesive starting neighborhood for meaning-only graph expansion.
+
+The primary method fails. The first-minimum control is a limited conservative
+candidate, with no demonstrated general boundary: local minima omit useful
+cases and change with the graph pool. The next useful investigation is to trace
+one clear missed fit through its group's full curve and inspect the group/graph
+mismatch before proposing another boundary rule. That follow-up is not begun.
+
+### Verification, scaling and saved evidence
+
+Six production-path tests first failed because the helper was absent, then pass.
+They exercise a hand-calculated weak bridge between neighborhoods, zero-addition
+and isolated-seed outcomes, weight-scale invariance, immutable repeated queries
+and invalid input rejection. Together with fusion, fixed-query and hierarchy
+HDBSCAN regression checks, 29 tests pass.
+
+Independent verification binds all 6,991 normalized vectors to their exact input
+text, full-meaning UTF-8 spans and raw receipts; checks 125 graph sweeps, 578,868
+cut points, all saved PageRank equations and 2,600 panel membership records; and
+preserves 83 protected source hashes. Maximum cut discrepancy is `2.15e-12` and
+maximum PageRank residual `9.42e-13`. The initial verifier's strict rank equality
+failed on a two-entry tail tie differing by about `1e-23` when division replaced
+reciprocal multiplication. That failure is retained. The corrected verifier
+checks the exact saved arithmetic order and independent monotonicity; scores,
+boundaries, proposals and settings are unchanged.
+
+The base probe and 123 whole-note seed-removal cases take 22.7 seconds locally.
+Sparse graph storage is linear in the number of neighbor edges; each diffusion
+iteration and sweep is linear in vertices plus edges, with sorting per group.
+Existing exact nearest-neighbor retrieval remains quadratic work at corpus scale,
+and 25 whole-component sweeps are not a qualified production-scale solution.
+No retrieval index, new constructor step or automatic membership policy is added.
+
+Ignored evidence is under:
+
+```
+target/food-halves-v1/local-graph-expansion-v1/
+```
+
+`plan.json` freezes the settings, memberships, controls and source bindings
+before results; SHA256
+`49c15037db995231401588f0ce7b421562da03697f3aa94bff0d7df65d716a4d`.
+`graph-info.json`, sparse `*-graph.npz`, `*-complete-curves.json.gz` and
+`*-group-results.json` retain graph structure, every curve, both boundaries and
+all selected entries. `root-proposals.json`, `first-local-root-proposals.json`,
+`panel-metrics.json`, `case-results.json`, `whole-note-seed-holdouts.json`,
+`human-note-controls.json` and `first-local-human-note-controls.json` retain
+membership and judgment scope. Pool/continuation sensitivity, all fifteen new
+entry reviews and the seed-group structure trace are separate artifacts.
+`independent-verification.json` records the arithmetic/source checks.
+
+No LLM calls, encodings, training, paid resources, hierarchy edits or UI updates
+occur. HR35 still reaches 718 notes. Completed experimental code, tests and
+maintained findings land on local `main`; the worktree remains for saved vector
+bindings and ignored evidence. This is neither a new HiGen version nor approval
+to add the twelve candidate notes.
