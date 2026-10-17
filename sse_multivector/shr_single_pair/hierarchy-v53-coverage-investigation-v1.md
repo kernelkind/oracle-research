@@ -10,6 +10,13 @@ used saved vectors only.
 
 ## Current scope and finding
 
+The user subsequently moved the boundary investigation to **Arts, sound and
+communication (C00003)**, leaving Tools aside because its example labels remain
+uncertain. The unchanged-rule transfer test at the end of this document finds
+useful omitted art entries but also unrelated proposals. Food's score-capacity
+result is not approval of its admission boundary or a claim about all roots.
+Neither root has an adopted admission method.
+
 Prioritize recovering omitted notes that already fit the existing roots, using
 full explicit meanings. Do not treat another root's membership as a negative
 semantic label, or treat a shared density cluster as containment. The user has
@@ -5096,3 +5103,105 @@ capacity cells across 13 overlapping cohorts. Maximum score discrepancy is
 is `O((P+N)*G)`; no extra graph or model work. Actual HR35 coverage remains
 718 notes. Findings/code/tests land on local `main`; retain this worktree for
 frozen vector, score and evidence paths.
+
+## Arts, sound and communication: unchanged boundary transfer
+
+The user requested a rule that works across roots and chose this root instead
+of Tools. This test reuses existing fusion, scoring and boundary code unchanged;
+it does not revise prompts, accepted meanings, hierarchy membership or any
+cutoff from new-root outcomes. No LLM calls, new encodings or training.
+
+Evidence: `target/food-halves-v1/arts-reference-boundaries-v1/` in the retained
+`oracle-mvp-hierarchy-food-halves-v1` worktree. Its plan was frozen before fusion
+or boundary outcomes; SHA256
+`78f87318e1d02198f17e600618e9487e972e3e5328b0fbfb994b9f9b98338e60`.
+The same ASv6.100-derived original entries, source-bound meanings and saved
+title/full-meaning vectors are used. Check titles and meanings against the
+original HR35 items and verify the raw vector files against their worker
+receipts. The root's synthetic wording is not an admission boundary.
+
+The reference is the first accepted root version: **162 original entries from
+118 notes in 19 original groups**. Music is prominent: one original group has
+60 Music headings plus Music discovery and Playing music. Other accepted groups
+cover performances, concerts, songs, albums, artists, guitars, lyrics, voice,
+television, audio technology, and noise/silence. This is a diverse collection,
+not exclusively music and not an independently certified semantic gold set.
+
+Apply the same bounded title/meaning fusion (20 neighbors, sigma 0.5, 20
+exchanges), then the same precomputed-distance EOM adapter with min_samples=3
+and min_cluster_size=2. It yields **25 groups with 132 entries from 104 notes**;
+30 accepted entries receive no new fusion group. Their original memberships
+remain unchanged. Preserve the adapter's warning about an infinite MST edge;
+do not manufacture connections or treat a disconnected outlier as rejected.
+
+Score the same 1,449 outside entries, including the 1,426 entries from 281
+entirely omitted eligible notes. No query shares a source note with this
+reference pool. Outsiders remain independent and never enter fusion. The score
+is still mean `exp[-5.5*(1-meaning_cosine)]` against a fixed group, excluding the
+query's whole source note. The reference-only boundary keeps the member anchor
+and previously tested `y-x` orientation. Compare the full accepted reference
+context with direct frozen fusion-neighbor context; change no parameters.
+
+Before outcomes, freeze 24 agent-assessed plausible entries, 20 provisional
+mismatches and seven unresolved controls. These are **not human gold**. The
+plausible entries include music degrees, radio stations, visual art, photography,
+films, galleries and exhibitions. Keep Electronic Arts, Martial arts, Blood,
+Outboxes, AI, Smartphones and Apartments unresolved rather than silently
+deciding their broad-topic membership from the root's name. A Food rejection
+does not transfer automatically to an Arts rejection: JAIA Drake is a plausible
+named-creator route here, while Blood's artistic-depiction wording stays open.
+
+| Reference context / self-check | Plausible selected | Provisional mismatches selected | Proposed omitted notes |
+|---|---:|---:|---:|
+| Full accepted root, no hard gate | 17/24 | 3/20 | 171 |
+| Full accepted root, hard gate | 15/24 | 1/20 | 98 |
+| Direct fusion neighbors, no hard gate | 17/24 | 3/20 | 174 |
+| Direct fusion neighbors, hard gate | 17/24 | 3/20 | 173 |
+
+The counts are proposals, not added notes or accuracy estimates. The neighbor
+variant proposes 342 omitted entries; full-context proposes 288. In the
+neighbor variant, Audio technology supplies 206 entry routes and Noise/Silence
+supplies 146, with overlap. This concentration identifies useful boundary
+diagnostics; it does not establish every such route as incorrect.
+
+Concrete evidence from the unchanged neighbor rule:
+
+- It selects Art, Visual artworks, Photography, Art commissions, Fan art,
+  Photographs, Films, Art prompts, Radio stations and Master of Music degrees.
+- It misses Art exhibitions L03734, Art galleries L03735, named creator JAIA
+  Drake L04019, the Avatar and Lord of the Rings film entries, Film editions and
+  editorial Cartoons L05979. These remain agent-assessed omissions.
+- Earthquakes L01799 and Gas facilities L06055 pass Audio technology
+  `fused-021`: scores `0.024575` and `0.025862`, boundary `0.019374`. Its weakest
+  own-member support is `0.039963`. The full-context boundary `0.028976`
+  rejects both through this group, although Earthquakes then passes Guitar
+  `fused-006` instead. Considering every admitting route matters.
+- Breath L04399 passes Noise/Silence `fused-024`: score `0.022048`, neighbor
+  boundary `0.013660`, full-context boundary `0.020002`. Both variants pass
+  their self-checks. The group mixes acoustic silence/noise, communicative
+  silence/noise and the accepted figurative cellular-signaling entry. Record
+  that composition without assigning fault to prompts or removing evidence.
+- Art galleries L03735 scores `0.087768` against Artists `fused-010` and passes
+  the full-context boundary `0.033753`. The neighbor version has insufficient
+  fitted levels and no boundary. Losing that route is abstention, not improved
+  semantic discrimination. It instead admits animated Cartoons L03388 through
+  the Television group, leaving both variants at 17/24 by different routes.
+
+A separately labeled post-outcome capacity diagnostic applies the same
+`separation_bounds` calculation to the pre-frozen controls. All **24/24**
+plausible entries can exceed every one of the 20 provisional rejection scores
+in at least one of the 25 groups. Thus this finite panel does not force a score
+change; the two automatic boundary rules fail to locate all those possible
+separations. This is an optimistic mathematical bound using all groups,
+including unavailable boundaries, not a learned cutoff, future accuracy or
+proof that group-specific boundaries can be derived from accepted data alone.
+
+Artifacts preserve group composition, every reference model/fold, all query
+scores, both contexts, gated/ungated proposals and provisional assessments.
+Independent scalar recomputation checks all 1,275 labeled query/group cells;
+maximum discrepancy `1.67e-16`. Direct groupwise maxima independently confirm
+the capacity result. Source hashes, graph arrays, vector replay and query
+reordering/duplication/isolated checks pass. All 47 existing boundary/query/
+fusion/HDBSCAN tests pass. Numerical evaluation takes 2.5 seconds for this
+small reference pool; it is not a production-scale qualification. No algorithm
+change is adopted, no hierarchy/UI is modified, and Tools is not reevaluated.
