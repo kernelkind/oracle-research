@@ -61,6 +61,15 @@ Best-group or nearest-member selection performs worse on the same panel. This
 supports testing the simpler within-root mean next, not claiming a solved cutoff
 or changing production admission.
 
+The subsequent complete ranking recomputes every omitted note's winning entry
+using that within-root mean. The stricter floors, frozen before the new ranking
+and source reviews, select ten Food and 34 Tools notes. All 44 are reviewed:
+37 straightforward plausible, six qualified plausible and one newly assessed
+unsupported publisher-tagline case. Only two selections were previously
+unreviewed root/note cases. The familiar NBA example falls from Tools rank 28
+to 96, but the new counterexample prevents calling the frozen cutoff validated.
+No threshold is moved to conceal that failure and no additions are applied.
+
 The saved-vector connection audit rejects the tested branch expansion rule. The
 subsequent controlled full-meaning comparison improves known-root ranking but
 worsens the difficult Food scope checks. First-sentence pooling does not resolve
@@ -2562,12 +2571,11 @@ supported by the matched checks. Best-group and nearest-member alternatives
 perform worse here. The remaining regressions and uncertainty prevent adopting
 it as an automatic admission or stopping rule yet.
 
-The next useful test is the within-root mean alone across the complete omitted
-note ranking, with source review of newly selected notes and explicit checks of
-the stopping boundary. Recompute each note's winning entry for that separate
-test; the present component diagnosis deliberately keeps winners fixed. Do not
-reuse the old ratio thresholds on these differently scaled scores. This test
-is recommended, not already begun.
+The user then authorized the within-root mean across the complete omitted-note
+ranking, including winner reselection, source review and boundary checks. That
+completed test follows. The component diagnosis above deliberately keeps winners
+fixed; its pair counts must not be used as quality measurements for the newly
+selected entries. Old ratio thresholds are not reused on the new score scale.
 
 Retained ignored evidence:
 
@@ -2598,3 +2606,184 @@ absolute scalar error is `7.105427357601002e-15`. Both earlier whole-note-exclud
 reference scores reproduce, and all 28 panel-method count results pass. HR35's
 frozen state is unchanged. No model calls, encodings, training, hierarchy changes
 or applied note gains occur; the worktree remains for the saved evidence.
+
+## Complete omitted-note ranking by within-root mean
+
+This test uses all 1,426 eligible entries from the same 281 globally omitted
+notes, separately against all 175 actual Food originals and all 91 actual Tools
+originals. The additional omitted note without an eligible saved vector remains
+unscorable. Each entry receives mean `exp[-5.5 × (1 − cosine)]` over that root's
+members. A note receives its largest eligible entry score, with deterministic
+entry-ID and note-ID ties. The full explicit-meaning vectors and their input
+context containing the title and meaning remain unchanged; no synthetic root
+vector is used.
+
+All candidate notes are absent from the reference notes, so excluding the entire
+query source note removes no references. Both 281-note rankings are rebuilt
+from entry scores. Source hashes, review selection and candidate thresholds are
+frozen before the new rankings or source assessments. No old ratio cutoff is
+transferred to the new score scale.
+
+### Notes and winning entries both change
+
+| Root | Top-twenty notes shared with ratio ranking | Newly entering that top twenty | Top-twenty winning entries changed | Winning entries changed across all 281 notes |
+|---|---:|---:|---:|---:|
+| Food | 16 | 4 | 6 | 174 |
+| Tools | 13 | 7 | 2 | 100 |
+
+For example, Food now selects Burgers `L00282` rather than general Knives in the
+burger-eating note, Seed oils rather than the consumer's body in the seed-oil
+note, and Bread preparation rather than Bread in the sourdough note. Tools
+selects Automation rather than Work for the software-agent post and Gaming
+rather than Open-source software in the Linux GPU-shim post. These are existing
+meanings from the same notes; no meaning or graph node is rewritten.
+
+The complete note ranking therefore tests more than the preceding fixed-entry
+component comparison. A clearer entry can remove a qualification on an earlier
+route, while an unrelated abstraction can expose a new route failure. The
+prior assessments remain preserved; new winning-entry reviews are separate.
+
+### Frozen candidate boundaries
+
+Two experimental boundaries are taken from the earlier fixed-entry component
+panel, without using new rankings or labels. The first is the largest mean
+among previously assessed unsupported cases. The stricter one also includes
+previously unresolved cases. A note is selected only if its new maximum-entry
+score is **strictly greater** than the frozen boundary. Qualified plausible
+cases are not silently treated as either negatives or established positives.
+
+| Root | Above prior unsupported-case maximum | Notes selected | Above prior unsupported-or-unresolved maximum | Notes selected |
+|---|---:|---:|---:|---:|
+| Food | 0.0166722209 | 43 | 0.0383115192 | 10 |
+| Tools | 0.0273195401 | 64 | 0.0388707244 | 34 |
+
+The first Food boundary comes from Holidays `L05158`, and its stricter boundary
+from Cost of living `L02266`. Tools uses Terminator franchise `L04683` and then
+Actions `L01600`. These are retrospective agent-reviewed controls used for a
+frozen transfer check, not human-certified probabilities or guaranteed future
+cutoffs. Their exact full-precision values are retained in the plan.
+
+The broader 43/64 selections are not qualified for automatic admission. They
+retain known unresolved cases, and the current source review leaves 22 Food
+and twenty Tools selections unreviewed. The reviewed portion already includes
+three new Tools rejections and additional uncertainty. Their larger selection
+counts must not be reported as a measured coverage gain.
+
+### Source review and stricter-boundary result
+
+The frozen review selection includes every stricter-boundary selection, both
+top-twenty lists, ten cases immediately at or below each boundary, and the
+previously diagnosed controls. After deduplication this gives 86 root/note
+cases: 31 Food and 55 Tools. Nineteen had no earlier judgment for that root;
+fifteen previously reviewed cases have a different winning entry. Posts can
+occur under both roots, so these are not 86 independent or necessarily distinct
+post samples.
+
+Every selected case retains its full post, full winning meaning, other local
+entries, closest actual reference members, score, previous rank and previous
+assessment. All stricter-boundary selections receive a source review:
+
+| Root | Selected notes | Straightforward plausible | Qualified plausible | Agent-assessed unsupported |
+|---|---:|---:|---:|---:|
+| Food | 10 | 8 | 2 | 0 |
+| Tools | 34 | 29 | 4 | 1 |
+
+These are 44 distinct selected notes, with no applied additions. Forty-two
+already had a root/note assessment; only two are newly reviewed selections.
+Both are Tools cases: Artificial intelligence `L04376`, about AI in propaganda,
+is plausible; Sports content solutions `L05323` is assessed unsupported below.
+The fresh-case result is therefore one plausible and one unsupported, not an
+independent 43/44 accuracy estimate or a measured population error rate.
+
+Food's qualified selections are Seasonings in a legal/branding story and
+Caffeine without an identified preparation. Its new Burgers winner removes
+the earlier generic-Knives qualification. Tools retains qualifications on
+Protocols, a sparse AI/economics post, GB Studio's palette association, and
+Figurative tools. Switching a game-construction note's winner to Video games
+removes its earlier physical-versus-simulated-construction qualification.
+No new human approvals or whole-meaning containment certifications are implied.
+
+### Fresh counterexample: a publisher tagline
+
+The source post, verbatim:
+
+> Resilient Kentucky meets Ole Miss for morning tip-off – Field Level Media – Professional sports content solutions https://www.rawchili.com/nba/557782/ #Basketball #CollegeBasketball #ncaa #NCAABasketball #ncaab
+>
+> https://media.channels.im/media_attachments/files/115/950/307/882/593/740/original/581d4bd38f2c53d5.jpg
+
+Its new winning entry is **Sports content solutions `L05323`**:
+
+> Sports content solutions are products or services designed to meet needs for creating, supplying, managing, or distributing media content about sports.
+
+That entry scores `0.03964917`, ranking 33 for Tools, above the unchanged
+stricter boundary `0.03887072`. It was rank 116 under the ratio method and had
+no earlier Tools source assessment. The actual publisher entry, Field Level
+Media `L05322`, scores `0.01088093`, and Basketball `L05321` scores `0.01045055`.
+The generalized functional definition thus scores about 3.64 times higher than
+the publisher's own meaning and 3.79 times higher than Basketball.
+
+I assess this proposed Tools route as unsupported: the source is a basketball
+preview carrying publisher branding; it does not discuss a tool or a method
+for producing media. This is not a blanket rejection of sports software,
+media-production tools or nonsoftware resources. The saved root title or generated
+definition is not treated as a fixed admission boundary. The assessment follows
+the source role and actual member evidence, and remains open to human review.
+
+The vector sees a functional products/services definition. It does not see the
+original post that identifies the phrase as publisher wording. This is a
+specific missing distinction, rather than proof that one particular token or
+upstream prompt caused the result. No extraction or Bootstrap fault is assigned
+by this test. The boundary is not raised after discovering the counterexample.
+
+### What improved and what remains unresolved
+
+Performance struggles, the earlier NBA example `L02909`, drops from Tools rank
+28 to 96. Software/device subjects move upward: Servers rises 23 to 5, the
+digital-avatar platform rises 40 to 7, and AI models rises 42 to 18. These
+measured rank changes agree with the earlier denominator diagnosis.
+
+They do not establish an ending method. The stricter Food boundary has no new
+source cases above it, so passing that portion supplies little fresh evidence.
+The stricter Tools boundary fails its newly exposed publisher-tagline case.
+The broader boundaries also admit known uncertainty. These frozen-boundary tests
+do not validate an automatic ending rule. The source counterexample is not
+repaired by the ranking improvement alone.
+
+The next useful probe is the user's earlier idea of pooling the explicit
+meaning with the original post supplied as encoder context, using this publisher
+case and genuine positive controls. It would add the source distinction the
+current vectors lack, while retaining the frozen SSE model and excluding LLMs
+and training. Additional encoded tokens and input-length limits would need to
+be measured before a corpus-wide change. That small new-encoding probe is
+recommended for separate authorization, not started here. A different context
+is a hypothesis to test, not an asserted fix or a new production policy.
+
+### Retained evidence and verification
+
+```
+target/food-halves-v1/within-root-mean-omitted-ranking-v1/
+```
+
+- `plan.json`: complete eligible sets, fixed score, frozen boundaries, source
+  identities and review selection; SHA256
+  `296c89c0ee6227742245bb6539f4dd2e139cb9819d901aef9cd2f0270a98f9e8`.
+- `entry-scores.json`, `note-ranking.json`: all 2,852 root/entry scores and both
+  complete 281-note rankings, with old ranks and explicit winner changes.
+- `boundary-selections.json`, `boundary-outcomes.json`: original-label and
+  newly reviewed boundary outcomes kept separately; unreviewed selections remain
+  explicit.
+- `source-member-review.json`, `agent-review.json`: all 86 source/member records
+  and provisional assessments, with old judgments preserved.
+- `rank-comparison.json`, `fresh-counterexample.json`, `summary.json`: top-twenty
+  overlaps, exact publisher evidence, all three entry scores and bounded result.
+- `verification.json`: source hashes, independent scalar sums, complete ranking
+  reconstruction, source/member bindings and frozen-boundary checks.
+
+Verification checks all 2,852 entry means and 562 note ranks, reproduces 142
+earlier component means, and validates 86 source/meaning/assessment bindings
+plus 430 displayed member cosines. Maximum scalar error is
+`2.7755575615628914e-17`; maximum earlier-component replay error is
+`6.938893903907228e-18`. All twelve protected source hashes and HR35's frozen
+state pass. No model calls, new encodings, training, threshold activation or
+hierarchy changes occur. Applied note gain remains zero; HR35 still reaches
+718 notes. The worktree remains for these artifacts and frozen source paths.
