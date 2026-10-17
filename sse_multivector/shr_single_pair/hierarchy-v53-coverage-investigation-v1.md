@@ -3097,3 +3097,172 @@ target/food-halves-v1/residual-member-connections-v1/
 
 All source meanings, vector receipts and HR35 state remain unchanged. Applied
 note gain is zero. The worktree remains for source-bound ignored evidence.
+
+## Scaling group matches by internal member similarity
+
+The user authorized testing whether a candidate's similarity to an original
+group becomes more useful when compared with that group's own internal
+similarity. This is fixed arithmetic over saved full-meaning vectors. No
+labels, group membership, meanings, encoder, root definitions or hierarchy
+edges change. There are no new encodings, LLM calls, training or paid resources.
+
+### Frozen rule and comparison
+
+Use the existing kernel `K(a,b) = exp(-5.5 * (1 - cosine(a,b)))`.
+For a query and each original reference group:
+
+1. Exclude all references from the query's source note.
+2. Calculate the mean query-to-reference affinity.
+3. Calculate the mean affinity between the remaining references, excluding
+   every self-pair and every pair from the same source note.
+4. Divide step 2 by step 3. The root's score is the largest such ratio among
+   its eligible original groups.
+
+The denominator is a reference similarity scale, not a probability or semantic
+label. A group without two independent source notes would remain unavailable,
+not receive an invented denominator. No such unavailable group occurs for
+these fixed queries. Initially ungrouped references are not combined into a
+fabricated group. They remain in the all-member-mean baseline, but not in
+either best-original-group method.
+
+Three scores are compared: the unchanged all-member mean, the raw best-group
+mean on the same grouped references, and the adjusted best-group mean. Thus
+adjustment can be separated from simply selecting a best group. The raw best
+group's poor earlier result remains a control, not a discarded approach.
+All old-panel baseline counts reproduce exactly before interpreting the new
+score.
+
+The frozen older panel has 142 saved root/note assessments; the later panel
+has 86. A focused panel contains the preceding twenty cases plus all twelve
+previously reviewed useful or qualified Tools cases below the publisher score.
+Panels overlap and are not independent samples. All case meanings and winners
+remain fixed; no other entry in a note is substituted to improve a method.
+Qualified and unresolved assessments remain separate. Most assessments are
+provisional agent reviews, not human semantic gold; prior human source-note
+decisions and attribution are preserved.
+
+### Broad result: no improvement over the current mean
+
+The table counts useful-versus-agent-assessed-unsupported entry pairs in which
+the useful entry scores higher, divided by all such pairs. These are dependent
+ordering comparisons, not accuracy, recovered notes or independent trials.
+
+| Saved panel | Root | All-member mean | Raw best group | Group-relative best |
+|---|---|---:|---:|---:|
+| Older 142 | Food | 609 / 609 | 531 / 609 | 587 / 609 |
+| Older 142 | Tools | 438 / 456 | 389 / 456 | 382 / 456 |
+| Later 86 | Food | 162 / 162 | 134 / 162 | 153 / 162 |
+| Later 86 | Tools | 284 / 297 | 255 / 297 | 224 / 297 |
+| Focused 32 | Food | 11 / 12 | 12 / 12 | 11 / 12 |
+| Focused 32 | Tools | 17 / 22 | 14 / 22 | 17 / 22 |
+
+On the older Tools panel, normalization fixes nine orderings relative to the
+current all-member mean but worsens 65. Against the raw best group, it fixes
+23 and worsens thirty. Food improves relative to the earlier raw-best-group
+method but still loses 22 orderings against the current all-member mean.
+The focused panel does not reverse the broader result.
+
+One motivating contrast improves: Smartwatches has adjusted score `0.490880`,
+above Sports content solutions at `0.445501`. Both now select G579. The
+camera-review case remains below the publisher (`0.298881`), and Wildlife
+remains above the human-accepted egg-decoration case (`0.217362` versus
+`0.208306`). These scores have a different scale from the original mean; old
+cutoffs are not transferred.
+
+### Why dividing by the group scale can backfire
+
+G579 contains only two originals from different notes:
+
+| Entry | Fixed meaning (verbatim) |
+|---|---|
+| Data cables | Data cables are physical cable assemblies containing a transmission medium designed to carry encoded information between devices or locations, with electrical conductors or optical fibers as possible media. They include, but are not limited to, undersea cables and cables linking locations across the Atlantic. |
+| Digital connections | Connections are technical communication links that enable digital systems, applications or services to exchange data or requests, including but not limited to links between a wallet and another application or service. Such links can be provided through different technical mechanisms. |
+
+Their mean kernel affinity is `0.07605354`, the lowest group scale among the
+29 tested groups. With two members, there is only one independent cross-note
+pair, represented twice as ordered pairs. Its loose connection gives a large
+boost after division. G579 becomes the chosen group for 28 of 71 older Tools
+cases and 27 of 55 later Tools cases. Across all 180 diagnostic queries scored
+against Tools, it wins 127 times; that larger count includes queries not assessed
+for Tools and is not a quality statistic.
+
+G153 has two Software agents entries and Operators of software agents, from
+only two notes. Its scale is `0.16626857`. The relative score promotes previously
+assessed unsupported Staff appointments, Chief executive officers and Taking
+orders over several useful technical cases. For example, Device compatibility
+scores `0.06050535` versus Staff appointments `0.02627413` under the current
+mean. After adjustment, their scores are `0.565256` and `0.586989`, reversing
+the retained useful/unsupported ordering. This diagnoses the numeric effect
+under prior judgments; it does not assign fault to those original group members
+or establish a new human rejection.
+
+Food shows the same scale effect. General-Food G027 has 53 references but an
+internal meaning-affinity scale of only `0.10216642`. It becomes the selected
+group for 49 of 71 older Food cases and 24 of 31 later cases. The raw group
+score had preferred preservation for Eggs, with mean `0.03993250` versus
+Wildlife's best raw group mean `0.02350877`. Adjustment instead selects G027
+for both, and Wildlife wins. Internal normalization can favor a looser group
+over a more specific useful connection; it does not automatically solve the
+heterogeneous-root problem.
+
+### The fixed stopping screen also fails
+
+Before calculating results, the plan freezes a score-at-least-one screen:
+a candidate must match one group at least as strongly as that group's references
+match one another on average. This is a numerical reference condition, not a
+claim of semantic validity or a learned threshold.
+
+No case in either the older or later Food panels reaches one, including all
+21 and eighteen straightforward-plausible Food cases respectively. The later
+Tools panel selects six plausible cases, one qualified case and one previously
+assessed unsupported case. The latter is Retrieval (`L01811`), whose source
+post is "Hold on let me grab the meme"; it scores `1.203478` via G579. That
+rejection remains provisional. The condition is not an established ending rule,
+and neither the threshold nor group eligibility is changed after seeing it.
+
+### Conclusion and next evidence
+
+Do not adopt this adjustment. It repairs one selected contrast but makes the
+broader saved comparisons worse, and its frozen stopping screen is insufficient.
+The experiment's sparse-group sensitivity and the difference between raw and
+relative group winners are retained rather than patched with another constant.
+
+The next useful check would examine an assumption behind reusing these groups:
+they were formed using title-pooled vectors, while the current admission probes
+use full-meaning-pooled vectors. Their coherence under the latter representation
+is not guaranteed. Comparing the two internal geometries with saved vectors
+would determine whether that mismatch actually explains the weak groups before
+proposing another cutoff or regrouping. This is a recommendation only; no new
+clustering, representations, model work or hierarchy changes are started here.
+
+### Evidence and bounded work
+
+```
+target/food-halves-v1/group-internal-similarity-v1/
+```
+
+- `plan.json`: frozen formula, three methods, input panels, exact source
+  identities, baseline controls and the unity screen; SHA256
+  `3d6ff04a97b834a35c750add8da6c881f2778bda24c1b8e4bbda707a492eef0c`.
+- `group-statistics.json`, `group-subset-statistics.json`: every internal
+  cross-note mean and each member's own-note-excluded group mean.
+- `all-group-query-scores.json`, `all-root-query-scores.json`: all 5,220
+  group/query results and 360 root/query results, including winning groups.
+- `panel-case-results.json`, `panel-pair-orderings.json`, `panel-metrics.json`:
+  260 attributed case records and 2,134 pair-ordering records, with panel
+  overlaps and qualified/unresolved cases preserved.
+- `fixed-unity-screen.json`, `query-and-reference-evidence.json`: every frozen
+  screen outcome and original title, meaning, source ID and full source post.
+- `verification.json`: 28 protected source hashes, 444 native-vector/source
+  bindings, 29 group scales, 49,783 independent scalar cosine/affinity checks,
+  every group/query and root/query score, all 2,134 pair orderings, unchanged
+  panel labels and the six displayed table rows. Maximum scale error is
+  `1.9984014443252818e-15`; maximum per-group query-score error is
+  `5.329070518200751e-15`. All checks pass.
+
+This bounded calculation uses 29 original groups containing 204 reference
+entries, with a largest group of 53 and only 4,068 dense within-group cells.
+The same exact reference subsets are cached; all 180 queries reuse the 29
+group scales. No all-corpus square matrix or arbitrary-scale implementation is
+proposed. The unchanged hierarchy still reaches 718 notes, with zero applied
+additions. The worktree remains for the source-bound ignored evidence.
