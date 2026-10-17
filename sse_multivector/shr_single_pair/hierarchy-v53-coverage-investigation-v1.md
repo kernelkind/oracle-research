@@ -26,7 +26,7 @@ samples one original entry per group and does not compare every constituent
 entry. No admission method, score aggregation, pooling policy or implementation
 has been decided through these probes.
 
-The latest equal-reference control separates dropping references from regrouping
+The preceding equal-reference control separates dropping references from regrouping
 them. Keeping exactly the 104 references retained by meaning-based clustering,
 Food's older-panel raw ordering count improves from 540 to 583 of 609 when those
 references are regrouped. Tools declines from 421 to 415 of 456: most of its
@@ -36,6 +36,19 @@ their eligibility materially affects the comparison. Existing whole-root means
 remain stronger on both broad panels, and neither retained grouping qualifies
 the pre-existing relative-score stopping rule. These are dependent ranking
 checks using saved assessments, not recovered notes or semantic accuracy.
+
+The latest authorized probe combines title and meaning neighbor networks using
+a bounded sparse adaptation of Similarity Network Fusion. It retains 177 of
+204 references in groups, compared with 104 for native meaning-only clustering.
+Exchange improves the older Food panel versus the same networks without
+diffusion (574 to 593 of 609 orderings), but loses three net orderings on the
+later Food panel and retains the Eggs/Wildlife and publisher/Smartwatches
+overlaps. Existing whole-root means remain stronger on both broad panels.
+The unchanged relative-score screen now selects ten distinct reviewed notes:
+eight plausible, one qualified plausible and one unresolved Water case. These
+are provisional saved assessments, not validated admission accuracy. No method
+is adopted and no notes are added. The full experiment and decoder limitations
+are recorded in the neighborhood-fusion section below.
 
 The user clarified the interpretation for this investigation: "the root is not
 about food only. it does not have a fixed meaning yet." Its saved title and
@@ -3711,3 +3724,176 @@ target/food-halves-v1/retained-reference-group-control-v1/
 The actual hierarchy still reaches 718 notes. No meaning, reference membership,
 graph edge or UI is changed. The worktree remains for source-bound ignored
 evidence; completed maintained findings are integrated into local `main`.
+
+## Title/meaning neighborhood fusion
+
+The user authorized testing whether title and meaning neighbor relationships
+can be combined more usefully than an arithmetic cosine blend. This bounded
+probe reuses the original 137 Food and 67 Tools references, both saved vector
+representations and the same 180 query entries. It makes no new encodings,
+LLM calls, training runs, semantic reviews, hierarchy changes or UI updates.
+Only reference grouping changes; candidate scoring stays in meaning space.
+
+### Frozen calculation and controls
+
+The experimental module is `sse_multivector/similarity_network_fusion.py`.
+It follows the exchange and normalization equations of the authors'
+[SNFtool implementation](https://github.com/maxconway/SNFtool/blob/master/R/SNF.R),
+using neighbor count twenty, local scale multiplier `0.5` and twenty iterations.
+Those settings were frozen before scoring and were not tuned on the judgments.
+This is a **bounded sparse adaptation**, not an exact implementation of dense
+published SNF:
+
+1. Build separate title and meaning networks from angular distances, with
+   locally scaled Gaussian affinities on mutual twenty-neighbor connections.
+2. Normalize each network. Update the title network by passing the meaning
+   network through title-neighbor transitions, and update meaning through title
+   information simultaneously. Add identity mass and symmetrize each round.
+3. Limit each state to twenty mutual non-self connections per entry. Prune the
+   first intermediate product before the second multiplication, preventing
+   unbounded dense diffusion. The final graph has the same degree limit.
+4. Extract EOM groups using HDBSCAN on reciprocal nonzero edge affinities.
+   Missing connections remain infinite distances, with no invented edge.
+   Minimum cluster size is two; minimum samples is three including the entry.
+
+Two matched controls use identical inputs and graph machinery: **Unfused** has
+zero diffusion iterations; **Self diffusion** runs twenty iterations but each
+representation exchanges only with itself. The latter distinguishes mixing
+the representations from diffusion alone. All resulting group memberships,
+noise entries, warnings and intermediate sparsity counts remain saved.
+
+The existing native angular decoder does not accept an arbitrary fused network.
+The numerical probe therefore uses scikit-learn's precomputed-distance HDBSCAN.
+Angular-distance replay reproduces both saved title memberships exactly. Meaning
+replays differ by three Food and four Tools entries: 66 versus 63 and 45 versus
+41 assigned entries respectively. Both native and library-reference controls
+are retained separately. This implementation difference is not attributed to
+the representation or declared a semantic error. An amendment recording these
+controls was frozen before query scoring; no clustering settings changed.
+Unfused, self-diffusion and exchanged-fusion comparisons share the same decoder.
+
+### Reference retention and ranking
+
+Every arm starts with the same 204 references. The outputs retain different
+subsets; these counts describe the complete grouping method, not a pure
+regrouping effect with identical retained references.
+
+| Root | Native title | Native meaning | Unfused | Self diffusion | Exchanged fusion |
+|---|---:|---:|---:|---:|---:|
+| Food, 137 entries | 137 | 63 | 108 | 125 | 111 |
+| Tools, 67 entries | 64 | 41 | 64 | 64 | 66 |
+| Total, 204 entries | 201 | 104 | 172 | 189 | 177 |
+
+Food's fused output has fifteen groups covering 69 of 76 source notes; Tools
+has ten groups covering 54 of 55 source notes. These are retained reference
+notes, not recovered omitted notes or additions to the actual graph. Fusion
+still leaves 26 Food references and Software tools `L06913` ungrouped.
+
+The table below keeps full-meaning candidate scoring and the existing
+`exp[-5.5 * (1 - cosine)]` kernel unchanged. Score each nonempty group's mean,
+then take the largest. As before, counts are plausible entries above
+agent-assessed unsupported entries, not accuracy or independent samples.
+Qualified and unresolved judgments remain separate; the three panels overlap.
+
+| Saved panel | Root | Native title groups | Native meaning groups | Unfused | Exchanged fusion | Existing whole-root mean |
+|---|---|---:|---:|---:|---:|---:|
+| Older 142 | Food | 531 / 609 | 583 / 609 | 574 / 609 | 593 / 609 | 609 / 609 |
+| Older 142 | Tools | 389 / 456 | 415 / 456 | 399 / 456 | 405 / 456 | 438 / 456 |
+| Later 86 | Food | 134 / 162 | 152 / 162 | 157 / 162 | 154 / 162 | 162 / 162 |
+| Later 86 | Tools | 259 / 297 | 267 / 297 | 263 / 297 | 268 / 297 | 284 / 297 |
+| Focused 32 | Food | 12 / 12 | 11 / 12 | 10 / 12 | 10 / 12 | 11 / 12 |
+| Focused 32 | Tools | 14 / 22 | 16 / 22 | 13 / 22 | 16 / 22 | 17 / 22 |
+
+Against Unfused, exchange fixes 25 older-Food orderings and worsens six; older
+Tools fixes nine and worsens three. Later Food fixes one and worsens four,
+while later Tools fixes seven and worsens two. Self diffusion produces older
+Food 545 / 609 and Tools 386 / 456, and later Food 135 / 162 and Tools 238 / 297.
+Exchange is useful relative to that control, but there is no uniform gain over
+Unfused or over native meaning groups. Whole-root means use extra initially
+ungrouped references and remain a different-pool operational baseline.
+
+### Difficult matches and the unchanged stopping screen
+
+- Egg decoration `L02984` scores `0.05509301`, below Wildlife `L04627` at
+  `0.05892624`. The egg-supporting preservation group regains Food-preservation
+  mixtures and century-egg Food. Wildlife nevertheless selects a different
+  four-entry Food/Food-growing group containing the strong `L02407` match.
+  Restoring useful egg references therefore does not remove this overlap.
+- Sports content solutions `L05323` scores `0.05503513`, slightly above
+  Smartwatches `L06024` at `0.05339702`. Its strongest group is now Computer code;
+  Smartwatches selects Technology/Tools. The publisher rejection remains an
+  agent assessment, not new human gold.
+- Camera Reviews remains `0.06790542`, below NBA Performance struggles at
+  `0.07830911`; both still select the unchanged nine-entry Testing group.
+
+The previously frozen two-source-note relative score at least one now selects
+ten distinct reviewed source notes across the overlapping panels: Milk, Tea,
+Coffee shops, Water, Bots, Microsoft Copilot, Protocols, Servers, Automation and
+Software clients. Eight have existing plausible assessments, Protocols is
+qualified plausible, and Water is unresolved. None is assessed unsupported in
+these saved panels. This is a small nonrandom reviewed screen, not an estimated
+error rate, general stopping guarantee or approval to add the cases. The
+unchanged screen selects neither Eggs nor Smartwatches. No threshold is moved.
+
+### Verification, scope and next useful test
+
+Six new production-path tests first failed for the missing module, then passed
+with implementation. They check the unpruned equations against an independent
+dense reference, view-order invariance, input immutability, degree bounds,
+identical-view controls, isolated entries and disconnected clustering. The
+combined fusion and existing hierarchy-HDBSCAN suite passes seventeen tests.
+The installed third-party `hdbscan` decoder failed on the disconnected fixture;
+its results are unused. The selected scikit-learn decoder passes that fixture,
+and its differences from native meaning memberships remain explicitly recorded.
+
+Independent numerical verification checks all four local affinity networks,
+all six final networks and their exact group/noise memberships, every degree
+and product bound, 888 source/vector bindings and 50,109 scalar affinities.
+It reproduces all 36,360 group/query scores, 2,880 root/query scores, 17,072
+ordering records, 192 metric cells, 96 change records and 48 frozen screens.
+Maximum final-network error is `2.220446049250313e-16`; local-weight error is
+at most `4.744649118038069e-12`; scalar score error is at most
+`5.329070518200751e-15`. All checks pass. Prior results replay across 2,160
+saved scores within `8.881784197001252e-16`.
+
+Fusion-state storage is bounded by `O(n*k)`; either intermediate sparse product
+has at most `n*(k+1)^2` stored entries. The calculation uses only the saved 137/67
+reference pools. Exact chunked neighbor search still takes quadratic comparison
+time, and final precomputed-distance clustering still allocates a small dense
+matrix. Consequently this module does not establish corpus-scale construction
+performance or qualify approximate neighbor search. Local graph construction
+and the six fusion/clustering arms took approximately `0.60` seconds locally,
+excluding angular replays, imports, source validation, scoring, tests and
+independent verification; that
+subtotal is not an end-to-end runtime or API saving.
+
+This test supports some complementary information between title and meaning
+neighborhoods, but does not justify replacing grouping or admission. The most
+useful next bounded test would apply the unchanged fused relative screen to
+all 281 omitted notes with eligible saved vectors, preserving source-note
+exclusions and inspecting actual selected source/member evidence. That would
+test whether its small promising screen survives outside these selected panels.
+It is proposed only and is not started here; no extra encodings, training or
+provider calls would be needed.
+
+Ignored evidence is under:
+
+```
+target/food-halves-v1/neighborhood-fusion-v1/
+```
+
+The frozen `plan.json` SHA256 is
+`f50af9c47a0bf3470e99930f864299073b117ee358961cc71d9b8c810c864e69`.
+`control-amendment.json` freezes the decoder replay qualification before scoring.
+`cluster-results.json`, `native-replays.json`, saved sparse network files and
+`groupings-with-controls.json` preserve every membership and unassigned entry.
+`all-group-query-scores.json`, `all-root-query-scores.json`, `panel-metrics.json`,
+`panel-pair-orderings.json` and `separate-effects.json` retain every calculation.
+`fixed-unity-screen.json` and `fused-screen-distinct-cases.json` retain all screen
+outcomes without merging judgments. `graph-verification.json`, `verification.json`,
+`runtime.json`, `development-checks.json` and `timing.json` retain checks and limits.
+
+The native hierarchy still reaches 718 notes. Completed experimental code,
+tests and maintained findings land on local `main`; the task worktree remains
+for frozen source bindings, vectors and ignored evidence. No production policy
+is activated.
