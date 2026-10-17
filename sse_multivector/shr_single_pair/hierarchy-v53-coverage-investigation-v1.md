@@ -26,6 +26,17 @@ samples one original entry per group and does not compare every constituent
 entry. No admission method, score aggregation, pooling policy or implementation
 has been decided through these probes.
 
+The latest equal-reference control separates dropping references from regrouping
+them. Keeping exactly the 104 references retained by meaning-based clustering,
+Food's older-panel raw ordering count improves from 540 to 583 of 609 when those
+references are regrouped. Tools declines from 421 to 415 of 456: most of its
+earlier gain came from reference removal, not regrouping. Three Food groups and
+one Tools group become single-entry groups in the original retained grouping;
+their eligibility materially affects the comparison. Existing whole-root means
+remain stronger on both broad panels, and neither retained grouping qualifies
+the pre-existing relative-score stopping rule. These are dependent ranking
+checks using saved assessments, not recovered notes or semantic accuracy.
+
 The user clarified the interpretation for this investigation: "the root is not
 about food only. it does not have a fixed meaning yet." Its saved title and
 generated definition identify the reference collection; they are not a fixed
@@ -3527,7 +3538,8 @@ arm, preserve their previous grouping in one arm and use their new grouping in
 the other, then rescore. This would isolate regrouping from simply discarding
 references. Current results deliberately report both effects together as the
 native clustering outcome; they do not attribute all gains to improved group
-geometry. That follow-up is proposed only and is not run here.
+geometry. That follow-up was subsequently authorized and is reported in the
+equal-reference control below.
 
 ### Evidence
 
@@ -3561,3 +3573,141 @@ target/food-halves-v1/matched-group-reclustering-v1/
 This small reference regrouping is not a new corpus hierarchy. The native
 canonical graph still reaches 718 notes, with zero additions or removals.
 The worktree remains for its frozen source paths and ignored evidence.
+
+## Equal-reference control: dropping references versus regrouping
+
+This authorized follow-up uses only saved vectors, memberships and assessments.
+There are no new encodings, HDBSCAN runs, LLM calls, training, thresholds or
+graph changes. Meaning pooling and the kernel `exp[-5.5 * (1 - cosine)]` remain
+fixed. All source-note exclusions, saved query entries, assessment qualifications
+and human note-level judgments remain unchanged.
+
+The three arms separate two operations:
+
+1. **Original full:** the original 29 groups, containing 204 references.
+2. **Original retained:** intersect each original group with the references
+   retained by meaning-based reclustering. This leaves 63 Food and 41 Tools
+   references, in fifteen Food and ten Tools groups.
+3. **Meaning retained:** the new thirteen Food and seven Tools groups, using
+   exactly those same 104 references.
+
+The first transition measures dropping references with the original grouping
+preserved. The second measures regrouping with the reference pool fixed.
+The original groups, rather than the preceding newly reclustered title groups,
+provide the baseline: title reclustering itself had dropped three Tools entries.
+Using that arm would not guarantee the requested identical retained pools.
+
+### Keep singleton references visible
+
+Pruning creates four single-entry original-group subsets: Dining experiences
+`L05004` in `G498`, Lunch `L00390` in `G513`, Diets `L00307` in `G566`, and
+Software developers `L03051` in `G171`. The main control takes the largest mean
+over every nonempty group, including these subsets. Otherwise the two retained
+arms would not make the same 104 references available. Their contribution is
+not silently assigned a group scale or merged into another group.
+
+The prior raw/relative method requiring two source notes remains a separately
+reported sensitivity check. Raw means are available for singleton groups, but
+their cross-note internal normalization is undefined. All per-group values and
+unavailable scales are retained. None of the 180 saved queries shares a source
+note with these retained references; source-note exclusions still apply.
+
+### Attribution results
+
+The main table holds full-meaning scoring fixed and uses every nonempty group.
+Counts are useful entries scoring above agent-assessed unsupported entries,
+divided by all such dependent pairs. These are not accuracy or notes recovered;
+the panels overlap. Qualified and unresolved assessments remain separate in
+the saved results. The existing mean uses all 266 original Food/Tools references,
+including 62 initially ungrouped references, so it is an operational comparison
+with a different reference pool, not a matched aggregation control.
+
+| Saved panel | Root | Original full groups | Original groups, retained references | New meaning groups, same references | Existing all-root mean |
+|---|---|---:|---:|---:|---:|
+| Older 142 | Food | 531 / 609 | 540 / 609 | 583 / 609 | 609 / 609 |
+| Older 142 | Tools | 389 / 456 | 421 / 456 | 415 / 456 | 438 / 456 |
+| Later 86 | Food | 134 / 162 | 134 / 162 | 152 / 162 | 162 / 162 |
+| Later 86 | Tools | 255 / 297 | 266 / 297 | 267 / 297 | 284 / 297 |
+| Focused 32 | Food | 12 / 12 | 12 / 12 | 11 / 12 | 11 / 12 |
+| Focused 32 | Tools | 14 / 22 | 13 / 22 | 16 / 22 | 17 / 22 |
+
+For older Food, dropping references fixes 28 orderings and worsens nineteen;
+regrouping then fixes 44 and worsens one. For older Tools, dropping references
+fixes forty and worsens eight; regrouping fixes two and worsens eight. The later
+panel has the same broad distinction: Food gains eighteen net orderings from
+regrouping, while Tools gains only one. These are descriptions of the saved
+panels, not a claim that the removed references were invalid.
+
+Singleton handling explains much of Food's apparent regrouping advantage.
+Under the earlier two-source-note eligibility rule, the original retained Food
+group score is already 578 / 609, compared with 583 / 609 after regrouping;
+the three singleton references are unavailable in that sensitivity check.
+Its 540-to-578 difference is therefore explicitly an additional reference
+eligibility effect, not evidence that the representations changed. Tools is
+420 / 456 versus 415 / 456 under the same restriction. The primary exact-pool
+comparison and this restricted sensitivity check must not be conflated.
+
+### The difficult controls remain mixed
+
+- Human-accepted egg decoration `L02984` stays above Wildlife after references
+  are dropped but original groups are kept (`0.02302965` versus `0.02128154`).
+  Regrouping reverses that ordering (`0.02625279` versus `0.02769534`).
+  This focused regression is caused by regrouping, not reference loss alone;
+  Wildlife's rejection remains an agent assessment.
+- Smartwatches stays below the sports publisher after dropping references
+  (`0.05907641` versus `0.07009350`). Regrouping puts it just above the publisher
+  (`0.05736364` versus `0.05651039`). This gain does come from regrouping.
+- Camera Reviews and NBA Performance struggles both select Testing. Dropping
+  references raises their scores to `0.08827715` and `0.10019421` respectively;
+  regrouping leaves both unchanged. That overlap is not fixed by the new groups.
+
+Relative normalization also remains mixed. Older Food is 587, 598 and 568 of
+609 across the three arms; Tools is 382, 434 and 428 of 456. The unchanged
+relative-score-at-least-one screen selects no cases in either retained arm
+across all six panel/root combinations. No new stopping threshold is fitted.
+
+### Conclusion and evidence
+
+The preceding apparent improvements had different causes. Regrouping helps
+Food on the broad panels, partly by changing how tiny retained groups affect
+the maximum. Most of Tools' gain comes from dropping references, and its
+regrouping effect is small or negative outside the focused controls. These
+findings do not support replacing the existing all-root mean or deleting the
+100 references left unassigned by meaning reclustering. They do not establish
+an ending method. The synthetic root definitions remain outside this test.
+
+More regrouping changes are not warranted by this control alone. Before
+optimizing further against Sports content solutions, the useful next decision
+is whether that source should actually be rejected from the broad Tools
+collection. Its current rejection is provisional agent judgment; the numerical
+diagnosis cannot turn it into human gold. This is a recommendation only, not
+a new review or calculation started here.
+
+Ignored evidence:
+
+```
+target/food-halves-v1/retained-reference-group-control-v1/
+```
+
+- `plan.json`: exact three-arm memberships, scoring policies, saved panels,
+  eligibility treatment and 51 protected source hashes; SHA256
+  `2d10b2cc93c36c19d8f768d31dda7b89f4acb5384faf358596f9873fce974e47`.
+- `group-composition.json`, `group-statistics.json`: every retained subset,
+  source-note count, title tally and all 58 available/unavailable group scales.
+- `all-group-query-scores.json`, `all-root-query-scores.json`: all 13,320 group
+  scores and 1,080 root/query results, including both eligibility policies.
+- `panel-metrics.json`, `panel-pair-orderings.json`, `separate-effects.json`:
+  all 6,402 orderings, qualified/unresolved counts and every improvement or
+  regression attributed separately to reference removal and regrouping.
+- `fixed-unity-screen.json`, `source-evidence.json`, `summary.json`: unchanged
+  stopping-screen outputs, full original meanings/posts and bounded accounting.
+- `verification.json`: 888 source/vector bindings, 49,885 independent scalar
+  affinities, all 58 scales, every group/root score, all 6,402 orderings,
+  72 metric cells, 48 change records and eighteen fixed screens. Maximum
+  scalar discrepancy is `5.329070518200751e-15`; all checks pass.
+  The prior baseline and new-meaning results replay across 2,160 saved scores,
+  with maximum discrepancy `8.881784197001252e-16`.
+
+The actual hierarchy still reaches 718 notes. No meaning, reference membership,
+graph edge or UI is changed. The worktree remains for source-bound ignored
+evidence; completed maintained findings are integrated into local `main`.
