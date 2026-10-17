@@ -158,3 +158,42 @@ def qualify_boundary(reference_affinities, reference_notes, group_indices, *,
     return dict(base=base, folds=folds,
                 eligible=base['threshold'] is not None and bool(folds)
                 and all(not fold['failed_indices'] for fold in folds))
+
+
+def separation_bounds(positive_scores, rejection_scores):
+    """Diagnostic capacity of any per-group cutoffs, not an admission estimator.
+
+    Rows are reviewed examples; columns are the same fixed groups. To reject
+    all supplied rejection examples under an any-group match rule, each group's
+    cutoff must strictly exceed that group's maximum rejection score. A useful
+    example can therefore be recovered exactly when it exceeds that maximum
+    in at least one available group. Different rejections can block each group.
+
+    NaN denotes unavailable support, not a negative judgment. A group with no
+    available rejection scores is unconstrained by this particular control set.
+    These label-dependent bounds must never be deployed as learned cutoffs or
+    presented as validation on unseen entries. Return arrays for audit callers.
+    """
+    positive = np.asarray(positive_scores, dtype=float)
+    negative = np.asarray(rejection_scores, dtype=float)
+    if (positive.ndim != 2 or negative.ndim != 2 or not negative.shape[0]
+            or not positive.shape[1] or positive.shape[1] != negative.shape[1]):
+        raise ValueError('need aligned score matrices, groups and rejection controls')
+    for scores in (positive, negative):
+        if (not np.all(np.isfinite(scores) | np.isnan(scores))
+                or np.any(scores < 0) or np.any(scores > 1)):
+            raise ValueError('scores must lie in [0,1]; only NaN may denote missing support')
+    observed = np.isfinite(negative)
+    maxima = np.max(np.where(observed, negative, -np.inf), axis=0)
+    has_rejection = np.any(observed, axis=0)
+    bounds = np.where(has_rejection, maxima, np.nan)
+    recoverable = np.isfinite(positive) & (positive > maxima)
+    blockers = np.where(has_rejection, np.argmax(np.where(observed, negative, -np.inf), axis=0), -1)
+    common_maximum = float(np.max(maxima))
+    best_positive = np.max(np.where(np.isfinite(positive), positive, -np.inf), axis=1)
+    return dict(rejection_maxima=bounds, blocking_rejection_indices=blockers,
+                margins=positive-bounds, recoverable_by_group=recoverable,
+                recoverable=np.any(recoverable, axis=1),
+                common_rejection_maximum=common_maximum if np.isfinite(common_maximum) else np.nan,
+                common_boundary_recoverable=np.any(np.isfinite(positive), axis=1)
+                & (best_positive > common_maximum))

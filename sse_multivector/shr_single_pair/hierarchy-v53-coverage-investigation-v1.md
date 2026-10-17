@@ -4978,3 +4978,121 @@ contexts**. Graph array bytes, source hashes and query independence checks pass.
 Evaluation takes 6.6 seconds for these small pools; this is not production-scale
 validation. Findings, reusable code and tests land on local `main`. Keep the
 worktree for frozen vector/evidence paths, including the failed attempt.
+
+## Can any boundaries separate the saved useful and unwanted scores?
+
+The user accepted the current omitted-note-focused query population rather than
+expanding to every globally ungrouped entry, then authorized this diagnostic.
+Keep the same 1,449 entries (1,426 from 281 wholly omitted eligible notes plus
+23 controls), Food and Tools only. This is a mathematical capacity check of
+the existing score, **not training, a deployed cutoff, an admission experiment
+on unseen entries or proof of semantic accuracy**. No new vectors or LLM calls.
+
+Evidence: `target/food-halves-v1/reference-score-separation-v1/` in the retained
+`oracle-mvp-hierarchy-food-halves-v1` worktree. The plan precedes capacity
+outcomes; SHA256
+`eb59d77c6889f5eb2152939ef196d013ab36147a27a9c3493d1d922b547beda6`.
+It binds all source scores, labels, group IDs, code and controls. The reusable
+calculation is `separation_bounds` in `fixed_reference_bend.py`. Previous source
+bytes are verified through Git commit `74c48059`; old artifacts remain intact.
+
+The logic accounts for **any-group** admission, not only the single best score
+or a pairwise ranking. If group `g` admits an entry when `score >= cutoff_g`,
+then rejecting every supplied unwanted entry requires:
+
+`cutoff_g > max(score(unwanted_entry, g))` for every group.
+
+A useful entry is therefore recoverable exactly when its score exceeds that
+maximum in at least one group. These conditions are simultaneously sufficient
+for every recoverable entry. A tie is inseparable. A blocked entry has a
+rejection scoring at least as high in every group; **different rejections may
+block different groups**. It is unnecessary for one rejection to dominate the
+entry everywhere. Missing reference support remains unavailable, not a label.
+
+This is an optimistic bound: use all 15 Food and ten Tools groups, regardless of
+whether any bend exists or the self-check passes. No bound is applied to the
+unreviewed omitted population. Label-dependent maxima are evidence about what
+cutoffs could achieve; they are not chosen as new inference parameters.
+
+The three overlapping review panels pool into 30 plausible Food entries and
+49 plausible Tools entries, with 36 and 18 provisional mismatches respectively.
+There are no conflicting labels across panels. Qualified/unresolved entries
+are excluded from these primary positive/negative sets. Preserve all roles:
+
+- Human rejection controls are the three specific entries Nausea, Blood and
+  JAIA Drake, plus all 14 eligible headings of the previously rejected Easter
+  broadcast note. The latter is one note-level decision, not 14 independent
+  human judgments.
+- Gas facilities and Breath are additional agent-assessed suspects.
+- The complete Food rejection set combines the above with the 36 provisional
+  panel mismatches, deduplicating to 51 entries. These are **not 51 human gold
+  rejections**. Other-root membership is never used as a rejection.
+- Earlier accepted notes are tested through any eligible heading as a possible
+  route. Their individual headings do not thereby become positive entry gold.
+  Traditional activities L02986 remains low priority, not relabeled negative.
+
+| Distinct useful entries and rejection controls | Recoverable with separate group cutoffs | Recoverable with one common root cutoff |
+|---|---:|---:|
+| 30 provisional Food fits; 17 human-decision rejection entries | 30/30 | 28/30 |
+| Same Food fits; add Gas facilities and Breath | 30/30 | 23/30 |
+| Same Food fits; all 51 reviewed rejection entries | 30/30 | 22/30 |
+| 49 provisional Tools fits; 18 provisional mismatches | 41/49 | 26/49 |
+
+All three human-accepted Food notes retain a possible route while rejecting
+the human control set, both with and without the two added suspects. With the
+suspects included, a single common root cutoff cannot preserve the pisanki
+note; separate group cutoffs can. This is note-route feasibility, not approval
+of every candidate heading. The 29 higher-priority Food entries also all remain
+recoverable under the full 51-entry rejection set; no apparent improvement is
+manufactured by dropping Traditional activities.
+
+Food examples against **all 51** rejection controls:
+
+| Useful entry | One group permitting a separation | Useful score | Highest rejection score in that group |
+|---|---|---:|---:|
+| Coffee L00228 | Food `fused-014` | 0.084107 | 0.046273, Blood |
+| Coffee beans L00374 | Food `fused-013` | 0.047644 | 0.032004, Gas facilities |
+| Steaks L00479 | Food `fused-006` | 0.056892 | 0.027034, Spaces in configuration text |
+
+For every saved plausible Food entry, at least one such interval exists. The
+smallest best-group margin is `0.000837`, for low-priority Traditional
+activities; excluding it, the smallest is `0.007353` for Eggs L02984. These
+are not floating-point ties. **The current score family is capable of matching
+this finite Food control set; the tested reference-derived boundary rules have
+not found those separations reliably.** This does not establish that the same
+scores separate unknown future fits or that these label-dependent intervals
+can be located from accepted references alone.
+
+The eight blocked Tools entries under the frozen provisional labels are Tablet
+computers L00473, Video games L01883/L02215, Factories L03455, Reviews L03939,
+Drones L04173, Smartwatches L06024 and Civil engineering L06928. The groupwise
+maximum rejection witnesses come from only six entries: Retrieval L01811,
+Planning L03774, Analysts L04113, Sports content solutions L05323, Deadlines
+L05586 and Staff appointments L05884. None is new human rejection gold.
+
+For example, Retrieval scores above Tablet computers in **all ten groups**.
+In the Computers group, their scores are `0.073533` and `0.040276`; in Software,
+`0.046683` and `0.037168`. Rejecting Retrieval while retaining that Tablet
+computers entry is impossible using any of these per-group cutoffs. Likewise,
+Sports content solutions alone dominates Factories and Civil engineering in
+every group. Other blocked cases require several rejection witnesses together.
+The contradiction is conditional on the provisional labels: review those
+rejection assumptions before concluding the score must change. It does not
+turn the user's uncertain Tools cases into established failures.
+
+`cohort-details.json` saves every useful/group score, rejection maximum, tied
+maximizing rejection IDs and margin, plus every rejection's complete group
+scores. `tools-blocking-witnesses.json` preserves all ten-group witnesses for
+each blocked entry. No cutoff vector or new hierarchy membership is exported.
+The verifier constructs only an ephemeral mathematical witness on the supplied
+examples to check the sufficiency claim; it never predicts unseen entries.
+
+Seven new tests first fail because the diagnostic does not exist, then pass
+through the calculation used by this audit. Forty-seven combined boundary/
+query/fusion/HDBSCAN tests pass. Independent verification recomputes all 36,225
+saved query/group scores from the unchanged meaning vectors and checks 4,235
+capacity cells across 13 overlapping cohorts. Maximum score discrepancy is
+`5.56e-17`. Source hashes and hierarchy state remain unchanged. Work per cohort
+is `O((P+N)*G)`; no extra graph or model work. Actual HR35 coverage remains
+718 notes. Findings/code/tests land on local `main`; retain this worktree for
+frozen vector, score and evidence paths.

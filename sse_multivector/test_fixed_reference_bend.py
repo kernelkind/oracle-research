@@ -4,7 +4,7 @@ import unittest
 import numpy as np
 from scipy import sparse
 
-from sse_multivector.fixed_reference_bend import derive_boundary, mean_support, qualify_boundary
+from sse_multivector.fixed_reference_bend import derive_boundary, mean_support, qualify_boundary, separation_bounds
 
 
 def reference(pair=.96):
@@ -165,6 +165,56 @@ class FixedReferenceBendTests(unittest.TestCase):
         for c in [np.eye(8), np.full((9, 9), np.nan), -np.eye(9), np.triu(np.ones((9, 9)))]:
             with self.assertRaises(ValueError):
                 derive_boundary(a, notes, [0, 1], context_connections=sparse.csr_matrix(c))
+
+
+class ScoreSeparationTests(unittest.TestCase):
+    def test_group_specific_boundaries_can_succeed_when_one_root_boundary_cannot(self):
+        r = separation_bounds([[.8, .05], [.1, .12]], [[.6, .1]])
+        np.testing.assert_array_equal(r['recoverable'], [True, True])
+        np.testing.assert_array_equal(r['common_boundary_recoverable'], [True, False])
+        np.testing.assert_array_equal(r['recoverable_by_group'], [[True, False], [False, True]])
+
+    def test_different_rejections_can_block_different_groups(self):
+        r = separation_bounds([[.5, .5]], [[.6, .1], [.1, .6]])
+        np.testing.assert_array_equal(r['recoverable'], [False])
+        np.testing.assert_array_equal(r['blocking_rejection_indices'], [0, 1])
+
+    def test_a_score_tie_cannot_be_separated(self):
+        r = separation_bounds([[.5]], [[.5]])
+        self.assertFalse(r['recoverable'][0])
+        self.assertEqual(r['margins'][0, 0], 0)
+
+    def test_bounds_are_necessary_and_sufficient_on_the_supplied_finite_scores(self):
+        positive = np.array([[.8, .05], [.1, .12], [.4, .09]])
+        negative = np.array([[.6, .1], [.3, .08]])
+        r = separation_bounds(positive, negative)
+        diagnostic_boundaries = np.nextafter(r['rejection_maxima'], np.inf)
+        np.testing.assert_array_equal(np.any(positive >= diagnostic_boundaries, axis=1), r['recoverable'])
+        self.assertFalse(np.any(negative >= diagnostic_boundaries))
+
+    def test_missing_support_is_not_an_automatic_rejection_or_a_match(self):
+        r = separation_bounds([[np.nan, .4], [np.nan, np.nan]], [[.9, np.nan]])
+        np.testing.assert_array_equal(r['recoverable'], [True, False])
+        self.assertTrue(np.isnan(r['rejection_maxima'][1]))
+        self.assertEqual(r['blocking_rejection_indices'][1], -1)
+
+    def test_reordering_and_duplicating_useful_entries_does_not_change_bounds(self):
+        positive = np.array([[.8, .05], [.1, .12]])
+        negative = np.array([[.6, .1], [.3, .08]])
+        before = positive.copy(), negative.copy()
+        original = separation_bounds(positive, negative)
+        changed = separation_bounds(positive[[1, 0, 0]], negative[::-1])
+        np.testing.assert_array_equal(changed['rejection_maxima'], original['rejection_maxima'])
+        np.testing.assert_array_equal(changed['recoverable'], original['recoverable'][[1, 0, 0]])
+        np.testing.assert_array_equal(positive, before[0])
+        np.testing.assert_array_equal(negative, before[1])
+
+    def test_requires_rejection_controls_and_aligned_valid_score_matrices(self):
+        for positive, negative in [([[.5]], np.empty((0, 1))), ([[.5]], [[.3, .2]]),
+                                   ([[np.inf]], [[.3]]), ([[.5]], [[-.1]]),
+                                   ([[1.1]], [[.2]]), (np.empty((1, 0)), np.empty((1, 0)))]:
+            with self.assertRaises(ValueError):
+                separation_bounds(positive, negative)
 
 
 if __name__ == '__main__':
