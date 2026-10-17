@@ -44,6 +44,14 @@ unresolved. These are agent assessments, not measured admission accuracy.
 The quote-bot and camera notes rank lower for Tools, but their potential routes
 through other roots have not been assessed by this check. No additions were made.
 
+The subsequent ending-rule investigation reviews 102 more source cases and tests
+numerical cutoffs. Neither ratio parity nor a score-curve bend separates useful
+matches from unrelated ones. Retrospective conservative cutoffs keep 26 Food and
+13 Tools notes, with eight qualifications, but omit a human-approved egg-decoration
+note and lose genuine meal/software cases in a whole-note-excluded reference
+check. No automatic ending method is established or activated. A deliberately
+high cutoff remains possible; its omission/error tradeoff has not been qualified.
+
 The saved-vector connection audit rejects the tested branch expansion rule. The
 subsequent controlled full-meaning comparison improves known-root ranking but
 worsens the difficult Food scope checks. First-sentence pooling does not resolve
@@ -2206,10 +2214,11 @@ the remaining roots or established an automatic cutoff. Servers is just outside
 the review window; rank 23 is not a rejection. Earlier panel expectations remain
 provisional, and Work remains compatible with the user's explicit correction.
 
-The next useful check is the unchanged score across the remaining roots,
-assessing whether omitted notes obtain **at least one useful route**, rather
-than requiring every plausible Tools relationship. Recommend that check without
-starting it. No admission rule or hierarchy modification is selected here.
+The suggested remaining-root check would assess whether omitted notes obtain
+**at least one useful route**, rather than requiring every plausible Tools
+relationship. Before that check, the user instead authorized investigating where
+admission should stop. That investigation follows. No admission rule or hierarchy
+modification is selected here.
 
 ### Verification and retained evidence
 
@@ -2240,3 +2249,169 @@ target/food-halves-v1/tools-full-member-top20-review-v1/
 No new vectors, model calls, training or hierarchy changes were made. Applied
 note gain is zero; HR35 remains at 718 reachable notes. The worktree is retained
 for these ignored artifacts and its saved-vector source paths.
+
+## Investigating where admission should stop
+
+The user asked for an ending method after the top-twenty reviews. This bounded
+check keeps the full-member score unchanged. Before further source review it
+freezes ranks 21–60 and ranks 80, 100, 120, 140, 160, 180, 200, 220, 240, 260 and
+281 in each of Food `C00004` and Tools `C00005`. These 102 additional root/note
+cases, plus the earlier forty, give 142 assessments: all first sixty results for
+each root and eleven lower positions each. A note can appear under both roots;
+142 is a count of root/note cases, not distinct notes or independent samples.
+
+Each new case includes its full source post, winning meaning, five closest
+actual members and the note's other eligible entries. The latter matter: PWM
+wins a Food note whose post explicitly requests beer and has a Beer entry;
+Solo entrepreneurship wins a Tools note explicitly discussing AI. Neither is
+rejected solely because its winning heading is general. Source-dependent media
+was not inspected. The root's synthetic definition remains outside the admission
+target, and membership elsewhere remains compatible with a useful second route.
+
+Agent assessments distinguish straightforward plausible, qualified plausible,
+unresolved and not supported by the source/member evidence. The last category
+does not become human gold. Exact earlier human note decisions remain separate.
+
+| Reference collection | Straightforward plausible | Qualified plausible | Unresolved | Agent-assessed unsupported |
+|---|---:|---:|---:|---:|
+| Food | 21 | 9 | 12 | 29 |
+| Tools | 38 | 15 | 6 | 12 |
+
+These deliberately selected ranks do not estimate overall precision or recall.
+The score is a ratio of average affinities, not an admission probability. For
+example, `score >= 1` selects 173 Food notes and 254 Tools notes from the 281
+omitted notes; it does not imply that those selections are semantically suitable.
+
+### Numerical ending rules
+
+Three numerical ideas are checked without selecting their settings from the
+semantic reviews: relative parity at one, a strongest score-curve bend in raw
+or log scores, and the largest adjacent log-score drop. For the bend, normalize
+rank and the descending score to `[0,1]`; take the largest positive difference
+between the endpoint line `1 − normalized_rank` and the normalized score. The
+selected rank is retained. This is a score-curve diagnostic, not HiGen's
+HDBSCAN tree-cut algorithm. The largest-gap boundary lies between its two scores.
+
+| Numerical rule | Food notes selected | Tools notes selected | Source-review result |
+|---|---:|---:|---|
+| Ratio at least one | 173 | 254 | Contains at least 25 Food and 12 Tools assessed unsupported cases; most selections remain unreviewed. |
+| Raw-score bend | 43 | 44 | All selections reviewed: six Food and two Tools assessed unsupported, plus seven and two unresolved cases respectively. |
+| Log-score bend | 51 | 44 | Thirteen Food and two Tools assessed unsupported, plus eight and two unresolved cases respectively. |
+| Largest adjacent log-score gap | 1 | 280 | Food stops after Egg yolks; Tools includes nearly everything, including twelve reviewed unsupported cases. |
+
+Thus the tested numerical endpoints do not identify a useful semantic boundary.
+Unlabeled tail positions cannot
+be treated as negatives, and a score-distribution gap is not itself evidence of
+irrelevance. The nonrandom review positions also do not support a confidence
+claim about the semantic error rate on an unseen population.
+
+### The specific orderings that obstruct a clean cutoff
+
+| Collection | Higher-scoring, agent-assessed unsupported case | Lower-scoring useful case |
+|---|---|---|
+| Food | Rank 27: Wildlife `L04627`, score 2.7765; marked wild fish under investigation, with no established food role. | Rank 30: Traditional activities `L02986`, score 2.4377; the exact pisanki egg-decoration note previously accepted by the user. |
+| Tools | Rank 28: Performance struggles `L02909`, score 3.3126; NBA team/player struggles, without an actual test or technical role. | Rank 31: Smartphones `L02428`, score 3.1720; satellite-texting functionality. |
+
+The wildlife result's closest Food member is Food `L02407`, cosine 0.66572;
+that member explicitly describes edible material. Wildlife similarity does not
+establish that role in the candidate source. The NBA result's closest member
+is Tests `L04780`, cosine 0.66798; expected sporting struggles do not establish
+an actual evaluative check. These rejection assessments can be disputed, but
+they are explicit source-based judgments rather than fabricated human labels.
+If either judgment is upheld, a scalar threshold that retains the lower useful
+case also retains the higher unsupported case.
+
+This does **not** prove that no conservative scalar cutoff can be useful. The
+user does not require every fitting note to be recovered. It establishes the
+cost of treating a single score boundary as a complete separator.
+
+### Retrospective conservative boundaries
+
+For an explicit conservative alternative, take the prefix before the first
+assessed unsupported **or unresolved** result, while still allowing qualified
+plausible cases. The first blocking result is Food's Wildlife at rank 27 and
+Tools' sparse Action: Up at rank 14. A midpoint between the last retained and
+first blocked scores gives the following retrospective candidates:
+
+| Collection | Candidate threshold | Omitted notes retained | Qualified cases retained |
+|---|---:|---:|---:|
+| Food | 2.814973 | 26 | 7 |
+| Tools | 4.726646 | 13 | 1 |
+
+These are 39 distinct omitted notes, not 39 applied additions. Their prefixes
+have been source-reviewed, but the thresholds were chosen after those reviews.
+They are not a separately validated stopping rule, and retaining qualified
+cases is an explicit tradeoff. Food's boundary omits the human-approved
+egg-decoration note and the straightforward coffee-flavor note at rank 33.
+Tools' boundary omits Servers, Smartphones and many other software/device notes.
+No acceptance percentage or error tolerance is invented on the user's behalf.
+
+### Would those boundaries retain existing members?
+
+A separate frozen follow-up checks original supporting notes already in the
+reference collections. For each query, remove **all entries from its source
+note** from both the target and other-root references. This prevents its own
+meanings, including meanings in other roots, from supplying its support.
+The planned calculation scores its original member entries. A supplemental
+calculation allows every eligible original entry from that note, matching the
+omitted-note maximum-entry policy and giving retention the stronger opportunity.
+
+| Collection | Supporting notes checked | Retained using original member entries | Retained using any eligible entry in the note |
+|---|---:|---:|---:|
+| Food | 89 | 87 | 88 |
+| Tools | 63 | 47 | 52 |
+
+Food misses Charity dinners `L02693`, score 2.1061, even when considering all of
+that note's entries. Its source explicitly describes attending a charity dinner
+and paying for the table with bitcoin. Tools misses eleven notes under the
+stronger all-entry calculation, including Software clients `L04264` at 2.2033,
+Computers `L05212` at 4.0119 and Web development `L04757` at 4.4018. The software
+client post explicitly discusses missing Primal support for NIP94 video events.
+These are concrete useful routes lost by a high threshold, not merely abstract
+low-score examples.
+
+Not all historical memberships are established semantic positives: the missed
+Tools cohort also includes political/military Experiments and music-proficiency
+Tests. Its 52/63 retention is therefore a measured construction-membership result,
+not validated recall. It also does not measure global note coverage: a note
+lost from Tools may still have a useful route elsewhere.
+
+### Result and retained evidence
+
+No automatic ending method is qualified by these results. Raising a threshold
+can deliberately recover fewer notes, but neither score parity nor an obvious
+curve feature identifies the intended quality/omission tradeoff. The next useful
+investigation is the specific score inversions—Wildlife versus Charity dinners,
+and NBA performance versus Software clients—and their score components, before
+more cutoff tuning. This is a recommendation, not a new experiment already begun.
+
+Retained ignored evidence:
+
+```
+target/food-halves-v1/admission-ending-investigation-v1/
+```
+
+- `plan.json`: ranks and scope frozen before the new semantic reviews; SHA256
+  `5ef2fd6575f45ffb434c5b11839c19cd4dbf451bce26811a2c9e57d5138c8a53`.
+- `source-cases.json`, `source-member-evidence.json`, `agent-review.json`:
+  102 complete source cases, member evidence and provisional assessments.
+- `combined-assessments.json`: those cases and the forty unchanged earlier reviews.
+- `numerical-cut-candidates.json`, `summary.json`, `conservative-candidate.json`:
+  exact numerical endpoints, assessed/unassessed selection counts and six
+  retrospective quality-policy boundary checks.
+- `reference-retention-plan.json`, `reference-retention-entry-scores.json`,
+  `reference-retention-note-scores.json`, `reference-retention-summary.json`,
+  `reference-retention-missed-evidence.json`: separately frozen whole-note
+  exclusion check and all twelve missed-source witnesses.
+- `verification.json`, `reference-retention-verification.json`:
+  source hashes, scalar score checks, source/member bindings and boundary checks.
+- `ending-findings.json`: completed bounded finding, qualifications and untouched
+  hierarchy status; earlier frozen plans/results are not rewritten.
+
+The first verification checks 102 source/meaning bindings, 510 closest-member
+cosines, eight numerical endpoints and all six retrospective boundaries. The
+follow-up checks 2,452 source-bound saved meaning vectors and 1,208 query/root
+scores, with whole-source-note exclusions on both sides. Maximum scalar errors
+are `6.661338147750939e-15` and `5.329070518200751e-15`, respectively. Protected
+sources and HR35's frozen state remain unchanged. No model calls, encodings,
+training, threshold activation, graph changes or applied note gains occur.
