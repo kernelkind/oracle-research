@@ -37,7 +37,7 @@ remain stronger on both broad panels, and neither retained grouping qualifies
 the pre-existing relative-score stopping rule. These are dependent ranking
 checks using saved assessments, not recovered notes or semantic accuracy.
 
-The latest authorized probe combines title and meaning neighbor networks using
+The preceding authorized probe combines title and meaning neighbor networks using
 a bounded sparse adaptation of Similarity Network Fusion. It retains 177 of
 204 references in groups, compared with 104 for native meaning-only clustering.
 Exchange improves the older Food panel versus the same networks without
@@ -49,6 +49,17 @@ eight plausible, one qualified plausible and one unresolved Water case. These
 are provisional saved assessments, not validated admission accuracy. No method
 is adopted and no notes are added. The full experiment and decoder limitations
 are recorded in the neighborhood-fusion section below.
+
+The latest scoring control holds all 25 fused groups and 177 references fixed
+while switching both candidate and reference vectors between title pooling and
+meaning pooling. Title scoring fixes the three focused raw-score contrasts
+(Eggs/Wildlife, Smartwatches/publisher and camera Reviews/NBA struggles), but is
+slightly worse on both older broad panels and more clearly worse on the later
+panels. The unchanged relative cutoff selects no title-scored cases versus ten
+meaning-scored notes. Meaning-only scoring was a control, not an approved best
+choice; these results support neither replacing it globally nor treating the
+title cutoff's empty output as a validated conservative policy. Outside entries
+still do not participate in fusion itself. No admission or graph changes occur.
 
 The user clarified the interpretation for this investigation: "the root is not
 about food only. it does not have a fixed meaning yet." Its saved title and
@@ -3897,3 +3908,124 @@ The native hierarchy still reaches 718 notes. Completed experimental code,
 tests and maintained findings land on local `main`; the task worktree remains
 for frozen source bindings, vectors and ignored evidence. No production policy
 is activated.
+
+## Fixed fused groups: title versus meaning candidate scoring
+
+The user authorized comparing title-only and meaning-only scoring against
+exactly the same fused groups and saved outside cases. This changes both sides
+of the similarity calculation together: candidate title vector against reference
+title vectors, or candidate meaning vector against reference meaning vectors.
+The SSE input remains `title + "\n\n" + explicit meaning` in both modes; only
+the selected pooling tokens change. In particular, title pooling still has the
+meaning as encoder context. No mixed-view score or new encodings are introduced.
+
+The fifteen Food groups containing 111 references and ten Tools groups containing
+66 references stay identical to the saved fusion output. All 180 query entries,
+three overlapping review panels, original assessments, source-note exclusions
+and kernel `exp[-5.5 * (1 - cosine)]` remain fixed. No fusion or HDBSCAN is rerun.
+Each candidate's raw score remains its strongest nonempty group's mean. The
+secondary relative score divides that mean by the group's cross-source-note
+internal mean and requires two source notes after query-note exclusion.
+
+### Raw rankings: title helps the focused contrasts, loses elsewhere
+
+These are useful entries scoring above agent-assessed unsupported entries,
+divided by all such dependent pairs. They are not accuracy, independent samples
+or recovered notes. Qualified and unresolved assessments stay separate in the
+saved results, and no new semantic labels are assigned.
+
+| Saved panel | Root | Meaning scoring | Title scoring |
+|---|---|---:|---:|
+| Older 142 | Food | 593 / 609 | 591 / 609 |
+| Older 142 | Tools | 405 / 456 | 403 / 456 |
+| Later 86 | Food | 154 / 162 | 143 / 162 |
+| Later 86 | Tools | 268 / 297 | 260 / 297 |
+| Focused 32 | Food | 10 / 12 | 12 / 12 |
+| Focused 32 | Tools | 16 / 22 | 19 / 22 |
+
+Switching from meaning to title fixes thirteen older Food orderings and worsens
+fifteen; older Tools fixes 37 and worsens 39. Later Food fixes three and worsens
+fourteen; later Tools fixes nineteen and worsens 27. Focused Food fixes two
+without worsening another; focused Tools fixes four and worsens one. All
+individual identities and qualified/unresolved counts remain retained.
+
+The three focused raw contrasts are:
+
+| Actual entries | Meaning scores | Title scores |
+|---|---:|---:|
+| Eggs `L02984` / Wildlife `L04627` | 0.055093 / 0.058926 | 0.085337 / 0.019136 |
+| Smartwatches `L06024` / Sports content solutions `L05323` | 0.053397 / 0.055035 | 0.015065 / 0.008968 |
+| Camera Reviews `L03939` / NBA Performance struggles `L02909` | 0.067905 / 0.078309 | 0.037808 / 0.018804 |
+
+The egg-decoration source has prior human acceptance; the three negative-control
+assessments remain provisional agent judgments. These selected successes do
+not supersede the broader regression counts or prove a universal title rule.
+
+### The unchanged cutoff admits no title-scored cases
+
+Using the same relative-score-at-least-one cutoff, title scoring selects zero
+cases in all six panel/root combinations. Meaning scoring reproduces exactly
+the previous ten distinct notes: eight plausible, one qualified plausible and
+one unresolved Water case. There is no new threshold, label selection or fitted
+cutoff to compensate for the change in score distributions.
+
+For example, Coffee shops drops from relative score `1.078088` under meaning
+pooling to `0.077142` under title pooling. Software clients drops from `1.330447`
+to `0.951129`. This shows that improved ordering on selected raw contrasts does
+not establish useful admission under the unchanged normalized cutoff.
+Normalization also leaves Smartwatches below the publisher in title mode:
+`0.026327` versus `0.030024`, despite the corrected raw-score ordering.
+The relative-score panel results are retained separately rather than mixing
+them with the raw ranking successes.
+
+### Scope, verification and interpretation
+
+The experiment scores the outside entries against existing reference groups.
+It does not put those outside entries or their titles into the fusion networks,
+and it adds none of the passing cases to canonical roots. The 177 references
+were already root members; their grouping count is not a note-coverage gain.
+Those distinctions remain explicit after the user's clarification in chat.
+
+Independent scalar verification binds both pooled vectors for all 357 used
+entries to the exact saved input text, selected UTF-8 byte spans, native row IDs
+and raw vector receipts. It verifies fixed memberships, group scales, every
+query/group mean, winning group, pair ordering, metric and cutoff outcome.
+All 1,080 meaning-mode score controls reproduce the prior fusion results
+exactly. Generated case records keep original metadata nested separately from
+the new calculated score. Verification caught a field-name collision in the
+initial flattened record packaging; the failed packaging is retained under
+`metadata-collision-v1/`. No numerical scores, judgments or settings changed.
+
+The result does not establish meaning-only scoring as best. Title scoring
+contains useful complementary information, but substituting it globally loses
+broader-panel orderings and all ten cutoff selections. More cutoff tuning on
+these same selected cases would not establish general admission quality.
+
+The next useful test would include the outside entries alongside the root's
+reference entries in both title and meaning fusion networks, then report which
+outside entries share resulting groups with existing root members. That would
+test both representations during the actual cross-pool grouping, instead of
+keeping outsiders absent from fusion and varying only a later score. This is
+a proposed numerical probe, not a new membership policy or work begun here.
+
+Ignored evidence:
+
+```
+target/food-halves-v1/fused-group-title-meaning-scoring-v1/
+```
+
+- `plan.json`: fixed group memberships, two pooling modes, unchanged kernel,
+  source-note policy, review panels, cutoff and 72 protected source hashes;
+  SHA256 `e2173b49a172a049ddac75efc10667e678507a90487dde41d13bb7019ddf0356`.
+- `group-statistics.json`, `all-group-query-scores.json`,
+  `all-root-query-scores.json`: every title/meaning scale and similarity.
+- `panel-metrics.json`, `panel-pair-orderings.json`,
+  `meaning-to-title-changes.json`: all dependent ordering outcomes and changes.
+- `fixed-unity-screen.json`, `distinct-screen-cases.json`: all cutoff results,
+  exact nested original assessments and deduplicated source-note selections.
+- `source-evidence.json`, `summary.json`, `verification.json`: original
+  titles/meanings/posts, bounded accounting and independent checks.
+
+This probe makes zero LLM calls, encodings, clustering runs, training runs,
+hierarchy changes or UI updates. Completed maintained findings land on local
+`main`. The worktree remains for frozen vector paths and ignored evidence.
