@@ -4565,8 +4565,8 @@ used to assess a particular query. Outside-query comparisons continue to use
 meaning vectors. The failed large mixed graph and trace remain evidence, not
 an admission path. No production generator or existing hierarchy changes.
 
-The admission boundary remains unresolved. The following is a research proposal
-for review, not an adopted algorithm or a tested result:
+The admission boundary remains unresolved. The following proposal was tested in
+the next section; it is not an adopted admission algorithm:
 
 1. Keep the existing fusion reference and direct mean-affinity query score fixed.
    For an entry `q` and group `G`, average the existing
@@ -4625,7 +4625,138 @@ outsider comparisons and retain exact invariance tests. Reference curve work is
 precomputed; no corpus-wide mixed graph is required. Scaling beyond the current
 small reference pools remains unqualified.
 
-No new numerical experiment, encoding, LLM call, training, graph expansion,
-hierarchy edit or UI update is performed for this design discussion. The
-maintained record preserves the approved constraints and the proposal's
-untested status on local `main`.
+That design discussion performed no experiment or hierarchy change. The next
+section records the subsequently authorized numerical test separately.
+
+## Fixed accepted-reference bend: measured recovery and failure
+
+The user authorized testing the preceding hypothesis. This is an experimental
+saved-vector result, **not an adopted admission rule or a hierarchy update**.
+The fixed fusion reference and independent-query constraints remain approved;
+an adequate admission boundary remains unresolved.
+
+Frozen artifact directory:
+`target/food-halves-v1/fixed-reference-bend-v1/` in the
+`oracle-mvp-hierarchy-food-halves-v1` worktree. `plan.json` was written before
+outcomes; SHA256
+`b470cd59900263ee36384834ddc44359977022b7377cf9c8950e676c7207ab16`.
+It binds the saved ASv6.100-derived inputs, original fusion files, full-meaning
+vectors, query cases, source code and tests. Generated evidence remains ignored.
+Reusable experimental calculation: `sse_multivector/fixed_reference_bend.py`.
+
+The primary calculation preserves the existing mean meaning-kernel score and
+fits a separate curve for each fixed group, using only the accepted entries of
+its root: 137 Food and 67 Tools entries. Each source note contributes total
+curve mass one. Aggregate exact score ties, order support descending, remove
+`ceil(10% of distinct score levels)` from each end, require three retained
+levels, normalize cumulative note mass and support drop, and select the largest
+positive `x-y` departure from the endpoint chord. Place the boundary midway to
+the next lower score. No positive bend means no boundary; `1e-12` only suppresses
+floating-point artifacts on straight curves, not admission scores.
+
+This is an adaptation of the hierarchy bend orientation to different measured
+quantities, not evidence that the same orientation has the same semantic effect.
+The opposite `y-x` orientation was frozen as a diagnostic, never substituted
+for the primary result after viewing outcomes. Gated and ungated versions were
+also frozen. A group is eligible only if its base boundary exists and every
+member passes after removing its entire source note from both the group and
+accepted curve context. Fusion memberships are held fixed during this check;
+it tests self-consistency, not independent group discovery or accuracy.
+
+The test evaluates 1,449 independent entries: all 1,426 eligible entries from
+281 actually omitted notes, plus the saved panels and every eligible heading
+from the four human-reviewed notes. There are no outsider-to-outsider scores.
+The 177 selected group members remain inside their original 204-entry accepted
+context pools. No query source note overlaps those pools in this frozen test;
+unit tests separately exercise complete source-note removal.
+
+| Primary result | Food | Tools |
+|---|---:|---:|
+| Fixed fusion groups | 15 | 10 |
+| Groups with a positive bend | 9 | 6 |
+| Groups passing every whole-note exclusion check | 4 | 2 |
+| Proposed entries from actually omitted notes | 104 | 34 |
+| Proposed distinct omitted notes | 50 | 20 |
+
+The two roots overlap on three proposed notes: **67 distinct omitted notes**
+in total, not 70. These are unimplemented proposals, mostly unreviewed; they
+must not be described as 67 correctly recovered notes or added to actual
+coverage. HR35 still reaches **718 notes**.
+
+The saved panels contain overlapping, provisional **agent** assessments, not
+human gold or independent test samples. Keep direct plausible cases separate
+from qualified and unresolved cases:
+
+| Panel | Root | Plausible proposed | Qualified proposed | Mismatches proposed | Unresolved proposed |
+|---|---|---:|---:|---:|---:|
+| Older 142 | Food | 19/21 | 7/9 | 3/29 | 5/12 |
+| Older 142 | Tools | 15/38 | 2/15 | 0/12 | 0/6 |
+| Later 86 | Food | 16/18 | 2/2 | 0/9 | 2/2 |
+| Later 86 | Tools | 16/33 | 2/11 | 0/9 | 0/2 |
+| Focused 32 | Food | 5/6 | 2/2 | 0/2 | 0/0 |
+| Focused 32 | Tools | 5/11 | 0/7 | 0/2 | 0/2 |
+
+There is a real improvement on the traced Coffee case, but the boundary is not
+yet reliable. Food `fused-014`, the two general Food definitions, accepts Coffee
+L00228: score `0.084107` versus boundary `0.015549`. The same eligible group
+also proposes all three older-panel mismatches: Nausea L02276 (`0.021513`),
+Blood L06803 (`0.046273`) and JAIA Drake L04019 (`0.017687`). Its strongest
+positive bend has departure only `0.005639` and selects score level 118 of
+136, near the low-support end. Recovering its own Food members does not prove
+that this remote-tail bend marks an appropriate admission boundary.
+
+The four human judgments are evaluated at **note level**, through any eligible
+heading from the note; they do not approve every heading individually:
+
+| Human-reviewed note | User decision | Primary result |
+|---|---|---|
+| Chocolate/eggs note, example L00101 | Accept | Proposed |
+| Coffee with raw cream and egg yolk, example L00440 | Accept | Proposed |
+| Pisanki egg-decoration note, example L02984 | Accept | Missed through every heading |
+| Religious/political Easter broadcast, example L02222 | Reject | Not proposed |
+
+Tools exposes a different failure. Only Computer code and Software projects
+pass the full check; broad Technology/Tools and Software groups are disabled.
+For Technology/Tools `fused-002`, withholding the note containing Tools L04303
+moves the fitted boundary from `0.034834` to `0.287453`. The held Tools member
+scores `0.213612` and fails. Software `fused-004` has boundary `0.063039`, but
+withholding the Software applications L06458 note leaves no positive bend.
+This shows instability under accepted-note removal, rather than proving those
+accepted memberships wrong. Disabled groups retain all original memberships.
+
+Removing the self-consistency gate is not a fix: older-panel proposals rise to
+20/21 plausible Food cases with 10/29 mismatches, and 32/38 plausible Tools
+cases with 4/12 mismatches. The predeclared opposite-orientation diagnostic
+passes more groups (13 Food, eight Tools) and matches all four human note
+controls, including egg decoration. It still proposes older-panel mismatches
+(two Food, one Tools) and three of nine later Tools mismatches. It is not
+promoted as a solution.
+
+The conclusion is narrower than rejecting independent fixed-reference scoring:
+**a strongest reference-only bend plus self-recovery is insufficient**. A weak
+tail bend can pass self-recovery, while removing one accepted note can destroy
+an otherwise useful group's bend. The experiment does not justify a new score
+cutoff, relaxing the gate, changing orientation after the fact, or returning to
+the rejected mixed outsider graph.
+
+Verification preserves the actual calculation and evidence:
+
+- Eight new tests pass through the experimental calculation used by the probe;
+  the initial test run failed because that implementation did not yet exist.
+  Thirty-one combined boundary/query/fusion/HDBSCAN tests pass.
+- All 50 group/orientation models, 362 base/fold boundaries, 38,756 reference
+  curve scores and 72,450 query/group scores are independently checked using
+  scalar arithmetic. Maximum discrepancy is `3.06e-16`.
+- Query reordering, duplication and isolated evaluation produce exactly the
+  same scores for all 25 groups and both orientations. Boundaries have no query
+  input. The 4,500 earlier direct mean-kernel scores replay within `1.67e-16`.
+- Source hashes, accepted fusion files and hierarchy state remain unchanged.
+  No new vectors, provider calls, training, paid resources or UI updates occur.
+
+The numerical evaluation takes 3.9 seconds for these small reference pools;
+this is not a production scaling qualification. Reference kernels use
+`R*R` storage, query scoring uses `Q*R`, and note-exclusion fits are cached.
+The straightforward all-fold fitting implementation repeats reference-curve
+work and is experimental; it is not installed in hierarchy generation.
+Maintained findings, calculation and tests land on local `main`; the task
+worktree remains for frozen source paths and ignored evidence.
