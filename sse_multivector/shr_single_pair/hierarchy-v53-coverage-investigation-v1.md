@@ -52,6 +52,15 @@ note and lose genuine meal/software cases in a whole-note-excluded reference
 check. No automatic ending method is established or activated. A deliberately
 high cutoff remains possible; its omission/error tradeoff has not been qualified.
 
+The authorized component trace identifies a specific arithmetic failure: dividing
+by other-root similarity reverses all four inspected useful/unsupported orderings.
+The useful cases already have stronger mean support within their target root.
+Removing the division improves the existing reviewed pair-ordering totals, but
+worsens thirteen Tools pair orderings and leaves eighteen wrong Tools pairs.
+Best-group or nearest-member selection performs worse on the same panel. This
+supports testing the simpler within-root mean next, not claiming a solved cutoff
+or changing production admission.
+
 The saved-vector connection audit rejects the tested branch expansion rule. The
 subsequent controlled full-meaning comparison improves known-root ranking but
 worsens the difficult Food scope checks. First-sentence pooling does not resolve
@@ -2380,10 +2389,10 @@ lost from Tools may still have a useful route elsewhere.
 
 No automatic ending method is qualified by these results. Raising a threshold
 can deliberately recover fewer notes, but neither score parity nor an obvious
-curve feature identifies the intended quality/omission tradeoff. The next useful
-investigation is the specific score inversions—Wildlife versus Charity dinners,
-and NBA performance versus Software clients—and their score components, before
-more cutoff tuning. This is a recommendation, not a new experiment already begun.
+curve feature identifies the intended quality/omission tradeoff. The user then
+authorized tracing the specific score inversions—Wildlife versus Charity dinners,
+and NBA performance versus Software clients—and their components. That completed
+diagnostic follows; it does not activate an admission rule.
 
 Retained ignored evidence:
 
@@ -2415,3 +2424,177 @@ scores, with whole-source-note exclusions on both sides. Maximum scalar errors
 are `6.661338147750939e-15` and `5.329070518200751e-15`, respectively. Protected
 sources and HR35's frozen state remain unchanged. No model calls, encodings,
 training, threshold activation, graph changes or applied note gains occur.
+
+## Tracing the score inversions by component
+
+This follow-up freezes six exact queries before calculation: Wildlife `L04627`,
+Charity dinners `L02693`, Traditional activities `L02986`, Performance struggles
+`L02909`, Software clients `L04264` and Smartphones `L02428`. The egg-decoration
+note's prior human acceptance remains note-level evidence; the new negative
+assessments and other positive expectations remain the agent's. No meanings,
+representations, reference memberships or beta settings change.
+
+All comparisons remove every reference entry from the query's source note on
+both sides. Wildlife, Traditional activities, Performance struggles and
+Smartphones are globally omitted and therefore remove none. Charity dinners
+removes four entries, leaving 174 Food references and 1,470 other-root references.
+Software clients removes four, leaving 90 Tools references and 1,554 others.
+Both existing-member scores reproduce the preceding whole-note-exclusion check.
+This prevents their own entries or related same-post headings from providing
+support. Original posts assess the examples; the saved SSE input remains title
+plus full explicit meaning, without the post.
+
+Let `A` be mean `exp[-5.5 × (1 − cosine)]` to actual target-root originals, and
+`B` the pooled mean of the same affinities to actual originals in other roots.
+The current diagnostic score is `A / B`. These are transformed cosine means,
+not raw cosines or membership probabilities.
+
+| Query | Target root | Within-root mean A | Other-root mean B | Ratio A/B |
+|---|---|---:|---:|---:|
+| L04627 · Wildlife | Food | 0.015745 | 0.005671 | 2.7765 |
+| L02693 · Charity dinners | Food | 0.023732 | 0.011268 | 2.1061 |
+| L02986 · Traditional activities | Food | 0.019136 | 0.007850 | 2.4377 |
+| L02909 · Performance struggles | Tools | 0.022287 | 0.006728 | 3.3126 |
+| L04264 · Software clients | Tools | 0.051752 | 0.023489 | 2.2033 |
+| L02428 · Smartphones | Tools | 0.040287 | 0.012701 | 3.1720 |
+
+### The division reverses all four orderings
+
+Within-root averaging already puts each useful case above its unsupported
+counterpart. For an unsupported query `n` and useful query `p`, the exact
+decomposition is:
+
+`score(n) / score(p) = [A(n) / A(p)] × [B(p) / B(n)]`
+
+| Compared entries: unsupported / useful | Target-mean factor | Other-root factor | Final ratio factor |
+|---|---:|---:|---:|
+| Wildlife / Charity dinners | 0.6634 | 1.9871 | 1.3183 |
+| Wildlife / Traditional activities | 0.8228 | 1.3843 | 1.1390 |
+| Performance struggles / Software clients | 0.4307 | 3.4912 | 1.5035 |
+| Performance struggles / Smartphones | 0.5532 | 1.8878 | 1.0443 |
+
+Every target-mean factor is below one: the useful query has stronger support.
+Every other-root factor is large enough to reverse that ordering. Software
+clients has about 2.32 times the within-Tools mean of Performance struggles,
+but about 3.49 times its pooled other-root mean, leaving the NBA query ahead.
+
+The other-root support is concrete. Software clients averages 0.027483 against
+Information and 0.036544 against Finance/technology, versus 0.004521 and 0.004742
+for Performance struggles. Charity dinners averages 0.016430 against
+Finance/technology, compared with Wildlife's 0.005115. These are measured
+root-collection means, not evidence that a particular word caused the embedding
+behavior. Sharing a useful topic with another root does not invalidate the
+target-root route; the division mixes strength of fit with distinctiveness.
+
+### Averaging and closest matches have different effects
+
+Wildlife's strongest individual Food match is Food `L02407`, cosine 0.66572,
+above Charity dinners' strongest Food match at 0.60574. Thus a nearest-member
+rule would still prefer Wildlife. Averaging all members already overcomes that
+single misleading match in this example; the later division reintroduces the
+wrong ordering.
+
+For Performance struggles, the nine-member Tests/Testing/Experiments group
+`G504` supplies 34.8% of its total Tools affinity, despite containing only 9.9%
+of Tools references. Its group mean is 0.078309. Software clients' strongest
+group, Data cables/Digital connections `G579`, averages 0.150609, and its
+Software group `G058` averages 0.098505. Those useful subgroup links exist, but
+the other-root division still reverses the best-group comparison for this pair.
+
+The probe separates dropping originally ungrouped target members from changing
+aggregation. It first compares the complete-member mean with the grouped-only
+mean, keeping the denominator fixed. It then replaces that grouped mean with
+the largest original-group mean, using exactly the same grouped references.
+Originally ungrouped members are not fabricated into a semantic group.
+
+### Broader matched check on the existing reviews
+
+All 142 previous root/note cases retain their exact original winning entry and
+meaning. No new labels or case winners are chosen for a method. Primary pair
+counts compare straightforward plausible cases against agent-assessed unsupported
+cases within each root; qualified and unresolved cases remain separate. Food
+has 21 plausible and 29 unsupported cases, giving 609 dependent comparisons.
+Tools has 38 and 12, giving 456. These totals are not admission accuracy or
+independent validation of the earlier assessments.
+
+| Score component choice | Food: useful above unsupported / 609 | Tools: useful above unsupported / 456 |
+|---|---:|---:|
+| All-member mean / other-root mean | 607 | 426 |
+| All-member mean alone | 609 | 438 |
+| Grouped-only mean / other-root mean | 607 | 415 |
+| Best original-group mean / other-root mean | 530 | 349 |
+| Best original-group mean alone | 531 | 389 |
+| Nearest-member affinity / other-root mean | 543 | 359 |
+| Nearest-member affinity alone | 544 | 405 |
+
+Removing the denominator improves two Food comparisons without worsening any.
+For Tools it improves 25 but worsens thirteen, a net gain of twelve. Those
+thirteen are pair orderings, not thirteen distinct newly misclassified notes.
+Dropping the 24 originally ungrouped Tools references worsens eleven comparisons.
+Then changing the same grouped-only numerator to its best group improves four
+and worsens seventy more. Thus stronger emphasis on one group is not supported
+by these matched results.
+
+The narrower ranks-21–60 cohort gives Food 98/100 before and 100/100 after
+removing the division; Tools improves from 80/110 to 98/110, with 25 improvements
+and seven regressions. Restricting to that cohort does not reverse the direction
+of the finding, but neither cohort is a fresh random sample.
+
+Eighteen Tools ordering failures remain with the within-root mean alone. They
+involve six plausible entries and four assessed unsupported entries. Drones,
+Factories, Cheap automotive fixes and T-Deck devices can score below Terminator
+franchise, Staff appointments or generic Planning. These are remaining
+disagreements involving the similarities, reference mix or provisional judgments;
+the component probe does not settle their semantic labels. Removing the division
+does not establish a clean boundary.
+
+Food's 609/609 result excludes nine qualified and twelve unresolved cases. Its
+lowest straightforward-plausible mean is Coffee flavour `L00683` at 0.017282,
+just above the largest unsupported mean, Holidays `L05158` at 0.016672. Cost of
+living, still unresolved, scores 0.038311. That unresolved overlap prevents
+calling the observed plausible/unsupported gap a validated admission cutoff.
+
+### Result, verification and next test
+
+The arithmetic diagnosis is established for these fixed inputs: the other-root
+division causes all four queried reversals. Removing it is the simpler candidate
+supported by the matched checks. Best-group and nearest-member alternatives
+perform worse here. The remaining regressions and uncertainty prevent adopting
+it as an automatic admission or stopping rule yet.
+
+The next useful test is the within-root mean alone across the complete omitted
+note ranking, with source review of newly selected notes and explicit checks of
+the stopping boundary. Recompute each note's winning entry for that separate
+test; the present component diagnosis deliberately keeps winners fixed. Do not
+reuse the old ratio thresholds on these differently scaled scores. This test
+is recommended, not already begun.
+
+Retained ignored evidence:
+
+```
+target/food-halves-v1/score-inversion-components-v1/
+```
+
+- `plan.json`: six queries, fixed components and existing review panel; SHA256
+  `a453c2d73c5883e7baf8afda11a7a9beb90df57ae1b98df8a0a3bf960b7ef6c8`.
+- `cosines.npz`: every query/reference cosine used, with original IDs; the kernel
+  and source-note exclusions reproduce every component calculation.
+- `entry-components.json`, `case-evidence.json`: all means, group contributions,
+  other-root contributions, source posts and nearest actual members.
+- `pair-decompositions.json`: four exact decompositions and seven fixed
+  component choices for each comparison.
+- `panel-comparisons.json`, `component-transitions.json`: all matched pair counts
+  and component-isolated improvements/regressions.
+- `raw-mean-remaining-inversions.json`, `component-score-ranges.json`: all eighteen
+  remaining Tools pairs and separate plausible/qualified/unresolved score ranges.
+- `summary.json`, `calculation-verification.json`, `independent-verification.json`:
+  bounded finding, source identities, exact replays and independent scalar checks.
+
+Sixteen protected source hashes pass. The calculation checks 1,652 source-bound
+saved meaning vectors and reproduces four earlier query cosine rows within
+`3.885780586188048e-16`. Independent checks recalculate 1,008 component scores,
+2,088 group means/contributions and 1,440 displayed nearest members; maximum
+absolute scalar error is `7.105427357601002e-15`. Both earlier whole-note-excluded
+reference scores reproduce, and all 28 panel-method count results pass. HR35's
+frozen state is unchanged. No model calls, encodings, training, hierarchy changes
+or applied note gains occur; the worktree remains for the saved evidence.
