@@ -4715,8 +4715,9 @@ heading from the note; they do not approve every heading individually:
 | Pisanki egg-decoration note, example L02984 | Accept | Missed through every heading |
 | Religious/political Easter broadcast, example L02222 | Reject | Not proposed |
 
-Tools exposes a different failure. Only Computer code and Software projects
-pass the full check; broad Technology/Tools and Software groups are disabled.
+Tools exposes instability in the boundary calculation, not confirmed semantic
+errors among its omissions. Only Computer code and Software projects pass the
+full check; broad Technology/Tools and Software groups are disabled.
 For Technology/Tools `fused-002`, withholding the note containing Tools L04303
 moves the fitted boundary from `0.034834` to `0.287453`. The held Tools member
 scores `0.213612` and fails. Software `fused-004` has boundary `0.063039`, but
@@ -4760,3 +4761,27 @@ The straightforward all-fold fitting implementation repeats reference-curve
 work and is experimental; it is not installed in hierarchy generation.
 Maintained findings, calculation and tests land on local `main`; the task
 worktree remains for frozen source paths and ignored evidence.
+
+### User review of the displayed selections and omissions
+
+After inspecting the cases, the user said of Traditional activities L02986:
+"i don't actually care that much about this one." Treat this omission as low
+priority; do not infer a rejection of the entry or retract the earlier
+note-level acceptance of the pisanki egg-decoration post.
+
+For Nausea L02276, Blood L06803 and JAIA Drake L04019, the user said:
+"yeah these shouldn't have been selected." These three **entry selections
+into Food** are now human-confirmed errors. This does not label every heading
+of their source posts or establish new judgments about other roots.
+
+For Tools, the user said: "the tools one i'm unsure. i wouldn't say these are
+all failures". The 23 missed entries remain provisional agent-assessed fits,
+not 23 confirmed failures. No Tools accuracy rate follows from that count, and
+zero confirmed errors must not be read as proof that no errors exist. Steaks
+L00479 also remains an agent-assessed fit without a new human decision here.
+
+Preserve the frozen panel labels and measured counts as historical test inputs;
+keep this subsequent user review separate. The next boundary investigation
+should prioritize excluding the three confirmed unwanted Food selections
+while retaining useful recovery. This review neither changes the scoring rule
+nor authorizes another experiment or a hierarchy edit.
