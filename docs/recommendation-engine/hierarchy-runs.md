@@ -2139,7 +2139,7 @@ charge is zero. Known tokens: 5,962,947 uncached input; 69,536,896 cached input;
 
 ## HR39 — automatically sampled 5,000-note HiGen V5.3
 
-**Prepared; model execution not started.** Automatic seed `hr39-corpus-v1`
+**ASv6.100 running.** Automatic seed `hr39-corpus-v1`
 selected 5,000 original posts from the same frozen English-eligible pool as
 HR36–HR38: 2,001 authors, no manual reviews or topic/author quotas.
 Overlap: HR36 2, HR37 1, HR38 2 notes.
@@ -2153,3 +2153,7 @@ Twelve local CPU workers; shared 30-request teacher queue; no attempt ceiling.
 [Definition](../../sse_multivector/hierarchy-runs/hr39/hierarchy.spec.json) ·
 [Selection](../../sse_multivector/hierarchy-runs/hr39/corpus-selection.spec.json).
 Native accounting, root coverage and review UI will be recorded after execution.
+
+AS/generator source is frozen at `5b9bfa68`; coordinator and
+teacher transport are frozen at `38561fe`. Source snapshots and all seven
+parameter specifications are hash-bound before the first model call.
