@@ -44,8 +44,10 @@ def audit_trial(directory, output, max_choices=6, work_budget=200000):
         if identifier in available:
             raise ValueError('duplicate corpus note ID')
         available[identifier] = {row['number'] for row in note['subjects']}
-    charge(len(state['roots']))
-    selected = {local['note_id'] for local in state['roots']}
+    selected_ids = (state['note_ids'] if 'note_ids' in state
+                    else [local['note_id'] for local in state['roots']])
+    charge(len(selected_ids))
+    selected = set(selected_ids)
     if selected - available.keys():
         raise ValueError('unknown selected note ID')
     nodes, children, direct = {}, {}, {}

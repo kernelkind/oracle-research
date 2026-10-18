@@ -850,6 +850,11 @@ clusters=[''')
         generation.check_state(state)
         exported = json.loads(self.native.cli('export-canonical-viewer', 'v5', '--output', 'empty-subject-view').stdout)
         self.assertEqual(exported['note_count'], 9)
+        self.native.cli('audit-canonical-trial', 'v5', '--output', 'empty-subject-audit.json')
+        audited = json.loads((self.native.root/'empty-subject-audit.json').read_text())
+        self.assertEqual(audited['note_coverage']['selected_count'], 10)
+        self.assertEqual(audited['note_coverage']['reachable_count'], 9)
+        self.assertEqual(audited['note_coverage']['missing'], ['empty'])
 
     def test_v53_rejects_a_corpus_with_no_original_subjects_before_preparing_calls(self):
         spec = self.prepare(count=9)

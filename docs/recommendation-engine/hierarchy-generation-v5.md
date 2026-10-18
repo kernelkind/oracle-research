@@ -208,7 +208,8 @@ A valid empty AS subject list remains in the frozen note inventory, produces
 no Bootstrap request and is reported in `notes_without_original_l1s`. HDBSCAN
 construction continues from the other notes; an input with no original L1
 subjects fails before preparing teacher calls. Nonempty malformed local trees
-remain invalid.
+remain invalid. Structural audits count the complete frozen input-note inventory,
+including empty-subject notes, when reporting coverage.
 
 A valid null Bootstrap answer is skipped and reported in `skipped_bootstrap`.
 If it is a note's only topic, that note is reported in

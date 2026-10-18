@@ -32,6 +32,27 @@ class CanonicalHierarchyViewerTests(unittest.TestCase):
                 'semantic_certified': False, 'group_task_coverage': 'unknown',
                 'qualification': 'Retained meanings and supporting entries are unchanged.'}})
 
+    def test_legacy_audit_uses_root_selection_without_selecting_the_whole_corpus(self):
+        path = self.source()
+        state = json.loads(path.read_text())
+        corpus_path = self.root/'notes.json'
+        corpus = json.loads(corpus_path.read_text())
+        for note in corpus['notes']:
+            count = 3 if note['note_id'] == 'n1' else 1
+            note['subjects'] = [dict(number=str(i)) for i in range(1, count+1)]
+        corpus_path.write_text(json.dumps(corpus))
+        state['sources'][str(corpus_path)] = hashlib.sha256(corpus_path.read_bytes()).hexdigest()
+        path.write_text(json.dumps(state))
+        original = path.read_bytes()
+        self.cli('audit-canonical-trial', 'trial', '--output', 'legacy-audit.json')
+        audited = json.loads((self.root/'legacy-audit.json').read_text())
+        self.assertEqual(audited['note_coverage']['selected'], ['n1', 'n3'])
+        self.assertEqual(audited['note_coverage']['selected_count'], 2)
+        self.assertEqual(audited['note_coverage']['reachable_count'], 2)
+        self.assertEqual(audited['note_coverage']['missing'], [])
+        self.assertEqual(path.read_bytes(), original)
+        self.assertEqual(fixtures.ExperimentTests.calls(self), [])
+
     def test_export_preserves_dag_memberships_meanings_and_original_text_without_inference(self):
         path = self.source()
         original = path.read_bytes()
