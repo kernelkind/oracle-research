@@ -7227,3 +7227,144 @@ ignored; maintained findings land on local `main`, with the task worktree
 retained for frozen evidence/vector paths. No model calls, training, encodings,
 paid resources, prompts, hierarchy/UI changes, official hierarchy-run records,
 spreadsheet updates or HR37/38 execution.
+
+## Local angular admission scaling: reject the query-adaptive variant
+
+The human approved the preceding local-distance experiment. **This one frozen
+variant fails actual automatic admissions. Do not adopt it.** In particular,
+the Arts reference collection admits every tested outsider. Larger proposal
+counts therefore do not demonstrate improved coverage or quality. The current
+hierarchy, reference collections, fusion groups and admission policy are
+unchanged.
+
+Evidence: `target/food-halves-v1/local-meaning-affinity-v1/` in the retained
+food-halves worktree. Plan SHA256
+`7f2627b3094460b8d456185e80d5a10e52989ed744f5c32c9aacdddf8570c937`;
+implementation manifest SHA256
+`f6db4a4ddfce65b5a7daaf98cfa1abf43f26a06fa8d9045a3c8314cfd3073816`.
+Both were frozen before evaluating the dataset. No parameter search, reference
+deletion, regrouping, label change or second panel variant was performed.
+
+### Exact frozen calculation
+
+Use saved normalized full-meaning vectors and angular distance
+`d = acos(clipped cosine)`. For each entry, define `rho` as its mean distance to
+the nearest 20 distinct other source notes among the fixed accepted references.
+Each note contributes its nearest entry only; exclude the entry's whole source
+note. Use all other notes if fewer than 20 exist. No other note means
+unavailable; an exactly zero radius uses the existing machine-epsilon floor.
+
+Reference radii are computed once, including the same accepted context-only
+references as before. Each outsider independently obtains its own radius from
+these fixed references, never from other outsiders. It does not enter a graph
+or change any reference radius. For an entry pair, calculate:
+
+```text
+s = 0.5 * (rho_i + rho_j + d) / 3
+affinity = 2*sqrt(rho_i*rho_j)/(rho_i+rho_j+d) * exp(-0.5*(d/s)^2)
+```
+
+This adapts the existing fusion local Gaussian form, with distinct-note
+neighbors and self-weight normalization into [0,1]. It is not the unchanged
+fusion algorithm or its sparse mutual-neighbor graph. Keep original fusion
+groups, cross-note mean aggregation and the original minimum-member boundary
+rule. Recalculate that boundary using these affinities; use no extra gate,
+cutoff, bend or label-derived threshold. Calibration still uses the full fixed
+reference collection, so it is not an independent held-out accuracy estimate.
+
+### Matched automatic results
+
+Run all 1,449 saved HR35 query entries against its Food/Arts references, and
+all 1,121 HR36 omitted entries against those references and the six native
+HR36 roots: **197 fixed groups and 278,797 query/group scores**. Keep development
+panels separate; their provisional entry judgments are not new human gold.
+The table counts selected entries, with useful and unwanted denominators fixed.
+
+| Panel | Useful selected, old → local | Unwanted selected, old → local |
+|---|---:|---:|
+| HR35 Food, 30 useful / 51 unwanted | 14 → 14 | 3 → 4 |
+| HR35 expanded Arts, 63 / 30 | 54 → 63 | 10 → 30 |
+| HR36 queries against old Food, 19 / 62 | 15 → 16 | 1 → 5 |
+| HR36 queries against old Arts, 18 / 57 | 5 → 18 | 1 → 57 |
+
+Arts selects all 1,449 HR35 queries and all 1,121 HR36 queries. Food proposals
+increase from 43 to 58 HR35 entries and 39 to 59 HR36 entries, without improved
+reviewed precision. Newly selected entries outside the old 39-entry HR36 Food
+audit are retained **unreviewed**; do not claim the expanded proposals were fully
+audited. On the old audit subset, 25/30 useful, 7/7 unwanted and 2/2 unresolved
+headings remain selected. All eleven useful and five unwanted notes still have
+some selected route.
+
+The 64-case native HR36 post-selection audit changes useful selection from
+36/36 to 33/36 while retaining all 14 unwanted cases; unresolved selection
+changes 14/14 to 13/14. The lost useful entries are Social and political power
+L01290, Videos L03929 and Large language models L01172. These are existing
+provisional judgments, not a newly reviewed sample or whole-note certification.
+
+All four explicit **Food whole-note** decisions still match: the three accepted
+Eggs/Egg yolks/Easter eggs notes retain a route; the rejected Easter broadcast
+note remains excluded. This does not approve every heading or rescue the wider
+result. L00440 Egg yolks loses its individual route, while L00438 from that note
+still passes. Higher retrieval counts for Arts reflect admitting every query,
+not successful discrimination.
+
+### Demonstrated failure mechanism, with a bounded counterfactual
+
+The Albums/Music group `HR35:C00003/fused-008` has nine accepted entries. Its
+weakest member, general Music L02400, sets a local boundary of 0.0156223. This
+group alone admits all 1,121 HR36 queries and 1,448/1,449 HR35 queries. A further
+group admits the remaining HR35 entry. Native HR36 Asset reserves/Assets
+`fused-014` admits 1,004/1,121; Defence `fused-002` admits 1,059/1,121.
+
+An outsider far from the references receives a larger radius precisely
+because those reference distances are large. That can make the comparison more
+permissive than the reference-member comparisons that establish its boundary.
+Fixed reference graphs and independent outsiders do not prevent this effect.
+
+Freeze a post-result two-case mechanism diagnostic before calculation
+(`failure-trace-plan.json`, SHA256
+`ad34b92a64a6fa93af92ab7d950ec7b79002eae8abde1809fd52a5fd73c82119`).
+Keep query vectors, reference vectors/radii, group means and boundaries fixed;
+replace only the query radius by the radius of the weakest reference setting
+that boundary. This is a counterfactual diagnostic, **not a second policy or
+panel trial**; it chooses no cutoff or new semantic label.
+
+| Existing unwanted case | Actual query radius | Weak reference radius | Actual score | Counterfactual score | Fixed boundary |
+|---|---:|---:|---:|---:|---:|
+| Software inputs L02670 → Albums/Music | 1.19989 | 0.49362 | 0.035278 | 0.005372 | 0.015622 |
+| Logistics L02900 → Defence | 1.17455 | 0.96063 | 0.047660 | 0.033009 | 0.029957 |
+
+Software inputs changes from admitted to rejected solely through that radius
+change. Logistics remains admitted. Query-side expansion is therefore a
+demonstrated mechanism, not the only explanation or proof that reference-only
+scaling would solve admission generally. Absolute boundary values from
+different kernels are not directly comparable evidence of quality.
+
+### Verification, disposition and next hypothesis
+
+The new experimental module is `sse_multivector/fixed_reference_local_scaling.py`.
+Nine failing-first numerical tests exercise its actual functions and existing
+group-mean/boundary paths; all **54 relevant numerical regression tests pass**.
+Baseline scores, boundaries and exact group/root decisions replay. Independent
+checks cover 4,607 scalar group means, 3,042 scalar affinities and 234 neighbor
+radii, with maximum absolute errors below `4.5e-16`. Query isolation, reordering
+and duplication preserve results; reference bytes and all protected inputs
+remain unchanged. Numerical execution took 5.19 seconds. Passing arithmetic
+checks does not establish semantic quality.
+
+Reject this exact query-adaptive variant without tuning it to the observed
+failures. The next proposed experiment is to derive comparison scales only
+from accepted reference members, so an outsider cannot relax its own allowance
+by being farther away. That is unimplemented and untested, and the Logistics
+counterfactual cautions against expecting a complete solution. Freeze any such
+next calculation before evaluating it; wait for separate user approval.
+
+Keep `reference-models.json.gz`, complete score matrices, `neighbor-scales.json`,
+cohort/audit/human-note reports, `failure-group-summary.json`, per-reference
+`failure-trace.json`, `verification.json` and the compact `review.md`.
+`evaluation-sources.json` pins numerical scripts and frozen manifests. Generated
+evidence stays ignored; reusable experimental code/tests and maintained
+findings land on local `main`, without activation. Retain the task worktree
+for frozen source vectors and evidence paths. No LLM calls, training, new
+encodings, paid resources, hierarchy/prompt/UI changes, official-run spreadsheet
+updates or HR37/38 execution.
