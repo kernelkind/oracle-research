@@ -8436,3 +8436,21 @@ and immutable-source verification; unresolved judgments remain unresolved.
 No encoding, LLM call, training, new semantic labels, production behavior,
 admission, hierarchy or UI changes. The old candidate is retained for research
 comparison, without adoption approval or a demonstrated satisfactory replacement.
+
+The user then authorized an
+[automatic title/meaning disagreement boundary](hierarchy-note-bend-admission-v1.md#automatic-titlemeaning-disagreement-boundary).
+Fit the same ascending-gap x-y bend separately to each corpus's accepted groups,
+without outsider scores or labels; a missing bend keeps groups available.
+The rule disables 17/157, 15/130 and 63/301 groups in HR36–38. Additional-note
+proposals fall 75→57, 92→80 and 384→140, with projected coverage 74.0%, 70.2%
+and 73.4%. Actual graphs and reference memberships stay unchanged. Primary
+wrong root placements change 0→0, 1→1 and 15→2, while known useful routes remain
+for six of seven HR36 notes, six of seven HR37 notes and 12 of 27 HR38 notes.
+Nine HR38 useful notes become unproposed, four need alternate-witness review,
+one retains only a wrong route and one only an unresolved route. The People
+errors disappear together with valid People admissions; the AI group stays
+enabled and all ten fixed wrong AI matches remain. Supplements are separate.
+This is a measured conservative tradeoff, not an adopted or proven preferable
+replacement. Independent rational bends, all 982,494 native score comparisons,
+immutable-source/review checks and 51 production-path tests pass. No encoding,
+LLM call, training, clustering, hierarchy modification or UI refresh occurred.

@@ -583,6 +583,129 @@ clustering, production code, thresholds, admissions, hierarchy files or UI
 updates occurred. Artifacts remain ignored on external storage; retain the
 research worktree for their frozen source paths.
 
+## Automatic title/meaning disagreement boundary
+
+The user authorized deriving an automatic group boundary from the already
+measured title/meaning disagreement, then replaying the unchanged procedure on
+HR36–38. This produces a more conservative option with a substantial measured
+cost. It removes 13 of 15 wrong primary HR38 root placements, but only 12 of
+27 previously useful notes retain a known supported route. Four more need
+alternate-witness review. This is a tradeoff, not a demonstrated preferable
+successor or an adopted HiGen policy.
+
+### Frozen rule and scope
+
+Fit one boundary **per corpus**, using all its own-root accepted fusion groups:
+157 in HR36, 130 in HR37 and 301 in HR38. The 40 historical HR35 Food/Arts groups
+are not fitted or filtered in this experiment. Every group has equal mass;
+larger groups and roots do not get extra weight per group. Existing group
+members, including those with low self-recovery scores, remain accepted.
+
+Use the unchanged gap: median cross-note title cosine minus median cross-note
+full-meaning cosine. Sort positive gaps from lowest to highest; exact ties
+share a level. Normalize cumulative group count and gap over the observed first
+and last levels. Select the largest positive x-y bend and put the boundary
+halfway between that gap and the next larger gap. Disable new admissions through
+groups above the boundary. Nonpositive/missing gaps do not disable a group;
+fewer than three positive levels or no positive bend disables none. No trimming,
+global semantic cutoff, outsider score or reviewed judgment sets the boundary.
+The existing 1e-12 straight-curve tolerance is numerical only.
+
+Filter the original conservative candidate's passing groups; a query still
+passes when any remaining group passes. Full-meaning scores, original score
+thresholds, note exclusions, original root memberships and all earlier reviews
+are unchanged. No entry is added to the fusion networks. Boundaries are written
+and hash-sealed before joining outcomes. Implementation:
+[reference_view_agreement_boundary.py](../reference_view_agreement_boundary.py).
+
+| Corpus | Automatically selected gap boundary | Groups disabled | Additional-note proposals, old → gated | Projected total coverage, old → gated |
+|---|---:|---:|---:|---:|
+| HR36 | 0.297830 | 17 / 157 | 75 → 57 | 75.8% → 74.0% |
+| HR37 | 0.295992 | 15 / 130 | 92 → 80 | 71.4% → 70.2% |
+| HR38 | 0.273630 | 63 / 301 | 384 → 140 | 85.6% → 73.4% |
+
+Coverage counts proposals on top of the original native graph, without notes
+above roots. They are not verified useful recoveries or a regenerated hierarchy.
+Actual original coverage stays at 683/1,000, 622/1,000 and 1,328/2,000.
+
+### Matched reviewed results
+
+Keep the existing primary cohorts and supplements separate. A known useful
+route requires its previously reviewed **selected witness** to survive; a
+different selected heading is not silently certified as a replacement.
+
+| Primary measure | HR36 | HR37 | HR38 |
+|---|---:|---:|---:|
+| Previously useful notes | 7 | 7 | 27 |
+| Known useful route retained | 6 | 6 | 12 |
+| Useful note now entirely unproposed | 1 | 1 | 9 |
+| Useful note needing alternate-witness review | 0 | 0 | 4 |
+| Useful note left with only wrong / unresolved routes | 0 / 0 | 0 / 0 | 1 / 1 |
+| Wrong root placements, old → gated | 0 → 0 | 1 → 1 | 15 → 2 |
+| Supported root placements: retained / removed / alternate review | 8 / 2 / 0 | 9 / 3 / 0 | 14 / 14 / 5 |
+
+The HR36 root supplement retains two of three useful notes. Both HR38
+supplemental notes keep another supported route: of their five supported root
+placements, three retain the witness, one disappears and one needs alternate
+review; wrong placements fall from two to one. The separate 33-placement HR38
+preview sample retains eight of 14 supported witnesses, removes five supported
+placements and needs one alternate review. Its wrong placements fall from 11
+to four. These are selected, overlapping provisional agent judgments, not
+independent accuracy estimates or new human gold.
+
+All four People-dominated HR38 groups have large positive gaps and are disabled.
+The fixed same-group panel's 22 wrong People matches disappear, along with all
+five currently passing supported witnesses, including Actors and Voice actors;
+the four already-missed useful controls remain missed. Existing People members
+are not removed. Patient advocacy also loses its supported root route. Thus the
+filter detects these groups' vector disagreement, not a separation between
+correct and incorrect People outsiders.
+
+The AI group's gap, 0.2264, remains below the automatic boundary. Codex still
+passes, but so do **all ten** reviewed wrong same-group matches. The surviving
+wrong primary HR38 placements are Technical specifications and Music through
+this group. Audience reactions loses its wrong People route while keeping its
+separate supported communication route. The rule does not solve both recurring
+mechanisms.
+
+Lost supported root routes also include HR36 Form submission and Predictive
+models, and HR37 Nostr client releases and Delight. HR38 World news, Films and
+Student financial aid become entirely unproposed. A formerly useful bitrate
+note loses its accepted Data route, leaving only its wrong AI-root Technical
+specifications route. This illustrates why removal counts alone cannot establish
+better whole-note access.
+
+Assessment: retain this as an experimental conservative option with explicit
+losses; neither an automatic boundary nor a reduction in known errors establishes
+an acceptable overall tradeoff. There is no post-result threshold adjustment,
+group exception, new semantic judgment or adoption. The four alternate primary
+HR38 routes remain unresolved by this numerical replay.
+
+### Verification and retained evidence
+
+Evidence: `target/food-halves-v1/reference-view-agreement-boundary-v1/`.
+Frozen plan SHA256:
+`88336cb2de0d05de1243fe61b3fb494f33f94807bc3d2520cecaf29160a93de0`.
+The 41 input bindings include source, original scores and review data; native
+corpus provenance verifies ASv6.100 for all 4,000 source-note records.
+`calibrations.json` retains each curve, split and disabled group;
+`query-decisions.json` retains every original proposal and surviving groups.
+Whole-note, root, heading-panel and fixed-group outcomes and every lost supported
+witness are kept separately. Existing preview artifacts remain unchanged.
+
+An independent rational calculation reproduces all three bends and 588 group
+decisions with maximum curve error `1.12e-16`. Independent native-score replay
+checks all **27,162 query/root rows and 982,494 query/group comparisons**; every
+old decision matches and every new decision is a subset. Source, output,
+coverage and unchanged-review checks pass. A missing-module test failed first;
+all **51** relevant production-path tests pass, including vector-summary to
+boundary integration, exact ties, reorder/scale invariance and unavailable or
+straight-curve fallback. Calibration costs O(G log G) in accepted groups and
+filtering is linear in saved passing groups. No new vector matrices, encodings,
+LLM calls, training, clustering, actual hierarchy changes or UI refresh occurred.
+The helper is experimental and unwired to production admission. The research
+worktree remains for frozen source and ignored external-storage artifact paths.
+
 ## Exact change
 
 Keep the original accepted-only fusion groups and full-meaning scores. For
