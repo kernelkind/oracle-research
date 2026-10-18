@@ -240,6 +240,92 @@ initial missing-module failure. The prior 20-group scalar checks also pass.
 All code and artifacts remain experimental. No new vectors, semantic judgments,
 LLM calls, training, hierarchy changes or UI refresh occurred.
 
+### Within-group admission score tradeoff
+
+The user authorized comparing correct and wrong matches within the same group
+to distinguish boundary problems from score-ordering problems. This descriptive
+HR38 sweep keeps every other group's threshold fixed. It changes no actual
+admission or hierarchy and does not select a threshold for deployment.
+
+Freeze the earlier judgments before inspecting the scores: 12 AI-group entries
+(one supported, ten wrong, one unresolved) and 39 People-group entries (nine
+supported, 22 wrong, eight unresolved). Reuse the original review and supplemental
+preview review, plus the earlier fixed People controls; deduplicate repeated
+entry IDs and retain every judgment's provenance. Supported entries are the
+reviewed useful witnesses; other headings in a useful note are not automatically
+positive. Wrong root placements provide their selected wrong entries. No new
+semantic labels are introduced, and unresolved cases remain separate.
+
+People's nine supported witnesses include Patient advocacy through the root's
+humane-treatment scope; it is not relabeled as a class of people. Four of the
+nine already fail the original threshold, including Astronauts and Racing
+drivers. Retaining currently passing witnesses must not hide those misses.
+
+These are full-meaning group mean-support scores, not raw cosine similarities.
+The existing thresholds are 0.065366 for the AI group and 0.011525 for People.
+
+| Group | Entry | Existing assessment | Score |
+|---|---|---|---:|
+| AI | L04959 · Software icons | Wrong | 0.143399 |
+| AI | L04960 · Figma | Wrong | 0.104740 |
+| AI | L01833 · OpenAI Codex | Supported | 0.095769 |
+| AI | L09409 · Self-portraits | Wrong | 0.083418 |
+| People | L04535 · Audience reactions | Wrong | 0.027289 |
+| People | L03937 · Spectators | Supported | 0.020622 |
+| People | L07047 · Amazon Mechanical Turk | Wrong | 0.011799 |
+| People | L03676 · Actors | Supported | 0.011669 |
+| People | L04484 · Voice actors | Supported | 0.011617 |
+| People | L03337 · Astronauts | Supported, already missed | 0.004233 |
+
+Enumerate the current threshold and values immediately above every distinct
+currently passing outsider score: 37 AI-group states and 315 People-group
+states. Recompute group matches, note/root placements and distinct-note proposals
+across all roots. Other entries, groups and roots can retain a placement even
+when its match to this group disappears. Existing accepted memberships remain
+fixed. These curves use labels to describe achievable tradeoffs only; they do
+not calibrate an automatic boundary.
+
+| Diagnostic point | Wrong entry/group matches removed | Currently passing useful group witnesses kept | Reviewed wrong root placements removed | Reviewed useful root placements kept |
+|---|---:|---:|---:|---:|
+| AI · retain Codex's group match | 8 / 10 | 1 / 1 | 6 / 7 | 3 / 3 |
+| AI · remove all reviewed wrong group matches | 10 / 10 | 0 / 1 | 7 / 7 | 3 / 3 |
+| People · retain all currently passing useful witnesses | 1 / 22 | 5 / 5 | 0 / 18 | 5 / 5 |
+| People · intermediate tradeoff | 13 / 22 | 3 / 5 | 10 / 18 | 3 / 5 |
+| People · remove all reviewed wrong group matches | 22 / 22 | 0 / 5 | 18 / 18 | 0 / 5 |
+
+The AI result offers room for a more selective boundary without demanding
+perfect score ordering: Codex outranks eight of ten wrong entries, but not
+Software icons or Figma. Codex also passes **fused-004**, the AI-assistant group,
+so removing its fused-009 match does not remove its valid root placement. At
+the all-reviewed-wrong diagnostic, C00005 proposals fall from 51 to 26 notes;
+the union across all roots remains 384 because the affected notes have other
+root routes. These proposal counts do not certify all remaining routes.
+
+People has a substantially worse tradeoff. The one wrong entry that can be
+removed while keeping all five currently passing useful witnesses is Summaries;
+Invitations from that same note still passes, so no reviewed wrong root placement
+is fixed. The intermediate point removes ten wrong placements but loses the
+Actors and Voice actors placements. Four previously missed positive controls
+remain missed under every tightening. This identifies a score-ordering problem
+in addition to any boundary choice; it is not a requirement for perfect precision.
+
+Root-placement counts span the existing historical primary, historical root
+supplement and supplemental preview cohorts. The evidence retains those cohorts
+separately. These overlapping, selected agent judgments are not new human gold,
+independent accuracy samples, or proof of reliability on unreviewed additions.
+No numerical value in the table is proposed as an operational cutoff.
+
+Evidence: `target/food-halves-v1/same-group-score-tradeoff-v1/`. Plan SHA256:
+`67170c7dd7003faa080c1b9d419527cd36bde767eb284930867c46e5e2358d29`.
+`panel-scores.json` preserves all 51 entries; both `*-threshold-sweep.json`
+files retain every state and cohort outcome. `summary.json` records the full
+tradeoffs, and `final-verification.json` checks independent note-membership
+reconstruction, monotone sweeps and unchanged input/preview hashes. All 51
+scores replay through the existing mean-support implementation and independent
+scalar arithmetic within `5.56e-17`; 39 relevant scoring/boundary tests pass.
+No new encodings, LLM calls, training, production code changes, thresholds,
+semantic judgments, hierarchy changes or UI refresh occurred.
+
 ## Exact change
 
 Keep the original accepted-only fusion groups and full-meaning scores. For

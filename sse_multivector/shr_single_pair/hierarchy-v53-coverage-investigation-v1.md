@@ -8369,3 +8369,19 @@ without selecting a policy threshold from the failures. This remains a warning
 diagnostic, not a qualified automatic admission gate. Nine tests and source,
 preview-integrity and independent arithmetic checks pass. No new scores,
 vectors, semantic judgments, model calls or hierarchy changes occur.
+
+The user-authorized
+[within-group score sweep](hierarchy-note-bend-admission-v1.md#within-group-admission-score-tradeoff)
+then compares 51 already-reviewed HR38 entries without changing the score or
+other group thresholds. The AI group can reject eight of ten wrong entry
+matches while retaining Codex's match. Rejecting all ten removes seven reviewed
+wrong root placements while all three reviewed useful root placements survive;
+Codex also passes the AI-assistant group. For People, preserving all five
+currently passing useful witnesses fixes zero of 18 reviewed wrong root
+placements. Removing ten costs the Actors and Voice actors placements, and
+four useful controls were already below threshold. This distinguishes the
+available boundary improvement in AI from poorer People score ordering, without
+choosing a policy cutoff or requiring perfection. Full sweeps retain cohort,
+entry, root-placement and whole-note outcomes separately. Independent arithmetic
+and membership checks and 39 relevant tests pass. No production behavior,
+vectors, labels, model calls, hierarchy files or UI changed.
