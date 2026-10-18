@@ -6606,3 +6606,134 @@ matrices, all query/group scores and boundary models, panel/audit files and
 `verification.json`. `review.md` is the compact report. Maintained findings
 land on local `main`; retain the worktree for required frozen source/vector
 paths. No hierarchy UI refresh or official hierarchy-run/spreadsheet change.
+
+## Member-only distribution boundary v1: excessive useful-match loss
+
+The human approved the proposed test of a boundary derived from existing
+members' score distribution rather than its minimum. Keep all reference
+groups, query similarity scores, meanings and previous judgments fixed.
+Evidence: `target/food-halves-v1/member-distribution-boundary-v1/` in the
+retained task worktree. Frozen plan SHA256
+`f3b7df085c891fa26dbbe9ea27fd56266b8df274ba825709b84e256c6ff21a5b`.
+The method and implementation were frozen before its changed admission
+outcomes. **This hypothesis fails the useful-admission objective and is not
+adopted.** Landing experimental code does not activate it in HiGen.
+
+### One reference-only hypothesis
+
+The new experimental `fixed_reference_member_distribution.derive_boundary`
+consumes the existing cross-note member support scores and source-note IDs.
+Sort distinct scores strongest first and merge equal levels. Each source note
+contributes one total unit of cumulative curve mass across its entries.
+Normalize cumulative mass to x and the drop in **log support** to y. Select
+the largest positive interior x-y deviation, then use the geometric midpoint
+between that score and the next lower score as the admission boundary.
+
+Log support expresses multiplicative differences in the existing exponential
+kernel; this is one frozen hypothesis, not a raw/log parameter search. There
+is no trimming, fitted mixture, label fitting, outsider participation or global
+similarity cutoff. Fewer than three distinct levels or no positive bend retain
+the old minimum. Unavailable cross-note support or zero support cannot invent
+a logarithm/boundary. The existing 1e-12 collinearity tolerance suppresses
+numerical bends; a representably zero log span retains the minimum.
+
+All original members remain in the group and in the unchanged query mean.
+This changes only the admission boundary. It can only tighten the previous
+minimum, so every new proposal must be a subset of the preceding proposals.
+The calculation costs O(m log m) for m members, O(m) storage; all query/group
+scores are reused. No new encodings, query kernels or outside/outside graph.
+
+### Fewer unwanted matches, but too many useful ones disappear
+
+Replay the existing HR35 Food/Arts regression queries and all 1,121 HR36
+queries against the two old and six new reference sets. Do not relabel any
+case. The panels below overlap, are development evidence and mostly contain
+provisional agent judgments; do not pool them as independent accuracy samples.
+
+| Existing panel | Plausible selected: minimum → distribution bend | Unsupported selected: minimum → distribution bend |
+|---|---:|---:|
+| HR35 Food, 30 plausible / 51 unsupported controls | 14 → 5 | 3 → 0 |
+| HR35 expanded Arts, 63 plausible / 30 unsupported | 54 → 20 | 10 → 1 |
+| HR36 Food pre-score panel, 19 plausible / 62 unsupported | 15 → 10 | 1 → 0 |
+| HR36 Arts pre-score panel, 18 plausible / 57 unsupported | 5 → 2 | 1 → 0 |
+| Prior selected sample across six HR36 roots | 36 → 9 | 14 → 0 |
+
+In the six-root sample, unresolved retained cases also fall from 14 to two;
+they remain unresolved, not reclassified as mistakes. The three human-reviewed
+Food entry rejections cannot become new positives under this subset rule.
+The **human note-level controls** reveal actual regressions: culinary Eggs
+(`L00101`'s note) and the accepted Easter-egg note (`L02984`) lose every route.
+Egg yolks retain the `L00438` route, and the rejected Easter broadcast remains
+rejected. Keep all previous user decisions intact.
+
+The complete preceding HR36 Food proposal audit permits checking its entire
+new subset: plausible selected headings 30 → 17, unsupported seven → zero,
+unresolved two → zero; plausible notes 11 → eight, unsupported notes five →
+zero. The separate pre-score useful-note retrieval panel changes **8/10 →
+7/10 for Food**, **6/14 → 3/14 for Arts**. These are different cohorts and
+units. Do not use the cleaner eight-note selection to conceal lost useful
+coverage. Across HR36's own roots, mechanical proposals fall from 736 entries
+/ 239 notes to 130 entries / 84 notes; that is not 84 validated recoveries.
+
+### The failure is visible in the accepted-member distributions
+
+| HR36 group | Minimum boundary | New boundary | Queries passing this group alone: old → new |
+|---|---:|---:|---:|
+| C00001 Technology | 0.01012 | 0.03593 | 463 → 71 |
+| C00001 Photography | 0.00685 | 0.11836 | 549 → 2 |
+| C00005 Sports | 0.04857 | 0.16463 | 29 → 2 |
+| C00006 AI models/agents | 0.10813 | 0.17511 | 5 → 0 |
+
+Technology does isolate its single weak named-posting reference. But the same
+rule changes **176 of 197 groups**, including ordinary groups. Twelve resulting
+boundaries exclude a majority of their own existing entries. A positive bend
+partitions score variation; it does not establish that the lower part consists
+of exceptional bad references.
+
+The Sports example exposes a more basic assumption. Existing members have
+median cross-note support **0.22743**, while the legitimate new subtopics score
+**0.05502 for Association football, 0.05861 for Cricket and 0.07092 for
+Basketball**. Those are above the old 0.04857 boundary but below the new
+0.16463 boundary. Many reference meanings repeat the broad heading, whereas
+the new meanings describe narrower topics. Strong agreement among existing
+definitions therefore does not by itself provide an admission radius for
+valid new subtopics. The AI change similarly removes LLM and chatbot proposals
+along with the unwanted military-intelligence/random-selection cases.
+
+**Reject this distribution-bend hypothesis as a general replacement.** It
+reduces unwanted admissions by closing too much useful expansion. This does
+not establish that all reference-only rules are impossible, nor that similarity
+scores alone explain every failure. The next useful investigation is whether
+the saved title and meaning connections can distinguish isolated weak reference
+matches from legitimate narrower-topic variation. Inspect the named Technology
+destination, IRIB and ordinary Sports controls before choosing another boundary.
+That next investigation is suggested only and is not started here.
+
+### Verification, reproducibility and integration
+
+Write tests against the new numerical function first and observe the expected
+missing-module failure. A separate near-identical-support test reproduces
+division by zero when distinct floats have identical represented logarithms;
+handling that zero span makes it pass without inventing an epsilon support.
+Eight new production-path tests plus 62 relevant existing regressions pass:
+isolated weak member, equal/small levels, log-linear scores, tied levels and
+equal note mass, permutation, unavailable/zero support and invalid input.
+The evaluator calls this same function; no testing-only production API or
+runner/constructor seam is added.
+
+The replay checks **197 boundaries and 278,797 saved query/group cells** across
+the two corpora. Every old group and root prediction exactly replays. All new
+proposals are subsets of old ones. Independent geometric-midpoint arithmetic
+differs by at most `1.11e-16`; permutation and source-hash checks pass. Query
+scores, reference memberships, all reviewed labels and frozen producer outputs
+remain unchanged. Evaluation takes **1.18 seconds**. There are no LLM calls,
+encodings, training, paid resources, hierarchy/prompt/UI changes or activation.
+
+`implementation.json` pins the new function and tests before evaluation;
+`evaluation-source.json` pins the data-specific evaluation script. Retain full
+reference curves/models, old/new query predictions, cohort and human-control
+results, complete Food-audit subset results, six-root sample results, numerical
+diagnostics and `verification.json`. `review.md` is the compact report. Land
+the reusable experimental module, tests and maintained findings on local `main`;
+keep the task worktree for these frozen artifact/vector paths. The previous
+minimum remains the comparison control, not an approved universal policy.
