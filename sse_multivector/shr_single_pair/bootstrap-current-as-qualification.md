@@ -661,8 +661,46 @@ response and complete usage. API-equivalent new-call cost is $1.2641192; it is
 not a subscription cash charge. Exact results and attributed reviews remain in
 `target/bootstrap-title-v140/`. All 41 focused checks pass, including native
 validation of the changed example and preservation of its complete meaning.
-The next revision should explicitly allow the short topic name to leave defining
+V141 below tests explicitly allowing the short topic name to leave defining
 conditions in meaning, rather than merely asking for a brief descriptive phrase.
+
+### Naming without full scope: Bootstrap-v141
+
+Experimental [Bootstrap-v141](Hierarchy-bootstrap-v141.md) changes only the title
+instruction: it names the topic for recognition in a list and explicitly says
+that the title need not express the definition's full scope. All four complete
+examples, shared rules-v12, Consolidation-v27 and constructor pins remain
+unchanged. The existing native V140 failures establish the failing regression
+before this edit.
+
+The [matched](hierarchy-bootstrap-title-v141-matched.spec.json) and
+[control](hierarchy-bootstrap-title-v141-controls.spec.json) specifications repeat
+the exact 48 and eight input selections from V140, three fresh draws each, using
+the corresponding V140 draws as baselines. Preparation verifies identical input
+hashes and model/runner settings. All six ready batches launch concurrently in
+the same overall scheduling group. The pre-call plan and exact results remain
+in `target/bootstrap-title-v141/`; these are development inputs, not new unseen
+qualification.
+
+All 168 outputs are valid and non-null. Fresh agent review records 150 accepts,
+six rejects and twelve uncertainties. The Celtic and Melbourne titles now leave
+their detailed conditions in meaning, but all three preference titles still
+list actions and all three stock-plan titles enumerate pressure-canning and
+pantry storage. Two stock titles additionally use "chicken-stock"; neither a
+word-count target nor a punctuation blacklist is used in judging them. Wording
+alone has not established reliable topic naming for plans and preferences.
+V141 remains unqualified for adoption.
+
+The twelve uncertainties concern digital immortality, Users, and inferred US
+federal identity in both the broad shutdown root and shutdown-odds event, each
+in all three draws. No scope qualification is rejected merely for being a
+qualification. Half-and-half retains the exact US milkfat interval in all three
+controls; stock meanings retain the full batch and preservation/storage details.
+Native [accounting](hierarchy-bootstrap-title-v141-usage-v1.json) records 174 new
+attempts including six warmups, zero failures/retries/reuses and complete usage.
+The API-equivalent cost is $1.2621704, not a subscription cash charge. All 41
+focused checks pass. The next revision should demonstrate naming an entire
+plan or preference with brief title examples rather than adding more rules.
 
 ## Meaning-derived titles: Bootstrap-v130
 

@@ -150,8 +150,13 @@ shared rules. Its [matched test](shr_single_pair/bootstrap-current-as-qualificat
 has 168 valid fresh responses: 148 agent accepts, ten title rejects and ten
 semantic uncertainties. The original preference case still lists all three
 actions in its title, and the stock-plan title still enumerates both stages.
-V140 remains unqualified; the next revision must make the title's naming purpose
-distinct from the definition's complete conditions. Constructor pins remain V133.
+V140 remains unqualified. Experimental
+[Bootstrap-v141](shr_single_pair/Hierarchy-bootstrap-v141.md) explicitly allows
+titles to leave the definition's full scope in meaning. Its same 168-response
+test has 150 agent accepts, six title rejects and twelve semantic uncertainties.
+The preference and stock-plan titles still enumerate their actions. V141 also
+remains unqualified; brief examples of naming a plan or preference are the next
+step. Constructor pins remain V133.
 
 Experimental [Bootstrap-v133](shr_single_pair/Hierarchy-bootstrap-v133.md)
 returns a concise, natural `title` derived solely from its finalized `meaning`.
