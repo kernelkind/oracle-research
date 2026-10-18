@@ -1,0 +1,2246 @@
+{
+  "schema_version": 4,
+  "corpus": "/mnt/external/algos-archive/oracle-mvp/hierarchy-hr38-v53-auto/hierarchy-hr38-v53-auto-2000-note-v1/subject-collection/subjects.json",
+  "nodes": [
+    {
+      "id": "heldout-001-root",
+      "local": {
+        "note_id": "50050183f1b134ffb04f0d0f7a2ba55fed4845f46d1c55c84d4793c18494538f",
+        "number": "5"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 1,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-001-specific",
+      "local": {
+        "note_id": "50050183f1b134ffb04f0d0f7a2ba55fed4845f46d1c55c84d4793c18494538f",
+        "number": "5.1.1.1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 1,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-002-root",
+      "local": {
+        "note_id": "1319ad9ecce80bc4df5d3e1a6437af22fc4818c86346d5bf0c63d5b873f08c6a",
+        "number": "2"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 2,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-002-specific",
+      "local": {
+        "note_id": "1319ad9ecce80bc4df5d3e1a6437af22fc4818c86346d5bf0c63d5b873f08c6a",
+        "number": "2.1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 2,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-003-root",
+      "local": {
+        "note_id": "b1fd540a5467861b09f71b2d6d6b8a92408c42997dc15f4729d107049aba2b9a",
+        "number": "4"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 3,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-003-specific",
+      "local": {
+        "note_id": "b1fd540a5467861b09f71b2d6d6b8a92408c42997dc15f4729d107049aba2b9a",
+        "number": "4.1.1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 3,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-004-root",
+      "local": {
+        "note_id": "047a23e2c14776b577bafb9e1bc33d824ef86a285e07e502abfcbd05b224456e",
+        "number": "3"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 4,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-004-specific",
+      "local": {
+        "note_id": "047a23e2c14776b577bafb9e1bc33d824ef86a285e07e502abfcbd05b224456e",
+        "number": "3.1.3"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 4,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-005-root",
+      "local": {
+        "note_id": "00000ac95e1068e2e4d5d279ee1a10984f4bdd2be514f0fb630bf0a9d50833d7",
+        "number": "3"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 5,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-005-specific",
+      "local": {
+        "note_id": "00000ac95e1068e2e4d5d279ee1a10984f4bdd2be514f0fb630bf0a9d50833d7",
+        "number": "3.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 5,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-006-root",
+      "local": {
+        "note_id": "6926e915a1d9c40c9783f1371c8d26d4ca68c3f44aedeae1f786420da12ec5fb",
+        "number": "2"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 6,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-006-specific",
+      "local": {
+        "note_id": "6926e915a1d9c40c9783f1371c8d26d4ca68c3f44aedeae1f786420da12ec5fb",
+        "number": "2.1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 6,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-007-root",
+      "local": {
+        "note_id": "20a251acc8d827df8b522c8cef37f0b28e9367eb15900a5b530acb40b8a8253d",
+        "number": "7"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 7,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-007-specific",
+      "local": {
+        "note_id": "20a251acc8d827df8b522c8cef37f0b28e9367eb15900a5b530acb40b8a8253d",
+        "number": "7.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 7,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-008-root",
+      "local": {
+        "note_id": "d1d89c714fe53b509a168382c176187c31c8e900e7f4e744544ea83a1ccae460",
+        "number": "5"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 8,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-008-specific",
+      "local": {
+        "note_id": "d1d89c714fe53b509a168382c176187c31c8e900e7f4e744544ea83a1ccae460",
+        "number": "5.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 8,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-009-root",
+      "local": {
+        "note_id": "3dceea733e5e6edfd10aadebcee5b802400bfee0bc7024341cc03a5ee78af2d9",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 9,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-009-specific",
+      "local": {
+        "note_id": "3dceea733e5e6edfd10aadebcee5b802400bfee0bc7024341cc03a5ee78af2d9",
+        "number": "1.1.1.2.1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 9,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-010-root",
+      "local": {
+        "note_id": "05501d5d65d024d873d0856de3950d81cc2520d0f66306a975b5aab88634dd3a",
+        "number": "4"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 10,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-010-specific",
+      "local": {
+        "note_id": "05501d5d65d024d873d0856de3950d81cc2520d0f66306a975b5aab88634dd3a",
+        "number": "4.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 10,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-011-root",
+      "local": {
+        "note_id": "23c261afac5fd8a7556f88070b65032935e031ee6e3488ddff96900328828121",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 11,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-011-specific",
+      "local": {
+        "note_id": "23c261afac5fd8a7556f88070b65032935e031ee6e3488ddff96900328828121",
+        "number": "1.2.1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 11,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-012-root",
+      "local": {
+        "note_id": "dcb415763aeec3b20be0c11d94eaea7f2a2143332de12e8f8fe436167bec9764",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 12,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-012-specific",
+      "local": {
+        "note_id": "dcb415763aeec3b20be0c11d94eaea7f2a2143332de12e8f8fe436167bec9764",
+        "number": "1.1.2.2"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 12,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-013-root",
+      "local": {
+        "note_id": "048871411e5166dddd0ba1f45a06a2a4e787d5ff5efdfbfbac213fd77efc4364",
+        "number": "3"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 13,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-013-specific",
+      "local": {
+        "note_id": "048871411e5166dddd0ba1f45a06a2a4e787d5ff5efdfbfbac213fd77efc4364",
+        "number": "3.1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 13,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-014-root",
+      "local": {
+        "note_id": "03a3d31fba4e158eb0c583ddad0f27c2ff7307399ef1bd35e1cbbe08a92860dd",
+        "number": "2"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 14,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-014-specific",
+      "local": {
+        "note_id": "03a3d31fba4e158eb0c583ddad0f27c2ff7307399ef1bd35e1cbbe08a92860dd",
+        "number": "2.1.1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 14,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-015-root",
+      "local": {
+        "note_id": "547bf4fe31e3b0b62efb7186469cb29fcd6fb68c486164f603ba1a471e4d4a8a",
+        "number": "2"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 15,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-015-specific",
+      "local": {
+        "note_id": "547bf4fe31e3b0b62efb7186469cb29fcd6fb68c486164f603ba1a471e4d4a8a",
+        "number": "2.1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 15,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-016-root",
+      "local": {
+        "note_id": "31de030462355abb7da9bbaedcaf52ab8fed4ffeba785bd4fcb2f6240c2232a9",
+        "number": "4"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 16,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-016-specific",
+      "local": {
+        "note_id": "31de030462355abb7da9bbaedcaf52ab8fed4ffeba785bd4fcb2f6240c2232a9",
+        "number": "4.1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 16,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-017-root",
+      "local": {
+        "note_id": "f2b5f969b5a086bcf360b658c32571405156af078abe9f976d1b816af998d017",
+        "number": "5"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 17,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-017-specific",
+      "local": {
+        "note_id": "f2b5f969b5a086bcf360b658c32571405156af078abe9f976d1b816af998d017",
+        "number": "5.1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 17,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-018-root",
+      "local": {
+        "note_id": "1d7531db06abe5099b777c38140a6cf6b91f91c536ac8c49e6eab295431b92ad",
+        "number": "2"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 18,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-018-specific",
+      "local": {
+        "note_id": "1d7531db06abe5099b777c38140a6cf6b91f91c536ac8c49e6eab295431b92ad",
+        "number": "2.1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 18,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-019-root",
+      "local": {
+        "note_id": "d530dfd4c9cc7ddcad272829a6b1be7a6eb5de45d95b770c042631df5b71256a",
+        "number": "5"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 19,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-019-specific",
+      "local": {
+        "note_id": "d530dfd4c9cc7ddcad272829a6b1be7a6eb5de45d95b770c042631df5b71256a",
+        "number": "5.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 19,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-020-root",
+      "local": {
+        "note_id": "3c2f3dee1b3b1217fb7b84838e2688fa009af1fc966bd9a496818771c35a0f03",
+        "number": "2"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 20,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-020-specific",
+      "local": {
+        "note_id": "3c2f3dee1b3b1217fb7b84838e2688fa009af1fc966bd9a496818771c35a0f03",
+        "number": "2.1.1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 20,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-021-root",
+      "local": {
+        "note_id": "00000e988bf9e3ecabb38bf63680641f6a4983882826cdd1f310e69027d4baf6",
+        "number": "4"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 21,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-021-specific",
+      "local": {
+        "note_id": "00000e988bf9e3ecabb38bf63680641f6a4983882826cdd1f310e69027d4baf6",
+        "number": "4.1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 21,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-022-root",
+      "local": {
+        "note_id": "ac393d63219c030be9df6040d28b6222d0231df53fb4d426886b90a7cbce1d3b",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 22,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-022-specific",
+      "local": {
+        "note_id": "ac393d63219c030be9df6040d28b6222d0231df53fb4d426886b90a7cbce1d3b",
+        "number": "1.1.1.1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 22,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-023-root",
+      "local": {
+        "note_id": "b9c3819e1ab857242f998bcbaeb77a17eb05a940cbec17825385bcabdf836740",
+        "number": "2"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 23,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-023-specific",
+      "local": {
+        "note_id": "b9c3819e1ab857242f998bcbaeb77a17eb05a940cbec17825385bcabdf836740",
+        "number": "2.1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 23,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-024-root",
+      "local": {
+        "note_id": "3022741a483662ee7add44d54e23efbd25d0d716808d3dd0e1a69dd6f9058d9d",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 24,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-024-specific",
+      "local": {
+        "note_id": "3022741a483662ee7add44d54e23efbd25d0d716808d3dd0e1a69dd6f9058d9d",
+        "number": "1.1.1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 24,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-025-root",
+      "local": {
+        "note_id": "0cc1c4cd30ba796f3fc832cad498e3e6ba118e8b8b93cca0b46a9b9edd3c82da",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 25,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-025-specific",
+      "local": {
+        "note_id": "0cc1c4cd30ba796f3fc832cad498e3e6ba118e8b8b93cca0b46a9b9edd3c82da",
+        "number": "1.1.1.1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 25,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-026-root",
+      "local": {
+        "note_id": "5ff226dc5c9cb45752766edc0096bdccc5e444ec830d73484317a06bea1513e4",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 26,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-026-specific",
+      "local": {
+        "note_id": "5ff226dc5c9cb45752766edc0096bdccc5e444ec830d73484317a06bea1513e4",
+        "number": "1.2.1.3.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 26,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-027-root",
+      "local": {
+        "note_id": "34d702ddeefb03d9265e7a975b36e97aa066640b8ab15c32fe792f375a6669ec",
+        "number": "6"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 27,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-027-specific",
+      "local": {
+        "note_id": "34d702ddeefb03d9265e7a975b36e97aa066640b8ab15c32fe792f375a6669ec",
+        "number": "6.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 27,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-028-root",
+      "local": {
+        "note_id": "c26e7fb06b7dc6276f7561b4a21a1b3c0ee7ba1b0557aea12915ddbf3496dcfe",
+        "number": "2"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 28,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-028-specific",
+      "local": {
+        "note_id": "c26e7fb06b7dc6276f7561b4a21a1b3c0ee7ba1b0557aea12915ddbf3496dcfe",
+        "number": "2.1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 28,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-029-root",
+      "local": {
+        "note_id": "064bbcf58331969e768c98b415377d58af7f63afb4baeccd077bbf549ff1974b",
+        "number": "4"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 29,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-029-specific",
+      "local": {
+        "note_id": "064bbcf58331969e768c98b415377d58af7f63afb4baeccd077bbf549ff1974b",
+        "number": "4.1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 29,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-030-root",
+      "local": {
+        "note_id": "14411225bc5e7833b646bd25babb62daee008e92ab8a2153d3c95762488e05c3",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 30,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-030-specific",
+      "local": {
+        "note_id": "14411225bc5e7833b646bd25babb62daee008e92ab8a2153d3c95762488e05c3",
+        "number": "1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 30,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-031-root",
+      "local": {
+        "note_id": "1571171cfe60c013c7f3d3e62d8f09c1dd367bcc4f39b0cc4e741edb4c9c0a75",
+        "number": "4"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 31,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-031-specific",
+      "local": {
+        "note_id": "1571171cfe60c013c7f3d3e62d8f09c1dd367bcc4f39b0cc4e741edb4c9c0a75",
+        "number": "4.1.1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 31,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-032-root",
+      "local": {
+        "note_id": "d7ee55a23299d9bc1006d4979f111ee6b18a866e6b2069b0327ed6505537e579",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 32,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-032-specific",
+      "local": {
+        "note_id": "d7ee55a23299d9bc1006d4979f111ee6b18a866e6b2069b0327ed6505537e579",
+        "number": "1.1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 32,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-033-root",
+      "local": {
+        "note_id": "9a6bb96cb4e1a80cc8ae44e54950916932dca17afea71487a6ae2b95bcd0f6fb",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 33,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-033-specific",
+      "local": {
+        "note_id": "9a6bb96cb4e1a80cc8ae44e54950916932dca17afea71487a6ae2b95bcd0f6fb",
+        "number": "1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 33,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-034-root",
+      "local": {
+        "note_id": "a3f93e45e21c1a08c1fcfaa21f2c9129c1e87d3ebf9992249c80210d3175e906",
+        "number": "6"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 34,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-034-specific",
+      "local": {
+        "note_id": "a3f93e45e21c1a08c1fcfaa21f2c9129c1e87d3ebf9992249c80210d3175e906",
+        "number": "6.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 34,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-035-root",
+      "local": {
+        "note_id": "de06e3e852f2db037c52d17457947af335a4894c28624a05c6ee99320787f921",
+        "number": "4"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 35,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-035-specific",
+      "local": {
+        "note_id": "de06e3e852f2db037c52d17457947af335a4894c28624a05c6ee99320787f921",
+        "number": "4.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 35,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-036-root",
+      "local": {
+        "note_id": "5a6a13041427dac018a495300537541d41f61cb115e38462de39c6c96c1dec3b",
+        "number": "2"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 36,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-036-specific",
+      "local": {
+        "note_id": "5a6a13041427dac018a495300537541d41f61cb115e38462de39c6c96c1dec3b",
+        "number": "2.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 36,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-037-root",
+      "local": {
+        "note_id": "9206aa930c7c4a4085e5bc37369798fd6814a23cef1af0486d568ab2c5097ab4",
+        "number": "3"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 37,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-037-specific",
+      "local": {
+        "note_id": "9206aa930c7c4a4085e5bc37369798fd6814a23cef1af0486d568ab2c5097ab4",
+        "number": "3.1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 37,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-038-root",
+      "local": {
+        "note_id": "03774223101fc202b5eac934f56f4b2075cb404b30a03bf554ae8200eee627eb",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 38,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-038-specific",
+      "local": {
+        "note_id": "03774223101fc202b5eac934f56f4b2075cb404b30a03bf554ae8200eee627eb",
+        "number": "1.1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 38,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-039-root",
+      "local": {
+        "note_id": "e064d209762bde7cebd7d86e7dd976b643a8148e2be495388a6d0bc7255c8ece",
+        "number": "6"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 39,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-039-specific",
+      "local": {
+        "note_id": "e064d209762bde7cebd7d86e7dd976b643a8148e2be495388a6d0bc7255c8ece",
+        "number": "6.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 39,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-040-root",
+      "local": {
+        "note_id": "b0682094fe0db00a2707d011d1c2260f19ae5628e8c34dd1d2db22e8124c61a8",
+        "number": "6"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 40,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-040-specific",
+      "local": {
+        "note_id": "b0682094fe0db00a2707d011d1c2260f19ae5628e8c34dd1d2db22e8124c61a8",
+        "number": "6.1.1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 40,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-041-root",
+      "local": {
+        "note_id": "8f798dc0a7db2163da87c33c2b07c41b22cfc144c5db7239cd50449b626e3175",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 41,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-041-specific",
+      "local": {
+        "note_id": "8f798dc0a7db2163da87c33c2b07c41b22cfc144c5db7239cd50449b626e3175",
+        "number": "1.2.2.1.1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 41,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-042-root",
+      "local": {
+        "note_id": "c503e54583204a43fc0236005c748f1d1d43f2c33e4a6180300686e6a80b8781",
+        "number": "2"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 42,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-042-specific",
+      "local": {
+        "note_id": "c503e54583204a43fc0236005c748f1d1d43f2c33e4a6180300686e6a80b8781",
+        "number": "2.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 42,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-043-root",
+      "local": {
+        "note_id": "d200a6408bd6307040751023425accd95ffc487919ddf7e819083d67a0588235",
+        "number": "3"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 43,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-043-specific",
+      "local": {
+        "note_id": "d200a6408bd6307040751023425accd95ffc487919ddf7e819083d67a0588235",
+        "number": "3.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 43,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-044-root",
+      "local": {
+        "note_id": "c643667b95f5a3346d1d04db151a5be60fe5df825b86ec68c8fca1650e8e94a1",
+        "number": "2"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 44,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-044-specific",
+      "local": {
+        "note_id": "c643667b95f5a3346d1d04db151a5be60fe5df825b86ec68c8fca1650e8e94a1",
+        "number": "2.1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 44,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-045-root",
+      "local": {
+        "note_id": "29e0c070fbd526367a43c425ce8c9196a85874e172fc8df2a9d2b100268fda78",
+        "number": "4"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 45,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-045-specific",
+      "local": {
+        "note_id": "29e0c070fbd526367a43c425ce8c9196a85874e172fc8df2a9d2b100268fda78",
+        "number": "4.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 45,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-046-root",
+      "local": {
+        "note_id": "e348260d77781f7138d3b4f793dba8d6ffc16d173d1cdea6ca421b9693bd1136",
+        "number": "6"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 46,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-046-specific",
+      "local": {
+        "note_id": "e348260d77781f7138d3b4f793dba8d6ffc16d173d1cdea6ca421b9693bd1136",
+        "number": "6.1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 46,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-047-root",
+      "local": {
+        "note_id": "7de5692cee3b861be64d81c639ca4253eefe0724557d7f7b5e327ba0749d2973",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 47,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-047-specific",
+      "local": {
+        "note_id": "7de5692cee3b861be64d81c639ca4253eefe0724557d7f7b5e327ba0749d2973",
+        "number": "1.2.2.1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 47,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-048-root",
+      "local": {
+        "note_id": "8a840d181c332b9e234caeb0bcd54ad79f571e3167888293875e8e803f5b5339",
+        "number": "5"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 48,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-048-specific",
+      "local": {
+        "note_id": "8a840d181c332b9e234caeb0bcd54ad79f571e3167888293875e8e803f5b5339",
+        "number": "5.1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 48,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-049-root",
+      "local": {
+        "note_id": "f6dee85b659783616df64b2a886ac6ac3851976f23fa8be1d6e5e7e41a00e3b3",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 49,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-049-specific",
+      "local": {
+        "note_id": "f6dee85b659783616df64b2a886ac6ac3851976f23fa8be1d6e5e7e41a00e3b3",
+        "number": "1.1.1.1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 49,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-050-root",
+      "local": {
+        "note_id": "72e297f6864f54076698c52e02c33f0faf84a80aab0b3d56f48d8e6d68c68741",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 50,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-050-specific",
+      "local": {
+        "note_id": "72e297f6864f54076698c52e02c33f0faf84a80aab0b3d56f48d8e6d68c68741",
+        "number": "1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 50,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-051-root",
+      "local": {
+        "note_id": "f00e910a0d56f31acaf88fc856a8efa4ebf041bdcd44e1e8eb0246ec9a7cd5b6",
+        "number": "2"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 51,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-051-specific",
+      "local": {
+        "note_id": "f00e910a0d56f31acaf88fc856a8efa4ebf041bdcd44e1e8eb0246ec9a7cd5b6",
+        "number": "2.1.2.1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 51,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-052-root",
+      "local": {
+        "note_id": "0bb8df1a919b0c748c86ed2d6a6066fc110b8e0712dfe148422903ae43901c56",
+        "number": "7"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 52,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-052-specific",
+      "local": {
+        "note_id": "0bb8df1a919b0c748c86ed2d6a6066fc110b8e0712dfe148422903ae43901c56",
+        "number": "7.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 52,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-053-root",
+      "local": {
+        "note_id": "581b72d8ed249761a55019c412db6dfc626bf006f53e57f1629cebc743142f6d",
+        "number": "5"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 53,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-053-specific",
+      "local": {
+        "note_id": "581b72d8ed249761a55019c412db6dfc626bf006f53e57f1629cebc743142f6d",
+        "number": "5.1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 53,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-054-root",
+      "local": {
+        "note_id": "0000383f3a2273d0ced259e76a763794e1f877ebfab415f6b42755488c091190",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 54,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-054-specific",
+      "local": {
+        "note_id": "0000383f3a2273d0ced259e76a763794e1f877ebfab415f6b42755488c091190",
+        "number": "1.1.1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 54,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-055-root",
+      "local": {
+        "note_id": "58396a454c4d2b316226ea0ec5533a99e5d433422f41e591bbba9430c2168327",
+        "number": "5"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 55,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-055-specific",
+      "local": {
+        "note_id": "58396a454c4d2b316226ea0ec5533a99e5d433422f41e591bbba9430c2168327",
+        "number": "5.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 55,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-056-root",
+      "local": {
+        "note_id": "d49c6d59d4a660dc3b78f25f63754040075f84ab7ca99f42e84464f42a21dbd7",
+        "number": "5"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 56,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-056-specific",
+      "local": {
+        "note_id": "d49c6d59d4a660dc3b78f25f63754040075f84ab7ca99f42e84464f42a21dbd7",
+        "number": "5.1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 56,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-057-root",
+      "local": {
+        "note_id": "b3db72c69b28da6a5cfd20561fc813d8c16aab16ef7969380016158ffde695f0",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 57,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-057-specific",
+      "local": {
+        "note_id": "b3db72c69b28da6a5cfd20561fc813d8c16aab16ef7969380016158ffde695f0",
+        "number": "1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 57,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-058-root",
+      "local": {
+        "note_id": "23257066912cfdd35c63452e6618b8edcda16db382bb55e9337711ad9e4b9495",
+        "number": "2"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 58,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-058-specific",
+      "local": {
+        "note_id": "23257066912cfdd35c63452e6618b8edcda16db382bb55e9337711ad9e4b9495",
+        "number": "2.3.1.2.1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 58,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-059-root",
+      "local": {
+        "note_id": "cd5db42996a0913767fb1de189993c0dd6b7f2338a5882d7deb847b3179d1888",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 59,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-059-specific",
+      "local": {
+        "note_id": "cd5db42996a0913767fb1de189993c0dd6b7f2338a5882d7deb847b3179d1888",
+        "number": "1.1.1.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 59,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-060-root",
+      "local": {
+        "note_id": "58673fe485798c915f7e9b61466168966d8aee00fbc0276ca30b29068c785dfc",
+        "number": "2"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 60,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-060-specific",
+      "local": {
+        "note_id": "58673fe485798c915f7e9b61466168966d8aee00fbc0276ca30b29068c785dfc",
+        "number": "2.1"
+      },
+      "review": {
+        "cohort": "seeded",
+        "family": null,
+        "pair": 60,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-061-root",
+      "local": {
+        "note_id": "e9576381ec6ff71c2e3decf478261a021b98dfe47f829b7cc166a35cfc9f915d",
+        "number": "7"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "food",
+        "pair": 61,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-061-specific",
+      "local": {
+        "note_id": "e9576381ec6ff71c2e3decf478261a021b98dfe47f829b7cc166a35cfc9f915d",
+        "number": "7.1.1"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "food",
+        "pair": 61,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-062-root",
+      "local": {
+        "note_id": "f26a13d03c167ac142f55d47f80629da3428617620a5f623043f4fca9db231ab",
+        "number": "2"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "food",
+        "pair": 62,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-062-specific",
+      "local": {
+        "note_id": "f26a13d03c167ac142f55d47f80629da3428617620a5f623043f4fca9db231ab",
+        "number": "2.1.1.1"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "food",
+        "pair": 62,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-063-root",
+      "local": {
+        "note_id": "b786f5b9acc1235442f993fbbbcf4973bfe4f67e20e2b01480dad1277d3647c0",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "food",
+        "pair": 63,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-063-specific",
+      "local": {
+        "note_id": "b786f5b9acc1235442f993fbbbcf4973bfe4f67e20e2b01480dad1277d3647c0",
+        "number": "1.1.1.1"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "food",
+        "pair": 63,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-064-root",
+      "local": {
+        "note_id": "66e2030185a322299bccc67efda413087b22c5c0b12781f26df66cb855236478",
+        "number": "3"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "food",
+        "pair": 64,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-064-specific",
+      "local": {
+        "note_id": "66e2030185a322299bccc67efda413087b22c5c0b12781f26df66cb855236478",
+        "number": "3.3.1.2"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "food",
+        "pair": 64,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-065-root",
+      "local": {
+        "note_id": "a68fe38b7fe067b64b73f2a0775a7bb8166e19c07e4bb54fe417d520df352961",
+        "number": "3"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "food",
+        "pair": 65,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-065-specific",
+      "local": {
+        "note_id": "a68fe38b7fe067b64b73f2a0775a7bb8166e19c07e4bb54fe417d520df352961",
+        "number": "3.1.1"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "food",
+        "pair": 65,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-066-root",
+      "local": {
+        "note_id": "10cec36b408adccd49e1de9b46141d10b9c71484fefb6da32a5ba54246f7c35c",
+        "number": "3"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "people",
+        "pair": 66,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-066-specific",
+      "local": {
+        "note_id": "10cec36b408adccd49e1de9b46141d10b9c71484fefb6da32a5ba54246f7c35c",
+        "number": "3.1.1.1.1.1"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "people",
+        "pair": 66,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-067-root",
+      "local": {
+        "note_id": "2e99735dbf2750094ad1086b48e4006ac4b117077cf69397c726b0016eed07e3",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "people",
+        "pair": 67,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-067-specific",
+      "local": {
+        "note_id": "2e99735dbf2750094ad1086b48e4006ac4b117077cf69397c726b0016eed07e3",
+        "number": "1.1.1.2.1.1"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "people",
+        "pair": 67,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-068-root",
+      "local": {
+        "note_id": "588aafd37c4aa20ceee0c9bc639a51ef79fa6a57e6dfa4c01338abd40fdc4363",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "people",
+        "pair": 68,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-068-specific",
+      "local": {
+        "note_id": "588aafd37c4aa20ceee0c9bc639a51ef79fa6a57e6dfa4c01338abd40fdc4363",
+        "number": "1.2.1.1"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "people",
+        "pair": 68,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-069-root",
+      "local": {
+        "note_id": "04a3a52f1563dcbb64df355c3e10eba9a8a80dd2256adde50e09d08dad1495ca",
+        "number": "2"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "people",
+        "pair": 69,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-069-specific",
+      "local": {
+        "note_id": "04a3a52f1563dcbb64df355c3e10eba9a8a80dd2256adde50e09d08dad1495ca",
+        "number": "2.2.1.1.1"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "people",
+        "pair": 69,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-070-root",
+      "local": {
+        "note_id": "ba9b9e0e5f162bbb267cdd80c5d2472887f80962d04f2c6523dc5fa8edb9bd1c",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "people",
+        "pair": 70,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-070-specific",
+      "local": {
+        "note_id": "ba9b9e0e5f162bbb267cdd80c5d2472887f80962d04f2c6523dc5fa8edb9bd1c",
+        "number": "1.1.1"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "people",
+        "pair": 70,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-071-root",
+      "local": {
+        "note_id": "52dc71f22c2b38b4edecbbbfef8cb1a2fa113e7cac857389bdcad2572163eb98",
+        "number": "4"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "plans_preferences",
+        "pair": 71,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-071-specific",
+      "local": {
+        "note_id": "52dc71f22c2b38b4edecbbbfef8cb1a2fa113e7cac857389bdcad2572163eb98",
+        "number": "4.5.2"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "plans_preferences",
+        "pair": 71,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-072-root",
+      "local": {
+        "note_id": "9212b46277aa8cca4fd91ecf549f18565f5048a8f15222593f42d4e40ec91ba6",
+        "number": "4"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "plans_preferences",
+        "pair": 72,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-072-specific",
+      "local": {
+        "note_id": "9212b46277aa8cca4fd91ecf549f18565f5048a8f15222593f42d4e40ec91ba6",
+        "number": "4.1.1.1"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "plans_preferences",
+        "pair": 72,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-073-root",
+      "local": {
+        "note_id": "eb4a48b3a6e7459706d498afb47542a212b0f854d4ad6ef5ddbee69892481a76",
+        "number": "4"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "plans_preferences",
+        "pair": 73,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-073-specific",
+      "local": {
+        "note_id": "eb4a48b3a6e7459706d498afb47542a212b0f854d4ad6ef5ddbee69892481a76",
+        "number": "4.1.1.1"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "plans_preferences",
+        "pair": 73,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-074-root",
+      "local": {
+        "note_id": "a7956c79a087c14694fa6da307a1d1c488f76a0974fd848464641cfa6dca80e5",
+        "number": "4"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "plans_preferences",
+        "pair": 74,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-074-specific",
+      "local": {
+        "note_id": "a7956c79a087c14694fa6da307a1d1c488f76a0974fd848464641cfa6dca80e5",
+        "number": "4.1"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "plans_preferences",
+        "pair": 74,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-075-root",
+      "local": {
+        "note_id": "b2138de815c78cbb47a673f5679c88b1d6ebf14fd48667289cf5ccec566a6c59",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "plans_preferences",
+        "pair": 75,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-075-specific",
+      "local": {
+        "note_id": "b2138de815c78cbb47a673f5679c88b1d6ebf14fd48667289cf5ccec566a6c59",
+        "number": "1.2.1"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "plans_preferences",
+        "pair": 75,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-076-root",
+      "local": {
+        "note_id": "13a74b5e726664f8543360592a4dd9c9f131bfaf082d74bd76f337f4b29433c2",
+        "number": "3"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "relationships_actions",
+        "pair": 76,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-076-specific",
+      "local": {
+        "note_id": "13a74b5e726664f8543360592a4dd9c9f131bfaf082d74bd76f337f4b29433c2",
+        "number": "3.1"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "relationships_actions",
+        "pair": 76,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-077-root",
+      "local": {
+        "note_id": "76fa8b8931426ee7287a0fa8d86a14d336132294fb1aeafc54cf31c0545811b5",
+        "number": "6"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "relationships_actions",
+        "pair": 77,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-077-specific",
+      "local": {
+        "note_id": "76fa8b8931426ee7287a0fa8d86a14d336132294fb1aeafc54cf31c0545811b5",
+        "number": "6.1.1"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "relationships_actions",
+        "pair": 77,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-078-root",
+      "local": {
+        "note_id": "58d7a6707418803b670a794f9e7c16c89a4d010e7cd8f8ccca693853e9bb8fff",
+        "number": "4"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "relationships_actions",
+        "pair": 78,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-078-specific",
+      "local": {
+        "note_id": "58d7a6707418803b670a794f9e7c16c89a4d010e7cd8f8ccca693853e9bb8fff",
+        "number": "4.1.1"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "relationships_actions",
+        "pair": 78,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-079-root",
+      "local": {
+        "note_id": "aa82eb6f176c01d697807edba04adcff3c1d25866c4ab820a9b586fba00810b6",
+        "number": "2"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "relationships_actions",
+        "pair": 79,
+        "level": "root",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-079-specific",
+      "local": {
+        "note_id": "aa82eb6f176c01d697807edba04adcff3c1d25866c4ab820a9b586fba00810b6",
+        "number": "2.1.1.2.1"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "relationships_actions",
+        "pair": 79,
+        "level": "specific",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "heldout-080-root",
+      "local": {
+        "note_id": "a2d1240e41c4b69b06be627150a6a5ce859f5632fc4c9cfb5e28f44aa2c132e3",
+        "number": "5"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "relationships_actions",
+        "pair": 80,
+        "level": "root",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "heldout-080-specific",
+      "local": {
+        "note_id": "a2d1240e41c4b69b06be627150a6a5ce859f5632fc4c9cfb5e28f44aa2c132e3",
+        "number": "5.1.1.1"
+      },
+      "review": {
+        "cohort": "challenge",
+        "family": "relationships_actions",
+        "pair": 80,
+        "level": "specific",
+        "reviewer": "B"
+      }
+    }
+  ]
+}

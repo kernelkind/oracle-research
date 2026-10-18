@@ -953,6 +953,43 @@ this is not a subscription cash charge. V147 remains experimental and unqualifie
 for adoption; constructor pins stay V133. Further qualification requires inputs
 not used to tune these revisions. No hierarchy has been rebuilt or adopted.
 
+### Frozen independent qualification of Bootstrap-v147
+
+The user authorized testing frozen V147 on untouched inputs with fixed criteria
+and independent review. The [pre-call protocol](hierarchy-bootstrap-v147-heldout-v1.json),
+[source selectors](hierarchy-bootstrap-v147-heldout-nodes-v1.json) and
+[native specification](hierarchy-bootstrap-v147-heldout-v1.spec.json) freeze
+80 new posts/authors: 60 selected by a fixed seeded ordering and twenty keyword
+challenge selections (five each for food, People, plans/preferences and
+relationships/actions). Each post supplies one original root and one specific
+descendant, for 160 inputs and three fresh draws each (480 planned responses).
+All subjects have ASv6.100 provenance. V147's exact hash stays
+`db6c29262f23cd4d6c0814554dce7cdf5289aa620259408dd5a1523e8a12af64`.
+
+Selection excludes 53 posts and 46 authors found across all 177 prior prepared
+Bootstrap envelopes in this retained task worktree, including the V134–V147
+development inputs and preceding V139 qualification. Normalized post duplicates
+and all four literal full-example posts are excluded too. This does not establish
+exclusion from every historical project experiment or model pretraining. The
+seeded cohort represents eligible saved HR38 notes; it is not a probability
+sample of the production population. The challenge families use declared lexical
+predicates, not semantic gold labels.
+
+Two independent AI reviewers audited the protocol before inference. A handles
+odd post-pair numbers and B handles even ones; both review all three draws of
+each assigned root/specific pair. They receive no earlier scores, tuning history
+or desired exact titles. Native metadata can reveal the version identity, so the
+review is not fully identity-blinded. Disjoint assignments provide independent
+review but no direct inter-reviewer agreement estimate. The main agent will check
+reported failures and uncertainties, preserving initial reviewer judgments.
+Title and meaning verdicts remain separate; word counts are not grading rules,
+and scope qualifications are not illustrative examples. No human-calibrated gold
+has been supplied. Exact plans, exclusions, outputs and native reviews remain
+under `target/bootstrap-v147-heldout-v1/`; source artifacts stay ignored.
+
+This is a frozen qualification, not another tuning round or an authorization to
+adopt V147. Results and native usage will be recorded here after completion.
+
 ## Meaning-derived titles: Bootstrap-v130
 
 The user requested a concise title based solely on the explicit meaning.

@@ -1,0 +1,61 @@
+{
+  "schema_version": 2,
+  "local_schema_version": 4,
+  "sources": [
+    {
+      "path": "hierarchy-bootstrap-v147-heldout-nodes-v1.json"
+    }
+  ],
+  "review": {
+    "purpose": "Frozen Bootstrap-v147 qualification with independent review; no prompt tuning or adoption during this test.",
+    "seed": "bootstrap-v147-heldout-v1",
+    "prompt_sha256": "db6c29262f23cd4d6c0814554dce7cdf5289aa620259408dd5a1523e8a12af64",
+    "corpus_sha256": "8328bfb1e3ff392a69aa74cb3f8656a92bc7c76b66652d61211356262fb0a3ce",
+    "exclusion_manifest": "../../target/bootstrap-v147-heldout-v1/exclusions.json",
+    "exclusion_manifest_sha256": "67856366b6df2e7cec57690069d133c270009ee2a4971d80b8261f02341645da",
+    "exclusions": {
+      "prior_bootstrap_envelopes": 177,
+      "prior_notes": 53,
+      "prior_normalized_posts": 53,
+      "prior_authors": 46,
+      "literal_prompt_examples": 4,
+      "eligible_notes_after_prior_exclusions": 1415
+    },
+    "untouched_scope": "Selected posts, whitespace-normalized texts and authors are disjoint from every prepared Bootstrap experiment found in this retained task worktree before selection. Excludes all V134-V147 development and previous V139 qualification inputs plus the four literal V147 full-example posts. Does not claim exclusion from every historical project experiment, AS generation or model pretraining.",
+    "selection": "Use only original HR38 ASv6.100 subjects. Eligible notes have a root with a descendant. Rank eligible notes by SHA256(seed + :representative: + note_id), choose 60 distinct authors/texts; rank each eligible root by SHA256(seed + :root: + note_id + : + root_number). Then select five new notes/authors/texts in each of four predeclared challenge families: food, people, plans_preferences, relationships_actions. Family note ranking uses SHA256(seed + :challenge: + family + : + note_id); root ranking uses SHA256(seed + :challenge-root: + family + : + note_id + : + root_number). Families are processed in that listed order. Family predicates: exact casefold root Food/Cooking/Food preservation/Recipes/Drinks/Beverages; exact root People/Humans; any branch subject containing plan/preference/intention/wish; any descendant with >=10 whitespace words and either and or a possessive apostrophe. Each root is paired with its deepest descendant, breaking ties by longest subject then smallest numeric entry number. Native preparation supplies the complete original selected-root hierarchy, context and post without rewriting them.",
+    "sample": {
+      "seeded_posts": 60,
+      "challenge_posts": 20,
+      "total_posts": 80,
+      "distinct_authors": 80,
+      "entries_per_post": 2,
+      "inputs": 160,
+      "fresh_draws_per_input": 3,
+      "expected_outputs": 480
+    },
+    "title_criteria": [
+      "Use only concepts supported by the finalized meaning. The source post or hierarchy cannot supply concepts absent from meaning.",
+      "Give the central topic or stated goal a brief, natural browsing name. Leave actions serving one stated goal, locations, timing and explanatory detail in meaning when they are unnecessary to recognize that topic. A title that restates the detailed definition fails even when accurate.",
+      "Retain recognizable identity and correct roles/relationships. Broader names are allowed for this same topic; shortening must not misattribute a person or relationship.",
+      "No word-count cutoff, shortest-title optimization, punctuation blacklist or prohibition on real compound names. Coequal topics can need a compound title. Evaluate actual wording and meaning, not character counts."
+    ],
+    "meaning_criteria": [
+      "Assess the selected entry against its subject, context, full source post and supplied root hierarchy at its selected level of abstraction.",
+      "No illustrative instances or example members in meaning, whether sourced from the post or elsewhere. Defining kinds, alternatives and jointly required parts are not illustrations.",
+      "Preserve defining scope, supported relationships, negation and numeric boundaries. Qualifications such as living or deceased are not examples and do not fail merely for being qualifications.",
+      "Do not accept unsupported factual specificity or silently resolve genuinely ambiguous source identity. Abstention can be appropriate when explicit meaning cannot be established; distinguish justified uncertainty from a clear omission or invention."
+    ],
+    "verdicts": {
+      "title": "accept/reject/uncertain with a concrete reason; N/A only for a justified null meaning/title pair",
+      "meaning": "accept/reject/uncertain with a concrete reason",
+      "overall": "reject if either dimension clearly fails or payload is invalid; uncertain if neither rejects and either is unresolved; otherwise accept. Native diagnostic errors are reported separately."
+    },
+    "independent_review": {
+      "assignment": "Reviewer A handles odd post-pair numbers; Reviewer B handles even post-pair numbers. Each independently assesses every assigned input across all three draws, without prior prompt revisions, prior scores, tuning discussion, exact desired titles or the other reviewer decisions. They may see the version ID in native metadata, so this is not full identity blinding. Reviewers record attributed per-case decisions through native review; comments identify reviewer and separate title/meaning verdicts. No historical labels are gold and no human gold has been supplied.",
+      "adjudication": "Preserve initial independent judgments. The main agent checks concrete failures and unresolved cases against source evidence; any adjudication appends history rather than overwriting it. Report disagreements and original reviewer totals separately."
+    },
+    "analysis": "Report native validity separately from semantic review; title and meaning verdicts separately; seeded and challenge cohorts separately; and per-post any-failure counts plus repeat consistency. Repeated draws and paired entries share a post and do not count as independent population samples. No post-hoc criterion changes, selective reruns or prompt revision. Report uncertainties and counterexamples; do not promote a subjective acceptance fraction into a population reliability estimate.",
+    "limits": "A single available corpus and one generation model/reasoning setting. Seeded sample is from eligible saved notes, not a production population probability sample. Challenge posts deliberately overrepresent risk cases. Independent reviewers are AI agents with no human calibration, potentially sharing model-family blind spots. This does not test end-to-end hierarchy construction or authorize adoption.",
+    "official_evaluation_guidance": "https://developers.openai.com/api/docs/guides/evaluation-best-practices"
+  }
+}
