@@ -123,6 +123,40 @@ this failure to the branch choice in this probe; it does not prove individual
 notes caused the merge, establish a general semantic boundary or imply six
 useful roots are impossible.
 
+## Visual comparison of two six-section cuts
+
+A manual alternative from the same saved tree separates the sports and
+war/politics children while combining the greetings and technology/news/art
+branches at their existing common ancestor. That ancestor also includes a
+54-group branch with Data, Analysis, Scientists, Life, Testing, Rankings and
+other topics. No canonical definition was generated or changed.
+
+| Choice | Sections | Distinct notes | Coverage | Change from A |
+|---|---:|---:|---:|---|
+| A: earlier variance cut | 6 | 1,603 | 80.15% | Baseline |
+| B: separate sports; combine the other branches | 6 | 1,633 | 81.65% | 30 gained, zero lost |
+
+A selects saved tree nodes `1516,1533,1544,1547,1551,1553`; B selects
+`1516,1533,1506,1543,1551,1554`. Node numbers refer only to the frozen
+779-group Ward tree. Group memberships remain disjoint within each cut;
+note memberships can overlap. A's 202-note sports/war branch becomes
+49-note sports and 159-note war/politics branches. Its 247-note greetings
+and 810-note technology/news/art branches become a single 1,037-note branch
+also containing the 54 additional groups. These per-branch counts must not be
+summed as distinct-note coverage.
+
+This illustrates an actual trade between available cuts, not a new automatic
+selection rule or a claim that B is semantically superior. Both meet the
+numerical requirements; whether the broader combined section is useful remains
+for review. The official HR38 HiGen hierarchy is untouched.
+
+Ignored review artifacts alongside `note-resampling-v1/`, in
+`competing-cuts-review-v1/`, contain the side-by-side PNG, collapsed-tree PNG,
+exact note/group memberships, input hashes and the single-comparison renderer.
+Image filenames are `hr38-competing-six-section-cuts-v1.png` and
+`hr38-competing-cut-branches-v1.png`. Actual set-union checks verify all counts,
+30 gained notes, zero lost notes and exactly six disjoint branches in both cuts.
+
 ## Reproduction and verification
 
 Reusable numerical CLI: `sse_multivector/cluster_resampling_probe.py`; tests:
