@@ -188,5 +188,7 @@ The experiment supports retaining a useful conservative option, while exposing
 a concentrated admission problem before adoption. It does not establish a
 uniform low wrong-placement rate, compare root-quality rates from a large
 human-labeled sample, or justify rejecting the entire approach because it
-misses useful notes. A focused test of optional-example effects is a possible
-next diagnostic; it has not been run or activated here.
+misses useful notes. The subsequent controlled
+[optional-example probe](hierarchy-meaning-example-probe-v1.md) isolates a large
+pooling effect, but its prefix conditions also lose useful controls. They are
+not activated; the original conservative candidate remains unchanged.

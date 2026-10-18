@@ -8273,3 +8273,21 @@ The candidate retains useful conservative value, while uniform low-error
 generalization is unproven. Ninety numerical tests and frozen-input, native
 vector-replay, scalar-score and all-301-threshold checks pass. No LLM calls,
 training, paid resources, hierarchy/prompt changes or UI update occurred.
+
+## Controlled optional-example pooling diagnosis
+
+The [three-view HR38 probe](hierarchy-meaning-example-probe-v1.md) keeps the
+People group and outsiders fixed. Selecting only the definition prefix raises
+median within-group cosine from 0.2839 to 0.9480 while examples remain in
+context; removing them from context raises it to 0.9505. Pooling optional example
+words therefore explains most of this group's weak agreement.
+
+Neither reference-only prefix condition establishes an admission improvement.
+With the same rule consistently recalculated, both admit zero of seven useful
+controls and zero of 11 reviewed wrong cases. Holding original thresholds fixed
+leaves two useful and nine wrong cases admitted. The score ordering of six
+actual human classes against those wrong activities also worsens. No cutoff
+is tuned, existing membership is preserved and the original conservative
+candidate remains unchanged. All 102 relevant tests and independent numerical
+checks pass. The proposed next check uses already-saved contextual-title scores
+on the same cases; it has not been run. No LLM calls or training occurred.
