@@ -112,8 +112,11 @@ This test establishes a concrete pooling effect and preserves the original
 conservative candidate. It does **not** qualify either prefix condition as an
 admission improvement. Before changing the boundary again, the most useful next
 check is whether the already-saved contextual-title vectors rank these actual
-people topics ahead of the same wrong activities. That comparison is proposed,
-not run here; it needs no new encoder or LLM calls.
+people topics ahead of the same wrong activities. The subsequent
+[saved-title comparison](hierarchy-hr38-title-meaning-score-v1.md) is now complete:
+ordering improves from 14/66 to 24/66, while the same Audience reactions entry
+still exceeds all six useful people topics in both views. No score combination,
+boundary or admission policy is introduced.
 
 ## Evidence and verification
 

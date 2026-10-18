@@ -8289,5 +8289,20 @@ leaves two useful and nine wrong cases admitted. The score ordering of six
 actual human classes against those wrong activities also worsens. No cutoff
 is tuned, existing membership is preserved and the original conservative
 candidate remains unchanged. All 102 relevant tests and independent numerical
-checks pass. The proposed next check uses already-saved contextual-title scores
-on the same cases; it has not been run. No LLM calls or training occurred.
+checks pass. The saved contextual-title comparison on the same cases is now
+reported below. No LLM calls or training occurred.
+
+## Saved contextual-title versus meaning score diagnosis
+
+The [fixed HR38 comparison](hierarchy-hr38-title-meaning-score-v1.md) uses the
+same People references, reviewed controls, kernel and group averaging. It makes
+no new encodings or admission changes. Six useful people topics outrank 11 wrong
+cases in 24/66 pairings with contextual-title vectors, versus 14/66 with meaning
+vectors. The cases overlap; these counts are not independent accuracy samples.
+
+One identical Audience reactions heading scores above all six useful topics
+in both views, so reweighting those two affected-group aggregate scores cannot
+reverse that contrast. This does not rule out information in other groups or
+individual references, and no combined method is fitted. All 29 input bindings
+remain unchanged, 95 native title rows match and all 182 original meaning/group
+scores replay exactly. A main-noun pooling diagnostic is proposed, not run.
