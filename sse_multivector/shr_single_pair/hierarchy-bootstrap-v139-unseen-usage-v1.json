@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "Bootstrap-v139-unseen": [
+      "../../target/bootstrap-v139-unseen-v1/draw1",
+      "../../target/bootstrap-v139-unseen-v1/draw2",
+      "../../target/bootstrap-v139-unseen-v1/draw3"
+    ]
+  }
+}

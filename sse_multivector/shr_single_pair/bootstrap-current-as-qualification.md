@@ -482,7 +482,120 @@ catalog cost is $1.2158252, not a subscription cash charge. Artifacts, baselines
 and attributed reviews remain under `target/bootstrap-scope-v139/` in the
 retained task worktree. This is a prompt experiment; constructors still pin
 V133 and no hierarchy is rebuilt. After repeated tuning on the same panel,
-the useful next qualification step is a frozen unseen panel before adoption.
+the frozen unseen test below provides the next qualification evidence.
+
+### Frozen unseen qualification of Bootstrap-v139
+
+The user authorized a frozen unseen-input test after V139's repeated development
+panel checks. The prompt, paired Consolidation-v27 rules, examples and constructor
+pins remain unchanged throughout this test. The
+[node references](hierarchy-bootstrap-v139-unseen-nodes-v1.json),
+[collection](hierarchy-bootstrap-v139-unseen-v1.json),
+[specification](hierarchy-bootstrap-v139-unseen-v1.spec.json) and
+[usage source](hierarchy-bootstrap-v139-unseen-usage-v1.json) freeze 48 inputs as
+24 root/specific pairs from 24 posts by 24 authors. All source notes identify
+ASv6.100. Selection precedes all V139 outputs for these inputs.
+
+The exclusion set is the 29 development posts, their 27 authors, normalized
+post duplicates and all four literal prompt-example posts. Remaining HR38
+notes number 1,693. A root is eligible when it has a descendant at depth at least
+two and with at least six whitespace-separated words. Familiar families are
+People (four new posts), Food, Artificial intelligence, Finance, Learning,
+Support, Requests and Photography (one each); scarcer families are selected first.
+Candidates rank by SHA256 with the fixed `bootstrap-v139-unseen-v1` seed. The
+thirteen other root labels are hash-ranked among labels with at least three
+eligible notes, excluding the seventeen previous panel labels. Each selected
+post is used once; its specific entry maximizes depth, then subject character
+length, then uses the smallest numeric entry number. The collection states the
+complete rule and frozen exclusions. New exact labels need not be new concepts.
+
+The other labels are Opportunities, Sleep, Users, Research, Politicians,
+Teaching, Films, Airlines, Payments, Humans, Government shutdowns, Prizes and
+Aircraft. Unseen means disjoint from V134–V139 development posts/authors and
+literal examples, not all historical experiments or the model's training data.
+This is a purposively stratified HR38 sample, not a population estimate.
+
+Before calls, the review criteria remain: omit illustrative examples and
+non-defining circumstances; preserve the selected identity, defining conditions,
+required alternatives/parts, instance details and uncertainty; make titles
+concise, natural and supported solely by the finalized meaning. Do not judge by
+a blacklist or numeric word cap. Record uncertainties separately from clear
+failures, and keep agent review separate from human approval. Three independent
+native batches use unchanged Sol 6.1 medium/subscription SSE settings, with no
+saved answer reuse.
+
+All three native preparations validate the complete original root trees and
+freeze isolated project/runner bindings. The prompt bytes and all runner
+settings match V139's development plan exactly. Each ready batch starts without
+waiting for other batch completion; the runner's shared queue controls active
+requests. All 144 responses are mechanically valid: 143 contain non-null
+meanings and one abstains with both meaning and title null. Native fresh agent
+review records:
+
+| Draw | Valid responses | Accept | Reject | Uncertain |
+|---|---:|---:|---:|---:|
+| 1 | 48 | 44 | 1 | 3 |
+| 2 | 48 | 42 | 2 | 4 |
+| 3 | 48 | 42 | 2 | 4 |
+| Total | 144 | 128 | 5 | 11 |
+
+**V139 does not meet the overall writing requirements on the unseen panel.**
+Three rejections repeat one non-defining expansion. For the broad People entry
+above the Lana Turner biography, every draw says:
+
+> People are human beings, living or deceased.
+
+The selected topic is unrestricted People. The lifespan in the post motivates
+a live/dead question in diagnostics, but its optional state qualification is
+unnecessary in the final definition: removing it leaves the identity and chosen
+membership unchanged. This is a redundant expansion, separate from an explicit
+list of named illustrative people. The other nine new People responses and all
+three Humans responses use direct definitions without post examples.
+
+Two rejections concern the title of the author's preference to learn, persevere
+and take steps toward a better future while opportunity is available. Draw 2:
+
+> Author's preference to learn, persevere, and act for a better future while opportunity is available
+
+Draw 3 similarly repeats the temporal qualification. These 15- and 14-word
+titles read as restatements of the selected entry, retaining a condition that
+can remain in meaning without being needed to recognize the topic. The review
+does not impose a numeric cutoff: longer names and compound topics are not
+automatically failures. No artificial compounding was identified as word-count
+gaming in this panel. The two title failures and three People failures occur
+on two unique inputs; repeated draws are not independent population cases.
+
+The eleven uncertainties remain distinct from these rejections. All three
+prospective-world outputs raise the unresolved meaning of on-chain digital
+immortality: one abstains, while two define enduring digital presence beyond
+biological life. The input does not establish the intended technical scope.
+Three payment-policy meanings restate the explicit Bitcoin/non-Bitcoin contrast,
+which may clarify defining alternatives or redundantly expand "all payment
+types." Two Users meanings may restrict users to account or identity holders.
+Three shutdown-odds meanings select a US federal identity from contextual
+clues rather than explicit wording. These are source-bound agent uncertainties,
+not silent accepts, invented user decisions or established factual errors.
+
+The broader paired controls retain the Copilot delegation/plan/execution stages
+and both apps/files, both named Melbourne dishes and the credited author, Lana
+Turner's stated profession/nationality/lifespan, both monetary contrast groups,
+both good-night/restful-sleep wishes, the report's posting destination and age,
+both prediction markets, the stated 10,000-satoshi prize, and the aircraft's
+landing/taxi/gate sequence. The image-provenance output does not invent image
+contents from the URL. This bounded review does not prove every semantic
+boundary correct. Neither old case judgments nor this fresh agent review are
+human-approved gold.
+
+Native accounting records 144 fresh outputs, 147 attempts including three
+warmups, zero failed/retry attempts or reuses, and complete observed usage.
+API-equivalent catalog cost is $0.98469, not a subscription cash charge.
+Exact native results, attributed reviews and accounting remain under
+`target/bootstrap-v139-unseen-v1/` in the retained task worktree. All 40 focused
+checks pass. V139, its synchronized companion and existing constructor pins are
+unchanged. This task does not retune the prompt on the unseen results. The useful
+next step is to simplify the writing instructions/examples around short topic
+names and omission of optional scope clarifications, then qualify a revision
+on another untouched panel before adoption.
 
 ## Meaning-derived titles: Bootstrap-v130
 

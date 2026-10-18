@@ -71,8 +71,16 @@ produces 153 valid fresh outputs. All twelve Half-and-half responses preserve
 the defining US milkfat interval. No clear example-list failures appear, but
 ten other semantic uncertainties remain. Native agent review records 143
 accepts, zero rejects and ten uncertainties. The original scope failure passes
-this bounded development test; broader qualification remains open. The useful
-next step is frozen unseen inputs before adoption. Constructor pins remain V133.
+this bounded development test. A subsequent
+[frozen unseen test](shr_single_pair/bootstrap-current-as-qualification.md#frozen-unseen-qualification-of-bootstrap-v139)
+uses 48 new inputs from 24 posts and authors, excluding the development posts
+and authors. Its 144 valid responses receive 128 agent accepts, five rejects
+and eleven uncertainties; one response abstains with null meaning/title. All
+three People definitions above one biography add the non-defining "living or
+deceased" qualification, and two titles repeat unnecessary temporal detail.
+V139 therefore remains experimental and unqualified for adoption. The prompt
+stays unchanged during this test; revise the writing examples/instructions
+before another unseen qualification. Constructor pins remain V133.
 
 The initial experimental pair uses
 [Bootstrap-v134](shr_single_pair/Hierarchy-bootstrap-v134.md) and

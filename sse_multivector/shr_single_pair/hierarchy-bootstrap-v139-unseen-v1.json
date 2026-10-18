@@ -1,0 +1,28 @@
+{
+  "schema_version": 2,
+  "local_schema_version": 4,
+  "sources": [
+    {
+      "path": "hierarchy-bootstrap-v139-unseen-nodes-v1.json"
+    }
+  ],
+  "review": {
+    "purpose": "Frozen unseen qualification of unchanged Bootstrap-v139. Three independent draws; prior agent judgments are not gold.",
+    "seed": "bootstrap-v139-unseen-v1",
+    "unseen_scope": "All selected posts and authors are disjoint from the V134-V139 development panel. Unseen refers to this development panel and the four literal prompt examples, not all historical project runs or model training.",
+    "development_source": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-bootstrap-no-examples-v1/target/bootstrap-scope-v139/draw1",
+    "selection": "Use ASv6.100 HR38 notes, excluding development note IDs, whitespace-normalized post duplicates, all development authors and literal prompt-example posts. Eligible roots have a descendant at depth >=2 with >=6 whitespace words. Familiar families: People (four notes), Food, Artificial intelligence, Finance, Learning, Support, Requests and Photography (one each); process by eligible-root count ascending then label. Rank note/root candidates by SHA256(seed + :note: + note_id + : + root_number), selecting an unused post. Rank other labels with >=3 eligible notes by SHA256(seed + :topic: + label), excluding all seventeen development-panel root labels; select the first thirteen with an unused note. For each root choose greatest descendant depth, then greatest subject character length, then smallest numeric entry number. Preserve root and specific descendant as adjacent cases.",
+    "review_criteria": "Assess complete meanings against selected subject, context, full post and hierarchy. Examples/optional circumstances fail; defining kinds, alternatives and joint parts are retained. Do not classify by a word blacklist. Check missing or added membership conditions and unsupported instance facts. Titles must be concise and natural, preserve recognizable topic identity, and use only finalized meaning; no numeric word limit. Keep clear rejects distinct from semantic uncertainties. Native validity and diagnostic errors remain separate from semantic judgments.",
+    "sampling_limits": "Purposively stratified sample of available HR38 notes; not a population reliability estimate. Other new root labels are new exact labels, not necessarily new semantic concepts.",
+    "exclusion_counts": {
+      "development_notes": 29,
+      "development_normalized_posts": 29,
+      "development_authors": 27,
+      "prompt_examples": 4,
+      "eligible_notes_after_exclusions": 1693,
+      "selected_posts": 24,
+      "selected_authors": 24
+    },
+    "prompt_sha256": "7c71a38f9a83a7a22674321d5d41ab06dea5476c78b49b571ae290d6fd464e84"
+  }
+}

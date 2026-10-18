@@ -1,0 +1,678 @@
+{
+  "schema_version": 4,
+  "corpus": "/mnt/external/algos-archive/oracle-mvp/hierarchy-hr38-v53-auto/hierarchy-hr38-v53-auto-2000-note-v1/subject-collection/subjects.json",
+  "nodes": [
+    {
+      "id": "unseen-pair-01-root",
+      "local": {
+        "note_id": "4b3a47b9bf6e250fd4d6426024c973f4eca67c28d95b802a97ed6429b5cf99ae",
+        "number": "4"
+      },
+      "review": {
+        "cohort": "new-context",
+        "pair": 1,
+        "root_subject": "Photography",
+        "level": "root",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-01-specific",
+      "local": {
+        "note_id": "4b3a47b9bf6e250fd4d6426024c973f4eca67c28d95b802a97ed6429b5cf99ae",
+        "number": "4.1.1"
+      },
+      "review": {
+        "cohort": "new-context",
+        "pair": 1,
+        "root_subject": "Photography",
+        "level": "specific",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-02-root",
+      "local": {
+        "note_id": "6c2e3671b4ee1eed208520138bf7156e1ff223b3c253471e8200bd0c3205d5d0",
+        "number": "3"
+      },
+      "review": {
+        "cohort": "new-context",
+        "pair": 2,
+        "root_subject": "Support",
+        "level": "root",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-02-specific",
+      "local": {
+        "note_id": "6c2e3671b4ee1eed208520138bf7156e1ff223b3c253471e8200bd0c3205d5d0",
+        "number": "3.1.1"
+      },
+      "review": {
+        "cohort": "new-context",
+        "pair": 2,
+        "root_subject": "Support",
+        "level": "specific",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-03-root",
+      "local": {
+        "note_id": "2670c6056c7f7944f1764f85460ce4a777e5b97fc35167cd80fee87698e6900d",
+        "number": "3"
+      },
+      "review": {
+        "cohort": "new-context",
+        "pair": 3,
+        "root_subject": "Finance",
+        "level": "root",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-03-specific",
+      "local": {
+        "note_id": "2670c6056c7f7944f1764f85460ce4a777e5b97fc35167cd80fee87698e6900d",
+        "number": "3.1.2.1"
+      },
+      "review": {
+        "cohort": "new-context",
+        "pair": 3,
+        "root_subject": "Finance",
+        "level": "specific",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-04-root",
+      "local": {
+        "note_id": "d82db2ba11bd76b0d1ed3dc29e609416706bb722498d216420bae985120fe41d",
+        "number": "3"
+      },
+      "review": {
+        "cohort": "new-context",
+        "pair": 4,
+        "root_subject": "Requests",
+        "level": "root",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-04-specific",
+      "local": {
+        "note_id": "d82db2ba11bd76b0d1ed3dc29e609416706bb722498d216420bae985120fe41d",
+        "number": "3.1.1"
+      },
+      "review": {
+        "cohort": "new-context",
+        "pair": 4,
+        "root_subject": "Requests",
+        "level": "specific",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-05-root",
+      "local": {
+        "note_id": "a3eb174a654e9f4b5188e4f8a1f35402c453140bff97232f3799f5746ed5b16d",
+        "number": "5"
+      },
+      "review": {
+        "cohort": "new-context",
+        "pair": 5,
+        "root_subject": "Learning",
+        "level": "root",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-05-specific",
+      "local": {
+        "note_id": "a3eb174a654e9f4b5188e4f8a1f35402c453140bff97232f3799f5746ed5b16d",
+        "number": "5.1.1"
+      },
+      "review": {
+        "cohort": "new-context",
+        "pair": 5,
+        "root_subject": "Learning",
+        "level": "specific",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-06-root",
+      "local": {
+        "note_id": "0b765b60a80e240cd75ae757263415bced2088709d3607ec1771ec36d8c0f630",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "new-context",
+        "pair": 6,
+        "root_subject": "Food",
+        "level": "root",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-06-specific",
+      "local": {
+        "note_id": "0b765b60a80e240cd75ae757263415bced2088709d3607ec1771ec36d8c0f630",
+        "number": "1.1.1.1.1.1"
+      },
+      "review": {
+        "cohort": "new-context",
+        "pair": 6,
+        "root_subject": "Food",
+        "level": "specific",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-07-root",
+      "local": {
+        "note_id": "dbede9004a128efababff5fdc3383138097d87752d31dfb674a5e187d1116346",
+        "number": "3"
+      },
+      "review": {
+        "cohort": "new-context",
+        "pair": 7,
+        "root_subject": "Artificial intelligence",
+        "level": "root",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-07-specific",
+      "local": {
+        "note_id": "dbede9004a128efababff5fdc3383138097d87752d31dfb674a5e187d1116346",
+        "number": "3.1.3.2.1.1"
+      },
+      "review": {
+        "cohort": "new-context",
+        "pair": 7,
+        "root_subject": "Artificial intelligence",
+        "level": "specific",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-08-root",
+      "local": {
+        "note_id": "6f6070996b15f22d246b43ca07e87163d3044803e54d7290ed2172a609f05a03",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "new-context",
+        "pair": 8,
+        "root_subject": "People",
+        "level": "root",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-08-specific",
+      "local": {
+        "note_id": "6f6070996b15f22d246b43ca07e87163d3044803e54d7290ed2172a609f05a03",
+        "number": "1.1.1.1"
+      },
+      "review": {
+        "cohort": "new-context",
+        "pair": 8,
+        "root_subject": "People",
+        "level": "specific",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-09-root",
+      "local": {
+        "note_id": "abf99e58a75777e788bf3c87b3a3e062c37a6a5c1861fe7f032a2c46a1fc3258",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "new-context",
+        "pair": 9,
+        "root_subject": "People",
+        "level": "root",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-09-specific",
+      "local": {
+        "note_id": "abf99e58a75777e788bf3c87b3a3e062c37a6a5c1861fe7f032a2c46a1fc3258",
+        "number": "1.1.2"
+      },
+      "review": {
+        "cohort": "new-context",
+        "pair": 9,
+        "root_subject": "People",
+        "level": "specific",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-10-root",
+      "local": {
+        "note_id": "cc1e5e5b27d8c2af99865d2202102f978d1be29fbdb7a0a878d44f9b240faee5",
+        "number": "4"
+      },
+      "review": {
+        "cohort": "new-context",
+        "pair": 10,
+        "root_subject": "People",
+        "level": "root",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-10-specific",
+      "local": {
+        "note_id": "cc1e5e5b27d8c2af99865d2202102f978d1be29fbdb7a0a878d44f9b240faee5",
+        "number": "4.1.1"
+      },
+      "review": {
+        "cohort": "new-context",
+        "pair": 10,
+        "root_subject": "People",
+        "level": "specific",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-11-root",
+      "local": {
+        "note_id": "f33863bdc1e8fab61a19b84d7df2769181e516e82f27e8aae2fbdde44fac0749",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "new-context",
+        "pair": 11,
+        "root_subject": "People",
+        "level": "root",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-11-specific",
+      "local": {
+        "note_id": "f33863bdc1e8fab61a19b84d7df2769181e516e82f27e8aae2fbdde44fac0749",
+        "number": "1.1.1.1"
+      },
+      "review": {
+        "cohort": "new-context",
+        "pair": 11,
+        "root_subject": "People",
+        "level": "specific",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-12-root",
+      "local": {
+        "note_id": "c83c1882f38e60748fa8475da1cab36563a5f89f2c442680502a006b904c0774",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "new-root-label",
+        "pair": 12,
+        "root_subject": "Opportunities",
+        "level": "root",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-12-specific",
+      "local": {
+        "note_id": "c83c1882f38e60748fa8475da1cab36563a5f89f2c442680502a006b904c0774",
+        "number": "1.2.1.1"
+      },
+      "review": {
+        "cohort": "new-root-label",
+        "pair": 12,
+        "root_subject": "Opportunities",
+        "level": "specific",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-13-root",
+      "local": {
+        "note_id": "f073ec951f4fd1635ff24fbe55e060c01e8021e794e0181f23158e590e9f393d",
+        "number": "5"
+      },
+      "review": {
+        "cohort": "new-root-label",
+        "pair": 13,
+        "root_subject": "Sleep",
+        "level": "root",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-13-specific",
+      "local": {
+        "note_id": "f073ec951f4fd1635ff24fbe55e060c01e8021e794e0181f23158e590e9f393d",
+        "number": "5.1.1"
+      },
+      "review": {
+        "cohort": "new-root-label",
+        "pair": 13,
+        "root_subject": "Sleep",
+        "level": "specific",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-14-root",
+      "local": {
+        "note_id": "3773d769ca7832366eeead2f1955e9ee3a10241adaef7602c743f9950543e557",
+        "number": "2"
+      },
+      "review": {
+        "cohort": "new-root-label",
+        "pair": 14,
+        "root_subject": "Users",
+        "level": "root",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-14-specific",
+      "local": {
+        "note_id": "3773d769ca7832366eeead2f1955e9ee3a10241adaef7602c743f9950543e557",
+        "number": "2.1.1.1"
+      },
+      "review": {
+        "cohort": "new-root-label",
+        "pair": 14,
+        "root_subject": "Users",
+        "level": "specific",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-15-root",
+      "local": {
+        "note_id": "3c93b4ced1b24c27f867d4956ba1915db87d26d2cceb4c43c3e54ed1b405217a",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "new-root-label",
+        "pair": 15,
+        "root_subject": "Research",
+        "level": "root",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-15-specific",
+      "local": {
+        "note_id": "3c93b4ced1b24c27f867d4956ba1915db87d26d2cceb4c43c3e54ed1b405217a",
+        "number": "1.1.1.1"
+      },
+      "review": {
+        "cohort": "new-root-label",
+        "pair": 15,
+        "root_subject": "Research",
+        "level": "specific",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-16-root",
+      "local": {
+        "note_id": "fe121dbf63fe7b654d672ba31ee6e36d3cae704ed56152546e06afb33bbed6b4",
+        "number": "2"
+      },
+      "review": {
+        "cohort": "new-root-label",
+        "pair": 16,
+        "root_subject": "Politicians",
+        "level": "root",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-16-specific",
+      "local": {
+        "note_id": "fe121dbf63fe7b654d672ba31ee6e36d3cae704ed56152546e06afb33bbed6b4",
+        "number": "2.1.1"
+      },
+      "review": {
+        "cohort": "new-root-label",
+        "pair": 16,
+        "root_subject": "Politicians",
+        "level": "specific",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-17-root",
+      "local": {
+        "note_id": "560bed159209b978cb8a39a8b35b8f750fabe531b1d2f3ac078e94585d09a822",
+        "number": "3"
+      },
+      "review": {
+        "cohort": "new-root-label",
+        "pair": 17,
+        "root_subject": "Teaching",
+        "level": "root",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-17-specific",
+      "local": {
+        "note_id": "560bed159209b978cb8a39a8b35b8f750fabe531b1d2f3ac078e94585d09a822",
+        "number": "3.1.1"
+      },
+      "review": {
+        "cohort": "new-root-label",
+        "pair": 17,
+        "root_subject": "Teaching",
+        "level": "specific",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-18-root",
+      "local": {
+        "note_id": "2e0342ea908bfb039b2fbf100937a560634cca37942644493af6ee1fe1ab92fd",
+        "number": "2"
+      },
+      "review": {
+        "cohort": "new-root-label",
+        "pair": 18,
+        "root_subject": "Films",
+        "level": "root",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-18-specific",
+      "local": {
+        "note_id": "2e0342ea908bfb039b2fbf100937a560634cca37942644493af6ee1fe1ab92fd",
+        "number": "2.1.1.1.1"
+      },
+      "review": {
+        "cohort": "new-root-label",
+        "pair": 18,
+        "root_subject": "Films",
+        "level": "specific",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-19-root",
+      "local": {
+        "note_id": "61deb15edd1c8b89b9ac39eb4cca09325d49831246fb9350fba1799c7a561a3b",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "new-root-label",
+        "pair": 19,
+        "root_subject": "Airlines",
+        "level": "root",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-19-specific",
+      "local": {
+        "note_id": "61deb15edd1c8b89b9ac39eb4cca09325d49831246fb9350fba1799c7a561a3b",
+        "number": "1.1.1.1"
+      },
+      "review": {
+        "cohort": "new-root-label",
+        "pair": 19,
+        "root_subject": "Airlines",
+        "level": "specific",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-20-root",
+      "local": {
+        "note_id": "9314c67a1acd4a66efd79536b4264b53f40ec04a8b0595615757e19e924b017c",
+        "number": "6"
+      },
+      "review": {
+        "cohort": "new-root-label",
+        "pair": 20,
+        "root_subject": "Payments",
+        "level": "root",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-20-specific",
+      "local": {
+        "note_id": "9314c67a1acd4a66efd79536b4264b53f40ec04a8b0595615757e19e924b017c",
+        "number": "6.1.1"
+      },
+      "review": {
+        "cohort": "new-root-label",
+        "pair": 20,
+        "root_subject": "Payments",
+        "level": "specific",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-21-root",
+      "local": {
+        "note_id": "92d052741b356dcae74ae2c8f0501de644e12341dc8a228a14f7e376cfdd0e9e",
+        "number": "2"
+      },
+      "review": {
+        "cohort": "new-root-label",
+        "pair": 21,
+        "root_subject": "Humans",
+        "level": "root",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-21-specific",
+      "local": {
+        "note_id": "92d052741b356dcae74ae2c8f0501de644e12341dc8a228a14f7e376cfdd0e9e",
+        "number": "2.2.1.1"
+      },
+      "review": {
+        "cohort": "new-root-label",
+        "pair": 21,
+        "root_subject": "Humans",
+        "level": "specific",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-22-root",
+      "local": {
+        "note_id": "b338d41ffe3361bb0c2e0b2540efa550560e5c4ef1e3ef953f7644fc3b76c450",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "new-root-label",
+        "pair": 22,
+        "root_subject": "Government shutdowns",
+        "level": "root",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-22-specific",
+      "local": {
+        "note_id": "b338d41ffe3361bb0c2e0b2540efa550560e5c4ef1e3ef953f7644fc3b76c450",
+        "number": "1.1.1.1"
+      },
+      "review": {
+        "cohort": "new-root-label",
+        "pair": 22,
+        "root_subject": "Government shutdowns",
+        "level": "specific",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-23-root",
+      "local": {
+        "note_id": "d8ad9c35b9a883b2357abf2a78a98e021dc2060ed02591ddf1ce543c2e87b705",
+        "number": "4"
+      },
+      "review": {
+        "cohort": "new-root-label",
+        "pair": 23,
+        "root_subject": "Prizes",
+        "level": "root",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-23-specific",
+      "local": {
+        "note_id": "d8ad9c35b9a883b2357abf2a78a98e021dc2060ed02591ddf1ce543c2e87b705",
+        "number": "4.1.2"
+      },
+      "review": {
+        "cohort": "new-root-label",
+        "pair": 23,
+        "root_subject": "Prizes",
+        "level": "specific",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-24-root",
+      "local": {
+        "note_id": "1dbb178d9391684ab77f4bd5585bec1df9176bbbf850dd4e0ef230f19ab5b7de",
+        "number": "3"
+      },
+      "review": {
+        "cohort": "new-root-label",
+        "pair": 24,
+        "root_subject": "Aircraft",
+        "level": "root",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    },
+    {
+      "id": "unseen-pair-24-specific",
+      "local": {
+        "note_id": "1dbb178d9391684ab77f4bd5585bec1df9176bbbf850dd4e0ef230f19ab5b7de",
+        "number": "3.1.1.1.1"
+      },
+      "review": {
+        "cohort": "new-root-label",
+        "pair": 24,
+        "root_subject": "Aircraft",
+        "level": "specific",
+        "criterion": "Define only the selected identity and defining conditions; omit illustrations and optional circumstances; preserve defining alternatives, jointly required parts, uncertainty and natural meaning-derived title."
+      }
+    }
+  ]
+}
