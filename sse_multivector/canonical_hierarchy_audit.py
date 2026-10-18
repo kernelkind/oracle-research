@@ -25,7 +25,7 @@ def audit_trial(directory, output, max_choices=6, work_budget=200000):
     state_path = directory / 'state.json'
     state_bytes = state_path.read_bytes()
     state = json.loads(state_bytes)
-    canonical_trial._check(state)
+    canonical_trial._check(state, verify_current_code=False)
     used = 0
 
     def charge(amount=1):
@@ -206,7 +206,7 @@ def audit_trial(directory, output, max_choices=6, work_budget=200000):
         'semantic_assessment': {'graded': False,
             'qualification': 'This structural audit does not establish semantic validity or completion.'},
         'violations': violations, 'choice_warnings': choice_warnings}
-    canonical_trial._check(state)
+    canonical_trial._check(state, verify_current_code=False)
     if state_path.read_bytes() != state_bytes or corpus_path.read_bytes() != corpus_bytes:
         raise ValueError('canonical audit source changed while auditing')
     output.parent.mkdir(parents=True, exist_ok=True)

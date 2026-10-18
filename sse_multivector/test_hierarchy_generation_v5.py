@@ -873,6 +873,27 @@ clusters=[''')
         self.assertEqual(self.native.calls(), before)
         self.assertFalse((self.native.root/'empty-v53').exists())
 
+    def test_read_only_audit_preserves_archived_source_bindings_and_rejects_tampering(self):
+        state = self.construct(self.prepare(count=9))
+        bound = next(p for p in state['sources'] if p.endswith('/hierarchy_generation.py'))
+        archived = self.native.root/'archived-source/hierarchy_generation.py'
+        archived.parent.mkdir()
+        archived.write_bytes(Path(bound).read_bytes())
+        state['sources'][str(archived)] = state['sources'].pop(bound)
+        path = self.native.root/'v5/state.json'
+        path.write_text(json.dumps(state))
+        original = path.read_bytes()
+        self.native.cli('audit-canonical-trial', 'v5', '--output', 'archived-audit.json')
+        audited = json.loads((self.native.root/'archived-audit.json').read_text())
+        self.assertEqual(audited['note_coverage']['selected_count'], 9)
+        self.assertIn(str(archived), audited['sources'])
+        self.assertEqual(path.read_bytes(), original)
+        archived.write_bytes(archived.read_bytes()+b'\n# changed after generation\n')
+        failed = self.native.cli('audit-canonical-trial', 'v5', '--output', 'tampered-audit.json', ok=False)
+        self.assertIn('changed', failed.stderr)
+        self.assertFalse((self.native.root/'tampered-audit.json').exists())
+        self.assertEqual(path.read_bytes(), original)
+
     def test_v53_still_rejects_nonempty_subject_trees_with_missing_parents(self):
         spec = self.prepare(count=9)
         cfg = json.loads(spec.read_text())
