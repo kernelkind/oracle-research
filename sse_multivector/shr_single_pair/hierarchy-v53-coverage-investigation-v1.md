@@ -6202,3 +6202,133 @@ calculations, vector bindings and verification remain in the ignored artifact
 directory. Maintained findings land on local `main`; retain the worktree for
 these frozen vector and evidence paths. No admission policy, hierarchy, prompt
 or UI changes are made.
+
+## Existing combined query score on the expanded Arts cases
+
+The user approved testing the existing title-and-meaning calculation on the
+same expanded Arts cases. Keep all 25 fusion groups, 162 accepted references,
+1,449 independent query entries, saved vectors, meanings and provisional
+assessments fixed. No outsider enters a graph and no graph is recomputed.
+This tests query scoring only, not a new admission or ending rule.
+
+Evidence: `target/food-halves-v1/arts-combined-query-v1/` in the retained task
+worktree. Plan SHA256
+`b64ffffa425fda14266733f331c66e920888f9b71af14eb2d3ae778258e69fe1`
+was frozen before the combined scores. Reuse the preceding exact title/meaning
+query-to-reference kernel matrices rather than re-encode or recompute them.
+
+### Existing calculation and matched controls
+
+Run the unchanged `fixed_reference_query.query_support` calculation:
+
+```
+sqrt(sum(C_ij * t_i * m_j) / sum(C_ij))
+```
+
+Here `t_i` and `m_j` are the query's title and meaning kernel affinities to
+accepted entries `i` and `j`; `C_ij` is their saved within-group fusion weight.
+Exclude self-connections and every connection between entries from the same
+source note. The frozen query notes are disjoint from reference notes; that
+condition is explicitly verified rather than assumed for other populations.
+All 25 groups have surviving cross-note edge weight, so all methods share the
+same groups with no fabricated unavailable scores.
+
+Matched controls substitute meaning twice or title twice in that same equation.
+Retain both original unweighted means to distinguish graph reweighting from
+combining the two views. The previously tested simpler combination is also a
+control: `sqrt(mean(t_i * m_i))`, using the same reference entry for both views
+without connection weights. This removes only the extra graph use in query
+scoring; it does not remove fusion from the original group construction.
+
+No mixing coefficient, cutoff, labels, threshold vector or prospective
+admissions are fitted. Conditional separability and largest-group score
+orderings use the same provisional cohorts. Unresolved cases remain unlabeled.
+
+### Results: small aggregate gain, no targeted breakthrough
+
+Conditional capacity is the maximum plausible entries recoverable by arbitrary
+separate group cutoffs while rejecting all supplied mismatches. It is a
+hindsight score bound, not actual admissions. Pair counts are dependent raw
+ranking comparisons, not accuracy. The expanded panel has 63 provisional fits
+and 30 provisional mismatches.
+
+| Calculation | Targeted pairs correct /8 | Expanded conditional capacity /63 | Useful above unwanted /1890 |
+|---|---:|---:|---:|
+| Original mean meaning | 0 | 57 | 1599 |
+| Original mean title | 3 | 48 | 1426 |
+| Meaning alone through connections | 1 | 56 | 1604 |
+| Title alone through connections | 3 | 47 | 1426 |
+| Title + meaning through connections | 3 | 58 | 1623 |
+| Title + meaning at the same reference, no connections | 3 | 58 | 1622 |
+
+Combining the views through connections fixes Pianos/Science,
+Voice studios/GraphQL and Refusal to discuss life/Indifference. Meaning alone
+through connections already fixes Pianos/Science, so that particular gain
+cannot be attributed solely to adding titles. Both combined versions leave
+the four Gaming/Video gaming versus Vector arithmetic/Configuration spaces
+inversions and Questions/Indifference wrong.
+
+In Audio technology, the main combined score is `0.019761` for Gaming,
+`0.018767` for Video gaming, `0.031174` for Vector arithmetic and `0.031887`
+for configuration spaces. Its Noise/silence score is `0.028678` for Questions
+versus `0.044817` for Indifference. The remaining incorrect orderings are
+therefore not missing-cutoff artifacts.
+
+The connection-based combination fixes 113 expanded largest-score orderings
+and worsens 94 against the matched meaning-through-connections control. Against
+the original unweighted mean meaning it fixes 113 and worsens 89. Against
+the simpler combination it fixes **nine and worsens eight**. The latter two
+methods have the same conditional capacity and the same targeted fixes, so
+there is little evidence on this panel that extra query graph weighting earns
+its complexity. This is a bounded observation, not a proof that connections
+cannot help another root or a decision to remove the reference fusion stage.
+
+These focal scores are proxies for admission into the broader root, not
+containment judgments about the particular reference group. A plausible Gaming
+entry does not have to be a kind of Audio technology; there is no dedicated
+gaming group in the fixed accepted references. Its current single passing
+Audio route explains why the local inversion matters, but does not justify
+forcing that route to succeed. The full any-group diagnostic remains necessary.
+
+Both combined methods leave exactly five entries blocked under the expanded
+all-controls condition: Avatar films L03389, The Lord of the Rings trilogy
+L03393, JAIA Drake L04019, Questions L04522 and Academy Awards L06413.
+Relative to original mean meaning, they recover conditional routes for Cartoons
+L05979 and Refusal to discuss life L02608 but newly block Academy Awards.
+The net gain of one is not a uniform recovery improvement. None is relabeled.
+
+### The overlapping panels do not show a consistent gain
+
+| Calculation | Old-control capacity /24 | New-audit capacity /39 | Old-control orders /480 | New-audit orders /390 |
+|---|---:|---:|---:|---:|
+| Original mean meaning | 24 | 37 | 434 | 272 |
+| Meaning alone through connections | 24 | 36 | 439 | 271 |
+| Title + meaning through connections | 23 | 37 | 434 | 271 |
+| Simpler combination without connections | 23 | 37 | 432 | 276 |
+
+The expanded ordering gain includes cross-panel comparisons; it is not a
+consistent improvement within both panels. The panels overlap and are
+development evidence, not independent test populations. This result does not
+justify activation or a claim to have solved automatic admission.
+
+### Verification and disposition
+
+All six existing `test_fixed_reference_query` production-path tests pass.
+No production function, prompt, hierarchy generator or test seam is changed.
+All 72,450 original mean-title/meaning group scores replay exactly, along with
+the preceding capacity and pair summaries. Independent dense arithmetic checks
+108,675 graph-score cells, maximum error `5.55e-17`; scalar weighted-pair sums
+check 9,300 labeled scores and 211,482 edge terms, maximum error `2.78e-17`.
+View swaps, reversed/duplicated query order and isolated queries preserve
+results. Accepted graph bytes and protected sources, labels and meanings stay
+unchanged. All verification assertions pass.
+
+Evaluation takes 2.07 seconds, reusing the fixed query/reference matrices and
+small within-group accepted graphs. No outsider/outside matrix is built.
+There are zero LLM calls, new encodings, training, clustering, hierarchy/UI
+changes or admission-policy changes. Retain the full group/root scores,
+reference edges, eight focal comparisons, per-group capacity calculations,
+changed pair identities and compact `review.md` under the ignored artifact
+directory. Maintained findings land on local `main`; preserve the worktree
+for those frozen source and evidence paths. Both combined scores remain
+experimental and unadopted.
