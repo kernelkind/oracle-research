@@ -17,6 +17,12 @@ useful omitted art entries but also unrelated proposals. Food's score-capacity
 result is not approval of its admission boundary or a claim about all roots.
 Neither root has an adopted admission method.
 
+The latest automatic ablation removes only lower-tail trimming. It does not
+establish improvement: neighbor-context Food recovers more provisional fits
+with more mismatches, Arts is unchanged, and full-context admissions become
+far too broad. The default trimming remains enabled; the optional experiment
+and its measured outcomes are recorded in the final section.
+
 Prioritize recovering omitted notes that already fit the existing roots, using
 full explicit meanings. Do not treat another root's membership as a negative
 semantic label, or treat a shared density cluster as containment. The user has
@@ -5505,8 +5511,9 @@ other available groups, so sensitivity and label authority remain material.
 
 This isolates a concrete next test: remove the lower-tail exclusion and compare
 the automatic calculation on Food and Arts with everything else held fixed.
-That test has **not** run here. Finding a feasible range with supplied labels
-does not tell the algorithm how to identify it from references alone.
+The following section records that subsequently authorized automatic test.
+Finding a feasible range with supplied labels does not tell the algorithm how
+to identify it from references alone.
 
 The audit covers 128 cohort/constraint/context combinations, with 62,400
 independent scalar candidate checks and 1,852 simultaneous safe-choice witness
@@ -5515,3 +5522,105 @@ monotonic recoverability checks. Saved source and graph hashes remain unchanged;
 no unknown-query predictions or chosen cutoff vectors are produced. Calculation
 takes about five seconds locally. No model calls, new vectors, hierarchy/UI
 changes or admission-policy adoption.
+
+## Removing lower-tail trimming: paired automatic test
+
+The user authorized removing only the lower-10% exclusion in an automatic test
+on Food and Arts. This section reports actual automatic proposals, **not** the
+preceding hindsight capacity bounds. The ablation does not qualify a new rule
+and is not adopted as the default.
+
+Evidence: `target/food-halves-v1/lower-tail-ablation-v1/` in the retained
+worktree. Plan SHA256
+`00b7bd389012378b088d303f5be94aac942b1f95cc5de510504deadfa4bddcca`
+was frozen after the production-path tests passed and before new admission
+outcomes. It binds historical source bytes from `d54a966b`, current experimental
+source/tests, original reference models/predictions, vectors, groups and graphs.
+
+Minimal reusable support adds `trim_lower=True` to `derive_boundary` and
+`qualify_boundary` in `fixed_reference_bend.py`. Default results retain their
+original structure and numerical values. The explicit experimental
+`trim_lower=False` keeps the entire lower tail and records
+`lower_trim_levels=0`; it does not alter the member anchor or upper endpoint.
+Forward the option through the base and every whole-note fold. No generator,
+prompt, runner or existing hierarchy configuration is changed.
+
+Keep the same groups (15 Food, 25 Arts), source-note exclusions, meaning-kernel
+score, 1,449 queries, source-note-weighted reference curves, member anchor,
+`y-x` bend orientation, strongest-bend selection and adjacent-score midpoint.
+Paired contexts remain the full accepted pool of the same root versus direct
+fixed fusion neighbors. Removing the lower tail exclusion changes the fitted
+lower endpoint, so normalized coordinates and the chosen bend can change;
+that is a consequence of the single intervention, not extra parameter tuning.
+
+Primary ungated results use neighbor context, as in the latest prior test.
+Retain the previously frozen provisional labels and human decisions separately.
+
+| Root / context, ungated | Plausible before → after | Rejection controls before → after | Proposed omitted notes before → after |
+|---|---:|---:|---:|
+| Food / neighbors | 21/30 → 24/30 | 3/51 → 5/51 | 43 → 47 |
+| Arts / neighbors | 17/24 → 17/24 | 3/20 → 3/20 | 174 → 174 |
+| Food / full accepted root | 27/30 → 29/30 | 2/51 → 20/51 | 34 → 144 |
+| Arts / full accepted root | 17/24 → 24/24 | 3/20 → 14/20 | 171 → 279 |
+
+These counts are proposals, not added notes, independent test accuracy or new
+human gold. There are 281 eligible entirely omitted notes in this fixed query
+population. Arts' full-context proposal of 279 is an especially broad outcome,
+not a coverage success established by its 24/24 plausible selections.
+
+The Food neighbor variant gains Steaks L00479, Seed oils L00627 and Charity
+dinners L02693 without losing a provisional fit. It also newly selects Economy
+L03778 and the agent-suspect Breath L04399. Its three explicit human entry
+rejections remain excluded, and all four prior human note decisions still
+match. The preserved Food group's Gas route is not repaired.
+
+The mechanism is concrete in the neighbor models:
+
+- General Food `fused-006` changes from no positive bend to boundary `0.031604`;
+  it gains a usable ungated route but still fails its whole-note self-check.
+- Eating `fused-010` changes from insufficient levels to boundary `0.046225`,
+  allowing Breath's score `0.055450`. It also still fails the hard self-check.
+- Food preservation `fused-008` stays at `0.022297`, so Gas facilities remains
+  admitted. Its self-check continues to pass.
+- Arts' Artists `fused-010` gains enough fitted levels but has no positive bend,
+  so it still supplies no automatic boundary. Audio technology `fused-021`
+  stays at `0.019374`, including its Gas/Earthquake routes. The primary Arts
+  panel therefore does not improve.
+
+Full-context results expose the difference between enabling feasible ranges
+and actually choosing useful boundaries. Arts' Artists `fused-010` boundary
+falls **`0.033753 → 0.005758`** and passes its self-check. This recovers the
+previously missed films, creator, exhibition and cartoons while also admitting
+many unrelated cases. Its all-group result includes Milk, Bread, Steaks, Water,
+Savings schemes and Gas facilities among the provisional mismatches. The
+automatic strongest-bend choice does not isolate the feasible separating
+intervals established by the preceding mathematical audit.
+
+Food's full-context result also newly admits the previously human-rejected
+Easter broadcast note through Support L02231. This is a violation of that
+note-level control, not a new independent heading judgment. The three specific
+human entry rejections Nausea, Blood and JAIA Drake remain excluded. Traditional
+activities becomes available on the already accepted pisanki note, but the
+user marked that heading low priority and its addition does not offset the
+unwanted broadcast admission.
+
+The hard self-check remains a secondary diagnostic, not a remedy to adopt:
+Food-neighbor gated results stay 17/30 and 1/51; Food-full gated results decline
+14/30 to 12/30 while staying 1/51. Arts-neighbor gated results stay 17/24 and
+3/20; Arts-full gated results become 24/24 and 14/20, the same overbroad result
+as ungated. Retaining accepted members does not establish rejection quality.
+
+Four new tests first fail on the unsupported `trim_lower` keyword, then pass
+through production functions. They verify restored lower levels without moving
+the member anchor, propagation through all whole-note folds, no fabricated
+bend or last-point indexing on a straight curve, and explicit boolean options.
+All 51 combined boundary/query/fusion/HDBSCAN tests pass.
+
+Default replay is exact for 80 base models, 430 whole-note folds and 11,592
+root-level predictions. Across 510 paired bases/folds, raw score curves,
+context membership, source exclusions, anchors and upper fit starts are
+unchanged. Independent scalar replay checks all 1,020 base/fold boundaries with
+zero error. Query reorder/duplicate/isolated checks and source/graph hashes
+pass. Numerical evaluation takes 5.6 seconds; no LLM calls, new vectors,
+training or hierarchy/UI changes. Source, tests and maintained findings land
+on local `main`; preserve the worktree for frozen source/evidence paths.

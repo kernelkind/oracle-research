@@ -118,6 +118,56 @@ class FixedReferenceBendTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             derive_boundary(a, notes, [0, 1], anchor='unknown')
 
+    def test_lower_tail_can_be_retained_without_moving_member_anchor(self):
+        a = np.full((6, 6), .1)
+        np.fill_diagonal(a, 1)
+        a[0, 1] = a[1, 0] = .9
+        for j, score in enumerate([.8, .79, .2, .19], 2):
+            a[j, :2] = a[:2, j] = score
+        notes = list('abcdef')
+        trimmed = derive_boundary(a, notes, [0, 1], anchor='members', orientation='y_minus_x')
+        retained = derive_boundary(a, notes, [0, 1], anchor='members',
+                                   orientation='y_minus_x', trim_lower=False)
+        self.assertEqual(trimmed['status'], 'no_positive_bend')
+        self.assertEqual(retained['status'], 'boundary')
+        self.assertAlmostEqual(retained['threshold'], .195)
+        self.assertEqual(retained['anchor_score'], trimmed['anchor_score'])
+        self.assertEqual(retained['fit_start_level'], trimmed['fit_start_level'])
+        self.assertEqual(retained['lower_trim_levels'], 0)
+        self.assertEqual(retained['curve'][-1]['x'], 1)
+
+    def test_whole_note_recovery_uses_untrimmed_tail_in_every_fold(self):
+        a = np.full((9, 9), .1)
+        a[:3, :3] = .96
+        np.fill_diagonal(a, 1)
+        for j, score in enumerate([.95, .94, .93, .3, .28, .27], 3):
+            a[j, :3] = a[:3, j] = score
+        r = qualify_boundary(a, list('abcdefghi'), [0, 1, 2],
+                             anchor='members', trim_lower=False)
+        self.assertEqual(len(r['folds']), 3)
+        for base in [r['base']] + [fold['boundary'] for fold in r['folds']]:
+            self.assertEqual(base['lower_trim_levels'], 0)
+            self.assertEqual(base['curve'][-1]['x'], 1)
+        for fold in r['folds']:
+            excluded = list('abcdefghi').index(fold['excluded_note'])
+            self.assertNotIn(excluded, fold['boundary']['context_indices'])
+            self.assertNotIn(excluded, fold['boundary']['group_indices'])
+
+    def test_retaining_lower_endpoint_does_not_fabricate_a_straight_curve_bend(self):
+        a = np.full((8, 8), .1)
+        np.fill_diagonal(a, 1)
+        a[0, 1:] = a[1:, 0] = np.linspace(.9, .3, 7)
+        r = derive_boundary(a, list('abcdefgh'), [0], trim_lower=False)
+        self.assertIsNone(r['threshold'])
+        self.assertEqual(r['status'], 'no_positive_bend')
+        self.assertEqual(r['curve'][-1]['x'], 1)
+
+    def test_lower_tail_switch_requires_an_explicit_boolean(self):
+        a, notes = reference()
+        for option in [None, 0, 1, .1, 'false']:
+            with self.assertRaises(ValueError):
+                derive_boundary(a, notes, [0, 1], trim_lower=option)
+
     def test_fusion_context_uses_members_and_direct_neighbors_only(self):
         a, notes = reference()
         c = np.eye(9)
