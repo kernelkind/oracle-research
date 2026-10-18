@@ -2139,7 +2139,7 @@ charge is zero. Known tokens: 5,962,947 uncached input; 69,536,896 cached input;
 
 ## HR39 — automatically sampled 5,000-note HiGen V5.3
 
-**ASv6.100 complete; Bootstrap-v133 running.** Automatic seed `hr39-corpus-v1`
+**ASv6.100 complete; Bootstrap-v133 running on NVMe.** Automatic seed `hr39-corpus-v1`
 selected 5,000 original posts from the same frozen English-eligible pool as
 HR36–HR38: 2,000 authors, no manual reviews or topic/author quotas.
 Overlap: HR36 2, HR37 1, HR38 2 notes.
@@ -2169,3 +2169,10 @@ The original failed experiments and receipts are preserved; `AS-final` reuses
 The native collection verifies all 5,000 final input IDs in order.
 26,243 original L1s enter Bootstrap; 369 notes have valid empty
 AS subject lists and remain in the input inventory.
+
+External archive writes stalled while another archive operation was active. The
+native coordinator resumed in `/home/dev/src/notedeck_hierarchy_runs/hr39-v53-auto-5000-note-v1`
+with the same frozen source, final inputs, prompts and model settings, reusing
+4,916 verified Bootstrap answers. The original batch drained before its
+coordinator was terminated; its 4,918 saved answers and AS receipts remain at
+the original external path for final native deduplicated accounting.
