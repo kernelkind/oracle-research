@@ -105,6 +105,22 @@ class TitleSelectionProbeTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,'source changed'):
                 probe.collect(out)
 
+    def test_standalone_whole_titles_batch_without_adding_the_meanings(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);study=self.fixture(root);out=root/'whole-titles'
+            probe.prepare(study,['a','b'],None,out,standalone=True)
+            inputs=json.loads((out/'inputs.json').read_text())
+            _,notes=worker._load_request(out/'worker-request.json')
+            self.assertIsNone(inputs['selected_text'])
+            self.assertEqual(inputs['views'],['standalone'])
+            self.assertEqual([n.text for n in notes],['人 reactions','Audience reactions'])
+            for r,n in zip(inputs['records'],notes):
+                self.assertEqual(n.text,r['title'])
+                self.assertEqual(n.subjects[0].byte_spans,((0,len(n.text.encode())),))
+                self.assertNotIn(r['meaning'],n.text)
+            with self.assertRaises(ValueError):
+                probe.prepare(study,['a'],None,root/'invalid')
+
 
 if __name__=='__main__':
     unittest.main()

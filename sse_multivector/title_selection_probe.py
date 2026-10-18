@@ -20,8 +20,9 @@ def prepare(study, entries, selected_text, output, *, standalone=False):
     if output.exists():
         raise FileExistsError(output)
     if (not entries or len(set(entries)) != len(entries)
-            or not selected_text.strip()):
-        raise ValueError('distinct entries and nonempty selected text required')
+            or (selected_text is None and not standalone)
+            or (selected_text is not None and not selected_text.strip())):
+        raise ValueError('distinct entries and selected text, or standalone whole titles, required')
     source = read(study/'plan.json')
     if source.get('as_version') != 'ASv6.100':
         raise ValueError('approved ASv6.100 provenance required')
@@ -39,17 +40,18 @@ def prepare(study, entries, selected_text, output, *, standalone=False):
     for entry in entries:
         item = by_id[entry]
         title, meaning = item['title'], item['meaning']
-        if not meaning.strip() or title.count(selected_text) != 1:
+        selection = title if selected_text is None else selected_text
+        if not title.strip() or not meaning.strip() or title.count(selection) != 1:
             raise ValueError('nonempty meaning and one exact title occurrence required')
-        text = selected_text if standalone else title+'\n\n'+meaning
+        text = selection if standalone else title+'\n\n'+meaning
         note_id = hashlib.sha256(text.encode()).hexdigest()
         note = contexts.setdefault(note_id,dict(note_id=note_id,text=text,subjects=[]))
-        start = len(title[:title.index(selected_text)].encode())
+        start = len(title[:title.index(selection)].encode())
         spans = dict(title=(0,len(title.encode())),
                      meaning=(len((title+'\n\n').encode()),len(text.encode())),
-                     selection=(start,start+len(selected_text.encode())))
+                     selection=(start,start+len(selection.encode())))
         if standalone:
-            spans = dict(standalone=(0,len(selected_text.encode())))
+            spans = dict(standalone=(0,len(selection.encode())))
         views = {}
         for view,(start,end) in spans.items():
             subject_id = digest([note_id,start,end])[:16]
@@ -134,7 +136,10 @@ def main():
     p.add_argument('study',type=Path)
     p.add_argument('output',type=Path)
     p.add_argument('--entry',action='append',required=True)
-    p.add_argument('--title-text',required=True)
+    selection=p.add_mutually_exclusive_group(required=True)
+    selection.add_argument('--title-text')
+    selection.add_argument('--whole-title',action='store_true',
+                           help='Use each entry\'s entire title; requires --standalone')
     p.add_argument('--standalone',action='store_true',
                    help='Encode only the selected text; reuse saved contextual vectors separately')
     p=sub.add_parser('collect')
