@@ -63,6 +63,7 @@ CODE_FILES = (
 
 
 def summary(state):
+    original_note_ids = {row['local']['note_id'] for row in state['originals']}
     unresolved = [
         *state.get("unresolved", []),
         *[
@@ -83,6 +84,10 @@ def summary(state):
         generation_policy=state["generation_policy"],
         canonical_nodes=len(state["nodes"]),
         original_l1s=len(state["originals"]),
+        notes_without_original_l1s=[
+            note_id for note_id in state['note_ids']
+            if note_id not in original_note_ids
+        ],
         experiments=[
             r["experiment"] for r in state["experiments"] if not r.get("complete")
         ],
@@ -325,10 +330,14 @@ def prepare(spec_path, directory, history_root=None):
                         subject=entry["subject"],
                     )
                 )
+        if not seen and policy in HDBSCAN_POLICIES:
+            continue
         if not any("." not in n for n in seen) or any(
             "." in n and n.rsplit(".", 1)[0] not in seen for n in seen
         ):
             raise ValueError("selected note requires a valid original local tree")
+    if not originals:
+        raise ValueError('hierarchy generation requires at least one original L1 subject')
     sources = {
         str(spec_path): trial._hash(spec_path),
         str(corpus_path): trial._hash(corpus_path),

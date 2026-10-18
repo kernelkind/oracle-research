@@ -204,6 +204,12 @@ client timeout is also compatible with completed Bootstrap reuse when every
 other input and control matches. Original producer receipts retain their actual
 timeout. HR30 sets one-hour timeouts for new Bootstrap and consolidation requests.
 
+A valid empty AS subject list remains in the frozen note inventory, produces
+no Bootstrap request and is reported in `notes_without_original_l1s`. HDBSCAN
+construction continues from the other notes; an input with no original L1
+subjects fails before preparing teacher calls. Nonempty malformed local trees
+remain invalid.
+
 A valid null Bootstrap answer is skipped and reported in `skipped_bootstrap`.
 If it is a note's only topic, that note is reported in
 `notes_not_in_hierarchy`; it does not block the other notes. The complete input

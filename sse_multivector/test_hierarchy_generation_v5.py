@@ -826,6 +826,62 @@ clusters=[''')
         self.assertEqual([row['case'] for row in report['skipped_bootstrap']], ['L00001'])
         generation.check_state(state)
 
+    def test_v53_preserves_empty_subject_notes_without_blocking_other_notes(self):
+        from sse_multivector import hierarchy_generation as generation
+        spec = self.prepare(count=9)
+        cfg = json.loads(spec.read_text())
+        cfg['generation_policy'] = 'hierarchy-generation-v5.3'
+        del cfg['bootstrap_hierarchy']
+        corpus_path = (spec.parent/cfg['corpus']).resolve()
+        corpus = json.loads(corpus_path.read_text())
+        corpus['notes'].append(dict(note_id='empty', text='https://example.com/photo.png', subjects=[]))
+        cfg['note_ids'].append('empty')
+        corpus_path.write_text(json.dumps(corpus))
+        original_bytes = corpus_path.read_bytes()
+        spec.write_text(json.dumps(cfg))
+        state = self.construct(spec)
+        self.assertEqual(len(state['note_ids']), 10)
+        self.assertEqual(len(state['originals']), 9)
+        self.assertEqual(corpus_path.read_bytes(), original_bytes)
+        report = generation.summary(state)
+        self.assertEqual(report['notes_without_original_l1s'], ['empty'])
+        self.assertIn('empty', report['notes_not_in_hierarchy'])
+        self.assertEqual(len(state['experiments'][0]['inputs']), 9)
+        generation.check_state(state)
+        exported = json.loads(self.native.cli('export-canonical-viewer', 'v5', '--output', 'empty-subject-view').stdout)
+        self.assertEqual(exported['note_count'], 9)
+
+    def test_v53_rejects_a_corpus_with_no_original_subjects_before_preparing_calls(self):
+        spec = self.prepare(count=9)
+        cfg = json.loads(spec.read_text())
+        cfg['generation_policy'] = 'hierarchy-generation-v5.3'
+        del cfg['bootstrap_hierarchy']
+        corpus_path = (spec.parent/cfg['corpus']).resolve()
+        corpus = json.loads(corpus_path.read_text())
+        for note in corpus['notes']:
+            note['subjects'] = []
+        corpus_path.write_text(json.dumps(corpus))
+        spec.write_text(json.dumps(cfg))
+        before = self.native.calls()
+        result = self.native.cli('prepare-hierarchy', 'empty-v53', '--spec', spec, ok=False)
+        self.assertIn('requires at least one original L1 subject', result.stderr)
+        self.assertEqual(self.native.calls(), before)
+        self.assertFalse((self.native.root/'empty-v53').exists())
+
+    def test_v53_still_rejects_nonempty_subject_trees_with_missing_parents(self):
+        spec = self.prepare(count=9)
+        cfg = json.loads(spec.read_text())
+        cfg['generation_policy'] = 'hierarchy-generation-v5.3'
+        del cfg['bootstrap_hierarchy']
+        corpus_path = (spec.parent/cfg['corpus']).resolve()
+        corpus = json.loads(corpus_path.read_text())
+        corpus['notes'][0]['subjects'] = [dict(number='1.1', subject='Missing parent', context='Original post')]
+        corpus_path.write_text(json.dumps(corpus))
+        spec.write_text(json.dumps(cfg))
+        result = self.native.cli('prepare-hierarchy', 'invalid-v53', '--spec', spec, ok=False)
+        self.assertIn('requires a valid original local tree', result.stderr)
+        self.assertFalse((self.native.root/'invalid-v53').exists())
+
     def test_finished_lineup_does_not_encode_representatives_with_nothing_left_to_add(self):
         spec = self.prepare(count=24)
         binary = self.native.root/'hdbscan-fixture'
