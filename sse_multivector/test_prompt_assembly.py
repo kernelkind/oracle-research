@@ -298,7 +298,7 @@ class PromptAssemblyTests(unittest.TestCase):
                    r'<output>\s*(.*?)\s*</output>\s*</example>')
         previous = re.findall(pattern, old_prompt.decode(), re.S)
         schema = json.loads((PROMPTS / 'Hierarchy-bootstrap-v130.output.schema.json').read_text())
-        for version in (140, 141, 142, 143):
+        for version in (140, 141, 142, 143, 144):
             with self.subTest(version=version):
                 new, _, new_prompt = compile_spec(
                     PROMPTS / f'Hierarchy-bootstrap-v{version}.assembly.json')

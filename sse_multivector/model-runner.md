@@ -165,8 +165,12 @@ stages. V142 remains unqualified. Experimental
 complete conditions to meaning and rejects compressed definitions as titles.
 Its matched test has 152 agent accepts, three stock-title rejects and thirteen
 uncertainties. The original preference passes all three draws, but stock titles
-still enumerate stages and form dense compounds. V143 remains unqualified;
-moving the title section after the long definition examples is the next test.
+still enumerate stages and form dense compounds. V143 remains unqualified.
+[Bootstrap-v144](shr_single_pair/Hierarchy-bootstrap-v144.md) moves the unchanged
+title section after the long definition examples; its 168-response test still
+has four title rejects, with 154 accepts and ten uncertainties. Placement alone
+does not resolve the failure. The next revision should make exact scope a
+requirement for meaning while allowing a familiar overall name in title.
 Constructor pins remain V133.
 
 Experimental [Bootstrap-v133](shr_single_pair/Hierarchy-bootstrap-v133.md)

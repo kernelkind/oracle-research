@@ -764,7 +764,7 @@ and pantry storage; two additionally compress "chicken-stock" and "pantry-storag
 into dense compounds. V143 has not reliably established the intended naming
 behavior and remains unqualified for adoption. The title instruction and its
 brief examples currently precede four lengthy complete definition examples;
-the next test should move that section after those examples without adding rules.
+V144 below tests moving that section after those examples without adding rules.
 
 Twelve uncertainties concern digital immortality, digital-system Users, and
 inferred US federal identity in both shutdown entries, each in three draws.
@@ -778,6 +778,41 @@ Scope qualifications are not examples. All 41 focused checks pass. Native
 including six warmups, zero failures/retries/reuses and complete usage.
 API-equivalent cost is $1.248368, not a subscription cash charge. Constructor
 pins remain V133.
+
+### Title-section placement: Bootstrap-v144
+
+Experimental [Bootstrap-v144](Hierarchy-bootstrap-v144.md) moves V143's single
+title section, including its two brief examples, after the four full Bootstrap
+examples and immediately before the final input. The section is byte-identical,
+appears once, and no instruction or example is added. Shared rules-v12,
+Consolidation-v27 and all complete example meanings are unchanged.
+
+The [matched](hierarchy-bootstrap-title-v144-matched.spec.json) and
+[control](hierarchy-bootstrap-title-v144-controls.spec.json) tests repeat the
+same 48 and eight inputs, three fresh draws each, with corresponding V143
+baselines and verified identical input hashes/model settings. All ready batches
+start concurrently. The pre-call plan and exact results remain under
+`target/bootstrap-title-v144/`.
+
+All 168 fresh outputs are valid and non-null. Fresh agent review records 154
+accepts, four rejects and ten uncertainties. One preference title again lists
+its actions; all three stock titles still enumerate canning and pantry storage.
+One returns "Chicken-stock canning and pantry-storage plan." Native raw outputs
+confirm that these titles come from the model, without validator rewriting.
+Placement alone has not reliably solved the naming problem; V144 remains
+unqualified. The next revision should clarify in the opening task and scope
+instructions that exact scope constrains meaning, while title may use a familiar
+overall name for that same central topic.
+
+Nine uncertainties concern digital immortality, digital-system Users and inferred
+US federal identity in the shutdown-odds event (three each). The tenth is one
+Half-and-half response that preserves the numeric interval but leaves its
+mass/weight basis implicit. Other controls preserve that basis and all stock
+batch/process details. Scope qualifications are not examples. All 41 focused
+checks pass. Native [accounting](hierarchy-bootstrap-title-v144-usage-v1.json)
+records 174 new attempts including six warmups, zero failures/retries/reuses and
+complete usage. API-equivalent cost is $1.250252, not a subscription cash charge.
+Constructor pins remain V133.
 
 ## Meaning-derived titles: Bootstrap-v130
 
