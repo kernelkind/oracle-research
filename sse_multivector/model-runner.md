@@ -81,6 +81,18 @@ This establishes a bounded prompt test, not guaranteed wording or an embedding
 or admission improvement. The pair is tested experimental source; existing
 hierarchy versions still pin Bootstrap-v133 and are not migrated by publication.
 
+The [deeper three-draw test](shr_single_pair/bootstrap-current-as-qualification.md#deeper-frozen-test-of-bootstrap-v134)
+finds repeatable failures in V134: all three Artificial intelligence meanings
+add example capabilities, and one Support meaning adds optional circumstances.
+The test uses 48 frozen inputs over 29 posts, with three fresh draws per input.
+All 24 People meanings omit post examples, but this does not establish adherence
+across topics. Native agent reviews record 133 accepts, four rejects and seven
+uncertain outputs under the stated style/scope checks; mechanical validity is
+144/144. The uncertain cases include possible defining-range clarifications and
+one ambiguous interpretation repeated three times. V134 is unchanged and has
+not met the no-examples requirement generally. Revise and retest before adoption;
+do not replace semantic review with a ban on particular words.
+
 ## Bootstrap titles derived from explicit meanings
 
 Experimental [Bootstrap-v133](shr_single_pair/Hierarchy-bootstrap-v133.md)

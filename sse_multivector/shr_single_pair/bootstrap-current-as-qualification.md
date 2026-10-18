@@ -93,6 +93,100 @@ meanings, vectors, saved hierarchies and constructor prompt pins are unchanged.
 No numerical representation or admission improvement is claimed. V134/V22 are
 tested experimental source, without activation or general reliability approval.
 
+### Deeper frozen test of Bootstrap-v134
+
+The user requested deeper testing, not a prompt change. The frozen
+[node selections](hierarchy-bootstrap-no-examples-deep-nodes-v1.json),
+[collection](hierarchy-bootstrap-no-examples-deep-v1.json) and
+[specification](hierarchy-bootstrap-no-examples-deep-v1.spec.json) contain 48
+inputs across 29 original posts: the two original People cases, six held-out
+People contexts, 16 broad/specific pairs and the eight original controls. This
+adds 38 previously untested inputs to the initial ten. All 2,000 origins in the
+source HR38 subject collection identify ASv6.100.
+
+Held-out notes are ranked by SHA256 of the fixed experiment label, note ID and
+root number, excluding the initial panel and notes already selected. Each
+specific member maximizes descendant depth and then subject length, requiring
+at least two descendant levels and six whitespace-separated words. The tracked
+collection records the rule and freezes the selected references before outputs.
+Pairs cover Food, Technology, Music, Photography, Finance, Learning, Sports,
+Artificial intelligence, Art, Requests, Support, Countries, War, Games, Messages
+and Nostr. These are purposively stratified inputs, not a population sample.
+
+Three native `prepare --spec ... --repeat` batches use identical inputs,
+Bootstrap-v134, its schema and Sol 6.1 medium/subscription SSE settings. All ready
+batches start concurrently, using the runner's shared queue without outer
+concurrency limits. Each receives fresh requests; no saved answer is reused.
+The shared rules, wrappers, prompts and constructor settings remain unchanged.
+
+Review each exact meaning against its selected topic and original evidence:
+omit illustrative examples and non-defining circumstances, retain required
+alternatives/parts/restrictions and uncertainty, and keep titles supported and
+natural. A particular instance's identifying details remain required. Defining
+kinds or relationships are not automatically examples, and the word "including"
+is not itself a failure. All judgments are fresh, source-bound agent assessments
+saved through native review, not new human gold or complete approval of every
+possible semantic boundary.
+
+| Draw | Valid responses | Accept | Reject | Uncertain |
+|---|---:|---:|---:|---:|
+| 1 | 48 | 44 | 1 | 3 |
+| 2 | 48 | 45 | 1 | 2 |
+| 3 | 48 | 44 | 2 | 2 |
+| Total | 144 | 133 | 4 | 7 |
+
+**V134 does not meet the no-examples requirement generally.** All three
+Artificial intelligence definitions append example capabilities. One says:
+
+> Artificial intelligence (AI) is the field concerned with developing and studying computer systems designed to perform tasks involving capabilities associated with intelligence, such as learning, reasoning, perception or language use.
+
+Learning, reasoning, perception and language processing/understanding/use are
+illustrative tasks rather than capabilities jointly required of every AI system.
+This failure comes from general knowledge, not copied post examples, and repeats
+in all three draws of the same held-out input.
+
+The fourth rejection is a Support definition that adds:
+
+> It includes both individual and ongoing acts, given independently or in return for help received.
+
+The post discusses continuous support and giving back. Those optional
+circumstances do not define Support. This is a non-defining expansion, separately
+identified from the three explicit AI example lists.
+
+All 24 People outputs omit the post's people and circumstances. Wording still
+varies among human beings, individual human beings, human individuals,
+individual/collective qualifications and a Homo sapiens identity clarification.
+No canonical wording or general reliability guarantee follows from these draws.
+
+Seven outputs remain uncertain rather than being silently accepted or forced
+into failures: two Food meanings name prepared dishes and ingredients, which
+may be examples or a defining ingredient-role clarification; one War meaning
+explicitly includes within-state conflicts; and one photo meaning uses
+"backstage or other off-air contexts." These concern the boundary between
+illustration and useful defining range. The other three are repeats of one
+specific investment topic: interpreting "together" as requiring other people
+may impose a condition when the selected context instead emphasizes jointly
+named products and services. This is a separate scope ambiguity, not proof of a
+regression caused by the new instruction.
+
+Protected details survive in the clear paired controls: all three dashboard
+meanings retain its four named features, all three dahlia requests retain both
+favorites and reasons, and all three conditional BCH plans retain the depleted
+balance condition and continuing deposits. The particular stock plan retains
+its batch, estimated quantity and both preservation/storage stages. Meaning
+generation remains stochastic; this test does not prove every boundary correct
+or compare numerical representation quality.
+
+The [native usage source](hierarchy-bootstrap-no-examples-deep-usage-v1.json)
+aggregates 144 fresh case outputs plus three warmups: 147 attempts, zero failed
+or retry attempts, zero reuses and complete observed usage. API-equivalent
+catalog cost is $1.0519176, not a subscription cash charge. Native results,
+reviews and aggregate accounting remain under
+`target/bootstrap-no-examples-deep-v1/{draw1,draw2,draw3,usage-summary.json}` in
+the retained Bootstrap task worktree. No official hierarchy was constructed or
+changed. Revise the prompt against these failures and rerun this panel before
+adopting V134's replacement; this task does not publish that replacement.
+
 ## Meaning-derived titles: Bootstrap-v130
 
 The user requested a concise title based solely on the explicit meaning.

@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "Bootstrap-v134-deep": [
+      "../../target/bootstrap-no-examples-deep-v1/draw1",
+      "../../target/bootstrap-no-examples-deep-v1/draw2",
+      "../../target/bootstrap-no-examples-deep-v1/draw3"
+    ]
+  }
+}

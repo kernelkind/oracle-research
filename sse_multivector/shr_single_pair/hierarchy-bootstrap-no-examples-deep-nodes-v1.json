@@ -1,0 +1,478 @@
+{
+  "schema_version": 4,
+  "corpus": "/mnt/external/algos-archive/oracle-mvp/hierarchy-hr38-v53-auto/hierarchy-hr38-v53-auto-2000-note-v1/subject-collection/subjects.json",
+  "nodes": [
+    {
+      "id": "L00086",
+      "local": {
+        "note_id": "20f22d37150d0427199a554f0fecf3b291af26da9b00035cb95c7235c0303a1c",
+        "number": "2"
+      },
+      "review": {
+        "cohort": "People-original",
+        "criterion": "Direct human-being definition without illustrative post members."
+      }
+    },
+    {
+      "id": "L00863",
+      "local": {
+        "note_id": "fd8d82eeeaf3cd811a7ce6cd10d75257db002aa2ecd2294619e84b4b621036de",
+        "number": "4"
+      },
+      "review": {
+        "cohort": "People-original",
+        "criterion": "Direct human-being definition without illustrative post members."
+      }
+    },
+    {
+      "id": "people-heldout-01",
+      "local": {
+        "note_id": "ae02a32fd45bbe3c3e67ceeebc8bf0051f41e36537351dbf99fc38fc0ed7d213",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "People-heldout",
+        "criterion": "Human beings without illustrative descendants or post circumstances."
+      }
+    },
+    {
+      "id": "people-heldout-02",
+      "local": {
+        "note_id": "c19502e0b58349951ad0e42fe8c92b3afec2d6bec3f371f8415c9b38b6ec682c",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "People-heldout",
+        "criterion": "Human beings without illustrative descendants or post circumstances."
+      }
+    },
+    {
+      "id": "people-heldout-03",
+      "local": {
+        "note_id": "ee554302b9ab14d1d2192814cd974a5d2fb839caac5f19609dd494e770ca020a",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "People-heldout",
+        "criterion": "Human beings without illustrative descendants or post circumstances."
+      }
+    },
+    {
+      "id": "people-heldout-04",
+      "local": {
+        "note_id": "32390324353954a3bbfb1e8a8c1d93a8e9ec73c28fac93f704c06c9650a0a8fc",
+        "number": "3"
+      },
+      "review": {
+        "cohort": "People-heldout",
+        "criterion": "Human beings without illustrative descendants or post circumstances."
+      }
+    },
+    {
+      "id": "people-heldout-05",
+      "local": {
+        "note_id": "459eac1944c65eb56ccd0ea682febeff11fc858355d078e43a14e3e3f45e2322",
+        "number": "2"
+      },
+      "review": {
+        "cohort": "People-heldout",
+        "criterion": "Human beings without illustrative descendants or post circumstances."
+      }
+    },
+    {
+      "id": "people-heldout-06",
+      "local": {
+        "note_id": "2320a861491d06dbeed0dcb26645ec93f252807e0b48eeb0a4a640e9ad92b901",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "People-heldout",
+        "criterion": "Human beings without illustrative descendants or post circumstances."
+      }
+    },
+    {
+      "id": "pair-01-broad",
+      "local": {
+        "note_id": "f5874db37bbf89203cb13aad068970ca9078fc6ea8e7c8abaa30c299b74c3580",
+        "number": "5"
+      },
+      "review": {
+        "cohort": "broad",
+        "paired_topic": "Food",
+        "criterion": "Define the selected kind without illustrative post details."
+      }
+    },
+    {
+      "id": "pair-01-specific",
+      "local": {
+        "note_id": "f5874db37bbf89203cb13aad068970ca9078fc6ea8e7c8abaa30c299b74c3580",
+        "number": "5.2.1.2.1"
+      },
+      "review": {
+        "cohort": "specific",
+        "paired_topic": "Food",
+        "criterion": "Preserve identity, jointly required parts, restrictions and uncertainty of the selected specific topic; these are not illustrative examples."
+      }
+    },
+    {
+      "id": "pair-02-broad",
+      "local": {
+        "note_id": "3b3a75ec0735008677a4ef131804e9a33877e581d9ac0523500acaca90224219",
+        "number": "5"
+      },
+      "review": {
+        "cohort": "broad",
+        "paired_topic": "Technology",
+        "criterion": "Define the selected kind without illustrative post details."
+      }
+    },
+    {
+      "id": "pair-02-specific",
+      "local": {
+        "note_id": "3b3a75ec0735008677a4ef131804e9a33877e581d9ac0523500acaca90224219",
+        "number": "5.1.1.1"
+      },
+      "review": {
+        "cohort": "specific",
+        "paired_topic": "Technology",
+        "criterion": "Preserve identity, jointly required parts, restrictions and uncertainty of the selected specific topic; these are not illustrative examples."
+      }
+    },
+    {
+      "id": "pair-03-broad",
+      "local": {
+        "note_id": "fdb5d8cc80a3266671a3155cfff148957cbd008e4cb351c1f4ad67f7529080d2",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "broad",
+        "paired_topic": "Music",
+        "criterion": "Define the selected kind without illustrative post details."
+      }
+    },
+    {
+      "id": "pair-03-specific",
+      "local": {
+        "note_id": "fdb5d8cc80a3266671a3155cfff148957cbd008e4cb351c1f4ad67f7529080d2",
+        "number": "1.1.1.1.1.1"
+      },
+      "review": {
+        "cohort": "specific",
+        "paired_topic": "Music",
+        "criterion": "Preserve identity, jointly required parts, restrictions and uncertainty of the selected specific topic; these are not illustrative examples."
+      }
+    },
+    {
+      "id": "pair-04-broad",
+      "local": {
+        "note_id": "2d0e28f1d625e5f721872818b5e7b2ded73de20c46487af504398031d21fa41e",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "broad",
+        "paired_topic": "Photography",
+        "criterion": "Define the selected kind without illustrative post details."
+      }
+    },
+    {
+      "id": "pair-04-specific",
+      "local": {
+        "note_id": "2d0e28f1d625e5f721872818b5e7b2ded73de20c46487af504398031d21fa41e",
+        "number": "1.1.1"
+      },
+      "review": {
+        "cohort": "specific",
+        "paired_topic": "Photography",
+        "criterion": "Preserve identity, jointly required parts, restrictions and uncertainty of the selected specific topic; these are not illustrative examples."
+      }
+    },
+    {
+      "id": "pair-05-broad",
+      "local": {
+        "note_id": "61959fdc93df62608ab7d547765af4734774371a88ba94e835847c1b675c6703",
+        "number": "13"
+      },
+      "review": {
+        "cohort": "broad",
+        "paired_topic": "Finance",
+        "criterion": "Define the selected kind without illustrative post details."
+      }
+    },
+    {
+      "id": "pair-05-specific",
+      "local": {
+        "note_id": "61959fdc93df62608ab7d547765af4734774371a88ba94e835847c1b675c6703",
+        "number": "13.1.1.1"
+      },
+      "review": {
+        "cohort": "specific",
+        "paired_topic": "Finance",
+        "criterion": "Preserve identity, jointly required parts, restrictions and uncertainty of the selected specific topic; these are not illustrative examples."
+      }
+    },
+    {
+      "id": "pair-06-broad",
+      "local": {
+        "note_id": "7a6891bee67c10f30f0b830f7c8dee75f88090ae921a3a86095f5e7d1b126053",
+        "number": "3"
+      },
+      "review": {
+        "cohort": "broad",
+        "paired_topic": "Learning",
+        "criterion": "Define the selected kind without illustrative post details."
+      }
+    },
+    {
+      "id": "pair-06-specific",
+      "local": {
+        "note_id": "7a6891bee67c10f30f0b830f7c8dee75f88090ae921a3a86095f5e7d1b126053",
+        "number": "3.1.1.1"
+      },
+      "review": {
+        "cohort": "specific",
+        "paired_topic": "Learning",
+        "criterion": "Preserve identity, jointly required parts, restrictions and uncertainty of the selected specific topic; these are not illustrative examples."
+      }
+    },
+    {
+      "id": "pair-07-broad",
+      "local": {
+        "note_id": "6cfdd0bc9c9cfbc2c1c52f455614e6443e34b1f81c86fcce2e5775a1b084b622",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "broad",
+        "paired_topic": "Sports",
+        "criterion": "Define the selected kind without illustrative post details."
+      }
+    },
+    {
+      "id": "pair-07-specific",
+      "local": {
+        "note_id": "6cfdd0bc9c9cfbc2c1c52f455614e6443e34b1f81c86fcce2e5775a1b084b622",
+        "number": "1.1.1.1.1.1"
+      },
+      "review": {
+        "cohort": "specific",
+        "paired_topic": "Sports",
+        "criterion": "Preserve identity, jointly required parts, restrictions and uncertainty of the selected specific topic; these are not illustrative examples."
+      }
+    },
+    {
+      "id": "pair-08-broad",
+      "local": {
+        "note_id": "621cc7943e645bb3d3f8be46df1a4944c4bf375fb644dfb4de198ab190062d53",
+        "number": "2"
+      },
+      "review": {
+        "cohort": "broad",
+        "paired_topic": "Artificial intelligence",
+        "criterion": "Define the selected kind without illustrative post details."
+      }
+    },
+    {
+      "id": "pair-08-specific",
+      "local": {
+        "note_id": "621cc7943e645bb3d3f8be46df1a4944c4bf375fb644dfb4de198ab190062d53",
+        "number": "2.1.1"
+      },
+      "review": {
+        "cohort": "specific",
+        "paired_topic": "Artificial intelligence",
+        "criterion": "Preserve identity, jointly required parts, restrictions and uncertainty of the selected specific topic; these are not illustrative examples."
+      }
+    },
+    {
+      "id": "pair-09-broad",
+      "local": {
+        "note_id": "3f086c4eac80448f00044da8e630335b25da288d691b07a89c454b18b0b3d15e",
+        "number": "2"
+      },
+      "review": {
+        "cohort": "broad",
+        "paired_topic": "Art",
+        "criterion": "Define the selected kind without illustrative post details."
+      }
+    },
+    {
+      "id": "pair-09-specific",
+      "local": {
+        "note_id": "3f086c4eac80448f00044da8e630335b25da288d691b07a89c454b18b0b3d15e",
+        "number": "2.1.1"
+      },
+      "review": {
+        "cohort": "specific",
+        "paired_topic": "Art",
+        "criterion": "Preserve identity, jointly required parts, restrictions and uncertainty of the selected specific topic; these are not illustrative examples."
+      }
+    },
+    {
+      "id": "pair-10-broad",
+      "local": {
+        "note_id": "31bbb358bcdb07d5ae34417dc75972f71b9511fc2639d720b08a390f81ee402f",
+        "number": "3"
+      },
+      "review": {
+        "cohort": "broad",
+        "paired_topic": "Requests",
+        "criterion": "Define the selected kind without illustrative post details."
+      }
+    },
+    {
+      "id": "pair-10-specific",
+      "local": {
+        "note_id": "31bbb358bcdb07d5ae34417dc75972f71b9511fc2639d720b08a390f81ee402f",
+        "number": "3.1.1"
+      },
+      "review": {
+        "cohort": "specific",
+        "paired_topic": "Requests",
+        "criterion": "Preserve identity, jointly required parts, restrictions and uncertainty of the selected specific topic; these are not illustrative examples."
+      }
+    },
+    {
+      "id": "pair-11-broad",
+      "local": {
+        "note_id": "900b36a816bad711f09e030cbec9c041f135a229c2cba368ce8daaecb6bd977a",
+        "number": "4"
+      },
+      "review": {
+        "cohort": "broad",
+        "paired_topic": "Support",
+        "criterion": "Define the selected kind without illustrative post details."
+      }
+    },
+    {
+      "id": "pair-11-specific",
+      "local": {
+        "note_id": "900b36a816bad711f09e030cbec9c041f135a229c2cba368ce8daaecb6bd977a",
+        "number": "4.2.1.1"
+      },
+      "review": {
+        "cohort": "specific",
+        "paired_topic": "Support",
+        "criterion": "Preserve identity, jointly required parts, restrictions and uncertainty of the selected specific topic; these are not illustrative examples."
+      }
+    },
+    {
+      "id": "pair-12-broad",
+      "local": {
+        "note_id": "6905ba5910121e715a005c690a039387dfd1665c4669886e97e88d38cfc9fa6d",
+        "number": "6"
+      },
+      "review": {
+        "cohort": "broad",
+        "paired_topic": "Countries",
+        "criterion": "Define the selected kind without illustrative post details."
+      }
+    },
+    {
+      "id": "pair-12-specific",
+      "local": {
+        "note_id": "6905ba5910121e715a005c690a039387dfd1665c4669886e97e88d38cfc9fa6d",
+        "number": "6.1.2.1"
+      },
+      "review": {
+        "cohort": "specific",
+        "paired_topic": "Countries",
+        "criterion": "Preserve identity, jointly required parts, restrictions and uncertainty of the selected specific topic; these are not illustrative examples."
+      }
+    },
+    {
+      "id": "pair-13-broad",
+      "local": {
+        "note_id": "83d65ba6112d9c994e1f1ecb0dfe81af918d249367d484ee80fd0bd8fac102e1",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "broad",
+        "paired_topic": "War",
+        "criterion": "Define the selected kind without illustrative post details."
+      }
+    },
+    {
+      "id": "pair-13-specific",
+      "local": {
+        "note_id": "83d65ba6112d9c994e1f1ecb0dfe81af918d249367d484ee80fd0bd8fac102e1",
+        "number": "1.1.1.1"
+      },
+      "review": {
+        "cohort": "specific",
+        "paired_topic": "War",
+        "criterion": "Preserve identity, jointly required parts, restrictions and uncertainty of the selected specific topic; these are not illustrative examples."
+      }
+    },
+    {
+      "id": "pair-14-broad",
+      "local": {
+        "note_id": "2a85131b8d80bd443750c30af6721f18eeda0a9cdffd722799acd7dbb6f0f31d",
+        "number": "1"
+      },
+      "review": {
+        "cohort": "broad",
+        "paired_topic": "Games",
+        "criterion": "Define the selected kind without illustrative post details."
+      }
+    },
+    {
+      "id": "pair-14-specific",
+      "local": {
+        "note_id": "2a85131b8d80bd443750c30af6721f18eeda0a9cdffd722799acd7dbb6f0f31d",
+        "number": "1.1.1.1"
+      },
+      "review": {
+        "cohort": "specific",
+        "paired_topic": "Games",
+        "criterion": "Preserve identity, jointly required parts, restrictions and uncertainty of the selected specific topic; these are not illustrative examples."
+      }
+    },
+    {
+      "id": "pair-15-broad",
+      "local": {
+        "note_id": "a62cdc873c7f7ff5a777f50c9bf66ac865f77e6d4587b5c74678771fe7a9f78d",
+        "number": "5"
+      },
+      "review": {
+        "cohort": "broad",
+        "paired_topic": "Messages",
+        "criterion": "Define the selected kind without illustrative post details."
+      }
+    },
+    {
+      "id": "pair-15-specific",
+      "local": {
+        "note_id": "a62cdc873c7f7ff5a777f50c9bf66ac865f77e6d4587b5c74678771fe7a9f78d",
+        "number": "5.1.1"
+      },
+      "review": {
+        "cohort": "specific",
+        "paired_topic": "Messages",
+        "criterion": "Preserve identity, jointly required parts, restrictions and uncertainty of the selected specific topic; these are not illustrative examples."
+      }
+    },
+    {
+      "id": "pair-16-broad",
+      "local": {
+        "note_id": "a282a8942182633e04641132e5841d95e63c605871ba38478486721775756220",
+        "number": "2"
+      },
+      "review": {
+        "cohort": "broad",
+        "paired_topic": "Nostr",
+        "criterion": "Define the selected kind without illustrative post details."
+      }
+    },
+    {
+      "id": "pair-16-specific",
+      "local": {
+        "note_id": "a282a8942182633e04641132e5841d95e63c605871ba38478486721775756220",
+        "number": "2.1.1"
+      },
+      "review": {
+        "cohort": "specific",
+        "paired_topic": "Nostr",
+        "criterion": "Preserve identity, jointly required parts, restrictions and uncertainty of the selected specific topic; these are not illustrative examples."
+      }
+    }
+  ]
+}
