@@ -876,8 +876,8 @@ clusters=[''')
     def test_read_only_audit_preserves_archived_source_bindings_and_rejects_tampering(self):
         state = self.construct(self.prepare(count=9))
         bound = next(p for p in state['sources'] if p.endswith('/hierarchy_generation.py'))
-        archived = self.native.root/'archived-source/hierarchy_generation.py'
-        archived.parent.mkdir()
+        archived = self.native.root/'archived-source/sse_multivector/hierarchy_generation.py'
+        archived.parent.mkdir(parents=True)
         archived.write_bytes(Path(bound).read_bytes())
         state['sources'][str(archived)] = state['sources'].pop(bound)
         path = self.native.root/'v5/state.json'
