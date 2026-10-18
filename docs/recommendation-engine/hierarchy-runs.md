@@ -2015,3 +2015,33 @@ linked replay evidence. The next
 semantic check is the 12 notes lost against HR30. The observed remaining
 runtime costs are recorded in
 [advancement performance](hierarchy-advancement-performance.md#observed-costs-at-hr35-completion).
+
+## HR36 — automatically sampled 1,000-note HiGen V5.3
+
+User-authorized automatic corpus and autonomous construction. The native
+exporter ranks all 3,774,156 frozen English-eligible event IDs by
+SHA256(`hr36-corpus-v1` UTF-8 bytes + raw event-ID bytes). Native
+`freeze-post-sample` automatic mode selects the first 1,000 verified,
+nonempty root/non-quote posts within 512 SSE tokens: 602 authors, at most
+64 notes per author, and one over-length exclusion among 1,001 examined.
+There are no manual reviews, topic quotas, author balancing or carried-forward
+curated notes. Original text and events remain unchanged.
+
+[Corpus export](../../sse_multivector/hierarchy-runs/hr36/corpus-export.spec.json),
+[selection](../../sse_multivector/hierarchy-runs/hr36/corpus-selection.spec.json)
+and [hierarchy definition](../../sse_multivector/hierarchy-runs/hr36/hierarchy.spec.json)
+freeze the controls. Raw notes SHA-256:
+`9e4614259f3b09ebd3a5e4c64b5506cffa2abced041019d129fecc8e96bb0879`.
+The original-note manifest and event evidence are retained under
+`oracle-mvp-hierarchy-hr36-v53-auto/target/hierarchy-hr36-v53-auto-thousand-note-v1/corpus/`.
+
+Status: preparing ASv6.100 generation. Full recursive V5.3 uses Bootstrap-v133,
+Consolidated-grouped-v1, GPT-6.1 Sol medium on subscription SSE, one-hour
+request deadlines, angular HDBSCAN/min_samples=3/min_cluster_size=2/EOM,
+no cosine cutoff and the existing 512-token title-pooling SSE checkpoint.
+Local numerical work uses 24 CPUs; native teacher batches share the runner's
+30-request queue without an outer batch or attempt cap. Invalid diagnostics
+are nonblocking; null meanings are preserved, skipped and counted. Temporary
+failures are retried and code errors repaired under the authorized completion
+goal. Actual root coverage is measured separately from top-container access.
+Review UI and final usage accounting follow construction.

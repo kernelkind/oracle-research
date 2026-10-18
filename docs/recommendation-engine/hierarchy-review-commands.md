@@ -40,6 +40,7 @@ original notes. Parameters describe the settings actually used.
 | HR33 | 200 | ASv6.100 | V5.2 | bootstrap-v133 | consolidated-grouped-v1 | — |
 | HR34 | 200 | ASv6.100 | V5.3 | bootstrap-v133 | consolidated-grouped-v1 | — |
 | HR35 | 1,000 | ASv6.100 | V5.3 | bootstrap-v133 | consolidated-grouped-v1 | — |
+| HR36 | 1,000 | ASv6.100 | V5.3 | bootstrap-v133 | consolidated-grouped-v1 | — |
 
 **Same notes:** HR03/HR10/HR14/HR16/HR19/HR20/HR21/HR27 use the same ordered 50-note selection.
 HR05/HR08/HR09/HR13/HR15/HR17/HR18 use its same ordered first 24 notes. HR04 uses
@@ -692,3 +693,16 @@ plus the display container and 718 original notes, with no direct notes above
 the roots. The offline viewer check passed; all 128 leaves have notes. The saved
 hierarchy and its meanings remain unchanged.
 [Current state and controls](hierarchy-runs.md#hr35--hr30-thousand-note-corpus-with-higen-v53).
+
+## HR36 — 1,000 automatically sampled notes · HiGen V5.3
+
+Preparing a full V5.3 hierarchy on an uncurated corpus: the first 1,000
+mechanically eligible notes in fixed event-ID hash order, seed
+`hr36-corpus-v1`, from the frozen 3,774,156-note English-eligible pool.
+The sample has 602 authors. One over-512-token post was skipped; no manual
+reviews, topic quotas, author balancing or earlier curated set are applied.
+ASv6.100, Bootstrap-v133 and Consolidated-grouped-v1 are fixed.
+
+Review UI is not available until construction completes.
+[Definition](../../sse_multivector/hierarchy-runs/hr36/hierarchy.spec.json) ·
+[Input and execution record](hierarchy-runs.md#hr36--automatically-sampled-1000-note-higen-v53).
