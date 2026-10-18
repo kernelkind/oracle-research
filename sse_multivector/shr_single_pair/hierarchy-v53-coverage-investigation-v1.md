@@ -6737,3 +6737,115 @@ diagnostics and `verification.json`. `review.md` is the compact report. Land
 the reusable experimental module, tests and maintained findings on local `main`;
 keep the task worktree for these frozen artifact/vector paths. The previous
 minimum remains the comparison control, not an approved universal policy.
+
+## HR36 title/meaning disagreement: explanatory, not a general boundary rule
+
+The human approved inspecting the saved title and meaning connections for
+Technology, IRIB and Sports controls before proposing another boundary.
+Keep the reference memberships, meanings, fusion settings, outsider scores and
+all previous judgments fixed. This diagnostic makes **no admission change**.
+Evidence: `target/food-halves-v1/reference-view-disagreement-v1/` in the
+retained food-halves worktree. The measure/case plan was frozen before
+calculation, SHA256
+`07342c7dee6ca01df774acc2479df54dae9dbedbb930425f1f64aaf32bbbd94f`.
+
+### Two different weak-reference mechanisms
+
+Reconstruct the two accepted-only local graphs from the existing saved vectors,
+using the unchanged mutual top-20 / sigma 0.5 calculation. Title pooling selects
+title tokens with the meaning in context; meaning pooling selects the full
+meaning with the title in context. Neither is an original-post mask vector.
+Exclude the member's whole source note when measuring its group support.
+
+Connections in this table are cross-note edges inside the assigned group in
+each local graph. Mean cosines include every available group peer, whether or
+not a graph edge exists. These quantities are not interchangeable.
+
+| Entry | Title / meaning connections | Mean title cosine | Mean meaning cosine |
+|---|---:|---:|---:|
+| L01694 Technology: named posting destination | 18 / 0 | 0.9663 | 0.1585 |
+| L04473 IRIB: Iranian broadcaster | 1 / 0 | 0.1133 | 0.0913 |
+| L05361 Imago: photography agency | 1 / 4 | 0.1720 | 0.4190 |
+| L00173 Photographers | 15 / 7 | 0.7315 | 0.4272 |
+| L04647 Content exclusion from the sports front | 12 / 2 | 0.6044 | 0.4237 |
+| L03069 Sports coverage | 13 / 11 | 0.8416 | 0.6251 |
+| L04632 AI agents: language-model-based autonomous software | 3 / 0 | 0.9255 | 0.6315 |
+
+**Technology exhibits strong title / weak meaning support.** L01694's meaning
+identifies a named posting destination. Its four meaning-graph connections
+outside the group all lead to Memestr posting destinations. Its title instead
+connects to every other Technology-group member. This is concrete evidence
+that the two views are connecting different senses.
+
+**IRIB is weak in both views.** Its sole title connection is to Imago, which
+has four meaning connections to photographers, cameras and photos. IRIB has
+no off-diagonal meaning edges anywhere in this root. The existing final fusion
+nevertheless connects IRIB to all 17 other group members, strongest to Imago.
+That is consistent with the exchange propagating this bridge; the inspection
+is not an ablation establishing exclusive causality.
+
+The same missing-edge symptom also occurs for **a legitimate AI-agent
+meaning**: L04632 explicitly describes language-model-based autonomous agents,
+yet has no meaning edges anywhere in its accepted root. Its three title edges
+lead to other AI-agent definitions, and final fusion connects it to 14 group
+peers. Mean meaning cosine is still 0.6315. Mutual-neighbor pruning does not
+make zero edges a semantic rejection certificate.
+
+Across all 951 group memberships in the three inspected roots / 108 groups,
+**51 have some in-group title edges but no in-group meaning edges**. These
+include ordinary Bitcoin and AI definitions. Do not promote that symptom into
+an automatic filter. The exploratory title-to-meaning kernel-support ratio
+also fails to identify both focal problems consistently: Technology is 82.73
+versus the next Technology member's 6.91, but IRIB is only 3.72, below the
+valid Photographers meaning's 7.50. No ratio cutoff is fitted.
+
+### Narrower outside topics can legitimately have weak title support
+
+Score the 15 planned outsiders independently against their fixed groups; never
+insert an outsider into either graph. The following are the unchanged mean
+`exp(-5.5*(1-cosine))` supports, not edge weights or probabilities.
+
+| Outside entry | Title support | Meaning support | Existing meaning minimum |
+|---|---:|---:|---:|
+| Association football | 0.08619 | 0.05502 | 0.04857 |
+| Cricket | 0.04130 | 0.05861 | 0.04857 |
+| Basketball, L02063 | 0.05866 | 0.07092 | 0.04857 |
+| Large language models | 0.01986 | 0.14070 | 0.10813 |
+| Chatbots | 0.03632 | 0.16695 | 0.10813 |
+
+All five planned Sports outsiders and both LLM/chatbot controls score below
+every accepted member on the title view, while passing the existing meaning
+minimum. Requiring title support to exceed even the weakest existing member
+would lose these group routes. This is a focal-group comparison, not a claim
+that every corresponding note loses all possible root routes.
+
+**Disposition:** the diagnostic explains why weak references can enter the
+fixed groups, but does not establish a generally reliable way to remove them
+from boundary estimation. Technology and IRIB require different explanations;
+ordinary subtopics and valid sparsely connected members overlap the numerical
+symptoms. Keep meaning-only outsider scoring unchanged. Do not adopt a
+both-views requirement, zero-edge exclusion or new cutoff from this evidence.
+The original minimum and rejected distribution bend remain experimental
+controls; this investigation has not resolved the general admission boundary.
+No new human gold labels or semantic accuracy estimates are created.
+
+### Verification and saved evidence
+
+All 951 existing meaning-support values replay within `1.67e-16`. Independent
+scalar calculations check 3,348 view/pair values, maximum error `3.67e-15`.
+Graph symmetry, positive weights and the top-20 degree bound pass. All frozen
+source hashes remain unchanged. Core calculation takes **0.74 seconds**.
+No production code changes, so no new testing seam or runtime part is added.
+
+Save all member values, complete focal pair scores and per-view edges,
+independent outside controls and their nearest matches, and the reconstructed
+per-view graphs/cosines. The additional existing-final-fusion inspection and
+derived support ratios are explicitly exploratory, with their source hashes
+in `exploratory-summary.json`. `evaluation-sources.json` pins the ignored
+calculation scripts; `verification.json` and `review.md` retain checks and the
+compact report. This is a small-reference diagnostic, not qualification of an
+all-pairs production graph at larger corpus sizes.
+
+There are no provider calls, new encodings, training, paid resources, prompt
+changes, hierarchy changes or UI updates. Land these maintained findings on
+local `main`; retain the task worktree for frozen evidence/vector paths.
