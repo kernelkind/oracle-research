@@ -62,8 +62,11 @@ separate from these mechanical checks.
 ## Definitions without illustrative examples
 
 The user requires direct definitions without illustrative members or examples,
-whether drawn from the post, hierarchy or general knowledge. The latest tested
-candidate is experimental [Bootstrap-v139](shr_single_pair/Hierarchy-bootstrap-v139.md),
+whether drawn from the post, hierarchy or general knowledge. A specific person
+would be an example in a general People definition; "living or deceased" is a
+qualification. The no-examples requirement does not itself prohibit qualifications.
+The latest tested candidate is experimental
+[Bootstrap-v139](shr_single_pair/Hierarchy-bootstrap-v139.md),
 paired with [Consolidation-v27](shr_single_pair/Hierarchy-consolidation-v27.md)
 and [rules-v12](shr_single_pair/prompt_parts/explicit-meaning-rules-v12.md).
 Its [matched scope test](shr_single_pair/bootstrap-current-as-qualification.md#defining-compositions-precisely-bootstrap-v139)
@@ -74,12 +77,12 @@ accepts, zero rejects and ten uncertainties. The original scope failure passes
 this bounded development test. A subsequent
 [frozen unseen test](shr_single_pair/bootstrap-current-as-qualification.md#frozen-unseen-qualification-of-bootstrap-v139)
 uses 48 new inputs from 24 posts and authors, excluding the development posts
-and authors. Its 144 valid responses receive 128 agent accepts, five rejects
-and eleven uncertainties; one response abstains with null meaning/title. All
-three People definitions above one biography add the non-defining "living or
-deceased" qualification, and two titles repeat unnecessary temporal detail.
+and authors. After correcting three agent rejections of that qualification,
+its 144 valid responses receive 131 agent accepts, two rejects and eleven
+uncertainties; one response abstains with null meaning/title. The remaining
+rejections concern two titles that repeat unnecessary temporal detail.
 V139 therefore remains experimental and unqualified for adoption. The prompt
-stays unchanged during this test; revise the writing examples/instructions
+stays unchanged during this test; revise the title-writing examples/instructions
 before another unseen qualification. Constructor pins remain V133.
 
 The initial experimental pair uses

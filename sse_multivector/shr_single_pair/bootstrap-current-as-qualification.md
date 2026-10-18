@@ -515,7 +515,7 @@ Aircraft. Unseen means disjoint from V134–V139 development posts/authors and
 literal examples, not all historical experiments or the model's training data.
 This is a purposively stratified HR38 sample, not a population estimate.
 
-Before calls, the review criteria remain: omit illustrative examples and
+Before calls, the agent review criteria were: omit illustrative examples and
 non-defining circumstances; preserve the selected identity, defining conditions,
 required alternatives/parts, instance details and uncertainty; make titles
 concise, natural and supported solely by the finalized meaning. Do not judge by
@@ -529,28 +529,34 @@ freeze isolated project/runner bindings. The prompt bytes and all runner
 settings match V139's development plan exactly. Each ready batch starts without
 waiting for other batch completion; the runner's shared queue controls active
 requests. All 144 responses are mechanically valid: 143 contain non-null
-meanings and one abstains with both meaning and title null. Native fresh agent
-review records:
+meanings and one abstains with both meaning and title null. The latest native
+agent verdicts, including the qualification correction below, are:
 
 | Draw | Valid responses | Accept | Reject | Uncertain |
 |---|---:|---:|---:|---:|
-| 1 | 48 | 44 | 1 | 3 |
-| 2 | 48 | 42 | 2 | 4 |
-| 3 | 48 | 42 | 2 | 4 |
-| Total | 144 | 128 | 5 | 11 |
+| 1 | 48 | 45 | 0 | 3 |
+| 2 | 48 | 43 | 1 | 4 |
+| 3 | 48 | 43 | 1 | 4 |
+| Total | 144 | 131 | 2 | 11 |
 
-**V139 does not meet the overall writing requirements on the unseen panel.**
-Three rejections repeat one non-defining expansion. For the broad People entry
-above the Lana Turner biography, every draw says:
+**V139 still has two title-concision failures on the unseen panel.**
+The original agent review also rejected three outputs containing the same
+qualification. For the broad People entry above the Lana Turner biography,
+every draw says:
 
 > People are human beings, living or deceased.
 
-The selected topic is unrestricted People. The lifespan in the post motivates
-a live/dead question in diagnostics, but its optional state qualification is
-unnecessary in the final definition: removing it leaves the identity and chosen
-membership unchanged. This is a redundant expansion, separate from an explicit
-list of named illustrative people. The other nine new People responses and all
-three Humans responses use direct definitions without post examples.
+The user clarified that "living or deceased" is a qualification, whereas a
+specific person would be an example. The previous agent rejection imposed an
+additional preference to omit that qualification; it was not justified by the
+user's no-examples requirement. The three corrected agent verdicts accept these
+outputs: the qualification expresses scope, no illustrative person appears in
+meaning, and the title is "People." This does not establish user approval of the
+exact wording or of every qualification. The native review history preserves
+both the original rejections and the subsequent corrections; frozen inputs,
+pre-call criteria and model outputs remain unchanged. The other nine new People
+responses and all three Humans responses use direct definitions without post
+examples.
 
 Two rejections concern the title of the author's preference to learn, persevere
 and take steps toward a better future while opportunity is available. Draw 2:
@@ -562,8 +568,8 @@ titles read as restatements of the selected entry, retaining a condition that
 can remain in meaning without being needed to recognize the topic. The review
 does not impose a numeric cutoff: longer names and compound topics are not
 automatically failures. No artificial compounding was identified as word-count
-gaming in this panel. The two title failures and three People failures occur
-on two unique inputs; repeated draws are not independent population cases.
+gaming in this panel. Both title failures occur on one unique input; repeated
+draws are not independent population cases.
 
 The eleven uncertainties remain distinct from these rejections. All three
 prospective-world outputs raise the unresolved meaning of on-chain digital
@@ -593,9 +599,8 @@ Exact native results, attributed reviews and accounting remain under
 `target/bootstrap-v139-unseen-v1/` in the retained task worktree. All 40 focused
 checks pass. V139, its synchronized companion and existing constructor pins are
 unchanged. This task does not retune the prompt on the unseen results. The useful
-next step is to simplify the writing instructions/examples around short topic
-names and omission of optional scope clarifications, then qualify a revision
-on another untouched panel before adoption.
+next step is to simplify the title-writing instructions/examples around short
+topic names, then qualify a revision on another untouched panel before adoption.
 
 ## Meaning-derived titles: Bootstrap-v130
 
