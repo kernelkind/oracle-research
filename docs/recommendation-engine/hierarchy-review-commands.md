@@ -714,7 +714,17 @@ cd /home/dev/src/notedeck_worktrees/algos
 
 ## HR37 — 1,000 automatically sampled notes · HiGen V5.3
 
-ASv6.100 and Bootstrap complete; construction running. ASv6.100, Bootstrap-v133 and Consolidated-grouped-v1. Review command unavailable until the hierarchy completes.
+Complete: 150 nodes, six roots, four levels and 622/1,000 notes beneath roots.
+All 144 edges narrow note sets; the offline UI check passed. Automatic seed
+`hr37-corpus-v1`, ASv6.100, Bootstrap-v133 and Consolidated-grouped-v1 are fixed.
+Semantic review is pending.
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos
+./oracle-mvp-hierarchy-hr37-v53-auto/target/hr37-review-ui-v1/launch.sh
+```
+
+[Input, code and accounting record](hierarchy-runs.md#hr37--automatically-sampled-1000-note-higen-v53).
 
 ## HR38 — 2,000 automatically sampled notes · HiGen V5.3
 

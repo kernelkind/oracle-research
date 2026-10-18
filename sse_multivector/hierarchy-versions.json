@@ -217,6 +217,13 @@
       "artifact_path": "target/hierarchy-hr36-v53-auto-thousand-note-v1/HR36/state.json",
       "sha256": "94a7f7d6d2e4ad8fac895c0c44ef4d444bece47fff60a4cbd30aaa3205a70a07",
       "family": "Hierarchy"
+    },
+    {
+      "version_id": "HR37",
+      "identity": "4adfc15cf24b5ff728417b8d93abcd805f47d6bdc1e53b8a0ca4c8b1b1c8236a",
+      "artifact_path": "hierarchy-hr37-v53-auto-1000-note-v1/HR37/state.json",
+      "sha256": "5b73c39d8ff7a377da1819a3a3987d1580291670df122425d2dbc8c81a300d19",
+      "family": "Hierarchy"
     }
   ]
 }
