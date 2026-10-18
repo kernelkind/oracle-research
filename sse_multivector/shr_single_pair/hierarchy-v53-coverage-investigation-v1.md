@@ -8215,3 +8215,13 @@ notes retain their routes; actual memberships never change. The numerical
 calculation takes 11.69 seconds after input verification; disk reads and hashing
 are additional. Relevant regression suites pass 81 tests. No new encodings,
 LLM calls, training, paid resources or hierarchy/UI changes occur.
+
+## Whole-note audit of the unchanged full-meaning candidate
+
+See [Whole-note admission audit v1](hierarchy-whole-note-admission-audit-v1.md)
+for the frozen 67-note review across HR36/HR37. Primary hash-selected proposals
+have useful routes for 19/24 and 18/24 notes, respectively; selected-root reviews
+also expose 5/38 and 22/72 unsupported placements, with ambiguity kept separate.
+This is genuine coverage value with substantial browsing noise, not a demand
+for perfection or a production approval. No scores, prompts, encoder weights,
+boundaries, hierarchy membership or prior exact-entry judgments changed.
