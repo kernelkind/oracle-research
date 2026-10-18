@@ -588,10 +588,11 @@ research worktree for their frozen source paths.
 The user authorized deriving an automatic group boundary from the already
 measured title/meaning disagreement, then replaying the unchanged procedure on
 HR36–38. This produces a more conservative option with a substantial measured
-cost. It removes 13 of 15 wrong primary HR38 root placements, but only 12 of
-27 previously useful notes retain a known supported route. Four more need
-alternate-witness review. This is a tradeoff, not a demonstrated preferable
-successor or an adopted HiGen policy.
+cost. It removes 13 of 15 wrong primary HR38 root placements, but after the
+bounded alternate-witness review below only 15 of 27 previously useful notes
+retain a known supported route. One of the four alternate routes remains
+unresolved. This is a tradeoff, not a demonstrated preferable successor or an
+adopted HiGen policy.
 
 ### Frozen rule and scope
 
@@ -630,8 +631,9 @@ Actual original coverage stays at 683/1,000, 622/1,000 and 1,328/2,000.
 
 ### Matched reviewed results
 
-Keep the existing primary cohorts and supplements separate. A known useful
-route requires its previously reviewed **selected witness** to survive; a
+The following table records the numerical replay **before** the follow-up
+alternate-witness review below. Keep primary cohorts and supplements separate.
+A known useful route requires its previously reviewed **selected witness** to survive; a
 different selected heading is not silently certified as a replacement.
 
 | Primary measure | HR36 | HR37 | HR38 |
@@ -677,9 +679,58 @@ better whole-note access.
 
 Assessment: retain this as an experimental conservative option with explicit
 losses; neither an automatic boundary nor a reduction in known errors establishes
-an acceptable overall tradeoff. There is no post-result threshold adjustment,
-group exception, new semantic judgment or adoption. The four alternate primary
-HR38 routes remain unresolved by this numerical replay.
+an acceptable overall tradeoff. The numerical replay makes no post-result
+threshold adjustment, group exception, new semantic judgment or adoption. It
+leaves four primary HR38 note routes for the subsequent review below.
+
+### Follow-up selected-witness review
+
+The user authorized reviewing those four note routes against the original full
+posts, the **currently selected** entry meanings and the root's actual accepted
+references. Removed Apps, Songs and Bitcoin headings cannot rescue a placement.
+The synthetic root name supplies no semantic evidence. Original references
+remain scope evidence even when their groups no longer supply new admissions;
+the filter never removed those accepted memberships.
+
+| Surviving selected entry | Review | Actual accepted reference and reason |
+|---|---|---|
+| L08703 · Wastefulness | Unresolved | Costs (L03490/L03540) covers resources sacrificed, but does not clearly settle the scope of the quality of wasting resources. Savings and Financial responsibility alone do not establish the full, nonfinancially restricted meaning. |
+| L02311 · Nostr | Supported | Social-networking protocols (L08372/L08725) explicitly includes Nostr and decentralized communication architectures. The removed Apps witness is unnecessary. |
+| L05466 · Value comparisons | Supported | Assessment (L07529) and Assessments (L09677) cover weighing information and appraising qualities. Comparing benefits or quantities relative to cost is such an evaluation, without restricting it to Bitcoin or money. |
+| L02125 · Sheet music | Supported | Documents (L07282/L02173) covers written, printed or electronic records conveying information. The selected meaning explicitly describes written musical notation; no sound-recording or public-publication assumption is needed. |
+
+Nostr suffices for its note; the other surviving Local data storage heading is
+not separately adjudicated. Wastefulness stays unresolved rather than becoming
+a false positive or being narrowed to the post's spending example. The other
+root's reader-body interpretation on that note remains outside this review.
+These are four new **provisional agent assessments**, preserving all prior
+judgments; they are not human decisions or a new independent test sample.
+
+The revised primary HR38 count is **15 of the original 27 useful notes with a
+supported route**, nine now entirely unproposed, one left with only a wrong
+route and two with unresolved routes. Among the **18 surviving proposals** in
+the original 32-note sample, 15 are useful, one is wrong-only and two unresolved.
+This conditional, post-development subset is not an accuracy estimate for all
+140 proposals. The two known wrong primary root placements remain; a separate
+Codex C00001 alternate route is still unreviewed, because that note already had
+a supported C00005 route and was outside these four cases.
+
+The review changes no automatic proposal, group boundary, hierarchy membership
+or coverage projection: 140 new-note proposals and 73.4% projected total
+coverage remain. The substantial useful-route loss persists after replacing
+three lost original witnesses with valid selected alternatives.
+
+Evidence: `target/food-halves-v1/reference-view-agreement-alternate-review-v1/`.
+Plan SHA256:
+`576cafadafc9f9589f171e749e135a7dbe96b2abd5ca000e07fd59efb8db7833`.
+The frozen packet retains all four full posts, selected fixed meanings and
+prior assessments. `review.json` records exact accepted-reference identities
+and complete reasons; `whole-note-results-after-review.json` is a separate
+updated assessment copy. Identity, current-selection, source-hash, bounded-change
+and recount checks pass. All other note/root judgments and the numerical replay
+remain unchanged. No new model calls, encodings, training, scoring, production
+code, hierarchy edits or UI refresh occurred. Retain the research worktree for
+the frozen evidence paths on external storage.
 
 ### Verification and retained evidence
 
