@@ -7111,3 +7111,119 @@ compact report. No new production code, APIs, tests or runtime components.
 No LLMs, training, encodings, paid resources, hierarchy/prompt/UI changes,
 spreadsheet updates or HR37/38 execution. Land the maintained findings on local
 `main`; retain the task worktree for frozen evidence and vector source paths.
+
+## HR36 meaning-only subgroup diagnostic: reject the reference filter
+
+The human approved testing whether meaning-only clustering inside the eight
+saved groups distinguishes IRIB/the Technology destination from valid AI
+agents and roleplaying meanings. Freeze plan SHA256
+`8fd339d6c245904d6071304be55a7f095268a16def3b9173ad59caab4c06216a`.
+Evidence: `target/food-halves-v1/hr36-within-group-meaning-hdbscan-v1/` in the
+retained food-halves worktree. **The clustering fails the valid-reference
+controls. Do not adopt subgroup/noise membership as a reference-quality filter.**
+No canonical membership, reference membership or outsider admission changes.
+
+### Existing production numerical path, unchanged parameters
+
+Run each fixed group independently on its saved full-meaning vectors with the
+same frozen native numerical binary as HR36: exact angular HDBSCAN,
+`min_samples=3` counting self, `min_cluster_size=2`, EOM. There are no outsiders,
+title vectors, synthetic vectors, cross-group pooling or parameter variants.
+Production `hierarchy_hdbscan.request_for` and `members` bind the controls,
+full-meaning vector identities, normalized bytes, aliases and expanded output.
+The ordinary tree validation also passes. Full output is used for these tiny
+at-most-30-point inputs because native core/outlier values are inspected;
+production hierarchy output remains compact.
+
+| Original fixed group | Entries | Selected subgroup sizes | Distinct notes per subgroup | Ungrouped |
+|---|---:|---|---|---:|
+| C00001 Photography | 18 | 3, 10 | 3, 8 | 5 |
+| C00001 Technology | 19 | None | — | 19 |
+| C00003 Defence | 6 | None | — | 6 |
+| C00004 Bitcoin initiative/media | 3 | None | — | 3 |
+| C00005 Gaming | 20 | 15, 3 | 14, 1 | 2 |
+| C00005 Sports | 15 | None | — | 15 |
+| C00006 AI models/agents | 15 | 9, 3 | 9, 3 | 3 |
+| C00006 broad AI | 30 | 8, 13 | 8, 13 | 9 |
+
+Across 126 existing entries, 64 are assigned to diagnostic subgroups and 62
+are ungrouped. These are geometric counts, not accuracy or changed note
+coverage. Four inputs yield no selected subgroup at all.
+
+### The desired distinction fails
+
+Photography leaves IRIB ungrouped, but also valid Photographers, Camera lenses,
+Images and Imago. AI models/agents leaves **both valid agent controls L02645
+and L04632** ungrouped, plus valid AI tooling. Nine model definitions form one
+subgroup; two other agents and model capabilities form another. That cannot
+justify discarding the remaining agents.
+
+The three roleplaying-game background/magic/rules entries are grouped, but
+all originate from **one source note**. This is not independent cross-note
+confirmation. Broad AI also leaves nine Artificial-intelligence definitions
+ungrouped. Its highest GLOSH outlier score, **0.69635**, belongs to the valid
+L02836 definition of the AI field and its applications. It exceeds IRIB's
+**0.68845**. The native score is a geometric outlier measure, not a semantic
+error probability or a universally valid exclusion cutoff.
+
+### Root ineligibility makes all-noise results inconclusive
+
+The existing algorithm intentionally excludes the all-data root from EOM and
+leaf selection. A condensed tree with no surviving non-root cluster therefore
+reports all points as noise. Technology's saved tree has zero proper child
+branches: its 19 ungrouped points do not establish that all Technology meanings
+are unrelated or invalid. Defence, Bitcoin and Sports similarly have no
+selected subgroup. Do not change root eligibility to make this result look
+successful.
+
+Eight whole-note exclusions cover every source contributing multiple entries
+inside a group. Removing the one note supplying the three roleplaying entries
+leaves **17 Gaming entries and no proper branch**. All are then noise, including
+15 previously grouped entries that remain present. Their topics did not become
+invalid; the flat-selection structure changed. This is expected current
+HDBSCAN behavior, not evidence to remove the reference collection or a generator
+bug. Other exclusions switch two remaining Photography entries or individual
+console entries. Withholding the two-entry AI source retains the same two
+subgroups. Preserve all folds, IDs, note identities and numerical changes.
+
+### Disposition and proposed next experiment
+
+Reject subgroup membership as the proposed reference filter. Raw closest-peer
+similarities and native outlier scores remain diagnostics; neither supplies an
+automatic admission boundary here. No reference is removed, no threshold is
+changed and no additional clustering settings are searched.
+
+The next proposed bounded experiment is **local distance scaling for admission
+affinities**. Fusion already computes nearby-reference scales, while admission
+uses one global `exp(-5.5*(1-cosine))` scale. Compare a reference's distances
+relative to its accepted meaning neighbors, keeping the full-meaning vectors,
+fixed fusion groups, independent outsiders, mean group aggregation and the
+existing weakest-member boundary. Change only similarity scaling, then measure
+actual automatic decisions on the frozen panels rather than a hindsight cutoff
+ceiling. This tests calibration without deciding which accepted entries are
+semantically bad. It is a hypothesis, not evidence of improvement or approval
+to deploy. Freeze the exact normalization and source-note controls before any
+such calculation; no part of it is implemented or run in this investigation.
+
+### Verification and evidence
+
+**18 native numerical invocations** comprise eight baselines, eight duplicate-
+source-note exclusions and two reversed-input controls. Technology and Gaming
+permutations preserve expanded subgroups and every per-entry numerical result
+exactly. The pinned HR36 binary SHA256 is
+`448aa03e6f35a7cea3d643f91d33135d9c3c4710f0aeee24711081f6b02652d7`.
+Independent scalar angular-core calculations differ by at most `7.33e-15`;
+independent recursive GLOSH reconstruction is exact. All source and vector
+hashes remain unchanged. Native process time is **0.042 seconds**, full
+numerical evaluation **0.73 seconds**. Eleven existing production HDBSCAN
+adapter tests pass; no new testing seam or production API is added.
+
+`native/` retains every source-bound request/result and stderr;
+`base-groups.json`, `duplicate-note-jackknives.json`, `all-native-runs.json`,
+`focal-case-results.json`, `input-permutation-checks.json` and
+`vector-bindings.json` retain complete output and source bindings. Keep the
+script hash, `verification.json` and `review.md`. Generated artifacts stay
+ignored; maintained findings land on local `main`, with the task worktree
+retained for frozen evidence/vector paths. No model calls, training, encodings,
+paid resources, prompts, hierarchy/UI changes, official hierarchy-run records,
+spreadsheet updates or HR37/38 execution.
