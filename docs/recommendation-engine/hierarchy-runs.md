@@ -2135,3 +2135,21 @@ charge is zero. Known tokens: 5,962,947 uncached input; 69,536,896 cached input;
 [Selection](../../sse_multivector/hierarchy-runs/hr38/corpus-selection.spec.json) ·
 [Native audit](../../../oracle-mvp-hierarchy-hr38-v53-auto/target/hierarchy-hr38-v53-auto-2000-note-v1/HR38/structural-audit.json) ·
 [Code provenance](../../../oracle-mvp-hierarchy-hr38-v53-auto/target/hierarchy-hr38-v53-auto-2000-note-v1/HR38/code-provenance.json).
+
+
+## HR39 — automatically sampled 5,000-note HiGen V5.3
+
+**Prepared; model execution not started.** Automatic seed `hr39-corpus-v1`
+selected 5,000 original posts from the same frozen English-eligible pool as
+HR36–HR38: 2,001 authors, no manual reviews or topic/author quotas.
+Overlap: HR36 2, HR37 1, HR38 2 notes.
+
+ASv6.100, Bootstrap-v133, Consolidated-grouped-v1 and full HiGen V5.3 recursion
+retain the HR37/38 controls: GPT-6.1 Sol medium/subscription SSE, prefix caching,
+one-hour deadlines, angular HDBSCAN min_samples=3/min_cluster_size=2/EOM,
+six-choice maximum, no cosine cutoff and the 512-token SSE checkpoint.
+Twelve local CPU workers; shared 30-request teacher queue; no attempt ceiling.
+
+[Definition](../../sse_multivector/hierarchy-runs/hr39/hierarchy.spec.json) ·
+[Selection](../../sse_multivector/hierarchy-runs/hr39/corpus-selection.spec.json).
+Native accounting, root coverage and review UI will be recorded after execution.

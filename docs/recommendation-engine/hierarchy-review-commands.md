@@ -739,3 +739,11 @@ cd /home/dev/src/notedeck_worktrees/algos
 ```
 
 [Input, code and accounting record](hierarchy-runs.md#hr38--automatically-sampled-2000-note-higen-v53).
+
+
+## HR39 — 5,000 automatically sampled notes · HiGen V5.3
+
+Preparing; review UI is not available yet. Automatic seed `hr39-corpus-v1`,
+ASv6.100, Bootstrap-v133 and Consolidated-grouped-v1.
+
+[Input, code and accounting record](hierarchy-runs.md#hr39--automatically-sampled-5000-note-higen-v53).
