@@ -5762,3 +5762,140 @@ controls, cohort metrics and verification. The two explicitly labeled
 calculation, not validated admission thresholds. Reusable source, tests and
 maintained findings land on local `main`; retain the task worktree because
 these ignored source-bound evidence paths are needed for continued research.
+
+## Weakest cross-note member as the boundary: controlled test
+
+The user approved testing each fixed group's weakest existing member score
+directly as its boundary, with the member's whole source note excluded when
+scoring it. This removes reference-curve fitting and graph-cut selection.
+It does not change fusion groups, weights, query scores or hierarchy admission.
+
+Evidence: `target/food-halves-v1/weakest-member-boundary-v1/` in the retained
+task worktree. Plan SHA256
+`9f01b0f8e433b73ffff8d0d7814fc7697b2304a2d34eb7318dfc9b5f335c3746`
+was frozen before outcomes. It binds the exact method/source/tests and prior
+baselines, the same 15 Food and 25 Arts groups, 1,449 independent queries,
+saved vectors, provisional cohorts and separate human controls. No LLM calls,
+new encodings, training or paid resources are used.
+
+For every member, compute the existing mean meaning-kernel affinity against
+members of the same group from other notes. Take the exact smallest mean as
+the boundary: no bend, trimming, interpolation with an adjacent reference,
+numerical semantic margin or labeled threshold selection. An outsider passes
+when its unchanged mean score reaches that boundary in any group. Other
+accepted reference groups and outsiders cannot affect the boundary. A group
+with no remaining members or no cross-note support supplies no boundary.
+Fixed reference memberships are never expanded or redefined during scoring.
+
+### Actual primary results
+
+All counts below use the same saved provisional panels and ungated any-group
+admission. They are development comparisons, not independent accuracy estimates.
+
+| Root | Original score bend: fits / mismatches | Graph boundary: fits / mismatches | Weakest member: fits / mismatches |
+|---|---:|---:|---:|
+| Food | 21/30; 3/51 | 12/30; 1/51 | 14/30; 3/51 |
+| Arts | 17/24; 3/20 | 5/24; 0/20 | 15/24; 0/20 |
+
+The original score bend is the previous neighbor-context, member-anchored
+`y-x` rule with the original lower-tail trimming. The graph boundary is the
+preceding fixed-reference conductance experiment. Weakest-member Food proposes
+40 omitted entries from 30 notes; Arts proposes 85 from 64 notes. These remain
+proposals, not additions or validated coverage gains. All 40 groups have base
+boundaries, so this experiment's losses are not caused by unavailable base
+curves or cuts.
+
+Compared with the original score bend, Food loses Coffee L00228, Tea L00534,
+Coffee roasting L00616, Taste profiles L00617, Coffee-drinking experience
+L00682, Ice cream bars L03892, Wineries L04122 and Mugs L05317. It gains Charity
+dinners L02693. Tea L00267 still passes. The other eight missed provisional
+fits were also missed by that baseline; do not count them as eight new losses.
+
+Food excludes the two Wildlife entries L04627/L05566 and Gas facilities L06055
+that were its earlier three provisional mismatches. It replaces them with
+Visits to Japan L02274, Invitations L03286 and Travel classes L05800. The
+unchanged total of three therefore conceals different proposed errors.
+
+Arts removes all three earlier provisional mismatches: Earthquakes L01799,
+Breath L04399 and Gas facilities L06055. Relative to the score-bend baseline,
+it loses Cartoons L03388, Photography L03433 and Photographs L04802, and gains
+Art galleries L03735. Its other six missed fits were already missed. Compared
+with the graph boundary, it recovers ten fits without adding a saved mismatch.
+This is a useful Arts development tradeoff, not qualification on unseen data.
+
+All four prior human Food **note-level** controls match again: the three
+accepted notes have a route and the Easter-broadcast note remains excluded.
+In particular, the accepted pisanki note returns through Eggs L02984, while
+its low-priority Traditional activities heading is still missed. Nausea
+L02276, Blood L06803 and JAIA Drake L04019 remain excluded from Food. Those
+three are entry-level human rejections, distinct from the note-level controls.
+Arts labels remain provisional; none inherits a Food rejection automatically.
+
+### Concrete boundary mechanisms
+
+Food preservation `fused-008` now uses its weakest member, generic century-egg
+Food L06359, at `0.0479689997`. Eggs L02984 scores `0.0550930106` and passes;
+Gas facilities scores `0.0477396846` and fails. This explains the recovered
+human-accepted note and the removed Gas route. It does not establish a robust
+margin: the Gas separation is only about `0.0002293` under the saved vectors.
+
+General Food `fused-014` has two members, Food L00445 and Food L06842. Their
+mutual cross-note affinity is `0.1149465543`, which becomes the new threshold.
+Coffee L00228 scores `0.084107` and now fails this route, formerly available
+at the score-bend threshold `0.071951`. A group's internal similarity is
+therefore not automatically the weakest useful outside membership score.
+
+All three new Food mismatches enter through restaurant-related `fused-004`.
+Its weakest member is Dining groups L05006:
+
+> Dining groups are parties of two or more people dining together, which may
+> include children.
+
+Its score against other-note group members is `0.0288968293`, below the next
+member Restaurant atmosphere L01119 at `0.0439631403`. The weakest-member rule
+sets the cutoff at the former. Visits to Japan scores `0.0393471443`,
+Invitations `0.0367863784`, Travel classes `0.0345618654`, and the gained fit
+Charity dinners `0.0373254006`. All pass. Visits to Japan scoring above Charity
+dinners means merely raising this group's threshold cannot retain that fit
+through this group while excluding every mismatch. This is a local score-order
+limitation, not evidence that the underlying Dining groups member is invalid
+or that the global score is incapable of recovering Charity dinners elsewhere.
+The complete member table and query definitions are retained in
+`restaurant-group-trace.json`; no reference or judgment is changed.
+
+Arts Audio technology `fused-021` uses Trying soundpacks L05675 at
+`0.0399633316`, excluding Gas facilities `0.0258617412`. Arts Artists
+`fused-010` uses Artist pages L00822 at `0.0372062174`, giving Art galleries
+an available route. The remaining films, creator and visual-art misses are not
+silently relabeled as unsuitable.
+
+### Self-consistency and verification
+
+Recovering the full group's existing members with the full-data minimum is
+true by construction, not a validation result. Recompute the boundary in
+whole-source-note exclusion folds to inspect sensitivity separately. Of 215
+folds, 18 have no cross-note boundary after exclusion. One Food group and no
+Arts group pass every fold. The optional hard gate yields 0 saved fits for
+both roots; Food still proposes two unreviewed omitted entries, Arts none.
+Do not adopt that gate or report abstention as improved accuracy.
+
+Five tests first fail for the missing implementation, then pass through
+`fixed_reference_members.derive_boundary`. They cover the exact minimum,
+exclusion of every entry from a member's note, recomputation after note
+removal, tied minima, unavailable support, nonmember/input invariance and
+invalid inputs. All 68 combined member/graph/bend/query/fusion/HDBSCAN/local
+expansion tests pass.
+
+Independent scalar arithmetic checks all 255 base/fold boundaries and 1,898
+member scores, with maximum error `2.22e-16`. All 57,960 outsider/group scores
+exactly match the earlier baseline. Query order, duplicates and isolated
+evaluation are invariant. Removing every nonmember reference leaves all 40
+base boundaries exactly unchanged. Protected source/graph hashes and original
+hierarchy state remain unchanged. Evaluation takes 1.60 seconds.
+
+The new rule is **not adopted**: it is substantially better than the graph
+boundary on Arts, but does not improve Food overall against the original score
+bend. Retain it as an experimental comparison, with the concentrated restaurant
+failure and overly strict Coffee route as separate evidence. Reusable source,
+tests and maintained findings land on local `main`; the worktree remains for
+the ignored frozen calculations, full member/fold results and all proposals.
