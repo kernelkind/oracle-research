@@ -59,9 +59,10 @@ The remaining ordering compares a standalone wrong topic with contextual useful
 topics. It does not establish that a consistently applied standalone-title
 method fails or succeeds. Bare reactions also loses the audience qualification;
 it is a mechanism control rather than a faithful replacement for either topic.
-The most useful next control is to encode the six
-actual people-class titles without context too, and compare the resulting
-ordering against the same references. That further experiment has not run.
+The subsequent [standalone people-class control](hierarchy-people-standalone-controls-v1.md)
+is complete: three of six useful witnesses, representing two of five distinct
+titles, now outrank reactions. Racing drivers, Astronauts and Australians still
+score lower. This partial change does not establish a separating score.
 This result does not qualify head-word extraction or context removal as an
 admission policy; the conservative candidate is retained unchanged.
 

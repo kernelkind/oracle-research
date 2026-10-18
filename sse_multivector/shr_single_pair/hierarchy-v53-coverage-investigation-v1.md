@@ -8315,5 +8315,9 @@ false match. No new admission rule or hierarchy change follows from this test.
 The [standalone reactions control](hierarchy-reactions-standalone-probe-v1.md)
 then lowers support a further 70–72% to 0.012325, with one new native encoding
 and all contextual vectors reused. It still exceeds five of the six saved
-contextual people-class scores. Context contributes, but a uniform standalone
-comparison has not yet been tested; the admission candidate stays unchanged.
+contextual people-class scores. The subsequent
+[standalone people-class controls](hierarchy-people-standalone-controls-v1.md)
+improve that ordering from one to three of six witnesses above reactions, or
+from one to two of five distinct titles. Racing drivers, Astronauts and
+Australians still score lower. This does not qualify a new admission score;
+references remain fixed/contextual and the admission candidate stays unchanged.
