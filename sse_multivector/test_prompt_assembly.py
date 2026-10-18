@@ -256,6 +256,8 @@ class PromptAssemblyTests(unittest.TestCase):
         for version, title, meaning in (
                 (136, 'Birds', 'Birds are feathered vertebrate animals.'),
                 (137, 'Transportation',
+                 'Transportation is the movement of people or goods from one place to another.'),
+                (138, 'Transportation',
                  'Transportation is the movement of people or goods from one place to another.')):
             with self.subTest(version=version):
                 examples = re.findall(
@@ -272,7 +274,8 @@ class PromptAssemblyTests(unittest.TestCase):
     def test_definition_only_pair_preserves_wrappers_and_changes_shared_rules_together(self):
         from sse_multivector.prompt_assembly import compile_spec
 
-        for family, current, previous in (('bootstrap', 134, 133), ('consolidation', 22, 21)):
+        for family, current, previous in (('bootstrap', 134, 133), ('consolidation', 22, 21),
+                                          ('bootstrap', 138, 137), ('consolidation', 26, 25)):
             with self.subTest(family=family):
                 path = PROMPTS / f'Hierarchy-{family}-v{current}.assembly.json'
                 spec, _, content = compile_spec(path)

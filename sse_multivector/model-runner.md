@@ -26,14 +26,14 @@ source synchronization change, not a measured prompt improvement or activation.
 
 To change common wording, author a new version of the shared rules and publish
 both new prompt versions in one operation. For example, after actually creating
-`explicit-meaning-rules-v11.md`:
+`explicit-meaning-rules-v12.md`:
 
 ```bash
 python3 sse_multivector/prompt_assembly.py sync \
-  sse_multivector/shr_single_pair/Hierarchy-bootstrap-v137.assembly.json \
-  --rules sse_multivector/shr_single_pair/prompt_parts/explicit-meaning-rules-v11.md \
-  --prompt-id Hierarchy-bootstrap-v138 \
-  --companion-id Hierarchy-consolidation-v26
+  sse_multivector/shr_single_pair/Hierarchy-bootstrap-v138.assembly.json \
+  --rules sse_multivector/shr_single_pair/prompt_parts/explicit-meaning-rules-v12.md \
+  --prompt-id Hierarchy-bootstrap-v139 \
+  --companion-id Hierarchy-consolidation-v27
 ```
 
 Run from the authorized task worktree. This command writes both new complete
@@ -62,7 +62,7 @@ separate from these mechanical checks.
 ## Definitions without illustrative examples
 
 The user requires direct definitions without illustrative members or examples,
-whether drawn from the post, hierarchy or general knowledge. The latest tested
+whether drawn from the post, hierarchy or general knowledge. The V137
 candidate is [Bootstrap-v137](shr_single_pair/Hierarchy-bootstrap-v137.md), paired
 with [Consolidation-v25](shr_single_pair/Hierarchy-consolidation-v25.md) and
 [rules-v10](shr_single_pair/prompt_parts/explicit-meaning-rules-v10.md). Its
@@ -118,6 +118,16 @@ Bootstrap-v136/Consolidation-v24 with rules-v9. Its 144 valid responses receive
 failures illustrate Finance with possible activities; the pair remains
 experimental and unadopted.
 
+The [V138 scope test](shr_single_pair/bootstrap-current-as-qualification.md#scope-preservation-revision-bootstrap-v138)
+checks the stated description without using the topic name to supply omitted
+properties. Bootstrap-v138 and Consolidation-v26 share rules-v11 and preserve
+all wrappers/examples. Its 153 valid outputs include twelve Half-and-half
+responses: four state the distinguishing US milkfat interval, seven approximate
+it by equal proportions and one remains too broad. The pair remains experimental
+and has not consistently resolved the scope failure. Native review records 140
+accepts, one reject and twelve uncertainties across the full panel and focused
+repeats. Constructor pins remain V133.
+
 ## Bootstrap titles derived from explicit meanings
 
 Experimental [Bootstrap-v133](shr_single_pair/Hierarchy-bootstrap-v133.md)
@@ -128,9 +138,9 @@ details in the meaning. Clear, faithful phrasing takes priority over shortening
 that would make the title awkward or misleading. There is no numeric length
 target or instruction to find the shortest title.
 
-Bootstrap-v134 retains V133's title instructions. V135 through V137 retain the
+Bootstrap-v134 retains V133's title instructions. V135 through V138 retain the
 natural-title policy but remove the instruction to leave illustrative details
-in the meaning. Bootstrap-v130 through v137 use the
+in the meaning. Bootstrap-v130 through v138 use the
 [five-field output schema](shr_single_pair/Hierarchy-bootstrap-v130.output.schema.json).
 Native `hierarchy_local_nodes` validation requires a nonempty title for a
 non-null meaning and a null title for a null meaning. Earlier schemas retain

@@ -358,6 +358,61 @@ experimental; existing constructors still pin V133 and no hierarchy is rebuilt.
 Resolve the scope rejection and remaining judgments before adoption, then test
 unseen inputs rather than continuing to tune only this development panel.
 
+### Scope-preservation revision: Bootstrap-v138
+
+The user authorized resolving V137's scope failure and retesting. V138 changes
+only the shared rules, paired with Consolidation-v26; all wrappers and examples
+remain fixed. The definition must state its defining conditions rather than
+relying on the topic name to supply them. The final scope check can resolve a
+missing condition before finalization, replacing the earlier prohibition on
+adding a condition during writing.
+
+Before calls: freeze three full 48-input draws and nine additional independent
+repeats of the original Half-and-half case, for twelve focused outputs total.
+Assess the same style/scope properties without a phrase blacklist. In the US
+dairy sense, a generic milk-and-cream mixture is insufficient. Check the stated
+composition against the primary standard linked in V137's review; approximate
+equal-parts wording alone is not an established exact boundary. Neither the
+standard nor an expected answer is added to the model input or examples. Prior
+agent judgments are development evidence, not human gold.
+
+All twelve ready native batches start without waiting for unrelated completion,
+using the shared queue and inherited model/schema/transport settings. Preparation
+verifies exact matched inputs and isolated source bindings. All 153 outputs are
+valid. Native agent review of the full panel records:
+
+| Draw | Accept | Reject | Uncertain |
+|---|---:|---:|---:|
+| 1 | 46 | 0 | 2 |
+| 2 | 47 | 0 | 1 |
+| 3 | 45 | 0 | 3 |
+
+Across all twelve Half-and-half outputs, four state the distinguishing US
+milkfat interval, seven give an approximate equal-parts description, and one
+only compares its fat content with whole milk and cream. The last remains too
+broad; the seven approximate descriptions are uncertain against the pre-call
+technical criterion. The nine focused batches therefore add two accepts, one
+reject and six uncertainties. Combined review: 140 accepts, one reject and
+12 uncertainties. V138 has not resolved the scope failure consistently.
+
+No clear illustrative-example failures appear in the full panel. All 24 People
+meanings omit post examples, and the dashboard, dahlia, conditional BCH and stock
+plan controls retain required details. Other uncertainties are three food/
+ingredient clauses, one R Cheap collaboration interpretation and one Ali Smith
+meaning that adds "merely" to the prohibition on treating the arts as industry.
+These are fresh agent judgments and do not establish causal regressions.
+
+The [specification](hierarchy-bootstrap-no-examples-deep-v138.spec.json) and
+[native usage source](hierarchy-bootstrap-scope-v138-usage-v1.json) preserve the
+full-panel settings and all twelve batch references. Artifacts remain under
+`target/bootstrap-scope-v138/` in the retained task worktree. Native totals are
+153 fresh outputs, 165 attempts including twelve warmups, zero failed/retry
+attempts or reused answers, and complete observed usage. API-equivalent catalog
+cost is $1.2287344, not a subscription cash charge. All 39 focused checks pass
+following the expected missing-publication failure. Source wrappers, all three
+examples and constructors remain unchanged. The pair is experimental; a further
+revision must distinguish defining quantitative criteria from approximations.
+
 ## Meaning-derived titles: Bootstrap-v130
 
 The user requested a concise title based solely on the explicit meaning.
