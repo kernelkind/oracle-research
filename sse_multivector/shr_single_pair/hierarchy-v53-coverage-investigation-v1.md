@@ -8385,3 +8385,20 @@ choosing a policy cutoff or requiring perfection. Full sweeps retain cohort,
 entry, root-placement and whole-note outcomes separately. Independent arithmetic
 and membership checks and 39 relevant tests pass. No production behavior,
 vectors, labels, model calls, hierarchy files or UI changed.
+
+The user then authorized a
+[uniform max of reference-note and group-member bends](hierarchy-note-bend-admission-v1.md#uniform-combination-of-note-and-member-bends).
+Across all 588 own-root groups in HR36–38, 374 thresholds rise. Additional-note
+proposals fall 75→58, 92→75 and 384→340 respectively. The AI-group boundary
+automatically reaches 0.084331, retaining Codex while rejecting eight of ten
+reviewed wrong group matches. The People boundary instead rejects Actors and
+Voice actors, while all 18 reviewed wrong People-root placements remain.
+The historical primary samples retain useful routes for six of seven HR36
+notes, seven of seven HR37 notes and 22 of 27 HR38 notes; two HR38 useful notes
+become unproposed and three require alternate-witness review. Wrong primary
+root placements change 0→0, 1→0 and 15→13. Supplements and unresolved routes
+remain separate. This does not justify replacing the current candidate uniformly
+on available evidence. Independent checks reconstruct all thresholds and
+982,494 score comparisons; 50 tests pass. The experimental helper and findings
+are retained without activating a policy or changing original hierarchies.
+No encodings, model calls, training, semantic labels or UI refresh occurred.

@@ -326,6 +326,107 @@ scalar arithmetic within `5.56e-17`; 39 relevant scoring/boundary tests pass.
 No new encodings, LLM calls, training, production code changes, thresholds,
 semantic judgments, hierarchy changes or UI refresh occurred.
 
+### Uniform combination of note and member bends
+
+The user authorized combining the current boundary with the existing per-group
+member-distribution bend, taking the stricter value everywhere, then replaying
+HR36–38. This reproduces the desirable AI tightening automatically but does
+not establish a generally preferable replacement for the current conservative
+candidate. It loses known useful routes elsewhere and does not resolve People.
+The combination remains experimental and is not activated in HiGen.
+
+Implementation: [fixed_reference_combined_bend.py](../fixed_reference_combined_bend.py).
+It calls the unchanged reference-note bend and unchanged group-member bend;
+each group's threshold is their maximum. An unavailable current threshold stays
+unavailable, and a missing group bend retains the current threshold. No new
+constant, outsider score, semantic label or root-specific exception determines
+the boundary. Existing accepted memberships, member statistics, meanings,
+fusion groups, score kernel and source-note exclusion remain fixed.
+
+All 18 own-root collections / 588 groups use the same rule. Exactly 374 group
+boundaries rise. Current calibrations and query decisions replay exactly before
+the change; every new proposal is a subset of the corresponding old proposal.
+All boundaries are written and hashed before query outcomes or review labels
+are evaluated. The test uses the original full-meaning score only.
+
+| Corpus | Additional-note proposals: current → combined | Projected coverage: current → combined |
+|---|---:|---:|
+| HR36 · 1,000 notes | 75 → 58 | 75.8% → 74.1% |
+| HR37 · 1,000 notes | 92 → 75 | 71.4% → 69.7% |
+| HR38 · 2,000 notes | 384 → 340 | 85.6% → 83.4% |
+
+Projected coverage means the original saved hierarchy's covered-note union plus
+new proposals, deduplicated. Native hierarchies cover 683, 622 and 1,328 notes
+respectively. Unclaimed notes above roots are excluded, as in the existing
+viewer. These are hypothetical proposal totals, not certified useful coverage
+or newly generated hierarchies. The saved HR38 preview remains unchanged.
+
+The matched historical primary samples retain the earlier note/root judgments:
+
+| Corpus | Previously useful sampled notes | Known useful route retained | No proposal remains | Alternate-witness review required |
+|---|---:|---:|---:|---:|
+| HR36 | 7 | 6 | 1 | 0 |
+| HR37 | 7 | 7 | 0 | 0 |
+| HR38 | 27 | 22 | 2 | 3 |
+
+For HR36's separate three-note root supplement, only one of three useful notes
+retains a route; two become unproposed. HR38's two supplemental notes both
+retain a useful route despite losing some valid extra placements. Do not pool
+these cohorts into a claimed accuracy rate.
+
+| Historical primary root placements | Supported: retained / removed / alternate review | Wrong: before → after |
+|---|---|---:|
+| HR36 | 7 / 2 / 1, out of 10 | 0 → 0 |
+| HR37 | 9 / 3 / 0, out of 12 | 1 → 0 |
+| HR38 | 24 / 4 / 5, out of 33 | 15 → 13 |
+
+Here removed means that root no longer receives the note at all; losing a
+particular root does not necessarily lose the whole note's useful access.
+Alternate review means the old useful witness no longer passes but other
+selected entries remain; those entries are not silently promoted to positives.
+Examples of definitely removed supported routes include Al Jazeera, Canada,
+large language models, Nostr client releases, Hoses and Approval.
+
+HR38's separately selected 33-placement preview inspection changes from 14
+supported / 11 wrong / eight unresolved placements to ten supported / eight
+wrong / six unresolved. Four supported placements disappear. These judgments
+are provisional, and the supplement is not an independent accuracy estimate.
+
+The target groups explain why the result is mixed:
+
+- The AI-group boundary rises from **0.0653655 to 0.0843310** using only its
+  accepted members. It retains Codex and rejects eight of ten reviewed wrong
+  entry matches, removing six of seven reviewed wrong C00005 placements.
+  Software icons and Figma still pass. The uniform rule also tightens other
+  groups in C00005: it loses the legitimate Audience reactions communication
+  route. The single-group sweep held those other groups fixed and therefore
+  did not reveal this additional cost.
+- The People-group boundary rises from **0.0115250 to 0.0117640**. Actors
+  (0.0116690) and Voice actors (0.0116172) now fail, while Amazon Mechanical
+  Turk (0.0117990) still passes. Summaries is rejected, but Invitations from
+  that note still passes. Across the reviewed root placements, all 18 wrong
+  C00006 routes remain and only three of five useful ones survive. Four useful
+  fixed controls were already missed and remain missed.
+
+This is not a requirement to eliminate every error. It shows a concrete
+coverage/quality cost outside the successful AI example, with no reviewed
+People-placement improvement. The assessment is to retain the existing
+conservative candidate rather than replace it uniformly on this evidence.
+No exception or hand-selected threshold is introduced to rescue the test.
+
+Evidence: `target/food-halves-v1/combined-member-note-bend-v1/`. Frozen plan
+SHA256: `081755b9345d20372efbe7c6f1cfe2fc030db37328942f6df5c0e102768efe3b`.
+`calibrations.json` retains every old/new threshold and complete group bend;
+`query-decisions.json` retains originally proposed entries and their surviving
+groups. Coverage, root outcomes, whole-note cohorts, heading controls and fixed
+AI/People controls remain separate files. Existing judgments are not changed.
+Independent verification reconstructs all **588 thresholds** with exact rational
+note masses and all **982,494 query/group comparisons**; maximum scalar threshold
+error is `1.12e-16`. All input and preview hashes remain unchanged. The helper
+first failed its missing-module test, then **50 relevant tests passed**.
+No new encodings, LLM calls, training, semantic judgments, actual memberships,
+hierarchy files or UI updates occurred.
+
 ## Exact change
 
 Keep the original accepted-only fusion groups and full-meaning scores. For
