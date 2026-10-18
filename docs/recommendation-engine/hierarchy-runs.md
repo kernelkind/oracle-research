@@ -2139,7 +2139,7 @@ charge is zero. Known tokens: 5,962,947 uncached input; 69,536,896 cached input;
 
 ## HR39 — automatically sampled 5,000-note HiGen V5.3
 
-**ASv6.100 complete; Bootstrap-v133 running on NVMe.** Automatic seed `hr39-corpus-v1`
+**ASv6.100 and Bootstrap-v133 complete; HiGen V5.3 constructing on NVMe.** Automatic seed `hr39-corpus-v1`
 selected 5,000 original posts from the same frozen English-eligible pool as
 HR36–HR38: 2,000 authors, no manual reviews or topic/author quotas.
 Overlap: HR36 2, HR37 1, HR38 2 notes.
@@ -2176,3 +2176,9 @@ with the same frozen source, final inputs, prompts and model settings, reusing
 4,916 verified Bootstrap answers. The original batch drained before its
 coordinator was terminated; its 4,918 saved answers and AS receipts remain at
 the original external path for final native deduplicated accounting.
+
+One Bootstrap server error also carried proxy cancellation metadata, preventing
+automatic retry. A native single-case experiment reran the identical frozen
+input successfully. `HR39-resumed-1` retains the same definition and all 5,000
+inputs; its Bootstrap batch has 26,243 valid answers, including 26,234 native
+reuses. All original attempts remain available for final accounting.
