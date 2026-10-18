@@ -7844,3 +7844,87 @@ findings land on local `main`; retain this worktree for frozen artifact paths.
 No LLM/provider calls, training, paid resources, hierarchy/prompt/UI changes,
 official-run spreadsheet updates, or HR38 execution occurred. Local frozen
 SSE encoding was the only new model computation.
+
+## HR37 mechanism diagnosis: thresholds cannot repair some score orderings
+
+After delegating the ongoing storage relocation, resume the admission
+investigation using saved HR37 vectors, fixed groups and frozen judgments.
+This is a post-result diagnostic, not another automatic rule or new inference.
+Evidence is in the ignored
+`target/food-halves-v1/hr37-reference-pooling-diagnosis-v1/`; preliminary
+ordering and individual-reference tables remain alongside the preceding
+HR37 transfer evidence. The new diagnostic plan SHA256 is
+`9ee745a43955bffb6c1a34433e3f938cb5821307e3e83fd028882aaa219fe09e`.
+
+The same unwanted entry scores at least as high as a useful entry in **every
+reference group** for seven of the 36 provisional useful native-audit cases.
+No choice of individual group thresholds can then accept that useful entry
+while rejecting that unwanted entry: whichever group accepts the useful one
+also accepts the unwanted one. This is a limit of these group-mean scores and
+threshold decisions, not proof that raw SSE vectors contain no useful information.
+
+Two concrete examples, showing the original mean kernel score for the relevant
+group, are:
+
+| Own HR37 root / group | Useful entry | Score | Unwanted entry | Score |
+|---|---|---:|---|---:|
+| C3 / Art, photography and images | YouTube L03974 | 0.022300 | Digestion L04299 | 0.023399 |
+| C4 / Games, competitions and events | Minecraft L02053 | 0.025719 | Asynchronous operations L03902 | 0.030179 |
+
+The full saved arrays verify the same unwanted-above-useful ordering in **all**
+groups of each root, not only the displayed group. Other witnesses include
+Understanding above Music release dates, Film contests and Wallpaper* magazine;
+Voting above Football team news; and Asynchronous operations above Film festivals.
+Frozen judgments remain provisional. These are heading/group contradictions,
+not seven newly lost notes or a requirement to recover every possible heading.
+The larger goal remains useful note coverage with acceptable unwanted admissions.
+
+Check the original individual connections before inventing another threshold.
+For Minecraft, its closest cross-note meaning reference in the game group is
+Games at cosine 0.4962, slightly above asynchronous operations' closest Events
+reference at 0.4868, yet averaging the entire group reverses their order.
+For YouTube, its closest meaning reference is Image sharing at 0.4713; Digestion
+instead matches Creativity at 0.5216. Thus the examples expose both an averaging
+effect and an already suspect individual meaning connection. Replacing every
+mean with a nearest match is not established as a general repair.
+
+Run one bounded two-by-two pooling diagnostic on **all 72 frozen native audit
+cases**, not just the selected witnesses. Preserve each accepted fusion group,
+its original entries, the source-note exclusion and the mean kernel formula.
+Vary only which existing vectors are compared. A contextual title vector pools
+title tokens with the full meaning still in encoder context; it is not a title
+encoded alone. No outsider enters reference fusion, and no reference is removed.
+
+| Incoming pooling | Reference pooling | Useful entries outranked by one unwanted entry in every group |
+|---|---|---:|
+| Full meaning | Full meaning | 7 / 36 |
+| Full meaning | Contextual title | 3 / 36 |
+| Contextual title | Full meaning | 3 / 36 |
+| Contextual title | Contextual title | 5 / 36 |
+
+These are **ordering obstructions, not admission results or accuracy**. The
+meaning-to-title comparison removes all such obstructions in the News and
+Activities collections and for Wallpaper* magazine. YouTube, Music release
+dates and Film contests remain blocked in C3. Individual pair tradeoffs remain:
+it removes seven of the ten original unwanted-dominance witnesses but introduces
+six different witnesses among those remaining three useful cases. All identity
+changes are saved; do not report only the improved distinct-entry count.
+
+This supports a bounded next hypothesis: keep the incoming full meaning and
+test contextual title pooling **only on the accepted-reference side**. It does
+not support immediately switching admission. Existing title-only regressions
+and Food role controls remain necessary. The comparison is directional:
+meaning(i)-to-title(j) need not equal meaning(j)-to-title(i). Any subsequent
+automatic test must compute member support in that same direction, rather
+than reuse old meaning-to-meaning thresholds or symmetrize a different score.
+The present production member-boundary helper requires a symmetric matrix;
+that contract has not been changed here.
+
+The 6,240 group scores have independent scalar verification within 5.56e-17;
+the original meaning-to-meaning scores replay exactly. All protected source
+hashes and frozen judgments stay unchanged. Runtime is 3.52 seconds after
+loading existing vectors. No thresholds are fitted, no admission decisions
+made, no new vectors encoded, and no LLM calls, training, hierarchy/UI changes
+or HR38 use occur. Retain full arrays, individual pair changes, source hashes,
+`results.json` and `verification.json`; the task worktree remains necessary
+for those evidence paths, now backed by external storage through its symlink.
