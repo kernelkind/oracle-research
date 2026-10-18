@@ -699,8 +699,47 @@ controls; stock meanings retain the full batch and preservation/storage details.
 Native [accounting](hierarchy-bootstrap-title-v141-usage-v1.json) records 174 new
 attempts including six warmups, zero failures/retries/reuses and complete usage.
 The API-equivalent cost is $1.2621704, not a subscription cash charge. All 41
-focused checks pass. The next revision should demonstrate naming an entire
-plan or preference with brief title examples rather than adding more rules.
+focused checks pass. V142 below tests brief examples of naming an entire
+plan or preference.
+
+### Brief title examples: Bootstrap-v142
+
+Experimental [Bootstrap-v142](Hierarchy-bootstrap-v142.md) adds two short
+meaning/title examples to V141's title section: a multi-step roof-maintenance
+plan receives "Roof maintenance plan," and a student's multi-action preference
+receives "Preferred study approach." Their subjects are outside both evaluation
+panels. V141's title instruction, four complete Bootstrap examples, shared
+rules-v12 and Consolidation-v27 are unchanged. Native V141 results establish the
+failing cases before this edit.
+
+The [matched](hierarchy-bootstrap-title-v142-matched.spec.json) and
+[control](hierarchy-bootstrap-title-v142-controls.spec.json) tests again freeze
+the same 48 and eight inputs, three independent draws each, with matching V141
+baselines and verified identical input hashes/model settings. All ready batches
+launch concurrently; the pre-call plan and exact results remain in
+`target/bootstrap-title-v142/`. All 168 fresh responses are valid and non-null.
+
+Fresh agent review records 153 accepts, five rejects and ten uncertainties.
+Two preference titles now say "Preferred approach to available opportunities";
+one still lists the actions. All three stock-plan titles still enumerate
+pressure-canning and pantry storage. A fifth rejection concerns
+"Khushbu Sundar's humanity-over-conflict appeal," which compresses the
+description into a compound instead of using an ordinary topic name. No word
+cutoff or punctuation blacklist determines the verdicts. V142 improves some
+labels but remains unqualified for adoption. The next instruction should state
+directly that definition completeness applies to meaning and that title must
+not be a compressed definition or list of its conditions.
+
+The ten semantic uncertainties concern digital immortality and digital-system
+Users (three each), inferred US federal shutdown-odds identity (three), and the
+same restriction on one broad shutdown root. All three Half-and-half controls
+retain the exact milkfat interval; the stock meanings preserve all batch and
+preservation/storage details. Scope qualifications are not counted as examples.
+All 41 focused checks pass. Native
+[accounting](hierarchy-bootstrap-title-v142-usage-v1.json) records 174 new
+attempts including six warmups, zero failures/retries/reuses and complete usage.
+API-equivalent cost is $1.2363892, not a subscription cash charge. Constructor
+pins remain V133; no hierarchy is rebuilt or adopted.
 
 ## Meaning-derived titles: Bootstrap-v130
 

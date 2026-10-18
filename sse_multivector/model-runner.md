@@ -155,8 +155,13 @@ V140 remains unqualified. Experimental
 titles to leave the definition's full scope in meaning. Its same 168-response
 test has 150 agent accepts, six title rejects and twelve semantic uncertainties.
 The preference and stock-plan titles still enumerate their actions. V141 also
-remains unqualified; brief examples of naming a plan or preference are the next
-step. Constructor pins remain V133.
+remains unqualified. Experimental
+[Bootstrap-v142](shr_single_pair/Hierarchy-bootstrap-v142.md) adds two brief
+meaning/title examples for plans and preferences. Its same 168-response test
+has 153 agent accepts, five title rejects and ten semantic uncertainties. Two
+preference draws now use a topic name, but all stock-plan titles still enumerate
+stages. V142 remains unqualified; definition completeness must be explicitly
+separated from title naming. Constructor pins remain V133.
 
 Experimental [Bootstrap-v133](shr_single_pair/Hierarchy-bootstrap-v133.md)
 returns a concise, natural `title` derived solely from its finalized `meaning`.
