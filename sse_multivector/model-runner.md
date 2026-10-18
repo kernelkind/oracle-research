@@ -65,7 +65,7 @@ The user requires direct definitions without illustrative members or examples,
 whether drawn from the post, hierarchy or general knowledge. A specific person
 would be an example in a general People definition; "living or deceased" is a
 qualification. The no-examples requirement does not itself prohibit qualifications.
-The latest tested candidate is experimental
+The shared definition rules are tested in experimental
 [Bootstrap-v139](shr_single_pair/Hierarchy-bootstrap-v139.md),
 paired with [Consolidation-v27](shr_single_pair/Hierarchy-consolidation-v27.md)
 and [rules-v12](shr_single_pair/prompt_parts/explicit-meaning-rules-v12.md).
@@ -142,6 +142,16 @@ accepts, one reject and twelve uncertainties across the full panel and focused
 repeats. Constructor pins remain V133.
 
 ## Bootstrap titles derived from explicit meanings
+
+Experimental [Bootstrap-v140](shr_single_pair/Hierarchy-bootstrap-v140.md)
+simplifies the title instruction and changes the detailed portrait-negative
+example title to "Studio portrait negatives," preserving every meaning and the
+shared rules. Its [matched test](shr_single_pair/bootstrap-current-as-qualification.md#topic-name-revision-bootstrap-v140)
+has 168 valid fresh responses: 148 agent accepts, ten title rejects and ten
+semantic uncertainties. The original preference case still lists all three
+actions in its title, and the stock-plan title still enumerates both stages.
+V140 remains unqualified; the next revision must make the title's naming purpose
+distinct from the definition's complete conditions. Constructor pins remain V133.
 
 Experimental [Bootstrap-v133](shr_single_pair/Hierarchy-bootstrap-v133.md)
 returns a concise, natural `title` derived solely from its finalized `meaning`.

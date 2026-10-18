@@ -289,6 +289,32 @@ class PromptAssemblyTests(unittest.TestCase):
                          '18-karat gold is a gold alloy with a nominal gold content of 75% by mass.')
         self.assertEqual(value['title'], '18-karat gold')
 
+    def test_topic_name_revision_preserves_meanings_and_validates_examples(self):
+        from sse_multivector import experiment_inputs
+        from sse_multivector.prompt_assembly import compile_spec
+
+        old, _, old_prompt = compile_spec(PROMPTS / 'Hierarchy-bootstrap-v139.assembly.json')
+        new, _, new_prompt = compile_spec(PROMPTS / 'Hierarchy-bootstrap-v140.assembly.json')
+        self.assertEqual(new['shared'], old['shared'])
+        self.assertEqual(new['companion'], old['companion'])
+        pattern = (r'<example>\s*<input>\s*(.*?)\s*</input>\s*'
+                   r'<output>\s*(.*?)\s*</output>\s*</example>')
+        previous = re.findall(pattern, old_prompt.decode(), re.S)
+        current = re.findall(pattern, new_prompt.decode(), re.S)
+        self.assertEqual(len(current), 4)
+        schema = json.loads((PROMPTS / 'Hierarchy-bootstrap-v130.output.schema.json').read_text())
+        for index, ((input_json, output), (old_input, old_output)) in enumerate(
+                zip(current, previous, strict=True)):
+            self.assertEqual(input_json, old_input)
+            value = experiment_inputs.validate(
+                {'adapter': 'hierarchy_local_nodes'},
+                {'inputs': {'INPUT_JSON': input_json}}, output, schema)['parsed']
+            expected = json.loads(old_output)
+            self.assertEqual({k: v for k, v in value.items() if k != 'title'},
+                             {k: v for k, v in expected.items() if k != 'title'})
+            self.assertEqual(value['title'], 'Studio portrait negatives' if index == 1
+                             else expected['title'])
+
     def test_definition_only_pair_preserves_wrappers_and_changes_shared_rules_together(self):
         from sse_multivector.prompt_assembly import compile_spec
 

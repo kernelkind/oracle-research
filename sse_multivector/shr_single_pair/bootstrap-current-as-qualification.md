@@ -602,6 +602,68 @@ unchanged. This task does not retune the prompt on the unseen results. The usefu
 next step is to simplify the title-writing instructions/examples around short
 topic names, then qualify a revision on another untouched panel before adoption.
 
+### Topic-name revision: Bootstrap-v140
+
+The user authorized simplifying the title instruction and replacing the
+overdescriptive example title. Experimental
+[Bootstrap-v140](Hierarchy-bootstrap-v140.md) asks for a short, natural topic
+name and leaves the definition and detailed qualifications in `meaning`.
+The portrait-negative example now uses "Studio portrait negatives." All four
+example inputs and every non-title output field are unchanged. The checked
+assembly retains shared rules-v12 and Consolidation-v27; constructor pins stay
+V133. This is a title-only revision, without a numeric length target.
+
+Before editing the prompt, native preparation and replay of the exact preference
+input reproduced the failure through production validation. Reuse selected a
+saved equivalent V139 draw whose title ends "while opportunity is available."
+It has fourteen words and repeats a condition already present in meaning; the
+failure is descriptive restatement, not a numeric cutoff. No new baseline
+inference was required. The original draw-2 answer remains the saved comparison
+baseline, separately from the replay's reused draw.
+
+The [matched specification](hierarchy-bootstrap-title-v140-matched.spec.json)
+uses the same 48 inputs as the V139 unseen test. They are now development inputs,
+not a new unseen sample. The
+[control specification](hierarchy-bootstrap-title-v140-controls.spec.json) uses
+eight selected inputs from the earlier 48-input panel: the original two People
+cases, the wine/dragon-blood comparison, Artificial intelligence, Half-and-half,
+Chicken stock, the specific stock-preservation plan and pottery soup mugs.
+Native `--only` selection freezes these eight in each control plan. Three fresh
+draws per panel produce 168 responses, with exact input/hash matches and the same
+model/runner settings as the corresponding V139 baselines. All six ready batches
+start concurrently under `bootstrap-title-v140`; frozen inputs and source bindings
+point to the retained task worktree and isolated runner. Review criteria are
+recorded before V140 calls in `target/bootstrap-title-v140/test-plan.txt`.
+
+All 168 fresh responses are mechanically valid and non-null. Fresh agent review
+records 148 accepts, ten rejects and ten uncertainties. The rejects comprise
+three preference titles that still list learning, persevering and acting for a
+better future; three stock-plan titles enumerating pressure-canning and pantry
+storage; three Celtic support titles retaining the two upcoming important games;
+and one Melbourne food-post title enumerating both dishes. These are judged
+against the user's clarified naming/description distinction, independently of
+older accepts. The instruction improves many titles but still permits compressed
+descriptions. V140 is not qualified for adoption.
+
+The ten semantic uncertainties concern digital immortality (three), Users
+restricted to digital identities (three), US federal identity inferred for the
+shutdown-odds event (three), and that same restriction on the broad shutdown root
+(one). A scope qualification is not an illustrative example; the two People
+outputs saying "living or deceased" are not rejected for it. All three
+Half-and-half controls preserve the exact US milkfat interval. The detailed
+stock meanings retain the saved carcasses, today's batch, approximate 25-quart
+yield and both preservation/storage stages. No clear illustrative-member failure
+was identified. Agent review is not human approval.
+
+Native [accounting](hierarchy-bootstrap-title-v140-usage-v1.json) records 174 new
+attempts, including six warmups, zero failures or retries, one reused baseline
+response and complete usage. API-equivalent new-call cost is $1.2641192; it is
+not a subscription cash charge. Exact results and attributed reviews remain in
+`target/bootstrap-title-v140/`. All 41 focused checks pass, including native
+validation of the changed example and preservation of its complete meaning.
+The next revision should explicitly allow the short topic name to leave defining
+conditions in meaning, rather than merely asking for a brief descriptive phrase.
+
 ## Meaning-derived titles: Bootstrap-v130
 
 The user requested a concise title based solely on the explicit meaning.
