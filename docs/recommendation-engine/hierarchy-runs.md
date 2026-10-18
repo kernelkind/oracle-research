@@ -2035,9 +2035,19 @@ freeze the controls. Raw notes SHA-256:
 The original-note manifest and event evidence are retained under
 `oracle-mvp-hierarchy-hr36-v53-auto/target/hierarchy-hr36-v53-auto-thousand-note-v1/corpus/`.
 
-Status: running ASv6.100 generation from frozen Oracle commit `050cebf8`
-and shared coordinator/teacher transport `38561fe`. All 130 native hierarchy
-regressions passed; the seven sampling/corpus-input checks also passed.
+Status: running Bootstrap construction. ASv6.100 completed with 1,000 valid
+answers: 939 notes have subjects and 61 have valid empty subject lists;
+5,378 original L1 subjects enter Bootstrap. Empty lists remain in the input
+inventory and receive no Bootstrap requests. The native parser fix is integrated
+as `46d3cc74`; all 133 hierarchy regressions pass, plus the seven sampling/input
+checks. AS source remains frozen at `050cebf8`; construction uses `12ab025b`
+and shared coordinator/teacher transport `38561fe`. The numerical executable
+uses verified compact output with unchanged groups and trees.
+
+[Native AS accounting](../../../oracle-mvp-hierarchy-hr36-v53-auto/target/hierarchy-hr36-v53-auto-thousand-note-v1/usage-subjects.json)
+records 1,002 attempts including warmup and one recovered failure. Known
+API-equivalent cost is $15.3100836; the failed attempt lacks usage, so complete
+cost is unknown. Incremental subscription cash charge is zero.
 Full recursive V5.3 uses Bootstrap-v133,
 Consolidated-grouped-v1, GPT-6.1 Sol medium on subscription SSE, one-hour
 request deadlines, angular HDBSCAN/min_samples=3/min_cluster_size=2/EOM,
