@@ -185,5 +185,7 @@ symlink. The worktree remains necessary for frozen artifact/source paths.
 The subsequent [reference-note bend test](hierarchy-note-bend-admission-v1.md)
 relaxes the self-recovery constraint without changing memberships. Its frozen
 bend variant removes most wrong matches but loses most reviewed useful omitted
-notes and two human Food acceptances. That particular replacement is rejected;
-the result does not establish that every reference must pass an admission test.
+notes and two human Food acceptances. Following the user's clarification, it
+remains a conservative candidate with an explicit coverage tradeoff; it is not
+activated in HiGen. The result does not establish that every reference must
+pass an admission test. Unchanged-rule fresh-data validation is next.

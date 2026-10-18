@@ -8244,5 +8244,9 @@ The [reference-note bend test](hierarchy-note-bend-admission-v1.md) then replace
 the weakest-note multiplier with a reference-only bend while keeping existing
 memberships. It reduces wrong primary-sample root placements from 27 to 1 under
 original scores, but useful omitted notes fall from 37 to 14 and two human Food
-acceptances fail. That specific boundary variant is not adopted. No hierarchy,
-encoder, group membership or original score changes occur.
+acceptances are omitted. Of its 16 proposed primary-sample notes, 14 are useful,
+one wrong and one unresolved. The user clarified that it should remain a
+conservative candidate, with lower coverage as a tradeoff; unchanged-rule
+fresh-data validation is the next approved investigation. It is not activated
+in HiGen. No hierarchy, encoder, group membership or original score changes
+occur.

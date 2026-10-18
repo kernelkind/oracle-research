@@ -1,15 +1,21 @@
 # Reference-note bend admission v1 — experimental result
 
-This particular relaxation is too conservative to replace the baseline. On the
-matched primary samples, useful omitted notes fall from 37 to 14 under original
-meaning scores, while wrong root placements fall from 27 to 1. Two of the three
-user-approved Food notes are rejected. Lower noise alone does not establish
-successful recovery of notes that fit existing roots.
+Status: retained as a **conservative admission candidate**, following the user's
+clarification that lower coverage can be an acceptable tradeoff. No production
+admission behavior is activated. Fresh-data generalization remains open.
+
+On the matched primary samples, useful omitted notes fall from 37 to 14 under
+original meaning scores, while wrong root placements fall from 27 to 1. Among
+the 16 notes it still proposes, 14 are useful, one has only wrong routes and one
+is unresolved. Two of the three user-approved Food notes are omitted. These
+are measured coverage costs, not new judgments that those notes do not fit.
 
 This does not prove that requiring every reference note to pass is necessary,
-or that every alternative without that constraint fails. It rejects one frozen
-replacement: choosing the existing positive log-support bend among reference
-notes' best relative scores instead of their minimum.
+or that every alternative without that constraint fails. The frozen candidate
+chooses the existing positive log-support bend among reference notes' best
+relative scores instead of their minimum. It has not established itself as a
+general replacement for the broader baseline; it remains worth validating as
+a stricter option.
 
 No existing membership, hierarchy, prompt, encoder or query score changed.
 There were no LLM calls, new encodings, training or paid resources. The new
@@ -130,8 +136,8 @@ Reference self-recovery remains much higher than useful outsider recovery:
 1,507 of 1,759 eligible reference note/root pairs still pass with original
 scores, and 1,468 with centered scores. **All reference memberships remain
 intact**, including those not passing this diagnostic. Their failed self-test
-is not the reason for rejecting the variant; the lost reviewed omitted notes
-and user controls are the material coverage loss.
+is not a failure criterion for this variant. The lost reviewed omitted notes
+and user controls quantify its material coverage tradeoff.
 
 These observations are consistent with a mismatch between the two populations:
 accepted members often closely resemble other definitions of the same topic,
@@ -140,11 +146,11 @@ activity or topic. A bend in existing-member scores is not automatically a
 boundary separating useful new topics from wrong ones. The experiment does
 not establish duplication as the sole cause or identify a proven replacement.
 
-A useful next probe is to withhold repeated definitions together and inspect
-recovery from the remaining references. That would check whether the reference
-test can better represent a genuinely new topic, before choosing another
-admission boundary. It is unrun and not authorized by this write-up itself.
-Historical membership must not silently become new semantic gold.
+The approved next investigation is to test this unchanged conservative option
+on fresh data, assessing admitted-note quality and missed useful notes
+separately. Joint holdouts of repeated definitions remain a separate, unrun
+possible diagnostic. Neither proposal activates an admission policy, and
+historical membership must not silently become new semantic gold.
 
 ## Evidence and verification
 
