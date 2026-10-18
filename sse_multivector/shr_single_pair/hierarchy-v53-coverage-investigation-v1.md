@@ -5899,3 +5899,173 @@ bend. Retain it as an experimental comparison, with the concentrated restaurant
 failure and overly strict Coffee route as separate evidence. Reusable source,
 tests and maintained findings land on local `main`; the worktree remains for
 the ignored frozen calculations, full member/fold results and all proposals.
+
+## Auditing Arts selections outside the earlier controls
+
+The user approved reviewing the weakest-member rule's Arts selections beyond
+the existing controls. The rule, scores, fusion groups, meanings and hierarchy
+remain unchanged. This is a complete **post-selection agent audit**, not new
+human gold, an independently sampled test, or an admission-policy change.
+
+Evidence: `target/food-halves-v1/arts-unreviewed-admissions-audit-v1/` in the
+retained task worktree. The audit plan was frozen before reading the new fixed
+meanings and full posts; selected titles and aggregate counts were already
+observed. Plan SHA256
+`1ea0bcd68e75c4b682ff96ea13b7b82830edadbbf59d7c49bcbf086824a0f271`.
+Assessments were saved before joining winning groups, scores and thresholds;
+assessment SHA256
+`c3818ead142b7130df94501c2e9f9940601ab4aeb64e8e226497d97ba3497d5d`.
+This masks numerical routes during review, not the known fact of selection.
+
+### Scope and review contract
+
+The saved rule proposes 86 query entries from 65 notes in total; 85 entries
+from 64 notes are in the fixed entirely-omitted query cohort. Exclude **all 51**
+earlier Arts label IDs: 24 provisional fits, 20 provisional mismatches and seven
+unresolved entries. Sixteen of those IDs are selected: fifteen fits and one
+unresolved AI case. Review every other selection, without sampling: **70
+entries from 57 notes**, including 69 omitted-cohort entries from 56 notes.
+
+Only 45 of those 57 note IDs were absent from the earlier Arts controls.
+Fourteen reviewed entries share one of twelve earlier control notes. All 57
+source texts are distinct. Neither new entry IDs nor source-note IDs establish
+statistical independence; no independent accuracy rate follows from this audit.
+
+Review each fixed meaning and its full source-post text. Do not redefine a
+general meaning as only its post's application, treat another root's membership
+as negative evidence, or impose the synthetic root definition as a fixed scope.
+Use the actual accepted references, including their audiovisual, music, artist,
+noise and communicative-silence meanings, as the present root context.
+
+Mark clear expressive/media/sound/communication roles plausible, absent or
+merely incidental roles unsupported, and genuine scope questions unresolved.
+These are all agent assessments. Generic AI remains unresolved, consistent
+with the earlier record. General hardware, platforms and broad meanings with
+one media-specific source example are not forced into rejection. Classify
+source-post relevance separately, so one suspect heading does not falsely
+reject a note with another good route. Linked images/videos were not fetched;
+missing attachment evidence remains a limitation where relevant.
+
+### Complete audit results
+
+| Assessment | Entries | Separate full-post assessment, distinct notes |
+|---|---:|---:|
+| Plausible | 39 | 40 |
+| Unsupported / suspect | 10 | 6 |
+| Unresolved | 21 | 11 |
+| Total | 70 | 57 |
+
+Entry and post columns answer different questions and are not interchangeable
+precision estimates. For example, generic Servers is unresolved but selected
+Graphics gives that note a direct visual-art route. Halls of fame is unresolved
+as an any-field meaning while its particular source concerns video games.
+Ownership and Output are suspect headings, but their source also has unresolved
+general AI. Motherboards is unresolved as a hardware-scope question even though
+its diagnostic-LED source post has no evident creative/media purpose.
+
+Plausible selections include Pianos, Voice studios, DJs, video games, Anime,
+Graphics, image galleries, picture frames, actors, creative works, publishing,
+memes, botanical imagery and character designs. Flags and Questions have direct
+symbolic/communicative meanings; they are not approved simply because they
+occur in a social-media post. The Food-rejected Easter-broadcast post is
+plausible here through Broadcasts; that earlier Food decision does not transfer.
+
+The earlier **0/20 Arts mismatches** does not establish success on this wider
+selection. The new audit identifies these ten suspect entry routes:
+
+| Entry | Fixed topic / source evidence | Passing group | Score | Boundary |
+|---|---|---|---:|---:|
+| L00538 · Wondering | Internal consideration; wondering about heavy tea consumption | Noise/silence | 0.045567 | 0.043530 |
+| L02575 · GraphQL | API query language/runtime; a software commit | Audio technology | 0.050402 | 0.039963 |
+| L03821 · Science | Natural-world investigation; lunar research instruments | Audio technology | 0.046838 | 0.039963 |
+| L03969 · Vector arithmetic | Vector operations; a triangle-centroid proof | Audio technology | 0.068287 | 0.039963 |
+| L03970 · Geometric parameterizations | Mathematical representations; the same centroid proof | Audio technology | 0.042549 | 0.039963 |
+| L04026 · Ownership | General property/control rights; AI economic incentives | Audio technology | 0.041222 | 0.039963 |
+| L04028 · Output | Any process result; the same AI economic source | Audio technology | 0.040333 | 0.039963 |
+| L04079 · Indifference | Little interest/concern; reactions to Tesla models | Noise/silence | 0.071974 | 0.043530 |
+| L04228 · Analysis | Generic detailed examination; short text and an unidentified linked video | Audio technology | 0.047112 | 0.039963 |
+| L04878 · Spaces in configuration text | Whitespace introduced by a software parser | Audio technology | 0.067710 | 0.039963 |
+
+These are provisional suspected mismatches, not ten newly human-confirmed
+errors. In particular, interpreting every machine request as communication
+would be a broader scope decision, not an established reason to accept GraphQL.
+A general Science heading is not automatically justified by the one accepted
+biological-signaling reference. The full meanings, source texts and rationales
+for all 70 entries are in the compact `review.md` and structured evidence.
+
+### Concentration in two routes
+
+All ten suspects pass **only one** group each: eight through Audio technology
+`fused-021`, two through Noise/silence `fused-024`. Within this audit, Audio
+technology also proposes ten plausible and fourteen unresolved entries;
+Noise/silence proposes three plausible and one unresolved. Counts across
+groups overlap for entries with several routes and must not be summed into
+unique-entry totals. None of the other passing groups proposes one of these
+ten suspects; that is bounded audit evidence, not a semantic certificate.
+
+Audio technology's minimum remains Trying soundpacks L05675 at
+`0.0399633316`. Noise/silence's minimum is the figurative biological Signaling
+silence L05169 at `0.0435299290`. These are legitimate fixed members, not
+authorized deletions. The scores do not establish which individual words or
+encoder features caused a match; no word ablation was performed.
+
+Raising just those boundaries does not preserve current useful routes:
+Vector arithmetic `0.068287` and configuration spaces `0.067710` both exceed
+Gaming L01596 `0.051793` and Video gaming L06169 `0.040622`, whose current
+only passing group is Audio technology. Indifference `0.071974` exceeds
+Refusal to discuss life L02608 `0.064919` and Questions L04522 `0.049711`,
+whose current only route is Noise/silence. Shouting scores `0.083057` and would
+survive that particular increase. Dropping the groups wholesale is neither
+proposed nor adopted. Alternative boundaries in other groups could change
+available routes, so these local inversions alone are not a global impossibility
+claim.
+
+### Conditional limit of all group cutoffs
+
+A subsequent arithmetic capacity diagnostic combines the old controls with
+the new frozen assessments: **63 plausible and 30 unsupported entries**.
+Exclude unresolved cases. The present rule selects 54/63 plausible entries
+and 10/30 unsupported entries. To reject every unsupported entry under the
+existing any-group rule, each group cutoff must exceed that group's largest
+unsupported score. A plausible entry remains recoverable only if it scores
+above that largest unsupported score in at least one group.
+
+Under these provisional judgments, arbitrary separate cutoffs can recover at
+most **57/63** plausible entries while rejecting all thirty controls. Six are
+blocked in every group:
+
+- Avatar: The Last Airbender films L03389.
+- The Lord of the Rings film trilogy L03393.
+- JAIA Drake L04019.
+- Cartoons L05979.
+- Refusal to discuss life L02608.
+- Questions L04522.
+
+For each of these, every one of the 25 groups has at least one unsupported
+score as high or higher; the blocking example can differ by group. The complete
+1,575 positive/group calculations, all blocking identities/scores, and all
+150 blocked-entry/group witnesses are saved. No threshold vector is fitted or
+deployed. This conditional capacity bound is not accuracy or an automatic
+selection result. It depends on the agent judgments and does not turn them into
+human gold. A better boundary may still improve the current tradeoff; the
+calculation rules out a **perfect cutoff-only solution to these judgments**, not
+all further boundary work.
+
+### Verification and disposition
+
+The complete selected-minus-old-label set matches the audit exactly. Assessment
+IDs are unique, all 57 note-level assessments are consistent, all passing
+routes and exact member-minimum boundaries match saved evidence, and independent
+scalar comparisons replay the expanded capacity result. Assessment bytes remain
+unchanged after revealing numerical routes. Protected input hashes, saved
+results, meanings, groups, graphs and the original hierarchy state remain
+unchanged. This documentation/evidence task changes no calculation behavior and
+requires no new production API or test seam. All verification assertions pass.
+
+The weakest-member rule remains **experimental, not adopted**. The audit finds
+additional useful selections and exposes previously unseen suspect routes.
+It makes zero model calls, encodings, clustering runs or training runs, and
+changes no hierarchy, prompt, UI or policy. Keep generic AI and hardware scope
+questions unresolved rather than quietly expanding the negative controls.
+Reusable findings land on local `main`; retain the worktree for the frozen
+review packet, assessments, source posts, score routes and capacity evidence.
