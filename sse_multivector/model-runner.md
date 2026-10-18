@@ -160,8 +160,14 @@ remains unqualified. Experimental
 meaning/title examples for plans and preferences. Its same 168-response test
 has 153 agent accepts, five title rejects and ten semantic uncertainties. Two
 preference draws now use a topic name, but all stock-plan titles still enumerate
-stages. V142 remains unqualified; definition completeness must be explicitly
-separated from title naming. Constructor pins remain V133.
+stages. V142 remains unqualified. Experimental
+[Bootstrap-v143](shr_single_pair/Hierarchy-bootstrap-v143.md) explicitly assigns
+complete conditions to meaning and rejects compressed definitions as titles.
+Its matched test has 152 agent accepts, three stock-title rejects and thirteen
+uncertainties. The original preference passes all three draws, but stock titles
+still enumerate stages and form dense compounds. V143 remains unqualified;
+moving the title section after the long definition examples is the next test.
+Constructor pins remain V133.
 
 Experimental [Bootstrap-v133](shr_single_pair/Hierarchy-bootstrap-v133.md)
 returns a concise, natural `title` derived solely from its finalized `meaning`.

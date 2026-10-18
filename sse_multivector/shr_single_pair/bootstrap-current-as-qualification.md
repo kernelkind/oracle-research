@@ -726,9 +726,9 @@ pressure-canning and pantry storage. A fifth rejection concerns
 "Khushbu Sundar's humanity-over-conflict appeal," which compresses the
 description into a compound instead of using an ordinary topic name. No word
 cutoff or punctuation blacklist determines the verdicts. V142 improves some
-labels but remains unqualified for adoption. The next instruction should state
-directly that definition completeness applies to meaning and that title must
-not be a compressed definition or list of its conditions.
+labels but remains unqualified for adoption. V143 below tests stating directly
+that definition completeness applies to meaning and that title must not be a
+compressed definition or list of its conditions.
 
 The ten semantic uncertainties concern digital immortality and digital-system
 Users (three each), inferred US federal shutdown-odds identity (three), and the
@@ -740,6 +740,44 @@ All 41 focused checks pass. Native
 attempts including six warmups, zero failures/retries/reuses and complete usage.
 API-equivalent cost is $1.2363892, not a subscription cash charge. Constructor
 pins remain V133; no hierarchy is rebuilt or adopted.
+
+### Explicit field responsibilities: Bootstrap-v143
+
+Experimental [Bootstrap-v143](Hierarchy-bootstrap-v143.md) changes only the title
+instruction. It explicitly assigns complete defining conditions to `meaning`
+and asks for a topic label rather than a compressed definition or enumeration
+of steps, parts or conditions. Both brief title examples, four complete examples,
+shared rules-v12 and Consolidation-v27 are unchanged. V142's native failures
+establish the regression before the edit.
+
+The [matched](hierarchy-bootstrap-title-v143-matched.spec.json) and
+[control](hierarchy-bootstrap-title-v143-controls.spec.json) tests retain the
+same 48 and eight inputs, with three fresh draws each and corresponding V142
+baselines. Native preparation verifies identical input hashes and model/runner
+settings. All ready batches start concurrently; the pre-call plan and results
+remain in `target/bootstrap-title-v143/`. All 168 outputs are valid and non-null.
+
+Fresh agent review records 152 accepts, three rejects and thirteen uncertainties.
+All three preference titles now name an approach or response to opportunity
+without listing the actions. All three stock titles still enumerate preservation
+and pantry storage; two additionally compress "chicken-stock" and "pantry-storage"
+into dense compounds. V143 has not reliably established the intended naming
+behavior and remains unqualified for adoption. The title instruction and its
+brief examples currently precede four lengthy complete definition examples;
+the next test should move that section after those examples without adding rules.
+
+Twelve uncertainties concern digital immortality, digital-system Users, and
+inferred US federal identity in both shutdown entries, each in three draws.
+The thirteenth is the draw-3 title "Brittany Wicker dating-history report": the
+meaning says she learned Devonta's history, so the shortened label could
+misattribute whose history is reported. The full meanings retain the actual
+relationship. All three Half-and-half controls retain the exact milkfat range,
+and stock meanings preserve the complete batch and preservation/storage details.
+Scope qualifications are not examples. All 41 focused checks pass. Native
+[accounting](hierarchy-bootstrap-title-v143-usage-v1.json) records 174 new attempts
+including six warmups, zero failures/retries/reuses and complete usage.
+API-equivalent cost is $1.248368, not a subscription cash charge. Constructor
+pins remain V133.
 
 ## Meaning-derived titles: Bootstrap-v130
 
