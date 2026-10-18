@@ -61,6 +61,30 @@ class TitleSelectionProbeTests(unittest.TestCase):
                 probe.prepare(study,['a'],'reactions',root/'invalid')
             self.assertFalse((root/'invalid').exists())
 
+    def test_standalone_pools_only_selected_text_and_reuses_one_native_row(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);study=self.fixture(root);out=root/'standalone'
+            probe.prepare(study,['a','b'],'reactions',out,standalone=True)
+            inputs=json.loads((out/'inputs.json').read_text())
+            _,notes=worker._load_request(out/'worker-request.json')
+            self.assertEqual(inputs['views'],['standalone'])
+            self.assertEqual(len(notes),1)
+            self.assertEqual(notes[0].text,'reactions')
+            self.assertEqual(len(notes[0].subjects),1)
+            self.assertEqual(notes[0].subjects[0].byte_spans,((0,9),))
+            self.assertEqual(inputs['records'][0]['views'],inputs['records'][1]['views'])
+            self.assertEqual([r['source_note_id']for r in inputs['records']],['note-a','note-b'])
+            self.assertEqual(inputs['records'][0]['meaning'],'Responses by people.')
+            with patch('sse_multivector.worker.OfficialSseEncoder',return_value=DeterministicEncoder()):
+                worker.run_worker(out/'worker-config.json')
+            result=probe.collect(out)
+            self.assertEqual(result['records'],2)
+            self.assertEqual(set(result['files']),{'standalone-vectors.npy'})
+            import numpy as np
+            vectors=np.load(out/'standalone-vectors.npy')
+            self.assertEqual(vectors.shape,(2,3))
+            self.assertTrue(np.array_equal(vectors[0],vectors[1]))
+
     def test_collects_native_output_and_rejects_changed_source_and_raw_bytes(self):
         with tempfile.TemporaryDirectory() as temp:
             root=Path(temp);study=self.fixture(root);out=root/'probe'

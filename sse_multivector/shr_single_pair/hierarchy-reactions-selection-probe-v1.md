@@ -66,9 +66,11 @@ to the mean cosine. All raw pair cosines and all seven group scores are saved.
 The test isolates the words included in pooling. It does not isolate the
 remaining effect of audience-related context, establish causality for every
 People error, or show that selecting main nouns is a usable admission policy.
-A useful next diagnostic would pool the identical word **reactions** without
-the surrounding definition to measure how much of its remaining People match
-comes from context. That further encoding is not performed or authorized here.
+The subsequent [standalone-word diagnostic](hierarchy-reactions-standalone-probe-v1.md)
+is now complete: encoding only reactions lowers the score a further 70–72%,
+to 0.012325, but still exceeds five of the six saved contextual useful scores.
+That tests context's contribution, not a uniformly applied standalone-title
+method or a new admission rule.
 
 ## Evidence and verification
 

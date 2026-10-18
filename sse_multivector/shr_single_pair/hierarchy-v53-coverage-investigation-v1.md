@@ -8311,3 +8311,9 @@ is complete: pooling only reactions in each unchanged full context lowers
 People support by 34–36%, but still puts both entries above five of the six
 actual people classes. The actor word contributes without fully explaining the
 false match. No new admission rule or hierarchy change follows from this test.
+
+The [standalone reactions control](hierarchy-reactions-standalone-probe-v1.md)
+then lowers support a further 70–72% to 0.012325, with one new native encoding
+and all contextual vectors reused. It still exceeds five of the six saved
+contextual people-class scores. Context contributes, but a uniform standalone
+comparison has not yet been tested; the admission candidate stays unchanged.

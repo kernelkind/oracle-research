@@ -1,4 +1,4 @@
-"""Prepare source-bound title-fragment SSE diagnostics in unchanged contexts.
+"""Prepare source-bound title-fragment SSE diagnostics, optionally without context.
 
 Uses the existing native worker and frozen encoder settings. Original titles,
 meanings, memberships and policies are never rewritten. This is a research
@@ -15,7 +15,7 @@ from sse_multivector.meaning_example_probe import read, write, digest, unchanged
 VIEWS = ('title', 'meaning', 'selection')
 
 
-def prepare(study, entries, selected_text, output):
+def prepare(study, entries, selected_text, output, *, standalone=False):
     study, output = Path(study).resolve(), Path(output).resolve()
     if output.exists():
         raise FileExistsError(output)
@@ -41,13 +41,15 @@ def prepare(study, entries, selected_text, output):
         title, meaning = item['title'], item['meaning']
         if not meaning.strip() or title.count(selected_text) != 1:
             raise ValueError('nonempty meaning and one exact title occurrence required')
-        text = title+'\n\n'+meaning
+        text = selected_text if standalone else title+'\n\n'+meaning
         note_id = hashlib.sha256(text.encode()).hexdigest()
         note = contexts.setdefault(note_id,dict(note_id=note_id,text=text,subjects=[]))
         start = len(title[:title.index(selected_text)].encode())
         spans = dict(title=(0,len(title.encode())),
                      meaning=(len((title+'\n\n').encode()),len(text.encode())),
                      selection=(start,start+len(selected_text.encode())))
+        if standalone:
+            spans = dict(standalone=(0,len(selected_text.encode())))
         views = {}
         for view,(start,end) in spans.items():
             subject_id = digest([note_id,start,end])[:16]
@@ -58,9 +60,10 @@ def prepare(study, entries, selected_text, output):
         records.append(dict(entry=entry,title=title,meaning=meaning,
                             source_note_id=item['source_note_id'],views=views))
     output.mkdir(parents=True)
-    write(output/'inputs.json',dict(status='Frozen title-selection diagnostic; unchanged context',
+    write(output/'inputs.json',dict(status=('Frozen standalone-selection diagnostic' if standalone
+        else 'Frozen title-selection diagnostic; unchanged context'),
         source_study=str(study),sources=sources,selected_text=selected_text,
-        records=records,views=list(VIEWS)))
+        records=records,views=['standalone'] if standalone else list(VIEWS)))
     write(output/'worker-request.json',dict(schema_version=1,
         proposal_sha256=worker._sha256_file(output/'inputs.json'),notes=list(contexts.values())))
     write(output/'worker-config.json',dict(template,request_path=str(output/'worker-request.json'),
@@ -103,7 +106,7 @@ def collect(directory):
     raw /= np.linalg.norm(raw,axis=1)[:,None]
     lookup = {k:i for i,k in enumerate(keys)}
     files = {}
-    for view in VIEWS:
+    for view in inputs['views']:
         values = raw[[lookup[(r['views'][view]['note_id'],r['views'][view]['subject_id'])]
                       for r in inputs['records']]]
         path = directory/(view+'-vectors.npy')
@@ -132,10 +135,12 @@ def main():
     p.add_argument('output',type=Path)
     p.add_argument('--entry',action='append',required=True)
     p.add_argument('--title-text',required=True)
+    p.add_argument('--standalone',action='store_true',
+                   help='Encode only the selected text; reuse saved contextual vectors separately')
     p=sub.add_parser('collect')
     p.add_argument('directory',type=Path)
     a=parser.parse_args()
-    result=(prepare(a.study,a.entry,a.title_text,a.output) if a.command=='prepare'
+    result=(prepare(a.study,a.entry,a.title_text,a.output,standalone=a.standalone) if a.command=='prepare'
             else collect(a.directory))
     print(json.dumps(result,indent=2))
 
