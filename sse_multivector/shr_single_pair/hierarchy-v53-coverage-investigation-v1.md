@@ -7506,3 +7506,159 @@ cohort/audit/human reports, `dominance-diagnostic-results.json`,
 retain the worktree for frozen vector/evidence paths. No LLM calls, training,
 new encodings, paid resources, prompt/hierarchy/UI changes, official hierarchy
 run or spreadsheet updates, or HR37/38 execution.
+
+## Reference-note coverage boundary: limited measured improvement
+
+The human approved revisiting the weakest-member admission assumption. Test
+one replacement that preserves a route for each eligible **reference note**,
+rather than making every accepted heading set an admission standard. **This
+improves several saved panels, with two useful Arts heading losses. It is an
+experimental candidate, not an adopted policy or a solved admission rule.**
+
+Evidence: `target/food-halves-v1/note-coverage-boundary-v1/` in the retained
+food-halves worktree. Plan SHA256
+`ff5b55e7fd67b5fd38195075c4d057b09b604f262247ff9b2ff3da00e0482e03` and
+implementation manifest SHA256
+`2e5ceaf4706cc1a5dad2c7adae43cc45fc90019e512ad91808c88c1b45bbee9e`
+were frozen before changed dataset outcomes. Keep original global-kernel
+scores, vectors, fixed fusion memberships and all previous judgments. Do not
+reuse the failed common-scale scores or repeat the failed member-score bend.
+No outsider, semantic label, parameter scan or fitted model chooses a boundary.
+
+### A note needs one route; every heading need not define the boundary
+
+For each eligible group, retain each member's original mean affinity to that
+group, already excluding the member's entire source note. Within each source
+note, take its **best member score** in that group. The median of those
+per-note best scores describes the group's usual reference support, giving
+each represented source note one value.
+
+For each note, divide its best score in each of its original groups by that
+group's median; retain the note's highest ratio across groups. The smallest
+of those note-best ratios is the largest common relative requirement that
+still gives every such note a route. Raise each group's old boundary to this
+requirement times its own median, whenever that is higher:
+
+```text
+a[g,n] = max original member score for note n in group g
+m[g]   = median of a[g,n] over notes represented in g
+r[n]   = max a[g,n] / m[g] over n's original eligible groups
+t      = min r[n] over those reference notes
+new_boundary[g] = max(old_boundary[g], t * m[g])
+```
+
+There is no chosen numerical acceptance constant. Medians scale support;
+they are not an acceptance percentile or semantic exclusion label. Calibrate
+using original group memberships only, rather than letting a reference find
+an unestablished route through an unrelated group. Missing cross-note groups
+stay unavailable; nonpositive medians retain their old boundary and do not
+supply ratios. No such zero-median case occurs in this dataset. Thresholds
+above one are allowed to make outsider expansion unavailable through a group;
+they do not delete that group or any accepted member. None exceeds one here.
+
+The rule can only tighten prior boundaries. Every originally covered reference
+note still has at least one member score above a new boundary, because its
+best ratio is at least t and every member score already met the old minimum.
+This proves **reference self-consistency**, not recovery of unseen valid
+topics. Original members and canonical evidence remain unchanged even when
+their own member score falls below the new outsider boundary.
+
+### Actual outcomes against the original baseline
+
+Replay the same **197 groups and 278,797 saved query/group scores**, covering
+1,449 HR35 queries and 1,121 HR36 omitted entries. The table reports selected
+entries on overlapping, provisional development panels; do not pool accuracy
+or promote these labels to human gold.
+
+| Existing reviewed panel | Useful selected, old → note coverage | Unwanted selected, old → note coverage |
+|---|---:|---:|
+| HR35 Food, 30 useful / 51 unwanted | 14 → 14 | 3 → 3 |
+| HR35 expanded Arts, 63 / 30 | 54 → 52 | 10 → 4 |
+| HR36 queries against old Food, 19 / 62 | 15 → 15 | 1 → 1 |
+| HR36 queries against old Arts, 18 / 57 | 5 → 5 | 1 → 0 |
+| Native HR36 post-selection audit, 36 / 14 | 36 → 36 | 14 → 12 |
+
+Native HR36's fourteen unresolved cases remain selected and unresolved. The
+complete old Food-proposal audit remains complete under this subset rule:
+useful headings **30 → 30**, unwanted **7 → 5**, unresolved **2 → 1**; useful
+notes **11 → 11**, unwanted notes **5 → 3**. Rewards L01349 and Return visits
+L04835 are the removed unwanted Food headings. These are existing provisional
+judgments. The separate pre-score useful-note retrieval counts stay 8/10 for
+Food and 6/14 for Arts. All four explicit Food human whole-note controls pass
+with their original saved heading routes; this does not approve all headings.
+
+The two useful Arts heading losses are Gaming L01596 and Video gaming L06169.
+L01596's note remains mechanically selected through GPUs L01597; this is not
+a new semantic endorsement of that route. L06169's note loses its Arts route
+entirely in the saved query set. Preserve both losses without relabeling them
+to improve the result. The six removed HR35 unwanted headings are GraphQL,
+Science, Parameterizations of geometric objects, Ownership, Output and
+Analysis. HR36 Arts removes Software performance.
+
+### Why the AI change works, and what remains unfixed
+
+Only **seven of 197 group boundaries change**. For native HR36 AI models/agents,
+the old minimum is 0.1081345 from AI agents L02645. The same source note has
+AI models L02650 scoring 0.3948783, so that weak heading need not set the bar
+to preserve the note. Another independent agent entry, L04632, now limits
+the group's requirement at **0.1350310**. Every eligible reference note retains
+a route.
+The two useful AI outsider controls survive, while Intelligence operations
+L00905 and Random selection L04521 are rejected. This boundary was derived
+from accepted references, not selected using those outsider scores or labels.
+
+In Food, Dining groups L05006 stops setting the lowest standard while the
+same note retains Restaurants, Restaurant staff, menus and dining-experience
+routes. Trying soundpacks L05675 likewise has the stronger Soundpacks L05674
+route from its note. However, **all five earlier cosine-distribution
+counterexamples still pass**. Raising their boundaries enough would require
+more than this particular reference-coverage rule permits. Do not claim the
+motivating five failures were solved by the wider panel improvement.
+
+The remaining limit is visible in native C00001: IRIB's note has just its
+Photography-group route and limits the root multiplier to **0.0355987**.
+The Technology threshold rises only 0.0101199 → 0.0103780; its unwanted Diets
+match remains. Preserving each reference note's self-recovery can still let
+one difficult note limit the other groups. This does not justify deleting
+IRIB, changing its canonical membership or inventing a semantic exclusion rule.
+
+### Verification and next test
+
+Eight failing-first tests exercise the new reusable experimental numerical
+function `sse_multivector/fixed_reference_note_coverage.py` through actual mean
+scoring and member-boundary inputs. All **70 relevant numerical tests pass**.
+Exact rational ratio comparisons/multiplication preserve limiting float ties
+without an epsilon. Tests also cover independent note mass, duplicated
+identical members, permutations, unavailable/zero groups, above-one thresholds,
+unchanged inputs and invalid scores. There is no constructor/runner seam or
+production activation.
+
+Saved query scores remain unchanged; every old minimum and group/root
+prediction replays. Independent integer cross-products and 120-digit decimal
+multiplication reproduce all new
+boundaries with **zero scalar discrepancy**. All **982 eligible source-note/root
+pairs** retain a member route. Another 59 reference-note/root pairs have no
+eligible original group route and are outside that guarantee; they are not
+removed or silently counted as recovered. Identical-member duplication and
+group/member permutations preserve the new calculation on frozen member-score
+inputs; this does not establish duplication invariance of the underlying mean
+scorer when actual references change. Root calibrations are saved before
+query scores are evaluated and their hashes stay unchanged afterward.
+All proposals are subsets of old proposals; no new unwanted admission is
+possible under this exact score-preserving tightening. Numerical replay takes
+**0.60 seconds**, using only saved scores. All protected sources remain unchanged.
+
+Freeze this candidate and transfer it **unchanged to HR37 next**, before
+tuning the gaming losses or remaining errors. That is the next recommended
+test, not performed here. The current evidence is development evidence after
+many prior experiments; it does not establish generalization. No automatic
+adoption or change to existing hierarchy membership is authorized by the result.
+
+Keep reference models, `root-calibrations.json`, all per-note retained/lost
+reference routes, full query outcomes, panel/audit/human results,
+`two-useful-entry-losses.json`, `five-original-dominance-cases.json`,
+`calibration-route-traces.json`, source hashes, checks and `review.md`. Artifacts
+remain ignored; reusable experimental code/tests and maintained findings land
+on local `main`. Retain the task worktree for frozen vectors/evidence paths.
+No LLM calls, training, new encodings, paid resources, hierarchy/prompt/UI
+changes, official-run spreadsheet updates or HR37/38 execution.
