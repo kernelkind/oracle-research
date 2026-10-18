@@ -5624,3 +5624,141 @@ zero error. Query reorder/duplicate/isolated checks and source/graph hashes
 pass. Numerical evaluation takes 5.6 seconds; no LLM calls, new vectors,
 training or hierarchy/UI changes. Source, tests and maintained findings land
 on local `main`; preserve the worktree for frozen source/evidence paths.
+
+## Fixed accepted-reference graph boundary: controlled test
+
+The user authorized testing connections inside versus outside each group in
+the fixed fusion graph as a stopping signal. This test keeps outsiders out of
+that graph. It does not repeat the earlier all-corpus graph expansion, change
+query scores, or adopt a new hierarchy admission rule.
+
+Evidence: `target/food-halves-v1/fixed-reference-conductance-v1/` in the retained
+task worktree. Plan SHA256
+`d812bbd362f2bca5609a64e22ffc88697b4a7a4bbf8d82a69882bf49ea59409b`
+was frozen before admission outcomes, binding the method, source/test bytes,
+baseline, graphs, memberships, vectors and the same 1,449 queries. Food still
+has 137 accepted references and 15 fixed fusion groups; Arts has 162 references
+and 25 groups. Other-root membership is not negative gold, and synthetic root
+names/definitions are not semantic scope constraints.
+
+### Frozen rule
+
+For each group, order all accepted references of that root by their unchanged
+mean meaning-kernel affinity to group members, excluding the entire reference's
+own source note. Equal scores enter together. At every score-level prefix,
+measure fusion weight crossing the split and total weighted degree inside it.
+Conductance is crossing weight divided by the smaller of the inside and outside
+degree volumes. Graph weights are never compared directly with query scores.
+
+Choose the minimum-conductance prefix touching the target group, restricted to
+at most half the graph's degree volume. Prefer the earlier prefix for numerical
+ties. Require a local minimum in crossing weight divided by **own** volume:
+the next unequal value must rise, and the preceding value cannot be smaller.
+Looking beyond the half-volume limit with this own-side fraction avoids a
+spurious valley caused only by switching the conductance denominator. A zero
+crossing-weight cut is resolved; an unresolved minimum causes abstention, with
+no automatic second choice. No trimming or semantic score constant is used.
+
+Map a resolved cut to the midpoint of its reference score and the next lower
+score. Each outsider keeps the same mean group score and passes at or above
+this threshold. The graph is accepted-reference-only and has no outsider
+inputs. A graph prefix need not retain all group members; this does not delete
+or redefine accepted references. Whole-note member recovery is measured
+separately, with the same source note removed from both graph and means in each
+fold. The primary remains ungated; hard all-fold gating is a diagnostic.
+
+This is an experimental conductance sweep with a meaning-score ordering, not
+a spectral ordering or a claimed graph-clustering guarantee. Graph degree
+volume weights entries and their connections; it is not a distinct-note count.
+
+### Actual outcomes
+
+Compare against the previous neighbor-context, member-anchored `y-x` score bend
+with the original lower-tail trimming. These are the same saved provisional
+panels, not independent semantic accuracy estimates.
+
+| Root, ungated | Plausible before → graph rule | Rejection controls before → graph rule | Proposed omitted notes before → graph rule |
+|---|---:|---:|---:|
+| Food | 21/30 → 12/30 | 3/51 → 1/51 | 43 → 18 |
+| Arts | 17/24 → 5/24 | 3/20 → 0/20 | 174 → 21 |
+
+The reduction in unwanted selections does not establish improvement: useful
+selections fall substantially. Food loses ten previously proposed fits and
+gains Steaks, net minus nine. Lost routes include Coffee, Tea, Coffee roasting,
+Taste profiles, Coffee-drinking experience, the human-accepted pisanki Eggs,
+Ice cream bars, Wineries and Mugs. Arts loses twelve earlier fits, including
+Visual artworks, Cartoons, several Photography/Photographs entries, Art
+commissions and Films; it gains no saved fit.
+
+Food's one remaining provisional mismatch is Wildlife. Gas facilities is no
+longer proposed into either root, and Nausea, Blood and JAIA Drake remain
+excluded from Food. The three human-accepted Food notes now have only two
+available routes: the pisanki note is lost entirely, not merely through its
+low-priority Traditional activities heading. The rejected Easter-broadcast
+note remains excluded. Arts labels remain provisional agent assessments;
+Food decisions do not transfer into Arts automatically.
+
+Ten Food groups and 21 Arts groups have a base boundary. The remaining five
+and four respectively have no resolved minimum. Only one Food model and five
+Arts models pass every whole-note fold. Hard gating proposes 0/30 Food fits
+and 2/24 Arts fits, with zero saved rejections in either; this is abstention,
+not a useful recovery policy.
+
+### What the graph is selecting
+
+Food preservation `fused-008` selects four closely related preservation entries,
+with conductance `0.210932`. It leaves out the fifth, generic century-egg Food
+reference, whose cross-note score is `0.047969`. The new threshold is
+`0.113467`, versus the former `0.022297`. Gas facilities scores `0.047740` and
+is excluded, but Eggs `0.055093`, Coffee roasting `0.028996`, Ice cream bars
+`0.025003`, Wineries `0.028644` and Mugs `0.028942` lose this earlier route too.
+The cut identifies a tightly connected preservation neighborhood; that does
+not establish the full range of useful Food admissions.
+
+General Food `fused-014`, an earlier Coffee/Tea route, has its smallest eligible
+conductance at 71 references. The own-side crossing fraction continues falling
+after half volume, so the candidate fails the predeclared local-valley test.
+Arts Audio technology `fused-021` behaves similarly at 91 references. Its lack
+of a boundary removes Gas/Earthquake routes but also many visual-art and film
+routes. This is an explicit structural abstention, not evidence that those
+queries have no semantic support.
+
+A subsequent **hindsight capacity diagnostic**, not an automatic policy or a
+second predictive experiment, examines every eligible local valley in these
+saved curves. Allowing an oracle to choose separate valleys against the saved
+rejection controls can recover at most 28/30 Food fits and 14/24 Arts fits while
+excluding all controls. No chosen threshold vector is deployed. Thus the
+minimum-selection rule leaves headroom, but choosing different local valleys
+alone still cannot recover all saved Arts fits under these constraints. The
+diagnostic does not resolve scope or qualify a cutoff learned from these labels.
+
+**Conclusion:** this graph-boundary rule is not an improvement and is not
+adopted. It finds tight accepted neighborhoods or abstains, without reliably
+identifying the wider range of useful outside entries. Fixed graph evidence
+must not be mistaken for a semantic membership certificate.
+
+### Implementation, checks and retained evidence
+
+`fixed_reference_graph.py` supplies the isolated experimental boundary and
+whole-note recovery calculation. It imports the existing `mean_support` so
+the query score cannot silently diverge. Six tests first fail for the absent
+module, then pass through these calculation functions. They cover topology
+changing the boundary while scores stay fixed, rejection of a false half-volume
+valley in a uniform graph, whole-note removal, tied-score/permutation/scaling
+behavior, unchanged inputs, isolated references and invalid inputs. All 63
+combined graph/bend/query/fusion/HDBSCAN/local-expansion tests pass.
+
+Independent dense-matrix sums verify 38,153 cut/volume rows across 255 base and
+whole-note sweeps. Maximum cut error is `2.31e-14`, volume error `9.95e-14`.
+All 57,960 query/group scores exactly match the earlier experiment. Query
+reordering, duplicates, isolated evaluation, uniform graph scaling, unchanged
+source/graph hashes and unchanged original hierarchy state pass. Evaluation
+takes 3.65 seconds; no LLM calls, encodings, training or hierarchy/UI changes.
+
+Artifacts retain the frozen plan and calculation script, full reference
+curves/folds, all query/group and root predictions, changed proposals, note
+controls, cohort metrics and verification. The two explicitly labeled
+`*-valley-capacity-diagnostic.json` files contain the subsequent capacity
+calculation, not validated admission thresholds. Reusable source, tests and
+maintained findings land on local `main`; retain the task worktree because
+these ignored source-bound evidence paths are needed for continued research.
