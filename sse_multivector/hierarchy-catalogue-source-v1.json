@@ -9453,6 +9453,166 @@
           "sha256": "3f22b9b42a1771e39ea2a1f32a712b361aafcc57a34ebea36096ae67664069c6"
         }
       ]
+    },
+    {
+      "version_id": "HR38",
+      "name": "ASv6.100 2000-note HiGen V5.3 — automatic corpus / Bootstrap-v133 / Consolidated-grouped-v1",
+      "root": "/mnt/external/algos-archive/oracle-mvp/hierarchy-hr38-v53-auto",
+      "artifact_path": "hierarchy-hr38-v53-auto-2000-note-v1/HR38/state.json",
+      "sha256": "76f0ecf137d65f6f4d17506617b8bb2d4abf035668ad6ebb4a57bebacff7b244",
+      "code_provenance": {
+        "schema_version": 1,
+        "version_id": "HR38",
+        "state_sha256": "76f0ecf137d65f6f4d17506617b8bb2d4abf035668ad6ebb4a57bebacff7b244",
+        "initial_source_record": "/mnt/external/algos-archive/oracle-mvp/hierarchy-hr38-v53-auto/hierarchy-hr38-v53-auto-2000-note-v1/code-provenance.json",
+        "git": {
+          "oracle": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr38-v53-auto",
+            "git_commit": "670a7623686f7aefe7595d296f61b8232b67670a",
+            "uncommitted_source": false
+          },
+          "subject_generation": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr38-v53-auto",
+            "git_commit": "670a7623686f7aefe7595d296f61b8232b67670a",
+            "uncommitted_source": false
+          },
+          "runner_coordinator": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/experiment-runner-hr36-source-v1",
+            "git_commit": "38561fefc5e72171a2a3ac7bcbef21367da6e4d7",
+            "uncommitted_source": false
+          },
+          "bootstrap_transport": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/experiment-runner-hr36-source-v1",
+            "git_commit": "38561fefc5e72171a2a3ac7bcbef21367da6e4d7",
+            "uncommitted_source": false
+          },
+          "consolidation_transport": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/experiment-runner-hr36-source-v1",
+            "git_commit": "38561fefc5e72171a2a3ac7bcbef21367da6e4d7",
+            "uncommitted_source": false
+          }
+        },
+        "initial_git": {
+          "oracle": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr38-v53-auto",
+            "git_commit": "670a7623686f7aefe7595d296f61b8232b67670a",
+            "uncommitted_source": false
+          },
+          "runner_coordinator": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/experiment-runner-hr36-source-v1",
+            "git_commit": "38561fefc5e72171a2a3ac7bcbef21367da6e4d7",
+            "uncommitted_source": false
+          }
+        },
+        "source_upgrade_count": 0,
+        "runtime": {
+          "cpu_workers": 12,
+          "shared_local_cpu_budget": 24,
+          "reserved_system_cpus": 4,
+          "numerical_executable": "/mnt/external/algos-archive/oracle-mvp/hierarchy-hr38-v53-auto/hierarchy-hr38-v53-auto-2000-note-v1/numerical-runtime/fine-segmentation-candidate",
+          "numerical_executable_sha256": "448aa03e6f35a7cea3d643f91d33135d9c3c4710f0aeee24711081f6b02652d7",
+          "numerical_source_commit": "39530abc58a65a46f6f3a59136b099f080b0c049",
+          "numerical_runtime_provenance": "/mnt/external/algos-archive/oracle-mvp/hierarchy-hr38-v53-auto/hierarchy-hr38-v53-auto-2000-note-v1/numerical-runtime/inherited-provenance.json",
+          "encoder_runtime": {
+            "encoder_class": "sse_multivector.worker.OfficialSseEncoder",
+            "packages": {
+              "tokenizers": "0.22.2",
+              "torch": "2.13.0+cpu",
+              "transformers": "4.57.1"
+            },
+            "python": "3.13.12",
+            "worker_sha256": "eccf48810ca4f43724f7e197d71c25e456d62ed510ba13f8cf40e90127a580fc"
+          },
+          "encoded_original_rows": 10036,
+          "maximum_observed_original_tokens": 131
+        },
+        "recorded_at_utc": "2026-10-18T14:28:57.613552+00:00",
+        "sidecar": "/mnt/external/algos-archive/oracle-mvp/hierarchy-hr38-v53-auto/hierarchy-hr38-v53-auto-2000-note-v1/HR38/code-provenance.json"
+      },
+      "experimental_parameters": {
+        "generation_policy": "hierarchy-generation-v5.3",
+        "dataset": {
+          "subject_prompt": "ASv6.100",
+          "notes": 2000,
+          "authors": 996,
+          "selection": "First 2000 mechanically eligible original posts in domain-separated event-ID hash order; no manual review or topic/author quotas",
+          "seed": "hr38-corpus-v1",
+          "raw_corpus_sha256": "c941bd119dc037d203f68d176d687fd6e34f635b54ef321b00ed9bc6113aa0e0",
+          "subject_corpus_sha256": "8328bfb1e3ff392a69aa74cb3f8656a92bc7c76b66652d61211356262fb0a3ce",
+          "overlap_counts": {
+            "HR36": 0,
+            "HR37": 2
+          }
+        },
+        "definition": {
+          "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr38-v53-auto/sse_multivector/hierarchy-runs/hr38/hierarchy.spec.json",
+          "sha256": "890b87fc3ff7d03fb3c535fbd15053f6a6bf79c9a127a2c9d47728e408467d1e"
+        },
+        "parameter_ledger": {
+          "path": "docs/recommendation-engine/hierarchy-parameters.csv",
+          "row": "HR38"
+        },
+        "native_usage": {
+          "complete_report": "/mnt/external/algos-archive/oracle-mvp/hierarchy-hr38-v53-auto/hierarchy-hr38-v53-auto-2000-note-v1/usage-complete.json",
+          "fresh_attempts": 12846,
+          "known_catalog_cost_estimate_usd": 101.54303360000007,
+          "catalog_cost_estimate_usd": null,
+          "incremental_cash_usd": 0
+        },
+        "qualification": "Native execution complete without terminal errors. 133 nodes, six roots, max six children, four levels and 33 finished lineups. All 127 edges strictly narrow note sets. Root coverage 1328/2000; 672 outside, including 168 empty-subject inputs and three additional notes without a non-null meaning. Full coverage unmet; semantic review pending. One diagnostic error preserved without blocking; UI check passes."
+      },
+      "related_outputs": [
+        {
+          "label": "Native completion summary",
+          "path": "hierarchy-hr38-v53-auto-2000-note-v1/HR38/run-summary.json",
+          "sha256": "42d3274afe4ff4b1636d5fc01b78821f6d2a0475eb9151def215a479b9aa1d9c"
+        },
+        {
+          "label": "Full-input structural audit",
+          "path": "hierarchy-hr38-v53-auto-2000-note-v1/HR38/structural-audit.json",
+          "sha256": "b6ee53c3cecf9947abdd70613b3315455d2d367531d531a9e7e7b8f200afc0ff"
+        },
+        {
+          "label": "Native complete usage",
+          "path": "hierarchy-hr38-v53-auto-2000-note-v1/usage-complete.json",
+          "sha256": "279dd0e39728ab1a3469e54223d90e79ae01bad7b911da5c18f68c89ec566082"
+        },
+        {
+          "label": "Frozen automatic selection",
+          "path": "hierarchy-hr38-v53-auto-2000-note-v1/corpus/manifest.json",
+          "sha256": "d740ed170410aacd68fe7772ce6a64a0cbdeaf6712af9d578dfbd4e065272172"
+        },
+        {
+          "label": "Frozen input controls",
+          "path": "hierarchy-hr38-v53-auto-2000-note-v1/input-controls.json",
+          "sha256": "6a3d2b7bad94e06671d9bf33c9f6b85ac97ebe91021fc9380f4412eebeef7a5b"
+        },
+        {
+          "label": "Frozen code provenance",
+          "path": "hierarchy-hr38-v53-auto-2000-note-v1/HR38/code-provenance.json",
+          "sha256": "61a053665b12fe1a34e9e49268556275180c58e64065ebe016ba1eaf8ecca2a8"
+        },
+        {
+          "label": "Review hierarchy",
+          "path": "hr38-review-ui-v1/hierarchy.json",
+          "sha256": "5e6d123eac05882c8c6cef61580949a68477dc9d4382d0b334b748f70be6063a"
+        },
+        {
+          "label": "Original-note browser",
+          "path": "hr38-review-ui-v1/notes.json",
+          "sha256": "a358e36fce0eb26b81c179a4b81950ffe695ad3636979ed0e04411f4902628e6"
+        },
+        {
+          "label": "Offline viewer check",
+          "path": "hr38-review-ui-v1/check.txt",
+          "sha256": "8ab0340924e590e4a5aad43f12fa7429deff0398384d3541b7db808f943c5f84"
+        },
+        {
+          "label": "Review provenance",
+          "path": "hr38-review-ui-v1/provenance.json",
+          "sha256": "e2daafc0f43e94e72d82fed48f827c76c991956ae7aa48a9fb493e5032811986"
+        }
+      ]
     }
   ]
 }

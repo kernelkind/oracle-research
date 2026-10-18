@@ -2103,8 +2103,35 @@ including 949,866 reasoning tokens.
 
 ## HR38 — automatically sampled 2,000-note HiGen V5.3
 
-**ASv6.100 and Bootstrap complete; construction running.** Seed `hr38-corpus-v1`, 996 authors, original English-eligible root posts, nonempty text and at most 512 SSE tokens. No manual reviews, topic quotas or author balancing. Neither sample overlaps HR36; HR37 and HR38 share two notes.
+**Construction complete; semantic review pending.** The constructor exited zero:
+133 canonical nodes, six roots, at most six children, four levels and 33 finished
+lineups. All 127 edges narrow observed note sets. **1,328/2,000 inputs are beneath
+roots; 672 remain outside.** The checked UI contains 133 nodes plus its display
+container and the 1,328 reachable notes. Full input coverage is unmet.
 
-ASv6.100, Bootstrap-v133 and Consolidated-grouped-v1; full V5.3 recursion, angular HDBSCAN min_samples=3/min_cluster_size=2/EOM, at most six choices, no cosine cutoff. GPT-6.1 Sol medium/subscription SSE with one-hour deadlines, no attempt cap, native exact answer reuse. Each run uses 12 local CPU workers; ready model batches share the native 30-request queue. Artifact storage is on the external disk through the task worktree’s ignored target path.
+Automatic seed `hr38-corpus-v1` selected 2,000 mechanically eligible original
+posts from the frozen English-eligible pool: 996 authors, no manual reviews or
+topic/author quotas. Neither new sample overlaps HR36; HR37 and HR38 share two
+notes. ASv6.100 produced 168 empty subject lists; Bootstrap-v133 retained and
+skipped 86 null meanings. Three additional notes have no non-null meaning, and
+501 notes with usable meanings remain outside roots. One invalid diagnostic
+record was preserved without blocking. SSE encoded 10,036 distinct original
+inputs, at most 131 tokens each, within the frozen 512-token limit.
 
-[Definition](../../sse_multivector/hierarchy-runs/hr38/hierarchy.spec.json) · [Automatic selection](../../sse_multivector/hierarchy-runs/hr38/corpus-selection.spec.json). Review UI and actual coverage/usage will be recorded at completion.
+Consolidated-grouped-v1, GPT-6.1 Sol medium/subscription SSE, one-hour deadlines,
+angular HDBSCAN min_samples=3/min_cluster_size=2/EOM, six-choice limit and full
+V5.3 recursion are fixed. No cosine cutoff or attempt ceiling was supplied.
+Each run has 12 local CPU workers; model batches share the native 30-request
+queue. Generator/AS source is `670a7623`; coordinator/transport is `38561fe`.
+
+[Native accounting](../../../oracle-mvp-hierarchy-hr38-v53-auto/target/hierarchy-hr38-v53-auto-2000-note-v1/usage-complete.json)
+records 12,846 fresh attempts, 12,775 valid cases and no reuse across 62 batches.
+Known API-equivalent cost is **$101.5430336**; nine recovered attempts (three AS,
+six Bootstrap) lack usage, so the complete total is unknown. Incremental cash
+charge is zero. Known tokens: 5,962,947 uncached input; 69,536,896 cached input;
+8,266,345 output, including 1,812,456 reasoning tokens.
+
+[Definition](../../sse_multivector/hierarchy-runs/hr38/hierarchy.spec.json) ·
+[Selection](../../sse_multivector/hierarchy-runs/hr38/corpus-selection.spec.json) ·
+[Native audit](../../../oracle-mvp-hierarchy-hr38-v53-auto/target/hierarchy-hr38-v53-auto-2000-note-v1/HR38/structural-audit.json) ·
+[Code provenance](../../../oracle-mvp-hierarchy-hr38-v53-auto/target/hierarchy-hr38-v53-auto-2000-note-v1/HR38/code-provenance.json).
