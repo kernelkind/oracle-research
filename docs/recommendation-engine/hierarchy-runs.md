@@ -2065,3 +2065,19 @@ including 942,954 reasoning tokens.
 [Native audit](../../../oracle-mvp-hierarchy-hr36-v53-auto/target/hierarchy-hr36-v53-auto-thousand-note-v1/HR36/structural-audit.json) ·
 [Code provenance](../../../oracle-mvp-hierarchy-hr36-v53-auto/target/hierarchy-hr36-v53-auto-thousand-note-v1/HR36/code-provenance.json) ·
 [Review command](hierarchy-review-commands.md#hr36--1000-automatically-sampled-notes--higen-v53).
+
+## HR37 — automatically sampled 1,000-note HiGen V5.3
+
+**Automatic corpus frozen; generation pending.** Seed `hr37-corpus-v1`, 571 authors, original English-eligible root posts, nonempty text and at most 512 SSE tokens. No manual reviews, topic quotas or author balancing. Neither sample overlaps HR36; HR37 and HR38 share two notes.
+
+ASv6.100, Bootstrap-v133 and Consolidated-grouped-v1; full V5.3 recursion, angular HDBSCAN min_samples=3/min_cluster_size=2/EOM, at most six choices, no cosine cutoff. GPT-6.1 Sol medium/subscription SSE with one-hour deadlines, no attempt cap, native exact answer reuse. Each run uses 12 local CPU workers; ready model batches share the native 30-request queue. Artifact storage is on the external disk through the task worktree’s ignored target path.
+
+[Definition](../../sse_multivector/hierarchy-runs/hr37/hierarchy.spec.json) · [Automatic selection](../../sse_multivector/hierarchy-runs/hr37/corpus-selection.spec.json). Review UI and actual coverage/usage will be recorded at completion.
+
+## HR38 — automatically sampled 2,000-note HiGen V5.3
+
+**Automatic corpus frozen; generation pending.** Seed `hr38-corpus-v1`, 996 authors, original English-eligible root posts, nonempty text and at most 512 SSE tokens. No manual reviews, topic quotas or author balancing. Neither sample overlaps HR36; HR37 and HR38 share two notes.
+
+ASv6.100, Bootstrap-v133 and Consolidated-grouped-v1; full V5.3 recursion, angular HDBSCAN min_samples=3/min_cluster_size=2/EOM, at most six choices, no cosine cutoff. GPT-6.1 Sol medium/subscription SSE with one-hour deadlines, no attempt cap, native exact answer reuse. Each run uses 12 local CPU workers; ready model batches share the native 30-request queue. Artifact storage is on the external disk through the task worktree’s ignored target path.
+
+[Definition](../../sse_multivector/hierarchy-runs/hr38/hierarchy.spec.json) · [Automatic selection](../../sse_multivector/hierarchy-runs/hr38/corpus-selection.spec.json). Review UI and actual coverage/usage will be recorded at completion.
