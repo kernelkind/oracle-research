@@ -853,8 +853,51 @@ details. Qualifications are not illustrative examples. All 41 focused checks
 pass. Native [accounting](hierarchy-bootstrap-title-v145-usage-v1.json) records
 174 new attempts including six warmups, zero failures/retries/reuses and complete
 usage. API-equivalent cost is $1.1539464, not a subscription cash charge. V145
-remains unqualified; constructor pins stay V133. The next test will name a stated
+remains unqualified; constructor pins stay V133. V146 below tests naming a stated
 goal in place of enumerating the actions that serve it.
+
+### Naming stated goals: Bootstrap-v146
+
+Experimental [Bootstrap-v146](Hierarchy-bootstrap-v146.md) tells title writing to
+name a stated goal when several actions serve it, leaving those actions in
+meaning. The brief student example now uses "Academic improvement" to demonstrate
+that strategy. V145's opening task/scope framing, both brief meanings, all four
+full examples, shared rules-v12 and Consolidation-v27 are unchanged. Existing
+V145 outputs establish the failing regression before these two edits.
+
+The [matched](hierarchy-bootstrap-title-v146-matched.spec.json) and
+[control](hierarchy-bootstrap-title-v146-controls.spec.json) tests again use the
+same 48 and eight inputs, three fresh draws each, with V145 baselines and verified
+identical input hashes/model settings. All ready batches launch concurrently.
+All 168 outputs are valid and non-null. The pre-call plan and exact results
+remain under `target/bootstrap-title-v146/`.
+
+Fresh agent review records 151 accepts, zero clear rejects and seventeen
+uncertainties. The original preference names its goal in all three draws:
+"Preference for a better future" twice and "Preference for building a better
+future" once. Its actions and opportunity condition remain in meaning. The DeFi
+decentralization condition missing in one V145 response appears in all three
+fresh V146 meanings; this is observed variation, not proof of a definition-rule
+fix. All stock titles use "Chicken stock preservation and storage plan," with
+batch, method and location details retained in meaning. Those three labels
+remain uncertain pending optional clarification of desired granularity.
+
+Twelve uncertainties concern digital immortality, digital-system Users, and
+inferred US identity in the broad shutdown and shutdown-odds entries, each in
+three draws. Two more concern "Brittany Wicker dating-history news post," which
+could imply that Devonta's dating history belongs to Brittany. This is a title
+ambiguity, separate from the full meanings' correct attribution. The next test
+will use a broader-name fallback for unclear relationships and a food-preservation
+example showing that a storage stage can remain outside the title.
+
+All three Half-and-half controls preserve the exact milkfat interval and weight
+basis; stock meanings preserve the full batch and process details. Qualifications
+are not examples, including the People phrasing "including those living and those
+who have died." All 41 focused checks pass. Native
+[accounting](hierarchy-bootstrap-title-v146-usage-v1.json) records 174 new attempts
+including six warmups, zero failures/retries/reuses and complete usage.
+API-equivalent cost is $1.1655304, not a subscription cash charge. V146 remains
+experimental and unqualified for adoption; constructor pins stay V133.
 
 ## Meaning-derived titles: Bootstrap-v130
 

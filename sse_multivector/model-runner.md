@@ -143,17 +143,19 @@ repeats. Constructor pins remain V133.
 
 ## Bootstrap titles derived from explicit meanings
 
-Experimental [Bootstrap-v145](shr_single_pair/Hierarchy-bootstrap-v145.md)
+Experimental [Bootstrap-v146](shr_single_pair/Hierarchy-bootstrap-v146.md)
 states both jobs in the opening task: exact meaning and a brief title. The
 selected entry's scope constrains `meaning`; `title` may use a familiar overall
 name for that same topic. The title section follows the full definition examples
 and includes brief plan/preference naming examples. Shared rules-v12 and
-Consolidation-v27 are unchanged, without a numeric word target.
-Its [matched test](shr_single_pair/bootstrap-current-as-qualification.md#overall-names-and-exact-meanings-bootstrap-v145)
-has 168 valid responses: 156 agent accepts, two rejects and ten uncertainties.
-One preference still lists actions; one DeFi definition loses decentralization.
-Three stock labels await clarification of desired granularity. V145 remains
-experimental and unqualified; constructor pins remain V133. V140–V144 results
+Consolidation-v27 are unchanged, without a numeric word target. V146 names a
+stated goal instead of listing its actions and demonstrates "Academic improvement."
+Its [matched test](shr_single_pair/bootstrap-current-as-qualification.md#naming-stated-goals-bootstrap-v146)
+has 168 valid responses: 151 agent accepts, zero clear rejects and seventeen
+uncertainties. The original preference names its goal in all three draws. Two
+other labels risk misattributing dating history; three stock labels await
+clarification of desired granularity. V146 remains experimental and unqualified;
+constructor pins remain V133. V140–V145 results
 and frozen prompts remain available in the same qualification report.
 
 Experimental [Bootstrap-v133](shr_single_pair/Hierarchy-bootstrap-v133.md)
