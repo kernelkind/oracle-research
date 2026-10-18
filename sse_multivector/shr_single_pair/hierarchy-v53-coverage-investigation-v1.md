@@ -7368,3 +7368,141 @@ findings land on local `main`, without activation. Retain the task worktree
 for frozen source vectors and evidence paths. No LLM calls, training, new
 encodings, paid resources, hierarchy/prompt/UI changes, official-run spreadsheet
 updates or HR37/38 execution.
+
+## Fixed group scales: no improvement over the original admission rule
+
+The human approved deriving scales only from accepted entries after the failed
+query-adaptive experiment. **One fixed common scale per fusion group removes
+the admit-everything failure, but does not improve the original baseline. Do
+not adopt it.** This result is not an unseen-corpus validation, a hierarchy
+change or a claim that all reference-only methods fail.
+
+Evidence: `target/food-halves-v1/fixed-group-meaning-affinity-v1/` in the retained
+food-halves worktree. Freeze plan SHA256
+`6656c5aa0622c77ca48f051c03d20d09d64aca4826dfe1afa48e5632a74b7a68` and
+implementation manifest SHA256
+`ab08af2391a80b0624a5e7b583602c453c679f3de4c2ec0b635baf431a68df48`
+before dataset outcomes. Reuse the existing tested numerical functions; no new
+production component or source change is necessary.
+
+### Exactly what changes
+
+Keep the preceding root-reference radii: mean angular distance to the nearest
+20 distinct other source notes among accepted references, with one nearest
+entry per note and the entire scored note excluded. Keep `sigma=0.5`, the
+normalized Gaussian formula, full-meaning vectors, fixed fusion groups,
+cross-note group means and the minimum-member boundary rule.
+
+For each group, take the ordinary median of its original members' reference
+radii. Supply this same radius for both endpoints of every member/member and
+outsider/member comparison in that group. Thus calibration and queries use
+the identical symmetric metric. No outsider distance, label, prior answer or
+synthetic root vector selects its scale. This replaces heterogeneous endpoint
+radii with a common group radius; it is not a test of a directed kernel with
+different scales per reference. Group medians and means retain their ordinary
+entry weighting; do not claim a new duplicate-invariance property for them.
+
+No reference is removed, group is rebuilt, boundary rule is added or parameter
+is searched. Recalculate boundaries in the new metric rather than comparing
+new scores against old-kernel threshold values.
+
+### Actual automatic outcomes
+
+Use all the same 1,449 HR35 queries and 1,121 HR36 omitted entries: **197 groups
+and 278,797 query/group scores**. Compare with the original global-kernel
+baseline, not only the disastrous query-adaptive variant. The table counts
+selected entries under existing provisional judgments.
+
+| Existing reviewed panel | Useful selected, baseline → fixed | Unwanted selected, baseline → fixed |
+|---|---:|---:|
+| HR35 Food, 30 useful / 51 unwanted | 14 → 14 | 3 → 3 |
+| HR35 expanded Arts, 63 / 30 | 54 → 49 | 10 → 9 |
+| HR36 queries against old Food, 19 / 62 | 15 → 15 | 1 → 1 |
+| HR36 queries against old Arts, 18 / 57 | 5 → 4 | 1 → 1 |
+
+No useful example is newly selected in these panels. HR35 Arts loses National
+flags L01660, Photography L04834, Photos L05857, Video gaming L06169 and Academy
+Awards L06413; HR36 Arts loses Films L04941. The one removed HR35 unwanted
+case is Wondering L00538. These are existing agent assessments, not new human
+decisions or semantic certification.
+
+HR36 Food selects exactly the same 39 headings and 16 notes as the original
+baseline; its old complete proposal audit remains 30 useful / 7 unwanted /
+2 unresolved headings and 11 useful / 5 unwanted notes. The six-native-root
+64-case audit changes useful selection **36 → 35**, retaining **all 14 unwanted
+cases**; unresolved selection is 14 → 13. The useful loss is Social and
+political power L01290. All four explicit Food whole-note human decisions
+still match, with the original selected heading routes restored. Preserve
+entry judgments separately from these human note decisions.
+
+Raw proposal counts alone are not quality evidence. HR35 Food changes 43 → 41
+entries, HR35 Arts 86 → 78 and HR36-to-old-Arts 58 → 54. Native HR36 roots
+C00001 through C00006 respectively change 702 → 695, 11 → 10, 39 → 35,
+48 → 59, 77 → 71 and 5 → 5. Retain complete changes without assigning new
+semantic labels to unreviewed entries.
+
+### Five concrete limits of common similarity rescaling
+
+Freeze a separate **post-result diagnostic**, not a second admission variant:
+`dominance-diagnostic-plan.json`, SHA256
+`72ed2f60da9d46dff127bc73b1d66cd19bbb850bd3b519f33bc1309b433fb1e2`.
+Inspect all 28 selected unwanted root/query controls across these panels and
+the native-root audit, retaining every passing group/member comparison.
+
+For each query, compare its cosine distribution over group members with each
+member's cosine distribution over its other-note peers. Use the same uniform
+entry weights as actual group means. In five cases the outsider's distribution
+is stronger at every quantile than that of the accepted member setting the
+minimum boundary:
+
+| Existing unwanted outsider | Reference collection | Accepted boundary-setting member |
+|---|---|---|
+| HR35 L02274 Visits to Japan | Food, fused-004 | L05006 Dining groups |
+| HR35 L03286 Invitations | Food, fused-004 | L05006 Dining groups |
+| HR35 L03969 Vector arithmetic | Arts, fused-021 | L05675 Trying soundpacks |
+| HR35 L04878 Spaces in configuration text | Arts, fused-021 | L05675 Trying soundpacks |
+| HR36 L05143 Diets | Native C00001, fused-071 | L01694 Technology posting destination |
+
+For these five cases, **any common per-group increasing cosine-to-affinity
+transform gives the outsider at least that member's mean**. The minimum-member
+boundary is no higher than the member's mean, so the outsider must pass.
+Changing this kind of distance scale cannot reject them while keeping the same
+vectors, groups, mean aggregation and minimum-member rule. This is conditional
+on the existing unwanted judgments and reference memberships; it does not
+establish that a reference is semantically invalid or should be deleted.
+
+Verify this finite-distribution relation two ways: exact empirical CDF counts
+using integer cross-products, and independent quantiles over rational
+probability intervals. All 425 member comparisons agree. Five comparisons
+satisfy the condition, one for each of five queries; all five members also
+actually set the current boundary. Their smallest cosine quantile advantages
+range 0.00303–0.02323, beyond numerical roundoff. Complete distributions,
+identities and actual baseline/fixed-scale scores are retained. Absence of
+this sufficient condition in the other 23 cases does not prove that changing a
+kernel would fix them. Different endpoint-dependent transforms and different
+aggregation or boundary rules are outside this argument.
+
+### Verification and next scope
+
+All **54 existing relevant numerical tests pass**; no tested production source
+is changed. Baseline scores, minima and exact group/root predictions replay.
+Independent checks cover all 1,689 reference radii, 197 group medians, 24,325
+scalar affinities and 4,607 scalar group means. Maximum absolute numerical
+errors are below `4.5e-16`. Queries evaluated separately, reordered or
+duplicated preserve their results; reference/group scales and protected source
+hashes stay fixed. Numerical evaluation took 4.16 seconds.
+
+Do not adopt or tune this common-scale variant. The next useful investigation
+is the minimum-member admission assumption exposed by those five controls,
+rather than another common scale. An existing accepted member remaining in
+the hierarchy does not itself justify letting that one member set the standard
+for every new outsider. No replacement boundary or other variant is implemented
+or authorized by these findings.
+
+Keep the frozen plan/implementation, score matrices, reference models/scales,
+cohort/audit/human reports, `dominance-diagnostic-results.json`,
+`dominance-witness-score-table.json`, `verification.json`, script hashes and
+`review.md` as ignored evidence. Land maintained findings on local `main` and
+retain the worktree for frozen vector/evidence paths. No LLM calls, training,
+new encodings, paid resources, prompt/hierarchy/UI changes, official hierarchy
+run or spreadsheet updates, or HR37/38 execution.
