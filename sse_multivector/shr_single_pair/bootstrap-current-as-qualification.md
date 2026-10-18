@@ -886,8 +886,8 @@ Twelve uncertainties concern digital immortality, digital-system Users, and
 inferred US identity in the broad shutdown and shutdown-odds entries, each in
 three draws. Two more concern "Brittany Wicker dating-history news post," which
 could imply that Devonta's dating history belongs to Brittany. This is a title
-ambiguity, separate from the full meanings' correct attribution. The next test
-will use a broader-name fallback for unclear relationships and a food-preservation
+ambiguity, separate from the full meanings' correct attribution. V147 below tests
+a broader-name fallback for unclear relationships and a food-preservation
 example showing that a storage stage can remain outside the title.
 
 All three Half-and-half controls preserve the exact milkfat interval and weight
@@ -898,6 +898,60 @@ who have died." All 41 focused checks pass. Native
 including six warmups, zero failures/retries/reuses and complete usage.
 API-equivalent cost is $1.1655304, not a subscription cash charge. V146 remains
 experimental and unqualified for adoption; constructor pins stay V133.
+
+### Broader names without misattribution: Bootstrap-v147
+
+Experimental [Bootstrap-v147](Hierarchy-bootstrap-v147.md) asks for a broader
+name when shortening could suggest the wrong person or relationship. Its brief
+plan example now names a multistage apple-preservation plan "Apple preservation
+plan," leaving drying, jars and cellar storage in meaning. Native V146 outputs
+establish the preceding title ambiguities and granularity uncertainties before
+these two edits.
+The opening task, shared rules-v12, Consolidation-v27, four full examples and
+student example are unchanged. There is no numeric word target or punctuation
+ban. Meaning retains exact scope and qualifications; qualifications are not
+illustrative examples.
+
+The [matched](hierarchy-bootstrap-title-v147-matched.spec.json) and
+[control](hierarchy-bootstrap-title-v147-controls.spec.json) tests use the same
+48 and eight inputs, three fresh draws each, with V146 baselines and verified
+identical input hashes/model settings. All ready batches launch concurrently.
+These inputs have informed prompt revisions and are development inputs, not an
+untouched qualification panel. The pre-call plan, exact outputs and native
+reviews remain under `target/bootstrap-title-v147/`.
+
+All 168 outputs are valid and non-null. Fresh agent review records 157 accepts,
+zero clear rejects and eleven uncertainties. The stock-plan titles are:
+
+- "Chicken stock preservation plan"
+- "Chicken stock preservation plan"
+- "Chicken stock preservation and pantry storage plan"
+
+All three meanings retain the saved carcasses, today's batch, approximately
+25 quarts, pressure-canning and subsequent pantry storage. The third title still
+includes a storage stage. It remains uncertain under the provisional broader-name
+preference; the optional user clarification of naming granularity is unanswered.
+The first two titles match that provisional preference, not a new human-approved
+gold label. The original preference titles are "Preference for a better future"
+twice and "Author's preference for a better future" once; their actions and
+opportunity condition remain in meaning. All three dating-history titles now
+explicitly identify Brittany as learning Devonta's dating history. This is an
+observed improvement on development cases, not a reliability guarantee.
+
+The other ten uncertainties concern digital immortality, digital-system Users
+and inferred US federal identity in the shutdown-odds entry (three each), plus
+the broad shutdown entry in draw 2. All three Half-and-half controls preserve the
+exact milkfat interval and mass/weight basis. The People definitions contain no
+illustrative people; any living/deceased wording is a scope qualification.
+All 41 focused checks pass.
+
+Native [accounting](hierarchy-bootstrap-title-v147-usage-v1.json) records 175 new
+attempts including six warmups and one recovered failed attempt/retry, with no
+exact reuses or final failures. Usage is incomplete for one attempt. The known
+API-equivalent cost subtotal is $1.1817048; unknown usage is not zero cost, and
+this is not a subscription cash charge. V147 remains experimental and unqualified
+for adoption; constructor pins stay V133. Further qualification requires inputs
+not used to tune these revisions. No hierarchy has been rebuilt or adopted.
 
 ## Meaning-derived titles: Bootstrap-v130
 
