@@ -172,3 +172,8 @@ or show that another background estimate would help. The practical conclusion
 is narrower: this particular mean removal has useful local gains but does not
 consistently reduce unwanted root placements. It remains experimental and is
 not activated in HiGen.
+
+The subsequent [boundary provenance audit](hierarchy-admission-boundary-provenance-v1.md)
+traces all wrong primary-sample routes under both views to their exact accepted
+members and root-wide limiting notes. It also records score-order conflicts
+that prevent threshold tightening from preserving every known useful route.
