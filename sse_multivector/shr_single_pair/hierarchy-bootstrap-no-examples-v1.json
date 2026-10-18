@@ -1,0 +1,27 @@
+{
+  "schema_version": 2,
+  "local_schema_version": 4,
+  "sources": [
+    {
+      "path": "hierarchy-bootstrap-people-no-examples-v1.json"
+    }
+  ],
+  "experiments": [
+    {
+      "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-bootstrap-title-samples-v1/target/bootstrap-v133-natural-titles-v1/draw1",
+      "select": [
+        "bootstrap-b5a5293eb46e3dd1b0d569f544f334c4dbbcdc6789af5707435502b39af3c7ed",
+        "bootstrap-9ff830e12b273971afe330df2fb311651e15884f87e27d377aa3846c804bf5b3",
+        "bootstrap-b5d7548e73737c6818975d3aa911a69b7f3d1ae57fc86ff61bbe859072cedef1",
+        "bootstrap-0e5b6c2d83a9e28ddb1785ec64b68dca008eef555bed5ddb97c8a316ba19cf9f",
+        "bootstrap-3ff314326ff0c69cb4ea0128a99d4ba6fa6151b3fba58935842fd4a20bbd48a5",
+        "bootstrap-fb83b19dfbaee54eff0507737d9d5810195cf2cba1954c8e7973aa97f63f22c0",
+        "bootstrap-3ea19137c2701e7b5e455c713d304e87f59f9b5e1416bd0b533f2ee8e09bea5b",
+        "bootstrap-37d8c707aa4a0ef1ea436a1c9b088f705c702b8b51b97ce3770d4b35c7b7a059"
+      ]
+    }
+  ],
+  "review": {
+    "purpose": "Definitions must omit illustrative examples while retaining defining alternatives, required parts, scope and meaning-derived titles. Review outputs freshly; historical judgments are not current gold."
+  }
+}

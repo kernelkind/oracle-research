@@ -29,6 +29,70 @@ or activation from this mechanical change; v126 remains the working experimental
 baseline described below. Future common writing changes must publish both new
 prompt versions together. See [the native workflow](../model-runner.md#synchronized-bootstrap-and-consolidation-definition-writing).
 
+## Definitions without examples: Bootstrap-v134 and Consolidation-v22
+
+The user requires standalone definitions without illustrative examples. Their
+HR38 contrast identifies the failure: L00086's broad People meaning appends
+protocol arguers and people whose understanding the author doubts, while
+L00863's "People are individual human beings" supplies the preferred direct
+definition. The selected People topic must not acquire incidental examples from
+its post or descendants.
+
+[Bootstrap-v134](Hierarchy-bootstrap-v134.md) and
+[Consolidation-v22](Hierarchy-consolidation-v22.md) publish synchronized
+[rules-v7](prompt_parts/explicit-meaning-rules-v7.md). They replace the old
+instruction to state optional variations and introduce non-exhaustive
+illustrative lists with a direct requirement to state only identity and defining
+conditions. Illustrative examples, lists of possible members and other
+non-defining details are omitted even when supplied by the post or hierarchy.
+Alternatives and parts that define the selected topic remain. All wrapper
+bytes, including title instructions, examples, diagnostics and output contracts,
+are unchanged. Native revision receipts use last approved Bootstrap-v104 and
+Consolidation-v3 as their bases.
+
+The [People source](hierarchy-bootstrap-people-no-examples-v1.json) selects the
+two original HR38 entries from the frozen ASv6.100 subject corpus. Native
+preparation verifies that both full original post/hierarchy payloads match the
+saved HR38 inputs exactly. The [collection](hierarchy-bootstrap-no-examples-v1.json)
+adds the eight prior native scope/title inputs through source-bound regeneration;
+historical judgments remain outside model input and are not restored gold.
+The [specification](hierarchy-bootstrap-no-examples-v1.spec.json) uses
+GPT-6.1 Sol medium, subscription SSE, the existing five-field schema and an
+isolated runner source. There is no added generation or postprocessing step.
+
+Tests first fail on the unpublished pair, then pass after synchronized
+publication. The regression uses production assembly/pair checks and local-node
+output validation, verifies byte-identical wrappers and example definitions, and
+confirms the new shared rules reach both prompts.
+
+All ten generated responses are valid. Fresh native agent reviews find no
+illustrative examples in their meanings. The exact People outputs are:
+
+- L00086: "People are human beings considered individually or collectively."
+- L00863: "People are individual human beings."
+
+Neither adds protocol arguers, judgments about understanding or named theater
+figures. The first still contains a generic qualification and is not the
+shortest possible wording. Controls omit risotto/shrimp, food sharing on Nostr,
+optional tea use and mug decoration. The particular preservation plan retains
+both required stages, today's batch, carcass source and anticipated quantity;
+these identify the selected plan and are not illustrative examples to discard.
+Titles retain the ordinary topic names and a longer, faithful plan label.
+
+The native run uses eleven attempts: ten cases and one warmup, with no failures,
+retries or exact reuses. Complete API-equivalent catalog cost is $0.0997068,
+not a subscription cash charge. All 38 relevant contract, assembly and revision
+checks pass. Frozen native results, inputs and attributed reviews remain at
+`oracle-mvp-bootstrap-no-examples-v1/target/bootstrap-no-examples-v1/draw1`.
+Retain that worktree and the isolated runner source
+`experiment-runner-bootstrap-no-examples-source-v1`, pinned at `38561fe`, for
+their absolute source and artifact references.
+
+This is a prompt qualification panel, not a hierarchy experiment. Existing
+meanings, vectors, saved hierarchies and constructor prompt pins are unchanged.
+No numerical representation or admission improvement is claimed. V134/V22 are
+tested experimental source, without activation or general reliability approval.
+
 ## Meaning-derived titles: Bootstrap-v130
 
 The user requested a concise title based solely on the explicit meaning.

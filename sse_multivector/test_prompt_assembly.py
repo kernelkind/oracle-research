@@ -223,7 +223,7 @@ class PromptAssemblyTests(unittest.TestCase):
                            r'<output>\s*(.*?)\s*</output>\s*</example>')
         original_examples = re.findall(example_pattern,
                                        (PROMPTS / 'Hierarchy-bootstrap-v129.md').read_text(), re.S)
-        for version in (130, 131, 132, 133):
+        for version in (130, 131, 132, 133, 134):
             with self.subTest(version=version):
                 prompt = (PROMPTS / f'Hierarchy-bootstrap-v{version}.md').read_text()
                 examples = re.findall(example_pattern, prompt, re.S)
@@ -240,6 +240,24 @@ class PromptAssemblyTests(unittest.TestCase):
         historical = (PROMPTS / 'Hierarchy-bootstrap-v129.md').read_bytes()
         self.assertEqual(sha256(historical),
                          '1ea170044a0daf63916e576df68e932b50ade5b3f8adec6a47fae5a420e8765e')
+
+    def test_definition_only_pair_preserves_wrappers_and_changes_shared_rules_together(self):
+        from sse_multivector.prompt_assembly import compile_spec
+
+        for family, current, previous in (('bootstrap', 134, 133), ('consolidation', 22, 21)):
+            with self.subTest(family=family):
+                path = PROMPTS / f'Hierarchy-{family}-v{current}.assembly.json'
+                spec, _, content = compile_spec(path)
+                old, _, old_content = compile_spec(
+                    PROMPTS / f'Hierarchy-{family}-v{previous}.assembly.json')
+                self.assertEqual(self.invoke('check', path).returncode, 0)
+                rules = (PROMPTS / spec['shared']['path']).read_bytes()
+                old_rules = (PROMPTS / old['shared']['path']).read_bytes()
+                self.assertNotEqual(rules, old_rules)
+                self.assertEqual(content, old_content.replace(old_rules, rules))
+                peer = json.loads((PROMPTS / spec['companion']).read_text())
+                self.assertEqual(peer['shared'], spec['shared'])
+                self.assertEqual(peer['companion'], path.name)
 
     def test_manifest_rejects_unversioned_output_and_output_as_its_own_source(self):
         self.manifest['output']['path'] = 'different-name.md'

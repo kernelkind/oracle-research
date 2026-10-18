@@ -1,0 +1,26 @@
+{
+  "schema_version": 4,
+  "corpus": "/mnt/external/algos-archive/oracle-mvp/hierarchy-hr38-v53-auto/hierarchy-hr38-v53-auto-2000-note-v1/subject-collection/subjects.json",
+  "nodes": [
+    {
+      "id": "L00086",
+      "local": {
+        "note_id": "20f22d37150d0427199a554f0fecf3b291af26da9b00035cb95c7235c0303a1c",
+        "number": "2"
+      },
+      "review": {
+        "purpose": "Broad People topic; omit illustrative protocol arguers and judgments about understanding."
+      }
+    },
+    {
+      "id": "L00863",
+      "local": {
+        "note_id": "fd8d82eeeaf3cd811a7ce6cd10d75257db002aa2ecd2294619e84b4b621036de",
+        "number": "4"
+      },
+      "review": {
+        "purpose": "Broad People topic; retain the direct human-being definition."
+      }
+    }
+  ]
+}

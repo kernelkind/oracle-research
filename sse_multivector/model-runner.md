@@ -26,14 +26,14 @@ source synchronization change, not a measured prompt improvement or activation.
 
 To change common wording, author a new version of the shared rules and publish
 both new prompt versions in one operation. For example, after actually creating
-`explicit-meaning-rules-v7.md`:
+`explicit-meaning-rules-v8.md`:
 
 ```bash
 python3 sse_multivector/prompt_assembly.py sync \
-  sse_multivector/shr_single_pair/Hierarchy-bootstrap-v129.assembly.json \
-  --rules sse_multivector/shr_single_pair/prompt_parts/explicit-meaning-rules-v7.md \
-  --prompt-id Hierarchy-bootstrap-v130 \
-  --companion-id Hierarchy-consolidation-v22
+  sse_multivector/shr_single_pair/Hierarchy-bootstrap-v134.assembly.json \
+  --rules sse_multivector/shr_single_pair/prompt_parts/explicit-meaning-rules-v8.md \
+  --prompt-id Hierarchy-bootstrap-v135 \
+  --companion-id Hierarchy-consolidation-v23
 ```
 
 Run from the authorized task worktree. This command writes both new complete
@@ -59,6 +59,28 @@ task rules, immutable historical files, collision refusal, failure cleanup and
 native CLI source binding. Semantic qualification of the synchronized pair is
 separate from these mechanical checks.
 
+## Definitions without illustrative examples
+
+The user requires direct definitions without illustrative members or examples
+borrowed from the post or hierarchy. Experimental
+[Bootstrap-v134](shr_single_pair/Hierarchy-bootstrap-v134.md) and
+[Consolidation-v22](shr_single_pair/Hierarchy-consolidation-v22.md) share
+[rules-v7](shr_single_pair/prompt_parts/explicit-meaning-rules-v7.md), which
+replaces the instruction to add non-exhaustive illustrative lists. The meaning
+states the topic's identity and defining conditions; required alternatives,
+parts and restrictions remain. Evidence and diagnostics may still quote and
+interpret the supplied post.
+
+The [ten-case native test](shr_single_pair/bootstrap-current-as-qualification.md#definitions-without-examples-bootstrap-v134-and-consolidation-v22)
+uses the two exact HR38 People inputs and eight existing scope/title controls.
+Agent review finds no illustrative examples in the ten returned meanings.
+Both People meanings define human beings directly; one matches the preferred
+wording exactly and the other adds an individual/collective qualification.
+The specific preservation plan retains its defining batch and process details.
+This establishes a bounded prompt test, not guaranteed wording or an embedding
+or admission improvement. The pair is tested experimental source; existing
+hierarchy versions still pin Bootstrap-v133 and are not migrated by publication.
+
 ## Bootstrap titles derived from explicit meanings
 
 Experimental [Bootstrap-v133](shr_single_pair/Hierarchy-bootstrap-v133.md)
@@ -69,7 +91,7 @@ details in the meaning. Clear, faithful phrasing takes priority over shortening
 that would make the title awkward or misleading. There is no numeric length
 target or instruction to find the shortest title.
 
-Bootstrap-v130 through v133 use the
+Bootstrap-v134 retains V133's title instructions. Bootstrap-v130 through v134 use the
 [five-field output schema](shr_single_pair/Hierarchy-bootstrap-v130.output.schema.json).
 Native `hierarchy_local_nodes` validation requires a nonempty title for a
 non-null meaning and a null title for a null meaning. Earlier schemas retain
