@@ -775,7 +775,7 @@ def add_commands(commands):
     p.add_argument('--reject', default='')
     p.add_argument('--forms', action='append', default=[], metavar='FORM:ORDINALS')
     p.add_argument('--reason', required=True)
-    p = commands.add_parser('freeze-post-sample', help='freeze original posts and three author-separated splits; no inference')
+    p = commands.add_parser('freeze-post-sample', help='freeze original posts automatically or with reviewed author-separated splits; no inference')
     p.add_argument('destination', type=Path)
     p.add_argument('--spec', type=Path, required=True)
     p.add_argument('--preview', action='store_true', help='save pending English reviews without freezing a sample')

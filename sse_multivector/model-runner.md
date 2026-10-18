@@ -721,7 +721,17 @@ agent English/form reviews in corpus hash order. `review-post-sample SOURCE
 are one-based source positions; comma lists and inclusive ranges are supported.
 These commands make no model calls.
 
-`freeze-post-sample DEST --spec CONFIG` requires every selected post to have a
+For an uncurated hierarchy corpus, `freeze-post-sample DEST --spec CONFIG`
+accepts `selection_mode: "automatic"`, `count`, `seed`, `candidates`,
+`candidate_manifest` and `token_counts`. The seed must equal the native export's
+`selection_domain`; every consumed event-ID hash rank is checked. It selects
+the first requested number of verified, nonempty, English-eligible root,
+non-quote posts within 512 SSE tokens. It applies no manual reviews, topic or
+author quotas, reference exclusions or additional text deduplication. Original
+events, source receipts, ordered notes and selection hashes are frozen together.
+The default reviewed three-way sampling workflow below is unchanged.
+
+In the default reviewed mode, `freeze-post-sample DEST --spec CONFIG` requires every selected post to have a
 source-bound review. Config names candidates, token_counts, prior_review, reviews,
 development_sources, seed, and train/validation/test counts under splits. It
 preserves original text and authors, rejects source/token/review mismatches,
