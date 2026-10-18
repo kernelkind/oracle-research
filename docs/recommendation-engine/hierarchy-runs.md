@@ -2035,7 +2035,7 @@ freeze the controls. Raw notes SHA-256:
 The original-note manifest and event evidence are retained under
 `oracle-mvp-hierarchy-hr36-v53-auto/target/hierarchy-hr36-v53-auto-thousand-note-v1/corpus/`.
 
-Status: running Bootstrap construction. ASv6.100 completed with 1,000 valid
+Status: running canonical construction. ASv6.100 completed with 1,000 valid
 answers: 939 notes have subjects and 61 have valid empty subject lists;
 5,378 original L1 subjects enter Bootstrap. Empty lists remain in the input
 inventory and receive no Bootstrap requests. The native parser fix is integrated
@@ -2048,7 +2048,13 @@ uses verified compact output with unchanged groups and trees.
 records 1,002 attempts including warmup and one recovered failure. Known
 API-equivalent cost is $15.3100836; the failed attempt lacks usage, so complete
 cost is unknown. Incremental subscription cash charge is zero.
-Full recursive V5.3 uses Bootstrap-v133,
+[Native Bootstrap accounting](../../../oracle-mvp-hierarchy-hr36-v53-auto/target/hierarchy-hr36-v53-auto-thousand-note-v1/usage-bootstrap.json)
+records 5,378 valid answers and 5,379 attempts including warmup, with no
+failed attempts or diagnostic errors. API-equivalent cost is $36.7148772.
+The 42 valid null meanings are skipped; 5,336 usable meanings produced
+5,279 distinct encoded inputs, at most 166 tokens each. Saved vectors remain
+unchanged after repairing the copied numerical executable's execute permission;
+the native advancement retry recovered. Full recursive V5.3 uses Bootstrap-v133,
 Consolidated-grouped-v1, GPT-6.1 Sol medium on subscription SSE, one-hour
 request deadlines, angular HDBSCAN/min_samples=3/min_cluster_size=2/EOM,
 no cosine cutoff and the existing 512-token title-pooling SSE checkpoint.
