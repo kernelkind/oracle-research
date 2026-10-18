@@ -223,7 +223,7 @@ class PromptAssemblyTests(unittest.TestCase):
                            r'<output>\s*(.*?)\s*</output>\s*</example>')
         original_examples = re.findall(example_pattern,
                                        (PROMPTS / 'Hierarchy-bootstrap-v129.md').read_text(), re.S)
-        for version in (130, 131, 132, 133, 134):
+        for version in (130, 131, 132, 133, 134, 135):
             with self.subTest(version=version):
                 prompt = (PROMPTS / f'Hierarchy-bootstrap-v{version}.md').read_text()
                 examples = re.findall(example_pattern, prompt, re.S)
@@ -235,8 +235,13 @@ class PromptAssemblyTests(unittest.TestCase):
                     value = experiment_inputs.validate({'adapter': 'hierarchy_local_nodes'},
                                                        case, output, schema)['parsed']
                     self.assertIsInstance(value['title'], str)
+                    expected = json.loads(original_output)
+                    if version >= 135 and value['title'] == 'Feedback':
+                        expected['meaning'] = (
+                            'Feedback consists of views, evaluations or suggestions '
+                            'communicated about an activity or experience.')
                     self.assertEqual({key: field for key, field in value.items() if key != 'title'},
-                                     json.loads(original_output))
+                                     expected)
         historical = (PROMPTS / 'Hierarchy-bootstrap-v129.md').read_bytes()
         self.assertEqual(sha256(historical),
                          '1ea170044a0daf63916e576df68e932b50ade5b3f8adec6a47fae5a420e8765e')
