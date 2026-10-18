@@ -281,7 +281,82 @@ reuses and complete usage. API-equivalent catalog cost is $1.0167436, not a
 subscription cash charge. Artifacts and native reviews remain under
 `target/bootstrap-no-examples-v136/` in the retained task worktree. The pair is
 experimental; it does not change constructor pins or construct a hierarchy.
-The remaining field/process illustrations motivate another bounded revision.
+The remaining field/process illustrations motivated the V137 revision below.
+
+### Matched revision test: Bootstrap-v137
+
+[Bootstrap-v137](Hierarchy-bootstrap-v137.md) and
+[Consolidation-v25](Hierarchy-consolidation-v25.md) share
+[rules-v10](prompt_parts/explicit-meaning-rules-v10.md). A field or activity is
+defined by its general subject matter or process, without an overview of
+representative practices, capabilities or methods. Bootstrap replaces the Birds
+example with Transportation: its meaning states the movement of people or goods,
+while buses and trains remain in diagnostics and evidence. Feedback and glass
+negatives examples are preserved. This applies the
+[official OpenAI guidance](https://developers.openai.com/api/docs/guides/optimizing-llm-accuracy#optimization)
+to align examples with the desired behavior and test changes systematically.
+It adds no word cap, phrase blacklist, output cleanup or constructor migration.
+
+The [matched specification](hierarchy-bootstrap-no-examples-deep-v137.spec.json)
+again preserves all 48 inputs and model/schema/transport settings from each V134
+draw. Three fresh batches start concurrently through the native shared queue.
+All 144 responses validate. Fresh attributed native agent review records:
+
+| Draw | Accept | Reject | Uncertain |
+|---|---:|---:|---:|
+| 1 | 46 | 0 | 2 |
+| 2 | 47 | 0 | 1 |
+| 3 | 44 | 1 | 3 |
+| Total | 137 | 1 | 6 |
+
+There are **zero clear illustrative-example failures**, with four unresolved
+style/range cases and two other scope uncertainties. All 24 People meanings
+omit the post's examples. In draw 1 the exact original People cases say:
+
+> People are human beings.
+
+> People are individual human beings.
+
+All three AI definitions omit the capability list; all three Support, Requests
+and pottery-mug definitions omit previously rejected optional expansions.
+Finance states the field's general defining activities directly. Draw 1 says:
+
+> Finance is the field concerned with raising, allocating and managing money and capital.
+
+This is reviewed semantically, not accepted merely because an introductory word
+was removed: the field is directly defined by its subject matter and activities,
+without appending representative cases. Required dashboard features, both dahlia
+request parts, the BCH condition and continuing deposits, and the particular
+stock plan's batch, quantity, pressure process and pantry stage survive.
+
+**V137 is not fully qualified for adoption.** Draw 3 defines Half-and-half only
+as a dairy product made by blending milk and cream. It omits a defining
+composition restriction and admits other milk-and-cream blends. For the US
+sense supported by "Dear America," the
+[current primary standard](https://www.ecfr.gov/current/title-21/chapter-I/subchapter-B/part-131/subpart-B/section-131.180)
+specifies at least 10.5% and less than 18% milkfat; an arbitrary blend does not
+suffice. This is a scope rejection, separate from the no-examples result. It
+does not establish that V137 caused the error. The earlier approximate-equal-parts
+wording is not established as an exhaustive technical definition by these tests.
+
+The six uncertainties remain explicit: three food/ingredient clauses, one
+behind-the-scenes photo definition using "backstage or other production
+circumstances," and two R Cheap definitions using shared investment/income where
+"together" may refer only to products and services. The first four concern the
+boundary between defining range and illustration. These are not user-approved
+gold judgments. After three prompt revisions this same panel is development
+evidence, not unseen validation or a population reliability estimate.
+
+[Native accounting](hierarchy-bootstrap-no-examples-deep-v137-usage-v1.json)
+records 147 attempts including three warmups, zero failed/retry attempts or
+reuses and complete observed usage. API-equivalent catalog cost is $1.0991464,
+not a subscription cash charge. Exact inputs, baselines, outputs, attributed
+reviews and accounting remain under `target/bootstrap-no-examples-v137/` in the
+retained task worktree. All 39 focused production assembly, example-validation,
+revision and title-contract checks pass. Bootstrap-v137/Consolidation-v25 remain
+experimental; existing constructors still pin V133 and no hierarchy is rebuilt.
+Resolve the scope rejection and remaining judgments before adoption, then test
+unseen inputs rather than continuing to tune only this development panel.
 
 ## Meaning-derived titles: Bootstrap-v130
 

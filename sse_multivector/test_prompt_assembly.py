@@ -251,17 +251,23 @@ class PromptAssemblyTests(unittest.TestCase):
 
         pattern = (r'<example>\s*<input>\s*(.*?)\s*</input>\s*'
                    r'<output>\s*(.*?)\s*</output>\s*</example>')
-        examples = re.findall(pattern, (PROMPTS / 'Hierarchy-bootstrap-v136.md').read_text(), re.S)
         previous = re.findall(pattern, (PROMPTS / 'Hierarchy-bootstrap-v135.md').read_text(), re.S)
-        self.assertEqual(len(examples), 3)
-        self.assertEqual(examples[:2], previous)
         schema = json.loads((PROMPTS / 'Hierarchy-bootstrap-v130.output.schema.json').read_text())
-        for input_json, output in examples:
-            value = experiment_inputs.validate(
-                {'adapter': 'hierarchy_local_nodes'},
-                {'inputs': {'INPUT_JSON': input_json}}, output, schema)['parsed']
-        self.assertEqual(value['meaning'], 'Birds are feathered vertebrate animals.')
-        self.assertEqual(value['title'], 'Birds')
+        for version, title, meaning in (
+                (136, 'Birds', 'Birds are feathered vertebrate animals.'),
+                (137, 'Transportation',
+                 'Transportation is the movement of people or goods from one place to another.')):
+            with self.subTest(version=version):
+                examples = re.findall(
+                    pattern, (PROMPTS / f'Hierarchy-bootstrap-v{version}.md').read_text(), re.S)
+                self.assertEqual(len(examples), 3)
+                self.assertEqual(examples[:2], previous)
+                for input_json, output in examples:
+                    value = experiment_inputs.validate(
+                        {'adapter': 'hierarchy_local_nodes'},
+                        {'inputs': {'INPUT_JSON': input_json}}, output, schema)['parsed']
+                self.assertEqual(value['meaning'], meaning)
+                self.assertEqual(value['title'], title)
 
     def test_definition_only_pair_preserves_wrappers_and_changes_shared_rules_together(self):
         from sse_multivector.prompt_assembly import compile_spec
