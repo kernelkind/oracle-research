@@ -2103,7 +2103,7 @@ including 949,866 reasoning tokens.
 
 ## HR38 — automatically sampled 2,000-note HiGen V5.3
 
-**ASv6.100 complete; Bootstrap and construction running.** Seed `hr38-corpus-v1`, 996 authors, original English-eligible root posts, nonempty text and at most 512 SSE tokens. No manual reviews, topic quotas or author balancing. Neither sample overlaps HR36; HR37 and HR38 share two notes.
+**ASv6.100 and Bootstrap complete; construction running.** Seed `hr38-corpus-v1`, 996 authors, original English-eligible root posts, nonempty text and at most 512 SSE tokens. No manual reviews, topic quotas or author balancing. Neither sample overlaps HR36; HR37 and HR38 share two notes.
 
 ASv6.100, Bootstrap-v133 and Consolidated-grouped-v1; full V5.3 recursion, angular HDBSCAN min_samples=3/min_cluster_size=2/EOM, at most six choices, no cosine cutoff. GPT-6.1 Sol medium/subscription SSE with one-hour deadlines, no attempt cap, native exact answer reuse. Each run uses 12 local CPU workers; ready model batches share the native 30-request queue. Artifact storage is on the external disk through the task worktree’s ignored target path.
 

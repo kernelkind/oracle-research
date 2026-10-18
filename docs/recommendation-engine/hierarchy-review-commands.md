@@ -728,4 +728,4 @@ cd /home/dev/src/notedeck_worktrees/algos
 
 ## HR38 — 2,000 automatically sampled notes · HiGen V5.3
 
-ASv6.100 complete; Bootstrap and construction running. ASv6.100, Bootstrap-v133 and Consolidated-grouped-v1. Review command unavailable until the hierarchy completes.
+ASv6.100 and Bootstrap complete; construction running. ASv6.100, Bootstrap-v133 and Consolidated-grouped-v1. Review command unavailable until the hierarchy completes.
