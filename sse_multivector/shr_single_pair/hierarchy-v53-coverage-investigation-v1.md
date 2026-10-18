@@ -8357,3 +8357,15 @@ candidate without adopting it unchanged; repeated broadening, rather than
 isolated imperfection, remains the concern. All additions and prior judgments
 are preserved. Mechanical evidence checks pass; no new scoring, encoding,
 model calls, hierarchy modification or UI refresh occurred.
+
+The subsequent
+[accepted-group title/meaning diagnostic](hierarchy-note-bend-admission-v1.md#titlemeaning-agreement-diagnostic)
+measures all 628 groups across HR36–38 and the saved HR35 Food/Arts controls.
+People is an extreme disagreement case, but the problematic AI group ranks only
+92nd of HR38's 301 groups; several larger-gap groups provide reviewed useful
+software/content routes. Rejecting by larger gap therefore loses good routes
+before reaching that AI group. Exact counterfactuals quantify the tradeoff
+without selecting a policy threshold from the failures. This remains a warning
+diagnostic, not a qualified automatic admission gate. Nine tests and source,
+preview-integrity and independent arithmetic checks pass. No new scores,
+vectors, semantic judgments, model calls or hierarchy changes occur.

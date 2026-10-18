@@ -166,6 +166,80 @@ No scores, vectors, hierarchy files, prompts or model-call allowances changed.
 No new encodings, model calls, training or UI refresh occurred. Human review and
 any subsequent implementation or full-run decision remain open.
 
+### Title/meaning agreement diagnostic
+
+The user authorized testing whether disagreement inside accepted reference
+groups identifies unreliable admission groups automatically. It highlights the
+People problem but **does not establish a general group-rejection rule**. The
+AI-specific group is less extreme than several groups providing reviewed useful
+routes. No group eligibility rule is adopted or added to HiGen.
+
+The calculation is frozen before joining existing semantic judgments: normalize
+each saved vector, take the median title cosine and median full-meaning cosine
+over pairs from different source notes, then subtract the second from the first.
+Exclude self-pairs and every same-note pair. A larger positive gap means titles
+agree more strongly than meanings; it is not itself a semantic error label.
+The reusable calculation is [reference_view_agreement.py](../reference_view_agreement.py).
+
+All 628 fixed groups are measured: 157 in HR36, 130 in HR37, 301 in HR38, plus
+40 existing HR35 Food/Arts controls. Each group has a cross-note comparison.
+Group membership, meanings, admission scores and thresholds remain unchanged;
+no outsider enters the measurement. Existing review outcomes are joined only
+after the metrics are written and hashed. A supported root placement can be
+triggered by a numerically unrelated group, so those associations do not label
+an entire group as semantically correct or incorrect.
+
+| Group | Title median | Meaning median | Gap | Existing reviewed witness |
+|---|---:|---:|---:|---|
+| HR38 C00006 fused-002 · People/Individuals | 0.9873 | 0.2839 | 0.7035 | Both valid people and wrong services/conduct |
+| HR38 C00005 fused-009 · AI-specific topics | 0.7797 | 0.5533 | 0.2264 | Codex is valid; conventional graphics are not |
+| HR36 C00001 fused-092 · Software features/functions/use | 0.9573 | 0.5802 | 0.3771 | Form submission |
+| HR37 C00002 fused-034 · Notes/Notedeck/note-taking | 0.8979 | 0.3801 | 0.5178 | Nostr client releases; Unifans |
+
+People's gap ranks fourth among HR38's 301 groups; the AI-specific group ranks
+92nd. Other large gaps occur in Songs, Food, Meals, news destinations and software
+groups. The larger-gap ordering would reject the useful software and content
+routes above before rejecting the AI group. More generally, disabling the AI
+group disables its valid Codex route as well as its wrong non-AI image routes;
+group diagnostics cannot replace assessing an outsider's relation to that group.
+
+Two **diagnostic counterfactuals**, not proposed cutoffs, quantify the cost:
+disable all groups whose gap is at least the already-observed People gap, or
+at least the already-observed AI-group gap. These values come from the failure
+witnesses and must not be presented as reference-only calibrated rules.
+
+| Original new-note proposals → remaining | People-gap diagnostic | AI-gap diagnostic |
+|---|---:|---:|
+| HR36 | 75 → 75 | 75 → 39 |
+| HR37 | 92 → 92 | 92 → 45 |
+| HR38 | 384 → 287 | 384 → 113 |
+
+These are distinct proposed-note totals, not useful-coverage estimates. At the
+AI-gap diagnostic, nine of 13 reviewed supported HR36 root placements and seven
+of 12 in HR37 lose every passing group. The HR38 historical review loses 23
+supported placements outright; six more lose their supported witness while
+other, unreviewed selected entries remain. Its separate supplemental preview
+review loses seven supported placements outright, with three more needing
+alternate-witness review. Do not pool these differently selected cohorts or
+count a surviving arbitrary heading as a verified useful route.
+
+The narrower People-gap diagnostic removes 14 wrong historical HR38 placements
+and six wrong supplemental placements, but also removes five and two supported
+placements respectively. It remains a possible warning signal with a measured
+tradeoff; this test supplies no automatic way to select that boundary. The AI
+errors remain. No labels determine a new score, threshold or gate.
+
+Evidence: `target/food-halves-v1/reference-view-agreement-v1/`. The frozen plan
+pins 36 source files; `group-metrics.json` retains all measurements,
+`reviewed-group-links.json` the exact saved judgments and passing groups, and
+`monotone-gap-capacity.json` both counterfactuals with cohorts kept separate.
+`final-verification.json` checks all source hashes, unchanged preview files,
+and independent scalar arithmetic for both failure groups and useful controls.
+Maximum target-check error is `4.45e-16`; nine relevant tests pass after the
+initial missing-module failure. The prior 20-group scalar checks also pass.
+All code and artifacts remain experimental. No new vectors, semantic judgments,
+LLM calls, training, hierarchy changes or UI refresh occurred.
+
 ## Exact change
 
 Keep the original accepted-only fusion groups and full-meaning scores. For
