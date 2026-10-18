@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "Bootstrap-v139-deep": [
+      "../../target/bootstrap-scope-v139/draw1",
+      "../../target/bootstrap-scope-v139/draw2",
+      "../../target/bootstrap-scope-v139/draw3"
+    ],
+    "Bootstrap-v139-half-and-half-focus": [
+      "../../target/bootstrap-scope-v139/focus1",
+      "../../target/bootstrap-scope-v139/focus2",
+      "../../target/bootstrap-scope-v139/focus3",
+      "../../target/bootstrap-scope-v139/focus4",
+      "../../target/bootstrap-scope-v139/focus5",
+      "../../target/bootstrap-scope-v139/focus6",
+      "../../target/bootstrap-scope-v139/focus7",
+      "../../target/bootstrap-scope-v139/focus8",
+      "../../target/bootstrap-scope-v139/focus9"
+    ]
+  }
+}

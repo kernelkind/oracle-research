@@ -413,6 +413,77 @@ following the expected missing-publication failure. Source wrappers, all three
 examples and constructors remain unchanged. The pair is experimental; a further
 revision must distinguish defining quantitative criteria from approximations.
 
+### Defining compositions precisely: Bootstrap-v139
+
+The V138 test did not consistently recover the defining US composition. The
+next authorized revision is [Bootstrap-v139](Hierarchy-bootstrap-v139.md),
+paired with [Consolidation-v27](Hierarchy-consolidation-v27.md) through
+[rules-v12](prompt_parts/explicit-meaning-rules-v12.md). When a composition,
+proportion or numerical limit determines membership, the rules require that
+criterion rather than a customary description or comparison. Bootstrap adds a
+fourth example defining 18-karat gold by its nominal 75% gold content by mass,
+while keeping the earrings' color and use outside the meaning. The previous
+three examples, title instructions and output contract remain fixed.
+Half-and-half, its numerical answer and food-specific instructions are absent
+from the prompt examples and rules. All 40 focused checks pass after the new
+example's expected missing-publication failure. Native approved-base revision
+receipts reconstruct both compiled prompts.
+
+The [specification](hierarchy-bootstrap-no-examples-deep-v139.spec.json) and
+[native usage source](hierarchy-bootstrap-scope-v139-usage-v1.json) preserve three
+48-input batches and nine additional single-case repeats, matched to V138's
+exact inputs and model/schema/transport settings. All twelve ready batches
+start without waiting for unrelated completion; only the native shared queue
+limits provider concurrency. This yields 153 valid fresh outputs and twelve
+Half-and-half responses, including the three full-panel draws.
+
+**All twelve Half-and-half responses state at least 10.5% and less than 18%
+milkfat in the American milk-and-cream product.** They meet the pre-call
+composition check against the primary standard linked above. One exact output:
+
+> Half-and-half, in American usage, is a dairy mixture of milk and cream containing at least 10.5% but less than 18% milkfat by mass.
+
+The title remains "Half-and-half." No output replaces the range with an
+arbitrary blend, approximate equal-parts recipe or broad relative comparison.
+The target scope failure is resolved on these repeated development inputs;
+this is not a general reliability guarantee or complete regulatory assessment.
+
+Fresh native agent reviews of the complete panel record:
+
+| Draw | Accept | Reject | Uncertain |
+|---|---:|---:|---:|
+| 1 | 44 | 0 | 4 |
+| 2 | 44 | 0 | 4 |
+| 3 | 46 | 0 | 2 |
+| Extra focused repeats | 9 | 0 | 0 |
+| Total | 143 | 0 | 10 |
+
+There are no clear illustrative-example failures. All 24 People meanings omit
+post examples; the exact preferred "People are individual human beings" still
+appears. Dashboard meanings retain all four named features, dahlia requests
+retain favorites and reasons, BCH plans retain the depleted-balance condition
+and continuing deposits, and the particular stock plan retains its batch,
+quantity, pressure process and pantry stage. Semantic review does not simply
+reject particular words or assume every list is illustrative.
+
+Ten outputs remain uncertain: three food/ingredient clauses; two photo meanings
+using "normally nonpublic" or naming preparations, activities and production
+settings; one War meaning naming state/non-state participants; two R Cheap
+meanings imposing shared income or other people; one soup-mug definition that
+omits a handle; and one chicken-stock definition admitting meat without bones.
+These raise defining-range, required-property or intended-scope questions. They
+are not silently accepted, user-approved gold or established causal regressions.
+They keep broader semantic qualification open even though the original
+composition failure passes all twelve repeats.
+
+Native totals are 153 fresh outputs, 165 attempts including twelve warmups,
+zero failed/retry attempts or reuses, and complete observed usage. API-equivalent
+catalog cost is $1.2158252, not a subscription cash charge. Artifacts, baselines
+and attributed reviews remain under `target/bootstrap-scope-v139/` in the
+retained task worktree. This is a prompt experiment; constructors still pin
+V133 and no hierarchy is rebuilt. After repeated tuning on the same panel,
+the useful next qualification step is a frozen unseen panel before adoption.
+
 ## Meaning-derived titles: Bootstrap-v130
 
 The user requested a concise title based solely on the explicit meaning.
