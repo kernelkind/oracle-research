@@ -8225,3 +8225,13 @@ also expose 5/38 and 22/72 unsupported placements, with ambiguity kept separate.
 This is genuine coverage value with substantial browsing noise, not a demand
 for perfection or a production approval. No scores, prompts, encoder weights,
 boundaries, hierarchy membership or prior exact-entry judgments changed.
+
+## Accepted-reference mean-centering follow-up
+
+The [mean-centering v1 matched trial](hierarchy-reference-centering-v1.md)
+changes only the saved full-meaning score and consistently recalculates the
+existing boundaries. It preserves all 37 originally useful primary-sample
+notes and adds two useful HR37 notes, but unsupported root placements change
+from 5 to 10 in HR36 and 22 to 19 in HR37. It is a tradeoff, not a consistent
+improvement or an activated admission rule. Groups, encoder and hierarchies
+remain unchanged; no LLM calls, encodings or training occur.

@@ -1,5 +1,10 @@
 # Whole-note admission audit v1 — experimental findings
 
+The later matched [mean-centering trial](hierarchy-reference-centering-v1.md)
+reuses this frozen sample, preserving these original assessments and recording
+changed-route reviews separately. It retains useful note routes but does not
+consistently reduce unwanted extra root placements.
+
 The unchanged full-meaning candidate recovers useful note routes, but also
 produces substantial wrong-root placements. This audit does not justify calling
 it a quality-preserving automatic admission pass. That is a practical error
