@@ -63,13 +63,13 @@ uniform standalone-title evaluation or evidence that discarding disambiguating
 context is generally safe. Lower absolute scores do not themselves establish
 correct rejection, and no threshold is fitted.
 
-The next useful mechanism test would select the words stating what the topic
-is in its definition: **people** for these human classes, versus **impressions**
-or **responses** for the Audience reactions entries, preserving full context.
-That targets the definitions' distinction directly rather than removing more
-text. It is a proposed diagnostic, not a validated extraction/admission rule;
-it has not been prepared or run. The existing conservative admission candidate
-remains unchanged.
+The user rejected the subsequent proposal to manually select defining words
+such as people, impressions or responses. That proposal is closed without
+preparation or encoding. The measured results above remain evidence, but this
+word-selection detour supplies no automatic admission rule. Work returns to the
+[cross-corpus conservative admission assessment](hierarchy-note-bend-admission-v1.md#current-practical-assessment-across-corpora),
+without requiring perfect separation of the People cases. The existing
+conservative admission candidate remains unchanged.
 
 ## Evidence and verification
 

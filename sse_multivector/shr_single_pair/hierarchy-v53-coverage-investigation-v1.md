@@ -8321,3 +8321,17 @@ improve that ordering from one to three of six witnesses above reactions, or
 from one to two of five distinct titles. Racing drivers, Astronauts and
 Australians still score lower. This does not qualify a new admission score;
 references remain fixed/contextual and the admission candidate stays unchanged.
+
+## Return to automatic coverage admission
+
+The user rejected manually pooling defining words such as people. No such
+experiment was prepared or run. The focus returns to the
+[unchanged conservative admission rule](hierarchy-note-bend-admission-v1.md#current-practical-assessment-across-corpora):
+75, 92 and 384 additional-note proposals on HR36, HR37 and HR38 respectively.
+Reviewed surviving proposals have useful routes for 7/7, 7/9 and 27/32 notes;
+wrong root placements remain separately visible at 0/10, 1/14 and 15/56.
+Samples differ and proposal totals are not verified recovery counts. This
+supports a practical saved-hierarchy review with existing computed additions,
+not policy activation, a new accuracy target or another word-selection probe.
+The review itself has not been performed. No new vectors, labels, model calls
+or hierarchy changes occur in this reassessment.

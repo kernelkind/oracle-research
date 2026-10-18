@@ -24,6 +24,62 @@ No existing membership, hierarchy, prompt, encoder or query score changed.
 There were no LLM calls, new encodings, training or paid resources. The new
 function is experimental and is not activated in HiGen.
 
+## Current practical assessment across corpora
+
+The unchanged full-meaning conservative rule has enough demonstrated coverage
+value to justify a saved-hierarchy trial. This is a recommendation, not approval
+to activate it or evidence that every added placement is correct. The user
+rejected manually selecting definition words such as people; that proposal is
+closed without preparation or encoding. The objective remains automatic
+recovery of omitted entries into suitable existing roots, accepting a measured
+coverage/quality tradeoff rather than perfect separation of one People case.
+
+| Corpus | All additional-note proposals | Reviewed conservative proposals with a useful route | Wrong reviewed root placements |
+|---|---:|---:|---:|
+| HR36 | 75 | 7 / 7 | 0 / 10 |
+| HR37 | 92 | 7 / 9 | 1 / 14 |
+| HR38 | 384 | 27 / 32 | 15 / 56 |
+
+Proposal totals are distinct omitted notes, not verified correct additions.
+HR36/HR37 retain seven and nine proposals from the original 24-note samples;
+HR38 independently samples 32 of the conservative rule's proposals. Supplements
+are excluded. These different, small agent-reviewed samples must not be pooled
+into a claimed general accuracy rate. HR37 has one wrong-only and one unresolved
+proposed note; HR38 has four wrong-only and one unresolved. Wrong extra roots
+remain errors even when another route makes the note useful.
+
+The coverage cost is substantial: on the matched HR36/HR37 samples, useful
+notes drop from 37 to 14 while wrong root placements drop from 27 to one.
+Two of three human-approved Food notes remain omitted. HR38's separate omission
+screen also identifies six useful notes among 12 proposals lost to tightening.
+This rule is a conservative addition pass, not a recovery guarantee.
+
+HR38's 11 wrong People-group placements account for 11 of its 15 wrong
+placements. The other sampled roots have 30 supported, four wrong and four
+unresolved placements. This identifies concentration; it does not authorize
+blacklisting that root/group or fitting a new threshold from these judgments.
+
+Centered conservative scores are an alternative, not an established successor:
+the same HR36/HR37 primary samples have 18 useful notes versus 14, but two wrong
+root placements versus one. No matched centered-conservative HR38 transfer is
+saved. The full-meaning rule remains the candidate tested unchanged across all
+three corpora; the evidence does not establish a universal best score.
+
+The recommended next step is to apply the **already computed conservative
+additions to a separate copy of HR38 for hierarchy review**. This would test
+actual usefulness and browsing noise before further score changes. It needs
+no new LLM calls, training or vectors; it is not performed by this assessment.
+Keep the original graph and saved decisions intact and do not silently filter
+the problematic group to improve the result.
+
+All counts were independently recounted from saved query decisions and frozen
+note/root judgments. Evidence:
+`target/food-halves-v1/conservative-admission-reassessment-v1/summary.json`,
+SHA256 `39e88afad480e2ea22c0a534f81a58d6e6a5abec584ff5e86aeb7fa04069f7b0`.
+Independent joins verify all 80 primary note states and all 55 supported
+witnesses against the actual own-corpus query decisions. There are no new
+scores, semantic labels, admissions, encodings or model calls.
+
 ## Exact change
 
 Keep the original accepted-only fusion groups and full-meaning scores. For
