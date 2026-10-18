@@ -427,6 +427,84 @@ first failed its missing-module test, then **50 relevant tests passed**.
 No new encodings, LLM calls, training, semantic judgments, actual memberships,
 hierarchy files or UI updates occurred.
 
+## Individual People reference matches
+
+The subsequent saved-vector diagnosis does **not** support penalizing scores
+concentrated in a few reference matches. A useful Actors entry depends much more
+on one reference than the wrong Mechanical Turk entry does. Astronauts is weak
+against almost every reference, while the wrong Audience reactions entry is
+stronger against **each of the same 16 references**. These are comparisons with
+accepted entry meanings, not with the synthetic root definition.
+
+Freeze the 39 existing People-group controls from the within-group study: nine
+supported, 22 wrong and eight unresolved entry/root judgments. Eight supported
+entries denote classes of humans. Keep Patient advocacy separate because its
+supported root route concerns humane treatment rather than human identity.
+Reuse the exact 16 People/Individuals reference meanings, full-meaning vectors,
+source-note exclusions and original kernel. All 624 pair values are retained;
+none of these queries shares a reference's source note. No labels or boundaries
+are selected from the new results.
+
+| Entry | Existing mean-support score | Mean cosine | Median cosine | Largest reference's share of score |
+|---|---:|---:|---:|---:|
+| Actors · L03676, supported | 0.011669 | 0.0917 | 0.0465 | 51.3% |
+| Voice actors · L04484, supported | 0.011617 | 0.1435 | 0.1032 | 24.5% |
+| Astronauts · L03337, supported | 0.004233 | -0.0042 | -0.0047 | 14.2% |
+| Audience reactions · L04535, wrong here | 0.027289 | 0.2754 | 0.3137 | 21.6% |
+| Amazon Mechanical Turk · L07047, wrong here | 0.011799 | 0.1706 | 0.1558 | 16.2% |
+
+The strongest Actors match is the accepted definition, "People are human
+individuals, including but not limited to lawyers and actors." Its cosine is
+0.5736. Removing that reference lowers Actors' mean support to 0.006058.
+The optional example supplies useful matching evidence in this case; requiring
+uniform support would remove it. By contrast, Mechanical Turk beats Actors
+against 13 of 16 references, and beats Astronauts against 15. The current score
+is not merely amplifying one aberrant Mechanical Turk connection.
+
+Audience reactions' strongest references concern speaking or being addressed,
+reporting information and arguing about protocols. Its cosine with the two
+identical short "People are individual human beings" definitions is 0.3137;
+Astronauts' is 0.0160. This is evidence of poor score ordering for these
+class-membership comparisons even without long optional examples. It does not
+establish a general limit on SSE or on admission in other groups. Audience
+reactions retains its separate supported communication-root judgment.
+
+Across the eight human-class entries and 22 wrong entries, the useful entry
+ranks higher in **33/176** pairings with the current kernel mean, **38/176**
+with raw mean cosine, **33/176** with median cosine and **73/176** with minimum
+cosine. These are descriptive ordering comparisons sharing entries, not
+independent accuracy samples or tested admission rules. No threshold is fitted.
+The minimum improves some orderings but still puts both focal wrong entries
+above Actors and Astronauts; it is not qualified for replay as an admission fix.
+
+In 58/176 pairings, sorting each entry's 16 similarities from weakest to
+strongest leaves the wrong entry at least as high at every position. Any
+order-independent aggregation that only increases when an input increases
+cannot reverse those particular pairings. Five also have dominance against
+each same named reference. This mathematical restriction is narrower than a
+claim that all possible reference-aware scores fail. In 123/176 pairings the
+wrong entry remains above the useful entry after deleting any one shared
+reference from both averages.
+
+Assessment: retain the current experimental candidate, and do not add a
+concentration penalty, median substitution or minimum-score rule on this
+evidence. This negative result closes the proposed "few strong wrong matches"
+explanation; it does not demand perfect admission or change previous reviews.
+
+Evidence: `target/food-halves-v1/people-reference-contributions-v1/`.
+Plan SHA256:
+`5f95ab4a00a0300101ac2b72ac95e3862ab26c56c80ca7414bca07af436f7a4d`.
+`entry-reference-scores.json` retains every original meaning, pair cosine,
+contribution, descriptive statistic and leave-one-reference-out mean;
+`supported-wrong-comparisons.json` retains all 176 pairings. All original scores
+replay, with maximum scalar/pair error `3.34e-16`; the 416 pairs overlapping the
+earlier title/meaning study agree within `4.17e-17`. A separate scalar
+verification reproduces all reported metrics within `8.89e-15` and verifies
+source hashes, ASv6.100 provenance and unchanged judgments. No production source,
+admission behavior, meanings, vectors, encodings, model calls, training,
+hierarchy files or UI changed. The retained research worktree supplies the
+frozen paths and ignored evidence on external storage.
+
 ## Exact change
 
 Keep the original accepted-only fusion groups and full-meaning scores. For

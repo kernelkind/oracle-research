@@ -8402,3 +8402,20 @@ on available evidence. Independent checks reconstruct all thresholds and
 982,494 score comparisons; 50 tests pass. The experimental helper and findings
 are retained without activating a policy or changing original hierarchies.
 No encodings, model calls, training, semantic labels or UI refresh occurred.
+
+The user next authorized inspecting the
+[individual People reference matches](hierarchy-note-bend-admission-v1.md#individual-people-reference-matches).
+All 624 similarities for 39 frozen controls and 16 accepted references replay
+from saved full-meaning vectors. Actors receives 51.3% of its existing score
+from the reference that explicitly gives actors as an optional People example;
+the wrong Mechanical Turk entry receives only 16.2% from its strongest match.
+Audience reactions scores above Astronauts against every same reference, even
+the two short example-free People definitions. Penalizing concentrated support
+therefore contradicts the focal useful case rather than explaining the wrong
+ones. Raw mean and median cosine do not fix those contrasts, and the minimum
+does not qualify a new rule. Across eight human classes and 22 wrong entries,
+58 of 176 pairings are dominated by the wrong entry at every sorted reference
+position; this limits monotone order-independent aggregation, not all possible
+scores. Independent arithmetic, prior-array replay and immutable-source checks
+pass. No score, boundary, label, encoder, model call, training, hierarchy or UI
+changes; the practical conservative candidate remains experimental and unchanged.
