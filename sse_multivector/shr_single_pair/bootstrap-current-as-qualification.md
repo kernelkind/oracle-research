@@ -185,7 +185,55 @@ reviews and aggregate accounting remain under
 `target/bootstrap-no-examples-deep-v1/{draw1,draw2,draw3,usage-summary.json}` in
 the retained Bootstrap task worktree. No official hierarchy was constructed or
 changed. Revise the prompt against these failures and rerun this panel before
-adopting V134's replacement; this task does not publish that replacement.
+adopting a replacement. The following revision tests retain this frozen baseline.
+
+### Matched revision test: Bootstrap-v135
+
+The user authorized revision and retesting after V134's failures.
+[Bootstrap-v135](Hierarchy-bootstrap-v135.md) and
+[Consolidation-v23](Hierarchy-consolidation-v23.md) share
+[rules-v8](prompt_parts/explicit-meaning-rules-v8.md). The rules distinguish
+membership conditions from examples of satisfying them, including general
+knowledge, and omit optional circumstances. Bootstrap also removes the title
+instruction to leave illustrations in the meaning, and changes the Feedback
+example to omit its optional anonymity clause. The example's input, diagnostics
+and evidence remain fixed. Both original examples validate through production
+preparation/validation; the new-version test failed before publication and the
+38 focused checks pass afterward. Historical prompt bytes are preserved.
+
+The [specification](hierarchy-bootstrap-no-examples-deep-v135.spec.json) preserves
+the 48-input panel. Three concurrent native `prepare --from` / `run` batches
+retain each V134 draw's exact inputs and model/schema/transport settings as a
+matched baseline, with fresh requests and new prompt-cache prefixes. All 144
+responses are valid. Fresh native agent reviews record 133 accepts, three
+rejects and eight uncertain outputs under the same bounded style/scope rubric:
+
+| Draw | Accept | Reject | Uncertain |
+|---|---:|---:|---:|
+| 1 | 43 | 2 | 3 |
+| 2 | 45 | 0 | 3 |
+| 3 | 45 | 1 | 2 |
+
+All three AI definitions omit illustrative capabilities, and all 24 People
+meanings omit post examples. V135 still fails the requirement: one Support
+meaning appends "including expressions of appreciation for their contributions";
+one Requests meaning adds "whether or not the recipient fulfills them"; and
+one pottery-mug meaning adds "regardless of what they are actually used to hold."
+The latter two restate optional circumstances rather than defining membership.
+The eight uncertainties are three food/ingredient-range clarifications, three
+interpretations of "together" as requiring other people, and two country
+sovereignty clauses that may clarify scope or redundantly restate optionality.
+Required dashboard features, dahlia-request parts, conditional BCH plans and the
+particular stock-preservation plan survive all three draws. These assessments do
+not imply that every other possible semantic boundary has been qualified.
+
+[Native usage](hierarchy-bootstrap-no-examples-deep-v135-usage-v1.json) records
+147 attempts including three warmups, zero failed/retry attempts, zero reuses
+and complete observed usage. API-equivalent catalog cost is $1.0749644, not a
+subscription cash charge. Exact inputs, outputs, attributed reviews and accounting
+remain in `target/bootstrap-no-examples-v135/` in the retained task worktree.
+The pair remains experimental; constructor pins and hierarchy outputs are not
+changed. Another revision is needed before adoption.
 
 ## Meaning-derived titles: Bootstrap-v130
 
