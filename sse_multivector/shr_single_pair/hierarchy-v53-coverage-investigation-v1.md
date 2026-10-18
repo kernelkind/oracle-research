@@ -5365,12 +5365,153 @@ the correctness of other admissions or resolves whole-root admission by itself.
 
 The finite score-capacity results remain consistent: arbitrary separate group
 boundaries can separate the saved controls, but the current curve construction
-and allowed midpoint choices cannot realize every such separation. The next
-useful diagnostic is to measure those restrictions across the saved Food and
-Arts controls before choosing another boundary formula; it has not run here.
+and allowed midpoint choices cannot realize every such separation. The
+following section records the subsequently authorized diagnostic across the
+saved Food and Arts controls.
 
 Saved artifacts retain all member contributions, complete Food curves and
 every considered midpoint/deviation for both groups and contexts. Exact Food
 query-score/anchor replay, direct midpoint enumeration, contribution sums and
 source hashes pass. Existing numerical code and previously accepted meanings
 remain unchanged. No new algorithm is adopted and no notes are added.
+
+## Across Food and Arts: which boundary constraints block the saved cases?
+
+The user authorized checking the anchor, bend direction and midpoint restrictions
+across the saved Food and Arts controls before choosing another formula. This
+is a **capacity diagnostic**, not a new admission algorithm, threshold search
+applied to unknown entries, training run or hierarchy change. Tools remains
+outside scope. Reuse every reference group, graph weight, vector, score and
+source-note exclusion unchanged.
+
+Evidence: `target/food-halves-v1/food-arts-boundary-constraints-v1/` in the
+retained worktree. Plan SHA256
+`7a94824fa0f3b3cd8b0256ee46e234dfa78304c91cc4b0740b83096a26187878`
+was frozen before this all-cohort diagnostic. It records that the earlier
+two-group Gas facilities traces were already known. Reconstruct reference
+geometry through the existing `derive_boundary` production calculation;
+member-anchored curves replay the saved Food/Arts bases with zero score or
+boundary error. No numerical production code is edited.
+
+Keep reference contexts separate: either the full accepted pool of the same
+root, or members plus their direct fixed fusion neighbors. The latter never
+adds an outsider or changes an edge. Within each context, vary three constraints:
+
+1. Fit's upper endpoint: the existing weakest-member anchor, or the existing
+   unanchored upper-10% trim. Replacing the endpoint is a controlled alternative,
+   **not necessarily a relaxation**; it can move the fit in either direction.
+   Preserve the existing lower-10% trim in every case.
+2. Candidate bends: positive `y-x`, positive `x-y`, either nonzero direction,
+   or any fitted reference point including zero-deviation endpoints. The
+   `1e-12` tolerance remains unchanged. These enumerate possible points, not
+   a new rule for choosing the strongest or any other bend.
+3. Boundary placement: the existing midpoint between a selected reference
+   score and its next lower score, or a hypothetical point anywhere in that
+   same gap. For upper/lower scores `u > l`, the relaxed interval is `(l,u]`.
+   A safe threshold admitting positive `p` exists exactly when
+   `min(u,p) > max(l, largest_rejection_score)`.
+
+Labels remain unchanged. The primary Food cohort has 30 provisional fits and
+51 distinct rejection controls mixing human decisions and agent assessments.
+Two sensitivity cohorts use only the 17 human-decision rejection headings
+(three entry decisions plus 14 headings of one rejected post), then those plus
+the two agent-suspect Gas/Breath entries. Arts has 24 provisional fits and 20
+provisional mismatches; its seven unresolved entries remain excluded. Do not
+present these as 51 or 20 independently validated human judgments.
+
+For each choice family and group, require rejecting every supplied mismatch.
+An available group with **no safe choice** must admit at least one mismatch
+if kept active. Report those groups explicitly; a good route elsewhere does
+not cancel their unwanted admissions. Separately compute an optimistic recall
+ceiling allowing such groups to abstain. This hypothetical abstention is not
+current policy, does not remove a group and is not hidden inside an accuracy
+claim. The following table uses that optimistic ceiling throughout.
+
+| Candidate choices, retaining the lower-10% trim | Food fits potentially retained / 30 | Arts fits potentially retained / 24 |
+|---|---:|---:|
+| Neighbor context; member anchor; any positive `y-x` bend; midpoint | 26 | 16 |
+| Same, allow any fitted point including endpoints | 26 | 17 |
+| Same, allow any position in each gap | 27 | 19 |
+| Same, replace member anchor with the old upper-10% trim | 28 | 20 |
+| Same, use full accepted-root context | 29 | 21 |
+| Unrestricted separate group thresholds: earlier score-only bound | 30 | 24 |
+
+These are hindsight upper bounds, **not measured results of an automatic new
+rule**. They ask what choices the reference geometry makes possible. A single
+simultaneously safe cutoff per group realizes every counted route; it is not
+a different cutoff chosen for each positive. Numerical witnesses stay in
+verification memory and are not exported as learned/deployed cutoff vectors.
+
+Specific findings:
+
+- Reversing bend direction alone does not solve the problem. With neighbor
+  context, member anchor and midpoint, the opposite `x-y` candidate family
+  retains at most 13/30 Food and 3/24 Arts, versus 26/30 and 16/24 for `y-x`.
+  Allowing both nonzero directions still gives 26/30 and 16/24. Permitting
+  endpoints is a distinct relaxation from merely changing bend polarity.
+- Under current neighbor choices, Food has two active groups with no safe
+  threshold against the full rejection set, and Arts has one. Permitting any
+  fitted point removes Arts' unsafe group, but Food preservation remains unsafe
+  until placement inside a gap is also allowed. Neither modification chooses
+  a replacement cutoff automatically.
+- Free placement restores a possible route for Eggs L02984 in Food and Film
+  editions L03394 plus editorial Cartoons L05979 in Arts. Their score orderings
+  already permit separation; a forced midpoint blocks a viable interval.
+- The member anchor can leave too few fitted points. Neighbor-context Artists
+  `fused-010`, for example, remains unavailable regardless of bend direction
+  or midpoint/free placement. Replacing the anchor changes that availability
+  and can restore a route for Art galleries; it does not certify the route.
+- Neighbor context itself can exclude useful boundary values. Coffee beans
+  L00374 scores `0.047644` against Food `fused-013`, above its largest full-panel
+  mismatch score `0.032004`. But the lowest adjacent reference score available
+  to its fitted neighbor gaps is `0.069263`; even that context's complete raw
+  curve bottoms at `0.063347`. Other potential Coffee-bean routes are also
+  blocked by the restricted fit. Full accepted-root context supplies enough
+  lower-valued references for a possible route. This does not add other
+  outsiders to the graph or establish full-context automatic accuracy.
+
+### The remaining Arts misses expose the lower trim
+
+Even with full accepted-root context, no bend-direction restriction and free
+gap placement, the preserved lower-10% trim blocks three plausible Arts entries:
+Avatar films L03389, The Lord of the Rings films L03393 and JAIA Drake L04019.
+The problem is visible in specific feasible-score intervals:
+
+| Outside entry / mathematical score route | Entry score | Largest mismatch score in that group | Lowest adjacent score allowed by the fitted gaps |
+|---|---:|---:|---:|
+| Avatar films / Artists `fused-010` | 0.014101 | 0.011340 | 0.014922 |
+| Lord of the Rings films / Artists `fused-010` | 0.012311 | 0.011340 | 0.014922 |
+| JAIA Drake / Songs `fused-012` | 0.015072 | 0.011932 | 0.017459 |
+
+Each positive exceeds all supplied rejection controls through at least one
+group, but it is below every boundary available in that group's fitted region.
+The full accepted-reference curves do contain lower values (`0.002870` for
+Artists and `0.007075` for Songs). Those lower reference levels have been
+trimmed out. These are mathematical root-admission routes, not semantic
+certification of an edge from a particular reference group to the outsider.
+
+The analogous remaining Food miss under full context is Traditional activities
+L02986, which the user already marked low priority. Its score `0.023273` clears
+the relevant rejection maximum `0.022436`, but the fitted gap floor is
+`0.025139`; the complete curve extends down to `0.010434`. Do not turn this
+case into the main optimization target or infer that the user rejected it.
+
+The human-rejection Food sensitivities do not erase the main limitation.
+Neighbor/current choices retain at most 28/30 with human rejections only, then
+26/30 when Gas/Breath suspects are included. With full-root context, no bend
+restriction and free gaps, all 30 are mathematically recoverable against either
+of those two rejection sets. The additional full-panel mismatch labels alter
+other available groups, so sensitivity and label authority remain material.
+
+This isolates a concrete next test: remove the lower-tail exclusion and compare
+the automatic calculation on Food and Arts with everything else held fixed.
+That test has **not** run here. Finding a feasible range with supplied labels
+does not tell the algorithm how to identify it from references alone.
+
+The audit covers 128 cohort/constraint/context combinations, with 62,400
+independent scalar candidate checks and 1,852 simultaneous safe-choice witness
+checks. Midpoint-to-free-gap and direction/endpoints relaxations satisfy
+monotonic recoverability checks. Saved source and graph hashes remain unchanged;
+no unknown-query predictions or chosen cutoff vectors are produced. Calculation
+takes about five seconds locally. No model calls, new vectors, hierarchy/UI
+changes or admission-policy adoption.
