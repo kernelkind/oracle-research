@@ -7928,3 +7928,134 @@ made, no new vectors encoded, and no LLM calls, training, hierarchy/UI changes
 or HR38 use occur. Retain full arrays, individual pair changes, source hashes,
 `results.json` and `verification.json`; the task worktree remains necessary
 for those evidence paths, now backed by external storage through its symlink.
+
+## Directional admission replay: better ordering did not transfer to better admission
+
+Status: **experimental negative result; do not adopt meaning-to-title admission**.
+This follows the user's approval to test the crossed representation with its own
+consistently calculated boundaries. No LLM calls, new encodings, training,
+clustering, hierarchy edits or production-policy changes occurred.
+
+The previous two-by-two study measured ordering obstructions, not actual
+admissions. This replay tests the actual rules on saved HR35, HR36 and HR37
+vectors and fixed accepted-only fusion groups. Incoming entries pool their full
+explicit meaning. Reference entries pool their title while the same explicit
+meaning remains encoder context; these are not subject-only vectors. Neither
+side uses a synthetic root vector or an outsider network.
+
+For this crossed comparison, each member's calibration score uses its meaning
+against other-source-note reference titles, in exactly the direction later used
+for outsiders. The kernel remains `exp(-5.5 * (1 - cosine))`. The reference matrix
+is intentionally asymmetric: do not transpose, symmetrize, or reuse the old
+meaning-to-meaning thresholds. Both existing boundary rules are tested: weakest
+cross-note member, and the reference-note-coverage rule. The latter preserves
+one eligible accepted-reference route per note; that self-consistency does not
+promise correct outsider admission.
+
+The numerical helper `fixed_reference_members.derive_boundary` now accepts
+aligned square directed affinities and preserves row-to-column orientation.
+This removes its unnecessary symmetry restriction without changing symmetric
+inputs. A production-function test first failed on the old symmetry rejection;
+the new test also distinguishes the transposed result and excludes every entry
+from the scored member's own note. The other boundary/graph helpers are unchanged.
+Historical experiment plans, receipts and source hashes remain unchanged;
+this new plan pins the revised helper and records its diff from `2fa5aebb`.
+
+### Actual admissions with the reference-note-coverage boundary
+
+Each cell is **selected / reviewed**. Existing judgments are held fixed and
+mostly provisional agent assessments. Native audits were selected from the
+original meaning-to-meaning proposals, so their useful totals are not unbiased
+recall estimates; panels overlap and must not be pooled into one accuracy rate.
+
+| Frozen panel | Useful: meaning → meaning | Useful: meaning → title | Unwanted: meaning → meaning | Unwanted: meaning → title |
+|---|---:|---:|---:|---:|
+| HR35 Food existing review | 14/30 | 25/30 | 3/51 | 10/51 |
+| HR35 expanded Arts existing review | 52/63 | 12/63 | 4/30 | 2/30 |
+| HR36 against old Food | 15/19 | 17/19 | 1/62 | 8/62 |
+| HR36 against old Arts | 5/18 | 3/18 | 0/57 | 0/57 |
+| HR37 against old Food | 11/12 | 12/12 | 0/50 | 0/50 |
+| HR37 against old Arts | 13/29 | 13/29 | 0/33 | 0/33 |
+| HR36 own-root baseline-selected audit | 36/36 | 27/36 | 12/14 | 4/14 |
+| HR37 own-root baseline-selected audit | 30/36 | 20/36 | 9/21 | 6/21 |
+
+Unresolved judgments remain separate in the saved panel results. The same
+Food/Arts failures occur with the weakest-member boundary: HR35 useful Arts
+falls from 54 to 12, while unwanted Food rises from 3 to 10. Thus the regression
+is not caused solely by the later reference-note-coverage tightening.
+
+These are not just lost alternative headings. In HR35's reviewed Arts panel,
+useful notes with a reviewed useful route fall from 42/47 to 10/47. For native
+HR36 the union of notes with any reviewed useful own-root route falls from
+33 to 26; for HR37 it falls from 28 to 18. These union counts deduplicate source
+notes and do not count an unreviewed or unwanted heading as a semantic rescue.
+A different, unreviewed route could still exist; actual hierarchies are unchanged.
+
+### Concrete boundary failures and gains
+
+The old Food `fused-006` consists of ten entries titled **Food**, each retaining
+its own meaning as context. Its crossed threshold is `0.007731677810394918`.
+The weakest member is Food `L00696`. The following incoming meanings all pass:
+
+| Incoming entry | Crossed group score | Existing judgment |
+|---|---:|---|
+| Coffee · L00228 | 0.008450 | Useful |
+| Support · L02231 | 0.011017 | Unwanted |
+| Online content feeds · L02234 | 0.008593 | Unwanted |
+| Blood · L06803 | 0.007836 | Unwanted |
+
+Support and Online content feeds are from the **user-rejected Easter note**
+whose recorded example is `L02222`. The Easter heading itself is not admitted;
+the note is incorrectly reached through those other headings. All three prior
+human-accepted Food notes still pass, but this fourth explicit decision now
+fails. Labels have not been reinterpreted to excuse the result. Within this
+particular group's scalar scores, raising its threshold cannot keep Coffee
+while rejecting the higher-scoring Support and Online content feeds.
+
+The Arts contrast is also concrete. Its accepted Artist pages / Artists group
+has crossed threshold `0.053934`; Art `L03500` scores `0.019361`, Photography
+`L03656` scores `0.009747`, and Films `L05039` scores `0.008693`. Their old
+meaning-to-meaning routes through this group disappear and no other group
+admits them. This records the mechanism, without asserting that every lost
+provisional judgment is independent human gold.
+
+Crossing does recover useful Food topics including Coffee, Tea, Coffee beans
+and Coffee roasting. It also restores the separately flagged Japanese CPI
+route in HR37. Those gains are real on the fixed evidence, but do not outweigh
+the explicit rejection regression and broad Arts losses as a general replacement.
+The previous reduction in ordering obstructions was insufficient evidence for
+changing automatic admission.
+
+All-own-root potential omitted-note proposals rise from 239 to 244 in HR36,
+and from 261 to 278 in HR37, relative to meaning-to-meaning note coverage.
+These additional unreviewed proposals are **not verified note recoveries**.
+No new audit selected only favorable crossed proposals.
+
+### Evidence and verification
+
+Ignored evidence: `target/food-halves-v1/directional-reference-admission-v1/`.
+Its logical path remains valid after relocation to external storage. Frozen
+`plan.json` SHA256:
+`d47355fd8035b0a6f99de35bd2e93d8e5281784380b88d0092ba908193686748`.
+It pins 57 source/data files, all unchanged after execution. Artifacts retain
+all four methods' actual query/root outcomes, every crossed query/group score,
+reference member scores and calibrated boundaries, original panels and human
+controls, and post-result Coffee/Support/Feeds/Blood/Arts traces.
+
+The replay covers 14 root-reference collections, 327 fixed fusion groups,
+5,128 independent member checks and 992,454 query/group cells across the two
+representations. Old meaning-to-meaning group/root decisions replay exactly;
+maximum recomputed reference-boundary discrepancy is `6.66e-16`, query-score
+replay discrepancy `2.78e-16`, and scalar score-check discrepancy `1.11e-16`.
+Crossed scores pass individual-query isolation checks. All eligible accepted
+reference notes retain a route, and each coverage result is a subset of its
+own representation's weakest-member proposals. No subset claim is made between
+different representations. The matched calculation took 6.04 seconds after
+input verification; external-disk reads and hashing are additional wall time.
+The relevant numerical regression suites pass 77 tests.
+
+Conclusion: keep this as a failed general replacement, not a production
+admission improvement. Pooling choice affects score order and boundaries
+together; an ordering-only screen cannot qualify admission quality. The
+remaining task is to improve useful coverage without reopening established
+role/identity errors or discarding valid accepted-topic families.

@@ -17,11 +17,15 @@ def derive_boundary(reference_affinities, reference_notes, group_indices, *, exc
     scored members and their references. A group without cross-note support
     supplies no boundary. Record tied weakest members; no interpolation, trim,
     numerical margin, outsider score or neighboring group selects the cutoff.
+
+    Rows are scored entries and columns are their references. The two sides may
+    use different representations, so affinities need not be symmetric. Keep
+    the same row-to-column direction when later scoring incoming entries.
     """
     a = np.asarray(reference_affinities, dtype=float)
     n = len(reference_notes)
-    if a.shape != (n, n) or not np.allclose(a, a.T, rtol=0, atol=1e-12):
-        raise ValueError('reference affinities must be square, aligned and symmetric')
+    if a.shape != (n, n):
+        raise ValueError('reference affinities must be square and aligned')
     group = list(group_indices)
     excluded = set(excluded_notes)
     scores = mean_support(a, reference_notes, reference_notes, group, excluded_notes=excluded)
