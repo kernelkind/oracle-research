@@ -8246,7 +8246,30 @@ memberships. It reduces wrong primary-sample root placements from 27 to 1 under
 original scores, but useful omitted notes fall from 37 to 14 and two human Food
 acceptances are omitted. Of its 16 proposed primary-sample notes, 14 are useful,
 one wrong and one unresolved. The user clarified that it should remain a
-conservative candidate, with lower coverage as a tradeoff; unchanged-rule
-fresh-data validation is the next approved investigation. It is not activated
+conservative candidate, with lower coverage as a tradeoff. The unchanged-rule
+fresh-data validation is reported below. It is not activated
 in HiGen. No hierarchy, encoder, group membership or original score changes
 occur.
+
+## HR38 fresh-data transfer of the conservative candidate
+
+The [frozen HR38 transfer](hierarchy-hr38-conservative-admission-v1.md) tests
+the unchanged reference-note bend on a 2,000-note corpus, excluding prior note
+IDs and exact post-text overlaps. It scores 499 fresh omitted notes with usable
+meanings. Candidate proposals cover 384 notes, versus 492 for the broader
+baseline; none are applied to the hierarchy.
+
+On 32 hash-selected candidate proposals, 27 have a supported selected route,
+four have only wrong routes and one is unresolved. Their 56 root placements
+include 33 supported, 15 wrong and eight unresolved. Eleven wrong placements
+pass one People group: title-vector pair cosine has median 0.9873, versus
+0.2839 for full-meaning vectors despite consistent human-being definitions.
+Optional examples are a representation hypothesis, not a proven sole cause.
+
+In separate omission screens, six of 12 baseline-only notes and four of seven
+neither-policy notes have a clear missed useful route. These are coverage
+costs, not new rejections. All new reviews remain provisional agent assessments.
+The candidate retains useful conservative value, while uniform low-error
+generalization is unproven. Ninety numerical tests and frozen-input, native
+vector-replay, scalar-score and all-301-threshold checks pass. No LLM calls,
+training, paid resources, hierarchy/prompt changes or UI update occurred.

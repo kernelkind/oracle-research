@@ -2,7 +2,10 @@
 
 Status: retained as a **conservative admission candidate**, following the user's
 clarification that lower coverage can be an acceptable tradeoff. No production
-admission behavior is activated. Fresh-data generalization remains open.
+admission behavior is activated. The unchanged
+[HR38 transfer](hierarchy-hr38-conservative-admission-v1.md) finds 27 useful
+notes among 32 sampled proposals, but 15 wrong root placements remain, 11 through
+one People group. Uniform low-error generalization remains open.
 
 On the matched primary samples, useful omitted notes fall from 37 to 14 under
 original meaning scores, while wrong root placements fall from 27 to 1. Among
@@ -146,10 +149,11 @@ activity or topic. A bend in existing-member scores is not automatically a
 boundary separating useful new topics from wrong ones. The experiment does
 not establish duplication as the sole cause or identify a proven replacement.
 
-The approved next investigation is to test this unchanged conservative option
-on fresh data, assessing admitted-note quality and missed useful notes
-separately. Joint holdouts of repeated definitions remain a separate, unrun
-possible diagnostic. Neither proposal activates an admission policy, and
+The approved fresh-data investigation is now complete on
+[HR38](hierarchy-hr38-conservative-admission-v1.md), with admitted-note quality
+and missed useful notes reported separately. No rule was tuned on that corpus.
+Joint holdouts of repeated definitions remain a separate, unrun possible
+diagnostic. Neither the findings nor that proposal activate an admission policy;
 historical membership must not silently become new semantic gold.
 
 ## Evidence and verification

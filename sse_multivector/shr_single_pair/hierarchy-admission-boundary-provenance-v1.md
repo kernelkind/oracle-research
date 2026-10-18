@@ -188,4 +188,9 @@ bend variant removes most wrong matches but loses most reviewed useful omitted
 notes and two human Food acceptances. Following the user's clarification, it
 remains a conservative candidate with an explicit coverage tradeoff; it is not
 activated in HiGen. The result does not establish that every reference must
-pass an admission test. Unchanged-rule fresh-data validation is next.
+pass an admission test. The subsequent unchanged-rule
+[HR38 transfer](hierarchy-hr38-conservative-admission-v1.md) finds useful routes
+for 27 of 32 sampled proposals, but 15 wrong root placements
+remain; 11 pass a single People group with weak full-meaning support. The
+conservative candidate remains unactivated, with fresh precision and coverage
+limits recorded separately.
