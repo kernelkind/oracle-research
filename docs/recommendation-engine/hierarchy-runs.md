@@ -2035,7 +2035,10 @@ freeze the controls. Raw notes SHA-256:
 The original-note manifest and event evidence are retained under
 `oracle-mvp-hierarchy-hr36-v53-auto/target/hierarchy-hr36-v53-auto-thousand-note-v1/corpus/`.
 
-Status: preparing ASv6.100 generation. Full recursive V5.3 uses Bootstrap-v133,
+Status: running ASv6.100 generation from frozen Oracle commit `050cebf8`
+and shared coordinator/teacher transport `38561fe`. All 130 native hierarchy
+regressions passed; the seven sampling/corpus-input checks also passed.
+Full recursive V5.3 uses Bootstrap-v133,
 Consolidated-grouped-v1, GPT-6.1 Sol medium on subscription SSE, one-hour
 request deadlines, angular HDBSCAN/min_samples=3/min_cluster_size=2/EOM,
 no cosine cutoff and the existing 512-token title-pooling SSE checkpoint.

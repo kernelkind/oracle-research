@@ -696,7 +696,7 @@ hierarchy and its meanings remain unchanged.
 
 ## HR36 — 1,000 automatically sampled notes · HiGen V5.3
 
-Preparing a full V5.3 hierarchy on an uncurated corpus: the first 1,000
+Running a full V5.3 hierarchy on an uncurated corpus: the first 1,000
 mechanically eligible notes in fixed event-ID hash order, seed
 `hr36-corpus-v1`, from the frozen 3,774,156-note English-eligible pool.
 The sample has 602 authors. One over-512-token post was skipped; no manual
