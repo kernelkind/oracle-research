@@ -6069,3 +6069,136 @@ changes no hierarchy, prompt, UI or policy. Keep generic AI and hardware scope
 questions unresolved rather than quietly expanding the negative controls.
 Reusable findings land on local `main`; retain the worktree for the frozen
 review packet, assessments, source posts, score routes and capacity evidence.
+
+## Saved title vectors on the expanded Arts cases
+
+The user approved checking whether saved title vectors distinguish the newly
+audited mismatches from useful Arts entries. This is a representation/ranking
+probe, not a new admission rule. The 25 accepted fusion groups, 162 reference
+entries, all meanings, graphs and source-note rules remain fixed. Outsiders
+are evaluated independently and never enter the reference graph. No labels
+change and no LLM, encoding, training or clustering runs occur.
+
+Evidence: `target/food-halves-v1/arts-title-ordering-v1/` in the retained task
+worktree. Plan SHA256
+`37c5504cc01233f49308593afba2c10250e925ea6dc54429a336becca9548101`
+was frozen before title-score outcomes. It binds both source vector stores and
+their receipts/context mappings, existing scores, the earlier audit's immutable
+assessments, all 1,449 queries and the exact numerical calculation.
+
+### Single controlled change
+
+Keep the same score: mean `exp[-5.5 * (1 - cosine)]` over the group's members,
+excluding every reference from the query's source note. Compare meaning-to-
+meaning affinities with title-to-title affinities. Neither method averages
+over all outsiders or changes any group. The title vector is **not** a
+context-free subject vector. Both saved representations encode:
+
+```
+{title}
+
+{full fixed meaning}
+```
+
+Title pooling selects the title tokens; meaning pooling selects the full
+meaning tokens. The other text remains context. Stored receipt offsets are
+`3 * input_index + 0` for title and `+ 1` for meaning; no re-encoding is needed.
+The two stores use the same frozen model/checkpoint and exact matching text.
+
+The primary includes eight previously documented wrong within-group rankings
+and conditional score separability on the entire expanded panel: 63 provisional
+fits and 30 provisional mismatches. The new audit is selected using an earlier
+meaning-based rule; it is not an unbiased independent comparison population.
+Earlier unresolved cases and the audit's 21 unresolved entries remain unlabeled.
+All query scores are saved, without silently treating those cases as negatives.
+
+No meaning cutoff is reused on title scores. No fixed cutoff, blended score,
+fitted weights, selected threshold vector or new admissions are tested here.
+
+### Targeted mistakes: three fixes out of eight
+
+The eight pairs were frozen before the title scores, not selected from favorable
+title results. All are wrong under the existing mean-meaning group score.
+
+| Fixed comparison group | Useful / unwanted | Meaning: useful / unwanted | Title: useful / unwanted | Title order correct? |
+|---|---|---:|---:|---|
+| Audio technology | Gaming / Vector arithmetic | 0.051793 / 0.068287 | 0.007411 / 0.015208 | No |
+| Audio technology | Video gaming / Vector arithmetic | 0.040622 / 0.068287 | 0.008549 / 0.015208 | No |
+| Audio technology | Gaming / Configuration spaces | 0.051793 / 0.067710 | 0.007411 / 0.014199 | No |
+| Audio technology | Video gaming / Configuration spaces | 0.040622 / 0.067710 | 0.008549 / 0.014199 | No |
+| Noise/silence | Refusal to discuss life / Indifference | 0.064919 / 0.071974 | 0.062346 / 0.027738 | Yes |
+| Noise/silence | Questions / Indifference | 0.049711 / 0.071974 | 0.016955 / 0.027738 | No |
+| Audio technology | Pianos / Science | 0.043437 / 0.046838 | 0.021325 / 0.009332 | Yes |
+| Audio technology | Voice studios / GraphQL | 0.049582 / 0.050402 | 0.106765 / 0.006453 | Yes |
+
+Thus titles supply useful distinctions for three cases, but the four gaming
+inversions and Questions/Indifference remain. Lower absolute title affinities
+are not themselves rejections: this probe defines no new title boundary. These
+within-group reversals do not establish outcomes under other groups or a future
+combined score.
+
+### Broader separation gets worse
+
+Conditional capacity asks how many plausible entries could pass **any separate
+group cutoffs** while all supplied mismatch controls fail. It is a mathematical
+upper bound using provisional judgments, not an automatic selection result or
+a trained/deployed cutoff vector. Largest-raw-group pair orderings are a
+secondary diagnostic; they are dependent comparisons, not admission accuracy.
+
+| Panel / measurement | Meanings | Titles |
+|---|---:|---:|
+| Expanded: conditional cutoff capacity | 57/63 | 48/63 |
+| Old controls only: conditional capacity | 24/24 | 22/24 |
+| New audit only: conditional capacity | 37/39 | 27/39 |
+| Expanded: useful above unwanted by largest group score | 1599/1890 | 1426/1890 |
+| Old controls only: useful above unwanted | 434/480 | 428/480 |
+| New audit only: useful above unwanted | 272/390 | 239/390 |
+
+Panels overlap and must not be pooled as independent samples. Switching to
+titles fixes 159 expanded largest-score orderings but worsens 332; 1,399 are
+unchanged. On the old panel the corresponding change is 23 fixes versus 29
+regressions; on the new audit it is 53 fixes versus 86 regressions.
+
+Titles make three previously blocked cases conditionally recoverable: JAIA
+Drake L04019, Cartoons L05979 and Refusal to discuss life L02608. They newly
+block twelve: National flags L01660; five Internet memes entries L01810,
+L01911, L02964, L04130 and L06342; Narrative endings L02965; Sumika L03877;
+Netflix L04646; Color palettes L05679; Botanical imagery L06053; and Academy
+Awards L06413. Avatar films L03389, The Lord of the Rings trilogy L03393 and
+Questions L04522 remain blocked under either representation. None is relabeled
+as unsuitable to make the representation look better.
+
+**Do not replace mean-meaning scores with mean-title scores.** The title view
+has complementary information in a few cases but is weaker on this expanded
+panel. This does not prove a combined score is better: the earlier Food/Tools
+combination experiment was mixed, and no combination is tested in this probe.
+The eight pair results also show why a title-only condition is not a general
+repair for the technical/mathematical Audio matches.
+
+### Verification and retained artifacts
+
+Existing `mean_support` and `separation_bounds` perform the calculation; no new
+production API, model code or test seam is added. Freeze the plan before scoring,
+then verify all 1,611 used text/vector bindings and 3,222 corresponding receipt
+rows. Text hashes, note/subject receipt identities, positive and ordered token
+selections, raw vector hashes, vector dimensions, model and checkpoint identities
+match. The normalized meaning vectors exactly match the previously saved
+meaning-vector matrix, with maximum error zero.
+
+All 36,225 meaning query/group scores replay exactly, as does the preceding
+57/63 conditional-capacity result and its six blocked IDs. Independent
+non-BLAS dot-product summation checks 30,132 kernel cells, maximum error
+`1.06e-15`; scalar averaging checks 4,650 labeled group means, maximum error
+`2.78e-17`. Query order, duplicates and isolated evaluation are invariant.
+Protected sources, labels, accepted graphs and original hierarchy state remain
+unchanged. All verification assertions pass.
+
+Only query-to-accepted-reference kernels are built: 1,449 by 162 per view.
+There is no outsider/outside kernel or graph. Read each raw store once, use four
+local BLAS threads, and retain complete scores and reference bindings. Evaluation
+takes 1.28 seconds with no paid resources. `review.md` is the compact comparison;
+full group/root scores, focal pairs, changed pair orderings, per-group capacity
+calculations, vector bindings and verification remain in the ignored artifact
+directory. Maintained findings land on local `main`; retain the worktree for
+these frozen vector and evidence paths. No admission policy, hierarchy, prompt
+or UI changes are made.
