@@ -152,12 +152,21 @@ Consolidation-v27 are unchanged, without a numeric word target. The title names 
 stated goal instead of listing its actions. V147 demonstrates a preservation
 plan's broader name and asks for a broader name when shortening would misattribute
 a person or relationship.
-Its [matched test](shr_single_pair/bootstrap-current-as-qualification.md#broader-names-without-misattribution-bootstrap-v147)
-has 168 valid responses: 157 agent accepts, zero clear rejects and eleven
-uncertainties. The original preference names its goal in all three draws. Two
-stock titles say "Chicken stock preservation plan"; the third still adds "and
-pantry storage." Ten meanings remain uncertain. These are development inputs;
-V147 remains experimental and unqualified. Constructor pins remain V133.
+Its subsequent [frozen independent qualification](shr_single_pair/bootstrap-current-as-qualification.md#frozen-independent-qualification-of-bootstrap-v147)
+uses 160 inputs from 80 new posts/authors, with three fresh draws each. All 480
+responses validate. Two independent AI reviewers assess separate assigned cases
+without earlier scores or tuning history. Initial review records 463 accepts,
+eleven rejects and six uncertainties; source-based adjudication leaves 463
+accepts, nine rejects and eight uncertainties. Three titles change the central
+topic from a video to its promotion. Six meanings retain illustrative member
+lists from two posts. The two disputed faucet-address scope judgments remain
+uncertain, with their original rejections preserved. Median non-null title
+length is three words, but counts do not determine title quality. The panel is
+limited to eligible saved notes, and neither AI review nor its acceptance
+fraction establishes population reliability. V147 remains experimental and
+unqualified; constructor pins remain V133. Its earlier
+[development test](shr_single_pair/bootstrap-current-as-qualification.md#broader-names-without-misattribution-bootstrap-v147)
+and exact stock-plan variants remain in the same report.
 V140–V146 results and frozen prompts remain available in the same qualification
 report.
 

@@ -985,10 +985,92 @@ reported failures and uncertainties, preserving initial reviewer judgments.
 Title and meaning verdicts remain separate; word counts are not grading rules,
 and scope qualifications are not illustrative examples. No human-calibrated gold
 has been supplied. Exact plans, exclusions, outputs and native reviews remain
-under `target/bootstrap-v147-heldout-v1/`; source artifacts stay ignored.
+under `target/bootstrap-v147-heldout-v1/`; raw posts and generated artifacts stay
+outside Git.
 
-This is a frozen qualification, not another tuning round or an authorization to
-adopt V147. Results and native usage will be recorded here after completion.
+All 480 fresh responses pass native validation; six have null meaning/title
+pairs. No answers are reused, and V147 is unchanged throughout generation and
+review. Complete selected-root hierarchies range from two to 29 entries; posts
+range from one to 184 whitespace words (median 24.5). This is a frozen
+qualification, not another tuning round or an authorization to adopt V147.
+
+Both reviewers completed their assigned 240 outputs and verified persisted
+source-bound native coverage. Counting each `(draw, case)` once, initial
+independent review records:
+
+| Dimension | Accept | Reject | Uncertain | N/A |
+|---|---:|---:|---:|---:|
+| Title | 471 | 3 | 0 | 6 |
+| Meaning | 466 | 8 | 6 | 0 |
+| Overall | 463 | 11 | 6 | 0 |
+
+The six null pairs are accepted abstentions: an unidentified `haxx` referent and
+a termite-recipe request whose culinary versus nonculinary sense is unresolved,
+each across three draws. N/A refers only to their absent titles; their meaning
+decisions remain accept. Twenty-four duplicate identical A journal entries
+arose during review-write retries. Their verdicts, comments, roles and
+source/output hashes match; preserve history and exclude duplicates from all
+case counts. The duplicates are metadata writes, not extra model outputs.
+
+Source-based adjudication examines all six initially flagged selected inputs and
+both null cases across the relevant draws, recording 23 append-only native
+judgments.
+It confirms three repeated title failures on one post: the selected subject and
+finalized meaning denote a linked video, but every title says "Miss Lexa OnlyFans
+video promotion." Promotion appears as a modifier in meaning; making it the
+title's head changes the central topic. Concise wording alone does not pass.
+
+Six repeated meaning failures occur on two other posts. One requests resources
+on soft-furniture ergonomics and says "Sofas, couches, beds, that kind of thing."
+All three meanings retain those illustrative kinds. Books/papers preference and
+the desk-chair exclusion remain legitimate qualifications. The other post
+describes VPN speed/security in crowded environments, with airports, stadiums
+and fan parks as nonexhaustive examples. Every meaning repeats that place list.
+Both lists also occur in the supplied selected subjects; the broader source
+wording does not prevent their survival in meaning. Defining joint parts and
+alternatives are not rejected simply for appearing in lists.
+
+The main agent leaves two initially rejected faucet-address meanings uncertain:
+the selected root names Bitcoin Testnet4 recipient addresses generally, while
+its context explicitly describes a faucet claim command. A general address-kind
+reading and a role restricted to faucet recipients are both plausible. The
+independent rejections remain in native history. Six other uncertainties are
+unchanged: three meanings select a particular usage interpretation of "capacity
+push," and three root Recipes meanings assume a culinary sense despite the
+unresolved termite-recipe context.
+
+After adjudication, current source-bound judgments are:
+
+| Cohort | Responses | Accept | Reject | Uncertain |
+|---|---:|---:|---:|---:|
+| Seeded, 60 posts | 360 | 346 | 9 | 5 |
+| Challenge, 20 posts | 120 | 117 | 0 | 3 |
+| Total, 80 posts | 480 | 463 | 9 | 8 |
+
+Title totals stay 471 accept / three reject / six N/A. Meaning totals become
+466 accept / six reject / eight uncertain. Seventy-four posts have all six
+responses accepted, three posts have clear failures, and three others have
+uncertainties. Dimension/overall verdicts agree across draws for 159 of 160
+inputs; the faucet-address root is accepted in draw 2 and uncertain in draws
+1/3. Repeat agreement includes repeated errors and is not an accuracy measure.
+Non-null titles have median three whitespace words, empirical 95th percentile
+seven and maximum nine; these are descriptive counts, not grading cutoffs.
+
+All 41 focused mechanical checks pass. Native
+[accounting](hierarchy-bootstrap-v147-heldout-usage-v1.json) records 484 attempts
+including three warmups and one recovered failed attempt/retry. One attempt has
+unknown usage/cost. The known API-equivalent subtotal is $3.2272744, not a
+complete cost or subscription cash charge; unknown usage is not zero cost.
+Exact plans, pre-review snapshots, independent reviews, adjudications and native
+usage summaries remain under `target/bootstrap-v147-heldout-v1/`.
+
+This test exposes repeatable title-identity and no-examples failures on new
+inputs. Its AI reviewers lack human calibration, its disjoint assignments do not
+measure inter-reviewer agreement, and its clustered observations are not a
+population success-rate estimate. V147 remains experimental and unqualified;
+constructor pins remain V133. No hierarchy is rebuilt or adopted. The useful
+next change is to address the two observed failure types while preserving meaningful
+qualifications and defining alternatives/parts, followed by fresh qualification.
 
 ## Meaning-derived titles: Bootstrap-v130
 
