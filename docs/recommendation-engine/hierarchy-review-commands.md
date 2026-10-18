@@ -714,8 +714,8 @@ cd /home/dev/src/notedeck_worktrees/algos
 
 ## HR37 — 1,000 automatically sampled notes · HiGen V5.3
 
-Automatic corpus frozen; generation pending. ASv6.100, Bootstrap-v133 and Consolidated-grouped-v1. Review command unavailable until the hierarchy completes.
+Automatic corpus frozen; ASv6.100 running. ASv6.100, Bootstrap-v133 and Consolidated-grouped-v1. Review command unavailable until the hierarchy completes.
 
 ## HR38 — 2,000 automatically sampled notes · HiGen V5.3
 
-Automatic corpus frozen; generation pending. ASv6.100, Bootstrap-v133 and Consolidated-grouped-v1. Review command unavailable until the hierarchy completes.
+Automatic corpus frozen; ASv6.100 running. ASv6.100, Bootstrap-v133 and Consolidated-grouped-v1. Review command unavailable until the hierarchy completes.
