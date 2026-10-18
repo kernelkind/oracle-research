@@ -6332,3 +6332,92 @@ changed pair identities and compact `review.md` under the ignored artifact
 directory. Maintained findings land on local `main`; preserve the worktree
 for those frozen source and evidence paths. Both combined scores remain
 experimental and unadopted.
+
+## HR36 transfer check: source readiness and limited saved-vector control
+
+The user requested using the second 1,000-note corpus, HR36, to test whether
+the promising meaning-based approach generalizes, accepting practical
+imperfection rather than requiring every development case to pass. This
+section records preparation and a limited saved-vector calculation, **not a
+completed transfer evaluation or an adopted admission policy**.
+
+First disambiguate the preceding table. Its `57/63` is a label-dependent
+capacity bound for arbitrary group-specific cutoffs; its `0/8` counts correctly
+ordered difficult positive/negative pairs, **not zero unwanted admissions**.
+Neither is an automatic rule's accuracy. Joining the existing weakest-member
+rule's saved predictions to the expanded provisional Arts assessments gives
+**54/63 plausible entries selected and 10/30 suspect entries selected**. These
+are development cases with provisional agent judgments, not human gold or
+independent validation. The new-audit cohort was chosen from that rule's
+admissions, so its selection rate is not representative either.
+
+### Independent posts and compatible sources
+
+HR36's completed state is
+`/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr36-v53-auto/target/hierarchy-hr36-v53-auto-thousand-note-v1/HR36/state.json`,
+SHA256 `94a7f7d6d2e4ad8fac895c0c44ef4d444bece47fff60a4cbd30aaa3205a70a07`.
+The native run record establishes ASv6.100 and Bootstrap-v133. Its SSE checkpoint,
+base artifact, 768 dimensions, title-plus-two-newlines-plus-meaning input format
+and contextual pooling implementation match the HR35 research sources.
+
+There are **zero shared note IDs** between HR35 and HR36. HR36 has 602 authors,
+181 also present in HR35: fresh posts do not establish author-independent
+sampling. HR36 is automatically sampled, unlike the earlier corpus; root
+composition also differs. Its six roots are Beings and society; Experience and
+expression; Society and security; two separate Activities and events roots;
+and Artificial intelligence. Their names alone do not define admission truth.
+
+The completed graph represents **683 notes recursively beneath roots**; 317
+are omitted. Of those 317, 254 have usable meanings, supplying **1,121 omitted
+entry queries**. The other 63 have no usable Bootstrap meaning and cannot be
+recovered by a meaning-vector admission rule. Count recursive descendants:
+using roots' own supports alone would incorrectly report 356 omitted notes.
+
+### Missing representation and bounded encoding requirement
+
+The retained native HR36 worker requests/receipts select **title tokens only**,
+with the meaning in context. They do not contain full-meaning pooled vectors.
+Across all 5,336 usable original entries, 98 entries from 92 notes match exact
+title-plus-meaning contexts in the existing HR35 numerical store. They represent
+only 61 distinct contexts and mostly repeat broad people/place names.
+
+A complete proposed check need not encode every HR36 context: the six roots'
+initial accepted references plus the 1,121 eligible omitted queries require
+2,511 entries / 2,502 distinct contexts. Thirty-three contexts have exact saved
+meaning vectors; **2,469 require local frozen SSE encoding**. Existing root
+amendments must not silently enlarge the initial reference sets. Independent
+queries must never enter the accepted fusion graphs. No new LLM calls,
+training or paid compute are needed for the proposed numerical check.
+
+Local meaning encoding was requested through an asynchronous scope question.
+**It has not run, and no approval is inferred from elapsed time.** No HR36
+scores, assessments or parameter search have been used to choose a new rule.
+The proposed comparison retains the existing mean-meaning score and automatic
+weakest-member boundary, with the preceding reference-only bend as an unchanged
+control. Both the old Food/Arts references on new queries and HR36's own
+reference groups are useful controls; neither conditional capacity nor exact
+context replay substitutes for that full automatic-rule transfer test.
+
+### Limited exact-context reuse calculation
+
+Evidence is retained under
+`target/food-halves-v1/hr36-saved-match-transfer-v1/` in this task worktree.
+Plan SHA256
+`42f6ef48a85687a170591be1a3f5ba9b0c55c76d3bb1f886cd966c33debb7a3e`
+was frozen before calculating the 98 queries against the unchanged HR35 Food
+and Arts groups. Reuse their exact saved meaning vectors and the existing
+group thresholds from `weakest-member-boundary-v1/reference-models.json.gz`.
+Query source notes and reference source notes are disjoint. The source-bound
+`source-readiness.json` records the full-corpus counts and proposed next scope.
+
+All **3,920 group scores** agree with independent within-group arithmetic;
+protected source hashes remain unchanged. Neither root proposes any of these
+98 entries. This includes the two Coffee entries and Alcoholic beverages, so
+the restricted sample is not evidence of useful recovery. It is not a random
+sample or an independent test of newly worded definitions. No accuracy or
+generalization claim follows from zero proposals.
+
+No production calculation, hierarchy, prompt, membership, UI or official run
+record changes. New encodings, LLM calls, training and paid resources: zero.
+Maintained findings land on local `main`; retain this worktree because the
+saved vector/evidence paths remain required by the continuing investigation.
