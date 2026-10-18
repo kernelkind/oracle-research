@@ -718,4 +718,4 @@ ASv6.100 complete; Bootstrap and construction running. ASv6.100, Bootstrap-v133 
 
 ## HR38 — 2,000 automatically sampled notes · HiGen V5.3
 
-Automatic corpus frozen; ASv6.100 running. ASv6.100, Bootstrap-v133 and Consolidated-grouped-v1. Review command unavailable until the hierarchy completes.
+ASv6.100 complete; Bootstrap and construction running. ASv6.100, Bootstrap-v133 and Consolidated-grouped-v1. Review command unavailable until the hierarchy completes.
