@@ -8235,3 +8235,14 @@ notes and adds two useful HR37 notes, but unsupported root placements change
 from 5 to 10 in HR36 and 22 to 19 in HR37. It is a tradeoff, not a consistent
 improvement or an activated admission rule. Groups, encoder and hierarchies
 remain unchanged; no LLM calls, encodings or training occur.
+
+## Admission-boundary provenance and reference-note bend follow-up
+
+The [provenance audit](hierarchy-admission-boundary-provenance-v1.md) traces weak
+accepted members and exact score-order conflicts behind the wrong placements.
+The [reference-note bend test](hierarchy-note-bend-admission-v1.md) then replaces
+the weakest-note multiplier with a reference-only bend while keeping existing
+memberships. It reduces wrong primary-sample root placements from 27 to 1 under
+original scores, but useful omitted notes fall from 37 to 14 and two human Food
+acceptances fail. That specific boundary variant is not adopted. No hierarchy,
+encoder, group membership or original score changes occur.

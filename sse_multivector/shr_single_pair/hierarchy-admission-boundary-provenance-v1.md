@@ -181,3 +181,9 @@ symlink. The worktree remains necessary for frozen artifact/source paths.
   Maximum score difference is `2.11e-15`. All 24 existing root boundary
   calculations replay exactly through `derive_boundaries`. All pinned inputs
   remain unchanged. No production code or test seam was added.
+
+The subsequent [reference-note bend test](hierarchy-note-bend-admission-v1.md)
+relaxes the self-recovery constraint without changing memberships. Its frozen
+bend variant removes most wrong matches but loses most reviewed useful omitted
+notes and two human Food acceptances. That particular replacement is rejected;
+the result does not establish that every reference must pass an admission test.
