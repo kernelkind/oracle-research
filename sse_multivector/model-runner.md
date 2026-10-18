@@ -26,14 +26,14 @@ source synchronization change, not a measured prompt improvement or activation.
 
 To change common wording, author a new version of the shared rules and publish
 both new prompt versions in one operation. For example, after actually creating
-`explicit-meaning-rules-v9.md`:
+`explicit-meaning-rules-v10.md`:
 
 ```bash
 python3 sse_multivector/prompt_assembly.py sync \
-  sse_multivector/shr_single_pair/Hierarchy-bootstrap-v135.assembly.json \
-  --rules sse_multivector/shr_single_pair/prompt_parts/explicit-meaning-rules-v9.md \
-  --prompt-id Hierarchy-bootstrap-v136 \
-  --companion-id Hierarchy-consolidation-v24
+  sse_multivector/shr_single_pair/Hierarchy-bootstrap-v136.assembly.json \
+  --rules sse_multivector/shr_single_pair/prompt_parts/explicit-meaning-rules-v10.md \
+  --prompt-id Hierarchy-bootstrap-v137 \
+  --companion-id Hierarchy-consolidation-v25
 ```
 
 Run from the authorized task worktree. This command writes both new complete
@@ -100,6 +100,13 @@ Consolidation-v23 share rules-v8; Bootstrap's Feedback example and title wording
 also align with the new requirement. Native agent review of the same 144 fresh
 outputs records 133 accepts, three rejects and eight uncertainties. V135 remains
 experimental and needs another revision before adoption.
+
+The [V136 matched test](shr_single_pair/bootstrap-current-as-qualification.md#matched-revision-test-bootstrap-v136)
+adds a broad-category example and an explicit optionality rule, synchronized in
+Bootstrap-v136/Consolidation-v24 with rules-v9. Its 144 valid responses receive
+135 agent accepts, two rejects and seven uncertainties. The remaining clear
+failures illustrate Finance with possible activities; the pair remains
+experimental and unadopted.
 
 
 ## Bootstrap titles derived from explicit meanings

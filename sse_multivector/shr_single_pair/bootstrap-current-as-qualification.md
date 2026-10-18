@@ -235,6 +235,54 @@ remain in `target/bootstrap-no-examples-v135/` in the retained task worktree.
 The pair remains experimental; constructor pins and hierarchy outputs are not
 changed. Another revision is needed before adoption.
 
+### Matched revision test: Bootstrap-v136
+
+[Bootstrap-v136](Hierarchy-bootstrap-v136.md) and
+[Consolidation-v24](Hierarchy-consolidation-v24.md) share
+[rules-v9](prompt_parts/explicit-meaning-rules-v9.md), which explicitly excludes
+statements that a feature is unnecessary or that membership holds regardless of
+a circumstance. Bootstrap adds a compact broad-category example: Birds are
+feathered vertebrate animals; observed robins and sparrows remain outside the
+meaning. The prior two examples are preserved. The production example-validation
+test fails before publication and all 39 focused checks pass afterward.
+
+The [matched specification](hierarchy-bootstrap-no-examples-deep-v136.spec.json)
+uses three concurrent native fresh draws from the same V134 panel, preserving
+all 48 inputs and model/schema/transport settings per draw. All 144 responses
+validate. Native agent reviews record:
+
+| Draw | Accept | Reject | Uncertain |
+|---|---:|---:|---:|
+| 1 | 46 | 0 | 2 |
+| 2 | 44 | 1 | 3 |
+| 3 | 45 | 1 | 2 |
+| Total | 135 | 2 | 7 |
+
+The three AI, Support, Requests and pottery-mug meanings omit the previously
+rejected additions. All 24 People meanings omit post examples. V136 nevertheless
+fails: two Finance definitions append representative activities to the general
+condition of managing money and financial resources. One says:
+
+> Finance is the field concerned with managing money and financial resources, including raising, allocating and investing funds.
+
+These activities illustrate the general condition rather than defining a joint
+requirement or an exhaustive set of alternatives. The seven uncertainties are
+three food/ingredient clarifications, two Learning definitions naming experience
+and study/instruction, one R Cheap interpretation requiring other people, and
+one reply-target definition that selects the general identifier role rather
+than the supplied identifier value. The latter two concern ambiguous source
+scope. These judgments use the existing rubric and are not human approval.
+The dashboard, dahlia, conditional BCH and stock-plan controls retain their
+required details in all draws.
+
+[Native accounting](hierarchy-bootstrap-no-examples-deep-v136-usage-v1.json)
+records 147 attempts including three warmups, zero failed/retry attempts or
+reuses and complete usage. API-equivalent catalog cost is $1.0167436, not a
+subscription cash charge. Artifacts and native reviews remain under
+`target/bootstrap-no-examples-v136/` in the retained task worktree. The pair is
+experimental; it does not change constructor pins or construct a hierarchy.
+The remaining field/process illustrations motivate another bounded revision.
+
 ## Meaning-derived titles: Bootstrap-v130
 
 The user requested a concise title based solely on the explicit meaning.
