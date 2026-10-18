@@ -8454,3 +8454,20 @@ This is a measured conservative tradeoff, not an adopted or proven preferable
 replacement. Independent rational bends, all 982,494 native score comparisons,
 immutable-source/review checks and 51 production-path tests pass. No encoding,
 LLM call, training, clustering, hierarchy modification or UI refresh occurred.
+
+The user subsequently authorized the
+[four-route alternate-witness review](hierarchy-note-bend-admission-v1.md#follow-up-selected-witness-review).
+Three surviving C00001 entries have direct accepted-reference support: Nostr
+under Social-networking protocols, Value comparisons under Assessment, and Sheet
+music under Documents. Wastefulness remains unresolved; Savings and Financial
+responsibility do not alone establish its whole resource-use meaning, while
+the broad Costs references leave a scope question. None of the removed original
+witnesses is reused. These separate provisional assessments raise retained
+useful primary HR38 notes from 12 to 15 of the original 27. Nine useful notes
+are entirely unproposed, one has only a wrong route and two have unresolved
+routes. Of 18 surviving proposals in the original 32-note sample, 15 are useful,
+one wrong-only and two unresolved. The two known wrong primary root placements
+remain. All proposals, thresholds, old judgments, other note/root assessments
+and preview artifacts remain unchanged. Exact selected-entry/reference and
+source-hash checks and independent recounts pass. No model calls, encodings,
+training, production code, actual admissions or UI changes occurred.
