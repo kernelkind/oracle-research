@@ -2139,9 +2139,9 @@ charge is zero. Known tokens: 5,962,947 uncached input; 69,536,896 cached input;
 
 ## HR39 — automatically sampled 5,000-note HiGen V5.3
 
-**ASv6.100 running.** Automatic seed `hr39-corpus-v1`
+**ASv6.100 complete; Bootstrap-v133 running.** Automatic seed `hr39-corpus-v1`
 selected 5,000 original posts from the same frozen English-eligible pool as
-HR36–HR38: 2,001 authors, no manual reviews or topic/author quotas.
+HR36–HR38: 2,000 authors, no manual reviews or topic/author quotas.
 Overlap: HR36 2, HR37 1, HR38 2 notes.
 
 ASv6.100, Bootstrap-v133, Consolidated-grouped-v1 and full HiGen V5.3 recursion
@@ -2150,10 +2150,22 @@ one-hour deadlines, angular HDBSCAN min_samples=3/min_cluster_size=2/EOM,
 six-choice maximum, no cosine cutoff and the 512-token SSE checkpoint.
 Twelve local CPU workers; shared 30-request teacher queue; no attempt ceiling.
 
-[Definition](../../sse_multivector/hierarchy-runs/hr39/hierarchy.spec.json) ·
+[Initial definition](../../sse_multivector/hierarchy-runs/hr39/hierarchy.spec.json) ·
 [Selection](../../sse_multivector/hierarchy-runs/hr39/corpus-selection.spec.json).
 Native accounting, root coverage and review UI will be recorded after execution.
 
 AS/generator source is frozen at `5b9bfa68`; coordinator and
 teacher transport are frozen at `38561fe`. Source snapshots and all seven
 parameter specifications are hash-bound before the first model call.
+
+One AS input received an explicit provider block twice. Native automatic sampling
+froze the first 5,001 eligible posts; a source-bound selector replaces only that
+post with the next eligible post, retaining exactly 5,000 inputs and their order.
+The original failed experiments and receipts are preserved; `AS-final` reuses
+4,999 verified answers. No post text, prompt, model setting or code was changed.
+[Effective definition](../../../oracle-mvp-hierarchy-hr39-v53-auto/target/hierarchy-hr39-v53-auto-5000-note-v1/hierarchy-final.spec.json) ·
+[Effective selection](../../../oracle-mvp-hierarchy-hr39-v53-auto/target/hierarchy-hr39-v53-auto-5000-note-v1/final-corpus-selection.json).
+
+The native collection verifies all 5,000 final input IDs in order.
+26,243 original L1s enter Bootstrap; 369 notes have valid empty
+AS subject lists and remain in the input inventory.
