@@ -118,8 +118,50 @@ class TitleSelectionProbeTests(unittest.TestCase):
                 self.assertEqual(n.text,r['title'])
                 self.assertEqual(n.subjects[0].byte_spans,((0,len(n.text.encode())),))
                 self.assertNotIn(r['meaning'],n.text)
-            with self.assertRaises(ValueError):
-                probe.prepare(study,['a'],None,root/'invalid')
+            contextual=root/'contextual'
+            probe.prepare(study,['a','b'],None,contextual)
+            _,context_notes=worker._load_request(contextual/'worker-request.json')
+            self.assertEqual([n.text for n in context_notes],
+                             ['人 reactions\n\nResponses by people.',
+                              'Audience reactions\n\nAudience responses.'])
+            self.assertTrue(all(len(n.subjects)==2 for n in context_notes))
+
+    def test_prepares_original_native_entries_with_source_bound_meaning_spans(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);study=self.fixture(root)
+            records=json.loads((study/'plan.json').read_text())['records']
+            corpus=root/'corpus.json'
+            corpus.write_text(json.dumps({'notes':[dict(note_id=r['source_note_id'],
+                origin={'prompt_version':'ASv6.100'}) for r in records]}))
+            native=root/'state.json'
+            state=dict(corpus=str(corpus),worker_config=json.loads((study/'worker-config.json').read_text()),
+                originals=[dict(id=r['id'],title=r['title'],meaning=r['meaning'],
+                                local={'note_id':r['source_note_id']}) for r in records],
+                families=[{'rounds':[{'current':['a','b']}]}])
+            native.write_text(json.dumps(state));out=root/'native-encoding'
+            probe.prepare(native,['a','b'],None,out)
+            inputs=json.loads((out/'inputs.json').read_text());_,notes=worker._load_request(out/'worker-request.json')
+            self.assertIn(str(native),inputs['sources']);self.assertIn(str(corpus),inputs['sources'])
+            self.assertEqual([r['entry'] for r in inputs['records']],['a','b'])
+            for record,note in zip(inputs['records'],notes):
+                view=record['views']['meaning'];subject=next(s for s in note.subjects if s.subject_id==view['subject_id'])
+                a,b=subject.byte_spans[0]
+                self.assertEqual(note.text.encode()[a:b].decode(),record['meaning'])
+            with patch('sse_multivector.worker.OfficialSseEncoder',return_value=DeterministicEncoder()):
+                worker.run_worker(out/'worker-config.json')
+            self.assertEqual(probe.collect(out)['records'],2)
+            corpus.write_text(corpus.read_text()+'\n')
+            with self.assertRaisesRegex(ValueError,'source changed'):
+                probe.collect(out)
+            co=json.loads(corpus.read_text());co['notes'][0]['origin']['prompt_version']='ASv6.23'
+            corpus.write_text(json.dumps(co))
+            with self.assertRaisesRegex(ValueError,'ASv6.100'):
+                probe.prepare(native,['a'],None,root/'deprecated')
+            self.assertFalse((root/'deprecated').exists())
+            co['notes'][0]['origin']['prompt_version']='ASv6.100';corpus.write_text(json.dumps(co))
+            state['families'][0]['rounds'][0]['current']=['a'];native.write_text(json.dumps(state))
+            with self.assertRaisesRegex(ValueError,'absent from source'):
+                probe.prepare(native,['b'],None,root/'not-native')
 
 
 if __name__=='__main__':

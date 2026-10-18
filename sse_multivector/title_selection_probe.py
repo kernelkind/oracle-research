@@ -3,6 +3,8 @@
 Uses the existing native worker and frozen encoder settings. Original titles,
 meanings, memberships and policies are never rewritten. This is a research
 input adapter, not an automatic grammatical analysis or admission rule.
+Sources may be a saved study directory or an ASv6.100 native hierarchy state;
+whole-title preparation retains the full meaning as context unless standalone.
 """
 import argparse
 import hashlib
@@ -20,22 +22,42 @@ def prepare(study, entries, selected_text, output, *, standalone=False):
     if output.exists():
         raise FileExistsError(output)
     if (not entries or len(set(entries)) != len(entries)
-            or (selected_text is None and not standalone)
             or (selected_text is not None and not selected_text.strip())):
-        raise ValueError('distinct entries and selected text, or standalone whole titles, required')
-    source = read(study/'plan.json')
+        raise ValueError('distinct entries and selected text or whole titles required')
+    if study.is_file():
+        native = read(study)
+        corpus_path = Path(native['corpus'])
+        if not corpus_path.is_absolute():
+            corpus_path = study.parent/corpus_path
+        corpus_path = corpus_path.resolve()
+        corpus = read(corpus_path)
+        if not corpus.get('notes') or any(n.get('origin',{}).get('prompt_version') != 'ASv6.100'
+                                           for n in corpus['notes']):
+            raise ValueError('approved ASv6.100 provenance required')
+        originals = {r['id']:r for r in native['originals']}
+        ids = native['families'][0]['rounds'][0]['current']
+        if any(i not in originals for i in ids):
+            raise ValueError('native initial input must contain original local entries')
+        source = dict(as_version='ASv6.100', sources={}, records=[dict(
+            id=i,title=originals[i]['title'],meaning=originals[i]['meaning'],
+            source_note_id=originals[i]['local']['note_id']) for i in ids])
+        template = native['worker_config']
+        source_paths = [study,corpus_path]
+    else:
+        source = read(study/'plan.json')
+        template = read(study/'worker-config.json')
+        worker.WorkerConfig.load(study/'worker-config.json')
+        source_paths = [study/'plan.json',study/'worker-config.json']
     if source.get('as_version') != 'ASv6.100':
         raise ValueError('approved ASv6.100 provenance required')
     by_id = {r['id']: r for r in source['records']}
     if any(i not in by_id for i in entries):
         raise ValueError('selected entry is absent from source')
     sources = {str(Path(p).resolve()): h for p,h in source['sources'].items()}
-    for path in [study/'plan.json', study/'worker-config.json', Path(__file__),
-                 Path(worker.__file__), Path(unchanged.__code__.co_filename)]:
+    for path in [*source_paths, Path(__file__), Path(worker.__file__),
+                 Path(unchanged.__code__.co_filename)]:
         sources[str(path.resolve())] = worker._sha256_file(path)
     unchanged(sources)
-    template = read(study/'worker-config.json')
-    worker.WorkerConfig.load(study/'worker-config.json')
     contexts, records = {}, []
     for entry in entries:
         item = by_id[entry]
@@ -139,7 +161,7 @@ def main():
     selection=p.add_mutually_exclusive_group(required=True)
     selection.add_argument('--title-text')
     selection.add_argument('--whole-title',action='store_true',
-                           help='Use each entry\'s entire title; requires --standalone')
+                           help='Use each entire title; retain meaning context unless --standalone')
     p.add_argument('--standalone',action='store_true',
                    help='Encode only the selected text; reuse saved contextual vectors separately')
     p=sub.add_parser('collect')
