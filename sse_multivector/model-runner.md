@@ -82,8 +82,8 @@ its 144 valid responses receive 131 agent accepts, two rejects and eleven
 uncertainties; one response abstains with null meaning/title. The remaining
 rejections concern two titles that repeat unnecessary temporal detail.
 V139 therefore remains experimental and unqualified for adoption. The prompt
-stays unchanged during this test; revise the title-writing examples/instructions
-before another unseen qualification. Constructor pins remain V133.
+stayed unchanged during that test. Title-only revisions are reported below;
+constructor pins remain V133.
 
 The initial experimental pair uses
 [Bootstrap-v134](shr_single_pair/Hierarchy-bootstrap-v134.md) and
@@ -143,35 +143,18 @@ repeats. Constructor pins remain V133.
 
 ## Bootstrap titles derived from explicit meanings
 
-Experimental [Bootstrap-v140](shr_single_pair/Hierarchy-bootstrap-v140.md)
-simplifies the title instruction and changes the detailed portrait-negative
-example title to "Studio portrait negatives," preserving every meaning and the
-shared rules. Its [matched test](shr_single_pair/bootstrap-current-as-qualification.md#topic-name-revision-bootstrap-v140)
-has 168 valid fresh responses: 148 agent accepts, ten title rejects and ten
-semantic uncertainties. The original preference case still lists all three
-actions in its title, and the stock-plan title still enumerates both stages.
-V140 remains unqualified. Experimental
-[Bootstrap-v141](shr_single_pair/Hierarchy-bootstrap-v141.md) explicitly allows
-titles to leave the definition's full scope in meaning. Its same 168-response
-test has 150 agent accepts, six title rejects and twelve semantic uncertainties.
-The preference and stock-plan titles still enumerate their actions. V141 also
-remains unqualified. Experimental
-[Bootstrap-v142](shr_single_pair/Hierarchy-bootstrap-v142.md) adds two brief
-meaning/title examples for plans and preferences. Its same 168-response test
-has 153 agent accepts, five title rejects and ten semantic uncertainties. Two
-preference draws now use a topic name, but all stock-plan titles still enumerate
-stages. V142 remains unqualified. Experimental
-[Bootstrap-v143](shr_single_pair/Hierarchy-bootstrap-v143.md) explicitly assigns
-complete conditions to meaning and rejects compressed definitions as titles.
-Its matched test has 152 agent accepts, three stock-title rejects and thirteen
-uncertainties. The original preference passes all three draws, but stock titles
-still enumerate stages and form dense compounds. V143 remains unqualified.
-[Bootstrap-v144](shr_single_pair/Hierarchy-bootstrap-v144.md) moves the unchanged
-title section after the long definition examples; its 168-response test still
-has four title rejects, with 154 accepts and ten uncertainties. Placement alone
-does not resolve the failure. The next revision should make exact scope a
-requirement for meaning while allowing a familiar overall name in title.
-Constructor pins remain V133.
+Experimental [Bootstrap-v145](shr_single_pair/Hierarchy-bootstrap-v145.md)
+states both jobs in the opening task: exact meaning and a brief title. The
+selected entry's scope constrains `meaning`; `title` may use a familiar overall
+name for that same topic. The title section follows the full definition examples
+and includes brief plan/preference naming examples. Shared rules-v12 and
+Consolidation-v27 are unchanged, without a numeric word target.
+Its [matched test](shr_single_pair/bootstrap-current-as-qualification.md#overall-names-and-exact-meanings-bootstrap-v145)
+has 168 valid responses: 156 agent accepts, two rejects and ten uncertainties.
+One preference still lists actions; one DeFi definition loses decentralization.
+Three stock labels await clarification of desired granularity. V145 remains
+experimental and unqualified; constructor pins remain V133. V140–V144 results
+and frozen prompts remain available in the same qualification report.
 
 Experimental [Bootstrap-v133](shr_single_pair/Hierarchy-bootstrap-v133.md)
 returns a concise, natural `title` derived solely from its finalized `meaning`.

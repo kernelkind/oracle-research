@@ -598,9 +598,9 @@ API-equivalent catalog cost is $0.98469, not a subscription cash charge.
 Exact native results, attributed reviews and accounting remain under
 `target/bootstrap-v139-unseen-v1/` in the retained task worktree. All 40 focused
 checks pass. V139, its synchronized companion and existing constructor pins are
-unchanged. This task does not retune the prompt on the unseen results. The useful
-next step is to simplify the title-writing instructions/examples around short
-topic names, then qualify a revision on another untouched panel before adoption.
+unchanged. The prompt is not retuned during that unseen test. This motivates the
+topic-name revisions below, which use development inputs and do not substitute
+for another untouched qualification before adoption.
 
 ### Topic-name revision: Bootstrap-v140
 
@@ -800,9 +800,9 @@ its actions; all three stock titles still enumerate canning and pantry storage.
 One returns "Chicken-stock canning and pantry-storage plan." Native raw outputs
 confirm that these titles come from the model, without validator rewriting.
 Placement alone has not reliably solved the naming problem; V144 remains
-unqualified. The next revision should clarify in the opening task and scope
-instructions that exact scope constrains meaning, while title may use a familiar
-overall name for that same central topic.
+unqualified. V145 below tests clarifying the opening task and scope instructions:
+exact scope constrains meaning, while title may use a familiar overall name for
+that same central topic.
 
 Nine uncertainties concern digital immortality, digital-system Users and inferred
 US federal identity in the shutdown-odds event (three each). The tenth is one
@@ -813,6 +813,48 @@ checks pass. Native [accounting](hierarchy-bootstrap-title-v144-usage-v1.json)
 records 174 new attempts including six warmups, zero failures/retries/reuses and
 complete usage. API-equivalent cost is $1.250252, not a subscription cash charge.
 Constructor pins remain V133.
+
+### Overall names and exact meanings: Bootstrap-v145
+
+Experimental [Bootstrap-v145](Hierarchy-bootstrap-v145.md) states both output
+jobs in its opening sentence and explicitly attaches the selected subject's
+scope to `meaning`. Its title instruction permits a familiar overall name for
+the same central topic, with exact scope, steps and qualifications supplied by
+meaning. Three wrapper edits preserve shared rules-v12, Consolidation-v27 and
+all full/brief examples. Native V144 results establish the failing cases first.
+
+The [matched](hierarchy-bootstrap-title-v145-matched.spec.json) and
+[control](hierarchy-bootstrap-title-v145-controls.spec.json) tests use the same
+48 and eight inputs, three fresh draws each, with V144 baselines and verified
+identical input hashes/model settings. All ready batches launch concurrently.
+All 168 outputs are valid and non-null. The pre-call plan and exact results
+remain under `target/bootstrap-title-v145/`.
+
+Fresh agent review records 156 accepts, two rejects and ten uncertainties. One
+preference title still enumerates learning, perseverance and constructive
+action. One prospective-world meaning omits decentralization from its DeFi
+component: blockchain smart contracts alone do not exclude centralized financial
+services. This is a scope failure even though the shared definition instructions
+are unchanged. Fresh generated meanings are not byte-identical across trials.
+
+The ten uncertainties comprise three stock titles awaiting the user's desired
+naming granularity; digital-system Users in three draws; digital immortality in
+two draws; and US identity inferred in draw 1's broad shutdown and odds entries.
+The stock titles now avoid artificial compounding: two say "Chicken stock
+preservation and storage plan," and one says "Chicken stock canning and pantry
+storage plan." These are not rejected by an invented general ban on compound
+topic names. The open choice is a broader preservation name versus retaining
+core actions. Pending that optional clarification, work continues toward the
+broader name consistent with the original request to leave detail in meaning.
+
+All three Half-and-half controls preserve the exact milkfat interval and weight
+basis, and stock meanings retain the complete batch and preservation/storage
+details. Qualifications are not illustrative examples. All 41 focused checks
+pass. Native [accounting](hierarchy-bootstrap-title-v145-usage-v1.json) records
+174 new attempts including six warmups, zero failures/retries/reuses and complete
+usage. API-equivalent cost is $1.1539464, not a subscription cash charge. V145
+remains unqualified; constructor pins stay V133. The next test will name a stated
+goal in place of enumerating the actions that serve it.
 
 ## Meaning-derived titles: Bootstrap-v130
 
