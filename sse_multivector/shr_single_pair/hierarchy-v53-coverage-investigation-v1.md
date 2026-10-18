@@ -8059,3 +8059,159 @@ admission improvement. Pooling choice affects score order and boundaries
 together; an ordering-only screen cannot qualify admission quality. The
 remaining task is to improve useful coverage without reopening established
 role/identity errors or discarding valid accepted-topic families.
+
+## Distinct-note aggregation: useful recoveries, but a mixed whole-note tradeoff
+
+Status: **experimental comparison; neither new score is activated**. The user
+approved investigating whether whole-group averaging hides useful matches and
+explicitly reminded us that perfection is unattainable. Assess practical useful
+note gains and meaningful errors, rather than requiring every heading to pass
+or every provisional label to be perfect.
+
+All original full-meaning vectors, the kernel, fixed accepted-only fusion groups,
+and the two existing boundary algorithms remain unchanged. The bounded replay
+compares three scores; it does not search neighbor counts or choose thresholds
+from semantic labels:
+
+- **Entry mean**, the existing control: mean affinity to all eligible entries in
+  the fixed group, excluding the query's whole source note.
+- **Distinct-note mean**: take the strongest affinity within each accepted source
+  note, then average once per note. Repeated headings from one note cannot count
+  as several independent sources.
+- **Closest-two-note mean**: average the strongest matches from two distinct
+  accepted notes. Within each group use `k = min(2, distinct notes - 1)`, floored
+  at one, for both member calibration and incoming queries. Two-source-note
+  groups can calibrate against only one other note and explicitly use `k=1`;
+  this is not two independent witnesses everywhere. Single-source-note groups
+  would remain unavailable, rather than invent a boundary.
+
+A new experimental numerical helper, `fixed_reference_note_support.note_support`,
+implements those last two scores on the actual research calculation path.
+Insufficient distinct-note support is missing, never zero or an implicit fallback.
+Its tests first failed because the production function did not exist. They now
+cover whole-note exclusion, insufficient support, duplicate-note invariance,
+nonmember irrelevance, isolated/reordered/duplicated queries, and invalid inputs.
+No encoder, fusion, hierarchy-construction or production-admission behavior changes.
+
+### Actual automatic results
+
+The following counts use the same reference-note-coverage boundary, recalculated
+from the respective member scores. Each cell is **useful / unwanted headings
+admitted**. Existing labels stay frozen. These focused panels overlap; native
+audits were selected from old baseline proposals and cannot estimate recall on
+newly proposed entries. Unresolved cases remain separate in the evidence.
+
+| Existing panel | Entry mean | Distinct-note mean | Closest-two-note mean |
+|---|---:|---:|---:|
+| HR35 Food (30 useful, 51 unwanted) | 14 / 3 | 14 / 2 | 16 / 5 |
+| HR35 expanded Arts (63, 30) | 52 / 4 | 51 / 3 | 57 / 9 |
+| HR36 against old Food (19, 62) | 15 / 1 | 15 / 1 | 16 / 1 |
+| HR36 against old Arts (18, 57) | 5 / 0 | 5 / 0 | 8 / 6 |
+| HR37 against old Food (12, 50) | 11 / 0 | 11 / 0 | 11 / 2 |
+| HR37 against old Arts (29, 33) | 13 / 0 | 12 / 0 | 17 / 1 |
+| HR36 native audit (36, 14) | 36 / 12 | 36 / 12 | 33 / 12 |
+| HR37 native audit (36, 21) | 30 / 9 | 30 / 10 | 24 / 11 |
+
+All four prior human Food note decisions still match under both new scores.
+Closest-two support recovers actual useful topics such as Tea, Wineries, Piano,
+Films, Photography, Gaming and Video gaming on these fixed panels. Those gains
+must not be dismissed merely because the result is imperfect. The corresponding
+new errors include software inputs/performance and Edge computing admitted to
+old Arts, and music-enjoyment topics admitted to old Food. Distinct-note weighting
+alone has much smaller effects; it does not deliver a general coverage improvement.
+
+### Whole-note changes and complete post-result review
+
+Counts below deduplicate notes across all of each corpus's own roots. They are
+potential proposals, not confirmed hierarchy recoveries:
+
+| Corpus / method | Existing proposals | New total | Gained notes | Lost notes |
+|---|---:|---:|---:|---:|
+| HR36 distinct-note mean | 239 | 240 | 1 | 0 |
+| HR36 closest-two-note mean | 239 | 241 | 2 | 0 |
+| HR37 distinct-note mean | 261 | 259 | 1 | 3 |
+| HR37 closest-two-note mean | 261 | 266 | 7 | 2 |
+
+The closest-two method retains 259 of 261 existing HR37 note proposals. That
+whole-note result is substantially less negative than counting every lost root
+or heading as a lost note. To assess its practical tradeoff, inspect **all eleven
+changed notes** across HR36 and HR37, rather than sampling favorable gains.
+The saved full posts, selected meanings, actual group contents and nearest
+accepted-note meanings precede separate post-result provisional assessments.
+No old judgment changes, no new labels enter thresholds, and no rerun follows
+these assessments. They are agent assessments, not additional human gold.
+
+| Corpus | Gained note / admitted heading | Post-result assessment |
+|---|---|---|
+| HR36 | NHK news report / NHKニュース | Useful: matches accepted news-provider families. |
+| HR36 | Image post / Showing legs | Unresolved: the meaning denotes physical display, without an explicit photography role. |
+| HR37 | Permanent daylight saving time | Mismatch: civil clock policy does not establish the data/publication or technology/mining roles used to admit it. |
+| HR37 | Dutch countryside / Netherlands | Mismatch: the country does not acquire a language-learning role by matching English/Vocabulary. |
+| HR37 | `p-worm shots build #0` / Builds | Unresolved: the opaque text and generic meaning do not establish software or a game. |
+| HR37 | Rugby confrontation / Physical altercations | Useful: accepted Hostility explicitly includes physical aggression. |
+| HR37 | Bus image / Buses | Mismatch: passenger vehicles are not digital-data transfers or collation. |
+| HR37 | Manchester United–Tottenham / Football | Useful: accepted Gaming explicitly includes rule-governed competitive games, not only video games. |
+| HR37 | Weber grill build / Weber-Stephen Products LLC | Useful: matches accepted Companies and Business. |
+| HR37 | Lost Cricket note | Useful game/competition route lost. |
+| HR37 | Lost Baseball note | Useful game/competition route lost. |
+
+Thus HR36 gains one plausible useful note and one unresolved note, losing none;
+HR37 gains three plausible useful notes, three mismatches and one unresolved
+note, while losing two plausible useful notes. The seven mechanical gains are
+not seven useful recoveries. These few practical errors, rather than a demand
+for perfect classification, weaken the case for replacement. Existing retained
+notes may also change root placements; the eleven-note review is complete for
+unique-note coverage changes, not for all changed root assignments.
+
+### What averaging explains, and what it does not
+
+A post-result ordering diagnostic on the fixed 72-case HR37 native audit finds
+seven useful cases dominated in every group by some unwanted case under entry
+means, seven under distinct-note means, and eight under closest-two means.
+This is a score-order diagnostic, not automatic accuracy, a target of zero
+required errors, or permission to fit thresholds from labels.
+
+Concrete examples retain the underlying ambiguity:
+
+- Minecraft's two strongest accepted-note affinities in the Games/Events group
+  are Games `0.0626043` and Video games `0.0537476`, averaging `0.0581759`.
+  Asynchronous operations instead matches Events `0.0594410` and Games
+  `0.0569908`, averaging `0.0582159`. The group's closest-two threshold is
+  `0.0668853`, set by an Events member. Both are rejected. Lowering this group's
+  boundary cannot admit Minecraft while excluding the slightly higher unwanted
+  score. This is not solely an excessively strict final coverage boundary.
+- YouTube's two closest matches are Image sharing and Photography, averaging
+  `0.0509212`. Digestion matches Creativity and Art, averaging `0.0605142`.
+  Both miss the group's coverage threshold `0.0849567`. Closest-two support
+  still fails to put the useful candidate ahead of this unwanted topic.
+
+Whole-group dilution therefore explains some useful recoveries, but replacing
+all-member means with the two nearest notes does not generally resolve the
+semantic score confusions. Do not keep sweeping neighbor counts until a small
+panel looks perfect. The useful next evaluation is practical whole-note quality
+of the existing full-meaning candidate across roots, rather than another
+ordering-only claim or a new admission constant.
+
+### Evidence and checks
+
+Ignored directory: `target/food-halves-v1/note-aggregation-admission-v1/`.
+Frozen plan SHA256:
+`08eff31c72067226a572c207c73b95cd867bd016bbf2ba37da3850ea34ec51a6`.
+It pins 60 source/data files before new aggregation scores or admissions; all
+remain unchanged after the run. Retained artifacts include all six methods'
+query/root outcomes, all new query/group scores, member boundaries and reference
+note routes, frozen panel results, four human controls, ordering diagnostics,
+nearest-note traces, complete unique-note changes and post-result assessments.
+Both original corpus collections used in the new review verify ASv6.100 provenance.
+
+The matched calculation uses 14 reference collections and 327 fixed groups,
+checks 7,692 member scores and 1,488,681 query/group cells, replays old decisions
+exactly, and verifies query isolation. Maximum scalar score discrepancy is
+`2.22e-16`; reference and query mean replays differ by at most `6.66e-16` and
+`2.78e-16`. Of 327 groups, 303 use two-note support and 24 use the explicit
+one-other-note setting; none is unavailable here. Each coverage result is a
+subset of its own score's weakest-member proposals. Eligible accepted-reference
+notes retain their routes; actual memberships never change. The numerical
+calculation takes 11.69 seconds after input verification; disk reads and hashing
+are additional. Relevant regression suites pass 81 tests. No new encodings,
+LLM calls, training, paid resources or hierarchy/UI changes occur.
