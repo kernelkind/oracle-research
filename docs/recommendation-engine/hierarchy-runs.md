@@ -2018,49 +2018,50 @@ runtime costs are recorded in
 
 ## HR36 — automatically sampled 1,000-note HiGen V5.3
 
-User-authorized automatic corpus and autonomous construction. The native
-exporter ranks all 3,774,156 frozen English-eligible event IDs by
-SHA256(`hr36-corpus-v1` UTF-8 bytes + raw event-ID bytes). Native
-`freeze-post-sample` automatic mode selects the first 1,000 verified,
-nonempty root/non-quote posts within 512 SSE tokens: 602 authors, at most
-64 notes per author, and one over-length exclusion among 1,001 examined.
-There are no manual reviews, topic quotas, author balancing or carried-forward
-curated notes. Original text and events remain unchanged.
+**Construction complete; semantic review pending.** The native constructor exited
+zero with no terminal errors: 71 canonical nodes, six roots, 65 strictly narrowing
+edges, at most six children, and all 18 sibling lineups complete. **683/1,000 input
+notes are beneath roots; 317 are outside them.** The corrected native audit counts
+all 1,000 frozen inputs, and the checked standalone review UI contains the 683
+reachable notes plus 71 canonical nodes and its display container. Full input
+coverage is unmet; top-container associations are not root placement.
 
-[Corpus export](../../sse_multivector/hierarchy-runs/hr36/corpus-export.spec.json),
-[selection](../../sse_multivector/hierarchy-runs/hr36/corpus-selection.spec.json)
-and [hierarchy definition](../../sse_multivector/hierarchy-runs/hr36/hierarchy.spec.json)
-freeze the controls. Raw notes SHA-256:
-`9e4614259f3b09ebd3a5e4c64b5506cffa2abced041019d129fecc8e96bb0879`.
-The original-note manifest and event evidence are retained under
-`oracle-mvp-hierarchy-hr36-v53-auto/target/hierarchy-hr36-v53-auto-thousand-note-v1/corpus/`.
+The native sampler selected the first 1,000 mechanically eligible original posts
+in SHA256(seed UTF-8 + raw event-ID bytes) order over 3,774,156 frozen
+English-eligible notes, seed `hr36-corpus-v1`: 602 authors, at most 64 posts per
+author. One post over 512 SSE tokens was skipped among 1,001 examined. There are
+no manual reviews, topic quotas, author balancing or carried-forward curated set.
+Raw corpus SHA-256 is `9e4614259f3b09ebd3a5e4c64b5506cffa2abced041019d129fecc8e96bb0879`.
 
-Status: running canonical construction. ASv6.100 completed with 1,000 valid
-answers: 939 notes have subjects and 61 have valid empty subject lists;
-5,378 original L1 subjects enter Bootstrap. Empty lists remain in the input
-inventory and receive no Bootstrap requests. The native parser fix is integrated
-as `46d3cc74`; all 133 hierarchy regressions pass, plus the seven sampling/input
-checks. AS source remains frozen at `050cebf8`; construction uses `12ab025b`
-and shared coordinator/teacher transport `38561fe`. The numerical executable
-uses verified compact output with unchanged groups and trees.
+ASv6.100 yielded 939 notes with subjects and 61 valid empty subject lists;
+5,378 L1s enter Bootstrap-v133. Its 42 null meanings are retained and skipped,
+leaving 5,336 meanings across 937 notes and 5,279 distinct original vector inputs.
+The longest original encoded input is 166 tokens. Consolidated-grouped-v1,
+GPT-6.1 Sol medium/subscription SSE, one-hour deadlines, angular HDBSCAN with
+min_samples=3/min_cluster_size=2/EOM, no cosine cutoff, and the 512-token
+SSE title-pooling checkpoint remain fixed. Local work uses a 24-CPU budget;
+ready teacher batches use the shared 30-request queue without an outer batch or
+model-attempt cap.
 
-[Native AS accounting](../../../oracle-mvp-hierarchy-hr36-v53-auto/target/hierarchy-hr36-v53-auto-thousand-note-v1/usage-subjects.json)
-records 1,002 attempts including warmup and one recovered failure. Known
-API-equivalent cost is $15.3100836; the failed attempt lacks usage, so complete
-cost is unknown. Incremental subscription cash charge is zero.
-[Native Bootstrap accounting](../../../oracle-mvp-hierarchy-hr36-v53-auto/target/hierarchy-hr36-v53-auto-thousand-note-v1/usage-bootstrap.json)
-records 5,378 valid answers and 5,379 attempts including warmup, with no
-failed attempts or diagnostic errors. API-equivalent cost is $36.7148772.
-The 42 valid null meanings are skipped; 5,336 usable meanings produced
-5,279 distinct encoded inputs, at most 166 tokens each. Saved vectors remain
-unchanged after repairing the copied numerical executable's execute permission;
-the native advancement retry recovered. Full recursive V5.3 uses Bootstrap-v133,
-Consolidated-grouped-v1, GPT-6.1 Sol medium on subscription SSE, one-hour
-request deadlines, angular HDBSCAN/min_samples=3/min_cluster_size=2/EOM,
-no cosine cutoff and the existing 512-token title-pooling SSE checkpoint.
-Local numerical work uses 24 CPUs; native teacher batches share the runner's
-30-request queue without an outer batch or attempt cap. Invalid diagnostics
-are nonblocking; null meanings are preserved, skipped and counted. Temporary
-failures are retried and code errors repaired under the authorized completion
-goal. Actual root coverage is measured separately from top-container access.
-Review UI and final usage accounting follow construction.
+AS generation source is frozen at `050cebf8`, construction at `12ab025b`, and
+coordinator/teacher transport at `38561fe`. The integrated empty-subject parser
+fix preserves all inputs and valid answers. The verified compact numerical
+executable preserves clustering results; its copied execute permission was
+repaired and native advancement recovered. The final audit validates frozen
+source files and includes empty-subject inputs; its implementation is preserved
+with the run. Hierarchy state SHA-256:
+`94a7f7d6d2e4ad8fac895c0c44ef4d444bece47fff60a4cbd30aaa3205a70a07`.
+
+[Native complete accounting](../../../oracle-mvp-hierarchy-hr36-v53-auto/target/hierarchy-hr36-v53-auto-thousand-note-v1/usage-complete.json)
+records **6,679 fresh attempts**, including warmups and one recovered failure,
+6,635 valid cases and zero answer reuse across 43 native batches. Known
+API-equivalent cost is **$53.3267152**; one failed AS attempt lacks usage, so the
+complete cost is unknown. Incremental subscription cash charge is zero. Known
+tokens: 3,229,136 uncached input; 35,887,232 cached input; 4,327,972 output,
+including 942,954 reasoning tokens.
+
+[Definition](../../sse_multivector/hierarchy-runs/hr36/hierarchy.spec.json) ·
+[Selection](../../sse_multivector/hierarchy-runs/hr36/corpus-selection.spec.json) ·
+[Native audit](../../../oracle-mvp-hierarchy-hr36-v53-auto/target/hierarchy-hr36-v53-auto-thousand-note-v1/HR36/structural-audit.json) ·
+[Code provenance](../../../oracle-mvp-hierarchy-hr36-v53-auto/target/hierarchy-hr36-v53-auto-thousand-note-v1/HR36/code-provenance.json) ·
+[Review command](hierarchy-review-commands.md#hr36--1000-automatically-sampled-notes--higen-v53).

@@ -189,6 +189,34 @@
       "artifact_path": "target/hierarchy-hr32-v51-two-hundred-note-v1/HR32/state.json",
       "sha256": "8c1ce5ce1ce05b5210a0d134c25ab6083b59d56859f3bca7297ead4f4044e50c",
       "family": "Hierarchy"
+    },
+    {
+      "version_id": "HR33",
+      "identity": "e37af185ee2527712a978b0611133bb10cdfd8c0d6918a35c460398e704e9e90",
+      "artifact_path": "target/hierarchy-hr33-v52-two-hundred-note-v1/HR33/state.json",
+      "sha256": "12cb1d2ff1255ac95cb2d58690c37c4f0b5fed7cf18925164dcbc5123a41696b",
+      "family": "Hierarchy"
+    },
+    {
+      "version_id": "HR34",
+      "identity": "9617496e2d7a0ce14212941ca79b78b8a0d34611ec34470ec3b5389c7d41a62c",
+      "artifact_path": "target/hierarchy-hr34-v53-two-hundred-note-v1/HR34/state.json",
+      "sha256": "cb01fdebbc28c605ad86c9a16c8ac79209c1a26f4c7ed95a4f86f41a14f927e4",
+      "family": "Hierarchy"
+    },
+    {
+      "version_id": "HR35",
+      "identity": "48ee8c37313f26ac34b0f1a0b0c312814ece084c80f02642fff724edf9fdcbb1",
+      "artifact_path": "target/hierarchy-hr35-v53-thousand-note-v1/HR35/state.json",
+      "sha256": "aac564fa745ac4a1d753e3f96af0a8bfa56c9bafe9b751a992a8cd5f81d2dd79",
+      "family": "Hierarchy"
+    },
+    {
+      "version_id": "HR36",
+      "identity": "211a41c1da1adf9564e5138c21a4abb4496e3a778eeec57e07c259aed16b8ccc",
+      "artifact_path": "target/hierarchy-hr36-v53-auto-thousand-note-v1/HR36/state.json",
+      "sha256": "94a7f7d6d2e4ad8fac895c0c44ef4d444bece47fff60a4cbd30aaa3205a70a07",
+      "family": "Hierarchy"
     }
   ]
 }

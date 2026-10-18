@@ -696,13 +696,18 @@ hierarchy and its meanings remain unchanged.
 
 ## HR36 — 1,000 automatically sampled notes · HiGen V5.3
 
-Running a full V5.3 hierarchy on an uncurated corpus: the first 1,000
-mechanically eligible notes in fixed event-ID hash order, seed
-`hr36-corpus-v1`, from the frozen 3,774,156-note English-eligible pool.
-The sample has 602 authors. One over-512-token post was skipped; no manual
-reviews, topic quotas, author balancing or earlier curated set are applied.
-ASv6.100, Bootstrap-v133 and Consolidated-grouped-v1 are fixed.
+Complete: **71 nodes, six roots and 683/1,000 notes beneath roots**; 317
+inputs remain outside them. The input inventory includes 61 posts with empty
+ASv6.100 subject lists. All 65 edges narrow observed note sets; every sibling
+lineup finishes within six choices. The offline review-UI check passed.
 
-Review UI is not available until construction completes.
-[Definition](../../sse_multivector/hierarchy-runs/hr36/hierarchy.spec.json) ·
-[Input and execution record](hierarchy-runs.md#hr36--automatically-sampled-1000-note-higen-v53).
+The corpus is a fixed-seed automatic sample (`hr36-corpus-v1`) from the frozen
+English-eligible pool, without manual reviews, topic quotas or author balancing.
+Bootstrap-v133 and Consolidated-grouped-v1 are fixed. Semantic review is pending.
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos
+./oracle-mvp-hierarchy-hr36-v53-auto/target/hr36-review-ui-v1/launch.sh
+```
+
+[Input, code and accounting record](hierarchy-runs.md#hr36--automatically-sampled-1000-note-higen-v53).
