@@ -8344,3 +8344,16 @@ quality review is pending. All sampled wrong placements remain visible. This
 does not activate a HiGen policy or simulate regenerated children. See the
 [preview evidence and limitations](hierarchy-note-bend-admission-v1.md#saved-hr38-preview).
 No new vectors, labels, scores, model calls or training were used.
+
+The user then authorized inspecting the preview additions. A
+[supplemental frozen review](hierarchy-note-bend-admission-v1.md#supplemental-review-of-the-actual-preview)
+of 33 previously unreviewed placements finds 14 supported, 11 wrong and eight
+unresolved agent judgments. This is a separate root-stratified inspection, not
+a pooled accuracy estimate. Six of eight sampled C00006 placements confuse
+services, messages or conduct with people; four of eight C00005 placements lack
+the AI role present in their matching references. Useful publication, health
+and actor routes also recur. The recommendation is to retain the experimental
+candidate without adopting it unchanged; repeated broadening, rather than
+isolated imperfection, remains the concern. All additions and prior judgments
+are preserved. Mechanical evidence checks pass; no new scoring, encoding,
+model calls, hierarchy modification or UI refresh occurred.

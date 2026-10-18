@@ -108,6 +108,64 @@ placements rather than silently removing them. There are no new scores,
 encodings, LLM calls or training; this is a mechanical preview, not semantic
 certification. The live review UI has not been refreshed.
 
+### Supplemental review of the actual preview
+
+The user authorized inspecting the added notes before deciding whether to
+adopt the pass. A frozen supplemental selection inspects eight previously
+unreviewed proposed note/root placements per root, or all available when fewer
+remain. Selection is by SHA256 of a fixed prefix, root ID and note ID, before
+judgments. This yields 33 placements across 32 distinct notes, with no overlap
+with the prior 53 reviewed notes. It is root-stratified, not a population error
+estimate, and is not pooled with the earlier sample.
+
+Review uses each full post, the selected entries and actual accepted references,
+including relevant families outside the winning fusion group. Synthetic root
+names do not establish scope. Unselected headings cannot rescue a proposal.
+Broad accepted Life meanings are not silently restricted to positive feelings;
+unclear activity/goal, depiction and communication-purpose relationships remain
+unresolved. These are provisional agent judgments, not new human gold.
+
+| Root | Supported | Wrong | Unresolved |
+|---|---:|---:|---:|
+| C00001 · General knowledge | 6 | 1 | 1 |
+| C00002 · Life and activity | 4 | 0 | 4 |
+| C00003 · Daily life | 1 | 0 | 0 |
+| C00004 · United Kingdom | No additions | — | — |
+| C00005 · Society and technology | 1 | 4 | 3 |
+| C00006 · Humanity and humaneness | 2 | 6 | 0 |
+
+Useful additions include Books through accepted Publications, Health through
+Well-being, and Voice actors and Actors through People. The root placement can
+be useful even when an unrelated winning group is not a defensible semantic
+explanation: radio-spectrum measurements fit accepted Data, for example.
+
+Two repeated mismatches matter to adoption:
+
+- C00006 admits Amazon Mechanical Turk (L07047), Mockery (L09290),
+  Transmissions (L09404), Summaries/Invitations, Pretending/Deception and Nostr
+  relays (L09342) through its People group. Services, messages and conduct do
+  not become human beings because people use, send or perform them.
+- C00005 admits Self-portraits (L09409), conventional graphics tools and icons,
+  interactive telescope-image viewing (L01781), and Builds (L00622) through an
+  AI-specific group without an established AI role. Ordinary art or software
+  can fit C00001 while remaining a wrong extra route in C00005.
+
+The assessment is to retain the candidate and preview but **not recommend
+adopting the unchanged rule yet**. The concern is repeated broadening of People
+and AI-specific topics, rather than a requirement for perfect precision. No
+group is blacklisted, threshold retuned, reviewed label used in scoring, or
+saved proposal removed. The coverage count remains 85.6%; it does not measure
+useful coverage or establish acceptable browsing noise.
+
+Evidence: `target/food-halves-v1/hr38-preview-quality-review-v1/`. Frozen input
+SHA256: `3878c21faf4440e32430f771fb4b3d8a35b0a06aa9c62fb127fdf62eb1311c6c`.
+`review.json` preserves all 33 rationales and accepted-reference witnesses;
+`verification.json` checks source hashes, exact selected entries in the actual
+preview, witness membership, sample disjointness and unchanged preview files.
+No scores, vectors, hierarchy files, prompts or model-call allowances changed.
+No new encodings, model calls, training or UI refresh occurred. Human review and
+any subsequent implementation or full-run decision remain open.
+
 ## Exact change
 
 Keep the original accepted-only fusion groups and full-meaning scores. For
