@@ -6981,3 +6981,133 @@ hashes and `review.md` preserve reproduction. Land these maintained findings;
 keep generated evidence ignored and retain the task worktree for frozen paths.
 No LLMs, training, new encodings, paid resources, new labels, prompts, official
 hierarchy artifacts, spreadsheet entries or UI changes.
+
+## HR36 reference-curve diagnosis: sparse constraints and an isolation clue
+
+The human approved inspecting accepted-reference signals in the six problematic
+HR36 groups, with all outsider scores and judgments fixed. No replacement
+boundary is implemented or adopted. Evidence:
+`target/food-halves-v1/hr36-reference-curves-v1/` in the retained food-halves
+worktree. Frozen plan SHA256
+`6d7c07733f71331266fd2eb36837c1860ded113357fcadab111267788d3c162f`.
+The six groups were selected from known failures: this is targeted development
+evidence, not independent validation. Sports and broad AI are unchanged controls.
+
+### The previous 28/28 result has only five dependent useful cases
+
+Recheck each useful entry's passing groups under the earlier tightening-only
+zero-error witness. **Only five of 28 useful cases depend on any adjusted
+group**; the other 23 already have routes through unchanged groups:
+
+- Books can use Photography at or below 0.017844 **or** Technology at or below
+  0.014706. Each is an alternative to the other; both cannot be disabled.
+- Arsenals and Ukrainian forces depend on the Defence group.
+- LLMs and chatbots depend on the AI models/agents group.
+- None of the five useful Sports cases depends on Gaming, the group that
+  admitted the unwanted software cases. The Bitcoin initiative/media group
+  likewise has no dependent useful outsider in this sample.
+
+The earlier mathematical ceiling remains correct. But it does not validate
+replacement boundaries for every group: disabling some whole groups would
+appear successful because the sample contains no useful outsider needing them.
+Preserve original valid member meanings as controls too, including the rare
+roleplaying-game meanings. No provisional label is changed.
+
+### Accepted-member gaps do not locate a shared boundary
+
+Calculate every accepted root entry's unchanged mean meaning affinity to each
+fixed target/control group, excluding its own source note. Preserve full
+member/nonmember score curves, with one cumulative unit of mass per source note,
+and all raw/log adjacent gaps. Other accepted groups are comparison evidence,
+**not semantic-negative labels**. Save the reference-only results before
+joining the previous label-dependent diagnostic ranges.
+
+| Problematic group | Must exceed reviewed unwanted score | Constraint from uniquely dependent useful cases |
+|---|---:|---|
+| C00001 Photography | 0.010260 | Books has the Technology alternative |
+| C00001 Technology | 0.013730 | Books has the Photography alternative |
+| C00003 Defence | 0.021150 | At or below Arsenals' 0.037675 |
+| C00004 Bitcoin initiative/media | 0.034077 | No dependent useful outsider |
+| C00005 Gaming | 0.049963 | No dependent useful outsider |
+| C00006 AI models/agents | 0.124425 | At or below LLMs' 0.140704 |
+
+These ranges use known judgments and other groups' saved witness boundaries.
+They are not automatic numerical settings. No individual upper bound for
+Photography or Technology means neither can be varied independently without
+considering Books' alternative-route constraint.
+
+There is no consistent largest-gap signal across these distributions:
+
+- Defence's largest member log gap is 0.017501–0.044096; geometric midpoint
+  0.027780 falls inside its retrospective feasible range.
+- Gaming's largest member log-gap midpoint is 0.036480, **below** the unwanted
+  maximum 0.049963; it would not reject the software cases.
+- AI's largest gap is 0.139812–0.219318, midpoint **0.175109**. That lies above
+  both LLMs (0.140704) and chatbots (0.166945). It separates accepted-subtopic
+  variation, not unwanted outsiders.
+- The full-reference Photography curve's lower bound lies in the small
+  0.010222–0.010300 gap, rank 95 among log gaps. Technology's is inside
+  0.013726–0.013738, rank 645. These are dense reference regions, not dominant
+  breaks. A group-member-only gap does not solve the full-reference problem.
+
+The existing anchored-neighbor bend is unavailable for five of the six target
+groups. Its Bitcoin-group boundary 0.010801 is below the old minimum and the
+unwanted scores. All historical curves and failed member-bend controls remain
+unchanged. Another uniform largest-gap/member-bend adjustment is not justified
+by this evidence; this does not prove every reference-only estimator impossible.
+
+### Exploratory clue: raw closest-peer meaning agreement
+
+After that planned inspection, freeze a separate exploratory nearest-peer
+check, SHA256
+`270cb71df14fba5a1b9bee7d34e008ede27412623cd96fa5118ce8eca79d0541`.
+For all 126 members of the eight target/control groups, record the maximum
+meaning-vector cosine to a same-group member from **another source note**.
+This uses raw similarities before mutual-neighbor pruning, and does not alter
+outsider scoring, fixed memberships or the accepted graph.
+
+| Existing reference | Closest cross-note meaning cosine | Comparison |
+|---|---:|---|
+| IRIB in Photography | 0.15949 | Next least-connected member: Imago at 0.54657 |
+| Technology: named posting destination | 0.23124 | Next least-connected member: Technology at 0.71322 |
+| AI agents, L04632 | 0.69301 | Valid specialized agents, despite zero mutual meaning edges |
+| AI agents, L02645 | 0.77778 | Valid agents setting the group's lowest mean support |
+| Roleplaying-game character backgrounds | 0.42964 | Valid, rare narrower topic with weaker cross-note support |
+
+This separates the two conspicuous isolated-reference examples from the valid
+low-mean AI agents; mutual graph-edge absence did not. It is a potential
+reference-quality signal, **not an admission rule or a universal cosine cutoff**.
+Rare valid topics also have weaker support. Even correctly identifying an
+isolated reference does not determine the next boundary: deleting IRIB and
+using the next Photography member's mean 0.046524 would exceed Books' 0.017844
+route. Technology's next minimum 0.127563 likewise exceeds Books' alternative.
+No reference is deleted and no next-minimum rule is adopted.
+
+The next proposed investigation is whether the existing meaning-distance
+clustering, applied within the fixed groups only as a diagnostic, isolates
+IRIB/the Technology destination while retaining valid AI agents and rare
+roleplaying topics. Track source-note identities so several entries from one
+post are not presented as independent support. Keep canonical/reference
+membership and outsider mean scores unchanged. This would qualify the isolation
+signal before defining an admission boundary, not supply a complete solution itself. That clustering
+investigation has not been run here; do not imply an approved policy change.
+
+### Verification and saved evidence
+
+Eight groups produce **2,282 accepted-reference scores**. All **126 existing
+member scores** replay exactly. Independent scalar cosine/kernel means check
+3,424 pairs, maximum error `4.44e-16`. Curve note mass totals one per source
+note. The overlay reproduces 53 panel constraints, including repeated C00001
+constraints. All four saved reference-stage file hashes remain unchanged after
+the overlay, and all source/assessment hashes remain unchanged. Core calculation
+takes **0.35 seconds**. The exploratory nearest-peer inspection checks all 126
+scalar maxima within `1e-14` and exactly reproduces its retained result bytes.
+
+Keep complete accepted-reference scores, curves and gaps; original model
+summaries; all diagnostic outsider overlays; joint useful-route dependencies;
+and every closest-peer value/identity. `evaluation-sources.json` pins the ignored
+calculation scripts; `verification.json` and `review.md` preserve checks and the
+compact report. No new production code, APIs, tests or runtime components.
+No LLMs, training, encodings, paid resources, hierarchy/prompt/UI changes,
+spreadsheet updates or HR37/38 execution. Land the maintained findings on local
+`main`; retain the task worktree for frozen evidence and vector source paths.
