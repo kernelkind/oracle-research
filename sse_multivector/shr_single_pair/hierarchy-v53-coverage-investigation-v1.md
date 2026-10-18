@@ -7662,3 +7662,185 @@ remain ignored; reusable experimental code/tests and maintained findings land
 on local `main`. Retain the task worktree for frozen vectors/evidence paths.
 No LLM calls, training, new encodings, paid resources, hierarchy/prompt/UI
 changes, official-run spreadsheet updates or HR37/38 execution.
+
+## HR37 transfer: note coverage tightens admission, with useful losses
+
+The human authorized testing the preceding reference-note boundary **unchanged
+on HR37**, including local frozen SSE encoding. This transfer removes unwanted
+matches, but also loses useful matches. **It does not establish preserved
+hierarchy quality or justify automatic adoption.** No rule, score, parameter,
+reference membership, prompt or hierarchy was changed to improve these results.
+
+Evidence: `target/food-halves-v1/hr37-note-coverage-transfer-v1/` in the retained
+food-halves worktree. Frozen plan SHA256
+`0b398f34f761f34898947b03873a99007dddeb73cc6dd9ebacc7eed84e21cfac`;
+pre-score judgments SHA256
+`89c1fd4652d066ab4e58d71ed67e633c80cd29db12ef46ecfe9879af73b66843`;
+native baseline-selected audit judgments SHA256
+`59dab5a83b13a7b1f94d89c8e9f7df490946ed700beaceff7b9083f63ad4bca5`.
+The candidate remains the exact function from `014cb381`.
+
+### Fresh notes, fixed references, independently evaluated outsiders
+
+HR37 has 1,000 notes: 622 already represented, 378 omitted. Of the omitted
+notes, 290 supply 1,279 usable title/meaning entries; the other 88 have no usable
+meaning and cannot be placed by this test. HR37 shares no source-note IDs with
+either HR35's or HR36's complete 1,000-note corpus. Repeated definition text
+can still occur; fresh note identity does not imply novel semantic wording.
+
+Use only each HR37 root's original first-version entries, without later
+amendments, descendants or synthetic representatives. The six collections have
+388, 297, 93, 54, 194 and 77 entries, respectively. Retain the two old Food/Arts
+reference collections and their exact groups/boundaries as separate transfer
+controls. These are eight reference collections, not eight roots of one graph.
+
+Encode the entire explicit meaning and, separately, the title in its original
+`title + two newlines + meaning` context. Reuse 47 exact saved entry encodings;
+encode 2,325 new contexts plus nine exact-replay controls, yielding 4,668 local
+SSE rows. Use the same frozen checkpoint/base artifact and actual pinned
+Python/Torch/Transformers runtime, on the host CPU with 12 threads. The config's
+container descriptor is provenance; this execution did not use Docker.
+
+For each own root, retain the unchanged accepted-only title/meaning fusion:
+20 neighbors, sigma 0.5, 20 exchanges, HDBSCAN minimum samples 3 and group size
+2. This produces 54, 35, 3, 5, 22 and 11 fixed fusion groups. C1/C2/C3 report
+disconnected-distance/infinite-MST warnings; preserve those warnings and groups,
+without silently changing the algorithm. Old Food/Arts retain their 15/25 groups.
+Score each outsider independently using the original mean full-meaning kernel,
+`exp(-5.5 * (1 - clipped cosine))`, against each group's members. No outsiders
+enter fusion or reference calibration. No synthetic-root vector is scored.
+
+The original weakest-member boundary and the candidate see identical scores.
+Freeze reference calibrations before query scoring. Preserve all accepted
+entries; the changed boundaries govern outsider proposals only.
+
+### Frozen panels show the tradeoff
+
+Before query predictions, freeze judgments on 64 distinct entries: one entry
+from each of 24 deterministically sampled omitted notes, plus 40 deterministically
+sampled keyword-title entries. Judge all 64 against old Food and old Arts.
+These are provisional agent judgments, not human gold or inputs to the rule.
+The title-focused and random cohorts are saved separately; do not pool them
+into an unbiased accuracy estimate.
+
+| Pre-score HR37 entries against fixed old references | Useful selected, baseline → candidate | Unwanted selected, baseline → candidate |
+|---|---:|---:|
+| Food: 12 useful, 50 unwanted, 2 unresolved | 11 → 11 | 0 → 0 |
+| Arts: 29 useful, 33 unwanted, 2 unresolved | 15 → 13 | 0 → 0 |
+
+The Arts losses are Piano L00013 and Films L00690. Piano's note retains old
+Arts routes through YouTube, Interpretation of music and Music appreciation.
+The Films note loses its old Arts route entirely. Across the 19 notes with a
+reviewed useful Arts heading, any-heading mechanical retrieval is **15 → 14**;
+requiring a reviewed useful heading gives **12 → 10**. These are different
+measurements. Alternate unreviewed headings do not become semantically approved.
+Food retains all seven reviewed useful notes under both measurements. The
+random cohort has only two Arts positives and no Food positives; most useful
+cases here come from title-focused sampling. No previous human control is
+represented as new HR37 gold.
+
+For the six own roots, select 12 baseline-admitted entries per root by a frozen
+hash order, without score-magnitude selection. Review the 72 cases against the
+actual accepted families, then freeze judgments **before computing candidate
+query decisions**. A generic synthetic title does not determine the root's
+allowed scope. Ambiguous topic extensions remain unresolved.
+
+| Own HR37 root | Useful selected | Unwanted selected | Unresolved selected |
+|---|---:|---:|---:|
+| C00001 · Society, economy and technology | 2 → 0 | 8 → 0 | 2 → 0 |
+| C00002 · Society and culture | 7 → 7 | 2 → 2 | 3 → 3 |
+| C00003 · Creation and technology | 6 → 2 | 4 → 0 | 2 → 2 |
+| C00004 · Activities and interactions | 8 → 8 | 3 → 3 | 1 → 1 |
+| C00005 · Activities and systems | 5 → 5 | 3 → 3 | 4 → 4 |
+| C00006 · General knowledge | 8 → 8 | 1 → 1 | 3 → 3 |
+| Total | **36 → 30** | **21 → 9** | **15 → 13** |
+
+This audit is deliberately selected from baseline proposals: every baseline
+count equals its panel size. It measures which sampled proposals tightening
+removes; it does not measure recall over all omitted topics. The 12 unwanted
+removals include cat depictions, karsts, quantum phases and general algorithms
+from C1, and digestion/comprehension/appearance/affect topics from C3.
+
+The six useful native losses are Nostr infrastructure developments and the
+Commonwealth of Nations from C1, plus YouTube, Music release dates, Film
+contests and Wallpaper* magazine from C3. Both C1 notes retain another C1
+heading. Of C3's six reviewed useful notes, four retain some C3 heading;
+the music-release and magazine notes lose their C3 route. They retain proposals
+elsewhere, but unrelated-root reachability is not proof of preserved browsing
+quality. Keep the exact loss definitions, judgments and alternative routes.
+
+### Why boundaries change, and what note counts conceal
+
+Only **12 of 170 boundaries change**, five of them the same old Food/Arts
+boundaries already derived before HR37. Own C4/C5/C6 have no boundary change,
+so their existing mistakes cannot improve under this candidate.
+
+For own C1's Blockstr/Blockwaves group, the old weakest heading is Blockwaves:
+its cross-note member mean is 0.0092268, despite a group median of 0.837851.
+Its note has a stronger Bitcoin route, so it need not set the threshold to keep
+that reference note. The boundary rises to **0.143374**, removing many unrelated
+outsiders. The fiatjaf/Fiat currency group rises **0.0118596 → 0.0187823**;
+its mixed developer/currency membership remains untouched. The United States
+group rises **0.0250898 → 0.0644381**. Do not claim these numerical changes
+repair the underlying group composition.
+
+C3's large Art/Photography/Images group rises **0.0211967 → 0.0406869**. Its
+weakest Images heading's note retains a stronger route; an independent
+Photographers reference limits the new requirement. This removes four unwanted
+audit matches and four useful ones. Reference self-recovery does not guarantee
+an unseen audiovisual/design topic clears that same boundary.
+
+Across all omitted entries, own-root proposals cover **266 → 261 distinct
+notes**; this is potential expansion, not validated or applied coverage.
+The five notes losing every own-root proposal concern Colorado cycling,
+British Columbia daylight saving time, a named build, Cocoon Ibiza, and a
+Japanese US/CPI/inflation news item. Do not label all five losses errors:
+several old routes were weak unrelated matches.
+
+The Japanese financial note is a concrete post-result useful-loss observation,
+kept outside frozen-panel metrics. Its CPI definition describes an economic
+price-change indicator, coherent with accepted Prices/Finance families. Its
+only old own-root route was the fiatjaf/Fiat currency group: score **0.0124604**,
+between the old and new boundaries. The note now loses every proposal.
+The Japanese United States heading was already missed by the baseline; it was
+not the route removed here. This shows a financial-topic miss, without proving
+whether language, score representation or group composition uniquely caused it.
+
+### Verification, status and retained evidence
+
+All 2,382 reconstructed titles match native HR37 title vectors within maximum
+cosine error **2.83e-13**. The 18 exact-replay rows have zero maximum absolute
+error. Receipt/model/checkpoint/request hashes, masks and every protected
+source validate. Old reference thresholds replay within **6.67e-16**, while
+their saved exact values remain authoritative. Independent kernels and 2,210
+scalar group-mean checks match; isolation, permutations and duplicate query
+checks pass. Query source notes are absent from all references.
+
+Replay all **217,430 query/group scores** with exact comparisons. Every new
+proposal is a subset of old proposals. Independent rational ratios and
+120-digit decimal products reproduce all boundaries, and all **950 eligible
+reference-note/root pairs** retain a route. Another 52 reference-note/root
+pairs have no eligible group route and are outside that guarantee. All 76
+relevant numerical tests pass. Reference construction plus baseline scoring
+takes 4.67 seconds after encoding; candidate replay takes 0.10 seconds. These
+exclude encoding, human/agent review and artifact preparation time.
+
+The transfer shows real rejection improvement **with a retrieval cost**.
+It strengthens evidence that note-based calibration can suppress weak-heading
+admissions, while disproving any claim that its reference guarantee preserves
+all useful outsider routes. Keep the candidate experimental; do not tune it
+on these outcomes or call hierarchy quality preserved. Compare the saved
+useful losses and unchanged-root mistakes before choosing another experiment.
+
+Retain the frozen plan, worker request/config/receipt/vectors, pre-score and
+native audit selections/assessments, fixed group compositions, raw score
+matrices, baseline/candidate outcomes, root calibrations, exact checks,
+`reviewed-useful-loss-traces.json`, `notes-losing-all-own-root-proposals.json`,
+`post-result-japanese-cpi-observation.json`, cross-corpus provenance, source
+hashes and `review.md` in the ignored evidence directory. A preliminary
+Japanese-US diagnostic is explicitly superseded by the checked CPI trace;
+its empty route trace exposed the incorrect heading attribution. Maintained
+findings land on local `main`; retain this worktree for frozen artifact paths.
+No LLM/provider calls, training, paid resources, hierarchy/prompt/UI changes,
+official-run spreadsheet updates, or HR38 execution occurred. Local frozen
+SSE encoding was the only new model computation.
