@@ -156,10 +156,8 @@ def choose_groups(groups, size, seed):
     raise ValueError('cannot make exact split counts with complete author groups')
 
 
-def freeze(spec, destination, preview=False):
-    if destination.exists():
-        raise ValueError('sample output already exists')
-    cfg = read(spec)
+def sample_inputs(cfg):
+    """Validate shared source/token bindings before either selection mode."""
     source = Path(cfg['candidates']).resolve()
     candidates = rows(source)
     digest = sha(source)
@@ -172,6 +170,81 @@ def freeze(spec, destination, preview=False):
         raise ValueError('duplicate/missing source or token records')
     if candidates != sorted(candidates, key=lambda r: (r['selection_order_sha256'], r['note_id'])):
         raise ValueError('candidate hash order differs')
+    return source, candidates, digest, token_path, token_records
+
+
+def freeze_automatic(cfg, spec, destination):
+    """Take the first mechanically eligible posts, without review or balancing."""
+    if set(cfg) != {'selection_mode', 'candidates', 'token_counts', 'candidate_manifest', 'seed', 'count'}:
+        raise ValueError('automatic sample requires only source, token, seed and count settings')
+    if type(cfg['count']) is not int or cfg['count'] < 1 or not isinstance(cfg['seed'], str) or not cfg['seed']:
+        raise ValueError('automatic sample requires a positive count and nonempty seed')
+    source, candidates, digest, token_path, token_records = sample_inputs(cfg)
+    export_path = Path(cfg['candidate_manifest']).resolve()
+    exported = read(export_path)
+    if exported['candidates_sha256'] != digest or exported['canonical_event_ids_verified'] is not True:
+        raise ValueError('candidate export receipt differs')
+    if exported['config']['selection_domain'] != cfg['seed']:
+        raise ValueError('candidate selection domain differs from seed')
+    selected, rejected = [], Counter()
+    for ordinal, row in enumerate(candidates, 1):
+        rank = hashlib.sha256(cfg['seed'].encode() + bytes.fromhex(row['note_id'])).hexdigest()
+        if rank != row['selection_order_sha256']:
+            raise ValueError('candidate hash rank differs from seed')
+        tokens = token_records[row['note_id']]
+        if tokens['text_sha256'] != text_sha(row['text']):
+            raise ValueError('token receipt text differs')
+        if row['canonical_event_id_verified'] is not True:
+            raise ValueError('unverified source event')
+        if not row['root_non_quote']:
+            reason = 'reply_or_quote'
+        elif not row['text'].strip():
+            reason = 'empty_text'
+        elif tokens['tokens'] > 512:
+            reason = 'over_512_tokens'
+        elif row['language_decision'] not in {'keep_english', 'keep_language_neutral'}:
+            reason = 'source_language_filter'
+        else:
+            reason = None
+        if reason:
+            rejected[reason] += 1
+            continue
+        selected.append(dict(row, tokens=tokens['tokens']))
+        if len(selected) == cfg['count']:
+            break
+    if len(selected) != cfg['count']:
+        raise ValueError('automatic sample has insufficient eligible candidates')
+    summary = dict(selected=len(selected), required=cfg['count'], review_needed=0,
+        exclusions=dict(rejected), examined_candidates=ordinal, source_sha256=digest, inference_calls=0)
+    notes = [dict(note_id=r['note_id'], pubkey=r['pubkey'], text=r['text'], origin=dict(
+        pubkey=r['pubkey'], candidate_source=str(source), candidate_source_sha256=digest,
+        selection_order_sha256=r['selection_order_sha256'], text_sha256=text_sha(r['text']),
+        tokens=r['tokens'])) for r in selected]
+    manifest = dict(schema_version=1, **summary, selection_mode='automatic', seed=cfg['seed'],
+        selection='first eligible original posts in domain-separated event-ID hash order; no manual reviews or topic/author quotas',
+        eligibility=dict(root_non_quote=True, nonempty_text=True, maximum_tokens=512,
+            language_decisions=['keep_english', 'keep_language_neutral']),
+        authors=len({r['pubkey'] for r in selected}),
+        candidate_export=exported,
+        protected_sources={str(source): digest, str(token_path): sha(token_path),
+            str(export_path): sha(export_path), str(spec.resolve()): sha(spec)})
+    publish_sample(destination, {'notes.json': dict(schema_version=1, notes=notes),
+        'manifest.json': manifest, 'original-events.jsonl': [r['event'] for r in selected]})
+    return dict(**summary, destination=str(destination))
+
+
+def freeze(spec, destination, preview=False):
+    if destination.exists():
+        raise ValueError('sample output already exists')
+    cfg = read(spec)
+    mode = cfg.get('selection_mode', 'reviewed')
+    if mode == 'automatic':
+        if preview:
+            raise ValueError('automatic sampling has no manual review preview')
+        return freeze_automatic(cfg, spec, destination)
+    if mode != 'reviewed':
+        raise ValueError('unknown post sample selection mode')
+    source, candidates, digest, token_path, token_records = sample_inputs(cfg)
     prior_path = Path(cfg['prior_review']).resolve()
     prior = {r['note_id']: r for r in read(prior_path)['notes']
              if r.get('source', {}).get('origin') == 'frozen-1000'}
@@ -278,6 +351,11 @@ def freeze(spec, destination, preview=False):
         for s in sizes:
             files[s + '.json'] = dict(schema_version=1, sources=[dict(path=str(destination.resolve()/'notes.json'),
                 format='posts', select=[n['note_id'] for n in notes if n['origin']['split']==s])])
+    publish_sample(destination, files, include_manifest=not preview)
+    return dict(**summary, destination=str(destination))
+
+
+def publish_sample(destination, files, include_manifest=True):
     destination.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix='.post-sample-', dir=destination.parent) as temporary:
         stage = Path(temporary)
@@ -286,8 +364,7 @@ def freeze(spec, destination, preview=False):
                 (stage/name).write_text(''.join(json.dumps(r, ensure_ascii=False)+'\n' for r in value))
             else:
                 write(stage/name, value)
-        if not preview:
+        if include_manifest:
             files['manifest.json']['files'] = {p.name: sha(p) for p in stage.iterdir() if p.name != 'manifest.json'}
             write(stage/'manifest.json', files['manifest.json'])
         stage.rename(destination)
-    return dict(**summary, destination=str(destination))
