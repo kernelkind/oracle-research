@@ -2,9 +2,12 @@
 
 Experimental numerical investigation, 2026-10-18. **Do not adopt as a HiGen
 policy.** The task is six useful root sections retaining strictly more than 80%
-of original corpus notes. Recovery under note removal provides a diagnostic but
-did not produce satisfactory root choices. No prompts, canonical hierarchies or
-review UIs changed. No model calls, encodings, training or paid resources.
+of original corpus notes; the latest probe explores 90%. The user prefers cut A
+and explicitly accepts broad root topics because deeper levels provide
+narrowing. Root breadth alone is not a failure criterion. Recovery under note
+removal provides a diagnostic, without establishing better browsing choices.
+No prompts, canonical hierarchies or review UIs changed. No model calls,
+encodings, training or paid resources.
 
 ## Question and controlled inputs
 
@@ -54,7 +57,7 @@ optimality guarantee or semantic similarity cutoff.
 The control minimizes within-section squared differences of group centroids
 under identical tree, membership and coverage constraints.
 
-## Result: repeatability alone favors a broad catch-all
+## Result: repeatability favors one large section and five small sections
 
 | Corpus | Variance control | Recovery selection | Largest recovery section |
 |---|---:|---:|---:|
@@ -65,9 +68,10 @@ under identical tree, membership and coverage constraints.
 All choices have six sections and exceed the numerical retention floor. But
 the recovery objective selects a large mixed section and five tiny sections,
 mostly financial/cryptocurrency topics. HR38's large section includes AI, news,
-people, countries, art, greetings and technology. This does not resolve useful
-browsing categories. Its held-out recovery remains high (0.962), so merely
-checking fresh subsets does not remove the problem.
+people, countries, art, greetings and technology. Its held-out recovery remains
+high (0.962). This reproduces the size imbalance; it does not establish whether
+subsequent narrowing makes the hierarchy useful. The user's later review
+accepts broad roots and must not be described as a rejection of root breadth.
 
 ## Shuffle control for the size advantage
 
@@ -79,7 +83,7 @@ group IDs eight times, preserving tree shape and branch sizes. Repeat the
 including the complete tree, contributes zero evidence. Negative adjusted
 values are retained. Shuffle seeds are `20261019 + 1000000 + repeat`.
 
-This was specified after seeing the raw selection's catch-all failure; it is an
+This was specified after seeing the raw selection's section-size imbalance; it is an
 adaptive diagnostic, not a prospectively chosen primary result.
 
 | Corpus | Adjusted selection | Largest section |
@@ -88,8 +92,8 @@ adaptive diagnostic, not a prospectively chosen primary result.
 | HR37 | 801 / 1,000 (80.1%) | 711 notes; 358 groups |
 | HR38 | 1,602 / 2,000 (80.1%) | 1,428 notes; 654 groups |
 
-Correction changes some small sections but retains the same broad catch-all
-in every corpus. It does not rescue this root-selection objective. Eight
+Correction changes some small sections but retains the same large section
+in every corpus. It does not materially change the root choices. Eight
 shuffles are a finite diagnostic, not an exact null-distribution calculation.
 
 ## Sports/war diagnostic
@@ -107,7 +111,8 @@ groups/159 notes. Their note sets overlap; counts must not be added as coverage.
 These are mean best-branch Jaccard agreements, not semantic accuracy scores.
 The smaller sports child is more reproducible than the selected parent, while
 the 125-group finance section has held-out agreement 0.835. Thus the diagnostic
-does distinguish some strong smaller sections from weak broad mixtures.
+does distinguish some more-repeatable smaller sections from less-repeatable
+broader branches. That distinction is not a semantic or usability judgment.
 
 Using fixed agent-selected headings only for inspection:
 
@@ -119,9 +124,9 @@ Using fixed agent-selected headings only for inspection:
 
 The broad tree therefore usually has a sports branch separate from War before
 the six-section choice. The cut selects their broader ancestor. This localizes
-this failure to the branch choice in this probe; it does not prove individual
-notes caused the merge, establish a general semantic boundary or imply six
-useful roots are impossible.
+the combined placement to the branch choice in this probe; it does not prove
+individual notes caused the merge or establish a general semantic boundary.
+The user's later review explicitly accepts this broad-root choice in A.
 
 ## Visual comparison of two six-section cuts
 
@@ -147,8 +152,10 @@ summed as distinct-note coverage.
 
 This illustrates an actual trade between available cuts, not a new automatic
 selection rule or a claim that B is semantically superior. Both meet the
-numerical requirements; whether the broader combined section is useful remains
-for review. The official HR38 HiGen hierarchy is untouched.
+numerical requirements. The user reviewed the PNGs, preferred A, and explained
+that broad root topics are acceptable because deeper levels provide narrowing.
+This is a research preference, not activation of a new HiGen policy. The official
+HR38 HiGen hierarchy is untouched.
 
 Ignored review artifacts alongside `note-resampling-v1/`, in
 `competing-cuts-review-v1/`, contain the side-by-side PNG, collapsed-tree PNG,
@@ -156,6 +163,55 @@ exact note/group memberships, input hashes and the single-comparison renderer.
 Image filenames are `hr38-competing-six-section-cuts-v1.png` and
 `hr38-competing-cut-branches-v1.png`. Actual set-union checks verify all counts,
 30 gained notes, zero lost notes and exactly six disjoint branches in both cuts.
+
+## Ninety-percent coverage probe
+
+The user next requested exploration of 90% coverage. The fixed original
+975 HDBSCAN groups contain only 1,778/2,000 notes (88.9%): no cut over just
+those groups can reach 90%. The original clustering input also contains 3,580
+unassigned entries. Together, all 10,188 valid native inputs represent
+1,829 notes (91.45%). The other 171 notes have no entry in this saved native
+clustering input; this probe assigns no fault for their absence.
+
+The three saved full-meaning banks have exact matches for 4,648 original
+entries across 1,778 notes, also below 90%. This follow-up therefore uses the
+complete **native title-pooled vectors with each meaning as context**, uniformly
+for groups and unassigned entries. A used full-meaning pooling and partial
+original groups. Both representation and eligibility change, so the resulting
+coverage is not a matched quality improvement over A.
+
+Keep each original HDBSCAN group intact with all original members. Make each
+originally unassigned entry an additional eligible singleton unit; none is
+automatically admitted. Construct unit centroids, rebuild the Ward tree and
+reuse the variance cut objective with six disjoint branches and at least 1,800
+distinct original note IDs. No HDBSCAN parameter changes, new encodings or
+teacher calls. No mixture of title-pooled and meaning-pooled vectors.
+
+| Eligible units and cut | Sections | Distinct notes | Coverage |
+|---|---:|---:|---:|
+| Original groups only; complete six-way cut | 6 | 1,778 | 88.9% |
+| Original groups plus unassigned entries; constrained cut | 6 | 1,800 | 90.0% |
+| Same expanded pool; complete six-way cut | 6 | 1,829 | 91.45% |
+
+The constrained result selects 739 original groups and 2,643 originally
+unassigned entries. It gains 42 notes outside the original grouped-note set
+and omits 20 of that original set: a net gain of 22. Relative to A it gains
+214 notes and loses 17, but the changed representation/eligibility prevent a
+controlled causal attribution. Per-section note counts are 329, 1,074, 713,
+776, 931 and 441; these overlap and must not be added. The complete cut keeps
+all available native notes and loses none of A's represented notes. Neither
+result establishes the usefulness of a complete hierarchy with deeper levels.
+
+Plans, exact memberships, vector/tree arrays and numerical results are ignored
+under `ninety-percent-cut-v1/attempt-2/`, beside the other probes. A first local
+attempt stopped on NumPy integer JSON serialization before optimization; its
+source, plan and failure status are retained. The corrected numerical run
+finished in 18.4 seconds and reached a 0.61% solver objective gap. Its coverage
+and disjointness are independently checked from original entry/note IDs.
+
+Numerically, 90% is attainable using existing vectors once unassigned entries
+are eligible. A fair comparison with A's pooling needs additional frozen-SSE
+meaning encodings; none were performed in this probe.
 
 ## Reproduction and verification
 
