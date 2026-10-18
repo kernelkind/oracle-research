@@ -8305,4 +8305,9 @@ in both views, so reweighting those two affected-group aggregate scores cannot
 reverse that contrast. This does not rule out information in other groups or
 individual references, and no combined method is fitted. All 29 input bindings
 remain unchanged, 95 native title rows match and all 182 original meaning/group
-scores replay exactly. A main-noun pooling diagnostic is proposed, not run.
+scores replay exactly. The subsequent
+[reactions-only pooling diagnostic](hierarchy-reactions-selection-probe-v1.md)
+is complete: pooling only reactions in each unchanged full context lowers
+People support by 34–36%, but still puts both entries above five of the six
+actual people classes. The actor word contributes without fully explaining the
+false match. No new admission rule or hierarchy change follows from this test.

@@ -116,9 +116,11 @@ views). No rule for exploiting those differences has been validated here.
 
 The next focused diagnostic is to compare pooling the main noun **reactions**
 with pooling the entire title **Audience reactions**, keeping its full context
-identical. That tests whether the actor word is driving a response-topic match
-to People before introducing another boundary or score weight. It would require
-new frozen SSE views and has not been run or implemented by this comparison.
+identical. The subsequent
+[controlled reactions probe](hierarchy-reactions-selection-probe-v1.md) is now
+complete: People support falls by 34–36%, but both entries still outrank five
+of six actual people classes. That diagnostic changes neither references nor
+admission rules; removing the actor word from pooling is insufficient.
 
 ## Evidence and verification
 
