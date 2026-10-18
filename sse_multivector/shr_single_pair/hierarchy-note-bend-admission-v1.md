@@ -505,6 +505,84 @@ admission behavior, meanings, vectors, encodings, model calls, training,
 hierarchy files or UI changed. The retained research worktree supplies the
 frozen paths and ignored evidence on external storage.
 
+## Named-reference pattern comparison
+
+The next authorized investigation preserves which accepted reference supplies
+each similarity, instead of using only their average. The tested pattern score
+is **worse** than the existing mean on both frozen HR38 groups. It supplies no
+replacement admission rule. Retaining the baseline for comparison does not
+qualify it for adoption.
+
+Keep the exact 51 controls from the within-group study, their provisional
+judgments, full-meaning vectors and accepted groups. People has 16 entries from
+16 source notes; the AI group has seven entries from six notes. For a candidate
+and an accepted member, make two lists in the same reference order: each one's
+raw cosine similarity to the group's other references. Remove the accepted member's entire source
+note from both lists, and also exclude the candidate's entire source note.
+Thus a member's similarity of one with itself cannot supply an artificial
+matching coordinate. Candidates do not enter the reference group.
+
+Subtract each list's mean, then divide their dot product by the product of
+their Euclidean lengths: Pearson correlation of the two similarity patterns. This retains
+the identities of the references while comparing relative rises and falls,
+rather than absolute average similarity. Take the highest correlation across
+available accepted members as the candidate's score. All lists require at least
+two coordinates and nonzero variance; unavailable lists supply no score. No
+weights, transformation, threshold or reference choice is learned from labels.
+This is a descriptive ordering test, not a fitted classifier or an admission
+calibration. The previous thresholds must not be reused on its different scale.
+
+| Same frozen comparisons | Existing mean: useful ranks higher | Pattern score: useful ranks higher |
+|---|---:|---:|
+| Eight People classes × 22 wrong entries | 33 / 176 | 17 / 176 |
+| OpenAI Codex × ten wrong AI entries | 8 / 10 | 6 / 10 |
+
+The People score fixes four pairwise orderings but breaks 20; AI fixes none and
+breaks two. Patient advocacy remains a separately supported humane-treatment
+route, outside the people-class comparison. Eight unresolved People entries
+and one unresolved AI entry keep their original status. These pairings share
+entries and are not independent accuracy samples or whole-note outcomes.
+
+| Entry | Pattern score | Best-matching accepted reference |
+|---|---:|---|
+| Actors · L03676, supported | 0.4915 | People · L04104, with lawyers/actors examples |
+| Astronauts · L03337, supported | 0.3378 | People · L08354, with authors/tennis players examples |
+| Audience reactions · L04535, wrong here | 0.8266 | People · L05254, with reporting/awareness examples |
+| Mechanical Turk · L07047, wrong here | 0.4401 | People · L02897, with sellers/recipients examples |
+| OpenAI Codex · L01833, supported | 0.8863 | Model modifications · L02735 |
+| Figma · L04960, wrong here | 0.9595 | AI Design models · L10024 |
+| Builds · L00622, wrong here | 0.9206 | Model modifications · L02735 |
+
+This particular change puts Actors above Mechanical Turk, but retains Audience
+reactions above both Actors and Astronauts. The latter's pattern resembles
+the accepted reporting/awareness reference through speaking, protocol argument
+and audience examples. Figma similarly resembles the pattern of AI Design
+models without establishing the required AI role. Relative patterns continue
+to reflect related subject matter in these examples. Preserving reference
+identities through this calculation has not supplied the missing distinction.
+This does not prove that every possible reference-aware score must fail.
+
+The calculation also has a generality limit before any possible deployment:
+two-entry groups have only one remaining coordinate and cannot supply a
+correlation; three-entry groups can have only two coordinates, giving degenerate
+correlations of plus or minus one when both vary. No fallback or special-case
+admission behavior is introduced. A broad replay of this failed score is not
+justified by the observed results.
+
+Evidence: `target/food-halves-v1/reference-pattern-ordering-v1/`. Frozen plan
+SHA256: `e91dddb9a0647fa805bc1eb24df2437ebe3015c8ae87726d0e6723dbc6f927d3`.
+`query-patterns.json` retains every query/anchor list, note exclusion,
+correlation, maximizing member and original score. `reference-patterns.json`
+retains the accepted-reference matrices; `ordering-pairs.json` retains all 186
+comparisons. Independent scalar verification reproduces all **708 correlations**
+and their orderings, with maximum numerical error `1.12e-15`; every original
+source hash, semantic status and ASv6.100 binding remains unchanged.
+Query work is O(g*d + g²) for group size g and encoder dimension d; no
+outsider-to-outsider matrix is built. No new encodings, model calls, training,
+clustering, production code, thresholds, admissions, hierarchy files or UI
+updates occurred. Artifacts remain ignored on external storage; retain the
+research worktree for their frozen source paths.
+
 ## Exact change
 
 Keep the original accepted-only fusion groups and full-meaning scores. For

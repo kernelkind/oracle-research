@@ -8419,3 +8419,20 @@ position; this limits monotone order-independent aggregation, not all possible
 scores. Independent arithmetic, prior-array replay and immutable-source checks
 pass. No score, boundary, label, encoder, model call, training, hierarchy or UI
 changes; the practical conservative candidate remains experimental and unchanged.
+
+The next authorized
+[named-reference pattern test](hierarchy-note-bend-admission-v1.md#named-reference-pattern-comparison)
+compares each candidate's ordered similarities with the corresponding list for
+each fixed accepted member, excluding that member's whole source note and the
+candidate's note. Maximum Pearson correlation retains reference identities and
+relative similarity patterns without training or label-fitted weights. It
+worsens the frozen People ordering from 33/176 to 17/176 useful-over-wrong pairs,
+and the separate AI ordering from 8/10 to 6/10. Actors overtakes Mechanical Turk,
+but Audience reactions remains much higher; Figma and Builds outrank Codex.
+The pattern therefore fails as a replacement score, and a larger replay is not
+justified. Small groups also lack enough remaining coordinates for meaningful
+correlations. All 708 correlations and 186 orderings pass independent scalar
+and immutable-source verification; unresolved judgments remain unresolved.
+No encoding, LLM call, training, new semantic labels, production behavior,
+admission, hierarchy or UI changes. The old candidate is retained for research
+comparison, without adoption approval or a demonstrated satisfactory replacement.
