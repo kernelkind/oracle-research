@@ -1,4 +1,5 @@
 """Read the saved graph and original-note references used by hierarchy exports."""
+import hashlib
 import json
 from graphlib import TopologicalSorter
 from pathlib import Path
@@ -9,11 +10,34 @@ except ImportError:
     import canonical_trial
 
 
-def read_hierarchy(directory):
+def _verify_export(directory, state, state_bytes, exported):
+    """Reuse a verified export of these exact state/corpus bytes, not its history."""
+    exported = Path(exported).resolve()
+    provenance = json.loads((exported/'provenance.json').read_bytes())
+    if (Path(provenance['state']).resolve() != directory/'state.json'
+            or provenance['state_sha256'] != hashlib.sha256(state_bytes).hexdigest()):
+        raise ValueError('verified viewer state changed')
+    files = {}
+    for name in ['hierarchy.json','notes.json']:
+        files[name] = (exported/name).read_bytes()
+        if hashlib.sha256(files[name]).hexdigest() != provenance['files'][name]:
+            raise ValueError('verified viewer checksum mismatch: '+name)
+    if json.loads(files['hierarchy.json'])['source_sha256'] != hashlib.sha256(files['notes.json']).hexdigest():
+        raise ValueError('verified viewer note binding differs')
+    corpus = Path(state['corpus'])
+    if (str(corpus) not in state['sources']
+            or hashlib.sha256(corpus.read_bytes()).hexdigest() != state['sources'][str(corpus)]):
+        raise ValueError('verified viewer corpus changed')
+
+
+def read_hierarchy(directory, *, verified_export=None):
     directory = Path(directory).resolve()
     state_bytes = (directory / 'state.json').read_bytes()
     state = json.loads(state_bytes)
-    canonical_trial._check(state, verify_current_code=False)
+    if verified_export is None:
+        canonical_trial._check(state, verify_current_code=False)
+    else:
+        _verify_export(directory, state, state_bytes, verified_export)
     rows = state.get('menu', {}).get('nodes', state['nodes'])
     nodes = {node['id']: node for node in rows}
     if not nodes or len(nodes) != len(rows) or 'VIEW_ROOT' in nodes:

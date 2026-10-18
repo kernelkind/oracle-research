@@ -1973,6 +1973,21 @@ or details.
 Offline export verifies the saved constructor sources and receipts and may run
 from a different checkout; advancing construction still requires its bound
 checkout or a reviewed source upgrade.
+
+For an authorized saved-admission preview, `export-canonical-viewer SAVED
+--output NEW --root-admissions STUDY` applies only the study's frozen
+`MM_note_bend` proposals directly to existing roots in a separate review export.
+It verifies decision hashes, exact constructor-state binding and original-entry
+title/meaning/note identities. It does not change construction state, recompute
+scores, regenerate children or perform inference. The output includes
+`root-admissions.json`; a new output directory is required. This is an
+experimental preview, not a production HiGen policy.
+Optional `--base-viewer VERIFIED_EXPORT` reuses an existing export's
+`provenance.json` after checking the exact state, corpus and exported-file hashes,
+instead of revalidating the historical construction inputs. Ordinary exports
+retain their full validation. The
+[HR38 preview](shr_single_pair/hierarchy-note-bend-admission-v1.md#saved-hr38-preview)
+records the coverage gain and remaining quality limitations.
 Source-bound Compare preparation remains available for evaluating
 fixed V3, V3.1 or V3.2 definitions independently. Historical `audit-canonical-trial`,
 `shape-canonical-trial`, candidate measurements and policy-cost comparisons are

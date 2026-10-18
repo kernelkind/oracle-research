@@ -837,6 +837,10 @@ def add_commands(commands):
     p = commands.add_parser('export-canonical-viewer', help='export saved canonical nodes and original notes for review; no inference')
     p.add_argument('directory', type=Path)
     p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--root-admissions',type=Path,
+                   help='preview source-bound saved conservative root additions; no hierarchy mutation')
+    p.add_argument('--base-viewer',type=Path,
+                   help='reuse an existing verified export for this admission preview, checking its state/corpus/file hashes')
     p = commands.add_parser('export-canonical-nostr', help='export a saved hierarchy as signed toy-protocol events; offline')
     p.add_argument('directory', type=Path)
     p.add_argument('--output', type=Path, required=True)
@@ -1091,7 +1095,8 @@ def handle_command(args):
             from .canonical_hierarchy_viewer import export_viewer
         except ImportError:
             from canonical_hierarchy_viewer import export_viewer
-        print(json.dumps(export_viewer(args.directory, args.output), ensure_ascii=False, indent=2))
+        print(json.dumps(export_viewer(args.directory, args.output, root_admissions=args.root_admissions,
+                                      base_viewer=args.base_viewer), ensure_ascii=False, indent=2))
         return 0
     elif args.command == 'export-canonical-nostr':
         try:

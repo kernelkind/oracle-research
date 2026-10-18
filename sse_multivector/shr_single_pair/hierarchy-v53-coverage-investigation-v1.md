@@ -8333,5 +8333,14 @@ wrong root placements remain separately visible at 0/10, 1/14 and 15/56.
 Samples differ and proposal totals are not verified recovery counts. This
 supports a practical saved-hierarchy review with existing computed additions,
 not policy activation, a new accuracy target or another word-selection probe.
-The review itself has not been performed. No new vectors, labels, model calls
-or hierarchy changes occur in this reassessment.
+The user subsequently authorized a separate HR38 preview using all already
+computed conservative additions. That copy now covers **1,712 / 2,000 notes
+(85.6%)**, versus 1,328 (66.4%) originally: 384 new distinct notes and 592
+note/root placements. All additions attach directly to roots; the existing
+133 nodes, headings, meanings and child branches remain intact, with no notes
+above the roots. Native state and the original review export are unchanged.
+The existing UI parser and independent source/membership checks pass; human
+quality review is pending. All sampled wrong placements remain visible. This
+does not activate a HiGen policy or simulate regenerated children. See the
+[preview evidence and limitations](hierarchy-note-bend-admission-v1.md#saved-hr38-preview).
+No new vectors, labels, scores, model calls or training were used.

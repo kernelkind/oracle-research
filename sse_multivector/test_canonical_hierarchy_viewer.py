@@ -117,6 +117,126 @@ class CanonicalHierarchyViewerTests(unittest.TestCase):
         self.assertEqual(path.read_bytes(), original)
         self.assertEqual(fixtures.ExperimentTests.calls(self), [])
 
+    def admission_study(self):
+        path=self.source()
+        (self.root/'admissions').mkdir()
+        state=json.loads(path.read_text())
+        record=dict(id='L001',title='Additional heading',meaning='Additional fixed meaning.',
+                    source_note_id='unused')
+        state['originals']=[dict(id=record['id'],title=record['title'],meaning=record['meaning'],
+                                local=dict(note_id='unused',number='1'))]
+        path.write_text(json.dumps(state))
+        plan=dict(as_version='ASv6.100',source_state=str(path),corpus=state['corpus'],
+                  sources={str(path):hashlib.sha256(path.read_bytes()).hexdigest()},
+                  records=[record],roots={'C001':{},'C002':{}})
+        self.write('admissions/plan.json',plan)
+        self.write('admissions/query-root-results.json',[
+            dict(corpus='trial',root='trial:'+root,entry='L001',source_note_id='unused',
+                 method=method,proposed=True,groups=['fused-001'])
+            for root,method in [('C001','MM_note_bend'),('C002','MM_note_bend'),
+                                ('C003','MM_coverage')]])
+        self.seal_admission_study()
+        return path
+
+    def seal_admission_study(self):
+        self.write('admissions/final-verification.json',dict(artifacts={
+            f:hashlib.sha256((self.root/'admissions'/f).read_bytes()).hexdigest()
+            for f in ['plan.json','query-root-results.json']}))
+
+    def test_saved_admissions_preview_adds_only_root_notes_without_changing_sources(self):
+        path=self.admission_study()
+        original=path.read_bytes()
+        self.cli('export-canonical-viewer','trial','--output','baseline')
+        self.cli('export-canonical-viewer','trial','--output','preview',
+                 '--root-admissions','admissions')
+        baseline=json.loads((self.root/'baseline/hierarchy.json').read_text())
+        view=json.loads((self.root/'preview/hierarchy.json').read_text())
+        before={n['node_id']:n for n in baseline['nodes']}
+        after={n['node_id']:n for n in view['nodes']}
+        self.assertEqual(set(before),set(after))
+        for key in before:
+            self.assertEqual(before[key]['children'],after[key]['children'])
+            if key!='VIEW_ROOT':self.assertEqual(before[key]['label'],after[key]['label'])
+        self.assertEqual(after['VIEW_ROOT']['note_ids'],[])
+        self.assertEqual(after['C001']['note_ids'],['N001','N002'])
+        self.assertEqual(after['C002']['note_ids'],['N003','N002'])
+        self.assertEqual(after['C003'],before['C003'])
+        notes=json.loads((self.root/'preview/notes.json').read_text())['notes']
+        self.assertEqual([r['note_id']for r in notes],['n1','unused','n3'])
+        self.assertEqual(notes[1]['text'],'Unselected post.')
+        self.assertEqual(view['source_sha256'],hashlib.sha256((self.root/'preview/notes.json').read_bytes()).hexdigest())
+        proof=json.loads((self.root/'preview/root-admissions.json').read_text())
+        self.assertEqual(proof['additional_notes'],1)
+        self.assertEqual(proof['new_root_placements'],2)
+        self.assertEqual(path.read_bytes(),original)
+        self.assertEqual(fixtures.ExperimentTests.calls(self),[])
+
+    def test_saved_admissions_preview_rejects_changed_results_before_writing(self):
+        self.admission_study()
+        (self.root/'admissions/query-root-results.json').write_text('[]')
+        result=self.cli('export-canonical-viewer','trial','--output','preview',
+                        '--root-admissions','admissions',ok=False)
+        self.assertIn('admission source checksum mismatch',result.stderr)
+        self.assertFalse((self.root/'preview').exists())
+        self.assertEqual(fixtures.ExperimentTests.calls(self),[])
+
+    def test_saved_admissions_preview_rejects_nonroot_or_changed_entry_evidence(self):
+        self.admission_study()
+        path=self.root/'admissions/query-root-results.json'
+        original=path.read_bytes()
+        for field,value,error in [('root','trial:C003','existing root'),
+                                   ('source_note_id','n3','entry evidence')]:
+            rows=json.loads(original)
+            rows[0][field]=value
+            path.write_text(json.dumps(rows));self.seal_admission_study()
+            result=self.cli('export-canonical-viewer','trial','--output','preview',
+                            '--root-admissions','admissions',ok=False)
+            self.assertIn(error,result.stderr)
+            self.assertFalse((self.root/'preview').exists())
+
+    def verified_baseline(self):
+        path=self.admission_study()
+        history=self.root/'old-construction.txt';history.write_text('Frozen historical input')
+        state=json.loads(path.read_text())
+        state['sources'][str(history)]=hashlib.sha256(history.read_bytes()).hexdigest()
+        path.write_text(json.dumps(state))
+        plan=json.loads((self.root/'admissions/plan.json').read_text())
+        plan['sources'][str(path)]=hashlib.sha256(path.read_bytes()).hexdigest()
+        self.write('admissions/plan.json',plan);self.seal_admission_study()
+        self.cli('export-canonical-viewer','trial','--output','baseline')
+        self.write('baseline/provenance.json',dict(state=str(path),
+            state_sha256=hashlib.sha256(path.read_bytes()).hexdigest(),files={
+                f:hashlib.sha256((self.root/'baseline'/f).read_bytes()).hexdigest()
+                for f in ['hierarchy.json','notes.json']}))
+        return path,history
+
+    def test_preview_reuses_verified_snapshot_without_rechecking_old_construction(self):
+        path,history=self.verified_baseline()
+        history.write_text('Historical source no longer used by this preview')
+        self.cli('export-canonical-viewer','trial','--output','preview',
+                 '--root-admissions','admissions','--base-viewer','baseline')
+        view=json.loads((self.root/'preview/hierarchy.json').read_text())
+        self.assertEqual(len(view['notes']),3)
+        self.assertEqual(fixtures.ExperimentTests.calls(self),[])
+        refused=self.cli('export-canonical-viewer','trial','--output','full-export',ok=False)
+        self.assertIn('trial source changed',refused.stderr)
+        self.assertFalse((self.root/'full-export').exists())
+
+    def test_verified_preview_rejects_changed_snapshot_or_corpus(self):
+        self.verified_baseline()
+        hierarchy=self.root/'baseline/hierarchy.json';original=hierarchy.read_bytes()
+        hierarchy.write_text('{}')
+        refused=self.cli('export-canonical-viewer','trial','--output','preview',
+                         '--root-admissions','admissions','--base-viewer','baseline',ok=False)
+        self.assertIn('verified viewer checksum mismatch',refused.stderr)
+        self.assertFalse((self.root/'preview').exists())
+        hierarchy.write_bytes(original)
+        (self.root/'notes.json').write_text('{}')
+        refused=self.cli('export-canonical-viewer','trial','--output','preview',
+                         '--root-admissions','admissions','--base-viewer','baseline',ok=False)
+        self.assertIn('verified viewer corpus changed',refused.stderr)
+        self.assertFalse((self.root/'preview').exists())
+
     def test_export_uses_the_finished_menu_and_preserves_the_raw_graph(self):
         from sse_multivector.canonical_hierarchy_shape import finish_nodes
         path = self.source()

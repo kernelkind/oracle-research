@@ -65,12 +65,11 @@ root placements versus one. No matched centered-conservative HR38 transfer is
 saved. The full-meaning rule remains the candidate tested unchanged across all
 three corpora; the evidence does not establish a universal best score.
 
-The recommended next step is to apply the **already computed conservative
-additions to a separate copy of HR38 for hierarchy review**. This would test
-actual usefulness and browsing noise before further score changes. It needs
-no new LLM calls, training or vectors; it is not performed by this assessment.
-Keep the original graph and saved decisions intact and do not silently filter
-the problematic group to improve the result.
+The user authorized applying the **already computed conservative additions to
+a separate copy of HR38**. That preview is now generated; human hierarchy review
+is pending. No new HiGen version or production policy is activated. The copy
+retains all saved proposals, including known wrong placements, so its review
+can assess actual usefulness and browsing noise without selective filtering.
 
 All counts were independently recounted from saved query decisions and frozen
 note/root judgments. Evidence:
@@ -79,6 +78,35 @@ SHA256 `39e88afad480e2ea22c0a534f81a58d6e6a5abec584ff5e86aeb7fa04069f7b0`.
 Independent joins verify all 80 primary note states and all 55 supported
 witnesses against the actual own-corpus query decisions. There are no new
 scores, semantic labels, admissions, encodings or model calls.
+
+### Saved HR38 preview
+
+Artifact: `target/food-halves-v1/hr38-conservative-preview-v1/` in the
+`oracle-mvp-hierarchy-food-halves-v1` worktree. `hierarchy.json` and `notes.json`
+use the existing review UI format; `root-admissions.json` retains every selected
+entry and source binding, and `verification.json` independently checks the copy
+against HR38's original verified review export.
+
+| Measure | Original HR38 | Saved-addition preview |
+|---|---:|---:|
+| Distinct notes beneath roots | 1,328 / 2,000 | 1,712 / 2,000 |
+| Coverage | 66.4% | 85.6% |
+| Canonical nodes / roots | 133 / 6 | 133 / 6 |
+
+The 384 additional distinct notes create 592 note/root placements because some
+notes qualify for multiple roots. They are attached directly to existing roots;
+children, headings, meanings, original memberships, short IDs and full posts
+are preserved. The display container remains empty. No child construction is
+rerun, so this preview does not measure how added entries would affect later
+grouping or depth. The original constructor state and review bundle are intact.
+
+The exporter verifies the saved decision hashes and exact original-entry
+identities. It reuses HR38's verified export after checking its state, corpus and
+exported-file hashes, avoiding historical clustering recomputation. The existing
+UI parser accepts the output. Independent checks retain all 15 reviewed wrong
+placements rather than silently removing them. There are no new scores,
+encodings, LLM calls or training; this is a mechanical preview, not semantic
+certification. The live review UI has not been refreshed.
 
 ## Exact change
 
