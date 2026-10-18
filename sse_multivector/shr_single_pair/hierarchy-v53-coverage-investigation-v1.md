@@ -6849,3 +6849,135 @@ all-pairs production graph at larger corpus sizes.
 There are no provider calls, new encodings, training, paid resources, prompt
 changes, hierarchy changes or UI updates. Land these maintained findings on
 local `main`; retain the task worktree for frozen evidence/vector paths.
+
+## HR36 score capacity: promising bounds, no automatic admission rule
+
+The human approved comparing saved HR36 meaning scores for already-reviewed
+useful and unwanted entries, before another boundary experiment. Preserve all
+judgments, unresolved cases, memberships, scores and previous predictions.
+Evidence: `target/food-halves-v1/hr36-score-capacity-v1/` in the retained
+food-halves worktree. Frozen measure/case plan SHA256
+`1ea6336c048fcd2716a7ea5cfe4bdda435d9fbee69ac12ad5bf83255038cf27a`.
+**Every bound below uses the supplied labels in hindsight. None is an automatic
+result, training run, deployed cutoff or unseen-performance estimate.**
+
+### Exact diagnostic and separate review panels
+
+Use the existing production `fixed_reference_bend.separation_bounds` function.
+An entry passes when any fixed group's mean meaning score reaches that group's
+boundary. To reject all reviewed unwanted entries, a group boundary must be
+strictly above its largest unwanted score. A useful entry can therefore survive
+exactly when it exceeds that maximum in at least one group. Different unwanted
+entries can block different groups. This is a mathematical bound for the
+supplied cases, not a prescription for choosing boundaries without labels.
+
+Only groups with an existing finite weakest-member boundary participate; all
+212 group instances across these nine panels are available. The repeated Food
+panels are separate and overlapping, not independent groups or accuracy samples.
+Compare unrestricted separate group boundaries with **tightening only**: no
+boundary may fall below the existing minimum. Tightening measures preservation
+of already selected useful entries; unrestricted bounds can also expose useful
+entries currently rejected by excessively high boundaries. Unresolved judgments
+never constrain either bound and remain separately recorded.
+
+### HR36 queries against old Food/Arts references, judged before scores
+
+| Existing reference set | Useful / unwanted / unresolved controls | Existing useful / unwanted admitted | Best possible useful, rejecting all unwanted | Same bound, tightening only |
+|---|---:|---:|---:|---:|
+| HR35 Food | 19 / 62 / 4 | 15 / 1 | 19/19 | 15/19 |
+| HR35 Arts | 18 / 57 / 10 | 5 / 1 | 15/18 | 5/18 |
+
+Thus the scores permit retaining all Food controls and most Arts controls while
+rejecting all reviewed unwanted examples. But recovering the four additional
+Food and ten additional Arts entries requires lowering some boundaries.
+Tightening alone cannot expand coverage beyond the old predictions. These
+panels mix random-note and title-focused sampling and provisional agent labels;
+they are not representative accuracy estimates or human gold.
+
+### HR36 own-root sample, reviewed after selection
+
+| Root | Useful / unwanted / unresolved controls | Best possible useful retained, rejecting all unwanted | Boundaries that must rise in this sample |
+|---|---:|---:|---:|
+| C00001 | 6 / 5 / 1 | 6/6 | 2/102 |
+| C00002 | 8 / 0 / 3 | Unconstrained: no unwanted controls | 0/13 |
+| C00003 | 9 / 1 / 2 | 9/9 | 1/16 |
+| C00004 | 6 / 1 / 5 | 6/6 | 1/20 |
+| C00005 | 5 / 5 / 2 | 5/5 | 1/4 |
+| C00006 | 2 / 2 / 1 | 2/2 | 1/2 |
+
+Across the **five roots with unwanted controls**, separate boundaries could
+retain all **28 useful entries** and reject all **14 unwanted entries**, even
+using tightening only. Exactly six group boundaries must rise in the
+label-dependent construction. The other eight useful cases have no unwanted
+controls, so do not include them in a claimed rejection test. All 64 examples
+were previously selected; this sample cannot measure missed useful entries.
+
+The feasible Sports score ranges retain association football, cricket,
+basketball and player suspensions while excluding the five reviewed generic
+software/servers cases. AI ranges retain LLMs and chatbots while excluding
+military intelligence and random selection. Minimum best usable-group margins
+above unwanted scores are 0.04330 for these Sports cases and 0.01628 for AI.
+C00001's narrowest useful route is Books: 0.01784 versus Food's 0.01026 in the
+Photography group, a margin of 0.00758. These are kernel-score differences, not
+probabilities or guarantees for the rest of the corpus.
+
+### Imperfect tradeoffs and inseparable cases
+
+Exhaustively enumerate permitting up to zero, one or two reviewed unwanted
+entries. Every unwanted entry outside the permitted subset still constrains
+all groups. Maximize retained useful cases, preferring fewer actual unwanted
+admissions for ties, then stable lexicographic enumeration. This diagnoses
+imperfection without choosing a production error budget or exporting a rule.
+
+Allowing one or two unwanted cases improves none of the preceding bounds.
+The complete post-selection Food audit is the exception: unrestricted boundaries
+can retain all 30 plausible headings and reject all seven unwanted headings;
+tightening alone preserves **29/30**. The lost route is Tim Hortons. Allowing
+one unwanted entry restores 30/30 under tightening. Pizzerias survives with
+only a **0.000432** margin above an unwanted control. Keep its pizza note's
+valid route distinct from suspect headings such as cruise news; entry and
+whole-note errors remain different questions. Do not pool this selected audit
+with the pre-score panel or claim representative note coverage.
+
+Three pre-score Arts headings cannot exceed all unwanted controls in any of
+its 25 fixed groups: **L00764 Requests for information, L02605 Fabrizio Romano,
+and L03598 English language**. Their closest-to-separable route is Songs, where
+Software inputs scores higher; other unwanted controls block the other groups.
+Their maximum margins are -0.01049, -0.00955 and -0.00438. Permitting at most
+two unwanted entries still does not recover them. Their existing provisional
+rationales concern broad human communication, journalism and language; those
+rationales do not establish matching reference families in this music-heavy
+set. A boundary alone cannot resolve these comparisons under the supplied
+controls. Missing suitable references and score limitations remain possible;
+this calculation distinguishes neither and changes no judgment.
+
+### Consequence, verification and integration
+
+The existing meaning scores permit substantial improvement on these cases.
+That supports continuing automatic-boundary investigation with the current
+representation and fixed groups, rather than changing vectors again. It does
+**not** locate the successful ranges from accepted references alone. The next
+suggested investigation is to inspect the six problematic HR36 groups'
+accepted-reference support curves against their feasible ranges, retaining
+Sports/AI as over-tightening controls. Do not deploy label-derived boundaries
+or tune separate constants per group. HR37 can test a resulting reference-only
+rule and HR38 remains outside development. That next test is not started here.
+
+All **273 reviewed panel rows** replay old predictions exactly. Independent
+scalar comparisons verify **49,902** useful/unwanted/group pairs; **7,672**
+permitted-unwanted subsets are enumerated. Query/group permutation,
+useful-duplicate, threshold-realization, zero-error, monotonic-budget and
+tightening-subset checks pass. The seven existing production
+`ScoreSeparationTests` pass. All source/assessment hashes remain unchanged;
+core execution takes **0.22 seconds**. No new production APIs or modules.
+
+Keep `panel-results.json` with original labels and panel-only hypothetical
+witnesses; `all-useful-group-routes.json` with every useful/group score and
+blocker; `blocked-useful-cases.json` with the three Arts cases; and complete
+reviewed score matrices, source bindings and gap details. Hypothetical
+boundaries are explicitly diagnostic and never exported as runtime policy or
+applied to the full omitted corpus. `verification.json`, calculation-script
+hashes and `review.md` preserve reproduction. Land these maintained findings;
+keep generated evidence ignored and retain the task worktree for frozen paths.
+No LLMs, training, new encodings, paid resources, new labels, prompts, official
+hierarchy artifacts, spreadsheet entries or UI changes.
