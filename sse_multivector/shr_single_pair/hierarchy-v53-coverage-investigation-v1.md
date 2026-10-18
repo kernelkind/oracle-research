@@ -6389,8 +6389,9 @@ amendments must not silently enlarge the initial reference sets. Independent
 queries must never enter the accepted fusion graphs. No new LLM calls,
 training or paid compute are needed for the proposed numerical check.
 
-Local meaning encoding was requested through an asynchronous scope question.
-**It has not run, and no approval is inferred from elapsed time.** No HR36
+At this preparation checkpoint, local meaning encoding had been requested
+through an asynchronous scope question. **It had not run, and no approval was
+inferred from elapsed time.** The subsequent authorized test is recorded below. No HR36
 scores, assessments or parameter search have been used to choose a new rule.
 The proposed comparison retains the existing mean-meaning score and automatic
 weakest-member boundary, with the preceding reference-only bend as an unchanged
@@ -6421,3 +6422,187 @@ No production calculation, hierarchy, prompt, membership, UI or official run
 record changes. New encodings, LLM calls, training and paid resources: zero.
 Maintained findings land on local `main`; retain this worktree because the
 saved vector/evidence paths remain required by the continuing investigation.
+
+## HR36 completed test of the unchanged automatic rules
+
+The human approved local meaning encoding and testing the unchanged automatic
+admission rules. Evidence:
+`target/food-halves-v1/hr36-meaning-transfer-v1/` in the retained task worktree.
+Frozen plan SHA256
+`f2de3ad7900184363db63cb5bd4376084cf337c2cf3451c079e18e6ea56d9ca9`.
+This is a completed numerical probe, **not an activated hierarchy policy**.
+There are no LLM calls, training, paid resources, prompt edits or actual
+membership changes. Generated reports, vectors and source-bound numerical
+scripts remain ignored; the existing production calculations are unchanged.
+
+### Transfer protocol and independent review
+
+Score all **1,121 eligible omitted entries from 254 HR36 notes** independently.
+The remaining 63 omitted notes have no usable meaning. Reuse the exact old
+Food/Arts references, fusion groups and thresholds. Separately apply the same
+recipe to each HR36 root's initial accepted entries; later amendments,
+descendants and outsiders never enlarge those reference sets. Synthetic titles
+are not score inputs or semantic gold boundaries.
+
+Freeze the rules before HR36 outcomes: mean meaning-kernel affinity within each
+fixed group; accept when any group passes its unchanged automatic boundary.
+The primary boundary is the exact weakest existing cross-note member mean.
+The control is the earlier member-anchored bend over fixed fusion neighbors,
+`orientation=y_minus_x`, with the original lower trim. Neither uses the
+all-fold gate, fits labels or inserts queries into the accepted graphs.
+
+Before scoring, freeze a review panel: one hashed entry from each of 40 hashed
+omitted notes plus 48 title-focused entries, deduplicated to **85 entries from
+62 notes**. Inspect complete meanings/posts and record provisional Food/Arts
+judgments separately from predictions. Review-input SHA256
+`7793e154ab046aa98eb8596e6668e0a31fa868484c17d9f19f91dd7fd14bd74c`;
+assessment SHA256
+`48b47a2c2e4aff62d11693d6277388a47c70d221e51c8ddb5e4d3373b833895f`.
+These are **agent assessments, not human gold**. The panel is small and partly
+focused; it does not establish population accuracy or author-independent
+generalization. Unresolved entries stay unresolved.
+
+### The old roots do not transfer uniformly
+
+These are actual unchanged-rule proposals, not the earlier 57/63 hindsight
+capacity bound. Each root has its own panel judgments.
+
+| Fixed accepted references | Automatic boundary | Plausible entries selected | Unsupported entries selected | Unresolved selected |
+|---|---|---:|---:|---:|
+| HR35 Food | Weakest member | 15/19 | 1/62 | 1/4 |
+| HR35 Food | Existing anchored neighbor bend | 19/19 | 5/62 | 1/4 |
+| HR35 Arts | Weakest member | 5/18 | 1/57 | 0/10 |
+| HR35 Arts | Existing anchored neighbor bend | 8/18 | 18/57 | 5/10 |
+
+Food's four missed plausible entries are one Food definition and three Coffee
+definitions. Its clear unwanted panel match is Nights, whose meaning is the
+period between sunset and sunrise and whose post describes sleeping on a floor.
+Arts misses Books, languages, some films and film-related activities, and selects
+generic Software performance through the Audio group. Moving to the old bend
+does not provide a general repair: it adds many technical/nonmedia matches.
+
+Reference coverage also matters. Twenty-six accepted Food entries, including
+many generic Food headings, remain outside the 15 fixed fusion groups; they
+provide curve context but no independent passing group. Thirty accepted Arts
+entries likewise remain outside its groups, mostly Music/Songs/Voices. The Arts
+references overall are music-heavy and contain no dedicated book or language
+group. The frozen broader Arts expectations are retained, but these misses
+also test expansion beyond observed topic families. They do not prove that
+threshold choice alone explains all of the transfer gap.
+
+The whole-note objective matters. Considering every query heading from notes
+that have a pre-reviewed plausible entry, weakest-member Food recovers
+**8/10 notes**, Arts **6/14**. The six Arts routes concern television series,
+films, film history, cinema enjoyment/Netflix, and Pixar/acting. These extra
+routes were inspected after prediction; a missed heading does not automatically
+mean its whole post was missed. Conversely, a good post does not validate every
+heading selected from it.
+
+Reviewing **all 39 weakest-member Food proposals** after selection gives
+30 plausible entries, seven unsupported and two unresolved, across 16 notes.
+Eleven notes plausibly fit Food/dining and five do not: heritage wallpaper
+preservation, generic travel, a crime-witness reward, nighttime hardship and
+a celebrity return visit. Cruise-line identity and general Cruise news are
+also weak/association-based entry matches, but their pizza post has legitimate
+Pizzerias/Culinary arts matches. The Tim Hortons case is dining-venue evidence,
+not a meal description; retain that qualification. This complete proposal audit
+is distinct from the pre-score control panel and is still provisional.
+
+### Applying the same recipe to HR36's own roots
+
+Keep the existing fusion settings: 20 neighbors, sigma 0.5, 20 iterations,
+HDBSCAN min_samples 3 / min_cluster_size 2 / EOM. Use only each root's original
+accepted entries. This changes the references to the new corpus; it does not
+change a rule in response to its outcomes.
+
+| HR36 root | Initial reference entries | Fixed fusion groups | Weakest-member proposed entries | Proposed omitted notes |
+|---|---:|---:|---:|---:|
+| C00001 · Beings and society | 904 | 102 | 702 | 233 |
+| C00002 · Experience and expression | 104 | 13 | 11 | 11 |
+| C00003 · Society and security | 120 | 16 | 39 | 28 |
+| C00004 · Activities and events | 170 | 20 | 48 | 39 |
+| C00005 · Activities and events | 46 | 4 | 77 | 51 |
+| C00006 · Artificial intelligence | 46 | 2 | 5 | 5 |
+
+Deduplicated union: **736 entries from 239 omitted notes**. This is a proposal
+count, not 239 validated recoveries. The control bend proposes 547 entries from
+215 distinct omitted notes. No graph receives any of them.
+
+As specified before scoring, audit up to 12 primary proposals per root, ordered
+by the fixed hash rather than score magnitude. The resulting **64 entries from
+59 notes** have 36 plausible, 14 unsupported and 14 unresolved root matches.
+This is a separate post-selection audit; root/sample observations are not
+independent. Root fit is assessed against the accepted topic composition,
+not just the synthetic name or the particular passing group. For example,
+Books can cohere with Articles/Digital content even when the numerical passing
+route is Photography. Ambiguous expansions remain qualified.
+
+### Concrete mechanism: one weak reference controls the whole boundary
+
+The strongest evidence against adopting the rule unchanged is reproducible
+from the accepted-member scores, without demanding perfect semantic grading:
+
+| HR36 group | Weakest member that sets the threshold | Threshold | Median member score | Outside entries passing this group alone |
+|---|---|---:|---:|---:|
+| C00001 · Technology | L01694 · Technology, defined as the **named posting destination** for a mango-farming post | 0.01012 | 0.29153 | 463 |
+| C00001 · Photography | L04473 · IRIB, Iran's state broadcasting organization | 0.00685 | 0.19891 | 549 |
+
+These proposal sets overlap and cannot be added. The first group accounts for
+194 omitted notes, the second 217. Ordinary food, diets, sexual activity and
+other unrelated topics pass these low boundaries. The named Technology
+destination is a preserved meaning, not silently reinterpreted as the field.
+Fusion has grouped it with technology headings, and the minimum-member rule
+allows that weak member to set the threshold for every future query.
+
+Other clear concerns survive outside those two groups: C00005 gaming/sports
+proposes generic Servers, Operating systems, open-source licensing and form
+handling. C00006 proposes military Intelligence operations and Random selection
+along with the plausible LLM/Chatbot cases; general Predictive models remain
+unresolved. A large proposal count is therefore insufficient evidence of useful
+coverage. Neither this diagnosis nor the audits establish that the boundary is
+the only problem: reference composition, score orderings and broad meanings
+remain relevant.
+
+**Do not adopt the weakest-member rule unchanged as a universal admission
+policy.** This is compatible with accepting practical imperfection: the exposed
+cross-root instability is larger than a few disputed cases. The next useful
+numerical test is a boundary derived from the main body of accepted-member
+support that cannot be controlled by a single weak member. Preserve these
+groups, scores and reviewed cases; do not introduce a global similarity cutoff,
+new LLM judgments or training. That replacement is suggested only, not run here.
+
+### Native encoding, verification and disposition
+
+Encode 2,469 new exact contexts and nine replay contexts using the unchanged
+native SSE worker, checkpoint and tokenizer on local CPU with 12 threads.
+Each context yields both title- and full-meaning pooled vectors in one encoder
+pass: **4,956 rows**. Thirty-eight required entries reuse 33 exact prior
+contexts. The longest new input is 124 tokens; no truncation. The actual runtime
+is Torch 2.13.0+cpu / Transformers 4.57.1 / Tokenizers 0.22.2, recorded in the
+new immutable receipt; its container label is historical identity, not rented
+compute.
+
+Nine exact context replays / 18 vector rows have maximum absolute error
+`4.47e-8` and cosine error `8.09e-14`. All 2,511 HR36 native-title comparisons
+pass, maximum cosine error `2.17e-13`. Validate text spans, token selections,
+receipt identities, raw vector hashes, checkpoint/base artifact and all frozen
+source hashes. The numerical evaluation produces 220,837 query/group scores;
+2,561 independent scalar group means differ by at most `2.78e-17`, independent
+kernel error at most `8.33e-16`. Isolated/reordered/duplicate queries preserve
+scores, and accepted graph bytes remain unchanged.
+
+An initial exact-equality threshold replay check differed by `6.66e-16` through
+floating-point arithmetic. Preserve its script/log; use the existing scalar
+arithmetic tolerance `1e-14` for that verification. **The old threshold values
+and admission comparisons remain unchanged.** The first preparation attempt
+was also interrupted to avoid repeatedly hashing the same state per input;
+the state hash is read once before freezing the plan. Neither issue made an
+extra encoding call or changed a teacher receipt.
+
+All 62 relevant existing production-path numerical tests pass. Evaluation
+takes 6.32 seconds after encoding. Keep `plan.json`, native request/config,
+`preflight.json`, immutable `worker-result/`, vector bindings, saved full-view
+matrices, all query/group scores and boundary models, panel/audit files and
+`verification.json`. `review.md` is the compact report. Maintained findings
+land on local `main`; retain the worktree for required frozen source/vector
+paths. No hierarchy UI refresh or official hierarchy-run/spreadsheet change.
