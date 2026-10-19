@@ -6,7 +6,12 @@ least 90% of original corpus notes, with each section representing at least 10% 
 original corpus. Earlier measurements below retain their original 80% target.
 The user prefers cut A
 and explicitly accepts broad root topics because deeper levels provide
-narrowing. Root breadth alone is not a failure criterion. Recovery under note
+narrowing. Root breadth alone is not a failure criterion. The user further
+clarified: "i don't care if the root nodes are wide in semantic width. but roots
+should not cover the same information". Assess duplication of information
+between roots, rather than treating a broad mix within one root as a defect.
+This does not establish a numerical duplication threshold or a new algorithm.
+Recovery under note
 removal provides a diagnostic, without establishing better browsing choices.
 No prompts, canonical hierarchies or review UIs changed. No model calls,
 training or paid resources were used in the original resampling probes.
@@ -25,6 +30,8 @@ are:
 - At most six sections; six is a maximum, not a required count.
 - At least 90% of the original corpus's distinct notes represented across them.
 - Each section represents at least 10% of that original corpus's distinct notes.
+- Roots should cover distinct information; broad semantic scope within a root
+  is acceptable. Shared note IDs alone do not establish duplicate information.
 
 For 100 notes, every section must represent at least ten notes and their union
 must represent at least 90. Deduplicate note IDs within each section and across
@@ -2233,10 +2240,10 @@ scope definitions. Note sets overlap and should not be summed. The changed
 representation removes the two specific awkward placements inspected in the
 meaning-only fit: the full 15-entry Coffee group and 27-entry Food group leave
 the publishing-oriented section, and the 14-entry Association football group
-leaves the networking-oriented section. They now share section 2. That remains
-a broad mixture, so these control improvements alone do not demonstrate a
-better overall browsing hierarchy. Broad roots themselves are permitted by
-the user's objective; their useful narrowing has not been tested here.
+leaves the networking-oriented section. They now share section 2. Its breadth
+is acceptable under the user's clarified criterion. These control changes
+alone do not establish that the six roots cover distinct information; that
+cross-root assessment and useful deeper narrowing have not been tested here.
 
 Across the eight predeclared starts, Food and Coffee share a section in five;
 Food and Association football share one in six; football never shares Nostr's
@@ -2260,7 +2267,9 @@ Ignored evidence is on the external drive, linked from the retained task
 worktree `oracle-mvp-combined-section-scoring-v1/target/combined-section-scoring-v1/`:
 `spec.json`, the frozen panel and complete `comparison-and-verification.json`.
 Executed source is `5061f8d5`; the worktree remains for frozen source and artifact
-paths. A useful next component check is the unchanged matched representation
-comparison on the other saved hash-selected 1,000-note corpus: this tests whether
-the observed placement improvements generalize before any policy adoption.
-That further test is a suggestion, not started or authorized by this record.
+paths. Before repeating the representation comparison on another corpus,
+inspect whether separate roots duplicate information in this saved result.
+This directly tests the user's clarified quality criterion; breadth alone is
+not a reason to change the grouping. A later unchanged comparison on the other
+saved hash-selected 1,000-note corpus would test generalization. Both are
+suggestions, not started or authorized by this record.
