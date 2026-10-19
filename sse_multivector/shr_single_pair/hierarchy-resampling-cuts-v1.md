@@ -2062,6 +2062,63 @@ vectors, all three raw native requests/results, runtime details, complete
 Artifacts remain on the external drive. HiGen, prompts, canonical meanings and
 review UI are unchanged; no training, new encoding or model calls occurred.
 
+### Matched broader-section comparison using the two fine groupings
+
+The user authorized testing whether the improved fine groups yield better
+broader choices. Freeze a matched comparison on all 5,336 original HR36 entries
+and 937 usable notes. Only the fine-group memberships differ: original title
+groups versus the equal-weight combined groups. Both retain all unassigned
+entries as independent items. Keep the original full-meaning vectors and entry
+weights, eight starting seeds, 50-iteration bound, candidate counts 1–6,
+32 paired PCA-box reference matrices and `globalSEmax` count rule unchanged.
+
+Use the existing zero-minimum group-preserving calculation. It cannot enforce
+positive section minima; check the 100-note threshold afterward rather than
+changing the optimizer. Both arms assign every supplied entry once, so their
+note coverage is identical by construction, not evidence of improved admission.
+The 63 source posts without saved inputs remain outside this comparison.
+
+Reusable preparation now accepts a completed native grouping producer per case.
+It validates matching entry evidence, exact meaning vectors and note rows,
+then freezes the native groups and source hashes. Original defaults remain
+unchanged. Preparation rejects incomplete/copy-only native evidence rather
+than running fresh numerical work. Production-path tests cover actual native
+group ingestion, intact section assignments, changed evidence, foreign input
+rows and copied reports without their native artifacts. All 60 relevant tests
+pass. The executed source checkpoint is `81b16788` in the retained experiment
+worktree. A separate integration worktree strengthens the completed-artifact
+guard without modifying frozen execution source or the numerical calculation.
+
+Both observed panels complete: 96 fits, with identical initial center indices
+for every paired count/seed and intact native groups in all assignments. All
+selected observed fits converge. The two PCA reference input packets are
+bit-identical. Reference-based count selection is still running at this
+checkpoint, with 24 workers on CPUs 0–23 and one BLAS thread per worker.
+
+The same-count six-section control has these distinct-note counts; note sets
+overlap and should not be summed:
+
+| Fine groups | Notes per section | Unique notes covered |
+|---|---|---:|
+| Title | 395, 540, 443, 441, 347, 341 | 937 |
+| Combined | 466, 436, 438, 549, 308, 341 | 937 |
+
+Both meet the six-choice, at-least-100-notes-per-section and 900-of-1,000 coverage
+checks. Neither is yet a finished hierarchy or human-approved topic layout.
+After matching section labels by maximum entry overlap, 1,357 of 5,336 entry
+assignments differ. This is not an accuracy score. Preliminary inspection finds
+no clear overall topic improvement: Food/Coffee join a publishing-oriented
+section in the combined fit, while sports share a section with networking.
+Nostr's 62 definitions stay together in both arms. Final conclusions await the
+unchanged count-selection calculation; no HiGen policy is activated.
+
+Ignored external evidence is retained under
+`oracle-mvp-combined-groups-sections-v1/target/combined-groups-sections-v1/`:
+the frozen spec, observed panels, paired reference plan/results and
+`same-count-audit.json`. No LLM calls, training, new encodings, synthetic
+definitions or UI updates occur. The task worktree must remain for its frozen
+execution and artifact paths.
+
 Reusable numerical CLI: `sse_multivector/cluster_resampling_probe.py`; tests:
 `sse_multivector/test_cluster_resampling_probe.py`. Input NPZ contains unit
 `vectors`, aligned compact zero-based original `groups`, and aligned `notes`.

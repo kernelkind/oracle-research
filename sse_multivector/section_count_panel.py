@@ -61,7 +61,9 @@ def _saved_grouping(selection, vectors, notes, entries):
     cfg = next(c for c in producer['cases'] if c['id'] == selection['case'])
     path = folder / cfg['id'] / selection['view'] / 'result.json'
     saved = _read(path)
-    if any(not Path(saved['native']['hdbscan'][k]).is_file() for k in ['request', 'result']):
+    expected = {k: path.parent / 'hdbscan-00000' / (k + '.json') for k in ['request', 'result']}
+    if any(not file.is_file() or Path(saved['native']['hdbscan'][k]).resolve() != file.resolve()
+           for k, file in expected.items()):
         raise ValueError('Completed native grouping evidence required; preparation cannot run it')
     report = probe.run(folder, cfg['id'], selection['view'])
     metadata = [{k: e[k] for k in ['id', 'title', 'meaning', 'note_id', 'source_group']}

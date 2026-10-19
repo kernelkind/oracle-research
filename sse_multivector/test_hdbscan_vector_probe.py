@@ -3,6 +3,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -189,6 +190,18 @@ class HdbscanVectorProbeTests(unittest.TestCase):
             self.assertEqual(len(set(labels[:6])), 1)
             self.assertEqual(len(set(labels[6:])), 1)
             self.assertNotEqual(labels[0], labels[6])
+            copied = root / 'copied'
+            copied.mkdir()
+            shutil.copyfile(root / 'probe/plan.json', copied / 'plan.json')
+            (copied / 'all/combined').mkdir(parents=True)
+            shutil.copyfile(root / 'probe/all/combined/result.json',
+                            copied / 'all/combined/result.json')
+            section_spec['cases'][0]['grouping']['directory'] = str(copied)
+            path.write_text(json.dumps(section_spec))
+            with self.assertRaisesRegex(ValueError, 'Completed native grouping evidence required'):
+                sections.prepare(path, root / 'incomplete')
+            self.assertFalse((copied / 'all/combined/hdbscan-00000').exists())
+            section_spec['cases'][0]['grouping']['directory'] = str(root / 'probe')
             (root / 'probe/all/combined/result.json').write_text('{}')
             with self.assertRaisesRegex(ValueError, 'Frozen source changed'):
                 sections.run(root / 'sections', 'grouped')
