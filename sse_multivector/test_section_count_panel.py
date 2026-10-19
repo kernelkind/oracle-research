@@ -13,6 +13,68 @@ from sse_multivector.section_count_panel import prepare, run
 
 
 class SectionCountPanelTests(unittest.TestCase):
+    def test_cli_reciprocal_neighbors_join_whole_existing_groups_before_scoring(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            manifest, spec = self._fixture(root)
+            source = spec['sources']['examined']
+            angles = np.array([0, .01, 2, 2.01, 4, 4.01])
+            np.savez(source['input'], vectors=np.c_[np.cos(angles), np.sin(angles)],
+                     notes=np.array(['a' + str(i) for i in range(6)]))
+            entries = json.loads(Path(source['entries']).read_text())
+            for i, entry in enumerate(entries):
+                entry['source_group'] = 'G1' if i in [0, 2] else None
+            Path(source['entries']).write_text(json.dumps(entries))
+            for path in [source['input'], source['entries']]:
+                source['files'][path] = hashlib.sha256(Path(path).read_bytes()).hexdigest()
+            spec['cases'][0].update(preserve_groups=True, reciprocal_nearest=True)
+            manifest.write_text(json.dumps(spec))
+            cli = [sys.executable, '-m', 'sse_multivector.section_count_panel']
+            prep = subprocess.run(cli + ['prepare', str(manifest), str(root / 'out')],
+                                  capture_output=True, text=True)
+            self.assertEqual(prep.returncode, 0, prep.stderr)
+            plan = json.loads((root / 'out/plan.json').read_text())
+            case = plan['cases'][0]
+            self.assertEqual(case['groups'], [0, 0, 0, 0, 1, 1])
+            self.assertEqual(case['reciprocal_pairs'], [[0, 1], [2, 3], [4, 5]])
+            subprocess.run(cli + ['run', str(root / 'out'), 'D01'],
+                           check=True, capture_output=True, text=True)
+            path = root / 'out/D01/count-2.json'
+            before = path.read_bytes()
+            for trial in json.loads(before)['panel']['trials']:
+                self.assertEqual(len(set(trial['labels'][:4])), 1)
+                self.assertEqual(trial['labels'][4], trial['labels'][5])
+            run(root / 'out', 'D01')
+            self.assertEqual(before, path.read_bytes())
+
+    def test_reciprocal_ties_singleton_and_invalid_settings_use_preparation_path(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            manifest, spec = self._fixture(root)
+            source = spec['sources']['examined']
+            np.savez(source['input'], vectors=np.tile([1., 0.], (6, 1)),
+                     notes=np.array(['a' + str(i) for i in range(6)]))
+            entries = json.loads(Path(source['entries']).read_text())
+            for i, entry in enumerate(entries):
+                entry['source_group'] = 'only' if i == 0 else None
+            Path(source['entries']).write_text(json.dumps(entries))
+            for path in [source['input'], source['entries']]:
+                source['files'][path] = hashlib.sha256(Path(path).read_bytes()).hexdigest()
+            spec['cases'][0].update(preserve_groups=True, reciprocal_nearest=True)
+            spec['cases'].append(dict(spec['cases'][0], id='singleton',
+                selector=dict(kind='source_group', value='only')))
+            manifest.write_text(json.dumps(spec))
+            plan = prepare(manifest, root / 'out')
+            self.assertEqual(plan['cases'][0]['reciprocal_pairs'], [[0, 1]])
+            self.assertEqual(plan['cases'][0]['groups'], [0, 0, 1, 2, 3, 4])
+            self.assertEqual(plan['cases'][2]['reciprocal_pairs'], [])
+            self.assertEqual(plan['cases'][2]['groups'], [0])
+            for flag, preserve in [('yes', True), (True, False)]:
+                spec['cases'][0].update(reciprocal_nearest=flag, preserve_groups=preserve)
+                manifest.write_text(json.dumps(spec))
+                with self.assertRaisesRegex(ValueError, 'reciprocal_nearest'):
+                    prepare(manifest, root / 'invalid')
+
     def test_cli_paired_vectors_freeze_view_and_use_equal_title_meaning_cosine(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

@@ -96,6 +96,42 @@ def _saved_grouping(selection, vectors, notes, entries, vector_view='meaning'):
     return membership, files
 
 
+def _reciprocal_groups(vectors, groups):
+    """Join existing groups across reciprocal nearest entries, without a cutoff.
+
+    Exact blocked search is a reference calculation: O(n*n*d) work and
+    O(256*n) temporary scores. Equal scores select the first original row.
+    """
+    x = vectors / np.linalg.norm(vectors, axis=1, keepdims=True)
+    if len(x) == 1:
+        return groups, []
+    nearest = np.empty(len(x), dtype=int)
+    for start in range(0, len(x), 256):
+        stop = min(start + 256, len(x))
+        scores = x[start:stop] @ x.T
+        scores[np.arange(stop - start), np.arange(start, stop)] = -np.inf
+        nearest[start:stop] = scores.argmax(axis=1)
+    pairs = [[i, int(j)] for i, j in enumerate(nearest) if i < j and nearest[j] == i]
+    parents = list(range(max(groups) + 1))
+
+    def find(i):
+        while parents[i] != i:
+            parents[i] = parents[parents[i]]
+            i = parents[i]
+        return i
+
+    for i, j in pairs:
+        a, b = find(groups[i]), find(groups[j])
+        parents[max(a, b)] = min(a, b)
+    identifiers, joined = {}, []
+    for group in groups:
+        root = find(group)
+        if root not in identifiers:
+            identifiers[root] = len(identifiers)
+        joined.append(identifiers[root])
+    return joined, pairs
+
+
 def prepare(specification, output):
     specification, output = Path(specification).resolve(), Path(output).resolve()
     spec = _read(specification)
@@ -143,6 +179,9 @@ def prepare(specification, output):
             raise ValueError('Group IDs must be derived from original source entries')
         if type(cfg.get('preserve_groups', False)) is not bool:
             raise ValueError('preserve_groups must be a boolean')
+        if (type(cfg.get('reciprocal_nearest', False)) is not bool
+                or (cfg.get('reciprocal_nearest') and not cfg.get('preserve_groups'))):
+            raise ValueError('reciprocal_nearest requires a boolean and preserve_groups')
         if 'grouping' in cfg and not cfg.get('preserve_groups'):
             raise ValueError('Saved grouping requires preserve_groups')
         grouping_files = {}
@@ -165,6 +204,9 @@ def prepare(specification, output):
                 if key not in keys:
                     keys[key] = len(keys)
                 groups.append(keys[key])
+        pairs = None
+        if cfg.get('reciprocal_nearest'):
+            groups, pairs = _reciprocal_groups(vectors[indices], groups)
         limit = len(indices) if groups is None else len(set(groups))
         counts = [k for k in spec['counts'] if k <= limit]
         if len(selected_notes) < cfg['minimum_notes'] or len(indices) < max(counts) * cfg['minimum_notes']:
@@ -178,6 +220,8 @@ def prepare(specification, output):
                           entries=len(indices), counts=counts)
         if groups is not None:
             case['groups'] = groups
+        if pairs is not None:
+            case['reciprocal_pairs'] = pairs
         if grouping_files:
             case['grouping_files'] = grouping_files
         cases.append(case)

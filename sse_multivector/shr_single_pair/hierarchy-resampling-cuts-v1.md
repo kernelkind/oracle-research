@@ -2349,3 +2349,44 @@ senses and the coverage/size requirements. This targets connections already
 present in the saved vectors without choosing a new fixed similarity cutoff.
 It remains an untested hypothesis; the seven post-selected witnesses alone do
 not establish that such a rule generalizes or is safe to adopt.
+
+### Reciprocal nearest matches before broader section assignment
+
+The user authorized this component test following the cross-root information
+audit. Use the same 5,336 HR36 entries, paired title/meaning vectors, 451 completed
+combined HDBSCAN groups, 2,518 independent entries, six sections, eight seeds
+and 50-iteration limit. Reuse the saved combined-scoring result as baseline.
+No reference-count screen, new encoding, model call or training is needed.
+
+The existing research-panel preparation accepts `reciprocal_nearest: true`
+only with `preserve_groups: true`. Each selected entry chooses its closest other
+entry by combined cosine across the selected inputs. A pair joins only if both
+choose each other; exact score ties choose the first original input row. Existing
+fine groups remain intact, so joins between their members connect entire groups,
+including any resulting chains. The resulting units use the unchanged summed
+original-entry cost and original-entry mean-center updates. Pair indices and
+resulting memberships are frozen before section assignment. No similarity
+cutoff or semantic review labels enter selection.
+
+This bounded exact reference search uses blocked products, O(n squared times
+dimensions) arithmetic and O(256 times n) temporary scores rather than a full
+stored pair matrix. At 5,336 entries it examines about 28.5 million ordered
+pairs in 1,536 dimensions, once before the eight starts. It does not establish
+that exact all-pairs search is suitable for a much larger corpus; a scalable
+neighbor index would need separate qualification before production adoption.
+Stored pairs and group memberships are linear in entry count. HiGen is unchanged.
+
+Predeclared inspection includes the seven duplicate witnesses from the preceding
+audit and the Strategy, Rooms and Inquiries different-sense controls. Same-root
+membership alone does not establish that different meanings were conflated:
+roots may be broad. Inspect which meanings the new pair constraints actually
+join, as well as residual split topics, complete section memberships, distinct
+note coverage and per-section counts. These selected controls are diagnostic
+evidence, not an independent semantic accuracy estimate.
+
+Two failing-first production-path tests demonstrate missing joins before the
+change, then pass through preparation, actual section CLI execution and saved
+resume. They cover transitive joins across existing groups, intact memberships,
+reciprocal-only tie behavior, self-exclusion, singleton input and invalid flags.
+All 63 relevant checks pass, including current native HDBSCAN validation and
+default panel behavior. This adds a research option, not a HiGen policy.
