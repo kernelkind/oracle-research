@@ -1231,6 +1231,40 @@ sentence names V150; reviewers are instructed to receive no expected labels or
 desired titles for V151 either. Native preparation and future receipts bind the
 new prompt hash. Constructors remain V133; results will be appended after testing.
 
+V151 produces 72/72 mechanically valid responses and fixes all nine agreed-case
+responses. Root review records 68 accepts, two title failures and two title
+uncertainties. In draws2 and3 the stock plan is titled “Chicken stock preservation
+and pantry-storage plan,” still enumerating storage alongside the overall
+preservation goal. The user explicitly rejected this pattern earlier; it is a
+clear failure under the existing title criterion, so qualification remains unrun.
+Earlier versions' borderline stock-title judgments are preserved rather than
+silently relabeled. The two writing-tool titles remain borderline restatements.
+All defining alternatives, seven alert tags, UK parts, dairy numeric boundaries
+and stock batch/process/storage conditions are retained. Native
+[accounting](hierarchy-bootstrap-v151-fix-usage-v1.json) records75 attempts including
+three warmups, no failures/retries/reuses, complete usage and $0.52963 API-equivalent
+cost. The480 qualification responses still have zero attempts and outputs.
+
+### Recognizable titles without complete-definition distinctions: Bootstrap-v152
+
+Experimental [Bootstrap-v152](Hierarchy-bootstrap-v152.md) revises only the title
+paragraph. Titles help readers recognize the central topic; they need not uniquely
+distinguish every detailed definition with that topic. Plans and preferences use
+their overall purpose, with operations, exact scope and qualifications retained
+in meaning. The rule still preserves referents and roles, derives titles solely
+from finalized meanings and allows familiar broader names. All examples, meaning
+rules, shared rules-v13 and Consolidation-v28 remain unchanged.
+
+The [regression specification](hierarchy-bootstrap-v152-regression-v1.spec.json)
+uses the same24 inputs, three fresh draws and saved V151 answers as baselines.
+Before the [frozen qualification protocol](hierarchy-bootstrap-v152-heldout-v1.json)
+can run, all nine agreed-case responses and all three stock-plan titles must pass,
+with no clear control regression. The [qualification specification](hierarchy-bootstrap-v152-heldout-v1.spec.json)
+retains the exact same80-post panel, still unused in development and with no model
+outputs from V150 or V151. No selection, rubric or desired titles change; the new
+protocol corrects the inherited version label in reviewer assignment. Constructors
+stay V133. Results and native accounting will be appended after testing.
+
 ## Meaning-derived titles: Bootstrap-v130
 
 The user requested a concise title based solely on the explicit meaning.
