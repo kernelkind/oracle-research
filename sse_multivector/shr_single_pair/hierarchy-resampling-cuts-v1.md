@@ -1,8 +1,8 @@
 # Note-subset recovery of candidate root sections
 
 Experimental numerical investigation, 2026-10-18. **Do not adopt as a HiGen
-policy.** The current target is six useful root sections retaining at least 90%
-of original corpus notes, with each section representing at least 10% of the
+policy.** The current target is at most six useful root sections retaining at
+least 90% of original corpus notes, with each section representing at least 10% of the
 original corpus. Earlier measurements below retain their original 80% target.
 The user prefers cut A
 and explicitly accepts broad root topics because deeper levels provide
@@ -22,7 +22,7 @@ hash-selected thousand-note corpora saved by HR36 and HR37. All retain frozen
 ASv6.100/Bootstrap-v133 original inputs. The root-level numerical requirements
 are:
 
-- Exactly six sections.
+- At most six sections; six is a maximum, not a required count.
 - At least 90% of the original corpus's distinct notes represented across them.
 - Each section represents at least 10% of that original corpus's distinct notes.
 
@@ -30,6 +30,14 @@ For 100 notes, every section must represent at least ten notes and their union
 must represent at least 90. Deduplicate note IDs within each section and across
 the union separately; section note sets can overlap. Use the original corpus
 size as denominator, rather than only the notes with usable inputs.
+
+The user clarified that the six-choice ceiling also permits fewer children at
+deeper levels. The existing tests fixed six as an experimental setting; that
+setting is not a requirement to manufacture six groups. The numerical CLI
+already accepts a specified `--sections` count, with six as its default, but
+does not choose the count automatically. How to choose fewer children and when
+to stop subdividing remain open. This clarification changes neither the root
+retention/size requirements nor any frozen result or current HiGen behavior.
 
 Stopping an ordinary linkage tree at six branches alone does not enforce the
 per-section minimum. The user rejected searching a prebuilt tree for branches
@@ -71,14 +79,14 @@ Cosine distances and normalized center updates follow
 The distinct-note counting below is an adaptation for this task, not a claimed
 result from either paper or a new trained encoder.
 
-For six fixed centers, minimize summed entry-to-center cosine dissimilarity.
-Each original entry is assigned once. A note/section witness can count at most
+For the specified fixed centers, minimize summed entry-to-center cosine
+dissimilarity. Each original entry is assigned once. A note/section witness can count at most
 once and requires an assigned entry from that note. Each section requires its
 configured minimum number of witnesses. This is a sparse minimum-cost-flow
 linear program; implementation uses SciPy's dual-simplex solver and checks
 integral assignments, optimal fixed-center cost and actual distinct-note
 counts. Shared notes across sections remain permitted. It does not replace
-distinct-note counts with entry counts or constrain all six sections to be
+distinct-note counts with entry counts or constrain the sections to be
 equal in size.
 
 Alternate assignment and normalized mean-center updates. Eight fixed starts
