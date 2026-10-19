@@ -1649,10 +1649,14 @@ frozen source paths require retaining this task worktree.
 
 The approved next test asks whether meaning-vector HDBSCAN can separate the
 mixed-name examples while keeping Nostr together. Freeze four pools from the
-same HR36 originals: G036 (62 Nostr entries), G320 (six people/country entries),
-G088 (four geographic entries), and their complete 72-entry union. Geographic
-locations may legitimately share a broader topic; G088 is not assumed to be
-human rejection gold. Interpret the actual memberships, not group count alone.
+same HR36 originals by group ID: G036, G320, G088, and their complete union.
+Preparation mistakenly described G320/G088 as six/four entries and the union
+as 72, using counts from their earlier V04 parent fragments. The frozen full
+groups actually contain eight/seven entries; the union has 77 entries and 76
+notes. This discrepancy was identified after execution and is retained here
+explicitly; no input membership was changed after results. Geographic locations
+may legitimately share a broader topic; G088 is not assumed to be human
+rejection gold. Interpret actual memberships, not group count alone.
 
 Run both saved title-pooled and whole-meaning-pooled vectors on each identical
 pool. Matched title controls distinguish representation changes from the effect
@@ -1671,6 +1675,97 @@ validates their identities, and resumes without rewriting saved reports.
 Eight numerical cases can run independently with one native worker each.
 No source hierarchy or HiGen version is changed. Ignored evidence is stored
 externally under `oracle-mvp-hdbscan-meaning-controls-v1/target/hdbscan-meaning-controls-v1/`.
+
+### Meaning-based controls: improved separation with two unwanted additions
+
+All eight numerical cases complete through the same native route, without
+changing parameters or encoding new vectors. The table records complete
+original groups, not their earlier parent fragments.
+
+| Pool | Entries / notes | Title: selected group sizes; unassigned entries | Meaning: selected group sizes; unassigned entries |
+|---|---:|---|---|
+| Nostr G036 | 62 / 62 | 25, 7, 7; 23 unassigned | 7, 4, 12, 10, 3; 26 unassigned |
+| Mixed people/countries G320 | 8 / 8 | no groups; 8 unassigned | no groups; 8 unassigned |
+| Mixed O-titled entries G088 | 7 / 7 | no groups; 7 unassigned | no groups; 7 unassigned |
+| Complete combined pool | 77 / 76 | 62, 7, 8; none unassigned | 64, 6; 7 unassigned |
+
+G320's two additional entries outside the earlier V04 fragment are Amy Colgan
+and coco. G088 additionally contains Oaths, Ovens and Oval shapes. These make
+the inherited mixed-topic problem clearer; the full groups are not just
+people/countries and geographic places respectively.
+
+In the combined title view, the selected partition exactly reproduces the
+three original groups. The meaning view changes their composition:
+
+- One group contains all 62 Nostr entries **plus Oaths and coco**. Those two
+  additions are agent-flagged mismatches, not new human judgments.
+- A six-entry group contains Cameroon, Curaçao, Colombia, the Sea of Oman,
+  Oklahoma and Odessa. It crosses the old group boundaries around geographic
+  meaning, a useful provisional distinction from the mixed-name groups.
+- Ottawa, Amy Colgan, James Corden, Brad Cooper, Stephen Colbert, Ovens and
+  Oval shapes remain unassigned. All remain eligible original inputs; they
+  were not deleted or semantically rejected. The selected meaning groups
+  represent 69 distinct notes; that is not a root-coverage measurement.
+
+Standalone cases require special care: the native implementation excludes the
+all-data root from EOM selection. Its `eom_subtree` returns the children's
+selection when `node == root`; see the
+[native implementation](../../src/fine_region_hdbscan.rs). Thus the isolated
+Nostr case cannot select its entire all-input root, and no-group outputs for
+the small mixed examples are not proof of correct semantic separation. The
+matched combined pool is the useful comparison here. These results also
+demonstrate why clustering a group alone is not equivalent to retaining it
+as a branch among other topics.
+
+### Exploratory cross-tab: retain membership supported by both views
+
+Inspecting intersections of the combined title and meaning groups yields
+blocks of `62, 1, 3, 1, 3` entries. The two singleton intersections are Oaths
+and coco. The three blocks of at least the existing two-entry minimum are:
+
+| Shared block | Entries |
+|---|---:|
+| Exactly the original Nostr members, with neither extra | 62 |
+| Oklahoma, Sea of Oman and Odessa | 3 |
+| Cameroon, Curaçao and Colombia | 3 |
+
+This is a post-hoc cross-tab of existing outputs, not a separately frozen or
+validated new grouping algorithm. It suggests testing group membership
+supported by both vector views. Other entries would remain independent
+eligible inputs rather than being discarded. Those three blocks contain 68
+entries from 67 notes; the other nine entries remain available. Both views
+use the same frozen encoder, so agreement is not independent-model evidence
+or proof of semantic correctness. It could also over-fragment useful groups.
+
+The next proposed component test is to freeze this agreement rule and evaluate
+it unchanged on the existing HR22 hundred-note corpus, including its originally
+ungrouped entries. That uses another saved corpus and realistic mixed context
+before considering integration. No further test is run here. The saved direct
+root partition already divides HR36's Nostr entries 53/9 across two roots;
+future preservation must be evaluated before that partition if its purpose is
+to prevent that split. This result does not change any root or hierarchy.
+
+### Native verification and retained evidence
+
+Independent checks verify all source/prepared hashes, bit-exact snapshots of
+both views, identical opaque point IDs/order, unchanged configuration, complete
+group/unassigned input unions, distinct-note counts, and the combined title
+partition's exact match to original membership. Independent normalization
+differs from request coordinates by at most `2.78e-17`; an initial bit-equality
+assertion was too strict for independently ordered floating-point sums and was
+replaced by a `1e-14` check. Source vectors and native results were unchanged.
+All native grouping results and the corrected verification pass. Fifty-six
+relevant tests pass, including two tests against the real executable with no
+mocked transport or skipped native checks. Individual native-route durations
+range from 0.025 to 0.206 seconds; eight CLI processes launched concurrently.
+
+The ignored artifact directory contains the frozen spec/plan, selected paired
+vector snapshots, all eight native requests/results and reports, and separate
+`paired-view-audit.json` with the complete cross-tab and limitations. Original
+sources are validated during preparation; execution validates the materialized
+inputs and executable it actually consumes. No LLM, new SSE encoding, training,
+parameter tuning, consolidation, UI update or HiGen activation occurred. The
+task worktree is retained for its frozen source and artifact paths.
 
 Reusable numerical CLI: `sse_multivector/cluster_resampling_probe.py`; tests:
 `sse_multivector/test_cluster_resampling_probe.py`. Input NPZ contains unit
