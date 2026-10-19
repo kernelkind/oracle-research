@@ -1740,7 +1740,7 @@ counted as justified N/A. The two combined Data-god nulls and three haxx-identit
 nulls are justified. This is an exposed development panel and unblinded judgment,
 not independent qualification.
 
-### Frozen next qualification panel for Bootstrap-v162
+### Frozen qualification panel and results for Bootstrap-v162
 
 The [protocol](hierarchy-bootstrap-v162-heldout-v1.json),
 [selectors](hierarchy-bootstrap-v162-heldout-nodes-v1.json) and
@@ -1771,11 +1771,159 @@ evidence and is reported separately.
 Each of the 81 posts contributes a root and specific input, with three fresh
 draws: 480 core outputs plus six supplemental outputs. Native preparation supplies
 the full original post and root hierarchy without rewriting them. Root-agent
-assessment will cover all outputs under the frozen rubric; it is unblinded,
+assessment covers all outputs under the frozen rubric; it is unblinded,
 not independent review or human calibration. Repeated draws and paired levels
 share posts. No prompt retuning or selective qualification rerun is permitted.
-Generation and semantic results are pending; V162 remains experimental, constructor
-pins stay V133 and Consolidation-v29 semantics remain unqualified.
+
+All three runs complete with 162 valid outputs and 163 attempts each, including
+one prefix warmup: 486 valid qualification outputs, no answer reuses, no terminal
+failures and no diagnostic errors. Every original input and output is unchanged
+between the pre-review and reviewed native snapshots. Every output has exactly
+one applicable source-bound root-agent review; input/output digests match native
+review records. All 486 payloads and their source-bound diagnostic sets also pass
+production validation on reinspection. Validity is separate from the semantic
+assessment below.
+
+In this table A/R/U means accept/reject/uncertain; the title column separately
+reports justified null/N/A pairs. Those three nulls concern an unresolved kind of
+materials, not missing answers silently counted as good titles. Cohort and level
+rows overlap; the author-disjoint core excludes the named-work supplement.
+
+| Outputs | Count | Overall A/R/U | Title A/R/U/N/A | Meaning A/R/U |
+| --- | ---: | ---: | ---: | ---: |
+| All | 486 | 440/10/36 | 460/6/17/3 | 463/4/19 |
+| Author-disjoint core | 480 | 435/10/35 | 455/6/16/3 | 457/4/19 |
+| Seeded core | 360 | 335/7/18 | 344/3/10/3 | 348/4/8 |
+| Challenge core | 120 | 100/3/17 | 111/3/6/0 | 109/0/11 |
+| Post-only named-work supplement | 6 | 5/0/1 | 5/0/1/0 | 6/0/0 |
+| Core roots | 240 | 225/3/12 | 240/0/0/0 | 225/3/12 |
+| Core specifics | 240 | 210/7/23 | 215/6/16/3 | 232/1/7 |
+| Seeded roots | 180 | 169/3/8 | 180/0/0/0 | 169/3/8 |
+| Seeded specifics | 180 | 166/4/10 | 164/3/10/3 | 179/1/0 |
+| Challenge roots | 60 | 56/0/4 | 60/0/0/0 | 56/0/4 |
+| Challenge specifics | 60 | 44/3/13 | 51/3/6/0 | 53/0/7 |
+| Supplemental roots | 3 | 3/0/0 | 3/0/0/0 | 3/0/0 |
+| Supplemental specifics | 3 | 2/0/1 | 2/0/1/0 | 3/0/0 |
+| Food challenge | 6 | 1/0/5 | 4/0/2/0 | 3/0/3 |
+| People challenge | 30 | 26/0/4 | 26/0/4/0 | 30/0/0 |
+| Illustrative-wording challenge | 42 | 34/0/8 | 42/0/0/0 | 34/0/8 |
+| Long-subject challenge | 42 | 39/3/0 | 39/3/0/0 | 42/0/0 |
+
+Five of the 81 posts have at least one clear failure; 17 other posts have an
+uncertainty and no clear failure. All six responses pass for the remaining 59
+posts. In the 80-post core these counts are five, 16 and 59. Overall and
+dimension-level verdicts agree across all three draws for 149 of 162 inputs;
+13 inputs have differing verdicts. These repetitions share the same source and
+are not independent posts.
+
+The ten clear failures are:
+
+- Post 052, specific, all three draws: two titles read “Meowing by funny cats
+  with the softest paws”; the third reads “Meowing by funny, softest-pawed cats.”
+  Each carries both secondary descriptive qualifications into the browsing
+  title. The hyphenated version still fails. The meanings correctly preserve
+  these qualifications; they are not illustrative examples.
+- Post 080, specific, all three draws: “Thanks to readers, tool visitors and
+  mission considerers” enumerates every recipient group and uses the strained
+  label “mission considerers.” The gratitude topic needs a brief natural name;
+  its complete recipient conditions belong in meaning. Those recipients are
+  jointly required parts, so removing them from meaning would be incorrect.
+- Post 012, root, draws one and two: the Magic: The Gathering spell definitions
+  require a card to have been cast, excluding the spell while it is being cast.
+  The [official rules](https://media.wizards.com/2026/downloads/MagicCompRules%2020260227.pdf),
+  112.1 and 601.2i, distinguish becoming a spell at the start of casting from
+  completing casting. Draw three admits both stages.
+- Post 015, specific, draw two: the generic CID definition requires a
+  cryptographic hash, excluding identity-multihash CIDs that directly embed
+  data. The [CID format](https://specs.ipfs.tech/cid/) and
+  [identity-CID specification](https://specs.ipfs.tech/unixfs/#532-identity-cid-size-limit)
+  support this counterexample. Draws one and three use the broader multihash
+  description.
+- Post 019, root, draw two: arrests are restricted to law-enforcement
+  authorities, excluding private-person arrests admitted by the source's
+  jurisdiction. [Louisiana CCrP 214](https://legis.la.gov/legis/Law.aspx?d=112362)
+  establishes the omitted case. The other two definitions do not impose that
+  restriction.
+
+All six title rejections concern wording and responsibility between fields,
+not a word-count cutoff, punctuation ban or ban on real compound names. No title
+clearly invents a concept absent from its finalized meaning in this assessment.
+
+The 17 title uncertainties concern “Named SIM” shorthand (three), Bitcoin-demand
+versus blockspace-demand wording (three), possible invention of a separate chess
+betting budget (one), unnecessary timing detail (two), listing both research
+systems (one), listing food-provenance aspects (two), a reporter-role proposition
+(one), awkward gender/deservingness wording (three), and the supplemental article's
+remaining descriptive headline wording (one). Uncertainty is not acceptance.
+
+The 19 meaning uncertainties concern smartwatch boundaries (three), human-only
+championship winners (one), communicated versus broader Support (three), human-only
+Clothing (one), human-only Food (three), the mailing appeal's recipient scope
+(one), business-only Automation tools (one), and six possible retained examples.
+Those six retain “including Jeff Dean” within a definite 37-person signatory
+group, or “including Tehran” within a particular reported military operation,
+across all three draws. These may illustrate an already defined set or qualify
+the selected particular group/event; the assessment does not resolve that
+distinction. They are neither confirmed example failures nor clean omission
+successes. The illustrative-wording sampling predicate is not itself a verdict.
+
+There are positive transfer cases without changing the rubric. Post 035 omits
+the illustrative stocks/Bitcoin/crypto list while retaining the conditional
+capital-rotation claim. Post 067 omits Pappy/Weller while preserving the thriving
+secondary-market claim, its only-route status and both buyer exceptions in every
+draw. Its bourbon root retains exact production criteria; “oak containers” is
+not rejected merely because the current regulation says barrels: the
+[TTB final rule](https://www.govinfo.gov/content/pkg/FR-2020-04-02/pdf/2020-05939.pdf)
+expressly treats those terms as allowing varying shapes and sizes. People
+definitions are direct human-being definitions, and the sex/age qualification
+in post 062 is not an example. Required import alternatives, joint credited
+builders and joint research-system purposes remain in their meanings. The
+supplement's full article identity, date and future-reading status remain in
+meaning in all three draws; two titles briefly name the public-artists article,
+while the longer first title remains uncertain.
+
+The [native usage specification](hierarchy-bootstrap-v162-fix-usage-v1.json)
+groups the red replay, all four development candidates and final qualification.
+Native `summarize-experiments` reports the following new-attempt accounting;
+estimates are API-catalog equivalents, not subscription charges or invoices.
+
+| Group | Valid outputs | New attempts | Reused answers | Catalog estimate USD |
+| --- | ---: | ---: | ---: | ---: |
+| V158 red replay | 2 | 0 | 2 | 0 |
+| V159 development | 108 | 111 | 0 | 0.8839828 |
+| V160 development | 108 | 111 | 0 | 0.8298988 |
+| V161 development | 108 | 111 | 0 | 0.8383360 |
+| V162 development | 108 | 111 | 0 | 0.8527628 |
+| V162 qualification | 486 | 489 | 0 | 3.4620000 |
+| Total, including reused replay | 920 | 933 | 2 | 6.8669804 |
+
+The native total includes 597,101 uncached input tokens, 5,862,784 cached input
+tokens and 508,650 output tokens; 105,381 reasoning tokens are already included
+in output. There are no failed/recovered/retry attempts, missing usage or missing
+catalog estimates. The source-inclusive generation view additionally accounts for
+the replay's three original source calls, reporting 936 original calls and
+$6.8862324; those are not new attempts or new cash spending. Provider-reported
+charges are unavailable. Calls use the existing Codex subscription with zero
+incremental cash charge; no budget-ledger change or attempt cap is introduced.
+
+Native runs and immutable pre-review snapshots remain under
+`target/bootstrap-v159-fix-v1/`; the final native profiles are
+`v162-qualification{1,2,3}-reviewed.json` and accounting is
+`v162-usage-summary.json`. The prompt and selector hashes above are unchanged.
+The task worktree and frozen runner remain necessary for absolute experiment,
+artifact, source and review bindings.
+
+V162 remains experimental and unqualified. This frozen round ends with its
+failures and uncertainties preserved, without retuning or selectively rerunning
+qualification cases. The development fixes do not establish reliable concise
+titles or settle every illustrative-member boundary on new inputs. This is one
+saved corpus, one generation model/reasoning setting and unblinded root judgment,
+without independent assessment or human calibration. V158 used a different panel
+and review process, so these totals do not measure paired improvement. Full
+hierarchy construction and Consolidation-v29 semantics remain untested;
+constructor pins stay V133. The useful next step is to review the repeated title
+failures and unresolved example/qualification boundaries before authorizing a
+separate development round; this report does not start that work.
 
 ## Meaning-derived titles: Bootstrap-v130
 

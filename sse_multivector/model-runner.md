@@ -224,10 +224,18 @@ title appends storage, so qualification remains unrun. Experimental
 required actions stay in meaning while the title gives their shared goal one
 broader name. Its 108 valid development responses receive 97 accepts and eleven
 uncertainties, with no clear rejection. All 18 target checks pass, including all
-three stock-plan titles. The frozen next panel contains 80 new posts/authors
+three stock-plan titles. Its frozen qualification contains 80 new posts/authors
 plus one separately reported new post by a previously seen author: 162 inputs,
-three draws and 486 expected outputs. Qualification and unblinded root assessment
-are pending; constructors stay V133.
+three draws and 486 valid outputs, without diagnostic errors or reused answers.
+Unblinded root assessment records 440 accepts, ten rejects and 36 uncertainties.
+Six title failures repeat across two posts: the titles enumerate cat
+qualifications or every recipient of thanks. Four meanings fail definition scope.
+The author-disjoint core receives 435 accepts, ten rejects and 35 uncertainties;
+the post-only supplement receives five accepts and one uncertainty. These are
+agent judgments, not population reliability or human approval. V162 remains
+experimental and unqualified; constructors stay V133. The
+[qualification findings](shr_single_pair/bootstrap-current-as-qualification.md#frozen-qualification-panel-and-results-for-bootstrap-v162)
+preserve the failures, uncertainties, source checks and native usage accounting.
 
 Experimental [Bootstrap-v133](shr_single_pair/Hierarchy-bootstrap-v133.md)
 returns a concise, natural `title` derived solely from its finalized `meaning`.
