@@ -1296,6 +1296,39 @@ still-unrun80-post panel and fixed rubric. V150, V151 and V152 qualification hav
 no attempts or outputs. Constructors stay V133; source publication remains
 experimental. Results and native accounting will be appended after testing.
 
+V153 remains inconsistent:72/72 mechanically valid responses receive66 root
+accepts, two rejections and four uncertainties. One stock title still joins
+preservation and pantry storage; one AI meaning enumerates illustrative abilities.
+A furniture meaning's support/posture/comfort list is uncertain as possible
+illustration of bodily needs; one country meaning and two writing-tools titles
+are also uncertain. No qualification runs start. Native
+[accounting](hierarchy-bootstrap-v153-fix-usage-v1.json) records75 attempts including
+three warmups, no failures/retries/reuses, complete usage and $0.521432 API-equivalent
+cost. Reviewers also catch a pre-call metadata typo: V153v1's purpose still names
+v152, although its actual prompt hash and assignment identify V153. Those unrun
+preparations and protocol remain preserved; the next protocol corrects the label.
+
+### Demonstrate definitions, qualifications and title omissions: Bootstrap-v154
+
+Experimental [Bootstrap-v154](Hierarchy-bootstrap-v154.md) retains V153's shorter
+title instruction and replaces abstract meaning-writing guidance with two brief
+positive demonstrations: botany states its general subject matter directly;
+edible plants retain a defining qualification. The apple-plan title example now
+explicitly rejects a title listing dehydration and cellar storage, explaining
+that it lists operations rather than names their goal. These generic
+illustrations demonstrate the required distinction without using qualification
+inputs, exact expected stock wording, a word limit or punctuation rules. Full
+examples, shared rules-v13 and Consolidation-v28 remain unchanged.
+
+The [regression specification](hierarchy-bootstrap-v154-regression-v1.spec.json)
+retains24 inputs, three fresh draws and saved V153 baselines. The same gate
+requires all nine agreed-case responses, all three stock-plan titles and no clear
+control regression. The correctly labeled [qualification protocol](hierarchy-bootstrap-v154-heldout-v1.json)
+and [specification](hierarchy-bootstrap-v154-heldout-v1.spec.json) retain the
+unchanged80-post panel and rubric. V150 through V153 qualification have zero
+attempts and outputs; no heldout result has informed these revisions. Constructors
+stay V133 and source remains experimental. Results will be appended after testing.
+
 ## Meaning-derived titles: Bootstrap-v130
 
 The user requested a concise title based solely on the explicit meaning.
