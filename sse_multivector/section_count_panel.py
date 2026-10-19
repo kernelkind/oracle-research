@@ -54,6 +54,32 @@ def _load_source(source):
     return vectors, notes, entries
 
 
+def _saved_grouping(selection, vectors, notes, entries):
+    from . import hdbscan_vector_probe as probe
+    folder = Path(selection['directory']).resolve()
+    producer = _read(folder / 'plan.json')
+    cfg = next(c for c in producer['cases'] if c['id'] == selection['case'])
+    path = folder / cfg['id'] / selection['view'] / 'result.json'
+    saved = _read(path)
+    if any(not Path(saved['native']['hdbscan'][k]).is_file() for k in ['request', 'result']):
+        raise ValueError('Completed native grouping evidence required; preparation cannot run it')
+    report = probe.run(folder, cfg['id'], selection['view'])
+    metadata = [{k: e[k] for k in ['id', 'title', 'meaning', 'note_id', 'source_group']}
+                for e in entries]
+    with np.load(cfg['data'], allow_pickle=False) as data:
+        if (cfg['entries'] != metadata or not np.array_equal(data['meaning'], vectors)
+                or not np.array_equal(data['notes'], notes)):
+            raise ValueError('Saved grouping uses different original inputs')
+    membership = {i: n for n, group in enumerate(report['groups']) for i in group}
+    files = dict(producer['files'], **producer['code_files'])
+    files.update({str(folder / 'plan.json'): _sha(folder / 'plan.json'), str(path): _sha(path),
+                  str(Path(probe.__file__).resolve()): _sha(probe.__file__)})
+    for kind in ['request', 'result']:
+        evidence = report['native']['hdbscan']
+        files[evidence[kind]] = evidence[kind + '_sha256']
+    return membership, files
+
+
 def prepare(specification, output):
     specification, output = Path(specification).resolve(), Path(output).resolve()
     spec = _read(specification)
@@ -101,14 +127,21 @@ def prepare(specification, output):
             raise ValueError('Group IDs must be derived from original source entries')
         if type(cfg.get('preserve_groups', False)) is not bool:
             raise ValueError('preserve_groups must be a boolean')
+        if 'grouping' in cfg and not cfg.get('preserve_groups'):
+            raise ValueError('Saved grouping requires preserve_groups')
+        grouping_files = {}
         if cfg.get('preserve_groups'):
             if cfg['minimum_notes'] != 0:
                 raise ValueError('Whole-group comparisons currently require a zero note minimum')
             if cfg.get('reuse'):
                 raise ValueError('Original-entry producers are not whole-group reuse sources')
+            membership = None
+            if 'grouping' in cfg:
+                membership, grouping_files = _saved_grouping(cfg['grouping'], vectors, notes, entries)
             keys, groups = {}, []
             for i in indices:
-                group = entries[i].get('source_group')
+                group = (membership.get(entries[i]['id']) if membership is not None
+                         else entries[i].get('source_group'))
                 key = ('group', group) if group is not None else ('entry', entries[i]['id'])
                 if key not in keys:
                     keys[key] = len(keys)
@@ -126,6 +159,8 @@ def prepare(specification, output):
                           entries=len(indices), counts=counts)
         if groups is not None:
             case['groups'] = groups
+        if grouping_files:
+            case['grouping_files'] = grouping_files
         cases.append(case)
     if role_notes['development'] & role_notes['reserved']:
         raise ValueError('Development and reserved cases share original notes')
@@ -195,6 +230,7 @@ def run(output, case_id):
     cfg = next((c for c in plan['cases'] if c['id'] == case_id), None)
     if cfg is None:
         raise ValueError('Unknown frozen case ID')
+    _check_files(cfg.get('grouping_files', {}))
     spec = plan['spec']
     vectors, notes, entries = _load_source(spec['sources'][cfg['source']])
     indices = cfg['indices']

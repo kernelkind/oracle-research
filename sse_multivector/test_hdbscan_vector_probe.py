@@ -12,6 +12,7 @@ import numpy as np
 
 from sse_multivector import hierarchy_hdbscan as hdbscan
 from sse_multivector.hdbscan_vector_probe import prepare, run
+from sse_multivector import section_count_panel as sections
 
 
 @unittest.skipUnless(os.environ.get('HDBSCAN_TEST_BINARY'), 'Native HDBSCAN executable required')
@@ -158,6 +159,48 @@ class HdbscanVectorProbeTests(unittest.TestCase):
             before = report_path.read_bytes()
             self.assertEqual(run(root / 'out', 'combined', 'combined'), report)
             self.assertEqual(report_path.read_bytes(), before)
+
+    def test_saved_native_groups_bind_section_fits_and_detect_changed_evidence(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            spec_path, spec = self._source(root)
+            entries = json.loads((root / 'entries.json').read_text())
+            for entry in entries:
+                entry['source_group'] = None
+            (root / 'entries.json').write_text(json.dumps(entries))
+            spec['source']['files'][str(root / 'entries.json')] = hashlib.sha256(
+                (root / 'entries.json').read_bytes()).hexdigest()
+            spec['cases'] = [dict(id='all', all_entries=True)]
+            spec_path.write_text(json.dumps(spec))
+            prepare(spec_path, root / 'probe')
+            result = run(root / 'probe', 'all', 'combined')
+            section_spec = dict(sources={'saved': spec['source']}, counts=[1, 2],
+                seeds=[10, 11], max_iterations=50, time_limit=30,
+                cases=[dict(id='grouped', source='saved', role='development',
+                    selector=dict(kind='all'), minimum_notes=0, preserve_groups=True,
+                    grouping=dict(directory=str(root / 'probe'), case='all', view='combined'))])
+            path = root / 'sections.json'
+            path.write_text(json.dumps(section_spec))
+            plan = sections.prepare(path, root / 'sections')
+            self.assertEqual(plan['cases'][0]['groups'], [0] * 6 + [1] * 6)
+            sections.run(root / 'sections', 'grouped')
+            saved = json.loads((root / 'sections/grouped/count-2.json').read_text())
+            labels = saved['panel']['best']['labels']
+            self.assertEqual(len(set(labels[:6])), 1)
+            self.assertEqual(len(set(labels[6:])), 1)
+            self.assertNotEqual(labels[0], labels[6])
+            (root / 'probe/all/combined/result.json').write_text('{}')
+            with self.assertRaisesRegex(ValueError, 'Frozen source changed'):
+                sections.run(root / 'sections', 'grouped')
+            (root / 'probe/all/combined/result.json').write_text(json.dumps(result))
+            entries[0]['meaning'] = 'different meaning'
+            (root / 'entries.json').write_text(json.dumps(entries))
+            section_spec['sources']['saved']['files'][str(root / 'entries.json')] = hashlib.sha256(
+                (root / 'entries.json').read_bytes()).hexdigest()
+            path.write_text(json.dumps(section_spec))
+            with self.assertRaisesRegex(ValueError, 'different original inputs'):
+                sections.prepare(path, root / 'wrong')
+            self.assertFalse((root / 'wrong').exists())
 
 
 if __name__ == '__main__':
