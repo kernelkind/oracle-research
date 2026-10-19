@@ -4,10 +4,10 @@
   "publication_oracle_commit": "f0babdd6495abaa66626752248633eaf32ec317f",
   "publication_runner_commit": "3b735505ecd8aec49dd7e947bbd4647e99f3a6a1",
   "state": "candidate file list; not a publication approval or complete reproducibility claim",
-  "files": 850992,
-  "file_bytes": 574183878319,
-  "unique_planned_archive_members": 825329,
-  "unique_planned_archive_bytes": 573253966205,
+  "files": 850994,
+  "file_bytes": 574183912828,
+  "unique_planned_archive_members": 825331,
+  "unique_planned_archive_bytes": 573254000714,
   "experiments_by_kind": {
     "historical collection": 120,
     "official hierarchy": 37,
@@ -18,10 +18,8 @@
   "models": 17,
   "dependency_status_counts": {
     "located-at-documented-checkout": 20,
-    "located": 49648,
-    "located-recorded-hash-not-checked": 9541,
-    "hash-mismatch": 21,
-    "located-hash-not-checked": 15,
+    "located": 59199,
+    "hash-mismatch": 26,
     "generator-supplied-input": 30,
     "not-created-held-step": 2
   },
@@ -42,15 +40,15 @@
   "changed_files": 0,
   "source_binding_count": 33940015,
   "unique_source_bindings": 59277,
-  "file_list_parts": 1251,
+  "file_list_parts": 1252,
   "excluded_fixture_environment_and_container_files": 7991,
-  "inputs": 37968,
+  "inputs": 37970,
   "historical_artifact_blobs": 294,
   "official_corpora": 9,
   "verified_official_corpora": 9,
   "recorded_generation_commits": 41,
   "generation_commits_missing_from_publication": 1,
-  "exact_dependency_alternatives": 18,
+  "exact_dependency_alternatives": 23,
   "dataset_hash_exceptions": [
     {
       "source": "oracle-mvp-hierarchy-hr39-v53-auto:target/hierarchy-hr39-v53-auto-5000-note-v1/subject-collection/subjects.json",
@@ -63,7 +61,7 @@
   "resolved_external_source_bindings": 151,
   "resolved_result_path_aliases": 276,
   "verification": {
-    "scope": "Original discovery pass; historical_input_recovery records the follow-up",
+    "scope": "Original discovery pass; historical_input_recovery and remaining_input_hash_check record follow-ups",
     "file_rows_rechecked": 850983,
     "unlisted_input_or_result_references": 0,
     "files_changed_since_inventory": 0,
@@ -110,6 +108,73 @@
       "affected_plan_files_unchanged": 9,
       "inventory_counts_and_references": "passed",
       "local_document_links": "passed"
+    }
+  },
+  "remaining_input_hash_check": {
+    "date": "2026-10-19",
+    "publication_oracle_commit": "9fb9c11121a62aac2674a73f2e36fa9f6b3e8863",
+    "bindings_checked": 9556,
+    "matching_current_files": 9551,
+    "mismatched_current_files": 5,
+    "mismatches_resolved_from_git": 3,
+    "mismatches_resolved_by_exact_recovery": 2,
+    "remaining_unchecked_recorded_input_bindings": 0,
+    "remaining_unrecovered_versions": 3,
+    "files_hashed": 9552,
+    "bytes_hashed": 3567318918,
+    "chunk_bytes": 1048576,
+    "elapsed_seconds": 22.34,
+    "peak_rss_KiB": 33992,
+    "concurrent_changes": 0,
+    "runtime_bindings_checked": 62,
+    "runtime_bindings_matched": 62,
+    "runtime_artifacts": [
+      {
+        "source": "oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781",
+        "sha256": "bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d",
+        "kind": "tree",
+        "rule": "sorted-relative-path-type-size-content-sha256-v1",
+        "files": 5,
+        "bytes": 2184305
+      },
+      {
+        "source": "oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt",
+        "sha256": "ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d",
+        "kind": "file",
+        "rule": "sha256",
+        "files": 1,
+        "bytes": 1329859448
+      },
+      {
+        "source": "oracle-mvp-hierarchy-v3-three-note-v1:target/hierarchy-v3-three-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781",
+        "sha256": "bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d",
+        "kind": "tree",
+        "rule": "sorted-relative-path-type-size-content-sha256-v1",
+        "files": 5,
+        "bytes": 2184305
+      },
+      {
+        "source": "oracle-mvp-hierarchy-v3-three-note-v1:target/hierarchy-v3-three-note-v1/sse-model/subencoder_st5_base.ckpt",
+        "sha256": "ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d",
+        "kind": "file",
+        "rule": "sha256",
+        "files": 1,
+        "bytes": 1329859448
+      }
+    ],
+    "runtime_bytes_hashed": 2664087506,
+    "runtime_peak_rss_KiB": 24980,
+    "additional_recovered_files": 2,
+    "additional_recovered_bytes": 34509,
+    "file_list_hashes_added": 9564,
+    "scope": "Recorded hashes already indexed in dependencies.csv and runtime-inputs.csv; does not inspect the 42 oversized plans, verify all receipts, or checksum all release artifacts",
+    "verification": {
+      "file_rows_checked": 850994,
+      "unresolved_versions_after_exact_alternatives": 3,
+      "original_references_and_expected_hashes": "preserved",
+      "inventory_counts_and_archive_members": "passed",
+      "local_document_links": "passed",
+      "peak_validation_rss_KiB": 471388
     }
   }
 }

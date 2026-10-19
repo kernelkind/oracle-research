@@ -8,9 +8,9 @@ archives have not been assembled, uploaded or approved for release.
 All nine official subject corpus hashes match located files. The 151 input
 bindings to relocated storage were also checked against their recorded hashes.
 
-There are **21 source bindings whose current contents differ from the recorded
+There are **26 source bindings whose current contents differ from the recorded
 hash**. [Exact alternatives](dependency-alternatives.csv) identify a matching
-saved or recovered copy for **18** of them. The remaining **three versions of
+saved or recovered copy for **23** of them. The remaining **three versions of
 one hierarchy state file** were not located in the recovery check below.
 Keep the current and historical versions distinguishable; do not change frozen
 plans to conceal a mismatch. These counts describe bindings, not necessarily
@@ -28,7 +28,7 @@ Some absent filenames are expected:
 
 ### Historical input recovery
 
-The follow-up check on 2026-10-19 recovered nine additional input versions,
+The first recovery check on 2026-10-19 recovered nine additional input versions,
 totaling 1,424,669 bytes. Each complete recovered file matches the SHA-256
 recorded by its original experiment:
 
@@ -72,6 +72,36 @@ inventoried files on relocated storage. [Inventory metadata](inventory.json)
 records the search bounds. This establishes that these versions were not found
 in those locations, not that no copy exists anywhere.
 
+### Remaining input hash checks
+
+The subsequent check completed all **9,556 previously unchecked input bindings**:
+9,551 match their current files, including all 15 large inputs. Five require
+older versions of these files under `research-main:sse_multivector/experiment_specs/`:
+
+| File | Exact historical version |
+| --- | --- |
+| `hr02-m06-muse-titles-v1.json` | Two versions: one in Git; the other recovered by changing only `max_output_tokens` from 6500 to the saved plan's 8192 in that Git version. |
+| `luna-complete-note-masks-v1.json` | Found in Git history. |
+| `lg01-bcpv4-six-pairs-astra-low-v1.json` | Found in Git history. |
+| `asv6.100-hr01-post-template.txt` | Recovered by UTF-8 encoding the exact `plan.prompt.text` saved in the `asv6.100-context-draft/V1` experiment. |
+
+All five match their original recorded hashes. The three Git blobs and their
+commits are present in the publication clone. The two recovered files are saved
+under ignored `target/publication-inputs/` and listed in
+[part-1252.csv](files/part-1252.csv). [Exact alternatives](dependency-alternatives.csv)
+records each source, hash and recovery procedure. No additional unresolved
+versions were found; the three state versions above remain unlocated.
+
+All **62 recorded encoder bindings** also match: two checkpoint copies and two
+configuration/tokenizer directory copies shared by the hierarchy runs. Directory
+hashes use the production worker's `canonical_tree_sha256` function. Measured
+hashes are recorded in [runtime inputs](runtime-inputs.csv) and the file lists.
+
+Files were hashed in 1 MiB chunks, with size and modification checks to detect
+concurrent edits. No concurrent changes were detected. This completes checking
+the recorded input hashes already indexed; it does not cover dependencies still
+unindexed inside the 42 large plans below or verification of all saved responses.
+
 ## Saved results and verification
 
 - **3,173 native plans** have no `results.jsonl` at the recorded location or
@@ -81,11 +111,9 @@ in those locations, not that no copy exists anywhere.
 - **42 large plans** are listed as files and as entries with metadata pending.
   They exceeded the inventory's 32 MiB JSON read limit. Their detailed settings
   and dependencies still need inspection with a bounded-memory reader.
-- **15 large input bindings** have located files whose hashes were not checked.
-  Another **9,541 code, prompt or configuration bindings** retain recorded hashes
-  without a new hash check. See [dependencies](dependencies.csv). Encoder asset
-  checks are recorded separately in [runtime inputs](runtime-inputs.csv).
-- Adapter configurations identify pinned base-model revisions. Weight files,
+- Indexed input and encoder hashes have been checked as described above. The
+  three unlocated state versions remain a source-verification limitation.
+- Adapter configurations identify pinned base-model revisions. Adapter weights,
   other unmeasured evidence and the eventual archives still need checksums.
   Having a saved file is not a completed reproduction test.
 

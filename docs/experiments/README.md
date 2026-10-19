@@ -57,10 +57,11 @@ remain historical evidence; raw source posts are not deprecated by that rule.
   identify saved copies or recoveries with the expected hash without changing a
   frozen experiment's original binding. Recovery entries record their sources
   and exact procedure. [Input recovery findings](open-items.md#historical-input-recovery)
-  explain the nine recovered versions and the three state versions still unlocated.
+  explain the eleven recovered files and the three state versions still unlocated.
 - [Runtime inputs](runtime-inputs.csv): hierarchy recipes and the encoder assets
   they reference, including recorded checkpoint and tokenizer/configuration
-  hashes. These hashes are distinguished from newly measured input hashes.
+  hashes. Expected hashes and newly measured hashes are recorded separately;
+  all 62 encoder bindings with recorded hashes match.
 - [Models](models.csv): adapter weights, configurations and the separate
   optimizer/training state needed to resume training. Using an adapter requires
   its pinned base model; it does not require optimizer state.
@@ -133,17 +134,19 @@ location for each of those files; the relocated input contents were also hashed.
 
 The file list records sizes without loading file contents. Identified inputs
 are hashed in 1 MiB chunks. The discovery pass capped input hashing at 128 MiB;
-the larger official HR39 corpus was checked separately. Remaining oversized
-inputs are marked as not hash-checked.
+the larger official HR39 corpus was checked separately. The follow-up checked
+all 9,556 remaining indexed input bindings, including the 15 oversized inputs,
+and all 62 recorded encoder bindings. Five additional historical-version
+mismatches were resolved using exact Git copies or recoveries from saved plans.
 Large experiment plans that cannot be inspected within the stated JSON limit
 require separate follow-up. Other evidence and final archives still need
 checksum verification. File sizes and modification times are checked again at
 the end to detect concurrent edits.
 
-The historical-input follow-up adds nine recovered files to the explicit list.
+The historical-input checks add eleven recovered files to the explicit list.
 Their complete contents were checked against the original expected hashes;
-the original dependency observations remain unchanged. The inventory record
-separates this follow-up from the discovery snapshot and lists its search bounds.
+original source paths and expected hashes remain unchanged. The inventory record
+separates the follow-ups from the discovery snapshot and lists their scope.
 
 Build caches, virtual environments, runtime lock files, known credential containers and
 unreviewed symlink targets are excluded. Known unit/integration fixture outputs

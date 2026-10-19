@@ -1,156 +1,156 @@
-run_id,field,source,expected_sha256,status
-HIGEN-V4-ROOTS-V1,bootstrap_spec,publication:sse_multivector/hierarchy-runs/higen-v4-roots-v1/bootstrap.spec.json,,located
-HIGEN-V4-ROOTS-V1,consolidation_spec,publication:sse_multivector/hierarchy-runs/higen-v4-roots-v1/consolidation.spec.json,,located
-HIGEN-V4-ROOTS-V1,worker_config,publication:sse_multivector/hierarchy-runs/higen-v4-roots-v1/worker-config.json,,located
-HIGEN-V4-ROOTS-V1,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,located; recorded hash not rechecked
-HIGEN-V4-ROOTS-V1,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,located; recorded hash not rechecked
-HR11,bootstrap_spec,publication:sse_multivector/hierarchy-runs/hr11/bootstrap.spec.json,,located
-HR11,consolidation_spec,publication:sse_multivector/hierarchy-runs/hr11/consolidation.spec.json,,located
-HR11,worker_config,publication:sse_multivector/hierarchy-runs/hr11/worker-config.json,,located
-HR11,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,located; recorded hash not rechecked
-HR11,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,located; recorded hash not rechecked
-HR12,bootstrap_spec,publication:sse_multivector/hierarchy-runs/hr12/bootstrap.spec.json,,located
-HR12,consolidation_spec,publication:sse_multivector/hierarchy-runs/hr12/consolidation.spec.json,,located
-HR12,worker_config,publication:sse_multivector/hierarchy-runs/hr12/worker-config.json,,located
-HR12,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,located; recorded hash not rechecked
-HR12,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,located; recorded hash not rechecked
-HR13,bootstrap_spec,publication:sse_multivector/hierarchy-runs/hr13/bootstrap.spec.json,,located
-HR13,consolidation_spec,publication:sse_multivector/hierarchy-runs/hr13/consolidation.spec.json,,located
-HR13,worker_config,publication:sse_multivector/hierarchy-runs/hr13/worker-config.json,,located
-HR13,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,located; recorded hash not rechecked
-HR13,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,located; recorded hash not rechecked
-HR14,bootstrap_spec,publication:sse_multivector/hierarchy-runs/hr14/bootstrap.spec.json,,located
-HR14,consolidation_spec,publication:sse_multivector/hierarchy-runs/hr14/consolidation.spec.json,,located
-HR14,worker_config,publication:sse_multivector/hierarchy-runs/hr14/worker-config.json,,located
-HR14,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,located; recorded hash not rechecked
-HR14,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,located; recorded hash not rechecked
-HR15,bootstrap_spec,publication:sse_multivector/hierarchy-runs/hr15/bootstrap.spec.json,,located
-HR15,consolidation_spec,publication:sse_multivector/hierarchy-runs/hr15/consolidation.spec.json,,located
-HR15,worker_config,publication:sse_multivector/hierarchy-runs/hr15/worker-config.json,,located
-HR15,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,located; recorded hash not rechecked
-HR15,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,located; recorded hash not rechecked
-HR16,bootstrap_spec,publication:sse_multivector/hierarchy-runs/hr16/bootstrap.spec.json,,located
-HR16,consolidation_spec,publication:sse_multivector/hierarchy-runs/hr16/consolidation.spec.json,,located
-HR16,worker_config,publication:sse_multivector/hierarchy-runs/hr16/worker-config.json,,located
-HR16,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,located; recorded hash not rechecked
-HR16,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,located; recorded hash not rechecked
-HR17,bootstrap_spec,publication:sse_multivector/hierarchy-runs/hr17/bootstrap.spec.json,,located
-HR17,consolidation_spec,publication:sse_multivector/hierarchy-runs/hr17/consolidation.spec.json,,located
-HR17,worker_config,publication:sse_multivector/hierarchy-runs/hr17/worker-config.json,,located
-HR17,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,located; recorded hash not rechecked
-HR17,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,located; recorded hash not rechecked
-HR18,bootstrap_spec,publication:sse_multivector/hierarchy-runs/hr18/bootstrap.spec.json,,located
-HR18,consolidation_spec,publication:sse_multivector/hierarchy-runs/hr18/consolidation.spec.json,,located
-HR18,worker_config,publication:sse_multivector/hierarchy-runs/hr18/worker-config.json,,located
-HR18,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,located; recorded hash not rechecked
-HR18,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,located; recorded hash not rechecked
-HR19,bootstrap_spec,publication:sse_multivector/hierarchy-runs/hr19/bootstrap.spec.json,,located
-HR19,consolidation_spec,publication:sse_multivector/hierarchy-runs/hr19/consolidation.spec.json,,located
-HR19,worker_config,publication:sse_multivector/hierarchy-runs/hr19/worker-config.json,,located
-HR19,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,located; recorded hash not rechecked
-HR19,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,located; recorded hash not rechecked
-HR20,bootstrap_spec,publication:sse_multivector/hierarchy-runs/hr20/bootstrap.spec.json,,located
-HR20,consolidation_spec,publication:sse_multivector/hierarchy-runs/hr20/consolidation.spec.json,,located
-HR20,worker_config,publication:sse_multivector/hierarchy-runs/hr20/worker-config.json,,located
-HR20,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,located; recorded hash not rechecked
-HR20,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,located; recorded hash not rechecked
-HR21,bootstrap_spec,publication:sse_multivector/hierarchy-runs/hr21/bootstrap.spec.json,,located
-HR21,consolidation_spec,publication:sse_multivector/hierarchy-runs/hr21/consolidation.spec.json,,located
-HR21,worker_config,publication:sse_multivector/hierarchy-runs/hr21/worker-config.json,,located
-HR21,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,located; recorded hash not rechecked
-HR21,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,located; recorded hash not rechecked
-HR22,bootstrap_spec,publication:sse_multivector/hierarchy-runs/hr22/bootstrap.spec.json,,located
-HR22,consolidation_spec,publication:sse_multivector/hierarchy-runs/hr22/consolidation.spec.json,,located
-HR22,worker_config,publication:sse_multivector/hierarchy-runs/hr22/worker-config.json,,located
-HR22,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,located; recorded hash not rechecked
-HR22,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,located; recorded hash not rechecked
-HR23,bootstrap_spec,publication:sse_multivector/hierarchy-runs/hr23/bootstrap.spec.json,,located
-HR23,consolidation_spec,publication:sse_multivector/hierarchy-runs/hr23/consolidation.spec.json,,located
-HR23,worker_config,publication:sse_multivector/hierarchy-runs/hr23/worker-config.json,,located
-HR23,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,located; recorded hash not rechecked
-HR23,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,located; recorded hash not rechecked
-HR24,bootstrap_spec,publication:sse_multivector/hierarchy-runs/hr24/bootstrap.spec.json,,located
-HR24,consolidation_spec,publication:sse_multivector/hierarchy-runs/hr24/consolidation.spec.json,,located
-HR24,worker_config,publication:sse_multivector/hierarchy-runs/hr24/worker-config.json,,located
-HR24,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,located; recorded hash not rechecked
-HR24,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,located; recorded hash not rechecked
-HR25,bootstrap_spec,publication:sse_multivector/hierarchy-runs/hr25/bootstrap.spec.json,,located
-HR25,consolidation_spec,publication:sse_multivector/hierarchy-runs/hr25/consolidation.spec.json,,located
-HR25,worker_config,publication:sse_multivector/hierarchy-runs/hr25/worker-config.json,,located
-HR25,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,located; recorded hash not rechecked
-HR25,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,located; recorded hash not rechecked
-HR26,bootstrap_spec,publication:sse_multivector/hierarchy-runs/hr26/bootstrap.spec.json,,located
-HR26,consolidation_spec,publication:sse_multivector/hierarchy-runs/hr26/consolidation.spec.json,,located
-HR26,worker_config,publication:sse_multivector/hierarchy-runs/hr26/worker-config.json,,located
-HR26,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,located; recorded hash not rechecked
-HR26,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,located; recorded hash not rechecked
-HR27,bootstrap_spec,oracle-mvp-hierarchy-hr21-v41:sse_multivector/hierarchy-runs/hr21/bootstrap.spec.json,,located
-HR27,consolidation_spec,oracle-mvp-hierarchy-hr21-v41:sse_multivector/hierarchy-runs/hr21/consolidation.spec.json,,located
-HR27,worker_config,oracle-mvp-hierarchy-hr21-v41:sse_multivector/hierarchy-runs/hr21/worker-config.json,,located
-HR27,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,located; recorded hash not rechecked
-HR27,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,located; recorded hash not rechecked
-HR28,bootstrap_spec,oracle-mvp-hierarchy-hr22-v41:sse_multivector/hierarchy-runs/hr22/bootstrap.spec.json,,located
-HR28,consolidation_spec,oracle-mvp-hierarchy-hr22-v41:sse_multivector/hierarchy-runs/hr22/consolidation.spec.json,,located
-HR28,worker_config,oracle-mvp-hierarchy-hr22-v41:sse_multivector/hierarchy-runs/hr22/worker-config.json,,located
-HR28,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,located; recorded hash not rechecked
-HR28,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,located; recorded hash not rechecked
-HR29,bootstrap_spec,oracle-mvp-hierarchy-hr26-v41:sse_multivector/hierarchy-runs/hr26/bootstrap.spec.json,,located
-HR29,consolidation_spec,oracle-mvp-hierarchy-hr26-v41:sse_multivector/hierarchy-runs/hr26/consolidation.spec.json,,located
-HR29,worker_config,oracle-mvp-hierarchy-hr26-v41:sse_multivector/hierarchy-runs/hr26/worker-config.json,,located
-HR29,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,located; recorded hash not rechecked
-HR29,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,located; recorded hash not rechecked
-HR30,bootstrap_spec,publication:sse_multivector/hierarchy-runs/hr30/bootstrap.spec.json,,located
-HR30,consolidation_spec,publication:sse_multivector/hierarchy-runs/hr30/consolidation.spec.json,,located
-HR30,worker_config,oracle-mvp-hierarchy-hr26-v41:sse_multivector/hierarchy-runs/hr26/worker-config.json,,located
-HR30,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,located; recorded hash not rechecked
-HR30,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,located; recorded hash not rechecked
-HR31,bootstrap_spec,publication:sse_multivector/hierarchy-runs/hr31/bootstrap.spec.json,,located
-HR31,consolidation_spec,publication:sse_multivector/hierarchy-runs/hr31/consolidation.spec.json,,located
-HR31,worker_config,oracle-mvp-hierarchy-hr22-v41:sse_multivector/hierarchy-runs/hr22/worker-config.json,,located
-HR31,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,located; recorded hash not rechecked
-HR31,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,located; recorded hash not rechecked
-HR32,bootstrap_spec,oracle-mvp-hierarchy-hr32-v51:sse_multivector/hierarchy-runs/hr32/bootstrap.spec.json,,located
-HR32,consolidation_spec,oracle-mvp-hierarchy-hr32-v51:sse_multivector/hierarchy-runs/hr32/consolidation.spec.json,,located
-HR32,worker_config,oracle-mvp-hierarchy-hr26-v41:sse_multivector/hierarchy-runs/hr26/worker-config.json,,located
-HR32,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,located; recorded hash not rechecked
-HR32,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,located; recorded hash not rechecked
-HR33,bootstrap_spec,oracle-mvp-hierarchy-hr32-v51:sse_multivector/hierarchy-runs/hr32/bootstrap.spec.json,,located
-HR33,consolidation_spec,oracle-mvp-hierarchy-hr32-v51:sse_multivector/hierarchy-runs/hr32/consolidation.spec.json,,located
-HR33,worker_config,oracle-mvp-hierarchy-hr26-v41:sse_multivector/hierarchy-runs/hr26/worker-config.json,,located
-HR33,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,located; recorded hash not rechecked
-HR33,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,located; recorded hash not rechecked
-HR34,bootstrap_spec,oracle-mvp-hierarchy-hr32-v51:sse_multivector/hierarchy-runs/hr32/bootstrap.spec.json,,located
-HR34,consolidation_spec,oracle-mvp-hierarchy-hr32-v51:sse_multivector/hierarchy-runs/hr32/consolidation.spec.json,,located
-HR34,worker_config,oracle-mvp-hierarchy-hr26-v41:sse_multivector/hierarchy-runs/hr26/worker-config.json,,located
-HR34,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,located; recorded hash not rechecked
-HR34,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,located; recorded hash not rechecked
-HR35,bootstrap_spec,oracle-mvp-hierarchy-hr30-final-v1:sse_multivector/hierarchy-runs/hr30/bootstrap.spec.json,,located
-HR35,consolidation_spec,oracle-mvp-hierarchy-hr30-final-v1:sse_multivector/hierarchy-runs/hr30/consolidation.spec.json,,located
-HR35,worker_config,oracle-mvp-hierarchy-hr26-v41:sse_multivector/hierarchy-runs/hr26/worker-config.json,,located
-HR35,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,located; recorded hash not rechecked
-HR35,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,located; recorded hash not rechecked
-HR36,bootstrap_spec,oracle-mvp-hierarchy-hr36-v53-auto:sse_multivector/hierarchy-runs/hr36/bootstrap.spec.json,,located
-HR36,consolidation_spec,oracle-mvp-hierarchy-hr36-v53-auto:sse_multivector/hierarchy-runs/hr36/consolidation.spec.json,,located
-HR36,worker_config,oracle-mvp-hierarchy-hr36-v53-auto:sse_multivector/hierarchy-runs/hr36/worker-config.json,,located
-HR36,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,located; recorded hash not rechecked
-HR36,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,located; recorded hash not rechecked
-HR37,bootstrap_spec,oracle-mvp-hierarchy-hr37-v53-auto:sse_multivector/hierarchy-runs/hr37/bootstrap.spec.json,,located
-HR37,consolidation_spec,oracle-mvp-hierarchy-hr37-v53-auto:sse_multivector/hierarchy-runs/hr37/consolidation.spec.json,,located
-HR37,worker_config,oracle-mvp-hierarchy-hr37-v53-auto:sse_multivector/hierarchy-runs/hr37/worker-config.json,,located
-HR37,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,located; recorded hash not rechecked
-HR37,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,located; recorded hash not rechecked
-HR38,bootstrap_spec,oracle-mvp-hierarchy-hr38-v53-auto:sse_multivector/hierarchy-runs/hr38/bootstrap.spec.json,,located
-HR38,consolidation_spec,oracle-mvp-hierarchy-hr38-v53-auto:sse_multivector/hierarchy-runs/hr38/consolidation.spec.json,,located
-HR38,worker_config,oracle-mvp-hierarchy-hr38-v53-auto:sse_multivector/hierarchy-runs/hr38/worker-config.json,,located
-HR38,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,located; recorded hash not rechecked
-HR38,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,located; recorded hash not rechecked
-HR39,bootstrap_spec,oracle-mvp-hierarchy-hr39-v53-auto:sse_multivector/hierarchy-runs/hr39/bootstrap.spec.json,,located
-HR39,consolidation_spec,oracle-mvp-hierarchy-hr39-v53-auto:sse_multivector/hierarchy-runs/hr39/consolidation.spec.json,,located
-HR39,worker_config,oracle-mvp-hierarchy-hr39-v53-auto:sse_multivector/hierarchy-runs/hr39/worker-config.json,,located
-HR39,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,located; recorded hash not rechecked
-HR39,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,located; recorded hash not rechecked
-V3-THREE-NOTE-V1,bootstrap_spec,publication:sse_multivector/hierarchy-runs/v3-three-note-v1/bootstrap.spec.json,,located
-V3-THREE-NOTE-V1,consolidation_spec,publication:sse_multivector/hierarchy-runs/v3-three-note-v1/consolidation.spec.json,,located
-V3-THREE-NOTE-V1,worker_config,publication:sse_multivector/hierarchy-runs/v3-three-note-v1/worker-config.json,,located
-V3-THREE-NOTE-V1,checkpoint_path,oracle-mvp-hierarchy-v3-three-note-v1:target/hierarchy-v3-three-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,located at documented original checkout; recorded hash not rechecked
-V3-THREE-NOTE-V1,base_model_artifact_path,oracle-mvp-hierarchy-v3-three-note-v1:target/hierarchy-v3-three-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,located at documented original checkout; recorded hash not rechecked
+run_id,field,source,expected_sha256,status,actual_sha256
+HIGEN-V4-ROOTS-V1,bootstrap_spec,publication:sse_multivector/hierarchy-runs/higen-v4-roots-v1/bootstrap.spec.json,,located,
+HIGEN-V4-ROOTS-V1,consolidation_spec,publication:sse_multivector/hierarchy-runs/higen-v4-roots-v1/consolidation.spec.json,,located,
+HIGEN-V4-ROOTS-V1,worker_config,publication:sse_multivector/hierarchy-runs/higen-v4-roots-v1/worker-config.json,,located,
+HIGEN-V4-ROOTS-V1,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,hash verified,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d
+HIGEN-V4-ROOTS-V1,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,hash verified,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d
+HR11,bootstrap_spec,publication:sse_multivector/hierarchy-runs/hr11/bootstrap.spec.json,,located,
+HR11,consolidation_spec,publication:sse_multivector/hierarchy-runs/hr11/consolidation.spec.json,,located,
+HR11,worker_config,publication:sse_multivector/hierarchy-runs/hr11/worker-config.json,,located,
+HR11,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,hash verified,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d
+HR11,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,hash verified,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d
+HR12,bootstrap_spec,publication:sse_multivector/hierarchy-runs/hr12/bootstrap.spec.json,,located,
+HR12,consolidation_spec,publication:sse_multivector/hierarchy-runs/hr12/consolidation.spec.json,,located,
+HR12,worker_config,publication:sse_multivector/hierarchy-runs/hr12/worker-config.json,,located,
+HR12,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,hash verified,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d
+HR12,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,hash verified,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d
+HR13,bootstrap_spec,publication:sse_multivector/hierarchy-runs/hr13/bootstrap.spec.json,,located,
+HR13,consolidation_spec,publication:sse_multivector/hierarchy-runs/hr13/consolidation.spec.json,,located,
+HR13,worker_config,publication:sse_multivector/hierarchy-runs/hr13/worker-config.json,,located,
+HR13,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,hash verified,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d
+HR13,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,hash verified,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d
+HR14,bootstrap_spec,publication:sse_multivector/hierarchy-runs/hr14/bootstrap.spec.json,,located,
+HR14,consolidation_spec,publication:sse_multivector/hierarchy-runs/hr14/consolidation.spec.json,,located,
+HR14,worker_config,publication:sse_multivector/hierarchy-runs/hr14/worker-config.json,,located,
+HR14,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,hash verified,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d
+HR14,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,hash verified,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d
+HR15,bootstrap_spec,publication:sse_multivector/hierarchy-runs/hr15/bootstrap.spec.json,,located,
+HR15,consolidation_spec,publication:sse_multivector/hierarchy-runs/hr15/consolidation.spec.json,,located,
+HR15,worker_config,publication:sse_multivector/hierarchy-runs/hr15/worker-config.json,,located,
+HR15,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,hash verified,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d
+HR15,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,hash verified,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d
+HR16,bootstrap_spec,publication:sse_multivector/hierarchy-runs/hr16/bootstrap.spec.json,,located,
+HR16,consolidation_spec,publication:sse_multivector/hierarchy-runs/hr16/consolidation.spec.json,,located,
+HR16,worker_config,publication:sse_multivector/hierarchy-runs/hr16/worker-config.json,,located,
+HR16,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,hash verified,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d
+HR16,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,hash verified,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d
+HR17,bootstrap_spec,publication:sse_multivector/hierarchy-runs/hr17/bootstrap.spec.json,,located,
+HR17,consolidation_spec,publication:sse_multivector/hierarchy-runs/hr17/consolidation.spec.json,,located,
+HR17,worker_config,publication:sse_multivector/hierarchy-runs/hr17/worker-config.json,,located,
+HR17,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,hash verified,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d
+HR17,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,hash verified,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d
+HR18,bootstrap_spec,publication:sse_multivector/hierarchy-runs/hr18/bootstrap.spec.json,,located,
+HR18,consolidation_spec,publication:sse_multivector/hierarchy-runs/hr18/consolidation.spec.json,,located,
+HR18,worker_config,publication:sse_multivector/hierarchy-runs/hr18/worker-config.json,,located,
+HR18,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,hash verified,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d
+HR18,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,hash verified,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d
+HR19,bootstrap_spec,publication:sse_multivector/hierarchy-runs/hr19/bootstrap.spec.json,,located,
+HR19,consolidation_spec,publication:sse_multivector/hierarchy-runs/hr19/consolidation.spec.json,,located,
+HR19,worker_config,publication:sse_multivector/hierarchy-runs/hr19/worker-config.json,,located,
+HR19,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,hash verified,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d
+HR19,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,hash verified,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d
+HR20,bootstrap_spec,publication:sse_multivector/hierarchy-runs/hr20/bootstrap.spec.json,,located,
+HR20,consolidation_spec,publication:sse_multivector/hierarchy-runs/hr20/consolidation.spec.json,,located,
+HR20,worker_config,publication:sse_multivector/hierarchy-runs/hr20/worker-config.json,,located,
+HR20,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,hash verified,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d
+HR20,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,hash verified,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d
+HR21,bootstrap_spec,publication:sse_multivector/hierarchy-runs/hr21/bootstrap.spec.json,,located,
+HR21,consolidation_spec,publication:sse_multivector/hierarchy-runs/hr21/consolidation.spec.json,,located,
+HR21,worker_config,publication:sse_multivector/hierarchy-runs/hr21/worker-config.json,,located,
+HR21,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,hash verified,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d
+HR21,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,hash verified,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d
+HR22,bootstrap_spec,publication:sse_multivector/hierarchy-runs/hr22/bootstrap.spec.json,,located,
+HR22,consolidation_spec,publication:sse_multivector/hierarchy-runs/hr22/consolidation.spec.json,,located,
+HR22,worker_config,publication:sse_multivector/hierarchy-runs/hr22/worker-config.json,,located,
+HR22,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,hash verified,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d
+HR22,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,hash verified,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d
+HR23,bootstrap_spec,publication:sse_multivector/hierarchy-runs/hr23/bootstrap.spec.json,,located,
+HR23,consolidation_spec,publication:sse_multivector/hierarchy-runs/hr23/consolidation.spec.json,,located,
+HR23,worker_config,publication:sse_multivector/hierarchy-runs/hr23/worker-config.json,,located,
+HR23,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,hash verified,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d
+HR23,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,hash verified,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d
+HR24,bootstrap_spec,publication:sse_multivector/hierarchy-runs/hr24/bootstrap.spec.json,,located,
+HR24,consolidation_spec,publication:sse_multivector/hierarchy-runs/hr24/consolidation.spec.json,,located,
+HR24,worker_config,publication:sse_multivector/hierarchy-runs/hr24/worker-config.json,,located,
+HR24,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,hash verified,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d
+HR24,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,hash verified,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d
+HR25,bootstrap_spec,publication:sse_multivector/hierarchy-runs/hr25/bootstrap.spec.json,,located,
+HR25,consolidation_spec,publication:sse_multivector/hierarchy-runs/hr25/consolidation.spec.json,,located,
+HR25,worker_config,publication:sse_multivector/hierarchy-runs/hr25/worker-config.json,,located,
+HR25,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,hash verified,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d
+HR25,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,hash verified,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d
+HR26,bootstrap_spec,publication:sse_multivector/hierarchy-runs/hr26/bootstrap.spec.json,,located,
+HR26,consolidation_spec,publication:sse_multivector/hierarchy-runs/hr26/consolidation.spec.json,,located,
+HR26,worker_config,publication:sse_multivector/hierarchy-runs/hr26/worker-config.json,,located,
+HR26,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,hash verified,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d
+HR26,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,hash verified,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d
+HR27,bootstrap_spec,oracle-mvp-hierarchy-hr21-v41:sse_multivector/hierarchy-runs/hr21/bootstrap.spec.json,,located,
+HR27,consolidation_spec,oracle-mvp-hierarchy-hr21-v41:sse_multivector/hierarchy-runs/hr21/consolidation.spec.json,,located,
+HR27,worker_config,oracle-mvp-hierarchy-hr21-v41:sse_multivector/hierarchy-runs/hr21/worker-config.json,,located,
+HR27,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,hash verified,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d
+HR27,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,hash verified,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d
+HR28,bootstrap_spec,oracle-mvp-hierarchy-hr22-v41:sse_multivector/hierarchy-runs/hr22/bootstrap.spec.json,,located,
+HR28,consolidation_spec,oracle-mvp-hierarchy-hr22-v41:sse_multivector/hierarchy-runs/hr22/consolidation.spec.json,,located,
+HR28,worker_config,oracle-mvp-hierarchy-hr22-v41:sse_multivector/hierarchy-runs/hr22/worker-config.json,,located,
+HR28,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,hash verified,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d
+HR28,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,hash verified,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d
+HR29,bootstrap_spec,oracle-mvp-hierarchy-hr26-v41:sse_multivector/hierarchy-runs/hr26/bootstrap.spec.json,,located,
+HR29,consolidation_spec,oracle-mvp-hierarchy-hr26-v41:sse_multivector/hierarchy-runs/hr26/consolidation.spec.json,,located,
+HR29,worker_config,oracle-mvp-hierarchy-hr26-v41:sse_multivector/hierarchy-runs/hr26/worker-config.json,,located,
+HR29,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,hash verified,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d
+HR29,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,hash verified,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d
+HR30,bootstrap_spec,publication:sse_multivector/hierarchy-runs/hr30/bootstrap.spec.json,,located,
+HR30,consolidation_spec,publication:sse_multivector/hierarchy-runs/hr30/consolidation.spec.json,,located,
+HR30,worker_config,oracle-mvp-hierarchy-hr26-v41:sse_multivector/hierarchy-runs/hr26/worker-config.json,,located,
+HR30,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,hash verified,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d
+HR30,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,hash verified,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d
+HR31,bootstrap_spec,publication:sse_multivector/hierarchy-runs/hr31/bootstrap.spec.json,,located,
+HR31,consolidation_spec,publication:sse_multivector/hierarchy-runs/hr31/consolidation.spec.json,,located,
+HR31,worker_config,oracle-mvp-hierarchy-hr22-v41:sse_multivector/hierarchy-runs/hr22/worker-config.json,,located,
+HR31,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,hash verified,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d
+HR31,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,hash verified,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d
+HR32,bootstrap_spec,oracle-mvp-hierarchy-hr32-v51:sse_multivector/hierarchy-runs/hr32/bootstrap.spec.json,,located,
+HR32,consolidation_spec,oracle-mvp-hierarchy-hr32-v51:sse_multivector/hierarchy-runs/hr32/consolidation.spec.json,,located,
+HR32,worker_config,oracle-mvp-hierarchy-hr26-v41:sse_multivector/hierarchy-runs/hr26/worker-config.json,,located,
+HR32,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,hash verified,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d
+HR32,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,hash verified,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d
+HR33,bootstrap_spec,oracle-mvp-hierarchy-hr32-v51:sse_multivector/hierarchy-runs/hr32/bootstrap.spec.json,,located,
+HR33,consolidation_spec,oracle-mvp-hierarchy-hr32-v51:sse_multivector/hierarchy-runs/hr32/consolidation.spec.json,,located,
+HR33,worker_config,oracle-mvp-hierarchy-hr26-v41:sse_multivector/hierarchy-runs/hr26/worker-config.json,,located,
+HR33,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,hash verified,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d
+HR33,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,hash verified,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d
+HR34,bootstrap_spec,oracle-mvp-hierarchy-hr32-v51:sse_multivector/hierarchy-runs/hr32/bootstrap.spec.json,,located,
+HR34,consolidation_spec,oracle-mvp-hierarchy-hr32-v51:sse_multivector/hierarchy-runs/hr32/consolidation.spec.json,,located,
+HR34,worker_config,oracle-mvp-hierarchy-hr26-v41:sse_multivector/hierarchy-runs/hr26/worker-config.json,,located,
+HR34,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,hash verified,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d
+HR34,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,hash verified,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d
+HR35,bootstrap_spec,oracle-mvp-hierarchy-hr30-final-v1:sse_multivector/hierarchy-runs/hr30/bootstrap.spec.json,,located,
+HR35,consolidation_spec,oracle-mvp-hierarchy-hr30-final-v1:sse_multivector/hierarchy-runs/hr30/consolidation.spec.json,,located,
+HR35,worker_config,oracle-mvp-hierarchy-hr26-v41:sse_multivector/hierarchy-runs/hr26/worker-config.json,,located,
+HR35,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,hash verified,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d
+HR35,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,hash verified,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d
+HR36,bootstrap_spec,oracle-mvp-hierarchy-hr36-v53-auto:sse_multivector/hierarchy-runs/hr36/bootstrap.spec.json,,located,
+HR36,consolidation_spec,oracle-mvp-hierarchy-hr36-v53-auto:sse_multivector/hierarchy-runs/hr36/consolidation.spec.json,,located,
+HR36,worker_config,oracle-mvp-hierarchy-hr36-v53-auto:sse_multivector/hierarchy-runs/hr36/worker-config.json,,located,
+HR36,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,hash verified,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d
+HR36,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,hash verified,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d
+HR37,bootstrap_spec,oracle-mvp-hierarchy-hr37-v53-auto:sse_multivector/hierarchy-runs/hr37/bootstrap.spec.json,,located,
+HR37,consolidation_spec,oracle-mvp-hierarchy-hr37-v53-auto:sse_multivector/hierarchy-runs/hr37/consolidation.spec.json,,located,
+HR37,worker_config,oracle-mvp-hierarchy-hr37-v53-auto:sse_multivector/hierarchy-runs/hr37/worker-config.json,,located,
+HR37,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,hash verified,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d
+HR37,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,hash verified,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d
+HR38,bootstrap_spec,oracle-mvp-hierarchy-hr38-v53-auto:sse_multivector/hierarchy-runs/hr38/bootstrap.spec.json,,located,
+HR38,consolidation_spec,oracle-mvp-hierarchy-hr38-v53-auto:sse_multivector/hierarchy-runs/hr38/consolidation.spec.json,,located,
+HR38,worker_config,oracle-mvp-hierarchy-hr38-v53-auto:sse_multivector/hierarchy-runs/hr38/worker-config.json,,located,
+HR38,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,hash verified,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d
+HR38,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,hash verified,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d
+HR39,bootstrap_spec,oracle-mvp-hierarchy-hr39-v53-auto:sse_multivector/hierarchy-runs/hr39/bootstrap.spec.json,,located,
+HR39,consolidation_spec,oracle-mvp-hierarchy-hr39-v53-auto:sse_multivector/hierarchy-runs/hr39/consolidation.spec.json,,located,
+HR39,worker_config,oracle-mvp-hierarchy-hr39-v53-auto:sse_multivector/hierarchy-runs/hr39/worker-config.json,,located,
+HR39,checkpoint_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,hash verified,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d
+HR39,base_model_artifact_path,oracle-mvp-hierarchy-hr11-v3:target/hierarchy-hr11-v3-six-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,hash verified,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d
+V3-THREE-NOTE-V1,bootstrap_spec,publication:sse_multivector/hierarchy-runs/v3-three-note-v1/bootstrap.spec.json,,located,
+V3-THREE-NOTE-V1,consolidation_spec,publication:sse_multivector/hierarchy-runs/v3-three-note-v1/consolidation.spec.json,,located,
+V3-THREE-NOTE-V1,worker_config,publication:sse_multivector/hierarchy-runs/v3-three-note-v1/worker-config.json,,located,
+V3-THREE-NOTE-V1,checkpoint_path,oracle-mvp-hierarchy-v3-three-note-v1:target/hierarchy-v3-three-note-v1/sse-model/subencoder_st5_base.ckpt,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d,hash verified at documented original checkout,ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d
+V3-THREE-NOTE-V1,base_model_artifact_path,oracle-mvp-hierarchy-v3-three-note-v1:target/hierarchy-v3-three-note-v1/sse-model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d,hash verified at documented original checkout,bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d
