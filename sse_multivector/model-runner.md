@@ -198,6 +198,15 @@ in all three draws. Original judgments and disagreements remain preserved.
 V158 remains experimental and unqualified; constructors stay V133. These results
 do not establish population reliability or qualify Consolidation-v28.
 
+Experimental [Bootstrap-v159](shr_single_pair/Hierarchy-bootstrap-v159.md)
+scopes exact-name retention to `meaning`, permits shortening long descriptive
+work names in titles, and keeps illustrative members in resolution justifications
+rather than the chosen conditions used for final composition. Shared rules-v13,
+Consolidation-v28, examples, schema and model settings remain unchanged. Its
+[development round](shr_single_pair/bootstrap-current-as-qualification.md#separate-development-round-bootstrap-v159)
+uses 36 inputs, including the two exposed V158 failures and their disputed
+controls. Testing is pending; this is an experimental source revision, not adoption.
+
 Experimental [Bootstrap-v133](shr_single_pair/Hierarchy-bootstrap-v133.md)
 returns a concise, natural `title` derived solely from its finalized `meaning`.
 It prefers the topic's ordinary name when that identifies it clearly, preserves

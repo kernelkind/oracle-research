@@ -1606,6 +1606,37 @@ End-to-end hierarchy construction and Consolidation-v28 semantics remain unteste
 constructor pins stay V133. The task worktree and frozen runner remain necessary
 for absolute native source, artifact and review bindings.
 
+### Separate development round: Bootstrap-v159
+
+The user authorized a development round for the two remaining V158 failures,
+followed by a new untouched panel. Native replay first reproduces both exact
+draw-one failures through production preparation and validation: two valid reused
+answers, zero model attempts, both rejected under the frozen V158 criteria.
+This establishes the failure before revising the prompt; it supplies no new
+human labels.
+
+Experimental [Bootstrap-v159](Hierarchy-bootstrap-v159.md) makes four wrapper
+edits. Exact selected-name retention now explicitly applies to `meaning`.
+Illustrative members belong in `resolutions.justification`, outside the chosen
+membership conditions in `answer` and the final meaning. Long descriptive work
+names may be shortened in the title while their full names remain in meaning.
+Shared rules-v13, Consolidation-v28, all examples, schema and generation settings
+are unchanged. This tests instruction scope and field responsibilities without
+adding examples or numeric title limits. The approach follows official guidance
+on [clear instructions](https://developers.openai.com/api/docs/guides/model-optimization#write-effective-prompts)
+and [simple, direct reasoning-model prompts](https://developers.openai.com/api/docs/guides/reasoning-best-practices#how-to-prompt-reasoning-models-effectively).
+
+The [regression collection](hierarchy-bootstrap-v159-regression-v1.json) and
+[specification](hierarchy-bootstrap-v159-regression-v1.spec.json) retain the
+original 24 inputs and add root/specific pairs for V158 posts 014, 030, 045, 058,
+064 and 074: 36 inputs and three fresh draws. The gate requires all six responses
+for the two V158 failures, all nine original agreed-case responses and all three
+stock-plan titles to pass, with no clear control regression. Uncertainties remain
+reported separately. Root-agent review is unblinded and not human-calibrated.
+Any subsequent qualification must freeze its new source panel, unchanged rubric
+and candidate hash before inference; it may not reuse exposed posts or retune
+on qualification outputs. Results are pending. Constructors stay V133.
+
 ## Meaning-derived titles: Bootstrap-v130
 
 The user requested a concise title based solely on the explicit meaning.

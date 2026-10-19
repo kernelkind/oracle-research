@@ -1,0 +1,174 @@
+{
+  "schema_version": 4,
+  "corpus": "/mnt/external/algos-archive/oracle-mvp/hierarchy-hr38-v53-auto/hierarchy-hr38-v53-auto-2000-note-v1/subject-collection/subjects.json",
+  "nodes": [
+    {
+      "id": "qualification-014-root",
+      "local": {
+        "note_id": "4ae5dfbdfbc0050f7eb2371a7e7408b115838268bb1897dce47aeb8ebe1de2cb",
+        "number": "4"
+      },
+      "review": {
+        "pair": 14,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-014-specific",
+      "local": {
+        "note_id": "4ae5dfbdfbc0050f7eb2371a7e7408b115838268bb1897dce47aeb8ebe1de2cb",
+        "number": "4.1.1"
+      },
+      "review": {
+        "pair": 14,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-030-root",
+      "local": {
+        "note_id": "d83087f4e4d84c62bd0ae705205a4c06a8606cf5267035fb30ee106db2459b3e",
+        "number": "4"
+      },
+      "review": {
+        "pair": 30,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-030-specific",
+      "local": {
+        "note_id": "d83087f4e4d84c62bd0ae705205a4c06a8606cf5267035fb30ee106db2459b3e",
+        "number": "4.1.1"
+      },
+      "review": {
+        "pair": 30,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-045-root",
+      "local": {
+        "note_id": "3d5b9e51f8472183ce2ae08a300399e2ce7ecab64c37f10a479071108b85794f",
+        "number": "2"
+      },
+      "review": {
+        "pair": 45,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-045-specific",
+      "local": {
+        "note_id": "3d5b9e51f8472183ce2ae08a300399e2ce7ecab64c37f10a479071108b85794f",
+        "number": "2.1.1.1"
+      },
+      "review": {
+        "pair": 45,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-058-root",
+      "local": {
+        "note_id": "5e1f5fb84dadb7bbef5bb94a9627f39028f8f6cf81bc7cbfcacdf73c426a8740",
+        "number": "1"
+      },
+      "review": {
+        "pair": 58,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-058-specific",
+      "local": {
+        "note_id": "5e1f5fb84dadb7bbef5bb94a9627f39028f8f6cf81bc7cbfcacdf73c426a8740",
+        "number": "1.1.1"
+      },
+      "review": {
+        "pair": 58,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-064-root",
+      "local": {
+        "note_id": "75dff855aedeeae86d506f502171cfeb2eeefb30c16dcad720f9ed19d9815058",
+        "number": "1"
+      },
+      "review": {
+        "pair": 64,
+        "level": "root",
+        "cohort": "challenge",
+        "family": "food",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-064-specific",
+      "local": {
+        "note_id": "75dff855aedeeae86d506f502171cfeb2eeefb30c16dcad720f9ed19d9815058",
+        "number": "1.1.1.1.1"
+      },
+      "review": {
+        "pair": 64,
+        "level": "specific",
+        "cohort": "challenge",
+        "family": "food",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-074-root",
+      "local": {
+        "note_id": "5df8c0102f59cf43f7e5f607c56977a6eb9778e505c1944b5d57f6ee732943d9",
+        "number": "9"
+      },
+      "review": {
+        "pair": 74,
+        "level": "root",
+        "cohort": "challenge",
+        "family": "plans_preferences",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-074-specific",
+      "local": {
+        "note_id": "5df8c0102f59cf43f7e5f607c56977a6eb9778e505c1944b5d57f6ee732943d9",
+        "number": "9.1"
+      },
+      "review": {
+        "pair": 74,
+        "level": "specific",
+        "cohort": "challenge",
+        "family": "plans_preferences",
+        "reviewer": "B"
+      }
+    }
+  ]
+}

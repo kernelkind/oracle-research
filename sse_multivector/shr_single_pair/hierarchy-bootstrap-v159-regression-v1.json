@@ -1,0 +1,22 @@
+{
+  "schema_version": 2,
+  "local_schema_version": 4,
+  "sources": [
+    {
+      "path": "hierarchy-bootstrap-v149-regression-nodes-v1.json"
+    },
+    {
+      "path": "hierarchy-bootstrap-v159-regression-nodes-v1.json"
+    }
+  ],
+  "review": {
+    "purpose": "Frozen 36-input development regression: original 24 controls plus root/specific pairs for the two V158 failure posts and four disputed/null/scope-control posts. V158 qualification is now exposed development evidence, excluded in full from the next untouched panel.",
+    "pre_call_plan": "../../target/bootstrap-v159-fix-v1/test-plan.json",
+    "criteria": "Use the unchanged V158 frozen semantic rubric. Final meaning contains no illustrative members. Title gives a brief recognizable topic or goal solely from meaning; broader names are allowed without identity or role errors. Qualifications, required alternatives/joint parts and numeric limits must remain. No word-count cutoff, punctuation ban or exact desired replacement title."
+  },
+  "experiments": [
+    {
+      "path": "../../target/bootstrap-title-v147/controls1"
+    }
+  ]
+}
