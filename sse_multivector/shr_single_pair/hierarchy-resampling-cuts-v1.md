@@ -4004,3 +4004,144 @@ all title/meaning/combined group-center and score matrices in NPZ files,
 construction/source worktrees remain unchanged. This documentation-only
 worktree need not be retained after integration; its calculations consume
 existing frozen sources and its ignored outputs have absolute external paths.
+
+
+### First-two-level audit: direct group connections versus center assignments
+
+The user authorized a read-only diagnosis of how existing groups become broader
+browsing choices in both saved mixed-corpus trees. Use the **all-entry controls**
+from the preceding complete construction, not the groups-only candidates: all
+5,336 / 5,189 usable original entries, from 937 / 912 post-prompt notes, remain
+present. No new grouping, encoding, model calls, training, hierarchy generation
+or UI refresh occurs. The user excluded further URL investigation; that topic
+is not pursued here.
+
+Inspect all six roots and 36 immediate children in each corpus, and recompute
+scores for every indivisible unit in the seven partitioning decisions per
+corpus. Numerical IDs below are saved partition labels, not generated canonical
+titles. The common-heading descriptions are agent summaries. Mixed or broad
+roots, related topics in different children and shared note IDs are not treated
+as semantic failures by themselves. In particular, the prior user discussion
+of Cooking versus Food preparation is not overridden by this audit.
+
+**What works:** every usable entry is assigned once at each of these levels;
+all 42 downward edges per corpus strictly narrow the distinct-note set, and
+both levels have at most six choices. Most repeated title families remain
+intact. At root level only 4 of 560 repeated-title families split in HR36 and
+1 of 549 in HR37; through the second level the counts are 6 and 1. These are
+screening counts, not error rates: HR36's Strategy denotes a plan versus the
+company, Deals denotes agreements versus favorable offers, and HR37's Trends
+denotes general change versus rising popularity. Their different senses must
+not be erased to improve a count.
+
+**The clearest recurring information-boundary witness:** Suggestions and
+Recommendations are separate pure-title groups in both corpora. Their full
+meanings share communicated ideas, options or courses of action offered for
+consideration. HR36 Suggestions L03515 explicitly includes recommendations;
+Recommendations L04115 presents a worthwhile choice or encourages action.
+HR37 Suggestions L03998 explicitly means communicated recommendations or
+proposals for consideration; Recommendations L01574 means communicated advice
+or suggestions putting forward suitable or beneficial actions/options. This is
+a bounded agent-assessed overlap, not an equivalence certificate or new human
+gold. The numerical evidence is:
+
+| Corpus | Suggestions group / route | Recommendations group / route | Combined group-center cosine | Mutually closest groups? | Saved root starts keeping them together |
+|---|---|---|---:|---|---:|
+| HR36 | 660, six entries, 5 → 5.6 | 912, three entries, 6 → 6.3 | 0.828949 | Yes | 5/8 |
+| HR37 | 633, five entries, 5 → 5.4 | 289, six entries, 6 → 6.1 | 0.823080 | Yes | 3/8 |
+
+Group numbers in this table belong to the respective saved root case; they are
+not original G labels or globally stable node identities. A group-center cosine
+here is between normalized means of that group's saved combined entry vectors.
+Each combined vector concatenates the unit title and full-meaning vectors,
+divided by square root of two. It is not a new encoding or a claim that the
+cosine of normalized group means equals a simple average of every member-pair
+cosine. Closest groups are computed among all 1,293 / 1,154 root units; no
+similarity threshold is chosen.
+
+The selected center scores explain the split. HR36 Suggestions prefers root 5
+at 0.4594 versus root 6 at 0.4097; Recommendations prefers root 6 at 0.4844
+versus root 5 at 0.3545. HR37's corresponding values are 0.4945 versus 0.4254,
+and 0.4917 versus 0.4171. Both original groups remain intact. The algorithm
+chooses their highest-scoring final centers, even though the groups themselves
+are each other's closest neighbors. Joining reciprocal **entries** earlier
+does not preserve every reciprocal connection between whole **groups**.
+
+A second cross-root witness is HR36 Donald Trump L02400: its meaning names the
+same American political figure, identified through the reported CNN phone
+call. It goes to root 1 and child 1.5, while the other fifteen exact Donald
+Trump headings go to root 4 and child 4.1. Its four closest combined whole-group
+centers all contain Trump variants and belong to root 4 (cosines 0.6216, 0.5838,
+0.5630 and 0.5236), but its section-center score favors root 1, 0.1979 versus
+0.1349. It is an independent root unit, so an intact multi-entry group does not
+force this particular placement. The full meanings identify the same individual;
+this is a clearer duplicate-information concern than merely separating related
+categories such as Music and Art.
+
+**A near-tie demonstrates that the fit objective is not a browsing-quality
+measure.** HR36's thirteen-entry Basketball unit goes to root 1, while its
+nineteen-entry association-football unit and fifteen-entry Sports unit go to
+root 2. Basketball's closest whole group is association football (0.6235),
+then Sports (0.6100). Seven of eight saved starts keep basketball and football
+together. The selected start is the exception, reducing the total cosine cost
+from the best joint start's 3,043.585608 to 3,042.403762: just 0.03885%.
+Against its selected final centers, Basketball favors root 1 by 0.00444.
+The title component contributes +0.04065 toward root 1; the meaning component
+contributes −0.03621, favoring root 2. These are contributions to the actual
+combined-center score, not a fresh meaning-only fit. In HR37 all eight saved
+starts keep the corresponding sports together; the selected children also
+keep them together in 2.2. No alternative seed is adopted from this review.
+
+Other conspicuous placements are weaker evidence of a universal remedy:
+
+- Women means adult female people, yet lands with geographic headings in
+  roots 4 / 3 rather than People in root 6 in both corpora. Its root units are
+  not forced there by countries inside the same unit. However, **both** the
+  title and meaning score contributions prefer those chosen geography centers
+  over the People center. Increasing meaning weight alone is not demonstrated
+  to repair it. Four of eight saved starts keep Women with People in each
+  corpus; a new semantic expectation is not silently imposed.
+- HR37's two-entry Men unit means adult male human beings. Its closest combined
+  group is the People group, but the center score favors root 2 over root 6
+  (0.19165 versus 0.17789). The title contribution favors root 2, while the
+  meaning contribution favors root 6. HR36 keeps Men with People. Thus the
+  title-versus-meaning tension occurs elsewhere, without showing that one
+  representation universally wins.
+- In HR37 Music and Art stay within the same root but split into children
+  2.1 and 2.4; four of eight saved child starts keep them together. Their
+  different media can justify separate choices. Trump and politics likewise
+  need not share every narrower child. Such pairs are inspection evidence,
+  not automatically counted as errors or hard coassignment requirements.
+
+**Diagnosis:** frozen inputs, labels, original-unit preservation and reported
+objectives validate. Every audited whole unit maximizes its mean similarity to
+the supplied final centers. There is no observed assignment implementation bug
+or active distinct-note minimum forcing these witness placements. The objective
+sums original-entry distances to section means; it neither rewards preserving
+neighbor connections between existing groups nor directly measures browsing
+usefulness, duplicated information or decisions. The existing vectors contain
+useful signals that this objective sometimes discards. This does not prove
+that every existing group is semantically correct or that protecting every
+neighbor edge will improve the entire hierarchy.
+
+The next suggested manual component test is to score the **already saved**
+eight alternatives by preservation of reciprocal nearest connections between
+whole groups, and inspect which partitions that would favor in both corpora.
+Keep original meanings/fine groups separate and unchanged: sharing a broader
+section is not equivalence or a permanent fine-group merge. Include the retained
+different-sense controls and inspect complete memberships, rather than selecting
+a seed solely because it repairs these post-selected examples. This targets
+the observed loss of direct connections without another encoding or model
+call. It remains a hypothesis, not an adopted selection rule; no alternative
+partition or hierarchy was generated or activated in this audit.
+
+External ignored evidence:
+`/mnt/external/algos-archive/oracle-mvp/first-two-level-audit-v1/`:
+`manifest.json`, per-corpus `*-audit.json` (all original definitions, every
+root/child unit and its center-score contributions/closest groups, all saved
+trial labels), `witnesses.json`, `summary.json`, compact first-two-level
+`review.md`, `verification.txt`, and `runtime-journal.jsonl`. Full input and
+saved-tree hashes are preserved. Calculations run with an 8 GiB hard memory
+limit, 6 GiB pressure threshold, no swap, eight BLAS threads and CPUs 0–23.
+There is no new official HR experiment, prompt change, production algorithm
+change, paid resource or UI update. This is a numerical research diagnosis.
