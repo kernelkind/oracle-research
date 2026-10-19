@@ -1390,6 +1390,72 @@ HiGen setting changed. The candidate is not ready for adoption. The next useful
 step is to diagnose the US-dollar control from the saved data before paying
 for another large numerical panel.
 
+### US-dollar diagnosis: a dense wording pair drives the late peak
+
+The approved diagnosis uses only saved vectors, assignments and reference
+samples. It does not create new encodings, reference samples, model calls or
+clustering-policy changes. The comparison remains based on whole explicit
+meanings, with titles as unchanged encoder context.
+
+All six definitions identify the US dollar as the official currency of the
+United States. Short formulations L01246 and L02850 have cosine similarity
+`0.976701`. The short L00144 definition versus L01616's international-payment
+and reserve-currency definition scores `0.5840`; versus L02137's economic-role
+definition it scores `0.6186`. The vectors thus contain large differences
+despite their shared topic. Extra clauses coincide with those differences;
+these saved inputs alone do not isolate a causal effect of particular words
+or establish a general pooling defect.
+
+Enumerating all 203 partitions of six entries, and evaluating the 202 with
+one through five groups, confirms every saved observed count attains both
+the minimum cosine objective and minimum squared-distance dispersion. This
+rules out insufficient initialization as the explanation for these observed
+splits. Reconstructing the same 32 reference matrices finds 157/160 saved
+reference/count solutions attain the exact cosine minimum. Substituting exact
+solutions for the remaining three still chooses four. Independently minimizing
+squared-distance dispersion for both observed and reference partitions also
+chooses four. The discrepancy between the fitted cosine objective and measured
+dispersion therefore does not explain this failure.
+
+The late peak has a concrete source. At five groups, only two entries remain
+together: L01246 and L02850. For unit vectors, their pair contributes dispersion
+`1 - cosine = 0.023299`; the four singletons contribute zero. Relative to the
+unsplit dispersion, the observed residual is `0.014667`, versus `0.033886` for
+the geometric-mean reference residual. The rule detects that unusually close
+pair against the wider surrounding definitions. That geometric structure does
+not establish five useful currency topics.
+
+| Largest count considered, same saved samples | Global rule chooses |
+|---:|---:|
+| 2 | 1 |
+| 3 | 1 |
+| 4 | 1 |
+| 5 | 4 |
+
+Adding the nearly all-singleton candidate changes the peak and therefore the
+uncertainty band used to choose the count. It makes the existing four-group
+partition qualify while the unsplit case no longer qualifies. This is an
+explanation, not a proposal to cap all cases at four or remove every singleton.
+The same exact audit leaves the other three small controls unsplit, as before.
+It completes in under one second; no larger numerical batch is needed for this
+diagnosis.
+
+The count criterion is implemented as intended but is not a direct test of
+useful topic distinctions. A tiny repeated-topic control exposes a failure;
+it does not establish its frequency or invalidate all useful mixed-section
+results. More restarts cannot improve the already optimal observed fits.
+The next useful check is the unchanged rule on a larger repeated-topic section
+from saved inputs, to distinguish a small-sample problem from a recurring
+source of unnecessary levels. That test is not begun here. No fixed six-note
+stopping threshold is introduced; the user's earlier rejection remains in force.
+
+Ignored `oracle-mvp-section-count-dollar-diagnosis-v1/target/section-count-dollar-diagnosis-v1/exact-audit.json`
+on the external drive retains input/result hashes, complete pairwise cosines,
+exact per-count optima, every checked reference/count, alternate-objective
+curves and the candidate-range calculation. Source receipts are unchanged.
+The worktree is retained for that reproducible artifact path. No HiGen setting
+is changed or qualified by this diagnosis.
+
 Reusable numerical CLI: `sse_multivector/cluster_resampling_probe.py`; tests:
 `sse_multivector/test_cluster_resampling_probe.py`. Input NPZ contains unit
 `vectors`, aligned compact zero-based original `groups`, and aligned `notes`.
