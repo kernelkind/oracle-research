@@ -2209,3 +2209,58 @@ well as original titles, meanings and note identities. There is no new encoding,
 training, inference, HiGen activation or automatic count decision. Preparation,
 actual CLI scoring, native grouping provenance, changed component rows and
 existing default paths pass 61 production-path checks.
+
+The fixed-six fit completes using the same 5,336 entries, 937 notes and exact
+451 combined fine groups. All 2,518 unassigned entries remain independent
+items. Selected section note counts are 341, 543, 296, 459, 462 and 400;
+their unions cover 937/1,000 source notes (93.7%), unchanged by construction.
+Each section exceeds 100 notes and strictly narrows the input note set.
+There is no new automatic count-selection result: six was fixed in advance.
+
+Agent descriptions of the selected fit's common titles are:
+
+| Section | Common topics | Distinct notes |
+|---|---|---:|
+| 1 | Countries, places, geopolitics and public figures | 341 |
+| 2 | Food, shopping, sports, music, politics and everyday activities | 543 |
+| 3 | Bitcoin, cryptocurrency, finance and markets | 296 |
+| 4 | Nostr, networking, news, publishing and links | 459 |
+| 5 | AI, technology, software, art and media | 462 |
+| 6 | People, greetings, feelings and social responses | 400 |
+
+These descriptions are neither generated canonical titles nor human-reviewed
+scope definitions. Note sets overlap and should not be summed. The changed
+representation removes the two specific awkward placements inspected in the
+meaning-only fit: the full 15-entry Coffee group and 27-entry Food group leave
+the publishing-oriented section, and the 14-entry Association football group
+leaves the networking-oriented section. They now share section 2. That remains
+a broad mixture, so these control improvements alone do not demonstrate a
+better overall browsing hierarchy. Broad roots themselves are permitted by
+the user's objective; their useful narrowing has not been tested here.
+
+Across the eight predeclared starts, Food and Coffee share a section in five;
+Food and Association football share one in six; football never shares Nostr's
+section. The selected best start is seed 20261018. All eight converge within
+50 iterations. The six-section fits together take about 6.36 seconds of recorded
+fit time with eight BLAS threads on CPUs 0–23. No expensive reference screen
+is repeated. After matching section labels by maximum original-entry overlap,
+1,317/5,336 entries move relative to meaning-only broader scoring with exactly
+the same fine groups. This is a change count, not an accuracy measure. Objective
+values across the two vector representations are not directly comparable.
+
+Independent verification checks all original identities and group assignments,
+normalized member-mean centers, objectives, note counts and every start's
+intact groups. Sampled pairwise combined cosines match the mean of title and
+meaning cosines to floating-point precision. Completed fit bytes are unchanged
+on resume; frozen source/code/native hashes remain valid. All 61 tests also
+pass on combined main. No model calls, new encoding, training, HiGen policy,
+canonical graph, synthetic definition or UI change occurs.
+
+Ignored evidence is on the external drive, linked from the retained task
+worktree `oracle-mvp-combined-section-scoring-v1/target/combined-section-scoring-v1/`:
+`spec.json`, the frozen panel and complete `comparison-and-verification.json`.
+Executed source is `5061f8d5`; the worktree remains for frozen source and artifact
+paths. A useful next component check is the unchanged matched representation
+comparison on the other saved hash-selected 1,000-note corpus: this tests whether
+the observed placement improvements generalize before any policy adoption.
+That further test is a suggestion, not started or authorized by this record.
