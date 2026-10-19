@@ -476,6 +476,74 @@ It includes the frozen inputs, all sixteen trials, full memberships,
 verification and provisional assessment. This is another manual component
 test; no HiGen policy, source hierarchy, prompt or review UI changed.
 
+### Conditional browsing-cost test on the saved subdivisions
+
+The user rejected a fixed six-note stopping threshold and approved testing
+whether a subdivision's smaller lists repay its added navigation. This is a
+diagnostic on Six-section-v1-04, -05 and -06, not another partition, an adopted
+stopping rule or a change to any HiGen version.
+
+`sse_multivector/section_browsing_cost.py` reads the unchanged saved assignments
+and deduplicates original note IDs within each child. Its assumptions are
+explicit: one target note is selected uniformly from the parent's distinct
+notes; inspection stops at that note in a random-order note list. An m-note
+list then requires `(m + 1) / 2` expected inspections. This is a single-note
+retrieval proxy, not a measured topic-browsing session.
+
+For each target note, enumerate its containing children. Record three
+conditional routes: choose the smallest such child, choose uniformly among
+them, or choose the largest. Average over distinct target notes, not over
+entries or child memberships. All three scenarios assume successful selection
+of a child containing the target and exclude wrong turns. They are not
+confidence bounds or observed user behavior. Menu reading and clicking have
+no assumed conversion to note inspections: report the maximum extra navigation
+cost that the conditional list savings would repay, in note-inspection units.
+
+| Saved subdivision | Parent notes | Parent-list inspections | Child-list inspections, uniform valid route | Maximum extra navigation cost |
+|---|---:|---:|---:|---:|
+| Six-section-v1-04 | 557 | 279.0 | 68.45 | 210.55 |
+| Six-section-v1-05 | 485 | 243.0 | 57.17 | 185.83 |
+| Six-section-v1-06 | 125 | 63.0 | 15.10 | 47.90 |
+
+The additional-navigation figures are break-even budgets, not actual menu costs
+or click counts. The best/worst valid-route budgets span 207.52–213.74,
+183.03–188.46 and 47.09–48.66 respectively. Thus the saved splits shorten
+lists under these assumptions; none establishes where further subdivision
+should stop.
+
+Use 64 preconfigured entry-label shuffles per case, seed `20261018`. Preserve
+each child's original entry count and the complete entry/note multiset while
+breaking the selected memberships. Note-set sizes and overlap can change.
+These controls stress the interpretation of the cost, without assigning
+semantic labels or computing a significance threshold.
+
+| Saved subdivision | Shuffled child-list inspection range | Shuffles with list savings | Shuffles scoring better than the selected split |
+|---|---:|---:|---:|
+| Six-section-v1-04 | 80.92–85.54 | 64 / 64 | 0 / 64 |
+| Six-section-v1-05 | 71.27–75.31 | 64 / 64 | 0 / 64 |
+| Six-section-v1-06 | 14.53–16.32 | 64 / 64 | 9 / 64 |
+
+**This cost is insufficient as a standalone stopping rule.** It rewards random
+memberships too because it assumes the user can choose a containing child.
+It does not establish that the topics help someone make that choice. Conversely,
+with no information about the target, any fixed traversal that inspects every
+distinct note once still averages `(N + 1) / 2` inspections for a uniform target,
+before navigation overhead. Smaller lists alone do not supply the missing
+routing information. This finding does not reject the manually reviewed
+subdivisions or establish that their real navigation benefit is zero.
+
+Seven production-path diagnostic tests cover hand-worked overlap and routing
+cases, duplicate-entry weighting, identical child note sets, deterministic
+shuffles, source-bound CLI behavior and changed-input rejection. Together with
+the existing partition/resampling panel, 24 tests pass. Independent exact-
+rational calculations from the saved child memberships match all observed
+costs; source hashes and all control counts/coverage pass verification.
+Ignored plans, every per-note calculation and all shuffled assignments are
+under `target/six-section-browsing-cost-v1/` in the retained
+`oracle-mvp-six-section-browsing-cost-v1` worktree, backed by external storage.
+No encoding, LLM calls, training, hierarchy changes or UI work occurred.
+The automatic stopping criterion remains open.
+
 ## Question and controlled inputs
 
 Does removing different notes break the previously flagged sports/war/politics
