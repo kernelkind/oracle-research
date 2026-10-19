@@ -1388,6 +1388,38 @@ and [specification](hierarchy-bootstrap-v156-heldout-v1.spec.json) retain the fi
 attempts and outputs; no heldout result has informed these revisions. Constructors
 stay V133 and source remains experimental. Results will be appended after testing.
 
+V156's reordered instructions fail the gate. All72 responses are mechanically
+valid, but root review records64 accepts, two rejections and six uncertainties.
+One title changes a video into its promotion; one meaning changes the selected
+VPN-settings activity into a recommendation. Seven of nine agreed-case responses
+pass. All three stock titles name preservation and all AI definitions omit
+illustrations, but those successes do not outweigh the referent changes. The
+uncertainties concern two writing-tools titles, two country senses, one possible
+furniture illustration and one explanation of a rejected prescription restriction.
+A read-only output-contract audit finds no competing semantic instruction in the
+schema or transport. Native [accounting](hierarchy-bootstrap-v156-fix-usage-v1.json)
+records75 attempts including three warmups, no failures/retries/reuses, complete
+usage and $0.6136752 API-equivalent cost. Qualification remains entirely unrun.
+
+### Contrast defining a field with illustrating it: Bootstrap-v157
+
+Experimental [Bootstrap-v157](Hierarchy-bootstrap-v157.md) returns to V155's order,
+which passed all nine agreed cases and all three stock titles. It adds only a
+matched rejected botany definition that appends fern/moss examples to the accepted
+general field definition, explaining that those kinds illustrate the subject
+matter rather than define the field. The defining edible-plant qualification,
+all full examples, title instructions and title examples are unchanged from V155.
+Shared rules-v13 and Consolidation-v28 remain unchanged.
+
+The [regression specification](hierarchy-bootstrap-v157-regression-v1.spec.json)
+retains24 exact inputs, three fresh draws and V156 saved baselines. The unchanged
+gate requires all nine agreed-case responses, all three stock-plan titles and no
+clear control regression. The [qualification protocol](hierarchy-bootstrap-v157-heldout-v1.json)
+and [specification](hierarchy-bootstrap-v157-heldout-v1.spec.json) retain the fixed
+80-post panel, rubric and assignments. V150 through V156 qualification have zero
+attempts and outputs; no heldout result has informed these revisions. Constructors
+stay V133 and source remains experimental. Results will be appended after testing.
+
 ## Meaning-derived titles: Bootstrap-v130
 
 The user requested a concise title based solely on the explicit meaning.
