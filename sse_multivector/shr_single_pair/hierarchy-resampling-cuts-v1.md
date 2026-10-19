@@ -544,6 +544,62 @@ under `target/six-section-browsing-cost-v1/` in the retained
 No encoding, LLM calls, training, hierarchy changes or UI work occurred.
 The automatic stopping criterion remains open.
 
+### Six-section-navigation-v1: manual topic-route audit
+
+The user approved checking whether the child headings offer clear routes to
+relevant notes. Use the six saved children of Six-section-v1-06, without changing
+their headings or memberships. This is a manual agent audit, **not a blinded
+user study**: the agent previously reviewed all 176 entries and their placements.
+The current target sample and route predictions are frozen before the current
+membership lookup, but prior exposure cannot be undone.
+
+Select twelve distinct case-folded titles from the parent's original entries
+in SHA256 order of `Six-section-navigation-v1:` plus entry ID, without selection
+by child or similarity. These twelve topic/entry queries span eleven supporting
+notes; Atheism and Religion share one note. Review each target's full fixed
+meaning against only the six existing descriptive headings. Record one primary
+route, any alternatives, confidence and reason; allow no obvious route. The
+headings remain provisional agent summaries rather than generated canonical
+definitions. No inference requests or new encodings occur.
+
+Lookup against the saved assignments gives:
+
+- Eight of twelve primary routes contain the selected entry.
+- Nine of twelve primary routes contain its supporting note, including one
+  route supported through another entry from the same note.
+- Eight route predictions were marked clear beforehand; seven reach the note.
+- Two were marked as having overlapping choices, one tentative and one with
+  no obvious first choice. No prediction is revised after lookup.
+
+The nonmatching or ambiguous cases illustrate different issues:
+
+| Target | Predicted first choice | Saved evidence |
+|---|---|---|
+| Atheism | Society, culture and religion | The Atheism entry is in People, but the same note is reachable through its Religion entry. |
+| The author's neighborhoods | Places, environment and space | Neither the selected entry nor its note is there; the note is represented in People and Society. |
+| Genetics | Biology, animals and health | The note is in Family, heredity and aging, the alternative declared before lookup. |
+| Complexity | No obvious first choice | The generic systems definition offers no direct heading match. Its note is represented in Biology, Family and Society; two were declared as alternatives. |
+
+Collectibles reaches its note through the tentatively selected Culture heading,
+although none of the headings explicitly advertises collections or hobbies.
+These are route observations rather than independently validated semantic
+judgments. A matching note can be reached through another entry; an entry
+placement mismatch alone therefore does not establish a browsing failure.
+Conversely, co-membership by itself does not certify the whole group's relevance.
+
+The audit supports useful topic choices in this example while exposing missed
+and ambiguous routes. It supplies neither a user success-rate estimate nor an
+automatic stopping criterion. It does not settle whether an issue comes from
+grouping, descriptive naming or the chosen target interpretation. The saved
+subdivision remains unchanged.
+
+Ignored protocol, deterministic targets, frozen predictions, full lookup
+evidence and verification are under `target/six-section-navigation-v1/` in the
+retained `oracle-mvp-six-section-navigation-v1` worktree on external storage.
+Mechanical checks reproduce the sample and compare all entry/note lookups with
+the original label array; all frozen source and prediction hashes agree.
+No code behavior, HiGen policy, prompt, canonical hierarchy or review UI changed.
+
 ## Question and controlled inputs
 
 Does removing different notes break the previously flagged sports/war/politics
