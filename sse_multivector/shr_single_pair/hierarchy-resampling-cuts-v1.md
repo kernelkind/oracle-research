@@ -1456,6 +1456,29 @@ curves and the candidate-range calculation. Source receipts are unchanged.
 The worktree is retained for that reproducible artifact path. No HiGen setting
 is changed or qualified by this diagnosis.
 
+### Larger repeated-topic control: frozen protocol
+
+The approved follow-up fixes the same `globalSEmax` rule on original HR36 group
+G036: 62 Nostr entries from 62 distinct notes. It is selected before computing
+new count results as the largest original group with exactly one title after
+case normalization. Selection uses saved group metadata, not gap scores. It
+is an additional diagnostic from the already used reserved corpus, not a new
+independent corpus or human gold.
+
+Read all original meanings before execution. They define the Nostr protocol,
+network and/or ecosystem, with variations in optional communication, community,
+payment and relay details. Their shared title does not itself prove identical
+meanings; inspection of any proposed children must check whether they offer
+distinct useful topics rather than merely redistribute these descriptions.
+
+Use the existing section-count panel and gap CLIs, frozen whole-meaning vectors,
+counts one through six, the same eight starts and constraints as prior deeper
+sections (zero minimum notes), 32 PCA-box references with seed 20261101, and
+the unchanged population-SD convention. Compare both independent 16-reference
+halves. No new encodings, model calls, training, policy changes or stopping
+thresholds are part of this screen. Ignored evidence is stored externally at
+`oracle-mvp-section-count-nostr-control-v1/target/section-count-nostr-control-v1/`.
+
 Reusable numerical CLI: `sse_multivector/cluster_resampling_probe.py`; tests:
 `sse_multivector/test_cluster_resampling_probe.py`. Input NPZ contains unit
 `vectors`, aligned compact zero-based original `groups`, and aligned `notes`.
