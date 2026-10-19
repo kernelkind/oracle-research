@@ -12,7 +12,7 @@ No prompts, canonical hierarchies or review UIs changed. No model calls,
 training or paid resources were used in the original resampling probes.
 The full-meaning tree-cut follow-up adds local frozen-SSE encodings, with no
 LLM calls or training, and reaches 91% in six complete branches. Later direct
-partition tests and a manual child-subdivision test are recorded below.
+partition tests and manual child-subdivision tests are recorded below.
 
 ## Root-partition requirements and research-test IDs
 
@@ -47,6 +47,7 @@ The user distinguishes these new research tests from their source experiments:
 | Six-section-v1-02 | HR36's hash-selected 1,000-note corpus |
 | Six-section-v1-03 | HR37's hash-selected 1,000-note corpus |
 | Six-section-v1-04 | The 557-note S05 section from Six-section-v1-03 |
+| Six-section-v1-05 | The 485-note S02 section from Six-section-v1-03 |
 
 HR IDs identify the original experiments, not reruns of them. Existing artifact
 paths retain their names to preserve frozen bindings. These research-test IDs
@@ -359,6 +360,63 @@ subsets. Seventeen relevant partition/resampling tests pass. Evidence is under
 task worktree, backed by external storage. It includes the frozen parent
 selection and thresholds, aligned inputs, all sixteen trials, child
 memberships, verification and provisional agent review. No review UI changed.
+
+### Six-section-v1-05: manually subdivide society and organized activities
+
+The user approved another manual component test using the **Society and
+organized activities** section from Six-section-v1-03 (source section S02).
+Select only its 990 assigned original entries representing 485 distinct notes.
+Reuse their vectors bit-for-bit; do not add other entries from the same notes
+or change any root memberships. No new encoding, LLM calls, training or
+canonical definitions are involved.
+
+Keep the same six-child method, objective, eight seeds and 50-iteration limit.
+The note minimum is `ceil(0.1 * 485) = 49` per child and
+`ceil(0.9 * 485) = 437` in their union. Select seed `20261022` by its lowest
+summed cosine dissimilarity, `479.40774258867623`, before reviewing contents.
+It converges in 17 iterations. Seven of eight constrained starts converge;
+the remaining start reaches the 50-iteration limit and remains recorded.
+
+| Child | Descriptive main themes | Original entries | Distinct notes |
+|---|---|---:|---:|
+| C01 | Government, politics and institutions | 155 | 99 |
+| C02 | Conflict, war and public safety | 123 | 89 |
+| C03 | People, relationships and society | 176 | 125 |
+| C04 | Food, nature and physical surroundings | 171 | 95 |
+| C05 | Business, services and infrastructure | 231 | 153 |
+| C06 | Sports, exercise and travel | 134 | 86 |
+
+All **485 / 485 parent notes** remain represented. Every child has a strictly
+smaller note set than the parent; the largest contains 153 notes (31.5%).
+No two children have identical note sets. All 990 entries occur exactly once,
+while notes can occur in several children through different entries.
+
+The selected unconstrained control has exactly the same assignments, seed and
+objective. Five of eight matched constrained/control starts differ, so the
+selected equality does not extend to the entire panel. The selected result
+displaces no entry from its closest final center. These observations do not
+establish a semantic benefit from the size constraint.
+
+Provisional agent review covers complete title inventories, seven distinct-title
+central meanings, ten deterministic entry-ID-hash samples and three weak
+assigned-center matches per child. Government/politics, conflict/war,
+business/infrastructure and sports have recognizable thematic cores. The other
+two children remain mixed: C03 also includes astronomy, diseases and biological
+topics; C04 includes clothing and other physical materials alongside food and
+nature. Broad agent descriptions do not establish semantic containment. The
+numeric narrowing and retention checks pass, but useful browsing throughout
+a complete recursive hierarchy remains untested. No membership was edited to
+improve the assessment.
+
+Independent checks verify exact parent-row reuse, unchanged source hashes,
+all entry IDs, normalized mean centers, objective, note unions and proper
+child-note subsets. Seventeen relevant partition/resampling tests pass.
+Ignored evidence is under `target/six-section-v1-05/` in the retained
+`oracle-mvp-six-section-v1-05` task worktree, backed by external storage.
+The frozen plan, input rows, all sixteen trials, full child memberships,
+verification and provisional agent review remain available. This is a manual
+component test, not an integration proposal or an official HiGen experiment;
+no hierarchy, prompt or review UI changed.
 
 ## Question and controlled inputs
 
