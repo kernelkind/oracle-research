@@ -1359,6 +1359,35 @@ and [specification](hierarchy-bootstrap-v155-heldout-v1.spec.json) retain the fi
 outputs. Constructors stay V133 and source remains experimental. Results and
 native accounting will be appended after testing.
 
+V155 fixes all nine agreed-case responses and all three stock titles use “Chicken
+stock preservation plan.” However, one AI meaning still lists illustrative
+abilities, a clear control regression relative to V154; qualification stays unrun.
+Root review of72 mechanically valid responses records68 accepts, one rejection
+and three uncertainties (one country meaning, one writing-tools title and one
+meaning explaining a rejected coadministration restriction). The latter is a
+qualification, not an example. Native
+[accounting](hierarchy-bootstrap-v155-fix-usage-v1.json) records75 attempts including
+three warmups, no failures/retries/reuses, complete usage and $0.5407224 API-equivalent
+cost. No qualification outputs have been generated.
+
+### Meaning rules after the full examples: Bootstrap-v156
+
+Experimental [Bootstrap-v156](Hierarchy-bootstrap-v156.md) reorders the existing
+meaning-writing block after the four full examples and immediately before title
+writing. It adds or removes no instruction, example or output condition. The
+shared rules-v13 now occur near the final input; the full examples and shorter
+title rule/counterexample are unchanged. Consolidation-v28 remains the paired
+experimental companion.
+
+The [regression specification](hierarchy-bootstrap-v156-regression-v1.spec.json)
+retains24 exact inputs, three fresh draws and V155 baselines. The same gate
+requires all nine agreed-case responses, all three stock-plan titles and no clear
+control regression. The correctly labeled [qualification protocol](hierarchy-bootstrap-v156-heldout-v1.json)
+and [specification](hierarchy-bootstrap-v156-heldout-v1.spec.json) retain the fixed
+80-post panel, rubric and assignments. V150 through V155 qualification have zero
+attempts and outputs; no heldout result has informed these revisions. Constructors
+stay V133 and source remains experimental. Results will be appended after testing.
+
 ## Meaning-derived titles: Bootstrap-v130
 
 The user requested a concise title based solely on the explicit meaning.
