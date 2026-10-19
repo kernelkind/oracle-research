@@ -1978,6 +1978,90 @@ frozen spec/plan and paired input, raw combined request/result, complete
 source/artifact paths. No new SSE encoding, model call, training, consolidation,
 hierarchy generation, UI update or HiGen integration occurred.
 
+### Unchanged combined similarity on the HR36 source corpus
+
+The user authorized a cross-corpus check before integration. Use the saved,
+hash-selected HR36 thousand-post source, ASv6.100 and Bootstrap-v133, without
+changing weights, vector selection, native executable or HDBSCAN settings.
+All 5,336 saved entries from 937 notes participate, including originally
+ungrouped entries. The other 63 source posts have no usable saved entries and
+cannot be assessed by this test. HR36 appeared in previous diagnostics,
+including the 77-entry grouping control; this is a larger, different corpus
+from the hundred-note source, not an untouched holdout.
+
+Freeze title, meaning and equal-weight combined runs on identical inputs,
+point IDs/order and `min_samples=3`, `min_cluster_size=2`, EOM. Preselect the
+same exact-title topics, original G036/G320/G088, and the five largest combined
+groups for inspection. Launch all three native jobs concurrently with eight
+workers each on CPUs 0–23, leaving four cores available. They take 12.26,
+12.32 and 16.23 seconds respectively. These are new numerical calculations,
+not new encoder or model calls and not an official HR experiment.
+
+| View | Groups | Grouped entries | Distinct notes in groups | Independent entries |
+|---|---:|---:|---:|---:|
+| Title | 527 | 3,212 | 907 | 2,124 |
+| Meaning | 385 | 2,184 | 820 | 3,152 |
+| Equal-weight combined | 451 | 2,818 | 883 | 2,518 |
+
+All 5,336 entries and 937 usable notes remain eligible in every result. These
+are fine-group counts: 883 notes occurring in combined groups is neither
+finished-root coverage nor a claim to meet 90% retention of all 1,000 posts.
+The title run exactly reproduces all 527 original groups.
+
+Manual comparisons of the same inputs show:
+
+- Nostr: title and combined each keep all 62 definitions in one group with no
+  extras. Meaning-only forms groups of 12, 10, 7, 4 and 3, leaving 26 independent.
+  Thus the combination avoids that fragmentation without the Oaths/coco
+  additions seen in the much smaller 77-entry pool. Corpus context matters.
+- Coffee: all nine definitions stay together in all three views. Food: title
+  and combined keep all nine together, whereas meaning groups three and leaves
+  six independent. The combined Food group has 27 entries, including Cooking,
+  Recipes, food-related activities and general Cravings with food as an example.
+  It is broad; this is not a fixed canonical Food definition or proof every
+  member is contained by Food. Both Recipes entries join that group. There are
+  no Breakfast entries here: the earlier Breakfast control is not revalidated.
+- Original mixed people/countries G320: title reproduces the eight-member mix.
+  Combined separates Cameroon and Colombia into a nine-entry geographic group
+  with Portugal, Argentina, Spain, Brazil, Mexico, Venezuela and Texas. Stephen
+  Colbert, James Corden and Brad Cooper form a four-person group with Jeremy
+  Corbyn. Amy Colgan, Curaçao and coco remain independent. These are plausible
+  broad distinctions, not new human gold or equivalence labels.
+- Original mixed O-titled G088: title again keeps Ottawa, Oaths, Ovens,
+  Oklahoma, Sea of Oman, Oval shapes and Odessa together. Combined groups Sea
+  of Oman and Odessa with two Strait of Hormuz entries; the other five stay
+  independent. The original unrelated-title mix disappears, though maritime
+  geography is broader than a single place or region.
+- The five largest combined groups cover Nostr (62 entries), AI/models/training
+  (41), Bitcoin (38), timestamps/time-related records (34), and Iran-related
+  topics (34). Definitions support these general themes, but boundaries remain
+  broad: the last group also contains Iraq, and the time group includes
+  countdowns and timelines. None is semantically certified by a title summary.
+
+This supports advancing the unchanged combination to a browsing-section test,
+rather than tuning weights around one remaining example. It preserves useful
+repeated topics while repairing the inspected mixed-name groups, but grouping
+statistics and a bounded manual review do not establish general accuracy or a
+better finished hierarchy. The next proposed test is whether these fine groups
+improve the at-most-six broader choices and their note coverage. No section
+partition, synthetic definition, hierarchy or production integration runs here.
+
+Independent checks validate frozen source/code and native request/result
+hashes, identical point IDs/order/settings, complete disjoint input partitions,
+exact recovery of the original title partition, and every combined pairwise
+cosine using bounded row blocks. Maximum error against the mean of the two
+saved-view cosines is `6.66e-16`. Five production-route probe tests pass. No
+source-code change was required. The previous Python environment was no longer
+installed; the local replacement is recorded and retained with a Nix GC root:
+Python 3.13.12, NumPy 2.3.4, SciPy 1.16.3. The native executable remains identical.
+
+Ignored evidence is in the retained combined-view task worktree under
+`target/hdbscan-combined-view-v1/hr36-unchanged-v1/`: frozen spec/plan and paired
+vectors, all three raw native requests/results, runtime details, complete
+`audit.json`, and all 451 combined groups with entry titles in `groups.md`.
+Artifacts remain on the external drive. HiGen, prompts, canonical meanings and
+review UI are unchanged; no training, new encoding or model calls occurred.
+
 Reusable numerical CLI: `sse_multivector/cluster_resampling_probe.py`; tests:
 `sse_multivector/test_cluster_resampling_probe.py`. Input NPZ contains unit
 `vectors`, aligned compact zero-based original `groups`, and aligned `notes`.
