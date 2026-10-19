@@ -2622,3 +2622,29 @@ resulting root. Root breadth is permitted because deeper levels should narrow
 the choices; that test would check whether the same method actually provides
 useful narrowing before a hierarchy-construction integration proposal. This
 further test has not been started or authorized by this record.
+
+### Manual child subdivision beneath the largest second-corpus root
+
+The user authorized one child level beneath the largest root in the preceding
+manual result. This selects numerical section 2 of NearestAttachments: 1,307
+original entries representing 553 notes. Keep its existing native fine groups
+intact and recompute reciprocal matches plus the single attachment pass within
+these selected rows. There is no new native HDBSCAN grouping, encoding, prompt
+or HiGen integration. Keep equal-weight title/meaning vectors, six fixed child
+sections, eight seeds and 50 iterations. This tests subdivision at a fixed
+width, not automatic child-count selection or a recursive stopping rule.
+
+Reuse the existing research-panel label selector with the frozen actual parent
+result and original full source rows. A minimal compatibility change lets that
+selector read this CLI's wrapped `panel.best.labels` output as well as existing
+direct `best.labels` files. It does not change selection or scoring for existing
+inputs. A failing-first test reproduces the unsupported native parent format,
+then verifies actual CLI child selection, original row/note identities, useful
+toy subdivision and rejection after a frozen parent result changes. All 66
+relevant production-path checks pass.
+
+Use a zero assignment minimum as before; inspect every child's distinct-note
+set against the 553-note parent and check duplicated information between the
+children. The 100-note root requirement is not silently imposed on children.
+All parent entries stay eligible. Any note-set overlap between children is
+separate from repeated information, as in the root-level review.

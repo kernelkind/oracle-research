@@ -13,6 +13,43 @@ from sse_multivector.section_count_panel import prepare, run
 
 
 class SectionCountPanelTests(unittest.TestCase):
+    def test_child_selector_reads_the_completed_parent_panel_and_preserves_rows(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            manifest, spec = self._fixture(root)
+            source = spec['sources']['examined']
+            angles = np.array([0, .01, .02, 2, 2.01, 2.02])
+            np.savez(source['input'], vectors=np.c_[np.cos(angles), np.sin(angles)],
+                     notes=np.array(['a' + str(i) for i in range(6)]))
+            source['files'][source['input']] = hashlib.sha256(Path(source['input']).read_bytes()).hexdigest()
+            manifest.write_text(json.dumps(spec))
+            prepare(manifest, root / 'parent')
+            run(root / 'parent', 'D01')
+            parent_path = root / 'parent/D01/count-2.json'
+            parent = json.loads(parent_path.read_text())
+            label = parent['panel']['best']['labels'][0]
+            source['labels']['parent'] = str(parent_path)
+            source['files'][str(parent_path)] = hashlib.sha256(parent_path.read_bytes()).hexdigest()
+            spec['cases'][0]['selector'] = dict(kind='labels', mode='parent', value=label)
+            child_spec = root / 'child.json'
+            child_spec.write_text(json.dumps(spec))
+            cli = [sys.executable, '-m', 'sse_multivector.section_count_panel']
+            result = subprocess.run(cli + ['prepare', str(child_spec), str(root / 'child')],
+                                    capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            plan = json.loads((root / 'child/plan.json').read_text())
+            self.assertEqual(plan['cases'][0]['indices'], [0, 1, 2])
+            self.assertEqual(plan['cases'][0]['entry_ids'], ['0', '1', '2'])
+            self.assertEqual(plan['cases'][0]['notes'], 3)
+            subprocess.run(cli + ['run', str(root / 'child'), 'D01'],
+                           check=True, capture_output=True, text=True)
+            child = json.loads((root / 'child/D01/count-2.json').read_text())['panel']['best']
+            self.assertEqual(sum(child['section_notes']), 3)
+            self.assertTrue(all(0 < n < 3 for n in child['section_notes']))
+            parent_path.write_text('{}')
+            with self.assertRaisesRegex(ValueError, 'Frozen source changed'):
+                run(root / 'child', 'D01')
+
     def test_cli_unmatched_entries_attach_to_frozen_reciprocal_groups_once(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

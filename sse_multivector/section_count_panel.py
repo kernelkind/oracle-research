@@ -170,7 +170,8 @@ def prepare(specification, output):
             key = (cfg['source'], selector['mode'])
             if key not in label_cache:
                 path = spec['sources'][cfg['source']]['labels'][selector['mode']]
-                label_cache[key] = np.asarray(_read(path)['best']['labels'])
+                saved = _read(path)
+                label_cache[key] = np.asarray(saved.get('panel', saved)['best']['labels'])
             labels = label_cache[key]
             if labels.shape != notes.shape:
                 raise ValueError('Saved labels must align with the original entries')
