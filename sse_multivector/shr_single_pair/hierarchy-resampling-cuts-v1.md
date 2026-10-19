@@ -1064,6 +1064,50 @@ it does not execute reserved cases. Artifacts are ignored in the retained
 stored on the external drive. No LLM calls, training or new encoding is used.
 No automatic count or stopping rule is selected or qualified by this protocol.
 
+### Fixed child-count panel: development results
+
+All 24 development cases completed: 129 count comparisons, each retaining eight
+starts. Nine count panels reuse 72 exact saved starts; 120 new panels compute
+960 numerical fits. Every selected best fit converged within the frozen
+50-iteration limit. Twelve other starts reached that limit and remain recorded;
+they were not silently retried or substituted. Independent reconstruction
+checks every trial's original-note union, per-child note counts, note minimum
+and objective. All supplied notes remain represented. All eleven reserved case
+directories remain absent. The frozen source and code hashes still agree.
+
+The ignored `panel/audit.json` records those checks and result hashes;
+`panel/inspection.json` retains every best partition's complete title counts
+and central entries with their full meanings. It supplements rather than
+replaces the raw per-count trials and exact source rows.
+
+The following are agent inspections of saved assignments, not semantic gold or
+new canonical names:
+
+| Section | Observed change as count increases | Consequence for count selection |
+|---|---|---|
+| Science/technology/creative, 557 notes (D13) | Four choices separate software, AI/science, arts/media, and numerical/data topics; six additionally separate music/video and time-related topics. | Extra choices can expose useful distinctions in a broad section. |
+| Family/relatives, four notes (D22) | Two choices both contain a `Families` entry. Four choices become `Relatives`, `Families`, `Family`, `Families`, each holding one note. | Lower dissimilarity and singleton note sets do not establish understandable choices. |
+| Young people, three notes (D21) | Two choices distinguish `Juveniles` from two `Young people` entries; three choices separate the two `Young people` definitions as well. | Count can separate a meaningful boundary or merely separate similar definitions; no reviewed optimum is assigned. |
+| Society/culture/religion, 43 notes (D20) | Four choices produce a group containing Donald Trump, Conventions and Environmental science; six produce a Donald Trump/Privacy group. | Adding choices does not monotonically improve semantic coherence. |
+
+Numerical dissimilarity falls at every available count increase in all 22
+non-singleton cases. In D21 the one-to-two reduction is 91.0% of unsplit error;
+in D22 it is 53.8%. Large relative improvement therefore also occurs in narrow
+sections, not only in broad mixtures. This does not establish that those splits
+are wrong; it rules out interpreting numerical improvement itself as evidence
+of useful browsing refinement.
+
+In the 100-note food root, two and three choices each leave one child covering
+all 100 notes. These are the only two best partitions failing the recorded
+strict-proper/distinct-note-set diagnostic. This is a stronger diagnostic than
+merely counting choices and is not a new semantic rejection or HiGen guard.
+
+The panel supplies the broader comparison evidence requested by the user.
+It does not yet establish an automatic child count, a stopping threshold or a
+finished recursive hierarchy. Any proposed selector should first be fixed and
+examined across this development panel, then evaluated unchanged on the
+reserved sections; the previous preference for four remains provisional.
+
 Reusable numerical CLI: `sse_multivector/cluster_resampling_probe.py`; tests:
 `sse_multivector/test_cluster_resampling_probe.py`. Input NPZ contains unit
 `vectors`, aligned compact zero-based original `groups`, and aligned `notes`.
