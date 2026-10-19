@@ -3616,3 +3616,103 @@ all-node `contents.txt`, resource/run/resume logs, `runtime-journal.jsonl`,
 `hr37/core-uncovered-entries.tsv`. The task worktree
 `oracle-mvp-initial-same-title-attachments-v1` stays for the frozen bindings.
 No official HR registration or HiGen activation occurred.
+
+### Groups-only omission audit across three saved corpora
+
+The user challenged the preceding Food-only construction recommendation as
+overfitting. No reduced-input Food hierarchy was built. Instead, the authorized
+test applies one unchanged eligibility rule to all original usable entries in
+three saved corpora: start from their completed combined-view native groups,
+join the same reciprocal nearest-entry pairs, and retain only resulting units
+containing at least two original entries. Omit independent entries without
+one-way attachment, extra fitting, new vectors, new cutoffs or hierarchy edits.
+All three sources use ASv6.100 and Bootstrap-v133. These corpora have appeared
+in earlier research; this is a cross-corpus diagnostic, not untouched validation.
+
+`python -m sse_multivector.section_group_omissions SPEC OUTPUT` provides the
+reusable offline audit. It checks the frozen source panel, source/code hashes,
+whole-corpus row identity, current source-post provenance and completed native
+grouping evidence, and recomputes the producer's reciprocal pairs. It writes
+every retained and omitted entry with its title, meaning and note ID, together
+with the original post and a separate unavailable-note count. Exact-title loss
+is an inspection aid; it is not an equivalence or accuracy judgment. Existing
+saved outputs are never overwritten.
+
+| Source corpus | Original notes | Notes with usable inputs | Notes retained | Additional usable notes lost | Retained notes also losing entries |
+|---|---:|---:|---:|---:|---:|
+| Food, used in HR22 | 100 | 100 | 99 (99.0%) | 1 | 84 |
+| Hash-selected mixed corpus used in HR36 | 1,000 | 937 | 917 (91.7%) | 20 | 690 |
+| Hash-selected mixed corpus used in HR37 | 1,000 | 912 | 892 (89.2%) | 20 | 658 |
+
+The 63 and 88 mixed-corpus notes lacking usable meanings are unavailable before
+this rule. Among usable notes, retention is 97.9% and 97.8%, respectively.
+Those conditional percentages do not replace the original-corpus denominator
+or meet the raw ninety-percent requirement for HR37.
+
+| Source corpus | Retained units | Retained / original entries | Omitted entries | Retained units supported by only one note |
+|---|---:|---:|---:|---:|
+| Food | 118 | 460 / 728 | 268 | 18 |
+| HR36 corpus | 818 | 3,646 / 5,336 | 1,690 | 73 |
+| HR37 corpus | 764 | 3,607 / 5,189 | 1,582 | 81 |
+
+Multiple entries do not necessarily establish multiple-note support. Neither
+native membership nor reciprocal matching supplies semantic certification.
+
+Review covers all 41 usable notes omitted entirely, plus eight retained notes
+with the lowest retained-entry fraction and eight other retained notes selected
+by fixed event-ID hash per corpus. The lowest-fraction screen is deliberately
+aimed at possible topic loss; the hash sample does not establish a semantic
+error rate. Full review text is saved separately. The following clear losses
+are agent assessments, not new human gold:
+
+| Source / note | What survives | Useful headings lost on that note |
+|---|---|---|
+| Food N005, `4db3cf2df042…` | Dezeen; Post publication | `L00025` Cookware, along with the brands, handles and breakfast heading |
+| Food N009, `78157049a8a2…` | Perceived needs | `L00059` Meal planning, from “I gotta start meal planning” |
+| Food N090, `fb878a83592e…` | Humans | `L00642` Meat; Dietary advice; Dietitians |
+| HR37 N339, `15068c8b9dd6…` | News | `L01736` Chess; Magnus Carlsen; Championship victories |
+| HR37 N616, `b390da113124…` | Poland | `L03156` Employers; Obligations; Procedures; Digitalization |
+
+These are lost placements for the particular note; they do not imply that the
+same topic is absent from every other note in the corpus. Conversely, some
+omissions are incidental: a retained breakfast/coffee note can lose a watching
+character or jealousy heading without losing its primary food topics. Not all
+omitted entries are failures, and no perfection requirement is introduced.
+
+Whole-note losses also include useful content rather than only uninterpretable
+posts. Food's sole omitted note is “Rise and grind coffee beans”: its Coffee
+beans, Grinding, Getting up and Hard work entries are all independent. HR36
+loses the Google Gemini presentation-creation note (`L00865` Artificial
+intelligence assistants; `L00866` Presentations) and the cricket coaching note
+(`L05039` Cricket; `L05040` Brendon McCullum). HR37 loses the eggs/cast-iron
+cooking note (`L00254` Eggs as food; `L00255` Cast-iron cookware, among others)
+and the TypeScript/static-methods note (`L03318`; `L03319`). Exact IDs, full
+meanings and original posts are in the ignored per-corpus reports.
+
+**Conclusion:** group-backed eligibility is not sufficient as a general rule.
+It preserves many note IDs across corpora while discarding useful entry-level
+topics, sometimes leaving only a publication heading or incidental location.
+Food's 99% note count therefore cannot establish browsing quality. Group-only
+eligibility is not adopted; the mandatory-placement assumption also remains
+unresolved. This audit identifies lost-topic controls for further research,
+without picking extra entries merely to cross a coverage threshold or changing
+the existing construction policy.
+
+The failing-first CLI test demonstrates that a note retained through Nostr can
+still lose another topic, separates genuinely unavailable notes from omitted
+usable notes, preserves full post evidence, rejects changed frozen sources and
+refuses to overwrite saved results. The relevant suite runs 76 tests with six
+skips. Independent union-find reconstruction from saved native groups and pair
+edges verifies all retained components, exact kept/omitted row partitions and
+all note counts; consumed source hashes remain unchanged.
+
+The audit takes 23.890 seconds under an enforced 8 GiB cgroup maximum, 6 GiB
+pressure threshold and zero swap allowance, using eight BLAS threads on CPUs
+0–23. The journal reports a 1.9 GiB peak and zero swap. No model calls, training,
+encoding, paid resources, hierarchy changes, official HR registration or UI
+updates occur. Ignored evidence is external at
+`/mnt/external/algos-archive/oracle-mvp/groups-only-omission-audit-v1/`:
+`spec.json`, `audit/summary.json`, full per-corpus reports, `inspection.md`,
+source/runtime hashes, test/run logs, `runtime-journal.jsonl` and independent
+`verification.txt`. The task worktree `oracle-mvp-groups-only-omission-audit-v1`
+remains for the report's frozen code binding.
