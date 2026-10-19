@@ -3105,7 +3105,7 @@ Some mixed leaves expose why structural success does not certify grouping:
 - Leaf `2.2.1` combines Buster + Punch, metal handles, matcha and melangers.
   Matcha `L00051` paired with melangers `L00601` in the initial root pass;
   handles `L00026` attached to melangers. In the smaller second-root pool,
-  Buster + Punch `L00023` reciprocally matched the handles, joining that
+  Buster + Punch `L00023` attached one-way to the handles, joining that
   already-mixed unit. This isolates an additional local matching effect,
   rather than attributing every issue to the original native groups.
 
@@ -3251,3 +3251,80 @@ and a previously unattached entry can join during deeper matching when that
 setting is enabled. Both modes retain their frozen original root grouping,
 resume byte-for-byte and reject an invalid deeper setting. Existing tests
 also require the default to inherit the original setting.
+
+### Completed initial-versus-deeper comparison
+
+All four complete constructions ran under `acf08c2f`, reusing the two
+unchanged root producers from the previous comparison. Enabled/enabled and
+disabled/disabled controls reproduce every earlier node and summary exactly.
+The mixed settings change only the deeper attachment toggle within their
+respective matched root condition. No root fit, encoding or model call is
+repeated. Every case retains all 728 rows and all 100 notes, preserves all 58
+native groups, has six roots and at most six choices per menu, and has no
+unresolved subdivisions.
+
+| Initial attachments | Deeper attachments | Leaves | Mean shortest leaf depth | P90 | Maximum depth | Non-narrowing edges |
+|---|---|---:|---:|---:|---:|---:|
+| On | On | 132 | 2.71 | 3 | 4 | 0 |
+| On | Off | 200 | 2.76 | 4 | 4 | 5 |
+| Off | On | 157 | 2.87 | 3 | 4 | 2 |
+| Off | Off | 372 | 3.17 | 4 | 6 | 8 |
+
+Depth is a structural category-edge measure, not measured user effort.
+Root note counts remain 64, 50, 76, 46, 44 and 29 when initial attachments
+are enabled, and 66, 50, 77, 47, 46 and 31 when disabled. Counts overlap;
+every root exceeds the ten-note minimum. No narrowing violation is silently
+repaired or removed from the report.
+
+The original suspicious-pair checks separate the stages' effects:
+
+| Pair occupying one final leaf | On / On | On / Off | Off / On | Off / Off |
+|---|---|---|---|---|
+| Audience addressed as "Champs" / Cashews | Yes | Yes | No | No |
+| St Marks Place / Stew | Yes | Yes | No | No |
+| Buster + Punch / Matcha | Yes | No | No | No |
+
+The first two mismatches enter during initial attachments and cannot be
+undone while their resulting groups remain intact. The third requires a
+deeper attachment in this case. This corrects an earlier trace description:
+the saved second-root `nearest_attachments` contains `L00023` Buster + Punch
+to `L00026` Metal handles; it is not in `reciprocal_pairs`. The earlier
+100-note findings above now use the correct link type. Matcha `L00051` to
+Melangers `L00601` really is reciprocal and survives every setting.
+
+Deeper-only attachments are the promising mixed candidate, not an approved
+replacement or a semantic accuracy estimate. They retain all 32 Food headings
+in one leaf, all 15 Nostr headings in one leaf and all eight Bitcoin headings
+in one leaf; Coffee still spans three leaves. The deeper-only pass makes 217
+attachment links over 19 matching rounds and needs 13 new six-section fits.
+This restores much of the useful concentration lost by disabling both stages,
+while separating all three prespecified suspicious pairs. Its 157 leaves
+compare with 132 under both stages and 372 under neither.
+
+The improvement is qualified. With deeper-only attachments, "Champs" joins
+greetings and wishes rather than food ingredients, and St Marks Place remains
+its own leaf. But Matcha remains with melangers and gains Jars; the controls
+therefore do not establish clean membership everywhere. Its two non-narrowing
+edges both occur under one one-note branch: Kate's Connected Postcard Project
+and Kate Rundell become separate direct choices under `6.4`, with the same
+single supporting note. This fails the current strict note-set check. No
+one-note construction stop or review-UI workaround has been added.
+
+The test supports taking the unchanged deeper-only candidate to a saved
+second corpus before changing the default: the gains so far come from this
+single 100-note corpus and bounded agent-reviewed pairs. An independent
+corpus would test whether the reduced interference and modest depth cost
+generalize. That next test is recommended, not performed here.
+
+All 72 relevant production/integration checks pass in the task worktree and
+combined main. Independent checks verify original root hashes, exact control
+reproduction, every original row assigned once, intact native groups and
+coverage. All four completed resumes preserve all 86 tree/plan/fit JSON files
+byte-for-byte. Source checkpoint `acf08c2f` is on local main. Ignored evidence
+is external at
+`/mnt/external/algos-archive/oracle-mvp/hundred-note-attachment-stages-v1/`:
+`protocol.json`, the four `initial-{on,off}_child-{on,off}/` trees and fits,
+their compact `contents.txt`, `verification.txt` and `resume-before.json`.
+The worktree `oracle-mvp-hundred-note-attachment-stages-v1` stays for frozen
+code bindings. Historical experiments remain unchanged; no HiGen activation,
+official HR registration, UI change, training or paid inference occurred.
