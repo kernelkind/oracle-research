@@ -2233,6 +2233,9 @@ their original receipt-bound manifests. Warmups contribute to generation cost
 without becoming comparison requests. Retries and failed attempts still count;
 missing costs retain an unknown total and a known subtotal. An optional existing
 attempt counter is checked under lock without refunds or resets.
+Accounting streams original receipt ledgers and retains their billing fields
+and file/line/hash references. Full rendered requests and answers remain in
+their native source files; shared receipt checks still verify those sources.
 
 The report uses `experiment-usage-summary-v3`. This corrects the earlier
 cross-experiment warmup/comparison classification while retaining original cost

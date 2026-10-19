@@ -4,6 +4,7 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import tracemalloc
 import unittest
 
 from sse_multivector import extraction_pipeline as engine
@@ -15,6 +16,38 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 
 class ExperimentUsageSummaryTests(unittest.TestCase):
+    def test_original_receipt_union_does_not_retain_model_request_bodies(self):
+        from sse_multivector import experiment_usage_summary as summary
+
+        directory = self.root / 'large-run'
+        directory.mkdir()
+        manifest = {'wrapper_sha256': 'b' * 64}
+        raw = engine._canonical_json_bytes(manifest)
+        (directory / 'manifest.json').write_bytes(raw)
+        manifest_hash = engine._sha256_bytes(raw)
+        path = directory / 'results.jsonl'
+        originals = {}
+        with path.open('wb') as stream:
+            for i in range(64):
+                record = {'manifest_sha256': manifest_hash, 'wrapper_sha256': 'b' * 64,
+                          'job_key': f'prompt:case-{i}', 'status': 'succeeded', 'attempt': 1,
+                          'usage': {'input': 3, 'output': 2, 'cost': {'total': .25}},
+                          'model_result': {'request': {'padding': 'x' * (256 * 1024)}}}
+                line = engine._canonical_json_bytes(record)
+                stream.write(line)
+                originals[path, i+1] = dict(results_path=str(path), result_line=i+1,
+                    result_sha256=engine._sha256_bytes(line), job_key=record['job_key'],
+                    status='succeeded', added_from_reuse=True)
+        tracemalloc.start()
+        try:
+            result = summary._generation_usage(originals, set())
+            _, peak = tracemalloc.get_traced_memory()
+        finally:
+            tracemalloc.stop()
+        self.assertEqual(result['original_calls'], 64)
+        self.assertEqual(result['catalog_cost_estimate_usd'], 16)
+        self.assertLess(peak, 3 * 1024 * 1024, 'receipt union copied complete request ledgers')
+
     def setUp(self):
         self.fixture = fixtures.ExperimentTests()
         self.fixture.setUp()

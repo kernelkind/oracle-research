@@ -1,7 +1,6 @@
 """Native cross-experiment accounting, without inference or source writes."""
 
 from collections import Counter
-import json
 from pathlib import Path
 
 try:
@@ -39,34 +38,14 @@ def _cost_total(total):
 def _generation_usage(originals, local_keys):
     """Union validated originals across experiments, including reuse-source retries."""
     try:
-        from .experiment import usage_summary
+        from .experiment import receipt_usage
     except ImportError:
-        from experiment import usage_summary
-    ledgers, costs, calls, warmup_calls, sources = {}, {}, [], [], []
-    for (path, number), receipt in originals.items():
-        if path not in ledgers:
-            lines = path.read_bytes().splitlines(keepends=True)
-            records = [json.loads(line) for line in lines]
-            manifest_bytes = (path.parent / 'manifest.json').read_bytes()
-            manifest = json.loads(manifest_bytes)
-            ledgers[path] = (lines, records, engine._sha256_bytes(manifest_bytes),
-                             manifest.get('cache_warmup', False))
-            costs[path] = engine.load_reconciled_costs(path.parent, records)
-        lines, records, manifest_hash, warmup = ledgers[path]
-        if not 1 <= number <= len(lines) or engine._sha256_bytes(lines[number - 1]) != receipt['result_sha256']:
-            raise ValueError('summary original generation source changed')
-        record = records[number - 1]
-        if record.get('manifest_sha256') != manifest_hash:
-            raise ValueError('summary original generation manifest changed')
-        (warmup_calls if warmup else calls).append(
-            (record, engine.provider_cost(record, costs[path])))
-        sources.append({**receipt, 'added_from_reuse': (path, number) not in local_keys})
-    usage = usage_summary(calls, strict=True, warmup_calls=warmup_calls)
-    return {**usage, 'original_calls': len(originals),
-            'source_calls_added': len(originals.keys() - local_keys),
-            'failed_calls': sum(s['status'] == 'failed' for s in sources),
+        from experiment import receipt_usage
+    usage = receipt_usage(dict(receipt, added_from_reuse=key not in local_keys)
+                          for key, receipt in originals.items())
+    return {**usage,
             'usage_complete': usage['attempts_without_usage'] == 0,
-            'reasoning_included_in_output': True, 'sources': sources}
+            'reasoning_included_in_output': True}
 
 
 def summarize_experiments(source_path, *, load_report):
