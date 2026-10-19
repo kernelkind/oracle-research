@@ -1,0 +1,42 @@
+repository,commit,available_locally,available_in_original,recorded_uses
+experiment-runner,1cfdd6a76a9910b2c9dea0ca395f825b90485f7e,true,true,HR26:Runner generation Git | HR27:Runner generation Git | HR28:Runner generation Git | HR29:Runner generation Git | HR32:Runner generation Git | HR33:Runner generation Git | HR34:Runner generation Git | HR35:Runner generation Git
+experiment-runner,36dfcf6390eaaa5e46fff07cba7581003b8877a4,true,true,HR31:Runner generation Git | HR32:Runner generation Git | HR33:Runner generation Git | HR34:Runner generation Git
+experiment-runner,38561fefc5e72171a2a3ac7bcbef21367da6e4d7,true,true,HR35:Runner generation Git | HR36:Runner generation Git | HR37:Runner generation Git | HR38:Runner generation Git | HR39:Runner generation Git
+experiment-runner,9d956b3a2d12b5f2ab190501a6f7b49b9e1d43e3,true,true,HR15:Runner generation Git | HR16:Runner generation Git | HR17:Runner generation Git | HR18:Runner generation Git | HR19:Runner generation Git | HR20:Runner generation Git
+experiment-runner,b03251cca40edd703c95047bdd84d56db5f1a54c,true,true,HR11:Runner generation Git | HR12:Runner generation Git | HR13:Runner generation Git | HR14:Runner generation Git
+experiment-runner,e19592f9a6b0b3a2b3ac0bc63220156d86a0f1a7,true,true,HR04:Runner generation Git | HR05:Runner generation Git | HR08:Runner generation Git | HR09:Runner generation Git | HR10:Runner generation Git
+experiment-runner,e7dd09fac055cb22148118fe8157ad729ca82f66,true,true,HR21:Runner generation Git | HR22:Runner generation Git | HR23:Runner generation Git | HR24:Runner generation Git | HR25:Runner generation Git | HR27:Runner generation Git | HR28:Runner generation Git | HR31:Runner generation Git
+experiment-runner,ef3e68281395b0732804530fb445d9e4f826304c,true,true,HR14:Runner generation Git
+oracle-mvp,050cebf8a18810ad14e8b4276c51adcd036aaad0,true,true,HR36:Oracle initial generation Git
+oracle-mvp,12ab025bd1a3f7b0615e764c0823be56604f1dc7,true,true,HR36:Oracle construction Git
+oracle-mvp,159ca516859f6a27bc821ad6a769f054ccc08312,true,true,HR33:Oracle construction Git
+oracle-mvp,17ea0b74959106090de110d2971e6797eff73c11,true,true,HR04:Oracle construction Git | HR04:Oracle initial generation Git
+oracle-mvp,1a7f68a3b27b8ab19f30256a6c613ce28768e0d9,true,true,HR08:Oracle initial generation Git | HR09:Oracle initial generation Git | HR10:Oracle initial generation Git
+oracle-mvp,251cf0edef01397e8403a53e6b00438b1a398a7c,true,true,HR05:Oracle construction Git | HR05:Oracle initial generation Git
+oracle-mvp,273e16e19a49cb407e600960579c822d7c26aa21,true,true,HR20:Oracle construction Git
+oracle-mvp,33208eb1dd8eca6b8b8aef2dbf286dc2df6d279c,true,true,HR30:Oracle initial generation Git
+oracle-mvp,48e71c71a3b6406588cf6af7e2aa5926b702e541,true,true,HR18:Oracle construction Git | HR18:Oracle initial generation Git | HR20:Oracle initial generation Git
+oracle-mvp,542d5697ccee1b85b28f3ded0a9e093c36de0c1b,true,true,HR08:Oracle construction Git | HR09:Oracle construction Git | HR10:Oracle construction Git
+oracle-mvp,5446454d16d2169ed169dc1c787150991093206a,true,true,HR19:Oracle construction Git | HR19:Oracle initial generation Git
+oracle-mvp,581132e922aa0dcd9d8c6ed4968764d1b466c9c7,true,true,HR22:Oracle construction Git | HR22:Oracle initial generation Git
+oracle-mvp,584aa6d8a4fccc9094e1c493dbc918b6c98fd278,true,true,HR28:Oracle construction Git | HR28:Oracle initial generation Git | HR31:Oracle initial generation Git
+oracle-mvp,5b9bfa689e2b0df5604a698ba84655d293ce4d61,true,true,HR39:Oracle construction Git | HR39:Oracle initial generation Git
+oracle-mvp,670a7623686f7aefe7595d296f61b8232b67670a,true,true,HR37:Oracle construction Git | HR37:Oracle initial generation Git | HR38:Oracle construction Git | HR38:Oracle initial generation Git
+oracle-mvp,6ea045051c29934dbda88879aa4fd3352a702148,true,true,HR32:Oracle construction Git
+oracle-mvp,7159bb54caeab45230252be7e31fdc960178f21a,true,true,HR34:Oracle initial generation Git
+oracle-mvp,835f91dcf6fa8fe4443ee370b8c977d24d9fb752,true,true,HR35:Oracle construction Git
+oracle-mvp,96ca342fbbb1110a77618e324088dd016c314475,true,true,HR29:Oracle construction Git | HR29:Oracle initial generation Git | HR32:Oracle initial generation Git | HR33:Oracle initial generation Git
+oracle-mvp,9805c149e1c6038fe59bdf028eb6ec65d6a8530e,true,true,HR27:Oracle construction Git | HR27:Oracle initial generation Git
+oracle-mvp,b1b1118e0be6a01b0c621206a398b5308879e92a,true,true,HR26:Oracle initial generation Git
+oracle-mvp,bdc22432c772587ddc6521a6619e772cb2ac59b5,true,true,HR17:Oracle construction Git | HR17:Oracle initial generation Git
+oracle-mvp,bf7801bc1d92491b20eab8d075fb8d57b83d6b3e,false,true,HR34:Oracle construction Git
+oracle-mvp,c607d6fbb815f15e4e5f44ed69f2898704480399,true,true,HR14:Oracle construction Git
+oracle-mvp,d2c13d78feb904716b1f4ae2e7d0bd38a7102d44,true,true,HR35:Oracle initial generation Git
+oracle-mvp,d4c55c13db67b4ba18a5205937fae17824c1d271,true,true,HR11:Oracle construction Git | HR11:Oracle initial generation Git | HR12:Oracle construction Git | HR12:Oracle initial generation Git | HR13:Oracle construction Git | HR13:Oracle initial generation Git | HR14:Oracle initial generation Git
+oracle-mvp,dbd03c02c5dfaf7e2fe5019ec1240a0eb5966c57,true,true,HR15:Oracle construction Git | HR15:Oracle initial generation Git | HR16:Oracle construction Git | HR16:Oracle initial generation Git
+oracle-mvp,df96b21c7c2c949810339bac56fcfa19f8bbf27e,true,true,HR23:Oracle construction Git | HR23:Oracle initial generation Git
+oracle-mvp,e498cda9d85c88a14cf3959e47cab718a75dcc4f,true,true,HR24:Oracle construction Git | HR24:Oracle initial generation Git | HR25:Oracle construction Git | HR25:Oracle initial generation Git
+oracle-mvp,e66eb182832ec689e13f6f79c95aec4ae9a8017f,true,true,HR26:Oracle construction Git
+oracle-mvp,ea862d83060e2a3fce70e2ba76e2d9890ade7b2c,true,true,HR31:Oracle construction Git
+oracle-mvp,f5500b025e75fa9def1952093a7aa371d8c0b946,true,true,HR21:Oracle construction Git | HR21:Oracle initial generation Git
+oracle-mvp,fb6f6154eb50aa8b89eac1640e71eaa5b7ee40d8,true,true,HR16:Oracle construction Git

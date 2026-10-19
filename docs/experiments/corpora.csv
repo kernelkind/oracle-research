@@ -1,0 +1,10 @@
+subject_corpus_sha256,runs,verified_sources,status
+18370b4772fee22c8d11f49a505f20f781f163e0512a8f32473d487ebdc8849a,HR03 | HR04 | HR05 | HR08 | HR09 | HR10 | HR11 | HR12 | HR13 | HR14 | HR15 | HR16 | HR17 | HR19 | HR18 | HR20 | HR21 | HR27,oracle-mvp-hierarchy-bootstrap-v88-three-note-v1:target/hierarchy-as100-b96-c48-fifty-note-v1/subjects/subjects.json,hash verified
+1f87b7c853beef38d2701f6cef6a3fc4957a93c547f34f7f80caa6919e6d0a07,HR06 | HR07,oracle-mvp-scalable-hierarchy-v12:target/sh200-generation-v1/subjects/subjects.json,hash verified
+42d5ce5211a1a72b08d8df3d80cb5d5668383d2afd27fbee6df331f567e8baef,HR36,oracle-mvp-hierarchy-hr36-v53-auto:target/hierarchy-hr36-v53-auto-thousand-note-v1/subject-collection/subjects.json,hash verified
+69ac6d8baabab336a1e41c519f5cff3b4c9e16b35ea8818d7f1e3fa3a0dac43d,HR22 | HR23 | HR24 | HR25 | HR28 | HR31,oracle-mvp-hierarchy-hr22-v41:target/hierarchy-hr22-v41-hundred-note-v1/subject-collection/subjects.json,hash verified
+6b8fa763d11779a3637d5323bf03c0f0770d554bc3dae47466ea15312cd31513,HR30 | HR35,oracle-mvp-hierarchy-hr30-v5:target/hierarchy-hr30-v5-thousand-note-v1/subject-collection/subjects.json,hash verified
+8328bfb1e3ff392a69aa74cb3f8656a92bc7c76b66652d61211356262fb0a3ce,HR38,oracle-mvp-hierarchy-hr38-v53-auto:target/hierarchy-hr38-v53-auto-2000-note-v1/subject-collection/subjects.json,hash verified
+d0c063c163c6682e33f2a5220e0b90eb659f3c536cbfa563705b60dfa7815fac,HR37,oracle-mvp-hierarchy-hr37-v53-auto:target/hierarchy-hr37-v53-auto-1000-note-v1/subject-collection/subjects.json,hash verified
+da35889c86faac7fb9022b36dd788aab997912d4d48b06752b964c410195fd16,HR26 | HR29 | HR32 | HR33 | HR34,oracle-mvp-hierarchy-hr26-v41:target/hierarchy-hr26-v41-two-hundred-note-v1/subject-collection/subjects.json,hash verified
+dbec79575b8a91f7e998a5998577ee077f1a2a7f99fe0791f33102d819538733,HR39,oracle-mvp-hierarchy-hr39-v53-auto:target/hierarchy-hr39-v53-auto-5000-note-v1/subject-collection/subjects.json,hash verified
