@@ -114,6 +114,16 @@ class SectionCountGapTests(unittest.TestCase):
                 run(root / 'gap', workers=1)
             self.assertFalse(list((root / 'gap/D01').glob('reference-*.json')))
 
+    def test_prepare_can_select_development_cases_without_changing_the_rule(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = self._panel(root)
+            result = prepare(source, root / 'subset', references=8, seed=200, cases=['D01'])
+            self.assertEqual([c['id'] for c in result['cases']], ['D01'])
+            with self.assertRaisesRegex(ValueError, 'development cases'):
+                prepare(source, root / 'bad', cases=['V01'])
+            self.assertFalse((root / 'bad').exists())
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -48,18 +48,22 @@ def select_count(counts, observed, references):
                 at_largest_tested_count=chosen == len(counts) - 1)
 
 
-def prepare(source, output, *, references=32, seed=20261101):
+def prepare(source, output, *, references=32, seed=20261101, cases=None):
     source, output = Path(source).resolve(), Path(output).resolve()
     if (type(references) is not int or references < 4 or references % 2
             or type(seed) is not int or seed < 0):
         raise ValueError('An even reference count of at least four and a nonnegative seed required')
     original = panel._read(source / 'plan.json')
     panel._check_files(original['code_files'])
+    eligible = {c['id'] for c in original['cases'] if c['role'] == 'development'}
+    if cases is not None and (not cases or len(set(cases)) != len(cases) or not set(cases) <= eligible):
+        raise ValueError('Select unique existing development cases only')
+    requested = eligible if cases is None else set(cases)
     output.mkdir(parents=True, exist_ok=False)
-    sources, cases = {}, []
+    sources, selected_cases = {}, []
     files = {str(source / 'plan.json'): panel._sha(source / 'plan.json')}
     for cfg in original['cases']:
-        if cfg['role'] != 'development':
+        if cfg['id'] not in requested:
             continue
         name = cfg['source']
         if name not in sources:
@@ -111,10 +115,10 @@ def prepare(source, output, *, references=32, seed=20261101):
         np.savez(data, vectors=vectors, notes=notes, center=center,
                  rotation=rotation, low=low, high=high)
         files[str(data)] = panel._sha(data)
-        cases.append(dict(id=cfg['id'], status=status, original_case=cfg, counts=counts,
+        selected_cases.append(dict(id=cfg['id'], status=status, original_case=cfg, counts=counts,
                           observed=observed, data=str(data), rank=rank))
     plan = dict(status='Frozen gap screen; no HiGen integration or count policy',
-        source=str(source), cases=cases, files=files,
+        source=str(source), cases=selected_cases, files=files,
         references=references, reference_seed=seed,
         reference_distribution='Uniform full nonzero PCA box plus original mean; no radial projection',
         dispersion='Sum of squared Euclidean distances to arithmetic group means on supplied coordinates',
@@ -243,12 +247,13 @@ def main():
     prep.add_argument('output', type=Path)
     prep.add_argument('--references', type=int, default=32)
     prep.add_argument('--seed', type=int, default=20261101)
+    prep.add_argument('--cases', nargs='+', help='Explicit development cases; reserved cases remain excluded')
     execute = commands.add_parser('run')
     execute.add_argument('output', type=Path)
     execute.add_argument('--workers', type=int, default=1)
     args = parser.parse_args()
     if args.command == 'prepare':
-        result = prepare(args.source, args.output, references=args.references, seed=args.seed)
+        result = prepare(args.source, args.output, references=args.references, seed=args.seed, cases=args.cases)
         print(json.dumps(dict(cases=len(result['cases']), references=result['references'])))
     else:
         result = run(args.output, workers=args.workers)

@@ -1171,6 +1171,67 @@ especially the reference construction and algorithm on pages 414–415;
 documents its alternative selection rules and squared-distance setting. These
 sources motivate the method, not its suitability for SSE topics.
 
+### Gap screen: early results and faster screening
+
+The initial full screen was too large for deciding whether the method merited
+further work: 704 reference samples and 26,368 multi-start fits, before checking
+the small stopping cases. The first execution received SIGTERM after 32 saved
+references, with no Python error or kernel OOM record; its cause is unproven.
+A persistent local job resumed the exact settings and reused those references.
+After the user emphasized iteration speed, that queue was intentionally stopped.
+It retains 370/704 reference records: ten complete 32-reference cases plus
+24 references for D02 and 26 for D12. This is an incomplete screen, not a full
+24-case result or a new HiGen experiment. All partial data remains preserved.
+
+The CLI now accepts explicit development `--cases` so cheap diagnostic cases
+can precede expensive confirmation work. Unknown or reserved IDs are rejected.
+The reference generation, dispersion, statistical selection and execution
+functions are unchanged; AST comparisons verify this. In a separate source
+worktree, the priority subset D19–D24 reuses the original observed assignments,
+keeps the identical 32 seeds and all statistical settings, and completes in
+under one second. It is a subset of the same development panel, not independent
+validation. Artifacts are ignored under
+`oracle-mvp-section-count-gap-priority-v1/target/section-count-gap-priority-v1`.
+
+| Completed section | Notes | Selected count | Counts from separate 16-reference halves |
+|---|---:|---:|---|
+| Food corpus root (D01) | 100 | 6 | 6, 6 |
+| Positive feelings/social topics (D03) | 46 | 6 | 6, 4 |
+| Waking/fatigue/time topics (D04) | 34 | 2 | 2, 2 |
+| Coffee and associated materials/food (D05) | 52 | 2 | 2, 5 |
+| Nostr/community topics (D06) | 43 | 5 | 5, 5 |
+| Knowledge/content topics (D07) | 55 | 4 | 4, 4 |
+| Food/preparation topics (D08) | 79 | 6 | 6, 6 |
+| Finance/cryptocurrency topics (D09) | 327 | 6 | 6, 6 |
+| Society/organized activities (D10) | 485 | 6 | 6, 6 |
+| Communication/social media (D11) | 401 | 6 | 6, 6 |
+| Family/biology/disease mixture (D19) | 16 | 1 | 1, 1 |
+| Society/culture/religion (D20) | 43 | 1 | 1, 1 |
+| Young people (D21) | 3 | 1 | 1, 1 |
+| Family/relatives (D22) | 4 | 1 | 1, 1 |
+| Measles (D23) | 1 | 1 | No random references needed |
+| Infertility (D24) | 1 | 1 | No random references needed |
+
+Topic names are inspection summaries, not new canonical definitions. The narrow
+near-duplicate sections stop, but D19 also stops despite containing distinct
+family, biology and disease topics. This is an agent assessment of inadequate
+narrowing, not human gold for a particular alternative child count.
+
+The saved D19 curve identifies a concrete mechanism: gaps for counts one through
+six are `0.0821, 0.0794, 0.1558, 0.1601, 0.1903, 0.2561`. The reference uncertainty
+at count two is `0.0724`. The published adjacent-count condition therefore accepts
+one immediately, even though larger counts have substantially higher gaps.
+This is not a transport failure or merely a shortage of Monte Carlo samples:
+both 16-sample halves make the same decision. The evidence identifies the local
+stopping condition's behavior, not which alternative rule is correct.
+
+All 128 priority reference matrices are independently reconstructed from their
+frozen seeds. Matrix hashes, every selected-label dispersion, cosine objective
+and distinct-note count agree. All eleven reserved cases remain unrun. Neither
+this selector nor any replacement is activated. Before more expensive reference
+generation, the useful next probe is how alternative count decisions use the
+already-computed gap curves, retaining these original results unchanged.
+
 Reusable numerical CLI: `sse_multivector/cluster_resampling_probe.py`; tests:
 `sse_multivector/test_cluster_resampling_probe.py`. Input NPZ contains unit
 `vectors`, aligned compact zero-based original `groups`, and aligned `notes`.
