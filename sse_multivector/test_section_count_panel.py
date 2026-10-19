@@ -13,6 +13,44 @@ from sse_multivector.section_count_panel import prepare, run
 
 
 class SectionCountPanelTests(unittest.TestCase):
+    def test_cli_paired_vectors_freeze_view_and_use_equal_title_meaning_cosine(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            manifest, spec = self._fixture(root)
+            source = spec['sources']['examined']
+            title = np.repeat(np.eye(2), 3, axis=0)
+            meaning = np.tile(np.eye(2), (3, 1))
+            notes = np.array(['a' + str(i) for i in range(6)])
+            np.savez(source['input'], title=title, meaning=meaning, notes=notes)
+            source['files'][source['input']] = hashlib.sha256(Path(source['input']).read_bytes()).hexdigest()
+            source['vector_view'] = 'combined'
+            manifest.write_text(json.dumps(spec))
+            cli = [sys.executable, '-m', 'sse_multivector.section_count_panel']
+            result = subprocess.run(cli + ['prepare', str(manifest), str(root / 'out')],
+                                    capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            subprocess.run(cli + ['run', str(root / 'out'), 'D01'],
+                           check=True, capture_output=True, text=True)
+            saved = json.loads((root / 'out/D01/count-2.json').read_text())
+            x = np.concatenate((title, meaning), axis=1) / np.sqrt(2)
+            np.testing.assert_allclose(x @ x.T, (title @ title.T + meaning @ meaning.T) / 2)
+            for trial in saved['panel']['trials']:
+                labels, centers = np.array(trial['labels']), np.array(trial['centers'])
+                self.assertEqual(centers.shape, (2, 4))
+                self.assertAlmostEqual(trial['objective'],
+                    np.clip(1 - np.einsum('ij,ij->i', x, centers[labels]), 0, 2).sum())
+            source['vector_view'] = 'unknown'
+            manifest.write_text(json.dumps(spec))
+            with self.assertRaisesRegex(ValueError, 'vector view'):
+                prepare(manifest, root / 'invalid')
+            source['vector_view'] = 'combined'
+            title[0] *= 2
+            np.savez(source['input'], title=title, meaning=meaning, notes=notes)
+            source['files'][source['input']] = hashlib.sha256(Path(source['input']).read_bytes()).hexdigest()
+            manifest.write_text(json.dumps(spec))
+            with self.assertRaisesRegex(ValueError, 'normalized'):
+                prepare(manifest, root / 'nonunit')
+
     def test_native_grouped_case_preserves_original_members_and_ungrouped_entries(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

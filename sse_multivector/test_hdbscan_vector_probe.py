@@ -190,6 +190,24 @@ class HdbscanVectorProbeTests(unittest.TestCase):
             self.assertEqual(len(set(labels[:6])), 1)
             self.assertEqual(len(set(labels[6:])), 1)
             self.assertNotEqual(labels[0], labels[6])
+            paired = json.loads((root / 'probe/plan.json').read_text())['cases'][0]['data']
+            combined_source = dict(spec['source'], input=paired, vector_view='combined',
+                files=dict(spec['source']['files'], **{paired: hashlib.sha256(Path(paired).read_bytes()).hexdigest()}))
+            section_spec['sources']['saved'] = combined_source
+            path.write_text(json.dumps(section_spec))
+            combined = sections.prepare(path, root / 'combined-sections')
+            self.assertEqual(combined['cases'][0]['groups'], plan['cases'][0]['groups'])
+            sections.run(root / 'combined-sections', 'grouped')
+            with np.load(paired) as data:
+                notes, title, meaning = data['notes'], data['title'], data['meaning']
+            np.savez(root / 'foreign.npz', notes=notes, title=title[::-1], meaning=meaning)
+            combined_source['input'] = str(root / 'foreign.npz')
+            combined_source['files'][combined_source['input']] = hashlib.sha256(
+                (root / 'foreign.npz').read_bytes()).hexdigest()
+            path.write_text(json.dumps(section_spec))
+            with self.assertRaisesRegex(ValueError, 'different original inputs'):
+                sections.prepare(path, root / 'foreign')
+            section_spec['sources']['saved'] = spec['source']
             copied = root / 'copied'
             copied.mkdir()
             shutil.copyfile(root / 'probe/plan.json', copied / 'plan.json')

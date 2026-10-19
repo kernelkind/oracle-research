@@ -2186,3 +2186,26 @@ adjustment above are experimental choices here, not claims from that paper.
 
 **Conclusion:** retain resampling as diagnostic evidence. Neither raw nor
 chance-adjusted recovery is justified as the automatic root-selection rule.
+
+### Combined-vector broader-section control
+
+The user authorized a quick fixed-six-section comparison on the same HR36
+inputs. Keep the completed combined HDBSCAN groups, all unassigned entries,
+original-entry weights, eight seeds and 50-iteration limit fixed. Change only
+the broader calculation's representation from full meanings to equal-weight
+title and meaning vectors. This tests whether the fine-group improvements
+carry through when the broader calculation uses the same representation.
+Six is fixed for this component test; no new count-reference screen is run.
+Initialization uses the same seeds, but the changed distances may select
+different initial entries. Coverage remains identical by construction.
+
+The existing research panel accepts a frozen `vector_view` of `combined`,
+`meaning` or `title` from an existing paired-vector packet; its default
+`vectors` contract is unchanged. Combined scoring concatenates unit title and
+meaning rows and divides by square root of two, giving the mean of their two
+cosines. Both components must be aligned and individually normalized. Saved
+native-group validation checks exact rows for the declared scoring view as
+well as original titles, meanings and note identities. There is no new encoding,
+training, inference, HiGen activation or automatic count decision. Preparation,
+actual CLI scoring, native grouping provenance, changed component rows and
+existing default paths pass 61 production-path checks.

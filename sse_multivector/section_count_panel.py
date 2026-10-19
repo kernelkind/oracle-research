@@ -36,13 +36,27 @@ def _check_files(files):
             raise ValueError('Frozen source changed: ' + path)
 
 
+def _vectors(packet, view):
+    if view not in ['vectors', 'title', 'meaning', 'combined']:
+        raise ValueError('Unknown saved vector view')
+    if view != 'combined':
+        return packet[view]
+    title, meaning = packet['title'], packet['meaning']
+    if (title.ndim != 2 or meaning.shape != title.shape
+            or not np.isfinite(title).all() or not np.isfinite(meaning).all()
+            or not np.allclose(np.linalg.norm(title, axis=1), 1, atol=1e-8)
+            or not np.allclose(np.linalg.norm(meaning, axis=1), 1, atol=1e-8)):
+        raise ValueError('Combined view requires aligned normalized title and meaning vectors')
+    return np.concatenate((title, meaning), axis=1) / np.sqrt(2)
+
+
 def _load_source(source):
     for path in [source['input'], source['entries'], *source.get('labels', {}).values()]:
         if path not in source['files']:
             raise ValueError('Every consumed source file requires a frozen hash')
     _check_files(source['files'])
     with np.load(source['input'], allow_pickle=False) as packet:
-        vectors, notes = packet['vectors'], packet['notes']
+        vectors, notes = _vectors(packet, source.get('vector_view', 'vectors')), packet['notes']
     entries = _read(source['entries'])
     if (vectors.ndim != 2 or notes.ndim != 1 or not len(notes)
             or len(vectors) != len(notes) or len(entries) != len(notes)
@@ -54,7 +68,7 @@ def _load_source(source):
     return vectors, notes, entries
 
 
-def _saved_grouping(selection, vectors, notes, entries):
+def _saved_grouping(selection, vectors, notes, entries, vector_view='meaning'):
     from . import hdbscan_vector_probe as probe
     folder = Path(selection['directory']).resolve()
     producer = _read(folder / 'plan.json')
@@ -69,7 +83,7 @@ def _saved_grouping(selection, vectors, notes, entries):
     metadata = [{k: e[k] for k in ['id', 'title', 'meaning', 'note_id', 'source_group']}
                 for e in entries]
     with np.load(cfg['data'], allow_pickle=False) as data:
-        if (cfg['entries'] != metadata or not np.array_equal(data['meaning'], vectors)
+        if (cfg['entries'] != metadata or not np.array_equal(_vectors(data, vector_view), vectors)
                 or not np.array_equal(data['notes'], notes)):
             raise ValueError('Saved grouping uses different original inputs')
     membership = {i: n for n, group in enumerate(report['groups']) for i in group}
@@ -139,7 +153,10 @@ def prepare(specification, output):
                 raise ValueError('Original-entry producers are not whole-group reuse sources')
             membership = None
             if 'grouping' in cfg:
-                membership, grouping_files = _saved_grouping(cfg['grouping'], vectors, notes, entries)
+                source = spec['sources'][cfg['source']]
+                view = source.get('vector_view', 'vectors')
+                membership, grouping_files = _saved_grouping(cfg['grouping'], vectors, notes, entries,
+                    'meaning' if view == 'vectors' else view)
             keys, groups = {}, []
             for i in indices:
                 group = (membership.get(entries[i]['id']) if membership is not None
