@@ -122,6 +122,7 @@ class SectionTreeTests(unittest.TestCase):
                 self.assertEqual(prepared.returncode, 0, prepared.stderr)
                 plan = json.loads((root / 'tree/plan.json').read_text())
                 self.assertEqual(plan['attach_nearest'], enabled)
+                self.assertEqual(plan['child_attach_nearest'], enabled)
                 completed = self._cli('run', root / 'tree')
                 self.assertEqual(completed.returncode, 0, completed.stderr)
                 tree = json.loads((root / 'tree/tree.json').read_text())
@@ -136,6 +137,37 @@ class SectionTreeTests(unittest.TestCase):
                 changed = self._cli('run', root / 'tree')
                 self.assertNotEqual(changed.returncode, 0)
                 self.assertIn('Tree settings disagree', changed.stderr)
+
+    def test_cli_can_separate_initial_from_child_attachments(self):
+        with tempfile.TemporaryDirectory() as directory:
+            for initial in [True, False]:
+                root = Path(directory) / str(initial)
+                root.mkdir()
+                self._fixture(root, attach_nearest=initial, outsider=True)
+                prepared = self._cli('prepare', root / 'panel', 'Roots', root / 'tree',
+                    '--corpus-notes', 35, '--minimum-root-notes', 1,
+                    '--child-attachments', 'off' if initial else 'on')
+                self.assertEqual(prepared.returncode, 0, prepared.stderr)
+                plan = json.loads((root / 'tree/plan.json').read_text())
+                self.assertEqual(plan['attach_nearest'], initial)
+                self.assertEqual(plan['child_attach_nearest'], not initial)
+                producer = json.loads((root / 'panel/plan.json').read_text())['cases'][0]
+                self.assertEqual(bool(producer.get('nearest_attachments', [])), initial)
+                completed = self._cli('run', root / 'tree')
+                self.assertEqual(completed.returncode, 0, completed.stderr)
+                tree = json.loads((root / 'tree/tree.json').read_text())
+                self.assertEqual(any(n['nearest_attachments'] for n in tree['nodes']), not initial)
+                outsider = next(n for n in tree['nodes'] if not n['children'] and 34 in n['indices'])
+                self.assertGreater(len(outsider['indices']), 1)
+                before = {p: p.read_bytes() for p in (root / 'tree').rglob('*.json')}
+                resumed = self._cli('run', root / 'tree')
+                self.assertEqual(resumed.returncode, 0, resumed.stderr)
+                self.assertEqual(before, {p: p.read_bytes() for p in before})
+                plan['child_attach_nearest'] = 'on'
+                (root / 'tree/plan.json').write_text(json.dumps(plan))
+                invalid = self._cli('run', root / 'tree')
+                self.assertNotEqual(invalid.returncode, 0)
+                self.assertIn('Tree settings disagree', invalid.stderr)
 
 
 if __name__ == '__main__':

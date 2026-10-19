@@ -3228,3 +3228,26 @@ The task worktree `oracle-mvp-hundred-note-attachment-ablation-v1` remains
 for the frozen code bindings. Earlier source worktrees and receipts remain
 unchanged. No model calls, encoding, training, official HR registration,
 HiGen activation or UI change occurred.
+
+### Separate initial and deeper attachment settings
+
+The user authorized the two missing combinations: initial attachments only
+and deeper attachments only. This completes a two-by-two numerical comparison
+with the existing all-enabled and all-disabled controls, on the same 100
+notes. Reuse both completed root producers exactly rather than recluster
+the roots. Keep all vectors, original groups, reciprocal matching, seeds,
+assignment settings and the approved stopping boundary unchanged.
+
+`section_tree prepare --child-attachments inherit|on|off` freezes an optional
+independent deeper setting. The default still inherits the root producer's
+setting. The root setting must continue to match its frozen source; the child
+setting must be a boolean and is covered by the tree plan/result/fit bindings.
+This is an experimental component-test option, not an activated HiGen policy.
+
+The production CLI test first fails on the unavailable option. It then checks
+both mixed combinations with an unmatched entry beside an intact matched
+pair: an initial attachment survives when later attachments are disabled,
+and a previously unattached entry can join during deeper matching when that
+setting is enabled. Both modes retain their frozen original root grouping,
+resume byte-for-byte and reject an invalid deeper setting. Existing tests
+also require the default to inherit the original setting.

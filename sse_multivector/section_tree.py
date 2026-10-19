@@ -1,8 +1,9 @@
 """Experimental complete tree from a frozen six-section numerical panel.
 
 Finish at the inherited intact groups when at most six remain. Larger pools
-receive local reciprocal matching, with the root panel's frozen attachment
-setting, and, if still necessary, the unchanged six-section fit. This does not
+receive local reciprocal matching, with a frozen attachment setting inherited
+from the root panel unless explicitly overridden during preparation, and, if
+still necessary, the unchanged six-section fit. This does not
 generate canonical definitions, activate HiGen behavior, or specify review-UI
 note display.
 """
@@ -43,10 +44,13 @@ def _root(directory, case_id):
     return plan, cfg, vectors, notes, entries, saved['panel']
 
 
-def prepare(directory, case_id, output, *, corpus_notes, minimum_root_notes):
+def prepare(directory, case_id, output, *, corpus_notes, minimum_root_notes,
+            child_attach_nearest=None):
     if (type(corpus_notes) is not int or corpus_notes < 1
-            or type(minimum_root_notes) is not int or minimum_root_notes < 0):
-        raise ValueError('Positive original-corpus size and nonnegative root minimum required')
+            or type(minimum_root_notes) is not int or minimum_root_notes < 0
+            or (child_attach_nearest is not None and type(child_attach_nearest) is not bool)):
+        raise ValueError('Positive original-corpus size, nonnegative root minimum '
+                         'and an optional boolean child attachment setting required')
     directory, output = Path(directory).resolve(), Path(output).resolve()
     root, cfg, _, notes, _, _ = _root(directory, case_id)
     if len(set(notes[cfg['indices']])) > corpus_notes:
@@ -58,6 +62,8 @@ def prepare(directory, case_id, output, *, corpus_notes, minimum_root_notes):
                 corpus_notes=corpus_notes, minimum_root_notes=minimum_root_notes,
                 max_children=6, seeds=root['spec']['seeds'],
                 attach_nearest=cfg.get('attach_nearest', False),
+                child_attach_nearest=(cfg.get('attach_nearest', False)
+                                      if child_attach_nearest is None else child_attach_nearest),
                 max_iterations=root['spec']['max_iterations'], time_limit=root['spec']['time_limit'],
                 stopping='Expose at most six inherited groups before another matching pass; '
                          'one group is already a leaf. No separate one-note stopping condition.',
@@ -143,6 +149,7 @@ def run(output):
     root, cfg, vectors, notes, entries, root_fit = _root(plan['root_panel'], plan['case_id'])
     if (plan['seeds'] != root['spec']['seeds'] or plan['max_children'] != 6
             or plan['attach_nearest'] != cfg.get('attach_nearest', False)
+            or type(plan['child_attach_nearest']) is not bool
             or plan['max_iterations'] != root['spec']['max_iterations']
             or plan['time_limit'] != root['spec']['time_limit']):
         raise ValueError('Tree settings disagree with the frozen root panel')
@@ -157,7 +164,7 @@ def run(output):
         pairs, attachments, matching = [], [], False
         if identifier != '0' and inherited_count > 6:
             groups, pairs, attachments = panel._reciprocal_groups(local, groups,
-                attach_nearest=plan['attach_nearest'])
+                attach_nearest=plan['child_attach_nearest'])
             matching = True
         count = len(set(groups))
         fitted = None
@@ -218,12 +225,15 @@ def main():
     prep.add_argument('output', type=Path)
     prep.add_argument('--corpus-notes', type=int, required=True)
     prep.add_argument('--minimum-root-notes', type=int, required=True)
+    prep.add_argument('--child-attachments', choices=['inherit', 'on', 'off'], default='inherit')
     execute = commands.add_parser('run')
     execute.add_argument('output', type=Path)
     args = parser.parse_args()
     if args.command == 'prepare':
         result = prepare(args.panel, args.case, args.output, corpus_notes=args.corpus_notes,
-                         minimum_root_notes=args.minimum_root_notes)
+                         minimum_root_notes=args.minimum_root_notes,
+                         child_attach_nearest={'inherit': None, 'on': True, 'off': False}[
+                             args.child_attachments])
         print(result['status'])
     else:
         result = run(args.output)
