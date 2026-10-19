@@ -15,9 +15,10 @@ calls or training, and reaches 91% in six complete branches.
 
 ## Approved requirements for the next smaller iteration
 
-The user approved a fixed 100-note subset of the same corpus for inspection,
-reusing saved vectors and rebuilding its groups. The 2,000-note corpus remains
-available for checking promising rules. The numerical requirements are:
+The user directed reusing an existing 100-note run, rather than drawing a new
+subset of HR38. Use HR22's saved ASv6.100/Bootstrap-v133 original inputs. The
+2,000-note corpus remains available for checking promising rules. The numerical
+requirements are:
 
 - Exactly six sections.
 - At least 90% of the original corpus's distinct notes represented across them.
@@ -29,10 +30,50 @@ the union separately; section note sets can overlap. Use the original corpus
 size as denominator, rather than only the notes with usable inputs.
 
 Stopping an ordinary linkage tree at six branches alone does not enforce the
-per-section minimum. The tree method and partition rule remain open; a matched
-average-linkage/Ward comparison is proposed, not yet run or adopted. These
-numerical requirements do not qualify the usefulness of section membership or
-deeper narrowing. Current HiGen behavior and historical results are unchanged.
+per-section minimum. The user rejected searching a prebuilt tree for branches
+meeting these counts and authorized investigating direct six-way partitioning.
+Average-linkage and Ward complete cuts can remain descriptive controls, rather
+than the candidate construction rule. These numerical requirements do not
+qualify section membership or deeper narrowing. Current HiGen behavior and
+historical results are unchanged.
+
+### Direct partition candidate: distinct-note-constrained cosine clustering
+
+`sse_multivector/direct_section_partition.py` partitions original entries
+directly. All supplied entries participate, including originally unassigned
+ones. Existing fine groups are not indivisible constraints in this candidate.
+This changes the unit from the preceding group-centroid probes; controls use
+exactly the same entry vectors as the candidate.
+
+Minimum-size constraints during assignment follow the approach in
+[Bradley, Bennett and Demiriz, Constrained K-Means Clustering](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/tr-2000-65.pdf).
+Cosine distances and normalized center updates follow
+[Spherical k-Means Clustering](https://www.jstatsoft.org/article/view/v050i10).
+The distinct-note counting below is an adaptation for this task, not a claimed
+result from either paper or a new trained encoder.
+
+For six fixed centers, minimize summed entry-to-center cosine dissimilarity.
+Each original entry is assigned once. A note/section witness can count at most
+once and requires an assigned entry from that note. Each section requires at
+least ten witnesses. This is a sparse minimum-cost-flow linear program; the
+implementation uses SciPy's dual-simplex solver and independently checks
+integral assignments, optimal fixed-center cost and actual distinct-note
+counts. Shared notes across sections remain permitted. It does not replace
+distinct-note counts with entry counts or constrain all six sections to be
+equal in size.
+
+Alternate assignment and normalized mean-center updates. Eight fixed starts
+use the same initial centers for the constrained and unconstrained controls;
+choose the lowest summed cosine dissimilarity, without looking at semantic
+review labels. Preserve all starts and records of entries displaced from their
+closest final center. The objective is local and is not semantic certification.
+Sparse assignment storage grows with `sections * (entries + notes)`; vector
+comparison grows with `entries * sections * dimensions` per update. There is
+no all-pairs matrix, teacher call, training or HiGen activation.
+
+Before real data, production-path tests compare the assignment to exhaustive
+optima and cover repeated notes, multi-section note support, infeasibility,
+deterministic clustering, monotone costs and the native numerical CLI.
 
 ## Question and controlled inputs
 
