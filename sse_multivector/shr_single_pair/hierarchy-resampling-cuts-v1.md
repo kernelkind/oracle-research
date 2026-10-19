@@ -10,15 +10,17 @@ narrowing. Root breadth alone is not a failure criterion. Recovery under note
 removal provides a diagnostic, without establishing better browsing choices.
 No prompts, canonical hierarchies or review UIs changed. No model calls,
 training or paid resources were used in the original resampling probes.
-The latest full-meaning follow-up adds local frozen-SSE encodings, with no LLM
-calls or training, and reaches 91% in six complete branches.
+The full-meaning tree-cut follow-up adds local frozen-SSE encodings, with no
+LLM calls or training, and reaches 91% in six complete branches. Later direct
+partition tests and a manual child-subdivision test are recorded below.
 
-## Approved requirements for the next smaller iteration
+## Root-partition requirements and research-test IDs
 
-The user directed reusing an existing 100-note run, rather than drawing a new
-subset of HR38. Use HR22's saved ASv6.100/Bootstrap-v133 original inputs. The
-2,000-note corpus remains available for checking promising rules. The numerical
-requirements are:
+The initial test uses the existing 100-note corpus saved by HR22, rather than
+a new subset of HR38. The subsequent root tests use the automatically
+hash-selected thousand-note corpora saved by HR36 and HR37. All retain frozen
+ASv6.100/Bootstrap-v133 original inputs. The root-level numerical requirements
+are:
 
 - Exactly six sections.
 - At least 90% of the original corpus's distinct notes represented across them.
@@ -37,6 +39,20 @@ than the candidate construction rule. These numerical requirements do not
 qualify section membership or deeper narrowing. Current HiGen behavior and
 historical results are unchanged.
 
+The user distinguishes these new research tests from their source experiments:
+
+| Research test | Saved input source |
+|---|---|
+| Six-section-v1-01 | HR22's 100-note corpus |
+| Six-section-v1-02 | HR36's hash-selected 1,000-note corpus |
+| Six-section-v1-03 | HR37's hash-selected 1,000-note corpus |
+| Six-section-v1-04 | The 557-note S05 section from Six-section-v1-03 |
+
+HR IDs identify the original experiments, not reruns of them. Existing artifact
+paths retain their names to preserve frozen bindings. These research-test IDs
+do not designate an approved HiGen version. The user requires manual tests of
+specific parts before an integration proposal.
+
 ### Direct partition candidate: distinct-note-constrained cosine clustering
 
 `sse_multivector/direct_section_partition.py` partitions original entries
@@ -54,9 +70,9 @@ result from either paper or a new trained encoder.
 
 For six fixed centers, minimize summed entry-to-center cosine dissimilarity.
 Each original entry is assigned once. A note/section witness can count at most
-once and requires an assigned entry from that note. Each section requires at
-least ten witnesses. This is a sparse minimum-cost-flow linear program; the
-implementation uses SciPy's dual-simplex solver and independently checks
+once and requires an assigned entry from that note. Each section requires its
+configured minimum number of witnesses. This is a sparse minimum-cost-flow
+linear program; implementation uses SciPy's dual-simplex solver and checks
 integral assignments, optimal fixed-center cost and actual distinct-note
 counts. Shared notes across sections remain permitted. It does not replace
 distinct-note counts with entry counts or constrain all six sections to be
@@ -75,7 +91,7 @@ Before real data, production-path tests compare the assignment to exhaustive
 optima and cover repeated notes, multi-section note support, infeasibility,
 deterministic clustering, monotone costs and the native numerical CLI.
 
-### HR22 direct partition result
+### Six-section-v1-01: roots from HR22's saved corpus
 
 Use the **existing HR22 hundred-note corpus**, not a new sample of HR38.
 Saved initial inputs contain 728 usable original entries representing all 100
@@ -142,13 +158,14 @@ hierarchies and official review UIs are untouched.
 Seventeen partition/resampling checks pass after integration on `main`.
 The broader 35-test adapter/worker panel passes with two optional Torch tests
 skipped in the numerical environment. This remains a research prototype, not
-an adopted HiGen version. Next inspect the complete memberships against Ward
-before claiming useful root sections or testing recursive narrowing.
+an adopted HiGen version. Numerical success does not establish semantic
+superiority over Ward or the quality of a recursive hierarchy.
 
-### HR36 hash-selected thousand-note transfer
+### Six-section-v1-02: roots from HR36's saved corpus
 
 The user next directed moving this investigation to the hash-selected
-1,000-note corpus rather than the manually selected corpus. Use **HR36**:
+1,000-note corpus rather than the manually selected corpus. Six-section-v1-02
+uses **HR36's saved corpus**:
 its frozen corpus manifest selects the first eligible original posts in
 domain-separated event-ID hash order, seed `hr36-corpus-v1`, with no manual
 reviews or topic/author quotas. There are 602 authors. The source state remains
@@ -157,8 +174,9 @@ ASv6.100 and Bootstrap-v133 are unchanged frozen source versions; later prompt
 development does not change these saved inputs.
 
 Apply the same entry-level full-meaning representation and direct cosine
-partition candidate as HR22, keeping every usable original entry separately,
-including repeated titles and entries originally unassigned by HDBSCAN.
+partition candidate as Six-section-v1-01, keeping every usable original entry
+separately, including repeated titles and entries originally unassigned by
+HDBSCAN.
 The 5,336 initial entries represent **937 of the original 1,000 notes**.
 The other 63 have no usable saved meaning and remain outside this test.
 The minimum is 100 distinct notes per section and 900 in the union, both
@@ -196,8 +214,9 @@ The chosen seed, `20261020`, converges in 32 iterations with objective
 `2801.4616378299197`. Six of eight starts converge; two reach the existing
 50-iteration limit and remain recorded. Every matched constrained and
 unconstrained start has identical final assignments. The selected result
-displaces no entry from its closest final center. As in HR22, these data do
-not demonstrate an observed benefit from the minimum-size constraints.
+displaces no entry from its closest final center. As in Six-section-v1-01,
+these data do not demonstrate an observed benefit from the minimum-size
+constraints.
 
 Independent checks verify section sizes, union coverage, all 5,336 entry IDs,
 normalized mean centers, the reported objective, exact control equality and
@@ -208,10 +227,10 @@ It includes the source-bound plan, native worker inputs/receipt, aligned
 vectors, all sixteen trials, full memberships and verification records.
 No official HiGen experiment, canonical hierarchy or review UI changed.
 
-### HR37 unchanged transfer: the six broad themes recur
+### Six-section-v1-03: roots from HR37's saved corpus
 
-The user approved testing the same candidate on **HR37**, without retuning,
-and requested a compact result plus an agent recommendation. Broad root
+The user approved Six-section-v1-03 using **HR37's saved corpus**, without
+retuning, and requested a compact result plus an agent recommendation. Broad root
 topics and practical imperfection remain acceptable; this transfer does not
 introduce a semantic-purity requirement or a new grouping algorithm.
 
@@ -233,8 +252,8 @@ vectors within `1.20e-7` maximum absolute error, cached title views within
 checkpoint identity, row mappings and normalized vectors pass validation.
 No LLM calls, encoder training or paid resources were used.
 
-The numerical implementation is byte-identical to HR36. Keep six sections,
-100 distinct notes per section, at least 900 in the union, equal entry
+The numerical implementation is byte-identical to Six-section-v1-02. Keep six
+sections, 100 distinct notes per section, at least 900 in the union, equal entry
 weights, the same eight seeds and summed cosine-dissimilarity selection
 rule, and the existing 50-iteration limit. The chosen seed `20261019`
 converges in 41 iterations, objective `2762.2833547731043`. Five of eight
@@ -257,30 +276,89 @@ center. Thus this third corpus still shows no observed numerical benefit
 from enforcing the minimum during assignment. Retention follows from
 keeping all usable inputs and is not an independent quality measure.
 
-For comparison only, matching the six HR36 and HR37 centers by maximum
-total cosine similarity pairs the same broad topic families. The six matched
-similarities range from `0.9559` to `0.9955`; no memberships or settings change
-to produce that alignment. This is descriptive repeatability across two
+For comparison only, matching the six centers from Six-section-v1-02 and
+Six-section-v1-03 by maximum total cosine similarity pairs the same broad
+topic families. The six matched similarities range from `0.9559` to `0.9955`;
+no memberships or settings change to produce that alignment. This is
+descriptive repeatability across two
 hash-selected samples of the same source corpus, not independent semantic
 validation or author-independent generalization.
 
 Agent review covers central representatives with distinct titles, a fixed
 12-entry ID-hash sample per section, frequent titles and weak assignments.
 The summaries above describe recognizable broad themes. S02 and S05 are
-especially broad, and imperfect placements remain. The agent recommendation
-is to retain the candidate for adoption/design review rather than add a new
-algorithm based on isolated mistakes. This is not human approval, a formal
-accuracy estimate or a completed recursive hierarchy.
+especially broad, and imperfect placements remain. These results support
+retaining the candidate. The user requires manual tests of specific parts
+before integration design; Six-section-v1-04 is the first subdivision probe.
+This is not human approval, a formal accuracy estimate or a completed
+recursive hierarchy.
 
 Independent checks verify section sizes, note unions, all 5,189 entry IDs,
 normalized mean centers, objective values, unchanged source bytes, the
-unchanged HR36 settings and exact matched-control equality. Seventeen
-partition/resampling tests pass. Ignored evidence is under
+unchanged Six-section-v1-02 settings and exact matched-control equality.
+Seventeen partition/resampling tests pass. Ignored evidence is under
 `target/hr37-direct-sections-v1/` in the retained
 `oracle-mvp-hr37-direct-sections-v1` task worktree, backed by external storage.
 It includes the frozen plan, native encoder inputs and receipt, all sixteen
 trials, full memberships, verification and source-bound provisional agent
 assessment. No official HiGen version, hierarchy or review UI changed.
+
+### Six-section-v1-04: manually subdivide one broad section
+
+The user approved testing the same procedure on the **Science, technology
+and creative work** section from Six-section-v1-03 (source section S05).
+Use only its 1,084 assigned original entries from 557 distinct notes, not all
+entries from those notes or entries from other root sections. Every vector is
+reused bit-for-bit from the parent test; no new encoding, LLM calls or training
+occurs. The displayed parent name remains an agent description of a numerical
+group, not a generated canonical definition.
+
+Keep six children, the same eight seeds and objective, and the existing
+50-iteration limit. Scale the minimum to the current parent's note set:
+`ceil(0.1 * 557) = 56` notes per child and `ceil(0.9 * 557) = 502` in the union.
+The implementation is unchanged. The selected seed `20261019` converges in
+15 iterations, objective `434.65725659848465`; all eight constrained starts
+converge. No child membership is edited after selection.
+
+| Child | Descriptive main themes | Original entries | Distinct notes |
+|---|---|---:|---:|
+| C01 | Art, images and visual expression | 194 | 132 |
+| C02 | AI, science, research and learning | 190 | 142 |
+| C03 | Dates, timestamps and change | 109 | 99 |
+| C04 | Music, audio, video and film | 134 | 92 |
+| C05 | Software, tools and technical work | 255 | 157 |
+| C06 | Data, identifiers, versions and comparisons | 202 | 161 |
+
+All **557 / 557 parent notes** remain represented, and every child has a
+strictly smaller note set than the parent. The largest child contains 161
+notes (28.9% of the parent). No two children have identical note sets, and
+all 1,084 parent entries occur exactly once. Note sets overlap between
+children. This subdivision does not change the source test's root memberships
+or its original-corpus coverage.
+
+The unconstrained control also selects seed `20261019`, with objective
+`434.6751512098334` and child note counts 131, 140, 99, 92, 157 and 163.
+The selected constrained/control assignments differ on four entries. Seven
+of eight matched starts differ, unlike the earlier root probes. The selected
+constrained result still displaces no entry from its nearest final center.
+This records a trajectory difference, not a demonstrated semantic benefit
+from the size constraint.
+
+Provisional agent review covers complete title inventories, distinct-title
+central representatives, ten entry-ID-hash samples per child and weak
+assignments. Recognizable thematic cores emerge, while time/data choices are
+more generic and some memberships remain unrelated to their child summary.
+The numerical narrowing check passes; this alone does not certify semantic
+containment or useful browsing throughout a recursive hierarchy. The result
+is a manual component test, not an integration proposal or HiGen activation.
+
+Independent checks verify source hashes, exact parent-vector reuse, objective
+values, normalized centers, entry coverage, note unions and strict child-note
+subsets. Seventeen relevant partition/resampling tests pass. Evidence is under
+`target/six-section-v1-04/` in the retained `oracle-mvp-six-section-v1-04`
+task worktree, backed by external storage. It includes the frozen parent
+selection and thresholds, aligned inputs, all sixteen trials, child
+memberships, verification and provisional agent review. No review UI changed.
 
 ## Question and controlled inputs
 
