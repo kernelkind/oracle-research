@@ -99,18 +99,42 @@ hashes are recorded in [runtime inputs](runtime-inputs.csv) and the file lists.
 
 Files were hashed in 1 MiB chunks, with size and modification checks to detect
 concurrent edits. No concurrent changes were detected. This completes checking
-the recorded input hashes already indexed; it does not cover dependencies still
-unindexed inside the 42 large plans below or verification of all saved responses.
+the recorded input hashes already indexed. The large-plan follow-up below also
+checks their newly indexed inputs. Verification of all saved responses remains
+unfinished.
+
+### Large experiment plans
+
+All **42 plans** that exceeded the initial 32 MiB read limit are now indexed as
+native experiments. Their entries contain prompt versions, provider/model
+settings, case counts, saved plan and manifest identities, code-provenance
+references and located result files. Complete frozen settings remain in each
+original plan.
+
+Their **34,091 source references** resolve to **6,092 input files**, all matching
+the recorded hashes. Of these, 6,067 had measured hashes and unchanged file
+metadata; the remaining 25 were hashed in 1 MiB chunks. This adds 25 dependency
+rows and one previously unlisted file: a saved **DSLv2** relationship prompt in
+[part-1253.csv](files/part-1253.csv). No new source mismatches or missing inputs
+were found.
+
+**33 plans have located result files.** The other nine have no result file at
+their recorded or adjacent locations. They remain evidence of preparation;
+absence of that file alone does not establish a failed run or lost results.
+Their individual entries are included in [issues](issues.csv).
+
+The streaming JSON pass read 8,200,509,108 bytes with a peak parser memory use
+of about 24 MiB. Raw plan-file hashes were also measured. This checked metadata
+and source bindings; it did not perform inference, assess answers or verify all
+response receipts. Saved case counts do not represent independent trials.
+Original plans and results were not modified.
 
 ## Saved results and verification
 
-- **3,173 native plans** have no `results.jsonl` at the recorded location or
+- **3,182 native plans** have no `results.jsonl` at the recorded location or
   beside their saved plan. Some may be prepared jobs that never ran. Establish
   their status from the saved records before calling them failed experiments or
   missing results. They remain indexed as evidence of preparation.
-- **42 large plans** are listed as files and as entries with metadata pending.
-  They exceeded the inventory's 32 MiB JSON read limit. Their detailed settings
-  and dependencies still need inspection with a bounded-memory reader.
 - Indexed input and encoder hashes have been checked as described above. The
   three unlocated state versions remain a source-verification limitation.
 - Adapter configurations identify pinned base-model revisions. Adapter weights,

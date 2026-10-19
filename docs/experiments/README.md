@@ -138,10 +138,13 @@ the larger official HR39 corpus was checked separately. The follow-up checked
 all 9,556 remaining indexed input bindings, including the 15 oversized inputs,
 and all 62 recorded encoder bindings. Five additional historical-version
 mismatches were resolved using exact Git copies or recoveries from saved plans.
-Large experiment plans that cannot be inspected within the stated JSON limit
-require separate follow-up. Other evidence and final archives still need
-checksum verification. File sizes and modification times are checked again at
-the end to detect concurrent edits.
+The 42 plans exceeding the initial 32 MiB JSON read limit were then indexed
+with a streaming reader. Their 34,091 source references all match located inputs;
+[large-plan findings](open-items.md#large-experiment-plans) describe that check
+and the nine plans without located result files. No discovered native plans
+remain unparsed. Other evidence and final archives still need checksum
+verification. File sizes and modification times are checked again at the end
+to detect concurrent edits.
 
 The historical-input checks add eleven recovered files to the explicit list.
 Their complete contents were checked against the original expected hashes;
