@@ -2462,3 +2462,35 @@ matching topic but is excluded solely by one-to-one reciprocity. This would
 test that remaining mechanism without introducing a fixed cosine threshold.
 It is not yet implemented, run or approved for adoption; the present improvement
 does not establish a general root-distinctness guarantee.
+
+### One-pass attachments into reciprocal groups
+
+The user authorized testing whether an entry can join the reciprocal group
+containing its nearest other entry. The Payments witness motivates this directly.
+Use exactly the same saved HR36 inputs, combined vectors, original fine groups,
+eight seeds, six sections and limits. Reuse the completed reciprocal-only panel
+as baseline. No new encoder work, inference, training or count screen is needed.
+
+Research-panel preparation adds `attach_nearest: true`, requiring
+`reciprocal_nearest: true` and the existing group-preservation option. First
+form the reciprocal groups as before. Freeze which resulting units contain
+reciprocal pairs. An entry in an unmatched unit can attach if its nearest other
+entry is in one of those frozen matched units. Compute all attachment choices
+before applying them; an entry newly attached during this pass cannot attract
+another entry. Already matched units do not initiate attachments. Existing fine
+groups stay intact, so attaching one member brings that whole unit. Multiple
+members pointing into different matched units can indirectly connect those
+units; record resulting component sizes rather than silently choosing one.
+
+Nearest entries and reciprocal pairs are unchanged and computed only once.
+This adds linear work over the existing nearest-neighbor results plus group
+unions. It does not solve the exact-search scaling limitation described above.
+Original entry weights and section scoring remain unchanged. The frozen plan
+retains both reciprocal pairs and directed `nearest_attachments` indices.
+
+Failing-first CLI/preparation tests show the missing third-entry attachment,
+then pass with the new option. They cover the bounded one-pass rule, preserving
+an existing group during attachment, unchanged reciprocal-only behavior,
+singleton inputs, invalid flags, actual section fits and immutable saved resume.
+All 65 current checks pass. This remains a component experiment, not a HiGen
+change or evidence that a nearest match establishes semantic equivalence.

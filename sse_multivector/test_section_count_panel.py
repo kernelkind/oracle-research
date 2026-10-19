@@ -13,6 +13,68 @@ from sse_multivector.section_count_panel import prepare, run
 
 
 class SectionCountPanelTests(unittest.TestCase):
+    def test_cli_unmatched_entries_attach_to_frozen_reciprocal_groups_once(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            manifest, spec = self._fixture(root)
+            source = spec['sources']['examined']
+            angles = np.array([0, .05, .14, .35, 2, 2.05])
+            np.savez(source['input'], vectors=np.c_[np.cos(angles), np.sin(angles)],
+                     notes=np.array(['a' + str(i) for i in range(6)]))
+            entries = json.loads(Path(source['entries']).read_text())
+            for entry in entries:
+                entry['source_group'] = None
+            Path(source['entries']).write_text(json.dumps(entries))
+            for path in [source['input'], source['entries']]:
+                source['files'][path] = hashlib.sha256(Path(path).read_bytes()).hexdigest()
+            spec['cases'][0].update(preserve_groups=True, reciprocal_nearest=True, attach_nearest=True)
+            spec['cases'].append(dict(spec['cases'][0], id='reciprocal', attach_nearest=False))
+            manifest.write_text(json.dumps(spec))
+            cli = [sys.executable, '-m', 'sse_multivector.section_count_panel']
+            prep = subprocess.run(cli + ['prepare', str(manifest), str(root / 'out')],
+                                  capture_output=True, text=True)
+            self.assertEqual(prep.returncode, 0, prep.stderr)
+            plan = json.loads((root / 'out/plan.json').read_text())
+            case = plan['cases'][0]
+            self.assertEqual(case['groups'], [0, 0, 0, 1, 2, 2])
+            self.assertEqual(case['reciprocal_pairs'], [[0, 1], [4, 5]])
+            self.assertEqual(case['nearest_attachments'], [[2, 1]])
+            self.assertEqual(plan['cases'][2]['groups'], [0, 0, 1, 2, 3, 3])
+            subprocess.run(cli + ['run', str(root / 'out'), 'D01'],
+                           check=True, capture_output=True, text=True)
+            path = root / 'out/D01/count-2.json'
+            before = path.read_bytes()
+            for trial in json.loads(before)['panel']['trials']:
+                self.assertEqual(len(set(trial['labels'][:3])), 1)
+                self.assertEqual(trial['labels'][4], trial['labels'][5])
+            run(root / 'out', 'D01')
+            self.assertEqual(before, path.read_bytes())
+            entries[2]['source_group'] = entries[3]['source_group'] = 'existing'
+            Path(source['entries']).write_text(json.dumps(entries))
+            source['files'][source['entries']] = hashlib.sha256(Path(source['entries']).read_bytes()).hexdigest()
+            manifest.write_text(json.dumps(spec))
+            grouped = prepare(manifest, root / 'grouped')
+            self.assertEqual(grouped['cases'][0]['groups'], [0, 0, 0, 0, 1, 1])
+            self.assertEqual(grouped['cases'][0]['nearest_attachments'], [[2, 1]])
+            run(root / 'grouped', 'D01')
+
+    def test_attachment_flags_and_singleton_use_frozen_preparation(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            manifest, spec = self._fixture(root)
+            case = spec['cases'][0]
+            case.update(preserve_groups=True, reciprocal_nearest=True, attach_nearest=True,
+                        selector=dict(kind='source_group', value='G2'))
+            manifest.write_text(json.dumps(spec))
+            plan = prepare(manifest, root / 'singleton')
+            self.assertEqual(plan['cases'][0]['groups'], [0])
+            self.assertEqual(plan['cases'][0]['nearest_attachments'], [])
+            for flag, reciprocal in [('yes', True), (True, False)]:
+                case.update(attach_nearest=flag, reciprocal_nearest=reciprocal)
+                manifest.write_text(json.dumps(spec))
+                with self.assertRaisesRegex(ValueError, 'attach_nearest'):
+                    prepare(manifest, root / 'invalid')
+
     def test_cli_reciprocal_neighbors_join_whole_existing_groups_before_scoring(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
