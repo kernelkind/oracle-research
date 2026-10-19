@@ -208,6 +208,80 @@ It includes the source-bound plan, native worker inputs/receipt, aligned
 vectors, all sixteen trials, full memberships and verification records.
 No official HiGen experiment, canonical hierarchy or review UI changed.
 
+### HR37 unchanged transfer: the six broad themes recur
+
+The user approved testing the same candidate on **HR37**, without retuning,
+and requested a compact result plus an agent recommendation. Broad root
+topics and practical imperfection remain acceptable; this transfer does not
+introduce a semantic-purity requirement or a new grouping algorithm.
+
+HR37 contains 1,000 automatically hash-selected posts from 571 authors, seed
+`hr37-corpus-v1`, with no manual topic or author quotas. Its original note IDs
+are disjoint from HR36's. The frozen source state SHA256 is
+`5b73c39d8ff7a377da1819a3a3987d1580291670df122425d2dbc8c81a300d19`.
+Retain ASv6.100, Bootstrap-v133 and the same frozen SSE checkpoint. The 5,189
+usable initial entries represent 912 notes; 88 notes lack usable saved
+meanings. All usable entries, including repeated titles and originally
+ungrouped entries, participate separately.
+
+Reuse 2,457 exact contextual meaning-vector bindings. Encode 2,718 missing
+distinct contexts plus eight cached controls through the native adapter and
+worker, producing 5,452 title/meaning span vectors. The maximum input has 132
+tokens; none reaches the frozen 512-token limit. New title views match native
+vectors within `1.20e-7` maximum absolute error, cached title views within
+`8.65e-8`, and eight meaning replays within `4.98e-8`. Frozen source hashes,
+checkpoint identity, row mappings and normalized vectors pass validation.
+No LLM calls, encoder training or paid resources were used.
+
+The numerical implementation is byte-identical to HR36. Keep six sections,
+100 distinct notes per section, at least 900 in the union, equal entry
+weights, the same eight seeds and summed cosine-dissimilarity selection
+rule, and the existing 50-iteration limit. The chosen seed `20261019`
+converges in 41 iterations, objective `2762.2833547731043`. Five of eight
+starts converge; three reach the existing limit and remain recorded.
+
+| HR37 section | Descriptive main themes | Original entries | Distinct notes |
+|---|---|---:|---:|
+| S01 | Finance and cryptocurrency | 902 | 327 |
+| S02 | Society and organized activities | 990 | 485 |
+| S03 | Social media, news and communication | 820 | 401 |
+| S04 | Countries, places and public figures | 597 | 343 |
+| S05 | Science, technology and creative work | 1,084 | 557 |
+| S06 | Personal experiences, feelings and choices | 796 | 441 |
+
+The union is **912 / 1,000 notes (91.2%)**. Each section exceeds the 100-note
+minimum. Note sets overlap, and every supplied entry is assigned exactly
+once. Every matched constrained/unconstrained start has identical final
+assignments; the selected result displaces no entry from its nearest final
+center. Thus this third corpus still shows no observed numerical benefit
+from enforcing the minimum during assignment. Retention follows from
+keeping all usable inputs and is not an independent quality measure.
+
+For comparison only, matching the six HR36 and HR37 centers by maximum
+total cosine similarity pairs the same broad topic families. The six matched
+similarities range from `0.9559` to `0.9955`; no memberships or settings change
+to produce that alignment. This is descriptive repeatability across two
+hash-selected samples of the same source corpus, not independent semantic
+validation or author-independent generalization.
+
+Agent review covers central representatives with distinct titles, a fixed
+12-entry ID-hash sample per section, frequent titles and weak assignments.
+The summaries above describe recognizable broad themes. S02 and S05 are
+especially broad, and imperfect placements remain. The agent recommendation
+is to retain the candidate for adoption/design review rather than add a new
+algorithm based on isolated mistakes. This is not human approval, a formal
+accuracy estimate or a completed recursive hierarchy.
+
+Independent checks verify section sizes, note unions, all 5,189 entry IDs,
+normalized mean centers, objective values, unchanged source bytes, the
+unchanged HR36 settings and exact matched-control equality. Seventeen
+partition/resampling tests pass. Ignored evidence is under
+`target/hr37-direct-sections-v1/` in the retained
+`oracle-mvp-hr37-direct-sections-v1` task worktree, backed by external storage.
+It includes the frozen plan, native encoder inputs and receipt, all sixteen
+trials, full memberships, verification and source-bound provisional agent
+assessment. No official HiGen version, hierarchy or review UI changed.
+
 ## Question and controlled inputs
 
 Does removing different notes break the previously flagged sports/war/politics
