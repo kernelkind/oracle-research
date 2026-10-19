@@ -1,6 +1,6 @@
 """Matched native HDBSCAN controls using saved title and meaning vectors.
 
-Select original groups before execution. Keep source entries and opaque point
+Select original groups or all entries before execution. Keep opaque point
 identities fixed between views; run no encoder, teacher, bend cut or hierarchy.
 """
 import argparse
@@ -32,18 +32,24 @@ def prepare(specification, output):
     available = {e.get('source_group') for e in entries}
     cases, identifiers = [], set()
     for cfg in spec['cases']:
-        name, groups = cfg['id'], cfg['groups']
+        name, groups = cfg['id'], cfg.get('groups')
+        all_entries = cfg.get('all_entries', False)
+        if (type(all_entries) is not bool or
+                (all_entries and 'groups' in cfg) or
+                (not all_entries and not groups)):
+            raise ValueError('Exactly one selector: all_entries true or original groups required')
         if (not re.fullmatch(r'[A-Za-z0-9_-]+', name) or name in identifiers
-                or not groups or any(not isinstance(g, str) for g in groups)
-                or len(set(groups)) != len(groups) or not set(groups) <= available):
+                or (not all_entries and (any(not isinstance(g, str) for g in groups)
+                    or len(set(groups)) != len(groups) or not set(groups) <= available))):
             raise ValueError('Unique safe cases and existing original groups required')
         identifiers.add(name)
-        indices = [i for i, e in enumerate(entries) if e.get('source_group') in groups]
+        indices = [i for i, e in enumerate(entries)
+                   if all_entries or e.get('source_group') in groups]
         selected, title_vectors = [], []
         for i in indices:
             e = entries[i]
             o = originals[e['id']]
-            if (o['subject'] != e['title'] or o['meaning'] != e['meaning']
+            if (o.get('title', o['subject']) != e['title'] or o['meaning'] != e['meaning']
                     or o['local']['note_id'] != e['note_id']):
                 raise ValueError('Original evidence differs between saved vector views')
             opaque = hdbscan.workflow.inputs.digest([e['id'], state['items'][e['id']]['vector_key']])
@@ -53,7 +59,7 @@ def prepare(specification, output):
         if (title_vectors.shape != vectors[indices].shape or not np.isfinite(title_vectors).all()
                 or not np.allclose(np.linalg.norm(title_vectors, axis=1), 1, atol=1e-8)):
             raise ValueError('Aligned finite normalized title vectors required')
-        cases.append(dict(id=name, groups=groups, indices=indices, entries=selected,
+        cases.append(dict(id=name, groups=groups, all_entries=all_entries, indices=indices, entries=selected,
                           title=title_vectors, meaning=vectors[indices], notes=notes[indices]))
     if not cases:
         raise ValueError('At least one explicit case required')

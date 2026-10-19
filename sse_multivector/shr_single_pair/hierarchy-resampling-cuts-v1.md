@@ -1767,6 +1767,86 @@ inputs and executable it actually consumes. No LLM, new SSE encoding, training,
 parameter tuning, consolidation, UI update or HiGen activation occurred. The
 task worktree is retained for its frozen source and artifact paths.
 
+### Manual agreement test on the complete hundred-note source
+
+At the user's request, test the proposed agreement rule manually on HR22's
+saved source corpus: 728 original entries from 100 notes, ASv6.100 and
+Bootstrap-v133. This is a numerical component test, not a new HR experiment.
+Before execution, freeze two complete views, the unchanged native angular
+HDBSCAN configuration (`min_samples=3`, `min_cluster_size=2`, EOM), and the
+rule: intersect selected title and meaning groups, retain intersections with
+at least two entries, and leave every other entry independently eligible.
+Include all 361 originally ungrouped entries. Do not tune parameters, encode
+new vectors, call models, generate a hierarchy or integrate the agreement rule.
+
+Both native jobs run concurrently with twelve workers each on CPUs 0–23,
+leaving four cores available. Each CLI finishes in about 1.9 seconds. The
+title partition exactly reproduces all 62 original groups, providing an
+input and execution control.
+
+| View | Groups | Entries in groups | Distinct notes in groups | Independent entries |
+|---|---:|---:|---:|---:|
+| Title | 62 | 367 | 94 | 361 |
+| Meaning | 52 | 289 | 94 | 439 |
+| Agreement | 49 | 186 | 80 | 542 |
+
+All 728 entries and all 100 notes remain available in the agreement result:
+independent entries are not discarded. The 80-note figure measures membership
+in fine groups, not finished-root retention. Only six original groups remain
+exactly intact, but that count alone does not distinguish useful repairs from
+unwanted fragmentation. Intersections cannot recover a useful group across
+different title groups, even when the meaning view supports that connection.
+
+Manual inspection finds both useful separation and loss of useful grouping:
+
+- Nostr retains fifteen protocol/network definitions together. Two Nostr
+  community definitions form a separate group; the referenced person and
+  Nostr zaps remain independent. These distinctions are defensible provisional
+  groupings, not new human semantic labels.
+- The mixed original Matcha/Melangers/Myoglobin group disappears; all three
+  entries remain independent. Agreement does not certify the retained groups:
+  one still combines Foodstr and Foodchain hashtags, another combines Human
+  bodies with People/Humans. Their browsing usefulness remains unreviewed.
+- Coffee's original fifteen-entry group contains fourteen Coffee definitions
+  and one Coffee preparation entry. Agreement makes groups of seven and four,
+  leaving three Coffee definitions and Coffee preparation independent. The
+  four-entry group emphasizes instant coffee and includes one definition that
+  also covers beans; the seven-entry group still includes a definition allowing
+  instant coffee. This does not establish a clean distinction for browsing.
+- Only three of six Breakfast definitions remain together. Their group includes
+  “Breakfast is the first meal of the day.” The other three describe the same
+  meal with examples such as fried tomatoes, a breakfast burrito and scrambled
+  eggs; all become independent. Three closely similar Recipes definitions and
+  Recipe creation also all become independent.
+- Food's original 39-entry group becomes groups of four, two and two, with 31
+  independent entries. Many independent entries still explicitly define edible
+  material intended for nourishment. This is substantial loss of useful
+  grouping, not evidence that those entries should be semantically rejected.
+
+Conclusion: strict agreement repairs some mixed title groups but is too
+fragmenting to adopt on this evidence. HDBSCAN leaving an entry unassigned is
+an absence of selected group support, not positive evidence of a different
+meaning. A narrower follow-up could distinguish that absence from an actual
+competing meaning group; it has not been tested or approved here. Neither
+this table nor the manual examples measure the quality of a finished hierarchy.
+
+The reusable probe gains only an explicit all-entry selector and validation
+against the resolved Bootstrap title (falling back to original subject when
+no resolved title exists). HR22 has 51 resolved titles that differ from the
+original subject wording. Meanings and note identities match exactly. Both
+changes have failing-first tests through production preparation/native paths;
+58 relevant checks pass with no skipped native tests. HiGen remains unchanged.
+
+Ignored evidence is external under
+`oracle-mvp-hdbscan-agreement-manual-v1/target/hdbscan-agreement-manual-v1/`:
+frozen spec/plan, paired vectors, both native requests/results, complete
+`agreement-audit.json` cross-tab and compact `agreement-groups.md`. Independent
+checks validate source/code hashes, paired opaque IDs/order, configuration,
+disjoint complete group/unassigned partitions and the original title partition.
+The task worktree remains for these frozen source/artifact paths. No model,
+training, new encoding, consolidation, UI update or production policy change
+occurred.
+
 Reusable numerical CLI: `sse_multivector/cluster_resampling_probe.py`; tests:
 `sse_multivector/test_cluster_resampling_probe.py`. Input NPZ contains unit
 `vectors`, aligned compact zero-based original `groups`, and aligned `notes`.

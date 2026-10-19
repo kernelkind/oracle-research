@@ -86,6 +86,45 @@ class HdbscanVectorProbeTests(unittest.TestCase):
                 prepare(spec_path, root / 'bad')
             self.assertFalse((root / 'bad').exists())
 
+    def test_all_entries_includes_originally_unassigned_and_requires_one_selector(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            spec_path, spec = self._source(root)
+            entries = json.loads((root / 'entries.json').read_text())
+            entries[0]['source_group'] = None
+            (root / 'entries.json').write_text(json.dumps(entries))
+            spec['source']['files'][str(root / 'entries.json')] = hashlib.sha256(
+                (root / 'entries.json').read_bytes()).hexdigest()
+            spec['cases'] = [dict(id='all', all_entries=True)]
+            spec_path.write_text(json.dumps(spec))
+            plan = prepare(spec_path, root / 'out')
+            self.assertEqual([e['id'] for e in plan['cases'][0]['entries']],
+                             [e['id'] for e in entries])
+            self.assertIsNone(plan['cases'][0]['entries'][0]['source_group'])
+            result = run(root / 'out', 'all', 'meaning')
+            self.assertEqual(result['input_entries'], 12)
+            self.assertEqual(result['input_notes'], 12)
+            for cfg in [dict(id='bad', all_entries=True, groups=['G1']),
+                        dict(id='bad', all_entries=False), dict(id='bad')]:
+                spec['cases'] = [cfg]
+                spec_path.write_text(json.dumps(spec))
+                with self.assertRaisesRegex(ValueError, 'selector'):
+                    prepare(spec_path, root / 'bad')
+                self.assertFalse((root / 'bad').exists())
+
+    def test_resolved_bootstrap_title_is_compared_instead_of_original_subject(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            spec_path, spec = self._source(root)
+            state = json.loads((root / 'state.json').read_text())
+            state['originals'][0].update(subject='original wording', title='fixed')
+            (root / 'state.json').write_text(json.dumps(state))
+            spec['source']['files'][str(root / 'state.json')] = hashlib.sha256(
+                (root / 'state.json').read_bytes()).hexdigest()
+            spec_path.write_text(json.dumps(spec))
+            plan = prepare(spec_path, root / 'out')
+            self.assertEqual(plan['cases'][0]['entries'][0]['title'], 'fixed')
+
 
 if __name__ == '__main__':
     unittest.main()
