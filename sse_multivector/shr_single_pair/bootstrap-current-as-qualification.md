@@ -1660,7 +1660,38 @@ a hypothesis, not an established explanation of V159's failures. No new rule,
 example, shared-rules version, companion or generation setting is introduced.
 The [regression specification](hierarchy-bootstrap-v160-regression-v1.spec.json)
 retains the same 36 inputs and unchanged gate, with three fresh draws. Results
-are pending; no untouched qualification response has informed this revision.
+follow below; no untouched qualification response has informed this revision.
+
+V160 produces 108 valid development responses without diagnostic errors or
+answer reuses. Root review records 95 accepts, four rejects and nine uncertainties.
+Titles receive 98 accepts, one rejection, three uncertainties and six justified
+null/N/A pairs; meanings receive 99 accepts, three rejects and six uncertainties.
+All three target relationship meanings still contain the illustrative member.
+All three reading titles and all nine original agreed-case responses pass, but
+the second stock title is “Chicken stock preservation and pantry storage plan.”
+The gate fails and qualification has not run. Removing name retention did not
+eliminate the example failure on this development panel. Uncertainties concern
+three pen definitions, three writing-alternative titles, one sovereign-only
+country definition and two human-only Food definitions. The combined Data-god
+topic returns justified null pairs in every draw.
+
+### State the omission rule directly: Bootstrap-v161
+
+Experimental [Bootstrap-v161](Hierarchy-bootstrap-v161.md) and
+[Consolidation-v29](Hierarchy-consolidation-v29.md) share
+[rules-v14](prompt_parts/explicit-meaning-rules-v14.md). One existing sentence
+changes from describing repeated examples as illustrative to directing their
+omission even when a supplied subject or description explicitly includes them;
+the general condition already admits those members. This tests whether the
+definition instruction resolves the observed preference for retaining explicitly
+included members. All remaining shared wording, wrappers, examples, schema and
+model settings are unchanged. The paired assembly checks preserve both historical
+versions and keep the common rule synchronized. Publishing the pair does not
+qualify Consolidation-v29 semantics or change constructor pins.
+
+The [regression specification](hierarchy-bootstrap-v161-regression-v1.spec.json)
+retains the same 36 exact inputs, three fresh draws and unchanged gate. Results
+are pending; no qualification response has informed this candidate.
 
 ## Meaning-derived titles: Bootstrap-v130
 

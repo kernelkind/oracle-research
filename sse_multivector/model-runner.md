@@ -210,9 +210,14 @@ from 108 valid responses. Reading titles pass all three draws, but illustrative
 members remain in all three target meanings and one stock title appends storage.
 The development gate fails; qualification has not run. Experimental
 [Bootstrap-v160](shr_single_pair/Hierarchy-bootstrap-v160.md) removes only V159's
-blanket selected-name retention sentence. Its development test is pending;
-shared rules, companion, examples, schema, model settings and constructor pins
-remain unchanged.
+blanket selected-name retention sentence. Its 108 valid responses receive 95
+accepts, four rejects and nine uncertainties; the same three illustrative meanings
+and one stock title fail, so qualification remains unrun. Experimental
+[Bootstrap-v161](shr_single_pair/Hierarchy-bootstrap-v161.md) and its synchronized
+Consolidation-v29 companion use shared rules-v14: explicitly omit illustrative
+members even when the supplied subject includes them, since the general condition
+already admits them. All wrappers, examples, schema and model settings are
+unchanged from V160. Development testing is pending; constructors stay V133.
 
 Experimental [Bootstrap-v133](shr_single_pair/Hierarchy-bootstrap-v133.md)
 returns a concise, natural `title` derived solely from its finalized `meaning`.
