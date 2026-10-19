@@ -2273,3 +2273,79 @@ This directly tests the user's clarified quality criterion; breadth alone is
 not a reason to change the grouping. A later unchanged comparison on the other
 saved hash-selected 1,000-note corpus would test generalization. Both are
 suggestions, not started or authorized by this record.
+
+### Information duplicated between the six combined-vector sections
+
+The user authorized inspecting the saved six-section fit for repeated information.
+This is read-only analysis of existing ASv6.100/Bootstrap-v133 meanings, vectors,
+fine groups and assignments. No clustering, encoding, model calls or policy
+changes are performed. Section numbers below refer to numerical fit labels,
+not generated canonical titles or immutable canonical meanings.
+
+Across 5,336 entries, 27 exact title wordings occur in multiple sections,
+covering 76 entries. The matched meaning-only broader fit split 51 title
+wordings covering 230 entries, with exactly the same fine groups. These are
+retrieval counts, not semantic error counts: Strategy means an overall plan in
+section 5 and the company formerly named MicroStrategy in section 3. Rooms
+means physical rooms in section 2 and logical communication rooms in section 5.
+Inquiries separates investigations in section 5 from information-seeking
+questions in section 6. These different senses should not be merged by title.
+
+No byte-identical full meaning occurs in different sections. Manual inspection
+nevertheless finds duplication under paraphrases and alternative names:
+
+| Topic and original entries | Combined sections | Information shared by the meanings |
+|---|---|---|
+| Cinema: L05044 / L05305 | 5 / 2 | The art and medium of motion pictures |
+| Construction: L04117 / L05185 | 2 / 5 | Physically creating buildings, infrastructure and structures |
+| Commenting: L00217 / L04959 | 4 / 6 | Communicating remarks or observations about a topic |
+| Claims: L02403 / L03937 | 4 / 6 | Assertions presenting something as true |
+| Rebates: L00076 / L01606 | 3 / 2 | Returning or crediting transaction payments to the payer |
+| Zap payments / Zaps: L05275 / L05325 | 3 / 4 | Lightning bitcoin tips expressing social-media support |
+| United States Department of Justice / U.S. Department of Justice: L02948 / L00948 | 1 / 2 | The same federal law-enforcement and justice department |
+
+These are agent-inspected witnesses, not new human labels or a sampled error
+rate. Definition differences can affect exact equivalence; the table identifies
+shared information, which is the user's review concern. Cinema and Rebates were
+together in the meaning-only fit and separate in the combined fit. The other
+five inspected witnesses were already split. The combined representation thus
+reduces the literal-title split screen overall while introducing some new splits.
+
+Six of these seven pairs are reciprocal nearest other entries by combined
+cosine over all 5,336 inputs: Cinema, Construction, Commenting, Claims, Rebates
+and the Justice department. Their combined pair scores range from 0.7977 to
+0.9784. The Zap pair has still-closer variants within its own respective fine
+groups. The vectors already contain useful connections; their absence from the
+section layout is not solely absence of similarity signal. A cosine cutoff is
+not adopted, and high similarity alone is not treated as equivalence. Nearest
+meaning searches also retrieve related but distinct topics such as a news
+portal and its reported subject, or content and its display device.
+
+The saved state explains two mechanisms. HDBSCAN groups are kept intact, but
+different groups and unassigned entries are routed independently by summed
+entry-to-center cost. There is no requirement to coassign a close pair across
+those units. Both Rebates entries are independent: one prefers finance at
+0.3810 versus 0.3644 for section 2; the other prefers section 2 at 0.3693 versus
+0.3662 for finance. Their pair similarity is 0.9784, yet those small independent
+center preferences split them. Construction L05185 individually prefers
+section 2, but its nine-entry Builds/Lego/Construction fine group goes to
+section 5. The Justice-department synonym similarly moves with a five-entry
+Courts/Judges group. Assigning each original entry once and keeping every fine
+group intact does not ensure that paraphrased information stays in one root.
+
+All source/code/native hashes, original identities, group constraints, selected
+costs and member-mean centers validate through the existing research paths.
+Audit evidence is ignored on the external drive, linked at
+`oracle-mvp-root-information-audit-v1/target/root-information-audit-v1/audit.json`.
+It retains all 27 split-title families with complete meanings, ranked cross-root
+meaning matches for every section pair, seven inspected witnesses, their
+nearest entries and center/group routing, plus different-sense controls.
+The task worktree remains for this evidence path; source hierarchies and saved
+producer files are unchanged.
+
+The next suggested component test is whether requiring reciprocal nearest
+matches to stay together can reduce these splits while preserving different
+senses and the coverage/size requirements. This targets connections already
+present in the saved vectors without choosing a new fixed similarity cutoff.
+It remains an untested hypothesis; the seven post-selected witnesses alone do
+not establish that such a rule generalizes or is safe to adopt.
