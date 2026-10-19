@@ -2815,3 +2815,31 @@ is one further split beneath the largest remaining child, section 6 child 1
 next depth before attempting recursive construction. Six remains a fixed test
 count, not an adopted child-count or stopping rule. That deeper test has not
 been started or authorized by this record.
+
+### Manual third-level split within second-corpus section 6 child 1
+
+The user authorized the proposed further split of the largest remaining child:
+section 6 child 1, containing 328 original entries from 238 notes. Keep the
+original native fine groups and recompute reciprocal matches plus one frozen
+attachment pass within these entries. Use unchanged equal-weight title/meaning
+vectors, six children, eight seeds, zero assignment minimum and 50 iterations.
+This is one further manual component test, not automatic recursion or adoption
+of a six-child stopping policy. No encoding, training or model calls occur.
+
+This requires selecting labels from a saved case that already uses a subset
+of the full source rows. The existing label selector gains an optional `plan`
+path to that saved result's actual producer plan. Both result and plan must be
+hash-pinned in the source's `files`. Preparation validates the result's producer
+binding, exact original vectors/notes/entry metadata, row mapping, grouping
+dependencies and saved costs/centers/counts, then maps selected local positions
+through the producer's original row indices. The default full-row selectors
+are unchanged. Earlier frozen worktree source files and artifacts stay intact.
+
+A failing-first production CLI test uses noncontiguous original rows 1, 3 and 5,
+selects two rows from their completed saved partition and runs the next split.
+Before the extension, preparation fails because the three saved labels cannot
+align directly with six original rows. The test then verifies exact original
+IDs/notes, a real two-child split, rejection of a mismatched result/producer
+binding, rejection of an unpinned producer plan, and failure after that frozen
+plan changes. All 67 relevant checks pass, including native HDBSCAN and existing
+selector/group/attachment/numerical checks.

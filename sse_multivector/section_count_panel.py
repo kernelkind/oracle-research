@@ -68,6 +68,39 @@ def _load_source(source):
     return vectors, notes, entries
 
 
+def _saved_labels(source, selector, vectors, notes, entries):
+    saved = _read(source['labels'][selector['mode']])
+    labels = np.asarray(saved.get('panel', saved)['best']['labels'])
+    indices = np.arange(len(notes))
+    if 'plan' in selector:
+        path = selector['plan']
+        if path not in source['files']:
+            raise ValueError('Nested labels require a frozen producer plan')
+        producer = _read(path)
+        _check_files(producer['code_files'])
+        binding = saved.get('binding', {})
+        cfg = next((c for c in producer['cases'] if c['id'] == binding.get('case_id')), None)
+        if (cfg is None or binding.get('count') not in cfg['counts']
+                or binding != dict(plan_sha256=_sha(path), case_id=cfg['id'], count=binding['count'])):
+            raise ValueError('Saved labels disagree with the frozen producer plan')
+        original = _load_source(producer['spec']['sources'][cfg['source']])
+        if (not np.array_equal(original[0], vectors)
+                or not np.array_equal(original[1], notes) or original[2] != entries):
+            raise ValueError('Saved labels use different original source rows')
+        indices = np.asarray(cfg['indices'])
+        if (indices.ndim != 1 or indices.dtype.kind not in 'iu'
+                or not len(indices) or len(np.unique(indices)) != len(indices)
+                or np.any(indices < 0) or np.any(indices >= len(notes))
+                or [entries[i]['id'] for i in indices] != cfg['entry_ids']):
+            raise ValueError('Invalid original row mapping in producer plan')
+        _check_files(cfg.get('grouping_files', {}))
+        _verify(saved['panel'], vectors[indices], notes[indices], binding['count'],
+                cfg['minimum_notes'], producer['spec']['seeds'], cfg.get('groups'))
+    if labels.shape != indices.shape:
+        raise ValueError('Saved labels must align with the original entries')
+    return labels, indices
+
+
 def _saved_grouping(selection, vectors, notes, entries, vector_view='meaning'):
     from . import hdbscan_vector_probe as probe
     folder = Path(selection['directory']).resolve()
@@ -167,15 +200,12 @@ def prepare(specification, output):
         if selector['kind'] == 'all':
             indices = np.arange(len(notes))
         elif selector['kind'] == 'labels':
-            key = (cfg['source'], selector['mode'])
+            key = (cfg['source'], selector['mode'], selector.get('plan'))
             if key not in label_cache:
-                path = spec['sources'][cfg['source']]['labels'][selector['mode']]
-                saved = _read(path)
-                label_cache[key] = np.asarray(saved.get('panel', saved)['best']['labels'])
-            labels = label_cache[key]
-            if labels.shape != notes.shape:
-                raise ValueError('Saved labels must align with the original entries')
-            indices = np.flatnonzero(labels == selector['value'])
+                label_cache[key] = _saved_labels(spec['sources'][cfg['source']], selector,
+                                                 vectors, notes, entries)
+            labels, rows = label_cache[key]
+            indices = rows[labels == selector['value']]
         elif selector['kind'] == 'source_group':
             indices = np.array([i for i, e in enumerate(entries)
                                 if e.get('source_group') == selector['value']], dtype=int)

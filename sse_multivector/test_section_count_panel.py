@@ -13,6 +13,66 @@ from sse_multivector.section_count_panel import prepare, run
 
 
 class SectionCountPanelTests(unittest.TestCase):
+    def test_cli_nested_selector_uses_the_frozen_producer_original_rows(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            manifest, spec = self._fixture(root)
+            source = spec['sources']['examined']
+            angles = np.array([3, 0, 3.01, .05, 3.02, 2])
+            np.savez(source['input'], vectors=np.c_[np.cos(angles), np.sin(angles)],
+                     notes=np.array(['a' + str(i) for i in range(6)]))
+            entries = json.loads(Path(source['entries']).read_text())
+            for i, entry in enumerate(entries):
+                entry['source_group'] = 'chosen' if i in [1, 3, 5] else None
+            Path(source['entries']).write_text(json.dumps(entries))
+            for path in [source['input'], source['entries']]:
+                source['files'][path] = hashlib.sha256(Path(path).read_bytes()).hexdigest()
+            spec['cases'][0]['selector'] = dict(kind='source_group', value='chosen')
+            manifest.write_text(json.dumps(spec))
+            prepare(manifest, root / 'parent')
+            run(root / 'parent', 'D01')
+            producer_plan = root / 'parent/plan.json'
+            producer_result = root / 'parent/D01/count-2.json'
+            parent = json.loads(producer_result.read_text())
+            labels = parent['panel']['best']['labels']
+            selected = next(label for label in set(labels) if labels.count(label) == 2)
+            expected = [i for i, label in zip([1, 3, 5], labels) if label == selected]
+            source['labels']['parent'] = str(producer_result)
+            for path in [producer_result, producer_plan]:
+                source['files'][str(path)] = hashlib.sha256(path.read_bytes()).hexdigest()
+            spec['cases'][0]['selector'] = dict(kind='labels', mode='parent', value=selected,
+                                               plan=str(producer_plan))
+            child_spec = root / 'child.json'
+            child_spec.write_text(json.dumps(spec))
+            cli = [sys.executable, '-m', 'sse_multivector.section_count_panel']
+            prepared = subprocess.run(cli + ['prepare', str(child_spec), str(root / 'child')],
+                                      capture_output=True, text=True)
+            self.assertEqual(prepared.returncode, 0, prepared.stderr)
+            plan = json.loads((root / 'child/plan.json').read_text())
+            self.assertEqual(plan['cases'][0]['indices'], expected)
+            self.assertEqual(plan['cases'][0]['entry_ids'], [str(i) for i in expected])
+            self.assertEqual(plan['cases'][0]['note_ids'], ['a' + str(i) for i in expected])
+            subprocess.run(cli + ['run', str(root / 'child'), 'D01'],
+                           check=True, capture_output=True, text=True)
+            child = json.loads((root / 'child/D01/count-2.json').read_text())['panel']['best']
+            self.assertEqual(sorted(child['section_notes']), [1, 1])
+            original_result = producer_result.read_bytes()
+            parent['binding']['case_id'] = 'different'
+            producer_result.write_text(json.dumps(parent))
+            source['files'][str(producer_result)] = hashlib.sha256(producer_result.read_bytes()).hexdigest()
+            child_spec.write_text(json.dumps(spec))
+            with self.assertRaisesRegex(ValueError, 'disagree with the frozen producer plan'):
+                prepare(child_spec, root / 'wrong-binding')
+            producer_result.write_bytes(original_result)
+            source['files'][str(producer_result)] = hashlib.sha256(original_result).hexdigest()
+            source['files'].pop(str(producer_plan))
+            child_spec.write_text(json.dumps(spec))
+            with self.assertRaisesRegex(ValueError, 'frozen.*plan'):
+                prepare(child_spec, root / 'unbound')
+            producer_plan.write_text('{}')
+            with self.assertRaisesRegex(ValueError, 'Frozen source changed'):
+                run(root / 'child', 'D01')
+
     def test_child_selector_reads_the_completed_parent_panel_and_preserves_rows(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
