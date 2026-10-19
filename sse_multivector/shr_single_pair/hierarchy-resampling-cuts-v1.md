@@ -2843,3 +2843,57 @@ IDs/notes, a real two-child split, rejection of a mismatched result/producer
 binding, rejection of an unpinned producer plan, and failure after that frozen
 plan changes. All 67 relevant checks pass, including native HDBSCAN and existing
 selector/group/attachment/numerical checks.
+
+The completed split retains all 328 selected entries and all 238 parent notes.
+All six child note sets are distinct and strict subsets of that parent. The
+largest contains 78/238 notes (32.8%). The full corpus's previously observed
+912/1,000 coverage is unchanged. Counts below overlap and must not be summed.
+These descriptions summarize existing headings; no synthetic canonical title
+or meaning has been generated.
+
+| Child | Common existing headings | Distinct notes |
+|---|---|---:|
+| 1 | Truth, Verification, Skepticism, Honesty, Truthfulness | 31 |
+| 2 | Knowledge, Uncertainty, Learning, Interpretation, Discovery | 78 |
+| 3 | Predictions, Recommendations, Expectations, Advice, Plans | 74 |
+| 4 | Time, Calendar dates, Morning, Clocks, Time intervals | 16 |
+| 5 | Opinions, Arguments, Comparisons, Opinion formation, Analysis | 38 |
+| 6 | Requests, Questions, Reminders, Appeals, Conversation | 51 |
+
+All 49 repeated exact-title families stay together in the selected fit. The
+bounded cross-child review finds related but distinct roles: uncertainty about
+the future versus expectations, taking action versus calls to action, and
+opinions versus requests for opinions. Related wording does not make those
+automatic duplication errors. Verification versus assessment of claims and
+interpretation versus detailed analysis retain some overlapping scope for
+review; no new equally clear Satoshis-style duplicate is established by the
+inspected matches. This is an agent assessment, not semantic certification or
+a measured accuracy rate. The result supports useful narrowing at this next
+depth without a new reason to change the method.
+
+The selected seed is 20261021; all eight starts converge. Their fit times sum
+to 0.043 seconds, excluding preparation and verification. Filtering the
+original native fine groups gives 194 initial units. There are 75 reciprocal
+pairs and 92 frozen attachments into 57 matched units, producing 74 final
+units. Independent dense nearest search and sparse connected components
+reproduce these constraints without indirectly merging matched units.
+Immediate parent units also remain intact. Frozen source/code/grouping hashes,
+nested producer bindings and exact original rows, all per-start costs/centers/
+notes, strict refinement and byte-preserving completed resume validate.
+
+Executed source checkpoint is `0019a0ce`, also verified on combined main with
+all 67 relevant checks passing. Ignored evidence is on the external drive,
+linked under `oracle-mvp-third-level-child-manual-v1/target/third-level-child-manual-v1/`:
+the frozen spec/panel, `comparison-and-verification.json`, and ranked matches
+for all 15 child pairs in `cross-child-matches.json`. The worktree stays for
+these frozen source and artifact paths. No model calls, new encoding, training,
+HiGen activation, official HR registration or UI refresh occur.
+
+The remaining construction decision is when to stop subdividing and when fewer
+than six children are sufficient. Six was fixed for these component tests;
+neither an automatic child-count rule nor a recursive stopping rule has been
+adopted for this research method. Settling that decision is more useful next
+than another unmotivated clustering variant: it determines whether these
+successful individual splits become a complete hierarchy without unnecessary
+depth. No further split, count-policy experiment or integration is authorized
+by this result record.
