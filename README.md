@@ -46,4 +46,4 @@ The [largest completed HiGen V5.3 run (HR39)](docs/recommendation-engine/hierarc
 
 ## Experiments and data
 
-The [experiment index](docs/experiments/README.md) connects the recorded experiments to their inputs, settings, saved results and fine-tuned adapters. It includes an exact file inventory for the planned GitHub release, with unresolved input versions and verification work identified. Data downloads and tested instructions for rerunning the historical experiments are still being prepared.
+The [experiment index](docs/experiments/README.md) connects the recorded experiments to their inputs, settings, saved results and fine-tuned adapters. The [reproduction guide](docs/experiments/reproduce.md) explains how to browse a saved hierarchy, try subject extraction on a recorded post, repeat hierarchy construction and inspect the fine-tune results. It identifies what has been tested and what remains unfinished. Data downloads are still being prepared.

@@ -5,6 +5,9 @@ interactive hierarchy. It uses the existing experiment runner to save inputs,
 model responses and resumable construction state. Previous research datasets
 and experiment outputs are not required.
 
+To use recorded research inputs or browse a saved result, see the
+[experiment reproduction guide](experiments/reproduce.md).
+
 The language-model steps use an external subscription or API account. SSE
 encoding and numerical construction run locally on CPU. Fully local generation
 and million-note scalability remain project goals. Start with a few dozen posts:

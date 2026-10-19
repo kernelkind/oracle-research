@@ -15,6 +15,7 @@ have been located and checked against their recorded SHA-256 hashes.
 | Work | Read first | Inventory |
 | --- | --- | --- |
 | Generate a hierarchy from posts | [Generation guide](../generate-hierarchy.md) | [Official hierarchy runs](hierarchy.csv) |
+| Inspect or repeat recorded experiments | [Reproduction guide](reproduce.md) | [Five example input files and checksums](reproduction.sha256) |
 | Understand the recorded hierarchy experiments | [Run overview](hierarchy.md) and [detailed findings](../recommendation-engine/hierarchy-runs.md) | [Run settings, source versions and corpus identities](hierarchy.csv) |
 | Use or study the subject fine-tunes | [Training process and evaluation](../planning/fine-tuning-pilot-process.md) | [Adapter weights and training state](models.csv) |
 | Study subject, mask, title, comparison and prominence trials | [Experiment workflow](../../sse_multivector/model-runner.md) | [Individual saved experiments and historical collections](experiments.csv) |
@@ -103,12 +104,13 @@ well as their own output.
 
 ## Reproduction status
 
-The index records where the necessary inputs and settings were found. It does
-not certify that every historical experiment can yet be rerun from a clean
-checkout. The next documentation task is to turn these bindings into tested
-instructions: obtain the inputs, select the recorded code, run the experiment,
-and inspect its output. Inspecting saved evidence and running fresh inference
-must remain distinguishable; fresh model answers need not match saved answers.
+The [reproduction guide](reproduce.md) covers browsing HR39, preparing ASv6.100
+on a recorded HR36 post, repeating HR36 construction with its saved subjects,
+and reading the fine-tune comparison. It records the offline checks performed
+and distinguishes them from new inference and exact historical-code reruns.
+Release downloads, portable training/L1 recomputation and receipt-aware replay
+of relocated historical collections remain unfinished. Fresh model answers
+need not match saved answers.
 
 Generation commits, later audit/export commits and the publication commit serve
 different purposes. Preserve their distinction when history cleanup changes

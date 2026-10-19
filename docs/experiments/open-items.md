@@ -72,7 +72,17 @@ yet checked for identical contents. It is not a download-size estimate. Readers
 should be able to obtain the collections they need without downloading all
 research artifacts.
 
-Next, turn the recorded inputs, source versions and settings into tested
-instructions for inspecting saved evidence and rerunning experiments. Record
-relocation instructions separately from frozen inputs. Finish history cleanup
-and repeat the publication checks against the final release contents.
+The [reproduction guide](reproduce.md) now provides concrete commands and records
+their validation limits. Before calling the release reproducible end to end:
+
+- Test the downloaded archives in a clean environment, including a complete
+  hierarchy run with public authentication.
+- Provide a supported way to verify relocated historical plans and reused
+  receipts without editing the original frozen evidence.
+- Provide a maintained, tested command for the L1 analysis from saved judgments;
+  the saved scores and original verification exist, but that CLI does not.
+- Validate portable training and adapter-inference instructions with the exact
+  datasets, base-model revisions and runtime versions.
+
+Finish history cleanup last and repeat publication checks against the final
+release contents, updating any affected checksums and commit references.
