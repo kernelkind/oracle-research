@@ -1265,6 +1265,37 @@ outputs from V150 or V151. No selection, rubric or desired titles change; the ne
 protocol corrects the inherited version label in reviewer assignment. Constructors
 stay V133. Results and native accounting will be appended after testing.
 
+V152 again fixes all nine agreed-case responses, with72/72 mechanically valid.
+Root review finds68 accepts, one title failure and three uncertainties. Two stock
+plans use “Chicken stock preservation plan”; draw3 still joins preservation and
+storage in its title, failing the explicit stock-title gate. Country sense is
+uncertain twice and a writing-tools title once. Defining meaning conditions remain
+intact; the People qualification “considered individually or collectively” is not
+an illustrative example and passes. Native [accounting](hierarchy-bootstrap-v152-fix-usage-v1.json)
+records75 attempts including three warmups, no failures/retries/reuses, complete
+usage and $0.581502 API-equivalent cost. Qualification still has zero attempts and
+outputs; no heldout result has informed these revisions.
+
+### Concise topic labels and explicit operation omission: Bootstrap-v153
+
+Experimental [Bootstrap-v153](Hierarchy-bootstrap-v153.md) simplifies the title
+paragraph: titles are familiar names for recognizing the central topic, with
+definitions and distinguishing details retained in meaning. Plans and preferences
+name the goal without listing or joining the operations achieving it. Referential
+identity and relationships remain required, titles still derive solely from
+finalized meaning, and meaning cannot be revised to fit a title. The full and brief
+examples, all meaning instructions, shared rules-v13 and Consolidation-v28 are
+unchanged. There is no word limit or punctuation optimization.
+
+The [regression specification](hierarchy-bootstrap-v153-regression-v1.spec.json)
+retains24 inputs and three fresh draws with V152 baselines. The same gate requires
+all nine agreed-case responses, all three stock-plan titles and no clear control
+regression. The [qualification protocol](hierarchy-bootstrap-v153-heldout-v1.json)
+and [specification](hierarchy-bootstrap-v153-heldout-v1.spec.json) retain the exact
+still-unrun80-post panel and fixed rubric. V150, V151 and V152 qualification have
+no attempts or outputs. Constructors stay V133; source publication remains
+experimental. Results and native accounting will be appended after testing.
+
 ## Meaning-derived titles: Bootstrap-v130
 
 The user requested a concise title based solely on the explicit meaning.

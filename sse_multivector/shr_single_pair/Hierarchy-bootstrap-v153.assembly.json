@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "prompt_id": "Hierarchy-bootstrap-v153",
+  "output": {
+    "path": "Hierarchy-bootstrap-v153.md",
+    "sha256": "c63171b27af83d017eff3b7c0ef7187236c671666b1db4ddc519e5da4fd59fa1"
+  },
+  "parts": [
+    {
+      "path": "prompt_sources/Hierarchy-bootstrap-v153.before.md",
+      "sha256": "6ad4be53e4c7ba537a25cd6474afcd2f4339b76bfb2ab90aeb52cdcd5f1b1320"
+    },
+    {
+      "text": "\n"
+    },
+    {
+      "path": "prompt_parts/explicit-meaning-rules-v13.md",
+      "sha256": "f1ad5e1abc18dcc27cd5afc280a6e6f0441b652126322b7b4f17116ce445ef1b"
+    },
+    {
+      "text": "\n"
+    },
+    {
+      "path": "prompt_sources/Hierarchy-bootstrap-v153.after.md",
+      "sha256": "e8c276fca1438e25767a0e04424b8d1a5aec49cebee82a2b23d2ea867f5fcdca"
+    }
+  ],
+  "shared": {
+    "path": "prompt_parts/explicit-meaning-rules-v13.md",
+    "sha256": "f1ad5e1abc18dcc27cd5afc280a6e6f0441b652126322b7b4f17116ce445ef1b"
+  },
+  "companion": "Hierarchy-consolidation-v28.assembly.json"
+}
