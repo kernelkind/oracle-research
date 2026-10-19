@@ -1,8 +1,10 @@
 # Note-subset recovery of candidate root sections
 
 Experimental numerical investigation, 2026-10-18. **Do not adopt as a HiGen
-policy.** The task is six useful root sections retaining strictly more than 80%
-of original corpus notes; the latest probe explores 90%. The user prefers cut A
+policy.** The current target is six useful root sections retaining at least 90%
+of original corpus notes, with each section representing at least 10% of the
+original corpus. Earlier measurements below retain their original 80% target.
+The user prefers cut A
 and explicitly accepts broad root topics because deeper levels provide
 narrowing. Root breadth alone is not a failure criterion. Recovery under note
 removal provides a diagnostic, without establishing better browsing choices.
@@ -10,6 +12,27 @@ No prompts, canonical hierarchies or review UIs changed. No model calls,
 training or paid resources were used in the original resampling probes.
 The latest full-meaning follow-up adds local frozen-SSE encodings, with no LLM
 calls or training, and reaches 91% in six complete branches.
+
+## Approved requirements for the next smaller iteration
+
+The user approved a fixed 100-note subset of the same corpus for inspection,
+reusing saved vectors and rebuilding its groups. The 2,000-note corpus remains
+available for checking promising rules. The numerical requirements are:
+
+- Exactly six sections.
+- At least 90% of the original corpus's distinct notes represented across them.
+- Each section represents at least 10% of that original corpus's distinct notes.
+
+For 100 notes, every section must represent at least ten notes and their union
+must represent at least 90. Deduplicate note IDs within each section and across
+the union separately; section note sets can overlap. Use the original corpus
+size as denominator, rather than only the notes with usable inputs.
+
+Stopping an ordinary linkage tree at six branches alone does not enforce the
+per-section minimum. The tree method and partition rule remain open; a matched
+average-linkage/Ward comparison is proposed, not yet run or adopted. These
+numerical requirements do not qualify the usefulness of section membership or
+deeper narrowing. Current HiGen behavior and historical results are unchanged.
 
 ## Question and controlled inputs
 
