@@ -49,6 +49,7 @@ The user distinguishes these new research tests from their source experiments:
 | Six-section-v1-04 | The 557-note S05 section from Six-section-v1-03 |
 | Six-section-v1-05 | The 485-note S02 section from Six-section-v1-03 |
 | Six-section-v1-06 | The 125-note C03 child from Six-section-v1-05 |
+| Six-section-v1-07 | The 16-note C03 child from Six-section-v1-06 |
 
 HR IDs identify the original experiments, not reruns of them. Existing artifact
 paths retain their names to preserve frozen bindings. These research-test IDs
@@ -599,6 +600,66 @@ retained `oracle-mvp-six-section-navigation-v1` worktree on external storage.
 Mechanical checks reproduce the sample and compare all entry/note lookups with
 the original label array; all frozen source and prediction hashes agree.
 No code behavior, HiGen policy, prompt, canonical hierarchy or review UI changed.
+
+### Six-section-v1-07: test another level inside the 16-note child
+
+The user approved splitting Six-section-v1-06's **Family, heredity and aging**
+child (C03) with the unchanged method, to examine whether another six-way split
+offers useful choices. Its 19 original entries represent 16 notes. Reuse only
+their exact saved vectors. Keep six children, eight seeds and the same objective
+and iteration limit. The scaled minima become two distinct notes per child
+and fifteen in their union. This tests those settings; it does not approve
+either minimum as a final rule for deeper levels.
+
+Seed `20261021` has the lowest constrained objective, `2.3707149236255156`,
+and converges in two iterations. All eight constrained starts converge. Review
+all 19 full meanings after selection without editing the memberships.
+
+| Child | Contents summarized from the original entries | Original entries | Distinct notes |
+|---|---|---:|---:|
+| C01 | Evolution, genetics and aging | 5 | 3 |
+| C02 | People, daughters and fatherhood | 3 | 3 |
+| C03 | Young people | 3 | 3 |
+| C04 | Climate change and measles | 2 | 2 |
+| C05 | Families and relatives | 4 | 4 |
+| C06 | Genetics and infertility | 2 | 2 |
+
+All sixteen notes and all nineteen entries remain represented. Each child
+has a proper subset of the parent's notes, with no identical child note sets.
+One note appears in two children. The numerical checks pass, but they do not
+justify displaying all six children: Climate change and Measles offer no
+clear useful joint topic in their supplied meanings. Other distinctions,
+including young people and family relationships, remain recognizable.
+
+The matched unconstrained control also selects seed `20261021`, with objective
+`2.3028385409404297` and note counts 5, 3, 3, 1, 4 and 1. Measles and Infertility
+are singleton groups there. Both Genetics entries and Climate change are in
+the broader evolution/genetics/aging group. This control also retains an
+inherited mixed topic; removing the minimum does not certify its semantics.
+
+To isolate the minimum's effect, call the existing production `assign` function
+twice on the **same fixed initial-center cost matrix**, changing only
+`minimum_notes` from zero to two. The minimum moves Climate change from C01
+to the Measles group C04 and moves one Genetics entry from C01 to the Infertility
+group C06. Their added fixed-center costs are `0.2534572007435255` and
+`0.19659671561079994`. Both initial assignments equal their respective final
+cluster assignments. The selected constrained run nevertheless reports zero
+displacements from its final centers: that field alone cannot establish that
+the minimum had no effect.
+
+This is evidence of a specific size-constraint problem, **not a sixteen-note
+stopping threshold** or a reason to reject all further refinement. The number
+of children and whether a whole extra level is worthwhile remain open. No
+minimum, root requirement or HiGen behavior is changed by the test.
+
+Independent checks verify exact parent-row reuse, source hashes, all entries,
+every trial's objective and note counts, normalized mean centers, union coverage
+and proper child-note subsets. The existing 24 partition/resampling/cost tests
+pass. Ignored frozen inputs, all sixteen trials, full memberships, fixed-center
+minimum-effect evidence and full agent assessment are under
+`target/six-section-v1-07/` in the retained `oracle-mvp-six-section-v1-07`
+worktree on external storage. No encoding, inference, training or UI change
+occurred, and all earlier memberships remain unchanged.
 
 ## Question and controlled inputs
 
