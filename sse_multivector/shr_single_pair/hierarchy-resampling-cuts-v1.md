@@ -1645,6 +1645,33 @@ and full original meaning for the three layouts, all 24 previously split
 groups, source bindings and verification results. The external artifact and
 frozen source paths require retaining this task worktree.
 
+### Meaning-based fine grouping: frozen small controls
+
+The approved next test asks whether meaning-vector HDBSCAN can separate the
+mixed-name examples while keeping Nostr together. Freeze four pools from the
+same HR36 originals: G036 (62 Nostr entries), G320 (six people/country entries),
+G088 (four geographic entries), and their complete 72-entry union. Geographic
+locations may legitimately share a broader topic; G088 is not assumed to be
+human rejection gold. Interpret the actual memberships, not group count alone.
+
+Run both saved title-pooled and whole-meaning-pooled vectors on each identical
+pool. Matched title controls distinguish representation changes from the effect
+of taking a small subset out of the original corpus. Preserve native opaque
+point IDs and their canonical order across both views. Use the same frozen
+native angular HDBSCAN executable, min_samples=3, min_cluster_size=2 and EOM.
+Do not tune parameters or add a bend cut, consolidation, new encoding, model
+call or training. Record unassigned entries and their notes explicitly; a lack
+of selected groups is not successful topic separation.
+
+The reusable `hdbscan_vector_probe` prepare/run CLI reads frozen original
+meaning packets and native title requests, validates matching title/meaning/
+note evidence, snapshots selected views and calls the existing production
+`hierarchy_hdbscan.round_for` route. It retains the raw requests/results,
+validates their identities, and resumes without rewriting saved reports.
+Eight numerical cases can run independently with one native worker each.
+No source hierarchy or HiGen version is changed. Ignored evidence is stored
+externally under `oracle-mvp-hdbscan-meaning-controls-v1/target/hdbscan-meaning-controls-v1/`.
+
 Reusable numerical CLI: `sse_multivector/cluster_resampling_probe.py`; tests:
 `sse_multivector/test_cluster_resampling_probe.py`. Input NPZ contains unit
 `vectors`, aligned compact zero-based original `groups`, and aligned `notes`.
