@@ -2139,7 +2139,8 @@ charge is zero. Known tokens: 5,962,947 uncached input; 69,536,896 cached input;
 
 ## HR39 — automatically sampled 5,000-note HiGen V5.3
 
-**ASv6.100 and Bootstrap-v133 complete; HiGen V5.3 constructing on NVMe.** Automatic seed `hr39-corpus-v1`
+**HiGen V5.3 generation complete: 200 nodes, no execution errors.**
+Bounded offline verification, native accounting and review export remain in progress. Automatic seed `hr39-corpus-v1`
 selected 5,000 original posts from the same frozen English-eligible pool as
 HR36–HR38: 2,000 authors, no manual reviews or topic/author quotas.
 Overlap: HR36 2, HR37 1, HR38 2 notes.
