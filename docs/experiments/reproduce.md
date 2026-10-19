@@ -315,17 +315,72 @@ Outputs derived from subjects older than **ASv6.100** are historical evidence,
 including their downstream hierarchies and evaluations. They are not current
 pipeline inputs or validation. Original source posts remain usable.
 
+### Verify a saved prompt experiment after extraction
+
 Native plans and collected results can contain absolute source paths and reused
-answer references. Moving an archive does not make those references portable.
-There is no general relocation option in the current runner. `prepare --from`
-inherits those bindings, so it is not a way to repair an extracted old plan.
+answer references. The runner's read-only `verify --locations` command resolves
+those paths through a separate mapping file. It leaves the original frozen
+files, recorded paths and hashes intact. It requires no credentials or model
+worker.
+
+Extract the selected experiment's `experiment.json`, `runner-config.json`, run
+manifest, results ledger and any runner/worker upgrade ledgers. Also obtain all
+files bound by the plan's `sources` hashes and the original producer receipts
+for reused answers. These are additional files beyond the five-file example
+above. Use the inventory and dependency list to locate them; a source may need
+its historical version from Git. Check the archive checksums first.
+
+Create `locations.json` at the extraction root. For example:
+
+```json
+{
+  "schema_version": 1,
+  "roots": {"/original/research": "evidence/research"},
+  "files": {"/original/research/posts.json": "datasets/posts.json"}
+}
+```
+
+Replace the example paths with the old paths recorded in the evidence and the
+actual archive members. Destinations are relative to this mapping file. Exact
+file mappings override root mappings, so a corpus can live at its deduplicated
+`datasets/<sha256>.json` location. The longest matching root is used. Missing
+mappings, missing files and hash mismatches stop verification; it never silently
+reads an original source when a mapping file is supplied. Credential files and
+the old runner executable do not need mappings.
+
+For HR39's saved `HR39-resumed-1/batch-00025` prompt experiment, after extracting
+its dependencies and writing the matching locations file:
+
+```bash
+cd "$ORACLE_ROOT"
+source target/hierarchy-env/bin/activate
+export HR39_EVIDENCE="$RELEASE_ROOT/evidence/hierarchy-run-store/hr39-v53-auto-5000-note-v1"
+python sse_multivector/experiment.py verify \
+  "$HR39_EVIDENCE/HR39-resumed-1/batch-00025/experiment" \
+  --locations "$RELEASE_ROOT/locations.json"
+```
+
+This checks the plan and bound source hashes, the manifest, ledger sequence and
+provenance, and successful response receipts. Reused responses are checked
+against their original producer receipts. The summary distinguishes successful,
+failed, unrun and mechanical cases. A successful command means its integrity
+checks passed; it does not mean the experiment completed or its answers are
+correct. Add `--json` for the measured counts and plan hash.
+
+The command does not reconstruct hierarchy or training outputs, reevaluate
+mechanical decisions, verify every transitive adapter input, or recover the
+original code from its recorded hashes. Failed attempts receive ledger checks,
+not successful-response verification. Archive checksums remain necessary to
+check collection completeness. Source hashing and ledger reads are streamed;
+the selected plan, configuration and manifests are loaded as JSON. For large
+builds, select an individual child prompt experiment.
 
 Preserve the original frozen files. For a new run, use an editable specification
 pointing at the verified extracted input files, then `prepare` into a new output
-directory. Keep an explicit record of changed paths and settings. Checking a
-relocated corpus hash proves its identity; it does not independently validate
-every original provider receipt. Receipt-aware replay of whole historical
-collections remains unfinished.
+directory. Keep an explicit record of changed paths and settings. Location
+mappings apply only to `verify`; they do not make `show`, `collect`, `run` or
+`prepare --from` portable. Replay of whole historical collections remains
+unfinished.
 
 ## What has been tested
 
@@ -354,3 +409,18 @@ semantic grading was performed. Interactive browsing was not manually reviewed;
 the viewer check exercised its noninteractive validation path. Downloaded-archive
 testing, a complete run with public authentication, and exact historical-code
 replays remain pending.
+
+The relocation verifier in runner `edf9177` was additionally checked against a copied HR39
+`HR39-resumed-1/batch-00025/experiment`: all 11 bound sources and its one
+successful receipt passed, with the original artifact locations and network
+blocked and a 4 GiB address-space limit. Its frozen plan hash is
+`25afccd740b15b2b83fd45246a6d121685176896808b296e1336579fe03f336a`.
+This is one saved prompt experiment, not verification of all HR39 evidence.
+Runner fixtures also cover moved reused answers, altered/missing inputs and
+receipts, deduplicated input locations, failed/unrun cases, upgrade ledgers and
+preservation of every evidence file's bytes.
+
+The runner's Python suite passed (211 tests, two skips), as did all ten dedicated
+verification tests. The broader Oracle regression check is not green: all 24
+failing test methods also failed with the unchanged runner at `3b73550`. No
+newly failing Oracle test methods were observed in this comparison.

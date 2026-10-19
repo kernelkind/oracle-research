@@ -77,8 +77,9 @@ their validation limits. Before calling the release reproducible end to end:
 
 - Test the downloaded archives in a clean environment, including a complete
   hierarchy run with public authentication.
-- Provide a supported way to verify relocated historical plans and reused
-  receipts without editing the original frozen evidence.
+- Apply the supported `verify --locations` command to the selected native prompt
+  experiments and ship their location mappings with the archives. One copied
+  HR39 prompt experiment has passed; the full collection has not been verified.
 - Provide a maintained, tested command for the L1 analysis from saved judgments;
   the saved scores and original verification exist, but that CLI does not.
 - Validate portable training and adapter-inference instructions with the exact

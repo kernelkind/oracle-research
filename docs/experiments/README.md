@@ -106,11 +106,12 @@ well as their own output.
 
 The [reproduction guide](reproduce.md) covers browsing HR39, preparing ASv6.100
 on a recorded HR36 post, repeating HR36 construction with its saved subjects,
-and reading the fine-tune comparison. It records the offline checks performed
-and distinguishes them from new inference and exact historical-code reruns.
-Release downloads, portable training/L1 recomputation and receipt-aware replay
-of relocated historical collections remain unfinished. Fresh model answers
-need not match saved answers.
+and reading the fine-tune comparison. It also explains `verify --locations` for
+checking saved prompt receipts after extraction without changing frozen files.
+It records the offline checks performed and distinguishes them from new
+inference and exact historical-code reruns. Release downloads, collection-wide
+verification, portable training/L1 recomputation and replay of historical
+collections remain unfinished. Fresh model answers need not match saved answers.
 
 Generation commits, later audit/export commits and the publication commit serve
 different purposes. Preserve their distinction when history cleanup changes

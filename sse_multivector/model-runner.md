@@ -1,5 +1,17 @@
 # General model runner
 
+## Verify extracted experiment evidence
+
+The shared runner supports read-only `verify EXPERIMENT --locations FILE` for
+native prompt experiments. It checks frozen plan/source hashes and successful
+receipts, including original receipts for reused responses, while mapping saved
+paths to extracted files without rewriting them. It makes no model calls and
+requires neither credentials nor the historical worker executable. Failed and
+unrun cases are reported separately; passing integrity checks is not semantic
+approval or proof that a collection is complete. Location mappings apply only
+to verification. See the [extraction and verification instructions](../docs/experiments/reproduce.md#verify-a-saved-prompt-experiment-after-extraction)
+for the mapping format, required dependencies and verification limits.
+
 ## Bootstrap evidence: conclusions reset, data retained
 
 The user clarified that prior conclusions must be disregarded while retaining
