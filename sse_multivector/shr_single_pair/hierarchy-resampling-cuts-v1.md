@@ -2648,3 +2648,73 @@ set against the 553-note parent and check duplicated information between the
 children. The 100-note root requirement is not silently imposed on children.
 All parent entries stay eligible. Any note-set overlap between children is
 separate from repeated information, as in the root-level review.
+
+The completed split keeps all 1,307 entries and all 553 notes. Every child
+represents a distinct, strictly smaller note set. The following descriptions
+summarize common existing headings; they are not generated canonical names.
+
+| Child | Common existing headings | Distinct notes |
+|---|---|---:|
+| 1 | Music, Cooking, Diet, Recipes, Trees, Outdoors, Coffee | 154 |
+| 2 | Basketball, War, Sports, Games, Military personnel | 162 |
+| 3 | Food, Companies, Travel, Economy, Energy, Houses | 196 |
+| 4 | Donald Trump, Art, Films, Entertainment, Photography | 146 |
+| 5 | Murder, Imprisonment, Crime, Punishment, Lawsuits | 44 |
+| 6 | Politics, Police, Regulation, Voting, Protests | 91 |
+
+Note sets overlap and should not be summed. All eight starts converge. The
+selected seed is 20261019; its six-section fit takes 0.039 seconds, and the eight
+fits together take 0.386 seconds, excluding preparation and verification.
+The selected fit splits no repeated exact title between children. This is a
+numerical narrowing result, not proof that the choices contain distinct
+information. Broad or mixed topics alone are not rejection criteria.
+
+Full meanings expose remaining overlapping information. Cooking in child 1
+includes preparing food, while Food preparation L02693 in child 3 explicitly
+includes cooking. Fighting in armed conflict L00006 is in child 2; Attacks in
+armed conflict L01275 is in child 5. President Donald Trump L03320 is in child
+4, while Presidents L03212 in child 6 explicitly includes Donald Trump. These
+are overlapping scopes or broader/narrower relationships, not automatically
+equivalent meanings. They are bounded manual witnesses, not an error rate.
+
+Food preparation supplies a concrete attachment witness. It is unassigned in
+the original combined-vector native grouping. The frozen attachment pass joins
+it to Food L02692; its direct combined cosine with that entry is 0.8245, versus
+0.7441 with Cooking L00001. The resulting 16-entry unit is assigned to child 3.
+Against the selected final centers, Food preparation individually favors child
+1 (0.4749 versus 0.4374 for child 3), but the whole unit's summed cost controls
+its assignment. Thus the attachment constraint, rather than an original native
+group, forces this entry away from its individually preferred child. This
+does not establish that all attachments should be removed: Cooking and Food
+preparation share a child in seven of eight total starts, while the minimum-cost
+selected fit separates them. Combat/attacks share a child in four starts;
+Trump/presidents in five. Reviewing the saved starts also finds no repeated
+exact-title splits in any start. Four starts keep all three witness pairs
+together, with costs 1.71–2.53% above the selected fit. The second-lowest-cost
+start, 0.23% above the selected fit, keeps Food preparation with Cooking but
+still separates the other two pairs. These post-selected checks do not qualify
+an alternative fit or establish a semantic accuracy score. The numerical
+objective does not certify the information boundaries.
+
+Independent dense nearest-neighbor reconstruction reproduces all 301 reciprocal
+pairs and all 356 frozen attachments. Sparse connected components reproduce
+the 255 final units without merging matched units indirectly. Original native
+fine groups and the inherited parent units remain intact. Parent bindings and
+selected original rows, frozen source hashes, centers, costs, note counts for
+all starts, and byte-preserving completed resume validate. Source checkpoint
+is `44081e94`; its 66 relevant production-path checks pass on combined main.
+Ignored evidence is retained on the external drive, linked under
+`oracle-mvp-second-corpus-child-manual-v1/target/second-corpus-child-manual-v1/`:
+the frozen spec/panel, cross-child matches, `all-starts-review.json` and complete
+`comparison-and-verification.json`. The worktree remains for frozen source and
+artifact paths. No model calls, new encoding, training, HiGen activation or UI
+refresh occur.
+
+A useful next component test is a matched child split without the optional
+attachment pass, keeping the original fine groups, reciprocal constraints,
+vectors, seeds and objective fixed. Food preparation supplies a concrete reason
+to isolate this constraint. Check both the information boundaries and any
+return of split definitions: removing attachments may improve one at the
+expense of the other. This would test the component's net contribution at
+child level rather than picking a preferred start from reviewed witnesses.
+That further fit has not been started or authorized by this record.
