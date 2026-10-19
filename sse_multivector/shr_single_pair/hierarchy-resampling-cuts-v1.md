@@ -2997,3 +2997,39 @@ construction would
 test actual depth, note coverage and terminal menus together. That would be
 more informative than another isolated successful split or a newly tuned
 count statistic. Such a construction has not been run by this record.
+
+### Complete small-corpus construction: research workflow
+
+The user authorized that complete manual numerical test on the existing
+100-note corpus, with the approved group boundary. `section_tree.py` provides
+reusable offline construction from a validated completed six-section
+`section_count_panel` case. This is research support, not a HiGen activation,
+official HR run, synthetic-title generator or review-UI change.
+
+Prepare freezes the root plan/result, code and original-corpus/root-minimum
+checks. Run loads and validates the original source once, reuses the completed
+root partition, and carries its fixed groups into each child. Before another
+local nearest-neighbor pass, at most six groups become direct leaves; one
+group is already a leaf. Larger pools receive the existing reciprocal and
+frozen one-pass attachments, preserving every inherited group. If more than
+six remain, use the unchanged six-section partitioner, fixed original-entry
+weights and seeds, with zero assignment minimum. If the local pass leaves at
+most six groups, expose those directly. A non-progressing fit is unresolved;
+no arbitrary depth limit, note-count stop or automatic repair is introduced.
+
+Per-node fits are bound to the frozen plan, original row indices and exact
+groups. Resume validates costs, centers and assignments and preserves saved
+bytes. Every original selected row must occur in exactly one terminal group;
+all source notes must remain represented. Reports distinguish numerical
+completion from root coverage/minimum and note-set-narrowing requirements.
+Shortest and longest leaf routes count category edges only, without claiming
+actual user effort or semantic accuracy. Existing headings describe the
+result; no new canonical definitions are inferred.
+
+Failing-first production CLI tests start with the absent complete-construction
+command. The implementation tests an actual nested fit, intact group leaves,
+the pre-matching six-group boundary, byte-preserving resume, and frozen
+source/result rejection. An all-one-note fixture must still subdivide by
+groups and report non-narrowing edges, explicitly preventing a UI note-display
+rule from becoming a construction shortcut. The complete 100-note result and
+content review will be recorded separately below.
