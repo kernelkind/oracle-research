@@ -1329,6 +1329,36 @@ unchanged80-post panel and rubric. V150 through V153 qualification have zero
 attempts and outputs; no heldout result has informed these revisions. Constructors
 stay V133 and source remains experimental. Results will be appended after testing.
 
+V154 fixes all nine agreed-case responses and has72/72 mechanically valid
+responses. Root review records67 accepts, one stock-title rejection and four
+uncertainties (three writing-tools titles and one country meaning). AI and People
+meanings omit illustrations in every draw; defining lists and numeric boundaries
+remain intact. One stock title still appends pantry storage to preservation, so
+the stock gate fails and qualification remains unrun. Native
+[accounting](hierarchy-bootstrap-v154-fix-usage-v1.json) records75 attempts including
+three warmups, no failures/retries/reuses, complete usage and $0.5460408 API-equivalent
+cost. The counterexample demonstrated only an operation list, while the actual
+remaining failure names the goal and then appends an operation.
+
+### Contrast a goal title with a goal plus a step: Bootstrap-v155
+
+Experimental [Bootstrap-v155](Hierarchy-bootstrap-v155.md) changes only that
+counterexample: the rejected apple title now says “Apple preservation and cellar
+storage plan,” explicitly identifying the unnecessary appended step and location.
+The accepted “Apple preservation plan,” all other examples, title instruction,
+meaning instructions, shared rules-v13 and Consolidation-v28 remain unchanged.
+This uses a generic case to demonstrate the actual error, with no word limit,
+punctuation rule or exact desired stock title supplied.
+
+The [regression specification](hierarchy-bootstrap-v155-regression-v1.spec.json)
+retains24 exact inputs, three fresh draws and V154 baselines. The same gate
+requires all nine agreed-case responses, all three stock-plan titles and no clear
+control regression. The correctly labeled [qualification protocol](hierarchy-bootstrap-v155-heldout-v1.json)
+and [specification](hierarchy-bootstrap-v155-heldout-v1.spec.json) retain the fixed
+80-post panel and rubric; V150 through V154 qualification have zero attempts and
+outputs. Constructors stay V133 and source remains experimental. Results and
+native accounting will be appended after testing.
+
 ## Meaning-derived titles: Bootstrap-v130
 
 The user requested a concise title based solely on the explicit meaning.
