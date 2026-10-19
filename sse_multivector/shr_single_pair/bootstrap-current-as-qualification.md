@@ -1191,6 +1191,46 @@ will remain separately attributable. Constructors stay V133; this publishes
 experimental source and does not build or adopt a hierarchy. Results and native
 accounting will be appended after the test.
 
+V150's development result failed the gate: 72/72 responses were mechanically
+valid, but root review found 62 accepts, five clear failures and five
+uncertainties. Only five of nine agreed-case responses passed: furniture was
+fixed in all three draws, while two VPN meanings retained illustrative venues
+and two video titles changed the video's referent into its promotion. One AI
+control meaning listed illustrative capabilities. Two country definitions and
+three borderline titles remained uncertain. The review journal preserves these
+judgments; this development review is not independent qualification.
+
+Native [accounting](hierarchy-bootstrap-v150-fix-usage-v1.json) records 78 attempts:
+72 responses, three warmups and three recovered failed attempts. Three attempts
+lack usage, so $0.5839596 is only the known API-equivalent subtotal, not complete
+cost or subscription cash spend. The prepared V150 qualification has zero
+attempts and zero outputs; all 480 responses remain unrun because the gate failed.
+
+### Defining lists and title referents: Bootstrap-v151
+
+Experimental [Bootstrap-v151](Hierarchy-bootstrap-v151.md) removes the remaining
+instruction to preserve every explicitly named alternative. Resolution now first
+distinguishes defining alternatives or jointly required parts from illustrations,
+then preserves every defining part and restriction. Writing uses the general
+membership condition rather than copying illustrative members from resolutions.
+The title instruction names what the meaning defines and keeps that referent;
+a brief positive example names an advertised documentary as a documentary.
+Plans and preferences still use their stated goal, leaving steps and exact scope
+in meaning. Full examples, shared rules-v13 and Consolidation-v28 are unchanged.
+No title length target, punctuation constraint or production API is added.
+
+The [regression specification](hierarchy-bootstrap-v151-regression-v1.spec.json)
+uses the same24 inputs and three fresh draws, retaining V150 answers as the
+baseline. All nine agreed-case responses must pass with no clear control
+regression before qualification can run. The [new frozen protocol](hierarchy-bootstrap-v151-heldout-v1.json)
+and [specification](hierarchy-bootstrap-v151-heldout-v1.spec.json) reuse the exact
+80-post panel already selected for V150: there are no qualification outputs to
+inspect or tune against, and no new favorable selection is made. Its original
+selectors, exclusion manifest and rubric remain frozen. The inherited assignment
+sentence names V150; reviewers are instructed to receive no expected labels or
+desired titles for V151 either. Native preparation and future receipts bind the
+new prompt hash. Constructors remain V133; results will be appended after testing.
+
 ## Meaning-derived titles: Bootstrap-v130
 
 The user requested a concise title based solely on the explicit meaning.
