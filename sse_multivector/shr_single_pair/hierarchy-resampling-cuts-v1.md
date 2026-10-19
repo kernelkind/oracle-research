@@ -2554,3 +2554,71 @@ The next suggested test is the unchanged method on the other saved hash-selected
 and the size/coverage results generalize beyond the corpus that supplied these
 post-selected witnesses, while exposing further joins between different meanings.
 That test has not been started or authorized by this record.
+
+### Manual unchanged attachment test on the second thousand-note corpus
+
+The user approved manually testing the unchanged method on HR37's saved corpus,
+without HiGen integration. Use existing numerical CLIs only: ASv6.100 and
+Bootstrap-v133 meanings, saved title vectors, equal-weight title/meaning cosine,
+native HDBSCAN minimum cluster size 2 / minimum samples 3 / EOM, six sections,
+the same eight seeds 20261018–20261025 and 50 iterations. No new source code,
+encoding, model calls, training or parameter changes occur. This is not a new
+official HR experiment. Full raw-corpus IDs confirm no overlap with HR36.
+
+HR37 provides 5,189 usable entries from 912 of its 1,000 hash-selected notes;
+88 lack usable saved inputs. Matched HDBSCAN produces 436 groups and 2,378
+independent entries. Compare three existing stages with identical entry rows,
+weights and per-seed initial centers. Notes remain fully eligible in every arm.
+
+| Stage | Indivisible units | Largest unit, entries | Split-title families | Entries in that screen |
+|---|---:|---:|---:|---:|
+| Combined vectors and existing fine groups | 2,814 | 91 | 24 | 115 |
+| Add reciprocal nearest matches | 2,346 | 92 | 8 | 70 |
+| Add one frozen attachment pass | 1,154 | 104 | 1 | 4 |
+
+There are 1,154 reciprocal pairs and 1,192 attachments into 764 matched units.
+No matched units merge indirectly. The final six section note counts are
+383, 553, 325, 306, 414 and 475. Their union is 912/1,000 (91.2%), unchanged by
+construction; every section exceeds 100 notes. These note sets overlap and
+should not be summed. The selected final seed is 20261019. All eight final
+starts converge. One unselected reciprocal-only start, seed 20261023, reaches
+50 iterations without convergence; its limit and result are preserved.
+
+The only residual split title is Trends: three definitions describe general
+directions or patterns of change over time, while another describes topics
+gaining audience attention. Their separation is plausibly a meaning distinction,
+not an established error. Manual checks also find Bill Gates aliases, organized
+Events, Knowledge and both logical communication Rooms definitions together.
+Different roles under Peace—emotional tranquility and nonviolent relations—now
+share a root. Broad root membership does not establish equivalent meanings.
+
+Differently named topics still expose shared or related information across
+roots. Suggestions in section 5 and Recommendations in section 6 overlap;
+Central banks in section 1 and US Federal Reserve in section 3 form a broader/
+narrower relationship. The method does not enforce semantic parent-child
+constraints or guarantee complete root distinctness. All 15 pairs of sections
+retain ranked cross-section vector matches for manual inspection. This is a
+cross-corpus numerical improvement with bounded agent checks, not an exhaustive
+semantic accuracy measurement. No canonical titles or meanings were generated.
+
+Native grouping takes 12.84 seconds. The three observed panels run concurrently
+on CPU sets 0–7, 8–15 and 16–23, leaving four cores free; their eight six-section
+fits sum to 11.31, 11.21 and 12.15 seconds per arm respectively, excluding
+preparation and search. These concurrent timings are not a speedup benchmark.
+Independent nearest-neighbor reconstruction, one-pass eligibility, sparse group
+components, original group preservation, centers, costs, note counts, frozen
+hashes and byte-preserving resume all validate. No behavior changed, so no new
+implementation tests or additional count-reference screen were introduced.
+
+Ignored evidence is on the external drive, linked from
+`oracle-mvp-second-corpus-attachments-manual-v1/target/second-corpus-attachments-manual-v1/`:
+the frozen grouping and section specs, actual native groups, all three panels,
+runtime, `cross-section-matches.json` and complete `comparison-and-verification.json`.
+Executed source checkpoint is `f23e861c`; the task worktree remains for frozen
+code and artifact paths. No HiGen policy, hierarchy or review UI is changed.
+
+A useful next manual component test is one child level beneath the largest
+resulting root. Root breadth is permitted because deeper levels should narrow
+the choices; that test would check whether the same method actually provides
+useful narrowing before a hierarchy-construction integration proposal. This
+further test has not been started or authorized by this record.
