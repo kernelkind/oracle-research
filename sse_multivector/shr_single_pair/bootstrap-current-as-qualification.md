@@ -1220,7 +1220,7 @@ in meaning. Full examples, shared rules-v13 and Consolidation-v28 are unchanged.
 No title length target, punctuation constraint or production API is added.
 
 The [regression specification](hierarchy-bootstrap-v151-regression-v1.spec.json)
-uses the same24 inputs and three fresh draws, retaining V150 answers as the
+uses the same 24 inputs and three fresh draws, retaining V150 answers as the
 baseline. All nine agreed-case responses must pass with no clear control
 regression before qualification can run. The [new frozen protocol](hierarchy-bootstrap-v151-heldout-v1.json)
 and [specification](hierarchy-bootstrap-v151-heldout-v1.spec.json) reuse the exact
@@ -1233,7 +1233,7 @@ new prompt hash. Constructors remain V133; results will be appended after testin
 
 V151 produces 72/72 mechanically valid responses and fixes all nine agreed-case
 responses. Root review records 68 accepts, two title failures and two title
-uncertainties. In draws2 and3 the stock plan is titled “Chicken stock preservation
+uncertainties. In draws 2 and 3 the stock plan is titled “Chicken stock preservation
 and pantry-storage plan,” still enumerating storage alongside the overall
 preservation goal. The user explicitly rejected this pattern earlier; it is a
 clear failure under the existing title criterion, so qualification remains unrun.
@@ -1241,9 +1241,9 @@ Earlier versions' borderline stock-title judgments are preserved rather than
 silently relabeled. The two writing-tool titles remain borderline restatements.
 All defining alternatives, seven alert tags, UK parts, dairy numeric boundaries
 and stock batch/process/storage conditions are retained. Native
-[accounting](hierarchy-bootstrap-v151-fix-usage-v1.json) records75 attempts including
+[accounting](hierarchy-bootstrap-v151-fix-usage-v1.json) records 75 attempts including
 three warmups, no failures/retries/reuses, complete usage and $0.52963 API-equivalent
-cost. The480 qualification responses still have zero attempts and outputs.
+cost. The 480 qualification responses still have zero attempts and outputs.
 
 ### Recognizable titles without complete-definition distinctions: Bootstrap-v152
 
@@ -1256,23 +1256,23 @@ from finalized meanings and allows familiar broader names. All examples, meaning
 rules, shared rules-v13 and Consolidation-v28 remain unchanged.
 
 The [regression specification](hierarchy-bootstrap-v152-regression-v1.spec.json)
-uses the same24 inputs, three fresh draws and saved V151 answers as baselines.
+uses the same 24 inputs, three fresh draws and saved V151 answers as baselines.
 Before the [frozen qualification protocol](hierarchy-bootstrap-v152-heldout-v1.json)
 can run, all nine agreed-case responses and all three stock-plan titles must pass,
 with no clear control regression. The [qualification specification](hierarchy-bootstrap-v152-heldout-v1.spec.json)
-retains the exact same80-post panel, still unused in development and with no model
+retains the exact same 80-post panel, still unused in development and with no model
 outputs from V150 or V151. No selection, rubric or desired titles change; the new
 protocol corrects the inherited version label in reviewer assignment. Constructors
 stay V133. Results and native accounting will be appended after testing.
 
-V152 again fixes all nine agreed-case responses, with72/72 mechanically valid.
-Root review finds68 accepts, one title failure and three uncertainties. Two stock
-plans use “Chicken stock preservation plan”; draw3 still joins preservation and
+V152 again fixes all nine agreed-case responses, with 72/72 mechanically valid.
+Root review finds 68 accepts, one title failure and three uncertainties. Two stock
+plans use “Chicken stock preservation plan”; draw 3 still joins preservation and
 storage in its title, failing the explicit stock-title gate. Country sense is
 uncertain twice and a writing-tools title once. Defining meaning conditions remain
 intact; the People qualification “considered individually or collectively” is not
 an illustrative example and passes. Native [accounting](hierarchy-bootstrap-v152-fix-usage-v1.json)
-records75 attempts including three warmups, no failures/retries/reuses, complete
+records 75 attempts including three warmups, no failures/retries/reuses, complete
 usage and $0.581502 API-equivalent cost. Qualification still has zero attempts and
 outputs; no heldout result has informed these revisions.
 
@@ -1288,21 +1288,21 @@ examples, all meaning instructions, shared rules-v13 and Consolidation-v28 are
 unchanged. There is no word limit or punctuation optimization.
 
 The [regression specification](hierarchy-bootstrap-v153-regression-v1.spec.json)
-retains24 inputs and three fresh draws with V152 baselines. The same gate requires
+retains 24 inputs and three fresh draws with V152 baselines. The same gate requires
 all nine agreed-case responses, all three stock-plan titles and no clear control
 regression. The [qualification protocol](hierarchy-bootstrap-v153-heldout-v1.json)
 and [specification](hierarchy-bootstrap-v153-heldout-v1.spec.json) retain the exact
-still-unrun80-post panel and fixed rubric. V150, V151 and V152 qualification have
+still-unrun 80-post panel and fixed rubric. V150, V151 and V152 qualification have
 no attempts or outputs. Constructors stay V133; source publication remains
 experimental. Results and native accounting will be appended after testing.
 
-V153 remains inconsistent:72/72 mechanically valid responses receive66 root
+V153 remains inconsistent: 72/72 mechanically valid responses receive 66 root
 accepts, two rejections and four uncertainties. One stock title still joins
 preservation and pantry storage; one AI meaning enumerates illustrative abilities.
 A furniture meaning's support/posture/comfort list is uncertain as possible
 illustration of bodily needs; one country meaning and two writing-tools titles
 are also uncertain. No qualification runs start. Native
-[accounting](hierarchy-bootstrap-v153-fix-usage-v1.json) records75 attempts including
+[accounting](hierarchy-bootstrap-v153-fix-usage-v1.json) records 75 attempts including
 three warmups, no failures/retries/reuses, complete usage and $0.521432 API-equivalent
 cost. Reviewers also catch a pre-call metadata typo: V153v1's purpose still names
 v152, although its actual prompt hash and assignment identify V153. Those unrun
@@ -1321,21 +1321,21 @@ inputs, exact expected stock wording, a word limit or punctuation rules. Full
 examples, shared rules-v13 and Consolidation-v28 remain unchanged.
 
 The [regression specification](hierarchy-bootstrap-v154-regression-v1.spec.json)
-retains24 inputs, three fresh draws and saved V153 baselines. The same gate
+retains 24 inputs, three fresh draws and saved V153 baselines. The same gate
 requires all nine agreed-case responses, all three stock-plan titles and no clear
 control regression. The correctly labeled [qualification protocol](hierarchy-bootstrap-v154-heldout-v1.json)
 and [specification](hierarchy-bootstrap-v154-heldout-v1.spec.json) retain the
-unchanged80-post panel and rubric. V150 through V153 qualification have zero
+unchanged 80-post panel and rubric. V150 through V153 qualification have zero
 attempts and outputs; no heldout result has informed these revisions. Constructors
 stay V133 and source remains experimental. Results will be appended after testing.
 
-V154 fixes all nine agreed-case responses and has72/72 mechanically valid
-responses. Root review records67 accepts, one stock-title rejection and four
+V154 fixes all nine agreed-case responses and has 72/72 mechanically valid
+responses. Root review records 67 accepts, one stock-title rejection and four
 uncertainties (three writing-tools titles and one country meaning). AI and People
 meanings omit illustrations in every draw; defining lists and numeric boundaries
 remain intact. One stock title still appends pantry storage to preservation, so
 the stock gate fails and qualification remains unrun. Native
-[accounting](hierarchy-bootstrap-v154-fix-usage-v1.json) records75 attempts including
+[accounting](hierarchy-bootstrap-v154-fix-usage-v1.json) records 75 attempts including
 three warmups, no failures/retries/reuses, complete usage and $0.5460408 API-equivalent
 cost. The counterexample demonstrated only an operation list, while the actual
 remaining failure names the goal and then appends an operation.
@@ -1351,7 +1351,7 @@ This uses a generic case to demonstrate the actual error, with no word limit,
 punctuation rule or exact desired stock title supplied.
 
 The [regression specification](hierarchy-bootstrap-v155-regression-v1.spec.json)
-retains24 exact inputs, three fresh draws and V154 baselines. The same gate
+retains 24 exact inputs, three fresh draws and V154 baselines. The same gate
 requires all nine agreed-case responses, all three stock-plan titles and no clear
 control regression. The correctly labeled [qualification protocol](hierarchy-bootstrap-v155-heldout-v1.json)
 and [specification](hierarchy-bootstrap-v155-heldout-v1.spec.json) retain the fixed
@@ -1362,11 +1362,11 @@ native accounting will be appended after testing.
 V155 fixes all nine agreed-case responses and all three stock titles use “Chicken
 stock preservation plan.” However, one AI meaning still lists illustrative
 abilities, a clear control regression relative to V154; qualification stays unrun.
-Root review of72 mechanically valid responses records68 accepts, one rejection
+Root review of 72 mechanically valid responses records 68 accepts, one rejection
 and three uncertainties (one country meaning, one writing-tools title and one
 meaning explaining a rejected coadministration restriction). The latter is a
 qualification, not an example. Native
-[accounting](hierarchy-bootstrap-v155-fix-usage-v1.json) records75 attempts including
+[accounting](hierarchy-bootstrap-v155-fix-usage-v1.json) records 75 attempts including
 three warmups, no failures/retries/reuses, complete usage and $0.5407224 API-equivalent
 cost. No qualification outputs have been generated.
 
@@ -1380,7 +1380,7 @@ title rule/counterexample are unchanged. Consolidation-v28 remains the paired
 experimental companion.
 
 The [regression specification](hierarchy-bootstrap-v156-regression-v1.spec.json)
-retains24 exact inputs, three fresh draws and V155 baselines. The same gate
+retains 24 exact inputs, three fresh draws and V155 baselines. The same gate
 requires all nine agreed-case responses, all three stock-plan titles and no clear
 control regression. The correctly labeled [qualification protocol](hierarchy-bootstrap-v156-heldout-v1.json)
 and [specification](hierarchy-bootstrap-v156-heldout-v1.spec.json) retain the fixed
@@ -1388,8 +1388,8 @@ and [specification](hierarchy-bootstrap-v156-heldout-v1.spec.json) retain the fi
 attempts and outputs; no heldout result has informed these revisions. Constructors
 stay V133 and source remains experimental. Results will be appended after testing.
 
-V156's reordered instructions fail the gate. All72 responses are mechanically
-valid, but root review records64 accepts, two rejections and six uncertainties.
+V156's reordered instructions fail the gate. All 72 responses are mechanically
+valid, but root review records 64 accepts, two rejections and six uncertainties.
 One title changes a video into its promotion; one meaning changes the selected
 VPN-settings activity into a recommendation. Seven of nine agreed-case responses
 pass. All three stock titles name preservation and all AI definitions omit
@@ -1398,7 +1398,7 @@ uncertainties concern two writing-tools titles, two country senses, one possible
 furniture illustration and one explanation of a rejected prescription restriction.
 A read-only output-contract audit finds no competing semantic instruction in the
 schema or transport. Native [accounting](hierarchy-bootstrap-v156-fix-usage-v1.json)
-records75 attempts including three warmups, no failures/retries/reuses, complete
+records 75 attempts including three warmups, no failures/retries/reuses, complete
 usage and $0.6136752 API-equivalent cost. Qualification remains entirely unrun.
 
 ### Contrast defining a field with illustrating it: Bootstrap-v157
@@ -1412,7 +1412,7 @@ all full examples, title instructions and title examples are unchanged from V155
 Shared rules-v13 and Consolidation-v28 remain unchanged.
 
 The [regression specification](hierarchy-bootstrap-v157-regression-v1.spec.json)
-retains24 exact inputs, three fresh draws and V156 saved baselines. The unchanged
+retains 24 exact inputs, three fresh draws and V156 saved baselines. The unchanged
 gate requires all nine agreed-case responses, all three stock-plan titles and no
 clear control regression. The [qualification protocol](hierarchy-bootstrap-v157-heldout-v1.json)
 and [specification](hierarchy-bootstrap-v157-heldout-v1.spec.json) retain the fixed
@@ -1420,13 +1420,13 @@ and [specification](hierarchy-bootstrap-v157-heldout-v1.spec.json) retain the fi
 attempts and outputs; no heldout result has informed these revisions. Constructors
 stay V133 and source remains experimental. Results will be appended after testing.
 
-V157 produces72/72 mechanically valid responses. Root review records70 accepts,
+V157 produces 72/72 mechanically valid responses. Root review records 70 accepts,
 one title rejection and one uncertain country meaning. Eight of nine agreed-case
 responses pass: one title still turns the linked video into its promotion.
 All three stock titles name preservation, all AI definitions omit illustrative
 abilities, and every People definition states human beings directly. Required
 alternatives, joint parts and numeric limits remain intact. Native
-[accounting](hierarchy-bootstrap-v157-fix-usage-v1.json) records75 attempts including
+[accounting](hierarchy-bootstrap-v157-fix-usage-v1.json) records 75 attempts including
 three warmups, no failures/retries/reuses, complete usage and $0.5550492 API-equivalent
 cost. Qualification remains entirely unrun.
 
@@ -1441,13 +1441,54 @@ remaining referent error using a generic topic, without supplying the expected
 title for the tested video or imposing word/punctuation constraints.
 
 The [regression specification](hierarchy-bootstrap-v158-regression-v1.spec.json)
-retains24 exact inputs, three fresh draws and V157 saved baselines. The unchanged
+retains 24 exact inputs, three fresh draws and V157 saved baselines. The unchanged
 gate requires all nine agreed-case responses, all three stock-plan titles and no
 clear control regression. The [qualification protocol](hierarchy-bootstrap-v158-heldout-v1.json)
 and [specification](hierarchy-bootstrap-v158-heldout-v1.spec.json) retain the fixed
 80-post panel, rubric and assignments. V150 through V157 qualification have zero
 attempts and outputs; no heldout result has informed these revisions. Constructors
 stay V133 and source remains experimental. Results will be appended after testing.
+
+### V158 development gate and frozen qualification generation
+
+V158 passes the declared development gate: all nine agreed-case responses and
+all three stock-plan titles pass root review, with no clear control failure.
+The 72 mechanically valid responses receive 67 accepts and five uncertainties.
+Title verdicts are 67 accepts, two uncertainties and three justified null/N/A
+pairs; meanings are 69 accepts and three uncertainties. The uncertain controls are
+two writing-tools titles repeating their alternatives, two country definitions
+with unsettled scope, and one pen definition possibly admitting ink-writing
+brushes. They remain explicitly uncertain rather than being counted as successes.
+There are no diagnostic errors or answer reuses.
+
+Every stock-plan title is “Chicken stock preservation plan.” Meanings retain the
+particular batch, expected yield of approximately 25 quarts, pressure-canning
+and later pantry storage. Every People definition directly states human beings. Furniture
+and VPN meanings omit illustrative member lists while preserving their defining
+qualifications, and video titles keep the video as their referent. This is a
+small development panel tuned during iteration, not independent qualification.
+
+The unchanged prompt then generates 480 new qualification responses: 80 frozen
+posts and 80 recorded authors, paired root/specific inputs, three draws each.
+All 480 responses validate, with no diagnostic errors, reuses or terminal failures.
+The panel was first selected before V150 inference and remained unrun throughout
+V150–V157 development. No new favorable selection or qualification rerun occurred.
+Cross-corpus exclusions remain those frozen at preselection: 133 earlier posts and
+130 authors, resolved across all three referenced corpora with no unattributed
+prior note. Independent AI semantic review is now in progress; structural validity
+is not a semantic acceptance verdict. The same fixed rubric and assignments apply,
+and reviewers receive no desired qualification titles or development judgments.
+
+Native [accounting](hierarchy-bootstrap-v158-fix-usage-v1.json) is complete:
+75 regression attempts cost $0.5674588 API-equivalent; 483 qualification attempts
+cost $3.3920368. Combined 558 attempts include six warmups, with no failures,
+retries, missing usage or answer reuses; total API-equivalent cost is $3.9594956.
+These are catalog estimates, not subscription cash charges. Native profiles,
+reviews and receipts remain ignored under `target/bootstrap-v149-fix-v1/`.
+The prompt SHA256 is
+`97c80312e8723ba8e541ccc709567b48b28c903d3338d56ea2cd2c873e82934d`.
+Constructors stay V133; neither source publication nor completed generation
+adopts V158 or qualifies Consolidation-v28. Semantic results will follow.
 
 ## Meaning-derived titles: Bootstrap-v130
 

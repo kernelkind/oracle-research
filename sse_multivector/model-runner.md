@@ -175,7 +175,22 @@ an older control from a second corpus: only 79 of the 80 authors were new to all
 prior development inputs. Frozen inputs and verdicts remain exact; the
 qualification report records this correction. Experimental V149 fixes eight of
 nine agreed-case regression draws, with one VPN meaning still listing example
-places. Its regression gate fails; untouched qualification has not started.
+places. V149's regression gate fails. V150–V157 development findings and frozen
+prompts remain in the same report; none of these versions has qualification
+outputs.
+
+Experimental [Bootstrap-v158](shr_single_pair/Hierarchy-bootstrap-v158.md)
+uses matched generic contrasts for field definitions, defining qualifications,
+plan goals and titles that preserve their referent. Shared rules-v13 distinguish
+illustrations from defining alternatives and joint parts; Consolidation-v28 is
+its experimental companion. The
+[development gate and qualification generation](shr_single_pair/bootstrap-current-as-qualification.md#v158-development-gate-and-frozen-qualification-generation)
+record 67 root accepts and five uncertainties across 72 valid development responses.
+All nine agreed-case responses and all three stock-plan titles pass, with no clear
+control failure. The frozen qualification then yields 480 valid new responses
+from 80 posts and 80 authors with no reuses or diagnostic errors. Independent AI
+semantic review is in progress; validity does not establish semantic correctness
+or population reliability. V158 remains experimental and constructors stay V133.
 
 Experimental [Bootstrap-v133](shr_single_pair/Hierarchy-bootstrap-v133.md)
 returns a concise, natural `title` derived solely from its finalized `meaning`.
