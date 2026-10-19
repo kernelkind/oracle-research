@@ -1447,7 +1447,7 @@ clear control regression. The [qualification protocol](hierarchy-bootstrap-v158-
 and [specification](hierarchy-bootstrap-v158-heldout-v1.spec.json) retain the fixed
 80-post panel, rubric and assignments. V150 through V157 qualification have zero
 attempts and outputs; no heldout result has informed these revisions. Constructors
-stay V133 and source remains experimental. Results will be appended after testing.
+stay V133 and source remains experimental. Completed results follow below.
 
 ### V158 development gate and frozen qualification generation
 
@@ -1475,9 +1475,10 @@ The panel was first selected before V150 inference and remained unrun throughout
 V150–V157 development. No new favorable selection or qualification rerun occurred.
 Cross-corpus exclusions remain those frozen at preselection: 133 earlier posts and
 130 authors, resolved across all three referenced corpora with no unattributed
-prior note. Independent AI semantic review is now in progress; structural validity
-is not a semantic acceptance verdict. The same fixed rubric and assignments apply,
-and reviewers receive no desired qualification titles or development judgments.
+prior note. Independent AI semantic review is complete, as recorded below;
+structural validity is not a semantic acceptance verdict. The same fixed rubric
+and assignments apply, and reviewers receive no desired qualification titles or
+development judgments.
 
 Native [accounting](hierarchy-bootstrap-v158-fix-usage-v1.json) is complete:
 75 regression attempts cost $0.5674588 API-equivalent; 483 qualification attempts
@@ -1488,7 +1489,122 @@ reviews and receipts remain ignored under `target/bootstrap-v149-fix-v1/`.
 The prompt SHA256 is
 `97c80312e8723ba8e541ccc709567b48b28c903d3338d56ea2cd2c873e82934d`.
 Constructors stay V133; neither source publication nor completed generation
-adopts V158 or qualifies Consolidation-v28. Semantic results will follow.
+adopts V158 or qualifies Consolidation-v28.
+
+### Frozen independent qualification of Bootstrap-v158
+
+The prompt, selectors, rubric and model settings remained unchanged throughout
+qualification. The 160 root/specific inputs from 80 posts and 80 distinct authors
+each received three fresh responses. Reviewers A and B independently assessed
+their disjoint assigned halves, 240 responses each, against the complete supplied
+source and finalized meaning/title. Both retained experience of the earlier V147
+review; version identity was visible. This is independent assessment without
+desired answers, not full blinding, human calibration or a measurement of
+agreement between reviewers on the same outputs.
+
+Initial independent review and subsequent source-based adjudication are distinct:
+
+| Dimension | Independent accept | Reject | Uncertain | N/A | Adjudicated accept | Reject | Uncertain | N/A |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Overall | 467 | 3 | 10 | 0 | 470 | 6 | 4 | 0 |
+| Title | 473 | 0 | 5 | 2 | 473 | 3 | 2 | 2 |
+| Meaning | 472 | 3 | 5 | 0 | 475 | 3 | 2 | 0 |
+
+Reviewer A recorded 238 accepts and two uncertainties; B recorded 229 accepts,
+three rejects and eight uncertainties. The main agent checked every rejected or
+uncertain output and both null pairs, appending 15 native adjudications. Three
+guide meanings changed from uncertain to accept, and three reading-plan titles
+changed from uncertain to reject. All original records remain intact. These are
+agent judgments, not new human labels or approval.
+
+The two repeated failures concern two posts, not six independent failure samples:
+
+- **058-specific, all three draws:** the meaning defines psychological progress
+  concerning addiction behaviour and other toxic cycles, then retains the
+  author's particular BPD–NPD relationship dynamics and their personal label.
+  The source introduces these with “like.” Every response recognizes their
+  illustrative status in its resolutions but still copies the example into
+  `meaning`. The jointly required addiction/toxic-cycle scope must remain;
+  this particular member is an illustration. Independent rejection is upheld.
+- **074-specific, all three draws:** the title is
+  **Planned reading of “These Hardcore Endurance Challenges Are as Beautiful as They Are Brutal”**.
+  Its meaning is a plan to read that named article. Independent review left the
+  title uncertain because the headline identifies a real article. Adjudication
+  rejects it: repeating the reading intention and complete descriptive headline
+  substantially restates the meaning instead of giving the goal a brief browsing
+  name. The frozen rubric already allows broader recognizable names for this
+  same topic. This judgment uses neither a word-count cutoff nor a prohibition
+  on real compound names; the original uncertainty remains visible.
+
+The guide disagreement goes the other way. **014-specific**, all draws, defines
+the particular Almaty Ski Resort Guide, whose displayed title and selected
+subject explicitly specify coverage of Shymbulak, Oi-Qaragai, Ak-Bulak and more.
+Those names are required contents of this document, rather than illustrative
+members of the kind ski resort guides. Adjudication accepts their preservation
+as joint parts; nonexhaustive coverage does not itself make them examples.
+No linked-page contents are inferred. The independent uncertainty is preserved.
+
+Four output uncertainties remain across three posts. **045-specific**, draws one
+and two, uses “deferral-based” in the China Vanke default-avoidance title; whether
+that brief mechanism modifier is needed to recognize the achieved event remains
+unsettled. **030-specific**, draw two, paraphrases an undefined Data-god learning
+component without establishing what paper denotes. Draws one and three instead
+return justified null meaning/title pairs because defining learning and sizing
+ambiguities remain unresolved. Its four coequal components do not fail merely
+for needing a compound title. **064-root**, draw one, defines Food as human
+nourishment; whether the lunch context warrants that scope restriction remains
+uncertain. A qualification is not treated as an example simply because it limits
+membership.
+
+Cohort totals retain the predeclared sampling distinction:
+
+| Cohort | Posts | Outputs | Independent accept / reject / uncertain | Adjudicated accept / reject / uncertain |
+| --- | ---: | ---: | --- | --- |
+| Seeded | 60 | 360 | 351 / 3 / 6 | 354 / 3 / 3 |
+| Challenge | 20 | 120 | 116 / 0 / 4 | 116 / 3 / 1 |
+
+Each challenge family contributes five posts and 30 outputs. Final overall
+verdicts are food 29 accepts and one uncertainty; people 30 accepts;
+plans/preferences 27 accepts and three rejects; relationships/actions 30 accepts.
+At root level, both independent and final review record 239 accepts and one
+uncertainty from 240 outputs, with all root titles accepted. At specific level,
+independent review records 228 accepts, three rejects and nine uncertainties;
+final review records 231 accepts, six rejects and three uncertainties. Specific
+title verdicts are 233 accepts, three rejects, two uncertainties and two N/A;
+specific meanings are 236 accepts, three rejects and one uncertainty.
+
+Before adjudication, one post has any clear rejection, five other posts have an
+uncertainty, and 74 posts have only accepts across all six responses. After
+adjudication, two posts have any clear rejection, three other posts have an
+uncertainty, and 75 posts have only accepts. The seeded cohort has one failing
+post and two uncertain posts after adjudication; the challenge cohort has one
+failing post and one uncertain post. Title/meaning/overall verdict triples are
+consistent across all three draws for 157 of 160 inputs in both reviews. The
+three varying inputs are 030-specific, 045-specific and 064-root; consistency
+here describes verdicts, not identical output wording.
+
+Native `show --json` snapshots preserve pre-review, independent and adjudicated
+states as `v158-qualification{1,2,3}-show.json`,
+`v158-qualification{1,2,3}-independent-reviewed.json` and
+`v158-qualification{1,2,3}-adjudicated.json` under the ignored task directory
+`target/bootstrap-v149-fix-v1/`. Each output has exactly one assigned independent
+review; applicable adjudications append source-bound history. Counting selects
+the applicable adjudication when present, rather than counting historical rows.
+All inputs and outputs remain byte-identical across these review snapshots.
+The selector SHA256 remains
+`731a19e00e8d9da591baa30b0b268249a8f794c9106c240df72168d48595a554`.
+
+V158 therefore remains experimental and unqualified. The development fixes do
+not eliminate illustrative members or definition-like titles on untouched
+inputs. No prompt retuning, selective rerun or model change follows this frozen
+qualification. This panel is limited to eligible notes in one saved corpus and
+one generation model/reasoning setting; challenge cases are deliberately selected
+for risk. Repeated draws and paired entries share posts. AI judgments, including
+the disclosed disagreements, do not establish population reliability. V147 and
+V158 use different panels, so their totals do not establish a paired improvement.
+End-to-end hierarchy construction and Consolidation-v28 semantics remain untested;
+constructor pins stay V133. The task worktree and frozen runner remain necessary
+for absolute native source, artifact and review bindings.
 
 ## Meaning-derived titles: Bootstrap-v130
 

@@ -188,9 +188,15 @@ its experimental companion. The
 record 67 root accepts and five uncertainties across 72 valid development responses.
 All nine agreed-case responses and all three stock-plan titles pass, with no clear
 control failure. The frozen qualification then yields 480 valid new responses
-from 80 posts and 80 authors with no reuses or diagnostic errors. Independent AI
-semantic review is in progress; validity does not establish semantic correctness
-or population reliability. V158 remains experimental and constructors stay V133.
+from 80 posts and 80 authors with no reuses or diagnostic errors. The completed
+[semantic review](shr_single_pair/bootstrap-current-as-qualification.md#frozen-independent-qualification-of-bootstrap-v158)
+records 467 independent AI accepts, three rejects and ten uncertainties.
+Source-based adjudication leaves 470 accepts, six rejects and four uncertainties.
+One specific meaning retains an illustrative relationship example in all three
+draws; one reading-plan title copies the complete descriptive article headline
+in all three draws. Original judgments and disagreements remain preserved.
+V158 remains experimental and unqualified; constructors stay V133. These results
+do not establish population reliability or qualify Consolidation-v28.
 
 Experimental [Bootstrap-v133](shr_single_pair/Hierarchy-bootstrap-v133.md)
 returns a concise, natural `title` derived solely from its finalized `meaning`.
