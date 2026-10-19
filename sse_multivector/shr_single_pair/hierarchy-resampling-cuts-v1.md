@@ -1847,6 +1847,64 @@ The task worktree remains for these frozen source/artifact paths. No model,
 training, new encoding, consolidation, UI update or production policy change
 occurred.
 
+### Manual follow-up: unassigned meaning entries are inconclusive
+
+The user authorized the proposed follow-up on the same saved hundred-note
+results. Freeze the following interpretation before calculating its output:
+within each title group, count the distinct selected meaning groups represented.
+If there are zero or one, preserve the entire title group. If there are two
+or more, retain their intersections of at least two entries; leave singleton
+intersections and meaning-unassigned entries independent. In that second case,
+the absence of an assignment cannot justify attaching an entry to either group
+or bridging them together. Entries outside all title groups remain independent.
+This rule tests numerical grouping evidence, not semantic truth.
+
+| Rule on the same 728 entries / 100 notes | Groups | Grouped entries | Distinct notes in groups | Independent entries |
+|---|---:|---:|---:|---:|
+| Original title partition | 62 | 367 | 94 | 361 |
+| Strict agreement | 49 | 186 | 80 | 542 |
+| Unassigned meaning is inconclusive | 71 | 305 | 92 | 423 |
+
+The follow-up preserves 51 title groups and splits 11. Twelve preserved groups
+have no meaning-group assignments; 39 have exactly one represented meaning
+group. It restores 119 entries to groups compared with strict agreement, adding
+12 notes to grouped membership. All 728 entries and 100 notes remain eligible
+under every rule; these are fine-group statistics, not finished-root retention.
+
+Manual controls expose the trade-off:
+
+- All six Breakfast definitions and all four Recipe/Recipe creation entries
+  stay together, fixing their strict-agreement fragmentation. The five-entry
+  Eggs group also stays together, including culinary Eggs, yolks and breakage.
+- Matcha/Melangers/Myoglobin also stays together: none has a selected meaning
+  group, so the rule has no evidence with which to separate them. It also
+  preserves the original Tomatoes/Tallow group, where Tallow is unassigned.
+- Coffee remains split into seven and four entries, with three Coffee
+  definitions and Coffee preparation independent. Food still yields groups
+  of four, two and two with 31 independent entries. Its original title group
+  intersects six meaning groups, three of those at only one entry each.
+- Nostr retains the previous fifteen-entry protocol/network group and the
+  two-entry community group, with the referenced person and zaps independent.
+
+Conclusion: distinguishing missing assignment from a competing selected group
+repairs some useful groups, but it also restores clear mixed-topic groups and
+does not repair the major Coffee/Food fragmentation. This is not sufficient
+evidence to adopt the rule. Fewer ungrouped entries alone is not improved
+semantic quality. The results suggest testing title and meaning similarities
+together before HDBSCAN, rather than interpreting its two separate hard
+partitions as semantic agreement or disagreement. That is a proposed next
+test, not a tested method or production decision.
+
+No source capability, parameter, vector or native result changed. The frozen
+manual protocol, source hashes, complete cross-tab and compact group listing
+are saved under the existing ignored evidence path in
+`unassigned-inconclusive-v1/{protocol.json,audit.json,groups.md}`. A second
+calculation reconstructs every group directly from set intersections, verifies
+the complete disjoint input union, and confirms every strict-agreement block
+remains intact within a resulting group. All checks pass. Source hashes remain
+unchanged. No new encoding, model call, training, hierarchy, UI or HiGen policy
+change occurred. The existing task worktree remains for frozen evidence paths.
+
 Reusable numerical CLI: `sse_multivector/cluster_resampling_probe.py`; tests:
 `sse_multivector/test_cluster_resampling_probe.py`. Input NPZ contains unit
 `vectors`, aligned compact zero-based original `groups`, and aligned `notes`.
