@@ -2494,3 +2494,63 @@ an existing group during attachment, unchanged reciprocal-only behavior,
 singleton inputs, invalid flags, actual section fits and immutable saved resume.
 All 65 current checks pass. This remains a component experiment, not a HiGen
 change or evidence that a nearest match establishes semantic equivalence.
+
+The matched fit completes with 1,215 attachments from 1,215 previously unmatched
+units into the 818 frozen matched units. Total units fall from 2,508 to 1,293.
+No two matched units are merged indirectly in this dataset. The largest unit
+grows from 62 to 71 entries. The six selected section note counts are 337, 511,
+363, 340, 410 and 463; their union remains 937/1,000 (93.7%), with every section
+above 100 notes. All eight starts converge using the same per-seed initial
+entries as the reciprocal-only baseline. The best seed changes from 20261018
+to 20261024. Eight fits take 4.15 seconds total, excluding preparation/search.
+After matching labels, 1,558/5,336 entry assignments change. This is not an
+accuracy score or evidence that every change improves browsing.
+
+| Diagnostic | Reciprocal-only baseline | One attachment pass |
+|---|---:|---:|
+| Seven original duplicate witnesses split in the selected fit | 1/7 | 0/7 |
+| Roots containing the three Payments definitions | 2 | 1 |
+| Exact-title families appearing in multiple roots | 9 | 4 |
+| Entries belonging to split-title families | 41 | 22 |
+| Distinct source notes retained | 937 | 937 |
+
+Payments' third definition now joins the other two in the same unit, addressing
+the proposed mechanism. The six earlier directly constrained witness pairs
+remain intact. Zaps shares a root in the selected fit but remains in separate
+units: it shares a root in seven of eight new starts, versus six of eight
+baseline starts. Its apparent repair is not a new must-stay-together constraint
+and is not guaranteed across starts.
+
+Remaining split titles are Donald Trump, Communication, Deals and Strategy.
+Fifteen Trump definitions share section 4; the CNN/Dana Bash wording L02400
+lands in section 1. Communication spans broad human/artificial message exchange
+in section 2 and interpersonal communication in section 6. These retain shared
+information or need scope review. Deals distinguishes agreements from favorable
+purchase offers; Strategy distinguishes planning from the company. Thus four
+split names are not four independently validated errors. The previous nine
+split names lose seven and gain Deals and Communication, leaving four.
+
+The different-meaning controls also expose forced coassignment. Physical and
+logical Rooms remain in one unit, now also containing Floors. The question
+meaning of Inquiries joins its two investigation meanings in another unit.
+Strategy's plan/company meanings remain separate. Broad roots may contain
+different meanings; these joins are not by themselves proof of wrong root
+membership, but nearest-neighbor constraints must not be described as semantic
+equivalence. Original titles, meanings, IDs and note evidence are unchanged.
+
+Independent nearest-neighbor reconstruction reproduces every reciprocal pair
+and all frozen one-pass attachment eligibility. Sparse connected components
+independently reproduce all final units. Original group preservation, attachment
+constraints, normalized centers, costs, notes, frozen hashes and byte-preserving
+resume validate. All 65 current checks pass on combined main. Source checkpoint
+is `bbde4812`; ignored evidence is on the external drive, linked under the
+retained executed worktree's `target/nearest-group-attachments-v1/`:
+the frozen spec/panel, runtime and `comparison-and-verification.json`.
+The worktree remains for frozen code and artifact paths. No inference, encoding,
+training, UI refresh or HiGen activation occurs.
+
+The next suggested test is the unchanged method on the other saved hash-selected
+1,000-note corpus. This would check whether the reduction in split information
+and the size/coverage results generalize beyond the corpus that supplied these
+post-selected witnesses, while exposing further joins between different meanings.
+That test has not been started or authorized by this record.
