@@ -1335,6 +1335,61 @@ case IDs, and original case roles remain unchanged. Ignored evidence will live
 under `oracle-mvp-section-count-validation-v1/target/section-count-validation-v1/`
 on the external drive.
 
+### Reserved validation result: a small-group over-split blocks adoption
+
+All five authorized cases completed without errors. Reference execution took
+16 seconds wall time, about 321 CPU-seconds, using 24 workers with one BLAS
+thread each; peak recorded memory was 666 MB. It generated 160 reference
+samples. The large development queue was not restarted.
+
+| Reserved case | Original entries / notes | Selected children | Independent halves |
+|---|---:|---:|---|
+| V04: mixed countries, places, people and related subjects | 556 / 330 | 5 | 5, 5 |
+| V08: US dollar | 6 / 6 | 4 | 5, 4 |
+| V09: lanterns, light and magic lanterns | 4 / 4 | 1 | 1, 1 |
+| V10: diplomacy, diplomatic talks and summonses | 3 / 3 | 1 | 1, 1 |
+| V11: deadlines and delays | 3 / 3 | 1 | 1, 1 |
+
+V04's five children retain all 330 notes and each narrows its parent's note set.
+Their distinct-note counts are 51, 43, 60, 126 and 140; these overlap and must
+not be added as if disjoint. Agent inspection finds broad distinctions around
+people/bodies, Britain, Israel-related subjects, other international subjects,
+and the United States. Peripheral assignments remain awkward, including animals
+and food in the people/body cluster. This is a numerical partition, not five
+approved canonical definitions or semantic certification.
+
+V08 exposes the important defect. All six meanings define the US dollar as the
+official currency of the United States. Three short descriptions stay together;
+three longer descriptions become singleton groups: international payments and
+reserve currency, economic strength/global monetary role, and its quoted
+Bitcoin exchange-rate use. These are unnecessary browsing distinctions by agent
+assessment, not four independently established different topics. The selected
+four-way split is also sensitive to reference sampling (five versus four).
+
+For V08, gaps for counts 1–5 are `-0.64725, -0.72161, -0.71734, -0.18885,
+0.19014`; the peak's uncertainty is `0.58804`. Thus the rule's acceptance level
+is about `-0.39790`: count four qualifies and count one does not. This traces
+the result to the unchanged global decision applied to this reference curve;
+it does not prove whether the reference distribution, vector differences or
+decision formula is the underlying cause. Do not add an exception for dollars
+or retune the rule from this single case.
+
+Independent reconstruction checked 130 raw reference matrices (all small
+controls and the first/last mixed-section references), their hashes, dispersions,
+cosine objectives, note counts and convergence. All 15 full/half selections
+were recomputed directly from saved dispersions; the 18 eligible observed
+partitions preserve their note unions. Production validation checks the frozen
+bindings for all 160 saved references. These mechanical checks passed; they do
+not remove the semantic over-split.
+
+Exact plans, raw reference outputs, results, execution log and separate
+`independent-verification.json` remain ignored at the external artifact path
+above. The source worktree is retained because these results bind its exact
+code and data paths. No reserved case outside V04/V08–V11 ran, and no production
+HiGen setting changed. The candidate is not ready for adoption. The next useful
+step is to diagnose the US-dollar control from the saved data before paying
+for another large numerical panel.
+
 Reusable numerical CLI: `sse_multivector/cluster_resampling_probe.py`; tests:
 `sse_multivector/test_cluster_resampling_probe.py`. Input NPZ contains unit
 `vectors`, aligned compact zero-based original `groups`, and aligned `notes`.
