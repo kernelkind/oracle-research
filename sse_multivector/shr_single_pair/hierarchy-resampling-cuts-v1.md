@@ -3033,3 +3033,96 @@ source/result rejection. An all-one-note fixture must still subdivide by
 groups and report non-narrowing edges, explicitly preventing a UI note-display
 rule from becoming a construction shortcut. The complete 100-note result and
 content review will be recorded separately below.
+
+### Completed 100-note fixed-group tree
+
+Executed the approved complete numerical test from the existing HR22 corpus,
+without changing or relabeling HR22. Inputs remain ASv6.100 / Bootstrap-v133:
+728 original entries from 100 notes, with equal-weight saved title/meaning
+vectors. All original entries are eligible, including the 399 left unassigned
+by the initial native grouping. The 58 original HDBSCAN groups remain intact.
+The initial reciprocal/frozen-attachment pass produces 204 fixed units.
+
+The root calculation uses the unchanged six-section objective, eight seeds
+20261018 through 20261025, 50 iterations, zero assignment minimum and a
+30-second assignment limit. Its selected seed is 20261023. The ten additional
+six-section fits use those same settings. All 88 fitted starts converge.
+Root constraints are checked after fitting; they are not used to select a
+different seed or reshape the result.
+
+| Result | Observed |
+|---|---:|
+| Distinct notes represented | 100/100 |
+| Root choices | 6 |
+| Notes per root, in saved order | 64, 50, 76, 46, 44, 29 |
+| Non-container nodes | 176 |
+| Terminal intact groups | 132 |
+| Maximum choices per menu | 6 |
+| Maximum leaf depth | 4 |
+| Mean shortest leaf depth per note | 2.71 |
+| Median / P90 shortest leaf depth | 3 / 3 |
+| Non-narrowing edges / duplicate sibling note sets | 0 / 0 |
+| Unresolved subdivisions | 0 |
+
+Root note counts overlap and must not be summed. Coverage is a retention
+result, not semantic accuracy: the procedure assigns every input entry.
+Each root exceeds the ten-note minimum; every child has a strictly smaller
+distinct-note set. Every original entry occurs in exactly one final leaf,
+every original native group and every initial fixed unit stays intact, and
+all parent rows and notes survive their subdivision. The 132 leaves occur at
+depths two (7), three (102) and four (23). Route depth counts numerical category
+edges from the invisible container to a leaf; it does not include reading or
+selecting notes and is not a measured navigation effort.
+
+There are 34 direct terminal menus, containing two through six already-fixed
+groups. They follow the pre-matching boundary without a further forced merge.
+No separate note-count stopping rule is used. The largest leaf holds 44 notes;
+this is the broad Food unit, rather than evidence that more numerical splits
+within that unit were authorized.
+
+Content review finds useful concentration and inherited limitations. All 32
+Food headings end in leaf `3.2.1.1`, all 15 Nostr headings in `6.2`, and all
+eight Bitcoin headings in `5.5.1`. All 61 repeated exact-title families stay
+within one root. Four families span multiple leaves: Coffee, Foodstr, Food
+preferences and Meat. This count is a diagnostic, not four semantic errors:
+Foodstr's hashtag versus community and other contextual scope differences
+need not be equivalent. Coffee remains a concrete redundancy concern:
+four, eight and two Coffee entries occupy sibling leaves `2.2.2`, `2.2.3`
+and `2.2.5`. Several are near-duplicate beverage definitions with optional
+preparation variations; one also admits coffee beans. The split already
+exists among the three initial fixed units, so the stopping rule preserves
+it rather than causing a new split.
+
+Some mixed leaves expose why structural success does not certify grouping:
+
+- Leaf `2.1.1` combines cashews, coconut butter, cacao and the audience
+  addressed as "Champs". The root pass attached audience entry `L00085` to
+  cashews `L00052`; the mismatch predates recursive stopping.
+- Leaf `3.3.5` combines Staub, stew, steaks and St Marks Place. The initial
+  root pass paired stew `L00063` with steaks `L00479`, then attached both
+  Staub `L00024` and the street `L00679` to stew. These four were already one
+  fixed unit before the first root partition.
+- Leaf `2.2.1` combines Buster + Punch, metal handles, matcha and melangers.
+  Matcha `L00051` paired with melangers `L00601` in the initial root pass;
+  handles `L00026` attached to melangers. In the smaller second-root pool,
+  Buster + Punch `L00023` reciprocally matched the handles, joining that
+  already-mixed unit. This isolates an additional local matching effect,
+  rather than attributing every issue to the original native groups.
+
+These are bounded agent assessments. They do not justify rejecting every
+broad root, merging every repeated title, or changing the approved boundary.
+The test supports complete construction with short paths and note retention;
+remaining membership quality is upstream of the stopping choice. No canonical
+titles/meanings or UI have been generated, and no HiGen policy is activated.
+
+Source checkpoint `7069565e` is landed on local main. All 70 relevant production
+and integration tests pass in the task worktree and on the combined main
+checkout. A completed rerun validates the frozen files/results and preserves
+them. Ignored evidence is under
+`/mnt/external/algos-archive/oracle-mvp/hundred-note-group-tree-v1/`:
+`spec.json`, `root-panel/`, `tree/plan.json`, per-node `tree/fits/`, complete
+`tree/tree.json`, and compact all-node `tree/contents.txt`. The task worktree
+`oracle-mvp-hundred-note-group-tree-v1` remains because these plans bind its
+exact code paths. Existing producer worktrees and outputs remain unchanged.
+No model calls, encoding, training, official HR registration or UI refresh
+occurred.
