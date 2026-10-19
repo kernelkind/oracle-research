@@ -1306,6 +1306,35 @@ The useful next check is unchanged validation on a smaller mixed section and
 narrow controls from the reserved corpus, rather than restarting the full large
 queue. All eleven reserved cases remain unrun at this checkpoint.
 
+### Frozen small reserved validation
+
+The next approved screen fixes `globalSEmax` before observing its reserved
+results. It uses V04, the saved root section with the fewest entries (556
+entries, 330 distinct notes), and the four already selected small groups
+V08–V11 (6, 4, 3 and 3 entries respectively). Selection uses the frozen panel
+metadata, not new gap scores. These small groups are controls for unnecessary
+splitting, not independently established homogeneous human gold.
+
+The reserved source is hash-selected HR36, with 937 usable notes disjoint from
+the development panel's note IDs. HR36 appeared in earlier grouping research;
+it is reserved for this count-selection comparison, not an unseen corpus in
+all prior work. Other reserved cases and the stopped large development queue
+remain unrun in this phase.
+
+Use the unchanged full-meaning vectors, original observed count assignments,
+PCA-box reference distribution, dispersion, eight starts, constraints and
+population-SD convention. Generate 32 references with seed 20261101, and compare
+the full decision with each independent 16-reference half. Local workers may
+use 24 cores, leaving four available. There are no new encodings, LLM calls,
+training, canonical definitions or HiGen activation. Inspect selected entries
+and meanings as well as the count; stability alone does not establish accuracy.
+
+The numerical CLI now freezes `--method` and `--role` in preparation. Its
+defaults remain adjacent/development. Reserved execution requires explicit
+case IDs, and original case roles remain unchanged. Ignored evidence will live
+under `oracle-mvp-section-count-validation-v1/target/section-count-validation-v1/`
+on the external drive.
+
 Reusable numerical CLI: `sse_multivector/cluster_resampling_probe.py`; tests:
 `sse_multivector/test_cluster_resampling_probe.py`. Input NPZ contains unit
 `vectors`, aligned compact zero-based original `groups`, and aligned `notes`.
