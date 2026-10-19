@@ -2897,3 +2897,100 @@ than another unmotivated clustering variant: it determines whether these
 successful individual splits become a complete hierarchy without unnecessary
 depth. No further split, count-policy experiment or integration is authorized
 by this result record.
+
+### Manual stopping proposal: finish at the existing intact groups
+
+The user authorized investigating stopping and fewer-than-six children. First
+review the earlier failures rather than repeat the same reference simulations:
+the adjacent gap rule stopped some broad mixtures; the global rule split US
+dollar descriptions and Nostr wording into artificial choices. Those results
+did not qualify an automatic semantic stopping score. The current method has
+since gained group constraints, which already define the smallest parts it
+can separate. Test that existing resolution boundary before adding a new score.
+
+The provisional proposal is:
+
+1. With more than six current intact groups, retain the existing six-way
+   broader subdivision.
+2. With two through six current intact groups, expose those groups directly
+   as terminal choices; do not recluster them or create empty extra choices.
+3. With one current intact group, stop there and expose its notes, without
+   inserting a same-note-set child.
+
+A one-note node is also terminal: no nonempty child note set could be smaller.
+This follows from the narrowing requirement, not a fitted note-count cutoff.
+
+These are the groups already fixed by the completed parent calculation,
+including its reciprocal and one-pass attachment constraints. Apply the
+boundary before another context-local matching pass. Six is the user's browsing
+limit, not a learned similarity threshold or a six-note stopping threshold.
+The preference for using the available width in larger pools is a practical
+short-path baseline; it is not proof that six always minimizes navigation or
+that smaller broad counts are never better. Note-set refinement remains a
+required check. This audit does not introduce a repair policy for an invalid
+terminal menu or activate a production stopping rule.
+
+The read-only test validates nine existing producers from both saved thousand-
+note corpora, including all current second-corpus root/child results and the
+238-note deeper result. Inspect their 54 saved child cases. Fifty-one retain
+more than six fixed groups and would continue. Three already fit the terminal
+menu limit:
+
+| Existing branch | Parent notes | Fixed groups / direct choices | Notes per direct choice |
+|---|---:|---:|---|
+| Time/calendar branch beneath section 6 child 1 | 16 | 4 | 6, 3, 6, 1 |
+| Requests/conversation branch beneath section 6 child 1 | 51 | 6 | 17, 18, 6, 5, 4, 2 |
+| Timestamp branch beneath section 5 | 43 | 4 | 34, 7, 1, 1 |
+
+Every direct choice in these three cases is a distinct, strictly smaller note
+set; every parent note remains represented. Counts overlap and must not be
+summed. The cases are overlapping saved branches, not independent corpora or
+new fitted partitions. No new cluster fit, reference simulation, encoding,
+training or model call occurs.
+
+Manual content review prevents treating that structural result as semantic
+certification. The time branch separates clocks/time, dates/month names,
+parts of the day, and two elements of one Frost poem. Its clocks/time group
+also contains Our Time, explicitly a UATV news-video title. The timestamp menu
+separates generic timestamps from specific publication times, plus Data
+availability and a 2:1 ratio. The requests menu separates questions/requests,
+conversation, appeals/verdicts, reminders, calls for attention/action, and probe
+acknowledgments. Some inherited combinations or possible redundancies remain;
+ending at fixed groups cannot repair their membership or certify good titles.
+
+Repeated-topic controls demonstrate the intended protection without proving
+accuracy. In the first corpus, all 62 Nostr headings occupy one 71-entry,
+68-note unit, and the US dollar variants occupy one 20-entry, 20-note unit.
+In the second, the currency variants occupy one 13-entry, 12-note unit.
+Stopping at these units avoids splitting their wording again. The whole units
+include other titles as well: the first Nostr unit includes InformNapalm,
+Nansen and Wisp; the first Coffee unit also includes tea and beer. Those are
+inherited grouping qualifications, not newly approved single-topic meanings.
+The second corpus's Nostr headings span two units, so the proposal does not
+magically resolve every alias or sense distinction.
+
+A separate tiny diagnostic uses real entries from the saved time branch and
+the production reciprocal/attachment function. With only Clocks and Calendar
+dates, reciprocal matching necessarily joins them. Adding the yellow wood in
+The Road Not Taken attaches it to that pair. The output has one group in both
+cases. This does not establish that the inputs lack useful distinctions:
+two entries have no other nearest-neighbor option. It supports exposing the
+already accepted small set directly, rather than deriving a stopping signal
+from forced matches after shrinking the pool.
+
+All nine complete producer/source checks and byte-preserving resumes pass.
+Direct choices reconstruct every selected entry, preserve all parent notes
+and keep the existing groups intact. No implementation changed; the proposal
+is manual research, not adopted HiGen behavior. The independent source rows,
+all direct-choice definitions, fixed protocol and validations are retained in
+`/mnt/external/algos-archive/oracle-mvp/section-stopping-manual-v1/` as
+`protocol.json`, `comparison-and-verification.json` and
+`small_pool-nearest-diagnostic.json`. Source checkpoint is `abd5c8b7`. The
+temporary documentation worktree is not a frozen execution dependency and can
+be removed after integration; all retained producer worktrees stay unchanged.
+
+This is the simplest next proposed stopping baseline, with the qualifications
+above. Before integration, a complete small-corpus manual construction would
+test actual depth, note coverage and terminal menus together. That would be
+more informative than another isolated successful split or a newly tuned
+count statistic. Such a construction has not been run by this record.
