@@ -169,6 +169,27 @@ class SectionTreeTests(unittest.TestCase):
                 self.assertNotEqual(invalid.returncode, 0)
                 self.assertIn('Tree settings disagree', invalid.stderr)
 
+    def test_initial_title_filter_does_not_filter_the_deeper_pass(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self._fixture(root, outsider=True)
+            manifest = root / 'spec.json'
+            spec = json.loads(manifest.read_text())
+            spec['cases'][0]['attachment_same_title'] = True
+            manifest.write_text(json.dumps(spec))
+            producer = panel.prepare(manifest, root / 'filtered-panel')
+            self.assertFalse(producer['cases'][0]['nearest_attachments'])
+            panel.run(root / 'filtered-panel', 'Roots')
+            prepared = self._cli('prepare', root / 'filtered-panel', 'Roots', root / 'tree',
+                '--corpus-notes', 35, '--minimum-root-notes', 1, '--child-attachments', 'on')
+            self.assertEqual(prepared.returncode, 0, prepared.stderr)
+            completed = self._cli('run', root / 'tree')
+            self.assertEqual(completed.returncode, 0, completed.stderr)
+            tree = json.loads((root / 'tree/tree.json').read_text())
+            self.assertTrue(any(n['nearest_attachments'] for n in tree['nodes']))
+            outsider = next(n for n in tree['nodes'] if not n['children'] and 34 in n['indices'])
+            self.assertGreater(len(outsider['indices']), 1)
+
 
 if __name__ == '__main__':
     unittest.main()

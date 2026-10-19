@@ -3464,3 +3464,30 @@ Ignored evidence is external at
 `oracle-mvp-second-corpus-deeper-attachments-v1` remains for frozen code
 bindings. No model calls, new encoding, training, paid resources, official
 HR registration, hierarchy UI change or HiGen activation occurred.
+
+### Initial same-title attachment filter: experimental component support
+
+The user authorized testing the proposed conservative initial filter on the
+100-note food corpus and HR37, with the earlier memory constraint retained.
+Only initial one-way attachments change. Keep saved vectors, native groups,
+reciprocal pairs, root-fitting settings, unrestricted deeper attachments and
+the existing stopping boundary unchanged. This is not production adoption.
+
+`section_count_panel` gains optional boolean `attachment_same_title`, requiring
+`attach_nearest=true`. Preparation computes exactly the same nearest entries
+and reciprocal groups as before, then retains an eligible one-way link only
+when its source and destination original title strings are exactly equal.
+There is no case folding, title normalization, similarity cutoff or search
+for another same-title destination after rejection. An existing whole group
+still moves intact when one of its entries forms an allowed link. The default
+is unchanged. The title restriction applies only in root-panel preparation;
+`section_tree --child-attachments on` continues the unrestricted deeper pass.
+
+The failing-first production CLI test preserves one same-title attachment
+and drops a different-title attachment while keeping both reciprocal pairs
+unchanged. It checks no second-choice retargeting, frozen-title rejection,
+case-sensitive equality, real numerical fits and byte-preserving resume.
+Invalid flag types and use without the one-way pass are rejected. A separate
+complete-tree test shows a link rejected initially can still be added in a
+later unrestricted child pool. These tests qualify the control, not its
+semantic usefulness; equal titles do not establish equal meanings.

@@ -129,12 +129,17 @@ def _saved_grouping(selection, vectors, notes, entries, vector_view='meaning'):
     return membership, files
 
 
-def _reciprocal_groups(vectors, groups, *, attach_nearest=False):
+def _reciprocal_groups(vectors, groups, *, attach_nearest=False, attachment_titles=None):
     """Join existing groups across reciprocal nearest entries, without a cutoff.
 
     Exact blocked search is a reference calculation: O(n*n*d) work and
     O(256*n) temporary scores. Equal scores select the first original row.
+    Optional titles filter one-way links by exact equality after nearest
+    search; they never change reciprocal pairs or retarget a rejected link.
     """
+    if attachment_titles is not None and (len(attachment_titles) != len(vectors)
+            or any(type(title) is not str for title in attachment_titles)):
+        raise ValueError('Attachment titles must be aligned original strings')
     x = vectors / np.linalg.norm(vectors, axis=1, keepdims=True)
     if len(x) == 1:
         return groups, [], []
@@ -161,7 +166,8 @@ def _reciprocal_groups(vectors, groups, *, attach_nearest=False):
         roots = [find(group) for group in groups]
         matched = {roots[i] for i, _ in pairs}
         attachments = [[i, int(j)] for i, j in enumerate(nearest)
-                       if roots[i] not in matched and roots[j] in matched]
+                       if roots[i] not in matched and roots[j] in matched
+                       and (attachment_titles is None or attachment_titles[i] == attachment_titles[j])]
         for i, j in attachments:
             a, b = find(groups[i]), find(groups[j])
             parents[max(a, b)] = min(a, b)
@@ -225,6 +231,9 @@ def prepare(specification, output):
         if (type(cfg.get('attach_nearest', False)) is not bool
                 or (cfg.get('attach_nearest') and not cfg.get('reciprocal_nearest'))):
             raise ValueError('attach_nearest requires a boolean and reciprocal_nearest')
+        if (type(cfg.get('attachment_same_title', False)) is not bool
+                or (cfg.get('attachment_same_title') and not cfg.get('attach_nearest'))):
+            raise ValueError('attachment_same_title requires a boolean and attach_nearest')
         if 'grouping' in cfg and not cfg.get('preserve_groups'):
             raise ValueError('Saved grouping requires preserve_groups')
         grouping_files = {}
@@ -250,7 +259,9 @@ def prepare(specification, output):
         pairs = None
         if cfg.get('reciprocal_nearest'):
             groups, pairs, attachments = _reciprocal_groups(vectors[indices], groups,
-                attach_nearest=cfg.get('attach_nearest', False))
+                attach_nearest=cfg.get('attach_nearest', False),
+                attachment_titles=([entries[i]['title'] for i in indices]
+                                   if cfg.get('attachment_same_title') else None))
         limit = len(indices) if groups is None else len(set(groups))
         counts = [k for k in spec['counts'] if k <= limit]
         if len(selected_notes) < cfg['minimum_notes'] or len(indices) < max(counts) * cfg['minimum_notes']:
