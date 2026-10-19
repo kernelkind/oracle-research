@@ -75,6 +75,76 @@ Before real data, production-path tests compare the assignment to exhaustive
 optima and cover repeated notes, multi-section note support, infeasibility,
 deterministic clustering, monotone costs and the native numerical CLI.
 
+### HR22 direct partition result
+
+Use the **existing HR22 hundred-note corpus**, not a new sample of HR38.
+Saved initial inputs contain 728 usable original entries representing all 100
+notes, from ASv6.100 and Bootstrap-v133. Original title/meaning bytes are
+unchanged. Reuse nine exact cached meaning vectors and encode the remaining
+716 distinct contexts locally, plus eight cached replays, through the existing
+native SSE adapter and worker. This produces 1,448 title/meaning span vectors.
+No LLM calls, training or paid resources were used.
+
+All 724 encoded title views match the native HR22 vectors within 1.06e-7
+maximum absolute error. The eight full-meaning replays agree within 4.74e-8.
+Frozen checkpoint, model settings, source hashes and native receipt mappings
+pass validation. The maximum context length is 120 tokens, below the existing
+512-token limit. This completes the uniform full-meaning representation;
+titles are not mixed into the clustering vectors.
+
+All methods below use **the same 728 entry vectors**, include originally
+ungrouped entries, and retain every supplied entry exactly once. HDBSCAN's 62
+original fine groups are provenance only, not indivisible input units. Counts
+refer to distinct original note IDs; different sections' note sets overlap.
+
+| Method | Sections | Distinct notes retained | Smallest section | Largest section | All numerical requirements |
+|---|---:|---:|---:|---:|---|
+| Direct cosine partition | 6 | 100 / 100 | 34 | 79 | Pass |
+| Complete Ward entry-tree cut | 6 | 100 / 100 | 25 | 76 | Pass |
+| Complete cosine average-linkage entry-tree cut | 6 | 100 / 100 | 1 | 98 | Fail: sections with 1, 7 and 8 notes |
+
+The direct result's six sections represent **46, 34, 52, 43, 55 and 79 notes**.
+Their entry counts are 83, 71, 124, 79, 124 and 247. Their closest headings
+suggest positive feelings; sleep and daily routines; coffee/drinks; Nostr and
+Bitcoin; ideas/creative activity; and food/cooking respectively. These are
+descriptive agent summaries, not generated canonical meanings or human gold.
+
+All eight fixed starts converge. The best seed is `20261025`, with summed
+cosine dissimilarity 328.6627484934107. The eight constrained runs take 0.302
+seconds combined, excluding model encoding, preparation and rendering. The
+**entire constrained and unconstrained panels have identical final
+assignments for each matched seed**. Even the unconstrained iterations never
+fall below 18 notes per section. Thus this corpus supports direct cosine
+partitioning as a numerical candidate; it does **not** demonstrate an observed
+benefit from minimum-size constraints. Their behavior is verified separately
+against exhaustive small assignment problems. Ward also passes the user's
+requirements, so no semantic superiority over Ward is established.
+
+Coverage is complete because nothing is discarded. Weak placements therefore
+remain visible: for example, `L00180` Rome is in the section centered on
+positive feelings, and `L00103` MrBeast is in the Nostr/Bitcoin-centered
+section. The actual root meanings have not been generated, so these are
+agent-flagged review candidates rather than validated semantic errors. The
+direct result splits 35 of 62 original fine groups across sections; this is
+allowed by the candidate's entry-level assignment and is explicitly shown as
+provenance in the viewer. No lower-level hierarchy or narrowing was built.
+
+Ignored evidence is under `target/food-halves-v1/hr22-direct-six-sections-v1/`
+in this task worktree, on the external drive. It includes the source-bound
+preparation, native worker inputs and receipts, exact reuse/replay checks,
+aligned numerical input, all sixteen constrained/unconstrained trials,
+complete tree controls, independent membership validation, a PNG overview
+and a standalone HTML viewer showing every entry and full meaning. The viewer
+can switch methods and reverse the ordering to show weak connections first;
+control columns are aligned by entry overlap solely for viewing. Saved source
+hierarchies and official review UIs are untouched.
+
+Seventeen partition/resampling checks pass after integration on `main`.
+The broader 35-test adapter/worker panel passes with two optional Torch tests
+skipped in the numerical environment. This remains a research prototype, not
+an adopted HiGen version. Next inspect the complete memberships against Ward
+before claiming useful root sections or testing recursive narrowing.
+
 ## Question and controlled inputs
 
 Does removing different notes break the previously flagged sports/war/politics
