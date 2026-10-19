@@ -285,6 +285,7 @@ def prepare(spec_path, directory, history_root=None):
                            fields | {"bootstrap_hierarchy", "generation_policy"})
     if policy in V5_POLICIES:
         allowed_fields += tuple(f | {"v5_options"} for f in allowed_fields)
+    allowed_fields += tuple(f - {"note_ids"} for f in allowed_fields)
     options = cfg.get('v5_options', {}) if isinstance(cfg, dict) else {}
     if (
         not isinstance(cfg, dict)
@@ -299,16 +300,21 @@ def prepare(spec_path, directory, history_root=None):
         or cfg["schema_version"] != 1
         or type(cfg["local_schema_version"]) is not int
         or cfg["local_schema_version"] != 4
-        or not isinstance(cfg["note_ids"], list)
-        or not cfg["note_ids"]
-        or any(not isinstance(n, str) or not n for n in cfg["note_ids"])
-        or len(set(cfg["note_ids"])) != len(cfg["note_ids"])
+        or ("note_ids" in cfg and (
+            not isinstance(cfg["note_ids"], list)
+            or not cfg["note_ids"]
+            or any(not isinstance(n, str) or not n for n in cfg["note_ids"])
+            or len(set(cfg["note_ids"])) != len(cfg["note_ids"])))
     ):
         raise ValueError("invalid hierarchy generation spec")
     if directory.exists():
         raise ValueError("hierarchy destination already exists")
     corpus_path = workflow.resolve(cfg["corpus"], spec_path.parent)
     corpus = workflow.read(corpus_path)["notes"]
+    if "note_ids" not in cfg:
+        cfg["note_ids"] = [row["note_id"] for row in corpus]
+        if not cfg["note_ids"] or any(not isinstance(n, str) or not n for n in cfg["note_ids"]):
+            raise ValueError("empty or invalid corpus note selection")
     notes = {row["note_id"]: row for row in corpus}
     if len(notes) != len(corpus) or set(cfg["note_ids"]) - notes.keys():
         raise ValueError("unknown or duplicate corpus note")
@@ -1161,12 +1167,14 @@ def check_state(state, *, verify_receipts=True, verify_current_code=True):
         )
     definition = Path(state["definition"])
     cfg = workflow.read(definition)
+    notes = {n["note_id"]: n for n in workflow.read(
+        workflow.resolve(cfg["corpus"], definition.parent))["notes"]}
     if (
         state["generation_policy"] != cfg.get("generation_policy",
             state["generation_policy"] if state["generation_policy"] in V5_POLICIES else POLICY)
         or state["max_siblings"] != MAX_SIBLINGS
         or state["min_notes"] != MIN_NOTES
-        or state["note_ids"] != cfg["note_ids"]
+        or state["note_ids"] != cfg.get("note_ids", list(notes))
         or state["local_schema_version"] != cfg["local_schema_version"]
         or state.get('v5_options', {}) != cfg.get('v5_options', {})
         or state["corpus"] != str(workflow.resolve(cfg["corpus"], definition.parent))
@@ -1218,7 +1226,6 @@ def check_state(state, *, verify_receipts=True, verify_current_code=True):
     originals = {r["id"]: r for r in state["originals"]}
     if len(originals) != len(state["originals"]):
         raise ValueError("duplicate original local L1 identity")
-    notes = {n["note_id"]: n for n in workflow.read(state["corpus"])["notes"]}
     expected = [
         dict(
             id=f"L{index + 1:05d}",

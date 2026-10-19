@@ -1,5 +1,8 @@
 # HiGen V5.3 — recursive HDBSCAN construction
 
+See [Generate a hierarchy](../generate-hierarchy.md) for environment setup,
+portable configurations and the complete workflow from your own posts to browsing.
+
 V5.3 is the default for new native hierarchy definitions. After each sibling
 lineup finishes, it runs the additional membership clustering described below,
 using global untracked original entries. V5.2 retains its frozen behavior without

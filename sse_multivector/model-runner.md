@@ -1094,9 +1094,9 @@ Optional fields:
 
 `typesafe/jev-1.13` uses OpenRouter's `/api/v1/systemone` endpoint, not chat
 completions. The shared runner implements this non-streaming transport directly
-because the pinned pi-ai SDK has no System One transport. It still uses the
-same local credential service, request identity, experiment workflow, and
-single-attempt receipts. There is no upstream credential fallback or redirect.
+because the pinned pi-ai SDK has no System One transport. It uses the selected
+OpenRouter authentication route, request identity, experiment workflow and
+single-attempt receipts. There is no credential-route fallback or redirect.
 
 For this model, `prompt` must be a JSON-encoded object containing exactly
 `state` and `questions`, using the [System One request format](https://openrouter.ai/docs/guides/community/typesafe-sdk).
@@ -1186,20 +1186,47 @@ summaries: selected model settings and SHA-256 fingerprints of the body, input,
 prompt text, instructions, and schema when present. It does not retain arbitrary
 echoed bodies, credentials, or private reasoning. OpenRouter may omit its echo;
 absence is not evidence of any particular upstream setting. Debugging adds no
-retry and does not bypass the credential service or require upstream keys.
+retry or change to the selected authentication route.
 
 ## Execution and credentials
 
+The default authentication route remains Anvil's credential service.
+`EXPERIMENT_RUNNER_AUTH=direct` explicitly selects pi-ai's native subscription
+authentication or an OpenRouter API key instead. Neither route falls back to
+the other after an authentication failure. Credentials do not belong in request
+JSON, experiment specs, saved outputs or the repository.
+
+For a new machine, follow the [complete generation guide](../docs/generate-hierarchy.md).
+
+### Direct authentication
+
+Set `EXPERIMENT_RUNNER_AUTH=direct`, then use
+`sse_multivector/run-model.sh login openai-codex` to complete pi-ai subscription
+login. The runner stores and refreshes credentials in
+`$XDG_CONFIG_HOME/experiment-runner/auth.json`, defaulting to
+`~/.config/experiment-runner/auth.json`. `EXPERIMENT_RUNNER_AUTH_FILE` selects
+another external credential file. Pi-ai remains unmodified.
+
+For OpenRouter, use the same login command with `openrouter`. Direct mode also
+accepts `OPENROUTER_API_KEY` when no credential is stored; stored credentials
+take precedence. The request or prepared spec must explicitly select
+`provider: openrouter` and the intended model.
+An API key does not switch a subscription experiment to API billing. Keep
+`auth_file` null in saved specs; credential locations and tokens are not model
+inputs. Direct execution retains the shared queue, retries and usage accounting
+without requiring Anvil account discovery.
+
 ### Anvil credential service
 
-Ordinary subscription requests automatically use the selected account's service:
+With `EXPERIMENT_RUNNER_AUTH` unset, subscription requests automatically use the
+selected account's service:
 
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
 ./sse_multivector/run-model.sh run request.json --send
 ```
 
-The runner invokes `agent-account exec pi` internally for each subscription
+In service mode, the runner invokes `agent-account exec pi` for each subscription
 request. The request process reads Pi's native `models.json` and `auth.json`
 from that selected view once: the loopback endpoint selects the account, and
 the token authorizes the local service only. The service owns the OpenAI
@@ -1208,7 +1235,8 @@ caller option. No Pi/Codex source is patched.
 
 The frozen comparison adapter and saved batches use the same automatic route.
 Set `auth_file` to null in new batch configs. `--auth-file` is rejected
-with a migration message; no provider credential file is read or bearer exported.
+with a migration message; service mode reads no upstream credential file or
+exports an upstream bearer.
 Missing launcher or invalid/nonlocal configuration fails without falling back
 to upstream access or paid OpenAI API billing. Preview remains credential-free.
 
@@ -1222,9 +1250,9 @@ On 2026-09-19 the ordinary command and a saved prompt batch completed real
 real launcher/proxy, selection capture, both account routes, renewal, redacted
 receipts, the frozen adapter, cancellation and failure without fallback.
 
-OpenRouter also uses the local credential service through the same automatic Pi
+In service mode, OpenRouter also uses the credential service through the same Pi
 configuration handoff. Its single shared provider key and `/openrouter/api/v1`
-route do not change when the selected OpenAI subscription changes. The runner
+route do not change when the selected OpenAI subscription changes. Service mode
 never reads `OPENROUTER_API_KEY` or falls back to direct provider access. Anvil's
 service route is active; the production runner's local configuration handoff was
 verified without inference. On 2026-09-20, ten ASv6.48 Muse requests also completed
@@ -1277,8 +1305,9 @@ Standard output is one JSON result with:
 A successful ordinary-text result has its text in both `raw_text` and `output`.
 A schema failure preserves the raw response and returns exit status 1. Invalid
 configuration, a missing launcher, or invalid local Pi configuration fails
-before sending, on standard error. The credential service owns provider-token
-validation and renewal; provider rejection remains a request failure.
+before sending, on standard error. In service mode, the service owns
+provider-token validation and renewal. Direct subscription mode uses pi-ai's
+authentication and refresh support. Provider rejection remains a request failure.
 
 Pi-ai's `usage.input` excludes `cacheRead` and `cacheWrite`;
 `usage.output` includes reasoning. Its cost field is a catalog estimate,
@@ -1291,6 +1320,12 @@ The JavaScript module [model.mjs](frontier_runner/model.mjs) also exports
 dependency-lock, and launcher hash.
 
 ## Installation
+
+The [generation guide](../docs/generate-hierarchy.md#1-install-the-runtime)
+covers a standalone installation. Oracle discovers an explicit
+`EXPERIMENT_RUNNER_ROOT`, a nested `experiment-runner/` checkout, an installed
+Python package, or the existing sibling checkout. Keep the complete runner
+source layout: hierarchy coordination uses its `bin/experiment-runner` launcher.
 
 The launcher uses Node 24+ when available, otherwise Nix's `nodejs_24`.
 Install the pinned dependencies once:
@@ -1434,8 +1469,9 @@ in `run/spend-limits.jsonl`. They do not replace ledger admission or authorize
 spending, and responses are never truncated to fit the dollar allowance.
 
 `experiment.py reconcile-costs EXPERIMENT` retrieves missing OpenRouter charges
-through the credential service's read-only generation lookup; it performs no
-inference. It saves separate `run/cost-receipts.jsonl` entries bound to each
+through a read-only generation lookup using the selected authentication route:
+Anvil's service by default, or OpenRouter directly in direct mode. It performs
+no inference. It saves separate `run/cost-receipts.jsonl` entries bound to each
 original receipt's hash and generation ID, without rewriting outputs or usage.
 Reports and resumed dollar budgets use these verified charges instead of the
 worst-case reserves. Failed lookups remain unknown; repeated reconciliation
@@ -1659,18 +1695,25 @@ executor enables this behavior internally; general `run-model.sh` callers retain
 their existing execution contract. `ORACLE_EXPERIMENT_BACKOFF_DIRECTORY` can
 select a private state directory for an isolated local fixture.
 
-The worker's scope/status reads use the existing local capability and only the
-configured loopback credential service. They perform no upstream requests. A
+In service mode, the worker's scope/status reads use the existing local capability
+and only the configured loopback credential service. They perform no upstream requests. A
 missing post-request status leaves the cause unknown. Before dispatch, scope
 discovery requires schema 1 and both valid opaque account/transport identifiers.
 Unavailable or invalid discovery, or unavailable admission state, stops new
 scheduling without marking unsent cases as terminal provider failures. Existing
 worker reservations remain consumed; waits/errors do not refund/reset budgets.
 There is no route-identifier fallback that could bypass an opaque scope's wait.
-The scope endpoint is a prerequisite for adopting this native experiment worker.
+The scope endpoint is required for this native experiment worker in service mode.
 Request-status storage is independent of usage-history retention. Proxy deployment
 and runner adoption are separate operations; existing frozen workers/receipts are
 not silently upgraded.
+
+Direct mode derives stable queue scopes locally from the authenticated
+subscription account ID or OpenRouter credential and the provider endpoint.
+Only digests enter queue state; credentials do not. It uses the same admission,
+cooldown and recovery logic without querying Anvil's scope or request-status
+endpoints. Failed authentication stops scheduling rather than selecting another
+authentication route.
 
 Provider authentication, credit/permission or endpoint errors (401, 402, 403,
 404) stop new scheduling, as do preflight/provenance errors or exhausted attempt
@@ -2001,10 +2044,13 @@ Read help through the shared stable launcher from the task worktree:
 ```
 
 `prepare-hierarchy DIRECTORY --spec SPEC` takes a schema-1 definition containing
-`corpus`, `note_ids`, `local_schema_version` (4), `bootstrap_spec`,
+`corpus`, `local_schema_version` (4), `bootstrap_spec`,
 `consolidation_spec` and `worker_config`. New definitions default to
 `hierarchy-generation-v5.3` and also require `hdbscan_binary`; set the policy
-explicitly for reproducibility. Optional `bootstrap_hierarchy` reuses matching
+explicitly for reproducibility. Optional `note_ids` selects an explicit subset;
+omitting it selects every note in the corpus in source order and freezes those
+IDs during preparation. The [public example](examples/hierarchy-v5.3/hierarchy.spec.json)
+uses this all-notes selection. Optional `bootstrap_hierarchy` reuses matching
 saved meanings and original vectors, including producers from V5. V5 versions
 can reuse completed Bootstrap before encoding finishes and can extend the client
 deadline without changing the completed producers or their recorded settings. Missing vectors are encoded

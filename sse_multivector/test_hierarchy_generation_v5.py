@@ -46,6 +46,19 @@ class V5ConstructionTests(unittest.TestCase):
         self.assertEqual(len(state['experiments']), 2)  # Bootstrap + group names.
         generation.check_state(state)
 
+    def test_preparation_can_select_the_complete_collected_corpus(self):
+        spec = self.prepare(count=9)
+        config = json.loads(spec.read_text())
+        expected = config.pop('note_ids')
+        spec.write_text(json.dumps(config))
+        before = len(self.native.calls())
+        self.native.cli('prepare-hierarchy', 'all-notes', '--spec', spec)
+        state = json.loads((self.native.root / 'all-notes/state.json').read_text())
+        self.assertEqual(state['note_ids'], expected)
+        self.assertEqual(len(self.native.calls()), before)
+        result = json.loads(self.native.cli('run-hierarchy', 'all-notes').stdout)
+        self.assertEqual(result['status'], 'complete')
+
     def test_independent_parent_definitions_prepare_separate_native_batches(self):
         from sse_multivector import hierarchy_generation_v5 as generation_v5
         state = self.construct(self.prepare())
