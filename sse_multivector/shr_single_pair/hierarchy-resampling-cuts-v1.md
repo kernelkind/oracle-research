@@ -48,6 +48,7 @@ The user distinguishes these new research tests from their source experiments:
 | Six-section-v1-03 | HR37's hash-selected 1,000-note corpus |
 | Six-section-v1-04 | The 557-note S05 section from Six-section-v1-03 |
 | Six-section-v1-05 | The 485-note S02 section from Six-section-v1-03 |
+| Six-section-v1-06 | The 125-note C03 child from Six-section-v1-05 |
 
 HR IDs identify the original experiments, not reruns of them. Existing artifact
 paths retain their names to preserve frozen bindings. These research-test IDs
@@ -417,6 +418,63 @@ The frozen plan, input rows, all sixteen trials, full child memberships,
 verification and provisional agent review remain available. This is a manual
 component test, not an integration proposal or an official HiGen experiment;
 no hierarchy, prompt or review UI changed.
+
+### Six-section-v1-06: subdivide the mixed people/society child
+
+The user approved subdividing the **People, relationships and society** child
+from Six-section-v1-05 (C03), to check whether another level separates its
+mixed contents. Its 176 assigned original entries represent 125 distinct
+notes. Reuse exactly those entries and their saved vectors, without other
+entries from the same notes, new encoding, LLM calls or training. The preceding
+root and child memberships remain unchanged.
+
+Use the unchanged six-child method, objective, eight seeds and 50-iteration
+limit. The minima are `ceil(0.1 * 125) = 13` notes per child and
+`ceil(0.9 * 125) = 113` notes in their union. The selected seed `20261022`
+converges in 13 iterations, with objective `66.76775852136385`; all eight
+constrained starts converge. Selection uses the lowest objective before
+review, without editing memberships afterward.
+
+| Child | Descriptive main themes | Original entries | Distinct notes |
+|---|---|---:|---:|
+| C01 | People and human affairs | 34 | 31 |
+| C02 | Biology, animals and health | 24 | 21 |
+| C03 | Family, heredity and aging | 19 | 16 |
+| C04 | Society, culture and religion | 46 | 43 |
+| C05 | Places, environment and space | 32 | 27 |
+| C06 | Friendship, romance and social life | 21 | 17 |
+
+All **125 / 125 parent notes** remain represented, and all 176 entries occur
+exactly once. Every child has a strictly smaller note set than the parent;
+the largest has 43 notes (34.4%). No two children have identical note sets.
+The counts overlap because different entries from one note may enter different
+children. Names in the table are agent summaries, not canonical definitions.
+
+The best unconstrained control also uses seed `20261022`, with objective
+`67.77027143211795` and note counts 36, 23, 15, 43, 30 and 10. Its smallest
+child misses the 13-note requirement. Seven of eight matched starts have
+different final assignments. The selected constrained result displaces no
+entry from its nearest final center: constraints changed the trajectory,
+without forcing final assignments away from the closest center. This does
+not establish a semantic advantage over the control.
+
+Provisional agent review reads all 176 full meanings. This additional level
+separates much of the earlier mixture into recognizable biological, familial,
+cultural, geographical/astronomical and interpersonal themes, alongside a
+general people group. Clear mistakes remain: static methods are with people,
+senators and headphones with biology, climate change with family/heredity,
+and cars, earbuds and PCIe devices with relationships. Practical imperfection
+does not erase the observed thematic separation, but the numerical result
+does not certify semantic containment or complete browsing usefulness.
+
+Independent checks verify source hashes, bit-for-bit parent-vector reuse,
+all entry IDs, normalized mean centers, every trial's objective and note counts,
+union coverage and proper child-note subsets. Seventeen partition/resampling
+tests pass. Ignored evidence is under `target/six-section-v1-06/` in the retained
+`oracle-mvp-six-section-v1-06` task worktree, backed by external storage.
+It includes the frozen inputs, all sixteen trials, full memberships,
+verification and provisional assessment. This is another manual component
+test; no HiGen policy, source hierarchy, prompt or review UI changed.
 
 ## Question and controlled inputs
 
