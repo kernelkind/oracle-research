@@ -125,6 +125,40 @@ class HdbscanVectorProbeTests(unittest.TestCase):
             plan = prepare(spec_path, root / 'out')
             self.assertEqual(plan['cases'][0]['entries'][0]['title'], 'fixed')
 
+    def test_cli_combined_uses_mean_cosine_with_matched_ids_and_native_resume(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            spec_path, spec = self._source(root)
+            with np.load(root / 'input.npz') as data:
+                title, notes = data['vectors'], data['notes']
+            meaning = np.tile(np.eye(2), (6, 1))
+            np.savez(root / 'input.npz', vectors=meaning, notes=notes)
+            spec['source']['files'][str(root / 'input.npz')] = hashlib.sha256(
+                (root / 'input.npz').read_bytes()).hexdigest()
+            spec_path.write_text(json.dumps(spec))
+            prepare(spec_path, root / 'out')
+            p = subprocess.run([sys.executable, '-m', 'sse_multivector.hdbscan_vector_probe',
+                                'run', str(root / 'out'), 'combined', 'combined'],
+                               capture_output=True, text=True)
+            self.assertEqual(p.returncode, 0, p.stderr)
+            report_path = root / 'out/combined/combined/result.json'
+            report = json.loads(report_path.read_text())
+            request = json.loads(Path(report['native']['hdbscan']['request']).read_text())
+            vectors = np.array([e['normalized_vector'] for e in request['inputs']])
+            self.assertEqual(vectors.shape, (12, 4))
+            np.testing.assert_allclose(vectors @ vectors.T,
+                                       (title @ title.T + meaning @ meaning.T) / 2,
+                                       atol=1e-14)
+            baseline = run(root / 'out', 'combined', 'title')
+            baseline_request = json.loads(Path(baseline['native']['hdbscan']['request']).read_text())
+            self.assertEqual([e['opaque_id'] for e in request['inputs']],
+                             [e['opaque_id'] for e in baseline_request['inputs']])
+            self.assertEqual(request['hdbscan_configuration'],
+                             baseline_request['hdbscan_configuration'])
+            before = report_path.read_bytes()
+            self.assertEqual(run(root / 'out', 'combined', 'combined'), report)
+            self.assertEqual(report_path.read_bytes(), before)
+
 
 if __name__ == '__main__':
     unittest.main()

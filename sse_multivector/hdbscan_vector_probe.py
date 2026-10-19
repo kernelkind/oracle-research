@@ -83,8 +83,8 @@ def prepare(specification, output):
 
 
 def run(output, case_id, view, *, workers=1):
-    if view not in ['title', 'meaning'] or type(workers) is not int or workers < 1:
-        raise ValueError('A saved title/meaning view and positive CPU worker count required')
+    if view not in ['title', 'meaning', 'combined'] or type(workers) is not int or workers < 1:
+        raise ValueError('A saved title/meaning/combined view and positive CPU worker count required')
     output = Path(output).resolve()
     plan = panel._read(output / 'plan.json')
     panel._check_files(plan['files'])
@@ -93,7 +93,10 @@ def run(output, case_id, view, *, workers=1):
     if cfg is None:
         raise ValueError('Unknown frozen grouping case')
     with np.load(cfg['data'], allow_pickle=False) as data:
-        vectors = data[view]
+        # Concatenating unit vectors gives equal-weight mean cosine before
+        # the native route converts cosine to angular distance.
+        vectors = (np.concatenate((data['title'], data['meaning']), axis=1) / np.sqrt(2)
+                   if view == 'combined' else data[view])
     ids = [e['id'] for e in cfg['entries']]
     # One paired producer identity keeps canonical point order identical across
     # views. The request's vector digest binds which actual view was supplied.
@@ -129,7 +132,7 @@ def main():
     execute = commands.add_parser('run')
     execute.add_argument('output', type=Path)
     execute.add_argument('case')
-    execute.add_argument('view', choices=['title', 'meaning'])
+    execute.add_argument('view', choices=['title', 'meaning', 'combined'])
     execute.add_argument('--workers', type=int, default=1)
     args = parser.parse_args()
     if args.command == 'prepare':

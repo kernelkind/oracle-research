@@ -1905,6 +1905,79 @@ remains intact within a resulting group. All checks pass. Source hashes remain
 unchanged. No new encoding, model call, training, hierarchy, UI or HiGen policy
 change occurred. The existing task worktree remains for frozen evidence paths.
 
+### Combined title and meaning similarity before HDBSCAN
+
+The user authorized the next manual component test. Freeze equal weights before
+execution: concatenate each entry's saved unit title and meaning vectors and
+divide by `sqrt(2)`. Their combined cosine is the arithmetic mean of the two
+cosines; the native executable then converts that cosine to angular distance
+before its usual HDBSCAN calculation. This averages similarities, not angles,
+hard group labels or cross-title/meaning dot products. No weight search is run.
+
+Use all 728 original HR22 entries, including formerly ungrouped ones, with
+unchanged ASv6.100/Bootstrap-v133 evidence, executable, opaque point IDs/order,
+and `min_samples=3`, `min_cluster_size=2`, EOM. Reuse the exact existing title
+and meaning control outputs. Preselect Breakfast, Coffee, Nostr, Food, Recipes,
+Matcha/Melangers/Myoglobin and Tomatoes/Tallow for manual inspection. The new
+saved-vector CLI `combined` view uses the same production native path and
+report/resume validation; it does not activate a HiGen policy.
+
+| View or rule | Groups | Grouped entries | Distinct notes in groups | Independent entries |
+|---|---:|---:|---:|---:|
+| Title | 62 | 367 | 94 | 361 |
+| Meaning | 52 | 289 | 94 | 439 |
+| Strict agreement | 49 | 186 | 80 | 542 |
+| Unassigned meaning is inconclusive | 71 | 305 | 92 | 423 |
+| Equal-weight combined similarity | 58 | 329 | 91 | 399 |
+
+Manual inspection shows several improvements together:
+
+- All six Breakfast definitions stay together, as do three Recipes definitions
+  with Recipe creation. Both avoid the strict-agreement fragmentation.
+- Twenty-eight of the 32 exact-title Food entries join one 34-entry group,
+  alongside Food dishes, Food enjoyment, Food appeal, two Food preparation
+  entries and Meal preparation. Four Food definitions remain independent;
+  they still describe food and are not semantic rejection gold. This restores
+  substantially more of the repeated Food topic than either agreement rule.
+- Matcha, Melangers and Myoglobin are all independent rather than one mixed
+  title group. Three Tomatoes entries join Potatoes; Tallow stays independent.
+  This avoids mixed groups restored by the inconclusive-unassigned rule.
+- Coffee still forms groups of seven and four, with three Coffee definitions
+  and Coffee preparation independent. The earlier ambiguous split survives.
+- The Nostr group again contains the fifteen protocol/network definitions,
+  two Nostr community entries, Nostr zaps **and the person referenced by a
+  Nostr mention**. That person remains an agent-flagged mixed-topic inclusion.
+  Combining similarities does not eliminate title-driven unwanted matches.
+
+This is a promising component result on the preselected controls, not semantic
+certification or a finished hierarchy. All 728 entries and 100 notes remain
+eligible; 91 notes occurring in fine groups is not root coverage. Equal weights
+are an unoptimized probe, not an established best setting. Before considering
+integration or tuning weights, test the unchanged combination on another saved
+corpus. That follow-up has not run here.
+
+The one new native job takes 2.46 seconds with 24 workers on CPUs 0–23, leaving
+four cores available. Concatenation doubles vector dimension and native input
+size; its own transformation is linear in entries times dimension and does not
+construct a new all-corpus matrix. This bounded probe does not remove the native
+clustering's existing scaling costs. The full pairwise matrix used to verify
+the cosine formula is a small-test audit, not added to the execution path.
+
+A failing-first test exercises the real CLI and native executable, checks
+mean-cosine behavior using contrasting title/meaning views, verifies matched
+point identities/configuration and unchanged resume results. All 59 relevant
+tests pass with no skipped native checks. Independent checks validate all
+source/code/baseline hashes, raw request/result hashes, the complete disjoint
+group/unassigned partition, and all pairwise combined cosines: maximum error
+against the saved-view mean is `5.55e-16`.
+
+External ignored evidence is retained in
+`oracle-mvp-hdbscan-combined-view-v1/target/hdbscan-combined-view-v1/`:
+frozen spec/plan and paired input, raw combined request/result, complete
+`audit.json` and compact `groups.md`. The task worktree remains for these frozen
+source/artifact paths. No new SSE encoding, model call, training, consolidation,
+hierarchy generation, UI update or HiGen integration occurred.
+
 Reusable numerical CLI: `sse_multivector/cluster_resampling_probe.py`; tests:
 `sse_multivector/test_cluster_resampling_probe.py`. Input NPZ contains unit
 `vectors`, aligned compact zero-based original `groups`, and aligned `notes`.
