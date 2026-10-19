@@ -164,8 +164,15 @@ Review the actual selected contents for credentials and personal information
 before packaging. Known credential containers were excluded from discovery;
 that is not a completed privacy review of the evidence.
 
-Choose archive groups from the explicit file list, verify their contents and
-checksums, then add download links. The listed archive members total about
+The [download plan](downloads.md) assigns all existing collections to groups
+and selects separate small results, corpora, adapters and training states.
+Its known shared-download requirements are not a complete native-experiment
+dependency list: finish source and original-producer selection from frozen
+plans and receipts, then verify the staged packages. The consolidated dependency
+index retains example consumers and cannot establish that complete list alone.
+
+Verify package contents and checksums, then add download links. The listed
+globally deduplicated archive members total about
 534 GiB before compression; this includes intermediate evidence and files not
 yet checked for identical contents. It is not a download-size estimate. Readers
 should be able to obtain the collections they need without downloading all

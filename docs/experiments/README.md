@@ -20,6 +20,7 @@ have been located and checked against their recorded SHA-256 hashes.
 | Use or study the subject fine-tunes | [Training process and evaluation](../planning/fine-tuning-pilot-process.md) | [Adapter weights and training state](models.csv) |
 | Study subject, mask, title, comparison and prominence trials | [Experiment workflow](../../sse_multivector/model-runner.md) | [Individual saved experiments and historical collections](experiments.csv) |
 | Find an input or result file | [Collection sizes](collections.csv) | [Exact file list](files/README.md) |
+| Choose downloads for a particular task | [Planned downloads](downloads.md) | [Bundles](bundles.csv) and [task requirements](download-targets.csv) |
 
 The generation guide describes the current implementation. Historical trials
 may require earlier code and prompt versions. A higher prompt version number is
@@ -92,12 +93,14 @@ Git blobs may also share a member; consumers retain their own source references.
 Content that has not been hashed is not assumed identical because its name or
 size matches another file.
 
-Package names, download URLs and archive checksums will be added when the files
-are assembled. GitHub currently permits up to 1,000 attachments per release,
-each under 2 GiB. Small collections can share an archive; a collection is not
-necessarily a separate attachment. The final archive sizes must be checked,
-including accompanying files and archive overhead. See
-[GitHub's release limits](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases).
+The [download plan](downloads.md) defines small result downloads, nine separate
+corpora, individual adapters and training states, and groups for the full
+experiment evidence. [Bundle assignments](bundle-collections.csv) cover all
+collections. Selected-file counts and known shared downloads are recorded;
+complete input and producer dependencies still need staged verification.
+Final attachment names, download URLs and archive checksums will be added when
+the files are assembled. Large bundles may require several attachments; see
+the [archive layout and size limits](downloads.md#file-selection-and-archive-layout).
 
 Preserve the original frozen plans, answers and receipts. Some contain absolute
 paths from the research environment. Release preparation supplies portable

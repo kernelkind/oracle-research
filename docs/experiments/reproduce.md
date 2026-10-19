@@ -29,8 +29,11 @@ export RELEASE_ROOT="$ORACLE_ROOT/target/reproduction/release"
 mkdir -p "$RELEASE_ROOT" target/reproduction/history
 ```
 
-Extract the selected release files under `RELEASE_ROOT`, preserving their member
-paths. [reproduction.sha256](reproduction.sha256) lists the five files used here
+The [download plan](downloads.md#start-small) assigns these examples to three
+downloads: `hr39-viewer`, `corpus-42d5ce5211a1` and `fine-tune-comparison`.
+Choose the downloads for the examples you want to follow. Extract their files
+under `RELEASE_ROOT`, preserving their member paths.
+[reproduction.sha256](reproduction.sha256) lists the five files used here
 and their measured checksums. They total about 47 MiB uncompressed; model
 downloads and build dependencies are additional. Archive sizes are not yet
 known. These examples do not require the full research collection.
@@ -41,6 +44,8 @@ known. These examples do not require the full research collection.
 | `datasets/42d5ce5211a1a72b08d8df3d80cb5d5668383d2afd27fbee6df331f567e8baef.json` | HR36's 1,000 posts and ASv6.100 answers |
 | `evidence/oracle-mvp-qwen-continuation-grading-v1/target/pilot-l1-results-v1/{analysis,verification}.json` | Saved fine-tune comparison |
 
+The combined check below requires all three downloads and all five files.
+Individual downloads will also receive their own checksum lists when packaged.
 Once all five files are present, verify them:
 
 ```bash
@@ -294,6 +299,9 @@ base-model revisions and associated training manifests. Inference requires an
 adapter's weights/configuration and its matching base model. Resuming training
 also requires its optimizer/training state and the original prepared dataset.
 These larger files are separate from the five-file example above.
+The [download plan](downloads.md#corpora-and-fine-tunes) separates each adapter
+from its training state and identifies the training records still needed for
+a portable training recipe.
 
 There is currently no maintained CLI that rebuilds this L1 analysis from the
 saved judgments. The shared runner's `compare-distillation-grades` compares
