@@ -1,0 +1,182 @@
+{
+  "schema_version": 4,
+  "corpus": "/mnt/external/algos-archive/oracle-mvp/hierarchy-hr38-v53-auto/hierarchy-hr38-v53-auto-2000-note-v1/subject-collection/subjects.json",
+  "nodes": [
+    {
+      "id": "regression-heldout-003-root",
+      "local": {
+        "note_id": "b1fd540a5467861b09f71b2d6d6b8a92408c42997dc15f4729d107049aba2b9a",
+        "number": "4"
+      },
+      "review": {
+        "role": "scope_control",
+        "source_selection": "heldout-003-root"
+      }
+    },
+    {
+      "id": "regression-heldout-003-specific",
+      "local": {
+        "note_id": "b1fd540a5467861b09f71b2d6d6b8a92408c42997dc15f4729d107049aba2b9a",
+        "number": "4.1.1.1"
+      },
+      "review": {
+        "role": "scope_control",
+        "source_selection": "heldout-003-specific"
+      }
+    },
+    {
+      "id": "regression-heldout-004-root",
+      "local": {
+        "note_id": "047a23e2c14776b577bafb9e1bc33d824ef86a285e07e502abfcbd05b224456e",
+        "number": "3"
+      },
+      "review": {
+        "role": "scope_control",
+        "source_selection": "heldout-004-root"
+      }
+    },
+    {
+      "id": "regression-heldout-004-specific",
+      "local": {
+        "note_id": "047a23e2c14776b577bafb9e1bc33d824ef86a285e07e502abfcbd05b224456e",
+        "number": "3.1.3"
+      },
+      "review": {
+        "role": "agreed_failure",
+        "source_selection": "heldout-004-specific"
+      }
+    },
+    {
+      "id": "regression-heldout-014-root",
+      "local": {
+        "note_id": "03a3d31fba4e158eb0c583ddad0f27c2ff7307399ef1bd35e1cbbe08a92860dd",
+        "number": "2"
+      },
+      "review": {
+        "role": "scope_control",
+        "source_selection": "heldout-014-root"
+      }
+    },
+    {
+      "id": "regression-heldout-014-specific",
+      "local": {
+        "note_id": "03a3d31fba4e158eb0c583ddad0f27c2ff7307399ef1bd35e1cbbe08a92860dd",
+        "number": "2.1.1.1"
+      },
+      "review": {
+        "role": "scope_control",
+        "source_selection": "heldout-014-specific"
+      }
+    },
+    {
+      "id": "regression-heldout-030-root",
+      "local": {
+        "note_id": "14411225bc5e7833b646bd25babb62daee008e92ab8a2153d3c95762488e05c3",
+        "number": "1"
+      },
+      "review": {
+        "role": "scope_control",
+        "source_selection": "heldout-030-root"
+      }
+    },
+    {
+      "id": "regression-heldout-030-specific",
+      "local": {
+        "note_id": "14411225bc5e7833b646bd25babb62daee008e92ab8a2153d3c95762488e05c3",
+        "number": "1.1"
+      },
+      "review": {
+        "role": "scope_control",
+        "source_selection": "heldout-030-specific"
+      }
+    },
+    {
+      "id": "regression-heldout-033-root",
+      "local": {
+        "note_id": "9a6bb96cb4e1a80cc8ae44e54950916932dca17afea71487a6ae2b95bcd0f6fb",
+        "number": "1"
+      },
+      "review": {
+        "role": "scope_control",
+        "source_selection": "heldout-033-root"
+      }
+    },
+    {
+      "id": "regression-heldout-033-specific",
+      "local": {
+        "note_id": "9a6bb96cb4e1a80cc8ae44e54950916932dca17afea71487a6ae2b95bcd0f6fb",
+        "number": "1.1"
+      },
+      "review": {
+        "role": "scope_control",
+        "source_selection": "heldout-033-specific"
+      }
+    },
+    {
+      "id": "regression-heldout-039-root",
+      "local": {
+        "note_id": "e064d209762bde7cebd7d86e7dd976b643a8148e2be495388a6d0bc7255c8ece",
+        "number": "6"
+      },
+      "review": {
+        "role": "scope_control",
+        "source_selection": "heldout-039-root"
+      }
+    },
+    {
+      "id": "regression-heldout-039-specific",
+      "local": {
+        "note_id": "e064d209762bde7cebd7d86e7dd976b643a8148e2be495388a6d0bc7255c8ece",
+        "number": "6.1"
+      },
+      "review": {
+        "role": "agreed_failure",
+        "source_selection": "heldout-039-specific"
+      }
+    },
+    {
+      "id": "regression-heldout-040-root",
+      "local": {
+        "note_id": "b0682094fe0db00a2707d011d1c2260f19ae5628e8c34dd1d2db22e8124c61a8",
+        "number": "6"
+      },
+      "review": {
+        "role": "scope_control",
+        "source_selection": "heldout-040-root"
+      }
+    },
+    {
+      "id": "regression-heldout-040-specific",
+      "local": {
+        "note_id": "b0682094fe0db00a2707d011d1c2260f19ae5628e8c34dd1d2db22e8124c61a8",
+        "number": "6.1.1.1"
+      },
+      "review": {
+        "role": "agreed_failure",
+        "source_selection": "heldout-040-specific"
+      }
+    },
+    {
+      "id": "regression-unseen-pair-12-root",
+      "local": {
+        "note_id": "c83c1882f38e60748fa8475da1cab36563a5f89f2c442680502a006b904c0774",
+        "number": "1"
+      },
+      "review": {
+        "role": "goal_naming_control",
+        "source_selection": "unseen-pair-12-root"
+      }
+    },
+    {
+      "id": "regression-unseen-pair-12-specific",
+      "local": {
+        "note_id": "c83c1882f38e60748fa8475da1cab36563a5f89f2c442680502a006b904c0774",
+        "number": "1.2.1.1"
+      },
+      "review": {
+        "role": "goal_naming_control",
+        "source_selection": "unseen-pair-12-specific"
+      }
+    }
+  ]
+}

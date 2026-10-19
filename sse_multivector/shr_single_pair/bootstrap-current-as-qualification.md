@@ -1072,6 +1072,57 @@ constructor pins remain V133. No hierarchy is rebuilt or adopted. The useful
 next change is to address the two observed failure types while preserving meaningful
 qualifications and defining alternatives/parts, followed by fresh qualification.
 
+### Source illustrations and title identity: Bootstrap-v149
+
+The user agreed with the three displayed V147 draw-1 failures and authorized
+fixing them while preserving qualifications and defining alternatives/parts.
+Those three exact outputs now have attributed native user rejections; agreement
+does not create user gold for unseen variants or authorize constructor adoption.
+Before editing, native preparation/run replayed those three production inputs
+and reused the same failing answers: three valid responses, three exact reuses
+and zero new attempts. This establishes the semantic regression before the fix.
+
+Experimental [Bootstrap-v149](Hierarchy-bootstrap-v149.md) resolves the competing
+scope instructions and names the same kind of topic as its final meaning.
+The Bootstrap wrapper identifies the selected subject's topic/level, with
+defining restrictions resolved from source evidence; it no longer separately
+commands preservation of every restriction in the supplied subject wording.
+Shared [rules-v13](prompt_parts/explicit-meaning-rules-v13.md) state that examples
+remain illustrative when repeated in a supplied subject or description, while
+preserving defining qualifications, alternatives and parts. The redundant ban
+on wording about membership regardless of circumstances is removed; this does
+not establish a new ban on qualifications.
+
+Native paired synchronization publishes the shared change as
+[Bootstrap-v148](Hierarchy-bootstrap-v148.md) and
+[Consolidation-v28](Hierarchy-consolidation-v28.md). V148 is V149's source
+dependency, with unchanged V147 wrappers; it is not independently qualified or
+adopted. V149 then revises only Bootstrap's wrapper/examples, retaining that
+paired shared source. Transportation's selected example subject now explicitly
+includes bus/train illustrations while its meaning remains unchanged. All four
+full example outputs stay exact. The short preference example retains the word
+"Preference," and a report example retains the report as its subject despite
+publication/distribution details. There is no numeric word target.
+
+The [pre-call regression collection](hierarchy-bootstrap-v149-regression-v1.json)
+and [specification](hierarchy-bootstrap-v149-regression-v1.spec.json) freeze
+24 original ASv6.100 inputs with three fresh draws: the three agreed failures
+and 21 controls, including their broad roots, original People/numeric/stock-plan
+cases, goal naming, defining tag/constituent lists, alternatives and an unresolved
+identifier. The gate requires all nine responses on the agreed failures to pass,
+with no clear regression on controls. Uncertainties stay separate from failures.
+Fresh qualification starts only after that gate passes; candidate changes after
+qualification would require another untouched panel. The pre-call plan and
+native artifacts remain ignored under `target/bootstrap-v149-fix-v1/`.
+
+The method follows [official model guidance](https://developers.openai.com/api/docs/guides/latest-model)
+and [reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices):
+direct instructions, consistent positive examples and representative evaluation
+with development inputs separated from qualification. No extra reasoning trace,
+word-count optimization, runtime postprocessor or new execution mechanism is
+introduced. Constructors stay V133; V149 and Consolidation-v28 are experimental.
+Results and native accounting will be recorded here after the test.
+
 ## Meaning-derived titles: Bootstrap-v130
 
 The user requested a concise title based solely on the explicit meaning.

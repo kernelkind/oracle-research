@@ -1,0 +1,19 @@
+{
+  "schema_version": 2,
+  "local_schema_version": 4,
+  "sources": [
+    {
+      "path": "hierarchy-bootstrap-v149-regression-nodes-v1.json"
+    }
+  ],
+  "review": {
+    "purpose": "Frozen 24-input regression of user-confirmed failures, qualifications, required alternatives/joint parts, numeric criteria, stock plan, goal naming and justified nulls. No word target or punctuation blacklist.",
+    "pre_call_plan": "../../target/bootstrap-v149-fix-v1/test-plan.json",
+    "criteria": "Preserve V147 frozen qualification criteria. The three user-confirmed draw1 failures are explicit gold only for those shown outputs, not desired exact replacement wording. Judge fresh meaning/title pairs against source evidence."
+  },
+  "experiments": [
+    {
+      "path": "../../target/bootstrap-title-v147/controls1"
+    }
+  ]
+}

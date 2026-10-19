@@ -318,11 +318,43 @@ class PromptAssemblyTests(unittest.TestCase):
                     self.assertEqual(value['title'], 'Studio portrait negatives' if index == 1
                                      else expected['title'])
 
+    def test_scope_revision_preserves_example_outputs_and_synchronizes_rules(self):
+        from sse_multivector import experiment_inputs
+        from sse_multivector.prompt_assembly import compile_spec, paired_spec
+
+        original, _, old_prompt = compile_spec(PROMPTS / 'Hierarchy-bootstrap-v147.assembly.json')
+        pattern = (r'<example>\s*<input>\s*(.*?)\s*</input>\s*'
+                   r'<output>\s*(.*?)\s*</output>\s*</example>')
+        old_examples = re.findall(pattern, old_prompt.decode(), re.S)
+        schema = json.loads((PROMPTS / 'Hierarchy-bootstrap-v130.output.schema.json').read_text())
+        for version in (148, 149):
+            with self.subTest(version=version):
+                path = PROMPTS / f'Hierarchy-bootstrap-v{version}.assembly.json'
+                current, _, prompt = compile_spec(path)
+                _, companion, _, _ = paired_spec(path.resolve(), current)
+                self.assertEqual(current['shared'], companion['shared'])
+                self.assertNotEqual(current['shared'], original['shared'])
+                self.assertEqual(self.invoke('check', path).returncode, 0)
+                examples = re.findall(pattern, prompt.decode(), re.S)
+                self.assertEqual(len(examples), len(old_examples))
+                for index, ((input_json, output), (old_input, old_output)) in enumerate(
+                        zip(examples, old_examples, strict=True)):
+                    expected_input = json.loads(old_input)
+                    if version == 149 and index == 2:
+                        expected_input['local']['hierarchy']['entries'][0]['subject'] = (
+                            'Transportation, including bus and train services')
+                    self.assertEqual(json.loads(input_json), expected_input)
+                    value = experiment_inputs.validate(
+                        {'adapter': 'hierarchy_local_nodes'},
+                        {'inputs': {'INPUT_JSON': input_json}}, output, schema)['parsed']
+                    self.assertEqual(value, json.loads(old_output))
+
     def test_definition_only_pair_preserves_wrappers_and_changes_shared_rules_together(self):
         from sse_multivector.prompt_assembly import compile_spec
 
         for family, current, previous in (('bootstrap', 134, 133), ('consolidation', 22, 21),
-                                          ('bootstrap', 138, 137), ('consolidation', 26, 25)):
+                                          ('bootstrap', 138, 137), ('consolidation', 26, 25),
+                                          ('bootstrap', 148, 147), ('consolidation', 28, 27)):
             with self.subTest(family=family):
                 path = PROMPTS / f'Hierarchy-{family}-v{current}.assembly.json'
                 spec, _, content = compile_spec(path)
