@@ -1580,6 +1580,71 @@ Use 24 local workers and one BLAS thread each; there are no teacher calls,
 training or new encodings. Ignored artifacts live externally at
 `oracle-mvp-section-count-preserved-groups-v1/target/section-count-preserved-groups-v1/`.
 
+### Preserved-group result: fragmentation fixed, topic quality remains mixed
+
+The grouped mixed-section test completes with six children; both independent
+reference halves choose six. All 330 original notes remain covered. The
+entry-level baseline chose five, so compare both the independently chosen
+layouts and their saved five-child fits rather than attributing count changes
+to topic quality.
+
+| Quantity | Entry-level baseline | Preserved groups, same five children | Preserved groups, selected six |
+|---|---:|---:|---:|
+| Original notes covered | 330 | 330 | 330 |
+| Original groups split across children | 24 / 89 | 0 / 89 | 0 / 89 |
+| Distinct notes per child | 51, 43, 60, 126, 140 | 60, 56, 153, 40, 106 | 105, 118, 40, 46, 28, 91 |
+
+All child note sets strictly narrow this parent; their counts overlap and
+must not be summed. The 189 ungrouped entries remain eligible as independent
+items. No note or entry is imported from outside the frozen parent.
+
+Examples of repaired fragmentation include G011's 39 entries (United States,
+United States of America and Americans), previously split 38/1; G115's 31
+Iran-related entries, previously split 20/2/9; and G296's six Donald Trump
+entries, previously split 2/4. Keeping the same five-child count retains broad
+people/body, Israel-related, international, Britain and US-oriented choices.
+This is provisional agent inspection, not human approval or a measured
+reduction in browsing decisions.
+
+The constraint also preserves weaker original combinations. G320 contains
+James Corden, Cameroon, Curaçao, Brad Cooper, Stephen Colbert and Colombia.
+Their full meanings identify people and countries, not one narrow shared
+topic. G088 combines Ottawa, Oklahoma, the Sea of Oman and Odessa. These are
+existing groups, not new mistakes introduced by the grouping adapter. Making
+all groups indivisible retains such combinations alongside useful ones.
+
+At the automatically selected six-child count, the Britain-oriented entries
+join a broader European/international child; women/nudity form another child,
+while a separate body/animals/daily-topics child still has weakly related
+entries. The result demonstrates intact membership, not clear overall
+superiority or six approved category names. No optimal child count is
+established by this comparison.
+
+Matched checks confirm bit-identical original vectors, note IDs, PCA bounds
+and all 32 raw reference matrix hashes. Every observed trial uses the same
+initial center indices as its baseline counterpart. Thus the numerical change
+is the group-assignment constraint applied to both real and reference data,
+with the entry weights, pooling and decision rule unchanged. All 48 observed
+trials and 192 reference/count group checks pass; all selected reference fits
+converge. Independent reconstruction checks first/last reference matrices,
+objectives and dispersions, and reproduces all three count choices. Reference
+refitting takes 16.89 seconds wall time, about 232 CPU-seconds and 674 MB peak
+memory. These are paired refits on existing deterministic samples, not 32 new
+independent samples relative to the baseline. Forty-three relevant tests pass.
+
+The proposal solves fragmentation by construction and reproduces the benefit
+on a real mixed parent. It does not justify treating every existing HDBSCAN
+group as semantically reliable. The useful next component test is whether
+meaning-based grouping can separate the mixed-name examples while keeping
+Nostr's shared topic together. That test is proposed, not run or adopted here.
+Positive-minimum root construction remains outside this component's support;
+no HiGen policy or complete hierarchy changes.
+
+Ignored `comparison-and-verification.json` retains every selected membership
+and full original meaning for the three layouts, all 24 previously split
+groups, source bindings and verification results. The external artifact and
+frozen source paths require retaining this task worktree.
+
 Reusable numerical CLI: `sse_multivector/cluster_resampling_probe.py`; tests:
 `sse_multivector/test_cluster_resampling_probe.py`. Input NPZ contains unit
 `vectors`, aligned compact zero-based original `groups`, and aligned `notes`.
