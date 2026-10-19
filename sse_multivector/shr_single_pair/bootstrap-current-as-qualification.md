@@ -1718,8 +1718,64 @@ punctuation restriction or new example. Shared rules-v14, Consolidation-v29,
 all examples, schema and model settings are unchanged.
 
 The [regression specification](hierarchy-bootstrap-v162-regression-v1.spec.json)
-retains the same 36 exact inputs, three fresh draws and unchanged gate. Results
-are pending; no qualification response has informed this revision.
+retains the same 36 exact inputs, three fresh draws and unchanged gate. No
+qualification response has informed this revision.
+
+V162 produces 108 valid development responses without diagnostic errors or
+answer reuses. Root review records 97 accepts, eleven uncertainties and no clear
+rejections. Titles receive 99 accepts, four uncertainties and five justified
+null/N/A pairs; meanings receive 100 accepts and eight uncertainties. All 18
+target checks pass: the nine original agreed-case responses, six responses for
+the two V158 failures and all three stock-plan titles. Every stock-plan title is
+“Chicken stock preservation plan.” The declared gate passes; the eleven
+uncertainties are not counted as successes.
+
+Uncertainties concern three pen definitions, three writing-alternative titles,
+two country definitions, one combined Data-god meaning, one short haxx-readiness
+definition and one null Sizing-root response. The readiness definition merely
+states a readiness state attributed to haxx, leaving its adequacy unsettled.
+The Sizing null pair is mechanically consistent, but whether a domain is needed
+to define the general root remains unresolved; neither dimension is accepted or
+counted as justified N/A. The two combined Data-god nulls and three haxx-identity
+nulls are justified. This is an exposed development panel and unblinded judgment,
+not independent qualification.
+
+### Frozen next qualification panel for Bootstrap-v162
+
+The [protocol](hierarchy-bootstrap-v162-heldout-v1.json),
+[selectors](hierarchy-bootstrap-v162-heldout-nodes-v1.json) and
+[specification](hierarchy-bootstrap-v162-heldout-v1.spec.json) freeze a new panel
+before qualification inference. The V158 title/meaning criteria and verdict
+definitions are unchanged. The prompt SHA256 is
+`c72c9c5f098a23adac79a8e8f60d535f777019c8d7e0f566a4b829d8ee934c61`;
+selector SHA256 is
+`4e85c9e948539270f5ec7bce8afb36a3b54029dc6fe868ec4b8405d8a9f8413c`.
+
+The core contains 80 new posts/texts and 80 recorded authors absent from all prior
+prepared Bootstrap inputs in this task worktree, including the complete V147 and
+V158 panels. Exclusions resolve 213 posts and 210 authors across all three actual
+source corpora, with no unattributed prior note. The frozen manifest covers 163
+prepared experiments containing local cases; prefix-only warmups are excluded
+from that experiment count. After exclusions, 930 eligible primary notes remain.
+
+The fixed seed selects 60 posts, then 20 risk cases from different authors/texts:
+one food, five people, seven with illustrative wording in descendant subjects and
+seven with long specific subjects. These are sampling predicates, not verdict
+rules. Only one new-author food post remains eligible, and the original quoted
+reading-plan predicate finds no new authors. The allocations reflect that source
+availability before any qualification output, rather than silently relaxing the
+author split. A separate post-only supplement selects the one remaining unused
+named-work reading post from a previously seen author; it is not author-disjoint
+evidence and is reported separately.
+
+Each of the 81 posts contributes a root and specific input, with three fresh
+draws: 480 core outputs plus six supplemental outputs. Native preparation supplies
+the full original post and root hierarchy without rewriting them. Root-agent
+assessment will cover all outputs under the frozen rubric; it is unblinded,
+not independent review or human calibration. Repeated draws and paired levels
+share posts. No prompt retuning or selective qualification rerun is permitted.
+Generation and semantic results are pending; V162 remains experimental, constructor
+pins stay V133 and Consolidation-v29 semantics remain unqualified.
 
 ## Meaning-derived titles: Bootstrap-v130
 

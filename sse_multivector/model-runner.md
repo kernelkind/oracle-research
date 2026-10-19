@@ -222,7 +222,12 @@ and eleven uncertainties. Both recent failures pass all six checks, but one stoc
 title appends storage, so qualification remains unrun. Experimental
 [Bootstrap-v162](shr_single_pair/Hierarchy-bootstrap-v162.md) clarifies that
 required actions stay in meaning while the title gives their shared goal one
-broader name. Its development test is pending; constructors stay V133.
+broader name. Its 108 valid development responses receive 97 accepts and eleven
+uncertainties, with no clear rejection. All 18 target checks pass, including all
+three stock-plan titles. The frozen next panel contains 80 new posts/authors
+plus one separately reported new post by a previously seen author: 162 inputs,
+three draws and 486 expected outputs. Qualification and unblinded root assessment
+are pending; constructors stay V133.
 
 Experimental [Bootstrap-v133](shr_single_pair/Hierarchy-bootstrap-v133.md)
 returns a concise, natural `title` derived solely from its finalized `meaning`.
