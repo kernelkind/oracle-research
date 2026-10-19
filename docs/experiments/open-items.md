@@ -10,10 +10,11 @@ bindings to relocated storage were also checked against their recorded hashes.
 
 There are **21 source bindings whose current contents differ from the recorded
 hash**. [Exact alternatives](dependency-alternatives.csv) identify a matching
-saved copy for nine of them. The other twelve still need the original bytes
-located or their limitation documented. Keep the current and historical
-versions distinguishable; do not change frozen plans to conceal a mismatch.
-These counts describe bindings, not necessarily distinct files.
+saved or recovered copy for **18** of them. The remaining **three versions of
+one hierarchy state file** were not located in the recovery check below.
+Keep the current and historical versions distinguishable; do not change frozen
+plans to conceal a mismatch. These counts describe bindings, not necessarily
+distinct files.
 
 Some absent filenames are expected:
 
@@ -24,6 +25,52 @@ Some absent filenames are expected:
   created because the producer step was held before comparison. Those defaults
   cannot be run directly. The saved state and the reference-specific explanation
   are recorded in [reference resolutions](reference-resolutions.csv).
+
+### Historical input recovery
+
+The follow-up check on 2026-10-19 recovered nine additional input versions,
+totaling 1,424,669 bytes. Each complete recovered file matches the SHA-256
+recorded by its original experiment:
+
+- **Eight review logs:** the required version is an exact prefix of the current
+  log, ending at a complete JSON line. Later reviews had been appended. The
+  alternatives list records the source, full-source hash and exact prefix length.
+  Both the complete current logs and the recovered earlier versions are retained.
+- **One qualification configuration:** `qualification-20261007` preserved its
+  case definitions in its plan. Replacing only the one-line Q06 and Q08 case
+  objects in Git blob `91b0a023d8dd9969f91a1394906bed97336b19f7` with those
+  saved definitions recovers the exact file. The alternatives list records the
+  plan location and hash, serialization and resulting hash. This is a verified
+  recovery, not a separately discovered backup.
+
+These nine files are saved under the publication checkout's ignored
+`target/publication-inputs/` directory and included in [part-1251.csv](files/part-1251.csv)
+for delivery under `datasets/`. Their contents are not committed to Git.
+Original files, plans and receipts were not modified.
+
+Three earlier versions of
+`oracle-mvp-shr-pair-correctness-v1:target/hierarchy-nine-note-children-v3/state.json`
+remain unlocated. They affect these eight saved experiments beneath
+`target/hierarchy-iteration-v1/` in that source root:
+
+| Expected SHA-256 | Affected experiment directories |
+| --- | --- |
+| `8170a1ada66e1a95d7a22a3ba5171f96bc36647bf3c998b722b49359034200a1` | `ingredient-heat-guards-v32-baseline`, `ingredient-heat-guards-v34-draw1` |
+| `3c684cdbedb8f8aeec8894267ca009e0ae4fba8fc20dcf7cc3f678dce5a90c0b` | `ingredient-heat-v32-baseline`, `ingredient-heat-v34-draw1`, `ingredient-heat-v34-draw2` |
+| `0e7eaab5e9f7154ace1478c6998f2164fde65e58c3e63b946ec398456a9541c6` | `preparation-storage-v32-baseline`, `preparation-storage-v35-draw1`, `preparation-storage-v35-draw2` |
+
+All eight retain prepared cases and saved responses. Their missing state
+versions prevent complete source verification and regeneration of those cases
+from the original state. Preserve the available evidence with this limitation;
+the current state file is not a substitute. The affected entries are marked in
+[experiments](experiments.csv) and [issues](issues.csv).
+
+The search checked 658 indexed state/configuration files, 167 additional direct
+copies under known source roots, indexed historical hashes, the configuration's
+Git path history and 18,285 Git blobs within bounded size ranges. It included
+inventoried files on relocated storage. [Inventory metadata](inventory.json)
+records the search bounds. This establishes that these versions were not found
+in those locations, not that no copy exists anywhere.
 
 ## Saved results and verification
 
@@ -100,6 +147,11 @@ the producer receipts needed by reused answers. Resolve historical input
 versions using the inventory before staging. Use copies of the frozen bytes.
 The file list remains the basis for selecting archive contents; this command
 does not select files, copy evidence or build an archive.
+
+An original path can require different historical contents in different plans.
+The current location file maps each original path to one destination, so a
+single shared mapping cannot verify conflicting versions. Resolve that packaging
+limitation before preparing a shared package for those experiments.
 
 Use the private original-to-staged locations from file selection and copying.
 For the HR39 example, with the setup variables from the reproduction guide and

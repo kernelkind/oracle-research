@@ -4,10 +4,10 @@
   "publication_oracle_commit": "f0babdd6495abaa66626752248633eaf32ec317f",
   "publication_runner_commit": "3b735505ecd8aec49dd7e947bbd4647e99f3a6a1",
   "state": "candidate file list; not a publication approval or complete reproducibility claim",
-  "files": 850983,
-  "file_bytes": 574182453650,
-  "unique_planned_archive_members": 825320,
-  "unique_planned_archive_bytes": 573252541536,
+  "files": 850992,
+  "file_bytes": 574183878319,
+  "unique_planned_archive_members": 825329,
+  "unique_planned_archive_bytes": 573253966205,
   "experiments_by_kind": {
     "historical collection": 120,
     "official hierarchy": 37,
@@ -29,7 +29,8 @@
     "oversized-plan-not-parsed": 42,
     "results-not-at-recorded-path": 3173,
     "symlink-requires-explicit-target-review": 11,
-    "credential-container-excluded": 2
+    "credential-container-excluded": 2,
+    "historical-input-version-not-recovered": 8
   },
   "excluded_file_counts": {
     "locks-build-metadata": 301083,
@@ -41,15 +42,15 @@
   "changed_files": 0,
   "source_binding_count": 33940015,
   "unique_source_bindings": 59277,
-  "file_list_parts": 1250,
+  "file_list_parts": 1251,
   "excluded_fixture_environment_and_container_files": 7991,
-  "inputs": 37959,
+  "inputs": 37968,
   "historical_artifact_blobs": 294,
   "official_corpora": 9,
   "verified_official_corpora": 9,
   "recorded_generation_commits": 41,
   "generation_commits_missing_from_publication": 1,
-  "exact_dependency_alternatives": 9,
+  "exact_dependency_alternatives": 18,
   "dataset_hash_exceptions": [
     {
       "source": "oracle-mvp-hierarchy-hr39-v53-auto:target/hierarchy-hr39-v53-auto-5000-note-v1/subject-collection/subjects.json",
@@ -62,6 +63,7 @@
   "resolved_external_source_bindings": 151,
   "resolved_result_path_aliases": 276,
   "verification": {
+    "scope": "Original discovery pass; historical_input_recovery records the follow-up",
     "file_rows_rechecked": 850983,
     "unlisted_input_or_result_references": 0,
     "files_changed_since_inventory": 0,
@@ -72,5 +74,42 @@
     "metadata_file_sizes": "all CSV files below 100 MiB",
     "archive_content_privacy_review": "pending",
     "historical_experiment_reproduction": "not performed"
+  },
+  "historical_input_recovery": {
+    "date": "2026-10-19",
+    "publication_oracle_commit": "33e009ac8ed9791cbbdaa6baac10690721620f93",
+    "newly_recovered_versions": 9,
+    "recovered_bytes": 1424669,
+    "methods": {
+      "exact_log_prefix": 8,
+      "saved_case_definitions_and_git_blob": 1
+    },
+    "unrecovered_versions": 3,
+    "affected_native_plans": 8,
+    "searched_indexed_files": 658,
+    "searched_indexed_bytes": 1265494752,
+    "state_file_size_limit_bytes": 33554432,
+    "additional_direct_copies_checked": 167,
+    "searched_git_blobs": 18285,
+    "searched_git_blob_bytes": 522880327,
+    "git_blob_size_ranges_inclusive": [
+      [
+        2000,
+        32768
+      ],
+      [
+        8388608,
+        16777216
+      ]
+    ],
+    "search_scope": "Inventoried state.json files up to 32 MiB, named qualification-source.json copies, direct copies under known source roots, indexed historical hashes, qualification path history, and original-repository Git blobs within the recorded size ranges; not an exhaustive disk search",
+    "original_dependency_observations_preserved": true,
+    "verification": {
+      "recovered_files_matching_recorded_hashes": 9,
+      "original_mismatched_source_hashes_rechecked": 21,
+      "affected_plan_files_unchanged": 9,
+      "inventory_counts_and_references": "passed",
+      "local_document_links": "passed"
+    }
   }
 }

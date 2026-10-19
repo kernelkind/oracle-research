@@ -54,8 +54,10 @@ remain historical evidence; raw source posts are not deprecated by that rule.
   experiment plans. [Specification inputs](spec-inputs.csv) retain the individual
   maintained-spec references. A located file with a different hash is not a
   substitute for the original input. [Exact alternatives](dependency-alternatives.csv)
-  identify other saved copies with the expected hash without changing a frozen
-  experiment's original binding.
+  identify saved copies or recoveries with the expected hash without changing a
+  frozen experiment's original binding. Recovery entries record their sources
+  and exact procedure. [Input recovery findings](open-items.md#historical-input-recovery)
+  explain the nine recovered versions and the three state versions still unlocated.
 - [Runtime inputs](runtime-inputs.csv): hierarchy recipes and the encoder assets
   they reference, including recorded checkpoint and tokenizer/configuration
   hashes. These hashes are distinguished from newly measured input hashes.
@@ -137,6 +139,11 @@ Large experiment plans that cannot be inspected within the stated JSON limit
 require separate follow-up. Other evidence and final archives still need
 checksum verification. File sizes and modification times are checked again at
 the end to detect concurrent edits.
+
+The historical-input follow-up adds nine recovered files to the explicit list.
+Their complete contents were checked against the original expected hashes;
+the original dependency observations remain unchanged. The inventory record
+separates this follow-up from the discovery snapshot and lists its search bounds.
 
 Build caches, virtual environments, runtime lock files, known credential containers and
 unreviewed symlink targets are excluded. Known unit/integration fixture outputs
