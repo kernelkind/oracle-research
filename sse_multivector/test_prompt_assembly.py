@@ -327,7 +327,7 @@ class PromptAssemblyTests(unittest.TestCase):
                    r'<output>\s*(.*?)\s*</output>\s*</example>')
         old_examples = re.findall(pattern, old_prompt.decode(), re.S)
         schema = json.loads((PROMPTS / 'Hierarchy-bootstrap-v130.output.schema.json').read_text())
-        for version in (148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159):
+        for version in (148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160):
             with self.subTest(version=version):
                 path = PROMPTS / f'Hierarchy-bootstrap-v{version}.assembly.json'
                 current, _, prompt = compile_spec(path)
@@ -342,7 +342,7 @@ class PromptAssemblyTests(unittest.TestCase):
                     value = experiment_inputs.validate(
                         {'adapter': 'hierarchy_local_nodes'},
                         {'inputs': {'INPUT_JSON': input_json}}, output, schema)['parsed']
-                    if version in (150, 151, 152, 153, 154, 155, 156, 157, 158, 159) and index == 2:
+                    if version in (150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160) and index == 2:
                         self.assertEqual(value['meaning'],
                             'Transportation of fragile goods is moving goods that are easily damaged '
                             'from one place to another.')

@@ -205,7 +205,14 @@ rather than the chosen conditions used for final composition. Shared rules-v13,
 Consolidation-v28, examples, schema and model settings remain unchanged. Its
 [development round](shr_single_pair/bootstrap-current-as-qualification.md#separate-development-round-bootstrap-v159)
 uses 36 inputs, including the two exposed V158 failures and their disputed
-controls. Testing is pending; this is an experimental source revision, not adoption.
+controls. Root review records 94 accepts, four rejects and ten uncertainties
+from 108 valid responses. Reading titles pass all three draws, but illustrative
+members remain in all three target meanings and one stock title appends storage.
+The development gate fails; qualification has not run. Experimental
+[Bootstrap-v160](shr_single_pair/Hierarchy-bootstrap-v160.md) removes only V159's
+blanket selected-name retention sentence. Its development test is pending;
+shared rules, companion, examples, schema, model settings and constructor pins
+remain unchanged.
 
 Experimental [Bootstrap-v133](shr_single_pair/Hierarchy-bootstrap-v133.md)
 returns a concise, natural `title` derived solely from its finalized `meaning`.

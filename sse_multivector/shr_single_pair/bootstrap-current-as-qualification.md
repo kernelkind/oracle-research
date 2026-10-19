@@ -1635,7 +1635,32 @@ stock-plan titles to pass, with no clear control regression. Uncertainties remai
 reported separately. Root-agent review is unblinded and not human-calibrated.
 Any subsequent qualification must freeze its new source panel, unchanged rubric
 and candidate hash before inference; it may not reuse exposed posts or retune
-on qualification outputs. Results are pending. Constructors stay V133.
+on qualification outputs. Constructors stay V133.
+
+V159 produces 108 valid development responses with no diagnostic errors or
+answer reuses. Root review records 94 accepts, four rejects and ten uncertainties.
+Titles receive 101 accepts, one rejection, three uncertainties and three justified
+null/N/A pairs. Meanings receive 98 accepts, three rejects and seven uncertainties.
+All three reading-plan titles now name the endurance-challenges article briefly,
+and all nine original agreed-case responses pass. However, all three relationship
+meanings retain the illustrative member; one stock title is “Chicken stock
+preservation and storage plan.” The gate fails, so no qualification calls follow.
+Uncertainties concern three pen definitions, three writing-alternative titles,
+one country definition and three unresolved combined Data-god learning meanings.
+Native reviews remain at `target/bootstrap-v159-fix-v1/v159-regression{1,2,3}`.
+
+### Remove blanket selected-name retention: Bootstrap-v160
+
+Experimental [Bootstrap-v160](Hierarchy-bootstrap-v160.md) removes only the
+sentence “Retain the selected name in `meaning` to preserve identity.” The
+remaining instructions already require the selected topic's identity and
+supported relationships. A descriptive subject can repeat an illustrative member,
+so unconditional name retention may compete with omitting that member. This is
+a hypothesis, not an established explanation of V159's failures. No new rule,
+example, shared-rules version, companion or generation setting is introduced.
+The [regression specification](hierarchy-bootstrap-v160-regression-v1.spec.json)
+retains the same 36 inputs and unchanged gate, with three fresh draws. Results
+are pending; no untouched qualification response has informed this revision.
 
 ## Meaning-derived titles: Bootstrap-v130
 
