@@ -2390,3 +2390,75 @@ resume. They cover transitive joins across existing groups, intact memberships,
 reciprocal-only tie behavior, self-exclusion, singleton input and invalid flags.
 All 63 relevant checks pass, including current native HDBSCAN validation and
 default panel behavior. This adds a research option, not a HiGen policy.
+
+The matched six-section fit completes. Preparation finds 1,176 reciprocal entry
+pairs, of which 461 cross the original indivisible units. Joining them reduces
+2,969 units to 2,508. The largest resulting unit has 62 entries; there is no
+collapse to one giant component. All original fine groups remain intact.
+All eight starts converge, using the same initial center entries as the saved
+baseline for each seed. The selected seed remains 20261018. Its section note
+counts are 334, 554, 294, 479, 442 and 406. Coverage remains 937/1,000 (93.7%)
+by construction, every section exceeds 100 notes, and the six choices retain
+the same broad themes as before. After matching labels, 263/5,336 entry
+assignments change. Recorded fit time across eight starts is 5.79 seconds,
+excluding input preparation and nearest-neighbor calculation.
+
+| Diagnostic | Saved baseline | Reciprocal constraint |
+|---|---:|---:|
+| Inspected duplicate witnesses split between sections | 7/7 | 1/7 |
+| Exact-title families occurring in multiple sections | 27 | 9 |
+| Entries belonging to those split-title families | 76 | 41 |
+| Distinct source notes retained | 937 | 937 |
+
+Cinema, Construction, Commenting, Claims, Rebates and the two Justice-department
+names now each share a section. Zap payments versus Zaps remains split between
+finance (3) and networking/publishing (4). These are seven post-selected
+agent-inspected witnesses, not independent semantic gold. The literal-title
+screen is likewise not an error count: Strategy and Inquiries still have
+legitimate different senses in separate sections.
+
+There are two important limitations. First, the new rule also joins physical
+Rooms (L00685) with logical communication Rooms (L01303), moving the latter from
+section 5 to section 2. Their title cosine is 0.9851, meaning cosine about 0.5053,
+and combined cosine 0.7452. In meaning space their nearest other entries are
+Floors and Probe acknowledgments respectively. Their combined mutual match
+therefore does not establish shared meaning. Broad roots may contain different
+meanings; coassignment itself is not proof of a wrong root, but this control
+shows why reciprocal matching cannot be treated as an equivalence detector.
+The Strategy plan/company distinction and Inquiries investigation/question
+distinction remain in separate units and their respective original sections.
+
+Second, Payments becomes a new split: L01784 and L03918 remain in finance (3),
+while L02582 goes to section 2. These definitions all describe transfers of
+money or value. The first two form a reciprocal pair; the third chooses L03918,
+but L03918 chooses its closer Payments counterpart, so no reciprocal edge joins
+the third. Keeping all mutual pairs intact thus does not preserve an entire
+topic with several variants. This is a new counterexample, not hidden inside
+the improved aggregate screen. Nineteen previously split title families stop
+splitting, eight remain, and Payments is added, giving nine total.
+
+Adding a requirement for meaning-only reciprocity is not an established fix.
+On these same inspected witnesses it would remove the Rooms edge, but also
+remove the direct Cinema, Commenting and Claims edges; their closest meaning
+neighbors are other related headings. No additional constrained fit using that
+requirement was run.
+
+Independent blocked nearest-neighbor reconstruction reproduces all pairs.
+A separate sparse connected-component calculation reproduces every final unit
+from original groups plus those pairs. Existing native/panel validation checks
+frozen hashes, original rows, all original and new group constraints, normalized
+centers, objectives and note counts for every start. Completed fit bytes are
+unchanged on resume. All 63 checks pass on combined main. Generated evidence is
+ignored on the external drive, linked from the retained executed worktree at
+`oracle-mvp-reciprocal-section-groups-v1/target/reciprocal-section-groups-v1/`:
+the frozen spec/panel, runtime and complete `comparison-and-verification.json`.
+Source checkpoint is `100fdb6b`; the worktree remains for frozen execution and
+artifact paths. No inference, encoding, training, UI or HiGen activation occurs.
+
+Next suggested component test: allow an entry that points into a reciprocal
+group to join that group, while measuring unwanted connections and any large
+components. Payments motivates this directly: a third definition finds its
+matching topic but is excluded solely by one-to-one reciprocity. This would
+test that remaining mechanism without introducing a fixed cosine threshold.
+It is not yet implemented, run or approved for adoption; the present improvement
+does not establish a general root-distinctness guarantee.
