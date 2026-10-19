@@ -7,7 +7,9 @@ and explicitly accepts broad root topics because deeper levels provide
 narrowing. Root breadth alone is not a failure criterion. Recovery under note
 removal provides a diagnostic, without establishing better browsing choices.
 No prompts, canonical hierarchies or review UIs changed. No model calls,
-encodings, training or paid resources.
+training or paid resources were used in the original resampling probes.
+The latest full-meaning follow-up adds local frozen-SSE encodings, with no LLM
+calls or training, and reaches 91% in six complete branches.
 
 ## Question and controlled inputs
 
@@ -212,6 +214,99 @@ and disjointness are independently checked from original entry/note IDs.
 Numerically, 90% is attainable using existing vectors once unassigned entries
 are eligible. A fair comparison with A's pooling needs additional frozen-SSE
 meaning encodings; none were performed in this probe.
+
+## Matched full-meaning follow-up: 91% in six complete branches
+
+The user authorized completing the full-meaning vectors and repeating the
+expanded-pool test. This follow-up restores A's exact representation: context
+is `title + two newlines + complete explicit meaning`, pooling the complete
+meaning. It does not pool the original post, shorten the definition, rewrite
+headings or meanings, train a model, or call an LLM.
+
+### Completion and validation
+
+Reuse 4,648 exact original-entry vectors from the three existing banks. The
+remaining 5,540 entries have 5,505 distinct contexts. The existing native
+`title_selection_probe` adapter now accepts an ASv6.100 native hierarchy state
+and prepares contextual whole-title/whole-meaning views. It binds the original
+entries, corpus, model settings and source files; deprecated AS versions and
+non-original native inputs are rejected. The normal native `worker.py` and
+adapter `collect` paths run and validate the encoding; no separate execution
+service or teacher runner is introduced.
+
+The local offline CPU worker encodes 5,505 missing contexts plus eight
+deterministically selected cached replay contexts, producing 11,026 span
+vectors. Title and meaning vectors share each encoder forward pass. The frozen
+checkpoint, base-model artifacts and pooling rule are unchanged. New encoding
+uses native batch size eight; the prior meaning banks used 32. Replay checks
+verify the resulting numerical agreement rather than assuming identical runtime
+settings. CPU affinity allows 24 of the machine's 28 CPUs, leaving four.
+
+| Check | Result |
+|---|---:|
+| Newly encoded title contexts checked against native vectors | 5,513 |
+| Maximum normalized title-vector absolute difference | 1.16e-7 |
+| Cached full-meaning replay contexts | 8 |
+| Maximum normalized meaning-vector absolute difference | 6.85e-8 |
+
+Frozen pre-result bounds were 1e-5 maximum absolute difference and 1e-6 cosine
+error, matching the earlier replay checks. All checks pass; the model is not
+refitted or otherwise changed.
+
+### Matched numerical comparison
+
+Apply A's zero-known-lexical-context check to both representations. It excludes
+37 original entries, leaving 10,151 entries representing 1,820 notes. The
+eligible units are identical for title and meaning: 975 original HDBSCAN groups
+with eligible members, plus 3,580 eligible originally unassigned entries as
+singleton units. No fine groups are reclustered. Unit weights, Ward algorithm,
+root count and numerical objective are identical between the two views.
+
+| Representation | Cut | Sections | Distinct notes | Coverage |
+|---|---|---:|---:|---:|
+| Title | Variance objective with 90% floor | 6 | 1,800 | 90.0% |
+| Full meaning | Same objective and floor | 6 | 1,800 | 90.0% |
+| Title | Complete six-way tree cut | 6 | 1,820 | 91.0% |
+| Full meaning | Complete six-way tree cut | 6 | 1,820 | 91.0% |
+
+The complete cuts cover the same notes by construction; these equal totals do
+not show that either representation is semantically better. Their branch
+memberships differ. For example, the largest complete meaning section represents
+1,170 notes, versus 1,666 for title. Root breadth alone is not an error under
+the user's clarified goal. No lower-level narrowing or finished-hierarchy
+quality is established by this root-only probe.
+
+With broad roots acceptable, the **complete six-way cut removes the need to
+prune toward a 90% target**. It retains all 1,820 usable input notes, preserving
+all of A's 1,603 represented notes and adding 217. Of those additions, 164 have
+eligible routes through original groups omitted by A, and 53 require an
+originally unassigned entry after the common lexical check. The constrained
+90% meaning cut instead gains 211 and loses 14 relative to A, so it is not
+necessary for this coverage goal.
+
+The six complete meaning branches represent 665, 861, 630, 917, 512 and 1,170
+notes respectively. These overlap; the total is the union, not their sum.
+Remaining omissions are 171 notes without any saved native clustering input
+and nine whose available contexts have no recognized lexical tokens in the
+frozen encoder. No fault or new semantic rejection is assigned to those notes.
+
+### Evidence and status
+
+All new artifacts are ignored under `meaning-completion-v1/`, alongside the
+earlier probes. They include preparation/preflight plans, exact cache bindings,
+native worker inputs/config/receipt, raw span vectors, complete normalized
+meaning vectors, replay checks, matched unit centroids, both trees and cuts,
+independent note/group membership checks, and
+`hr38-full-meaning-91-percent-six-sections-v1.png`. Data stays on the external
+drive. All protected source hashes remain unchanged. Eighteen adapter/worker
+tests pass in the actual cached CPU environment with no skips, including the
+native-source and pooling paths.
+
+This is a successful numerical coverage result using A's pooling, not an
+official HiGen run or policy activation. Missing meaning vectors were computed
+locally; LLM calls, training and paid resources remain zero. Inspecting the next
+level of the broad branches is the next useful check before claiming useful
+hierarchy narrowing.
 
 ## Reproduction and verification
 
