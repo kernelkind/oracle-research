@@ -1024,6 +1024,46 @@ hierarchy narrowing.
 
 ## Reproduction and verification
 
+### Fixed child-count panel: protocol
+
+The user approved broader comparisons after the 19-entry family-section probe:
+one provisional preference cannot establish an automatic child-count rule.
+`Section-count-panel-v1` is offline research, not a HiGen version or policy.
+It fixes 24 development sections from the food corpus and the hash-selected
+mixed corpus used in HR37, spanning roots through four subdivision levels.
+The cases include every saved root section, smallest/largest children selected
+by note count, narrow young-people/family sections, and singleton leaves.
+Sizes range from one to 5,189 entries and one to 912 distinct notes. These
+overlapping parent/child sections are correlated evidence, not 24 independent
+corpora. Neither narrowness nor the previous four-child preference is gold.
+
+Eleven cases from the corpus used in HR36 are reserved for later unchanged-rule
+validation: its root, all six saved root sections, and four original groups
+selected by deterministic group-ID hash. Their 937 distinct note IDs do not
+overlap the 1,012 development note IDs. HR36 was used in earlier research; the
+reservation concerns these new child-count comparisons, not an unseen corpus.
+No reserved count fit is part of this development run.
+
+Each case compares the unsplit baseline with two through six children where
+entry count permits, using the same eight seeds, cosine partitioner and saved
+whole-meaning vectors. The unsplit baseline is a numerical control, not a new
+same-note-set child. Root cases retain their original ten-percent note minimum;
+deeper cases use no minimum. All supplied entries remain eligible. Empty,
+duplicate-note-set or non-narrowing children are reported rather than repaired.
+Within each count, retain the lowest-dissimilarity start and all other starts.
+Do not select across counts using raw dissimilarity: adding centers lowers
+that objective without establishing useful browsing choices.
+
+`sse_multivector/section_count_panel.py` freezes source hashes, original rows,
+case roles and code before execution. It imports exact saved numerical panels
+only when vectors, note ordering, seeds, constraints and producer settings
+agree, and resumes completed counts without rewriting them. The fixed plan
+has nine such imports. Preparation is separate from explicit case execution;
+it does not execute reserved cases. Artifacts are ignored in the retained
+`oracle-mvp-section-count-panel-v1/target/section-count-panel-v1` worktree path,
+stored on the external drive. No LLM calls, training or new encoding is used.
+No automatic count or stopping rule is selected or qualified by this protocol.
+
 Reusable numerical CLI: `sse_multivector/cluster_resampling_probe.py`; tests:
 `sse_multivector/test_cluster_resampling_probe.py`. Input NPZ contains unit
 `vectors`, aligned compact zero-based original `groups`, and aligned `notes`.
