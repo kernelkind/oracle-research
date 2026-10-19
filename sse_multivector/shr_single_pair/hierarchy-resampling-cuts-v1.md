@@ -3491,3 +3491,128 @@ Invalid flag types and use without the one-way pass are rejected. A separate
 complete-tree test shows a link rejected initially can still be added in a
 later unrestricted child pool. These tests qualify the control, not its
 semantic usefulness; equal titles do not establish equal meanings.
+
+### Completed same-title initial-filter comparison
+
+Both unchanged-corpus tests completed under source checkpoint `268f43f9`.
+The new filter retains exactly five of the 182 original Food initial
+attachment links, and 59 of HR37's 1,192 original initial links. Initial
+reciprocal pairs are unchanged (158 and 1,154). Independent sparse connected
+components reconstruct the new units from original native groups, those
+reciprocal pairs and the retained link subset. No alternate destination is
+searched after a link fails title equality. Deeper attachments stay enabled
+and unrestricted.
+
+| Corpus / measure | Existing all-enabled control | Same-title initial filter |
+|---|---:|---:|
+| Food notes retained | 100/100 | 100/100 |
+| Food initial units | 204 | 381 |
+| Food terminal groups | 132 | 165 |
+| Food mean shortest leaf depth | 2.71 | 2.93 |
+| Food median / P90 / maximum depth | 3 / 3 / 4 | 3 / 3 / 4 |
+| Food non-narrowing edges | 0 | 0 |
+| HR37 notes retained | 912/1,000 | 912/1,000 |
+| HR37 initial units | 1,154 | 2,287 |
+| HR37 terminal groups | 780 | 839 |
+| HR37 mean shortest leaf depth | 3.6985 | 3.75 |
+| HR37 median / P90 / maximum depth | 4 / 4 / 5 | 4 / 4 / 6 |
+| HR37 non-narrowing edges | 3 | 3 |
+
+These remain numerical category-edge depths, not observed user effort or
+accuracy scores. Every case has six roots and maximum menu width six.
+The filtered Food root note counts are 49, 46, 79, 57, 42 and 49; filtered
+HR37 counts are 496, 485, 376, 334, 361 and 436. Counts overlap and must not
+be summed. All roots exceed their ten-percent note minimum. All original
+usable entries remain assigned; the 88 HR37 notes without saved meanings
+remain unavailable before construction. No automatic menu repair is added.
+
+The positive HR37 prediction holds. All 27 People headings again share one
+root, in two terminal groups of 25 and two entries, and all five Knowledge
+headings share one terminal group. Their inspected useful initial links
+survive exact-title filtering. The raw number of exact-title families
+spanning roots decreases from eight under deeper-only to two under this
+filter, versus one under the all-enabled control. The remaining two are
+Donald Trump and Trends. Title counts are diagnostic; Trends includes
+different senses, and repeated wording is not independently validated gold.
+
+The Food negative checks reveal why blocking an initial link does not
+establish a correct final grouping:
+
+- The audience addressed as "Champs" stays separate from cashews and joins
+  greetings/wishes, a plausible improvement under bounded agent review.
+- St Marks Place stays separate from stew, but now joins the Nostr terminal
+  group. Its deeper `nearest_attachments` link at `6.2` is `L00679` St Marks
+  Place to `L00286` Siamstr community. The latter is defined as the Thai-
+  oriented community of Nostr users. The initial wrong link was removed,
+  but a different unrelated link was subsequently allowed.
+- Buster + Punch and Matcha remain in one terminal group, along with metal
+  handles, jars and melangers. The unrestricted deeper pass attaches metal
+  handles `L00026` to melangers `L00601` at `2`, then Buster + Punch `L00023`
+  to the handles at `2.4`. The initial reciprocal Matcha/melanger pair also
+  remains. This is a provisional grouping concern, not new human gold.
+
+Food's 32 Food, 14 Coffee, nine Cooking, five People, 15 Nostr and eight
+Bitcoin headings each preserve their previous terminal-group concentration
+(Coffee still has three groups). HR37's Food, Coffee, Cooking, Music, Bitcoin
+and AI controls likewise stay together per heading. The earlier Satoshis
+alias split and Chinese-versus-English Nostr split remain. The result is
+mixed: the filter restores useful repeated-topic links, but does not produce
+a general final-membership boundary and does not improve route depth.
+It remains experimental; no default or HiGen policy is changed.
+
+Memory limits remain enforced at 8 GiB maximum, 6 GiB pressure and zero
+swap for every preparation, fit, tree and resume process. The two independent
+corpus pipelines run concurrently, with dependent stages sequential, CPU
+affinity 0–23 and eight BLAS threads each. At dispatch there was about
+101 GiB available; the combined two-process hard allowance was 16 GiB.
+The largest recorded cgroup peak across all stages is **1,675,108,352 bytes
+(1.5601 GiB)** during preparation. Full-tree peaks are 139.8 MiB for Food
+and 397.2 MiB for HR37. All processes exit successfully with zero swap.
+New encodings, model calls, training, paid resources and UI updates remain zero.
+
+A more basic coverage observation emerges from these saved inputs. The
+current constructor supplies every usable entry to numerical assignment;
+that is stronger than the user's note-retention target. Count only existing
+native/reciprocal units containing at least two original entries, before
+any one-way links. This is a read-only eligibility count, not a new fit or
+completed reduced-input hierarchy:
+
+| Corpus | Existing multi-entry units | Entries in those units | Distinct notes covered | Additional uncovered notes offered by the old one-way pass |
+|---|---:|---:|---:|---:|
+| Food | 118 | 460 | 99/100 | 1 |
+| HR37 | 764 | 3,607 | 892/1,000 | 18 |
+
+HR37 therefore needs eight additional notes to reach 900/1,000, rather than
+placement of every one of its 1,582 independent entries. This count does not
+establish which eight notes/links are appropriate or prove that a resulting
+six-section hierarchy would satisfy every quality constraint. The 18 are
+mechanically eligible under the old pass, not semantically certified links.
+With the same-title links added, non-singleton units cover 896 HR37 notes;
+the remaining inputs were still all forced into the tested full construction.
+
+The agent recommendation is to first build the Food hierarchy using only
+its 118 existing native/reciprocal multi-entry groups. Their 460 entries
+already cover 99/100 notes, so the test needs no additional admission rule
+to meet the user's target. Inspect which note is omitted and whether retained
+notes still have useful topic placements: raw retention alone is insufficient.
+This directly questions mandatory placement of every independent entry before
+adding more similarity rules. HR37 could follow, but which eight additional
+notes/links to use remains undecided. No reduced-input construction,
+supplemental-note selection, deeper eligibility change or coverage-first
+policy is implemented by this task. This is a proposed next test, not an
+approved design.
+
+All 75 relevant production/integration tests pass in the task worktree and
+combined main. Frozen source/row identity, exact initial-link filtering,
+unchanged reciprocal pairs, independent graph reconstruction, native and
+inherited group preservation, coverage and baseline hashes validate.
+Both completed tree resumes preserve all 91 tree/plan/fit JSON files
+byte-for-byte. Previous source worktrees/results remain unchanged.
+Ignored evidence is external at
+`/mnt/external/algos-archive/oracle-mvp/initial-same-title-attachments-v1/`:
+`protocol.json`, `food/` and `hr37/` specs, prepared panels, full trees/fits,
+all-node `contents.txt`, resource/run/resume logs, `runtime-journal.jsonl`,
+`verification.txt`, `resume-before.json`, `core-coverage.tsv`, and
+`hr37/core-uncovered-entries.tsv`. The task worktree
+`oracle-mvp-initial-same-title-attachments-v1` stays for the frozen bindings.
+No official HR registration or HiGen activation occurred.
