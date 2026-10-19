@@ -1108,6 +1108,69 @@ finished recursive hierarchy. Any proposed selector should first be fixed and
 examined across this development panel, then evaluated unchanged on the
 reserved sections; the previous preference for four remains provisional.
 
+### Gap-statistic screen: frozen protocol
+
+The user authorized testing the gap statistic on the development panel before
+integration. `Section-count-gap-v1` reuses the original assignments; no observed
+clustering is rerun, no reserved count fit is executed, and no HiGen behavior
+changes. It adds no LLM calls, encoding or encoder training. Its reusable CLI is
+`sse_multivector/section_count_gap.py` with production-path tests in
+`sse_multivector/test_section_count_gap.py`.
+
+Settings fixed before the development screen:
+
+- Use the 24 development cases and their original entry/note rows, note minima,
+  eight initialization seeds, 50-iteration limit and cosine partitioner.
+- Measure dispersion as the sum of squared Euclidean distances to each group's
+  arithmetic mean. This equals the paper's pair-distance definition without an
+  all-pairs matrix. Reuse the saved lowest-cosine-objective labels for each count;
+  dispersion evaluates those labels rather than changing the clustering method.
+- Generate 32 reference samples per nondegenerate case, seeds 20261101–20261132.
+  Center the original vectors, rotate into their full nonzero PCA coordinates,
+  sample uniformly within each coordinate's original minimum/maximum, then rotate
+  back and restore the original mean. Do not reduce nonzero dimensions, whiten,
+  add post context, or project reference samples onto the unit sphere. The
+  unchanged partitioner normalizes its inputs internally for assignments;
+  dispersion uses the supplied coordinates for both real and reference data.
+- Refit each reference/count with the same eight starts for counts two through
+  six. The one-cluster assignment is unique and is calculated directly.
+- Compute `gap(k) = mean(log W_reference(k)) - log W_observed(k)` and
+  `s(k) = population_SD(log W_reference(k)) * sqrt(1 + 1/32)`. Select the smallest
+  count satisfying `gap(k) >= gap(k+1) - s(k+1)`; otherwise choose the largest
+  tested count. This is the paper's rule, not R's different default `firstSEmax`.
+- Exclude counts at or above the entry count: all-singleton dispersion is zero
+  and its logarithm undefined. An input with numerically zero total dispersion
+  stops unsplit; other zero-dispersion comparisons remain unresolved rather than
+  being assigned an artificial positive floor. Singleton cases require no
+  random reference work. Count one remains an unsplit baseline, not an added
+  same-note-set hierarchy child.
+- Separately report the choices from the first and last 16 reference samples
+  using the same rule. This diagnoses Monte Carlo sensitivity without tuning
+  the final rule or treating 32 samples as a precision guarantee.
+
+The PCA box is an explicit reference-distribution assumption. A statistical
+preference does not establish useful semantic choices. Inspect the actual
+selected topics across broad and narrow cases; a rule that fails clear topic
+mixtures or repeatedly separates near-duplicate choices is not qualified by
+its score. Only a promising development result would justify unchanged
+evaluation on the eleven reserved cases.
+
+The bounded screen needs at most 32 reference datasets per nondegenerate case
+and at most eight starts per multi-child count. It uses linear-size vector and
+assignment arrays, no dense entry-pair matrix. Reference jobs can execute on
+24 local CPU workers, leaving four of the host's 28 CPUs available. This is an
+offline method screen, not a production scalability claim. Plans, exact source
+and producer hashes, PCA bounds, reference seeds, reference matrix hashes,
+per-start costs/convergence and selected labels remain ignored under the
+retained `oracle-mvp-section-count-gap-v1/target/section-count-gap-v1` worktree
+path on the external drive. Completed references are immutable and reusable.
+
+Primary references: [Tibshirani, Walther and Hastie, gap-statistic paper](https://web.stanford.edu/~hastie/Papers/gap.pdf),
+especially the reference construction and algorithm on pages 414–415;
+[R cluster documentation](https://stat.ethz.ch/R-manual/R-devel/library/cluster/html/clusGap.html)
+documents its alternative selection rules and squared-distance setting. These
+sources motivate the method, not its suitability for SSE topics.
+
 Reusable numerical CLI: `sse_multivector/cluster_resampling_probe.py`; tests:
 `sse_multivector/test_cluster_resampling_probe.py`. Input NPZ contains unit
 `vectors`, aligned compact zero-based original `groups`, and aligned `notes`.
