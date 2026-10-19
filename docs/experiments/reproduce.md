@@ -317,48 +317,26 @@ pipeline inputs or validation. Original source posts remain usable.
 
 ### Verify a saved prompt experiment after extraction
 
-Native plans and collected results can contain absolute source paths and reused
-answer references. The runner's read-only `verify --locations` command resolves
-those paths through a separate mapping file. It leaves the original frozen
-files, recorded paths and hashes intact. It requires no credentials or model
-worker.
+Check the archive checksums, then extract the experiment's evidence package,
+keeping its directory structure. The package supplies the inputs, saved
+responses and location metadata needed for verification. Readers do not need
+to recreate the research machine's paths or edit any configuration.
 
-Extract the selected experiment's `experiment.json`, `runner-config.json`, run
-manifest, results ledger and any runner/worker upgrade ledgers. Also obtain all
-files bound by the plan's `sources` hashes and the original producer receipts
-for reused answers. These are additional files beyond the five-file example
-above. Use the inventory and dependency list to locate them; a source may need
-its historical version from Git. Check the archive checksums first.
-
-Create `locations.json` at the extraction root. For example:
-
-```json
-{
-  "schema_version": 1,
-  "roots": {"/original/research": "evidence/research"},
-  "files": {"/original/research/posts.json": "datasets/posts.json"}
-}
-```
-
-Replace the example paths with the old paths recorded in the evidence and the
-actual archive members. Destinations are relative to this mapping file. Exact
-file mappings override root mappings, so a corpus can live at its deduplicated
-`datasets/<sha256>.json` location. The longest matching root is used. Missing
-mappings, missing files and hash mismatches stop verification; it never silently
-reads an original source when a mapping file is supplied. Credential files and
-the old runner executable do not need mappings.
-
-For HR39's saved `HR39-resumed-1/batch-00025` prompt experiment, after extracting
-its dependencies and writing the matching locations file:
+Verification requires the Python runtime above, but no credentials or model
+worker. For HR39's saved `HR39-resumed-1/batch-00025` prompt experiment:
 
 ```bash
 cd "$ORACLE_ROOT"
 source target/hierarchy-env/bin/activate
 export HR39_EVIDENCE="$RELEASE_ROOT/evidence/hierarchy-run-store/hr39-v53-auto-5000-note-v1"
 python sse_multivector/experiment.py verify \
-  "$HR39_EVIDENCE/HR39-resumed-1/batch-00025/experiment" \
-  --locations "$RELEASE_ROOT/locations.json"
+  "$HR39_EVIDENCE/HR39-resumed-1/batch-00025/experiment"
 ```
+
+The command finds the bundled `experiment-locations.json` automatically. These
+are additional evidence files beyond the five-file example above. The package
+has been tested locally; its release download is still pending. Publishers
+prepare it using the [release checklist](open-items.md#prepare-verification-metadata).
 
 This checks the plan and bound source hashes, the manifest, ledger sequence and
 provenance, and successful response receipts. Reused responses are checked
@@ -424,3 +402,13 @@ The runner's Python suite passed (211 tests, two skips), as did all ten dedicate
 verification tests. The broader Oracle regression check is not green: all 24
 failing test methods also failed with the unchanged runner at `3b73550`. No
 newly failing Oracle test methods were observed in this comparison.
+
+Archive extraction was also tested locally with runner `62c06e0`: release preparation generated the
+bundled locations for this HR39 experiment, then a tar.gz archive was extracted
+into a different directory. All 15 evidence files and the generated metadata
+retained their checksums. The reader command passed without `--locations`, with
+the original artifact paths and network blocked, the staging directory moved,
+the private locations file unavailable, and a 4 GiB address-space limit.
+This checks one local archive; it is not a download test of a published release.
+All 16 verification tests and 90 relevant shared-runner, update and receipt
+regression tests passed for this change.

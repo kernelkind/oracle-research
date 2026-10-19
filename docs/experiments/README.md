@@ -97,7 +97,8 @@ including accompanying files and archive overhead. See
 [GitHub's release limits](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases).
 
 Preserve the original frozen plans, answers and receipts. Some contain absolute
-paths from the research environment; record relocation instructions separately.
+paths from the research environment. Release preparation supplies portable
+location metadata with the archive; readers do not create their own mappings.
 Any publication redactions need a record of the changes and new checksums.
 Runs that reused answers need the original producer's responses and receipts as
 well as their own output.
@@ -106,8 +107,8 @@ well as their own output.
 
 The [reproduction guide](reproduce.md) covers browsing HR39, preparing ASv6.100
 on a recorded HR36 post, repeating HR36 construction with its saved subjects,
-and reading the fine-tune comparison. It also explains `verify --locations` for
-checking saved prompt receipts after extraction without changing frozen files.
+and reading the fine-tune comparison. It also explains `verify` for checking
+saved prompt receipts after extraction using bundled location metadata.
 It records the offline checks performed and distinguishes them from new
 inference and exact historical-code reruns. Release downloads, collection-wide
 verification, portable training/L1 recomputation and replay of historical

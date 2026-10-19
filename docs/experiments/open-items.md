@@ -77,9 +77,9 @@ their validation limits. Before calling the release reproducible end to end:
 
 - Test the downloaded archives in a clean environment, including a complete
   hierarchy run with public authentication.
-- Apply the supported `verify --locations` command to the selected native prompt
-  experiments and ship their location mappings with the archives. One copied
-  HR39 prompt experiment has passed; the full collection has not been verified.
+- Prepare the verification metadata below and include it in each evidence
+  package. One local HR39 archive has passed after extraction elsewhere using
+  `verify` without extra options; the full collection has not been verified.
 - Provide a maintained, tested command for the L1 analysis from saved judgments;
   the saved scores and original verification exist, but that CLI does not.
 - Validate portable training and adapter-inference instructions with the exact
@@ -87,3 +87,48 @@ their validation limits. Before calling the release reproducible end to end:
 
 Finish history cleanup last and repeat publication checks against the final
 release contents, updating any affected checksums and commit references.
+
+## Prepare verification metadata
+
+This is a publisher step. Readers extract the package and run `verify`; they
+do not supply paths from the research machine.
+
+Stage the selected native experiments and their required files under one
+extraction root. Include each plan, prepared configuration, run manifest,
+results and any runner/worker upgrade ledgers, all bound source versions, and
+the producer receipts needed by reused answers. Resolve historical input
+versions using the inventory before staging. Use copies of the frozen bytes.
+The file list remains the basis for selecting archive contents; this command
+does not select files, copy evidence or build an archive.
+
+Use the private original-to-staged locations from file selection and copying.
+For the HR39 example, with the setup variables from the reproduction guide and
+that private file saved outside the staging root:
+
+```bash
+cd "$ORACLE_ROOT"
+source target/hierarchy-env/bin/activate
+python sse_multivector/experiment.py prepare-release "$RELEASE_ROOT" \
+  --locations target/reproduction/private-locations.json \
+  --experiment evidence/hierarchy-run-store/hr39-v53-auto-5000-note-v1/HR39-resumed-1/batch-00025/experiment
+```
+
+Repeat `--experiment` for all selected native experiments sharing that extraction
+root. Preparation verifies them and writes `experiment-locations.json` only
+after they pass. The generated file contains relative destinations for only the
+locations those checks use, including original producers of reused responses.
+Shared sources are hashed once per invocation. No model calls are made.
+The private location format is documented in the runner's publisher instructions.
+
+Preparation rejects dependencies outside the staging root and does not overwrite
+an existing locations file. Missing files, changed source bytes and invalid
+receipts must be resolved before packaging. A successful integrity check may
+still include failed or unrun cases; preserve their recorded status.
+
+Include the generated file at the extraction root and add it to the final
+archive file list and checksums. Keep the private staging locations outside the
+archive. When splitting a collection into several archives, preserve the common
+extraction layout and supply the same complete metadata with the pieces. Do not
+overwrite it with independently generated partial mappings. Check the required
+downloads together after extraction elsewhere, with original storage unavailable,
+using the reader command without `--locations`.
