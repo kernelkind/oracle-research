@@ -3762,4 +3762,133 @@ entries while preserving original row/pair mappings across multiple cases;
 reject ambiguous filter-stage settings; fit real roots/children; and verify
 34 selected notes out of 35 usable notes report 34/35 even when the original
 corpus contains 50 notes. Changing the frozen usable-note count is rejected.
-Results and quality assessments follow after the saved-input experiment.
+The saved-input experiment and quality assessment follow below.
+
+### Complete groups-only results on both mixed corpora
+
+Both full constructions finish under source checkpoint `5d21024f`. Candidate
+input membership matches the omission audit exactly: HR36 has 3,646 entries
+in 818 original native/reciprocal units, and HR37 has 3,607 in 764 units. The
+same eight seeds, original-entry cosine objective, 50 iterations, 30-second
+assignment limit, six-choice ceiling, deeper matching/attachment behavior and
+approved inherited-group stopping boundary apply to both corpora. No entries
+are added just to reach a target.
+
+Compare three arms on each source:
+
+- **All entries:** the current numerical all-enabled control, reusing its
+  original root result and constructing a complete tree under the new reporting
+  code. Both initial and deeper one-way attachments remain enabled.
+- **All entries, reciprocal initial groups:** preserve every entry but disable
+  the initial one-way pass; deeper attachments remain enabled. These additional
+  controls were frozen before inspecting the new tree results. Their source
+  vectors, original native groups and retained multi-entry units match the
+  candidate exactly. This separates entry omission from the initial attachment
+  setting instead of attributing both effects to one change.
+- **Groups only:** omit initial single-entry units before fitting roots, keep
+  the audited multi-entry units intact, and use the same deeper construction.
+
+Both HR37 controls reproduce the corresponding earlier saved graph nodes and
+edges exactly. Only their coverage reporting changes. The numerical pass
+condition still fails in all arms because of non-narrowing edges; completion
+of construction does not imply a fully satisfactory browsing hierarchy.
+
+| Corpus / arm | Coverage after prompts | Nodes | Leaves | Mean shortest leaf depth | Median / P90 | Maximum depth | Non-narrowing edges |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| HR36, all entries | 937/937 | 1,125 | 831 | 3.7161 | 4 / 4 | 6 | 3 |
+| HR36, all entries with reciprocal initial groups | 937/937 | 1,209 | 898 | 3.7716 | 4 / 4 | 6 | 5 |
+| HR36, groups only | 917/937 (97.9%) | 1,104 | 818 | 3.7350 | 4 / 4 | 6 | 3 |
+| HR37, all entries | 912/912 | 1,055 | 780 | 3.6985 | 4 / 4 | 5 | 3 |
+| HR37, all entries with reciprocal initial groups | 912/912 | 1,112 | 836 | 3.6875 | 4 / 4 | 6 | 3 |
+| HR37, groups only | 892/912 (97.8%) | 1,027 | 764 | 3.7937 | 4 / 4 | 6 | 4 |
+
+Every arm has six roots, maximum menu width six and no unresolved subdivision.
+All roots exceed the unchanged 100-note minimum; candidate root counts are
+307, 336, 248, 306, 553, 247 in HR36 and 266, 276, 275, 447, 421, 290 in HR37.
+Counts overlap. All candidates exceed the approved post-prompt coverage floor.
+Duplicate sibling note-set menus number four in the HR36 candidate and zero
+in HR37, versus one in each all-enabled baseline. These remain structural
+diagnostics, not measured user effort or semantic accuracy estimates.
+
+Dropping twenty notes cannot be allowed to manufacture a route-depth gain.
+Restrict the comparison to notes surviving the candidate in each corpus:
+
+| Corpus | Shared notes | All-entry mean depth on those notes | Groups-only mean | Shorter / unchanged / longer |
+|---|---:|---:|---:|---:|
+| HR36 | 917 | 3.7110 | 3.7350 | 187 / 527 / 203 |
+| HR37 | 892 | 3.6951 | 3.7937 | 114 / 579 / 199 |
+
+Against the reciprocal-initial matched control, HR36 improves slightly on the
+same 917 notes (3.7644 to 3.7350), while HR37 worsens (3.6850 to 3.7937).
+There is no consistent improvement across the two corpora, and neither
+candidate improves mean depth against the current all-enabled construction.
+
+The small change in leaf count has a concrete explanation. The all-enabled
+construction already places 1,659 of the 1,690 subsequently omitted HR36
+entries into leaves containing retained entries: 98.2%. HR37's corresponding
+count is 1,545 of 1,582: 97.7%. Only 13 and 16 baseline leaves contain nothing
+but subsequently omitted entries. Every audited retained unit remains intact
+in exactly one baseline leaf. Candidate final leaves equal those same 818 and
+764 retained units exactly. Thus omitting roughly thirty percent of the entry
+rows removes only 1.6% and 2.1% of the all-enabled browsing leaves. Entry count
+was a poor proxy for the number of browsing choices.
+
+Known topic losses from the omission audit remain. The following additional
+checks examine retained information rather than treating omission as the sole
+quality concern:
+
+- HR37's thirty retained `URLs` entries now span candidate roots 4 and 6,
+  versus all 32 original URL entries under one all-enabled root. The split
+  follows optional examples: media/article links on one side, WebSocket and
+  relay endpoints on the other. `L02573` defines URLs generally as structured
+  addresses specifying location and access scheme; `L00025` defines the same
+  general kind and adds nonrestrictive HTTPS/WSS examples. Their full meanings
+  do not impose the example-specific scopes suggested by the split. This is
+  an agent-assessed information-duplication concern, not new human gold.
+- HR36 keeps all Food, Cooking, Coffee, Music, AI and Nostr exact-heading
+  entries; it drops 15 of 96 Bitcoin, one of 32 People and one of two Knowledge
+  entries. HR37 keeps all Food, Coffee, Music, AI, Bitcoin and Nostr headings,
+  but drops one of four Cooking, five of 27 People and two of five Knowledge
+  entries. Exact-heading retention alone neither establishes nor rejects
+  semantic quality; all full meanings remain in the inspection artifacts.
+- The candidate does not remove the known non-narrowing edges generally and
+  introduces no automatic structural repair. All six results report those
+  witnesses explicitly rather than treating successful execution as acceptance.
+
+**Assessment:** do not adopt groups-only eligibility on this evidence. It clears
+coverage, but scarcely reduces browsing choices, does not improve route depth
+consistently, retains the known lost-topic tradeoff and exposes another split
+between broadly equivalent definitions. This is not a demand for perfect
+classification. The proposed simplification has not supplied a practical
+browsing benefit on either all-enabled comparison. Research should examine
+the existing groups and their arrangement rather than assume that reducing
+entry rows will simplify the finished menu. No new grouping rule is approved
+or implemented by this assessment.
+
+All 79 relevant production tests run successfully with six skips in both the
+task worktree and combined main. Independent verification checks exact row
+partitions, original-note sets, pre-filter denominators, initial-unit
+preservation, width/root minima and every reported non-narrowing edge.
+All frozen original source/result hashes remain unchanged. All candidate
+starts converge (656/656 in HR36; 544/544 in HR37). The HR37 reciprocal-initial
+control preserves its one historical unselected 50-iteration-limit trial;
+no result is replaced to improve the outcome.
+
+Independent numerical jobs run concurrently under per-process limits of
+8 GiB maximum, 6 GiB pressure and zero swap, with eight BLAS threads on CPUs
+0–23. At dispatch about 100 GiB was available; at most four numerical jobs
+overlap. The largest journal-recorded process peak is 1,604,354,048 bytes
+(1.50 GiB), and swap remains zero. Root fits are newly computed for the
+candidate and reused for controls, so these timings are not an end-to-end
+policy-speed comparison or an API-cost saving. No model calls, encoding,
+training, paid resources, hierarchy UI updates or official HR registrations
+occur. All reusable code/findings land without activating a HiGen version.
+
+Ignored evidence is external at
+`/mnt/external/algos-archive/oracle-mvp/groups-only-construction-v1/`:
+`protocol.json`, `matched-controls.json`, per-corpus specs/root panels and
+all three complete trees with full `contents.txt`, `comparison.json`,
+`removal-impact.json`, resource/run logs, `runtime-journal.jsonl`,
+`resource-peaks.json`, independent `verification.txt`, and task/main test logs.
+The worktree `oracle-mvp-groups-only-construction-v1` remains for these frozen
+absolute source bindings. Historical source worktrees/artifacts are unchanged.
