@@ -2718,3 +2718,100 @@ return of split definitions: removing attachments may improve one at the
 expense of the other. This would test the component's net contribution at
 child level rather than picking a preferred start from reviewed witnesses.
 That further fit has not been started or authorized by this record.
+
+### Manual unchanged child splits beneath all six second-corpus roots
+
+The user questioned whether separating Cooking and Food preparation was bad.
+The clarification is that related scopes, shared notes, or an entry being
+assigned away from its individually closest center do not establish a bad
+browsing choice. The attachment-removal proposal above was not authorized or
+run. The user instead approved keeping the method unchanged and testing the
+other five roots, then reviewing retention, useful narrowing and clearly
+redundant or confusing choices across the two levels.
+
+Reuse the completed section-2 child result exactly. The existing numerical
+panel CLI prepares and runs sections 1, 3, 4, 5 and 6 from the same frozen
+original entry rows and actual parent labels. Native fine groups stay intact;
+reciprocal matches and one frozen attachment pass are recomputed within each
+parent. Vectors, six fixed children, eight seeds, zero assignment minimum and
+50 iterations are unchanged. The five runs execute concurrently on CPU sets
+0–23, leaving four logical CPUs free. No source implementation changes occur.
+
+| Numerical root | Parent notes | Six children: distinct notes | Largest child / parent |
+|---|---:|---|---:|
+| 1 | 383 | 87, 50, 66, 195, 76, 119 | 50.9% |
+| 2, reused | 553 | 154, 162, 196, 146, 44, 91 | 35.4% |
+| 3 | 325 | 92, 41, 80, 102, 67, 45 | 31.4% |
+| 4 | 306 | 30, 74, 60, 137, 72, 60 | 44.8% |
+| 5 | 414 | 193, 43, 85, 122, 116, 80 | 46.6% |
+| 6 | 475 | 238, 109, 87, 54, 60, 120 | 50.1% |
+
+Every one of the 36 children represents a strictly smaller subset of its
+parent's notes; within each parent, the six child note sets are distinct.
+Each parent's children retain its complete original
+note set. The two-level union remains 912/1,000 notes (91.2%); the 88 notes
+without usable saved inputs remain unavailable. All 5,189 usable entries stay
+assigned once at each level. Note sets overlap and must not be summed.
+All 48 six-section starts converge, including the eight previously saved
+section-2 starts. The 40 new six-section fits sum to 1.849 seconds of observed
+fit time, excluding preparation, verification and scheduling. This is not an
+end-to-end speed benchmark.
+
+Common headings show several interpretable distinctions. Section 1's children
+separate money/payments, network relays, prices/fees, Bitcoin, financial markets,
+and Nostr. Section 4 offers work/upkeep, computers/debugging, science/testing,
+software/tools, AI, and named products/companies. Section 6 separates knowledge/
+questions, people/support, positive feelings, privacy/freedom, humor, and
+problems/warnings. These are agent summaries of membership, not synthetic
+canonical titles or fixed definitions. Geographic section 3 is less intuitive:
+its U.S. Midwest entries share a child with European places, while Iran is
+apart from Israel/Bahrain. Mixed membership warrants review but does not alone
+prove duplication or a false semantic relationship.
+
+Only one of 549 repeated exact-title families within these parents is split
+between selected children: Data availability L01855/L05187, between section
+5's timestamp and data/version choices. Its meanings retain different amounts
+of post-specific interval detail, so the title screen is not a semantic error
+rate. Neither entry is originally grouped in the current combined-vector
+producer; old `source_group` labels are not the producer used by this test.
+L01855 points toward L05187, which itself attaches to Data. Frozen one-pass
+eligibility leaves L01855 separate because L05187 was not in a matched unit
+when eligibility was established. This records the mechanism without silently
+turning the method into recursive attachment.
+
+A clearer differently named duplication is Bitcoin satoshis L01557 in section
+1 child 4 versus Satoshis L00097 in child 6. Both explicitly define a unit equal
+to 0.00000001 BTC. L01557 attaches to Bitcoin amounts L04424: combined cosine
+0.8295 versus 0.7922 with L00097. Against L00097, meaning cosine is 0.9714 but
+title cosine is 0.6130. Thus the unchanged equal-weight combination favors the
+broader amount wording; the two synonymous unit definitions remain in
+different indivisible units and selected children. Both individually favor
+their assigned centers, so this is not the earlier Food preparation center-
+override mechanism. This is an agent-assessed duplicate-information witness,
+not new human gold or a measured corpus-wide error rate. Preserve it as a
+regression rather than treating one case as grounds for a redesign.
+
+Independent dense nearest search and sparse connected components reproduce
+every parent's reciprocal pairs, frozen attachment eligibility and final units,
+without indirectly merging matched units. Original native groups and inherited
+parent units stay intact. All source hashes, parent bindings/row selections,
+per-start costs/centers/note counts, note-set refinement and byte-preserving
+completed resumes validate. Source checkpoint is `f4df4c6d`; no source behavior
+changed and no additional implementation test suite was needed.
+
+Ignored evidence extends the retained child-test worktree's
+`target/second-corpus-child-manual-v1/remaining-roots-v1/`: the frozen spec/panel,
+`comparison-and-verification.json`, all 90 child-pair ranked match lists in
+`cross-child-matches.json`, and original definitions plus routing evidence in
+`review-witnesses.json`. Prior section-2 evidence remains unchanged. The
+worktree remains for these frozen source and artifact paths. No model calls,
+new encoding, training, HiGen activation, official HR registration, or UI
+refresh occur.
+
+The result supports continuing the unchanged method, with the retained
+duplication and geographic qualifications. A useful next manual component test
+is one further split beneath the largest remaining child, section 6 child 1
+(238 notes). This would test whether substantial narrowing continues at the
+next depth before attempting recursive construction. Six remains a fixed test
+count, not an adopted child-count or stopping rule. That deeper test has not
+been started or authorized by this record.
