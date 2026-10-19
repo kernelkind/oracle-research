@@ -1420,6 +1420,35 @@ and [specification](hierarchy-bootstrap-v157-heldout-v1.spec.json) retain the fi
 attempts and outputs; no heldout result has informed these revisions. Constructors
 stay V133 and source remains experimental. Results will be appended after testing.
 
+V157 produces72/72 mechanically valid responses. Root review records70 accepts,
+one title rejection and one uncertain country meaning. Eight of nine agreed-case
+responses pass: one title still turns the linked video into its promotion.
+All three stock titles name preservation, all AI definitions omit illustrative
+abilities, and every People definition states human beings directly. Required
+alternatives, joint parts and numeric limits remain intact. Native
+[accounting](hierarchy-bootstrap-v157-fix-usage-v1.json) records75 attempts including
+three warmups, no failures/retries/reuses, complete usage and $0.5550492 API-equivalent
+cost. Qualification remains entirely unrun.
+
+### Contrast an object title with an action on that object: Bootstrap-v158
+
+Experimental [Bootstrap-v158](Hierarchy-bootstrap-v158.md) adds only a matched
+rejected title to the existing advertised-documentary example: “Coastal wildlife
+documentary promotion” names the advertising rather than the documentary.
+The accepted title, all meaning rules, full examples, other title examples,
+shared rules-v13 and Consolidation-v28 are unchanged. This demonstrates the
+remaining referent error using a generic topic, without supplying the expected
+title for the tested video or imposing word/punctuation constraints.
+
+The [regression specification](hierarchy-bootstrap-v158-regression-v1.spec.json)
+retains24 exact inputs, three fresh draws and V157 saved baselines. The unchanged
+gate requires all nine agreed-case responses, all three stock-plan titles and no
+clear control regression. The [qualification protocol](hierarchy-bootstrap-v158-heldout-v1.json)
+and [specification](hierarchy-bootstrap-v158-heldout-v1.spec.json) retain the fixed
+80-post panel, rubric and assignments. V150 through V157 qualification have zero
+attempts and outputs; no heldout result has informed these revisions. Constructors
+stay V133 and source remains experimental. Results will be appended after testing.
+
 ## Meaning-derived titles: Bootstrap-v130
 
 The user requested a concise title based solely on the explicit meaning.
