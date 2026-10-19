@@ -2089,11 +2089,15 @@ pass. The executed source checkpoint is `81b16788` in the retained experiment
 worktree. A separate integration worktree strengthens the completed-artifact
 guard without modifying frozen execution source or the numerical calculation.
 
-Both observed panels complete: 96 fits, with identical initial center indices
-for every paired count/seed and intact native groups in all assignments. All
-selected observed fits converge. The two PCA reference input packets are
-bit-identical. Reference-based count selection is still running at this
-checkpoint, with 24 workers on CPUs 0–23 and one BLAS thread per worker.
+Both observed panels and all 64 reference samples complete. The 96 observed
+fits have identical initial center indices for every paired count/seed and
+intact native groups in all assignments. All selected observed fits converge.
+The two PCA reference input packets are bit-identical. Both full reference
+screens select six sections; both independent halves also select six in each
+arm. Reference execution uses 24 workers on CPUs 0–23 and one BLAS thread per
+worker. Of 320 selected multi-section reference fits, 27 reach the 50-iteration
+bound without converging. Count agreement is a bounded numerical result, not
+semantic validation or a claim of exact global optimization.
 
 The same-count six-section control has these distinct-note counts; note sets
 overlap and should not be summed:
@@ -2104,18 +2108,52 @@ overlap and should not be summed:
 | Combined | 466, 436, 438, 549, 308, 341 | 937 |
 
 Both meet the six-choice, at-least-100-notes-per-section and 900-of-1,000 coverage
-checks. Neither is yet a finished hierarchy or human-approved topic layout.
+checks: each covers 93.7% of the original corpus. Neither is a finished hierarchy
+or human-approved topic layout. These same-count fits are also both arms'
+automatically selected fits.
 After matching section labels by maximum entry overlap, 1,357 of 5,336 entry
-assignments differ. This is not an accuracy score. Preliminary inspection finds
+assignments differ. This is not an accuracy score. Bounded manual inspection finds
 no clear overall topic improvement: Food/Coffee join a publishing-oriented
 section in the combined fit, while sports share a section with networking.
-Nostr's 62 definitions stay together in both arms. Final conclusions await the
-unchanged count-selection calculation; no HiGen policy is activated.
+Nostr's 62 definitions stay together in both arms. The combined fit slightly
+lowers the numerical cosine objective (2,828.785 versus 2,857.895), which does
+not establish better browsing choices.
+
+Read-only assignment scores explain one weakness. The 15-entry Coffee group
+has mean cosine 0.2067 against the publishing-oriented section and 0.1361
+against its next-best section. Fourteen of its fifteen members individually
+prefer that same section. The partitioner must choose an available section;
+it does not test whether any section is a suitable semantic placement. The
+14-entry Association football group likewise individually prefers the
+networking-oriented section. Thus the group-preservation constraint alone
+does not explain these awkward placements. Root themes here are agent
+descriptions of saved memberships, not generated or fixed canonical titles.
+
+The title/meaning combination has only been used to form fine groups. The
+broader calculation deliberately still uses the original meaning vectors,
+holding that factor fixed in this comparison. The next proposed component
+test is a quick matched six-section fit using combined vectors for that stage
+as well, before further expensive count-reference work. No such fit, production
+policy or HiGen version is introduced here. The observed fine-group gains
+remain useful evidence; this test does not demonstrate a better finished
+hierarchy or justify integrating the whole candidate.
+
+Independent verification reproduces all six full/half count choices, checks
+all 384 reference assignments for intact groups and distinct-note counts,
+reconstructs first/last raw reference matrices and checks their objectives and
+dispersions. Paired reconstructions agree exactly. Frozen source, code and
+native evidence hashes remain valid. Reference-work span is approximately
+748 seconds, estimated from output timestamps and recorded sample durations;
+the count check dominates this bounded probe's computation. All 60 relevant
+tests pass on the combined main checkout. The copied-artifact guard changes
+only preparation failure behavior and does not alter the executed numeric fits.
 
 Ignored external evidence is retained under
 `oracle-mvp-combined-groups-sections-v1/target/combined-groups-sections-v1/`:
-the frozen spec, observed panels, paired reference plan/results and
-`same-count-audit.json`. No LLM calls, training, new encodings, synthetic
+the frozen spec, observed panels, paired reference plan/results,
+`same-count-audit.json`, `six-section-assignment-scores.json`,
+`reference-reconstruction-checks.json` and complete final
+`comparison-and-verification.json`. No LLM calls, training, new encodings, synthetic
 definitions or UI updates occur. The task worktree must remain for its frozen
 execution and artifact paths.
 
