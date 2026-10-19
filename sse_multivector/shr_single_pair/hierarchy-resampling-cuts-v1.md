@@ -145,6 +145,69 @@ skipped in the numerical environment. This remains a research prototype, not
 an adopted HiGen version. Next inspect the complete memberships against Ward
 before claiming useful root sections or testing recursive narrowing.
 
+### HR36 hash-selected thousand-note transfer
+
+The user next directed moving this investigation to the hash-selected
+1,000-note corpus rather than the manually selected corpus. Use **HR36**:
+its frozen corpus manifest selects the first eligible original posts in
+domain-separated event-ID hash order, seed `hr36-corpus-v1`, with no manual
+reviews or topic/author quotas. There are 602 authors. The source state remains
+`94a7f7d6d2e4ad8fac895c0c44ef4d444bece47fff60a4cbd30aaa3205a70a07`.
+ASv6.100 and Bootstrap-v133 are unchanged frozen source versions; later prompt
+development does not change these saved inputs.
+
+Apply the same entry-level full-meaning representation and direct cosine
+partition candidate as HR22, keeping every usable original entry separately,
+including repeated titles and entries originally unassigned by HDBSCAN.
+The 5,336 initial entries represent **937 of the original 1,000 notes**.
+The other 63 have no usable saved meaning and remain outside this test.
+The minimum is 100 distinct notes per section and 900 in the union, both
+measured against the original thousand-note corpus.
+
+Reuse 2,579 exact title/meaning vector bindings from compatible saved banks.
+The native adapter/worker encodes 2,744 missing distinct contexts and eight
+saved-context controls, producing 5,504 title/meaning span vectors. The
+maximum input is 166 tokens, below the frozen 512-token limit. New title
+views match native vectors within `1.08e-7` maximum absolute error; cached
+title views within `7.68e-8`; all eight meaning replays within `4.93e-8`.
+Source hashes, checkpoint identity, row mappings and normalized vectors pass
+validation. No teacher calls, training or paid resources were used.
+
+| Section | Descriptive main themes | Original entries | Distinct notes |
+|---|---|---:|---:|
+| S01 | Finance and cryptocurrency | 1,005 | 316 |
+| S02 | Feelings, thought and personal life | 823 | 415 |
+| S03 | Countries, places and public figures | 556 | 330 |
+| S04 | Technology, organizations and organized activities | 1,081 | 537 |
+| S05 | Social media, communication and news | 798 | 427 |
+| S06 | AI, digital content and creative work | 1,073 | 527 |
+
+The union is **937 / 1,000 notes (93.7%)**. Note counts overlap across sections;
+every supplied original entry is assigned exactly once. These descriptions
+are agent summaries of the contents, not generated canonical definitions or
+human-approved memberships. Several sections include unrelated material:
+for example, `L03042`'s Chinese garlic definition is assigned to S01, while
+`L01358`'s Japanese Nix package-manager definition is assigned to S02. The
+numerical pass does not establish understandable section boundaries.
+
+Keep the same eight seeds, `20261018` through `20261025`, and select by the
+unchanged summed cosine-dissimilarity objective before semantic assessment.
+The chosen seed, `20261020`, converges in 32 iterations with objective
+`2801.4616378299197`. Six of eight starts converge; two reach the existing
+50-iteration limit and remain recorded. Every matched constrained and
+unconstrained start has identical final assignments. The selected result
+displaces no entry from its closest final center. As in HR22, these data do
+not demonstrate an observed benefit from the minimum-size constraints.
+
+Independent checks verify section sizes, union coverage, all 5,336 entry IDs,
+normalized mean centers, the reported objective, exact control equality and
+unchanged frozen sources. Seventeen relevant partition/resampling tests pass.
+Ignored evidence is under `target/hr36-direct-sections-v1/` in the retained
+`oracle-mvp-hr36-direct-sections-v1` task worktree, backed by external storage.
+It includes the source-bound plan, native worker inputs/receipt, aligned
+vectors, all sixteen trials, full memberships and verification records.
+No official HiGen experiment, canonical hierarchy or review UI changed.
+
 ## Question and controlled inputs
 
 Does removing different notes break the previously flagged sports/war/politics
