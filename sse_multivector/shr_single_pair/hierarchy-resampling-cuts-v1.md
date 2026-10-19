@@ -1479,6 +1479,71 @@ halves. No new encodings, model calls, training, policy changes or stopping
 thresholds are part of this screen. Ignored evidence is stored externally at
 `oracle-mvp-section-count-nostr-control-v1/target/section-count-nostr-control-v1/`.
 
+### Larger repeated-topic result: stable splitting of Nostr descriptions
+
+The unchanged rule selects six children for the 62-entry, 62-note Nostr group.
+Both independent 16-reference halves also choose six. Their note counts are
+13, 12, 18, 3, 10 and 6; these are disjoint in this particular control and their
+union preserves all 62 notes. Every selected child strictly narrows the note
+set. Those structural properties do not establish useful topic distinctions.
+
+| Observed group | Notes | Wording emphasized in its original meanings |
+|---|---:|---|
+| 0 | 13 | All explicitly mention public keys. |
+| 1 | 12 | Mostly list sharing, promotion and commenting among social uses. |
+| 2 | 18 | Mostly describe the general protocol supporting social networking and other applications. |
+| 3 | 3 | General protocol descriptions, including relay-choice architecture. |
+| 4 | 10 | Emphasize social networking, the associated network or community. |
+| 5 | 6 | Five contain the literal phrase `called events`. |
+
+These descriptions are post-hoc agent inspection, not generated canonical
+titles, semantic gold or rules used to select the count. A shared Nostr title
+alone would not prove equivalent scope. Some protocol/network/ecosystem
+differences could matter; the six-way result nevertheless separates overlapping
+general definitions rather than six clearly distinct narrow subjects.
+
+For example, group 2's L02673 defines an open decentralized protocol for social
+networking and other applications, in which clients publish and receive signed
+events through independent relays. Group 5's L03082 defines an open decentralized
+protocol in which clients publish signed messages **called events** to relay
+servers and retrieve them, supporting applications such as social networking.
+Both establish the same core role and mechanism. Merely naming those messages
+events does not supply a useful navigation distinction. Full original meanings
+and memberships are retained in the inspection artifact.
+
+Gaps at counts one through six are `0.67312, 0.71737, 0.85231, 0.87834,
+0.88325, 0.93671`. Peak uncertainty is `0.03267`, giving an acceptance level
+near `0.90405`; only count six qualifies. Agreement across the halves therefore
+coexists with the semantic problem. This is not a significance test or proof
+that the reference model captures semantic variation.
+
+The effect is not limited to the six-entry dollar case or nearly all-singleton
+candidates. Nostr's selected children all contain at least three notes. More
+reference precision or an exception for tiny inputs does not address the
+observed distinction between definition wording and useful topics.
+
+Observed fits took about 0.58 seconds; reference execution took 0.83 seconds
+wall time, 4.35 CPU-seconds and about 280 MB peak memory. There were 48 observed
+fits and 32 new reference samples. Independent checks reconstructed all 32
+matrices and checked 192 reference/count dispersions, objectives, note counts,
+bindings and selected convergence states; all passed. All 48 observed trials
+also passed native validation, and all three full/half count choices were
+recomputed from saved dispersions. No LLM, encoding, training or HiGen change
+was made. Fourteen relevant production-path tests pass.
+
+The next candidate to test is keeping existing HDBSCAN groups together when
+forming broader choices, with originally unassigned entries still eligible.
+Nostr would then be one input group rather than 62 definitions to subdivide.
+This would change the current direct-entry candidate's explicit treatment of
+fine groups, and requires a separate approved component test. Original groups
+are not semantic gold; useful mixed-section splits and note coverage must be
+checked. No such rule is activated or tested in this result.
+
+The external artifact directory contains the frozen spec, observed panel,
+reference screen, execution log and `inspection-and-verification.json`, with
+complete selected meanings and per-group note IDs. The task worktree is
+retained because these artifacts bind its exact source paths.
+
 Reusable numerical CLI: `sse_multivector/cluster_resampling_probe.py`; tests:
 `sse_multivector/test_cluster_resampling_probe.py`. Input NPZ contains unit
 `vectors`, aligned compact zero-based original `groups`, and aligned `notes`.
