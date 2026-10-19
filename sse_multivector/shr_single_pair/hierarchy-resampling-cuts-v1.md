@@ -1544,6 +1544,42 @@ reference screen, execution log and `inspection-and-verification.json`, with
 complete selected meanings and per-group note IDs. The task worktree is
 retained because these artifacts bind its exact source paths.
 
+### Preserved-group comparison: frozen component protocol
+
+The approved next test keeps existing HDBSCAN groups together in the same
+mixed section V04 previously used for reserved validation: 556 original
+entries from 330 notes. Within this frozen parent there are 89 original groups
+and 189 originally ungrouped entries. Every ungrouped entry remains independently
+eligible. Members of a group outside this parent are not imported; this bounded
+test does not repair earlier fragmentation between roots.
+
+Keep every original vector and its entry weight unchanged. For a fixed set
+of centers, sum the costs of each group's members and assign the whole group
+to the cheapest child. Center updates still use all original entry vectors.
+This is equivalent to keeping group members together under the existing
+entry-weighted objective; it does not introduce equal group weights, a new
+centroid representation or re-encoding. Preserve initial centers/seeds, six
+candidate counts, reference matrix seeds and the global count rule.
+
+Apply the same group constraint to the real data and each reference fit. The
+PCA box and raw reference matrices must match the saved entry-level baseline
+exactly. Refit the constrained assignments on those same 32 matrices, rather
+than claiming reused unconstrained fits are matched answers. Compare full and
+half count choices, note unions, actual selected topics, and how many original
+groups cross child boundaries in each result. No outcome is fixed in advance.
+
+Native support is an explicit per-case `preserve_groups` option. It derives
+group IDs from the saved original `source_group`, gives each ungrouped entry
+its own ID, validates all observed/reference assignments, and caps candidate
+counts at the available groups. A single preserved group stays unsplit without
+reference work. This component supports the deeper-section zero-note-minimum
+case only: positive note minima and unmatched producer reuse are explicitly
+rejected rather than silently bypassed. Defaults and HiGen are unchanged.
+
+Use 24 local workers and one BLAS thread each; there are no teacher calls,
+training or new encodings. Ignored artifacts live externally at
+`oracle-mvp-section-count-preserved-groups-v1/target/section-count-preserved-groups-v1/`.
+
 Reusable numerical CLI: `sse_multivector/cluster_resampling_probe.py`; tests:
 `sse_multivector/test_cluster_resampling_probe.py`. Input NPZ contains unit
 `vectors`, aligned compact zero-based original `groups`, and aligned `notes`.

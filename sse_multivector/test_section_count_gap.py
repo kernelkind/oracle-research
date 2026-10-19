@@ -14,7 +14,7 @@ from sse_multivector.section_count_gap import dispersion, select_count, prepare,
 
 
 class SectionCountGapTests(unittest.TestCase):
-    def _panel(self, root, constant=False):
+    def _panel(self, root, constant=False, preserve_groups=False, group_size=3):
         rng = np.random.default_rng(123)
         angle = np.r_[rng.normal(0, .01, 12), rng.normal(1.5, .01, 12)]
         vectors = np.c_[np.cos(angle), np.sin(angle)]
@@ -27,7 +27,8 @@ class SectionCountGapTests(unittest.TestCase):
             notes = np.array([name + str(i) for i in range(len(vectors))])
             np.savez(base / 'input.npz', vectors=vectors, notes=notes)
             (base / 'entries.json').write_text(json.dumps([
-                dict(id=str(i), note_id=note, title='fixed', meaning='fixed')
+                dict(id=str(i), note_id=note, title='fixed', meaning='fixed',
+                     source_group='G' + str(i // group_size))
                 for i, note in enumerate(notes)]))
             sources[name] = dict(input=str(base / 'input.npz'), entries=str(base / 'entries.json'),
                 files={str(p): hashlib.sha256(p.read_bytes()).hexdigest()
@@ -38,10 +39,40 @@ class SectionCountGapTests(unittest.TestCase):
                              selector={'kind': 'all'}, minimum_notes=0),
                         dict(id='V01', role='reserved', source='reserved',
                              selector={'kind': 'all'}, minimum_notes=0)])
+        if preserve_groups:
+            spec['cases'][0]['preserve_groups'] = True
+            spec['cases'].append(dict(spec['cases'][0], id='D02', preserve_groups=False))
         (root / 'spec.json').write_text(json.dumps(spec))
         panel.prepare(root / 'spec.json', root / 'panel')
         panel.run(root / 'panel', 'D01')
+        if preserve_groups:
+            panel.run(root / 'panel', 'D02')
         return root / 'panel'
+
+    def test_grouped_screen_uses_identical_reference_matrices_and_preserves_members(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = self._panel(root, preserve_groups=True)
+            plan = prepare(source, root / 'gap', references=8, seed=200,
+                           cases=['D01', 'D02'], method='globalSEmax')
+            run(root / 'gap', workers=2)
+            groups = plan['cases'][0]['original_case']['groups']
+            for i in range(8):
+                a = json.loads((root / 'gap/D01' / f'reference-{i:03d}.json').read_text())
+                b = json.loads((root / 'gap/D02' / f'reference-{i:03d}.json').read_text())
+                self.assertEqual(a['reference_matrix_sha256'], b['reference_matrix_sha256'])
+                for row in a['rows']:
+                    self.assertEqual(len(set(zip(groups, row['labels']))), len(set(groups)))
+
+    def test_one_preserved_group_stays_unsplit_without_reference_work(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = self._panel(root, preserve_groups=True, group_size=24)
+            prepare(source, root / 'gap', references=8, seed=200, cases=['D01'])
+            result = run(root / 'gap', workers=1)
+            self.assertEqual(result['cases'][0]['selected_count'], 1)
+            self.assertEqual(result['cases'][0]['status'], 'single preserved group')
+            self.assertFalse(list((root / 'gap/D01').glob('reference-*.json')))
 
     def test_dispersion_equals_published_pair_distance_definition(self):
         vectors = np.array([[1, 2], [3, 7], [8, 5], [9, 1]], dtype=float)

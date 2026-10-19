@@ -13,6 +13,45 @@ from sse_multivector.section_count_panel import prepare, run
 
 
 class SectionCountPanelTests(unittest.TestCase):
+    def test_native_grouped_case_preserves_original_members_and_ungrouped_entries(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            manifest, spec = self._fixture(root)
+            src = spec['sources']['examined']
+            np.savez(src['input'], vectors=np.eye(2)[[0, 1, 0, 1, 1, 1]],
+                     notes=np.array(['a' + str(i) for i in range(6)]))
+            entries = json.loads(Path(src['entries']).read_text())
+            entries[3]['source_group'] = entries[4]['source_group'] = None
+            Path(src['entries']).write_text(json.dumps(entries))
+            for path in [src['input'], src['entries']]:
+                src['files'][path] = hashlib.sha256(Path(path).read_bytes()).hexdigest()
+            spec['cases'][0]['preserve_groups'] = True
+            spec['cases'].append(dict(spec['cases'][0], id='D02', preserve_groups=False))
+            manifest.write_text(json.dumps(spec))
+            output = root / 'out'
+            plan = prepare(manifest, output)
+            self.assertEqual(plan['cases'][0]['groups'], [0, 0, 0, 1, 2, 3])
+            grouped = run(output, 'D01')
+            baseline = run(output, 'D02')
+            self.assertGreater(grouped['counts'][1]['objective'], baseline['counts'][1]['objective'])
+            path = output / 'D01/count-2.json'
+            before = path.read_bytes()
+            run(output, 'D01')
+            self.assertEqual(path.read_bytes(), before)
+            bad = json.loads(before)
+            bad['panel'] = json.loads((output / 'D02/count-2.json').read_text())['panel']
+            path.write_text(json.dumps(bad))
+            with self.assertRaisesRegex(ValueError, 'split an original group'):
+                run(output, 'D01')
+            spec['counts'] = [1, 2, 3, 4, 5, 6]
+            manifest.write_text(json.dumps(spec))
+            bounded = prepare(manifest, root / 'bounded')
+            self.assertEqual(bounded['cases'][0]['counts'], [1, 2, 3, 4])
+            spec['cases'][0]['minimum_notes'] = 1
+            manifest.write_text(json.dumps(spec))
+            with self.assertRaisesRegex(ValueError, 'zero note minimum'):
+                prepare(manifest, root / 'unsupported')
+
     def _fixture(self, root):
         sources = {}
         for name, prefix in [('examined', 'a'), ('reserved', 'b')]:

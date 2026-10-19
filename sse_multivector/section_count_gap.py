@@ -103,7 +103,8 @@ def prepare(source, output, *, references=32, seed=20261101, cases=None,
             saved = panel._read(path)
             if saved['binding'] != dict(plan_sha256=files[str(source / 'plan.json')], case_id=cfg['id'], count=k):
                 raise ValueError('Observed count has different frozen bindings')
-            panel._verify(saved['panel'], vectors, notes, k, cfg['minimum_notes'], original['spec']['seeds'])
+            panel._verify(saved['panel'], vectors, notes, k, cfg['minimum_notes'],
+                          original['spec']['seeds'], groups=cfg.get('groups'))
             consumed[str(path)] = panel._sha(path)
             if k in counts:
                 best = saved['panel']['best']
@@ -113,7 +114,9 @@ def prepare(source, output, *, references=32, seed=20261101, cases=None,
         files.update(consumed)
         one = dispersion(vectors, np.zeros(len(vectors), dtype=int))
         tolerance = 64 * np.finfo(float).eps * max(1., float((vectors ** 2).sum()))
-        if one <= tolerance:
+        if cfg.get('groups') is not None and len(set(cfg['groups'])) == 1:
+            status = 'single preserved group'
+        elif one <= tolerance:
             status = 'zero observed dispersion'
         elif len(counts) < 2:
             status = 'no nonsaturated alternative'
@@ -176,7 +179,8 @@ def _reference(task):
         for fit_seed in settings['seeds']:
             t = direct.partition(vectors, notes, sections=k,
                 minimum_notes=cfg['original_case']['minimum_notes'], seed=fit_seed,
-                max_iterations=settings['max_iterations'], time_limit=settings['time_limit'])
+                max_iterations=settings['max_iterations'], time_limit=settings['time_limit'],
+                groups=cfg['original_case'].get('groups'))
             trials.append(t)
         best = min(trials, key=lambda t: (t['objective'], t['seed']))
         rows.append(dict(count=k, dispersion=dispersion(vectors, best['labels']),
@@ -191,12 +195,14 @@ def _reference(task):
     return str(destination)
 
 
-def _check_reference(saved, binding, counts, seeds, reference_seed):
+def _check_reference(saved, binding, counts, seeds, reference_seed, groups=None):
     if saved['binding'] != binding or [r['count'] for r in saved['rows']] != counts:
         raise ValueError('Reference has different frozen bindings or counts')
     if saved['seed'] != reference_seed + binding['reference_index']:
         raise ValueError('Saved reference seed disagrees with the frozen seed')
     for row in saved['rows']:
+        if groups is not None and len(set(zip(groups, row['labels']))) != len(set(groups)):
+            raise ValueError('Reference assignments split an original group')
         if (not np.isfinite(row['dispersion']) or row['dispersion'] <= 0
                 or [t['seed'] for t in row['trials']] != ([] if row['count'] == 1 else seeds)):
             raise ValueError('Invalid reference dispersion or trial selection')
@@ -221,7 +227,8 @@ def run(output, *, workers=1):
             path = output / cfg['id'] / f'reference-{index:03d}.json'
             binding = dict(plan_sha256=plan_hash, case_id=cfg['id'], reference_index=index)
             if path.exists():
-                _check_reference(panel._read(path), binding, cfg['counts'], plan['settings']['seeds'], plan['reference_seed'])
+                _check_reference(panel._read(path), binding, cfg['counts'], plan['settings']['seeds'],
+                                 plan['reference_seed'], groups=cfg['original_case'].get('groups'))
             else:
                 tasks.append((path, binding, cfg, plan['settings'], plan['reference_seed'] + index))
     if workers == 1:
@@ -237,7 +244,7 @@ def run(output, *, workers=1):
     results = []
     for cfg in plan['cases']:
         result = dict(case_id=cfg['id'], status=cfg['status'], counts=cfg['counts'],
-                      selected_count=1 if cfg['status'] == 'zero observed dispersion' else None,
+                      selected_count=1 if cfg['status'] in ['zero observed dispersion', 'single preserved group'] else None,
                       references=[])
         if cfg['status'] == 'ready':
             values = []
@@ -245,7 +252,8 @@ def run(output, *, workers=1):
                 path = output / cfg['id'] / f'reference-{index:03d}.json'
                 binding = dict(plan_sha256=plan_hash, case_id=cfg['id'], reference_index=index)
                 saved = panel._read(path)
-                _check_reference(saved, binding, cfg['counts'], plan['settings']['seeds'], plan['reference_seed'])
+                _check_reference(saved, binding, cfg['counts'], plan['settings']['seeds'],
+                                 plan['reference_seed'], groups=cfg['original_case'].get('groups'))
                 values.append([r['dispersion'] for r in saved['rows']])
                 result['references'].append(dict(path=str(path), sha256=panel._sha(path)))
             observed = [r['dispersion'] for r in cfg['observed']]

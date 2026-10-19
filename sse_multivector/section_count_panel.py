@@ -96,16 +96,37 @@ def prepare(specification, output):
         if not len(indices):
             raise ValueError('Selected section is empty')
         selected_notes = sorted(set(notes[indices].tolist()))
-        counts = [k for k in spec['counts'] if k <= len(indices)]
+        groups = None
+        if 'groups' in cfg:
+            raise ValueError('Group IDs must be derived from original source entries')
+        if type(cfg.get('preserve_groups', False)) is not bool:
+            raise ValueError('preserve_groups must be a boolean')
+        if cfg.get('preserve_groups'):
+            if cfg['minimum_notes'] != 0:
+                raise ValueError('Whole-group comparisons currently require a zero note minimum')
+            if cfg.get('reuse'):
+                raise ValueError('Original-entry producers are not whole-group reuse sources')
+            keys, groups = {}, []
+            for i in indices:
+                group = entries[i].get('source_group')
+                key = ('group', group) if group is not None else ('entry', entries[i]['id'])
+                if key not in keys:
+                    keys[key] = len(keys)
+                groups.append(keys[key])
+        limit = len(indices) if groups is None else len(set(groups))
+        counts = [k for k in spec['counts'] if k <= limit]
         if len(selected_notes) < cfg['minimum_notes'] or len(indices) < max(counts) * cfg['minimum_notes']:
             raise ValueError('Section cannot supply the configured minimum note witnesses')
         role_notes[role].update(selected_notes)
         for reuse in cfg.get('reuse', {}).values():
             _check_files(reuse['files'])
-        cases.append(dict(cfg, indices=indices.tolist(),
+        case = dict(cfg, indices=indices.tolist(),
                           entry_ids=[entries[i]['id'] for i in indices],
                           note_ids=selected_notes, notes=len(selected_notes),
-                          entries=len(indices), counts=counts))
+                          entries=len(indices), counts=counts)
+        if groups is not None:
+            case['groups'] = groups
+        cases.append(case)
     if role_notes['development'] & role_notes['reserved']:
         raise ValueError('Development and reserved cases share original notes')
     output.mkdir(parents=True, exist_ok=False)
@@ -120,12 +141,14 @@ def prepare(specification, output):
     return plan
 
 
-def _verify(panel, vectors, notes, count, minimum, seeds):
+def _verify(panel, vectors, notes, count, minimum, seeds, groups=None):
     normalized = vectors / np.linalg.norm(vectors, axis=1)[:, None]
     if [t['seed'] for t in panel['trials']] != seeds:
         raise ValueError('Saved trials disagree with the fixed seeds')
     for trial in panel['trials']:
         labels, centers = np.asarray(trial['labels']), np.asarray(trial['centers'])
+        if groups is not None and len(set(zip(groups, labels.tolist()))) != len(set(groups)):
+            raise ValueError('Saved assignments split an original group')
         if (labels.shape != notes.shape or labels.dtype.kind not in 'iu'
                 or labels.min() < 0 or labels.max() >= count
                 or centers.shape != (count, vectors.shape[1]) or not np.isfinite(centers).all()):
@@ -197,10 +220,12 @@ def run(output, case_id):
             else:
                 trials = [direct.partition(vectors, notes, sections=count,
                           minimum_notes=cfg['minimum_notes'], seed=seed,
-                          max_iterations=spec['max_iterations'], time_limit=spec['time_limit'])
+                          max_iterations=spec['max_iterations'], time_limit=spec['time_limit'],
+                          groups=cfg.get('groups'))
                           for seed in spec['seeds']]
                 panel = dict(best=min(trials, key=lambda t: (t['objective'], t['seed'])), trials=trials)
-        _verify(panel, vectors, notes, count, cfg['minimum_notes'], spec['seeds'])
+        _verify(panel, vectors, notes, count, cfg['minimum_notes'], spec['seeds'],
+                groups=cfg.get('groups'))
         if not completed:
             _write(path, dict(binding=binding, reused_from=reused, panel=panel))
         best = panel['best']

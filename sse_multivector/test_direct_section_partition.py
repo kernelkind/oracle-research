@@ -13,6 +13,18 @@ from sse_multivector.direct_section_partition import assign, partition
 
 
 class AssignmentTests(unittest.TestCase):
+    def test_whole_groups_use_summed_entry_cost_and_real_note_counts(self):
+        costs = np.array([[0., 1.], [10., 0.], [0., 2.]])
+        result = assign(costs, ['a', 'b', 'c'], minimum_notes=0, groups=[0, 0, 1])
+        self.assertEqual(result['labels'], [1, 1, 0])
+        self.assertEqual(result['section_notes'], [1, 2])
+        self.assertAlmostEqual(result['objective'], 1)
+        for bad in [[0, 1], [[0], [0], [1]]]:
+            with self.assertRaises(ValueError):
+                assign(costs, ['a', 'b', 'c'], minimum_notes=0, groups=bad)
+        with self.assertRaisesRegex(ValueError, 'zero note minimum'):
+            assign(costs, ['a', 'b', 'c'], minimum_notes=1, groups=[0, 0, 1])
+
     def test_minimum_counts_distinct_notes_instead_of_entries(self):
         costs = np.column_stack([np.zeros(6), np.arange(1, 7) / 10])
         notes = ['a', 'a', 'a', 'b', 'c', 'd']
@@ -61,6 +73,23 @@ class AssignmentTests(unittest.TestCase):
 
 
 class PartitionTests(unittest.TestCase):
+    def test_partition_keeps_original_group_members_together(self):
+        vectors = np.eye(2)[[0, 0, 1, 0, 1, 1]]
+        groups = [0, 0, 0, 1, 1, 1]
+        result = partition(vectors, np.arange(6), sections=2, minimum_notes=0,
+                           seed=12, groups=groups)
+        labels = result['labels']
+        self.assertEqual(len(set(labels[:3])), 1)
+        self.assertEqual(len(set(labels[3:])), 1)
+        self.assertNotEqual(labels[0], labels[3])
+        self.assertEqual(result['section_notes'], [3, 3])
+        self.assertTrue(result['converged'])
+        trace = [r['objective'] for r in result['trace']]
+        self.assertTrue(all(b <= a + 1e-8 for a, b in zip(trace, trace[1:])))
+        with self.assertRaisesRegex(ValueError, 'groups'):
+            partition(vectors, np.arange(6), sections=3, minimum_notes=0,
+                      seed=12, groups=groups)
+
     def test_separated_meanings_are_recovered_without_discarding_entries(self):
         vectors = np.repeat(np.eye(3), 6, axis=0)
         notes = np.arange(18)

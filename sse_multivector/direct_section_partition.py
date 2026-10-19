@@ -22,8 +22,12 @@ def note_counts(labels, notes, sections):
     return [len(set(notes[labels == k].tolist())) for k in range(sections)]
 
 
-def assign(costs, note_ids, *, minimum_notes, time_limit=30):
-    """Minimum-cost integral assignment, counting distinct note witnesses."""
+def assign(costs, note_ids, *, minimum_notes, time_limit=30, groups=None):
+    """Minimum-cost integral assignment, counting distinct note witnesses.
+
+    With a zero note minimum, optional integer group IDs require all members
+    to share a label, minimizing their summed original-entry costs.
+    """
     costs, notes = np.asarray(costs, dtype=float), np.asarray(note_ids)
     if (costs.ndim != 2 or not costs.size or notes.ndim != 1
             or len(notes) != len(costs) or not np.all(np.isfinite(costs))
@@ -38,6 +42,17 @@ def assign(costs, note_ids, *, minimum_notes, time_limit=30):
     labels = costs.argmin(axis=1)
     started = time.monotonic()
     status = 'nearest assignments already satisfy note minimum'
+    if groups is not None:
+        groups = np.asarray(groups)
+        if groups.shape != (n,) or groups.dtype.kind not in 'iu':
+            raise ValueError('Aligned integer group IDs required')
+        if minimum_notes != 0:
+            raise ValueError('Whole-group assignment currently requires a zero note minimum')
+        unique_groups, inverse_groups = np.unique(groups, return_inverse=True)
+        summed = np.zeros((len(unique_groups), k))
+        np.add.at(summed, inverse_groups, costs)
+        labels = summed.argmin(axis=1)[inverse_groups]
+        status = 'whole groups assigned by summed original-entry cost'
     if min(note_counts(labels, notes, k)) < minimum_notes:
         nx, nw = n * k, m * k
         entry_columns = np.arange(nx)
@@ -88,7 +103,7 @@ def _initial_centers(vectors, count, seed):
 
 
 def partition(vectors, note_ids, *, sections, minimum_notes, seed,
-              max_iterations=50, time_limit=30):
+              max_iterations=50, time_limit=30, groups=None):
     """Alternate exact constrained assignments and normalized center updates.
 
     Center initialization samples proportional to nearest-center cosine distance.
@@ -102,6 +117,8 @@ def partition(vectors, note_ids, *, sections, minimum_notes, seed,
             or type(max_iterations) is not int or max_iterations < 1
             or np.any(np.linalg.norm(vectors, axis=1) <= 0)):
         raise ValueError('Finite nonzero vectors, aligned notes and valid section/iteration counts required')
+    if groups is not None and len(np.unique(groups)) < sections:
+        raise ValueError('Not enough original groups for the requested section count')
     vectors = vectors / np.linalg.norm(vectors, axis=1)[:, None]
     centers, initial = _initial_centers(vectors, sections, seed)
     previous, trace = None, []
@@ -109,7 +126,8 @@ def partition(vectors, note_ids, *, sections, minimum_notes, seed,
     converged = False
     for iteration in range(max_iterations):
         costs = np.clip(1 - vectors @ centers.T, 0, 2)
-        assignment = assign(costs, notes, minimum_notes=minimum_notes, time_limit=time_limit)
+        assignment = assign(costs, notes, minimum_notes=minimum_notes, time_limit=time_limit,
+                            groups=groups)
         labels = np.asarray(assignment['labels'])
         updated = centers.copy()
         for k in range(sections):
