@@ -3892,3 +3892,115 @@ all three complete trees with full `contents.txt`, `comparison.json`,
 `resource-peaks.json`, independent `verification.txt`, and task/main test logs.
 The worktree `oracle-mvp-groups-only-construction-v1` remains for these frozen
 absolute source bindings. Historical source worktrees/artifacts are unchanged.
+
+### URL-group audit: examples separate broadly shared definitions
+
+The user authorized inspecting redundant existing groups, starting with URLs,
+before changing hierarchy construction. This is an analysis of the same saved
+ASv6.100/Bootstrap-v133 entries, native/reciprocal units and paired SSE vectors
+used above. No grouping, root assignment, definition, encoder or policy changes.
+No new model calls, encodings or training occur.
+
+Trace both retained URL groups through the source and complete numerical trees:
+
+| Corpus | Retained URL group sizes | All-entry control leaves | Groups-only candidate leaves |
+|---|---|---|---|
+| HR36 | 17 and 10 entries | `5.1.3.1`; `5.1.3.3` | `4.3.1.3`; `4.3.1.1.1` |
+| HR37 | 20 and 10 entries | `5.5.1`; `5.5.3` | `6.5.2.1`; `4.3.3.3.2` |
+
+Both URL groups already exist as distinct leaves in each all-entry control.
+Entry omission does not create that fine-group duplication; in HR37 it moves
+the two groups into different roots. The dominant distinction in the explicit
+meanings is optional examples: HTTPS/WSS relay endpoints versus articles,
+comments and media links. For instance, HR37 `L02573` defines URLs generally
+as structured addresses specifying location and access scheme, while `L00025`
+defines the same broad kind with nonrestrictive HTTPS/WSS examples. The latter
+does not restrict membership to relay URLs.
+
+Do not infer that every definition is exactly equivalent. HR36 `L03144`
+expressly permits relative addresses resolved against a base URL, whereas
+many others expressly mention an access scheme. Such a real scope variation
+is not the general boundary separating the groups: the ten-entry article/link
+group also contains ordinary unrestricted location-and-scheme definitions.
+The case supports investigating shared-topic duplication, not unconditional
+equivalence of every member or automatic merging by identical title.
+
+For each existing retained unit, average its saved vectors, normalize that
+average, then compare cosine against every other retained unit: 818 groups in
+HR36 and 764 in HR37. Do this separately for title, full meaning and the same
+equal-weight concatenated entry vectors used in construction. Normalization
+occurs after averaging, so the combined centroid cosine need not equal the
+arithmetic mean of the two separate centroid cosines. No cutoff or new
+neighbor-selection policy is fitted. Save complete rankings and matrices.
+
+| Corpus / vector view | Cosine between URL group centers | Rank in each other's group-neighbor list |
+|---|---:|---|
+| HR36, title | 0.9972 | 1 / 1 |
+| HR36, full meaning | 0.6510 | 3 / 11 |
+| HR36, combined | 0.8310 | 1 / 2 |
+| HR37, title | 0.9977 | 1 / 1 |
+| HR37, full meaning | 0.6943 | 2 / 5 |
+| HR37, combined | 0.8536 | 1 / 2 |
+
+The original entry-level matching mechanism cannot bridge these groups:
+all 27 retained HR36 URL entries and all 30 retained HR37 URL entries choose
+their nearest combined-vector entry inside their own existing unit. Mean
+within-group full-meaning cosine is about 0.924 in both corpora; between-group
+entry cosine falls to 0.598 and 0.622. The full-meaning view follows the
+example-specific wording much more strongly than the title view. This is a
+measured representation effect, not evidence that Bootstrap imposed the
+example-specific restrictions in its explicit definitions.
+
+Simply moving the same reciprocal-nearest rule to combined group centers
+would still miss the URL pair: one side ranks the other second, preferring a
+Web links/Links group in HR36 and a mixed Websites/Links/Webpages group in
+HR37. Title-only group matching retrieves the shared URL topic, but cannot
+establish safe merges. Inspect existing different-scope controls:
+
+- HR36 planning/strategic-implications versus Strategy/MSTR the company are
+  reciprocal nearest title groups (0.8607), although their meaning cosine is
+  0.0820 and their meaning-neighbor ranks are 643/259. The supplied definitions
+  plainly distinguish an approach to a goal from a named company.
+- HR37 general patterns of change versus trending/popularity are reciprocal
+  nearest title groups (0.8203), with meaning cosine 0.3672 and meaning ranks
+  93/48. Their explicit scopes differ; the shared word is insufficient to
+  establish equivalence.
+- HR36's two Security-containing groups mix broad Security with Public
+  security on one side and Operational security on the other. Title and
+  combined group matching are reciprocal. This is a mixed-scope inspection
+  control, not a certified rejection or an equivalence label for whole groups.
+
+Switching the whole pipeline back to title-only grouping is not established
+by this result. The saved original title grouping puts all 27 HR36 URL entries
+with one Source URLs entry in one group, but HR37 already has separate title
+groups of 27 and four URL entries, with another URL entry unassigned. Earlier
+title-only mixed-name grouping failures also remain part of the evidence.
+
+**Finding:** group-level title similarity can retrieve a connection hidden by
+entry-level density, but neither title-only automatic merging nor the existing
+combined reciprocal rule solves this generally. Full-meaning similarity alone
+penalizes optional examples while still being necessary to distinguish genuine
+scope differences. A next representation probe could isolate explicitly
+optional examples while preserving the full defining text, identity and scope,
+using these URL and different-scope controls. This is a suggestion requiring
+separate authorization for any new encoding, not an implemented rule or a
+reason to relax scope preservation.
+
+Independent checks reconstruct group-center cosine from every original pair
+of member vectors, verify reported full ranking positions and between-group
+means, and confirm all consumed source hashes remain unchanged. No production
+code behavior changed; no new test suite was needed for this read-only
+calculation. The bounded numerical process takes 2.293 seconds with peak
+406,069,248 bytes (387.2 MiB), zero swap and configured 8 GiB maximum / 6 GiB
+pressure limits, eight BLAS threads and CPUs 0–23. No official HR registration
+or UI update occurs.
+
+Ignored evidence is external at
+`/mnt/external/algos-archive/oracle-mvp/url-group-audit-v1/`:
+full per-corpus `*-audit.json` with complete target-group rankings and meanings,
+all title/meaning/combined group-center and score matrices in NPZ files,
+`scope-contrasts.json`, compact full-meaning `url-groups.md`, `summary.json`,
+`verification.txt`, the calculation log and raw runtime journal. The saved
+construction/source worktrees remain unchanged. This documentation-only
+worktree need not be retained after integration; its calculations consume
+existing frozen sources and its ignored outputs have absolute external paths.
