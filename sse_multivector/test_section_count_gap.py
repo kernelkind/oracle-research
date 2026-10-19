@@ -67,6 +67,29 @@ class SectionCountGapTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'positive'):
             select_count([1, 2], [1, 0], np.ones((2, 2)))
 
+    def test_global_rules_compare_later_peaks_without_changing_default(self):
+        gap = np.array([.10, .08, .27, .30])
+        error = np.array([.01, .02, .001, .06])
+        delta = error / np.sqrt(1.5)
+        reference = np.exp(np.array([-delta, delta]))
+        observed = np.exp(-gap)
+        counts = [1, 2, 3, 4]
+        baseline = select_count(counts, observed, reference)
+        self.assertEqual(baseline['selected_count'], 1)
+        self.assertEqual(select_count(counts, observed, reference, method='globalmax')['selected_count'], 4)
+        self.assertEqual(select_count(counts, observed, reference, method='globalSEmax')['selected_count'], 3)
+        self.assertEqual(select_count(counts, observed, reference, method='adjacent'), baseline)
+        with self.assertRaisesRegex(ValueError, 'Unknown'):
+            select_count(counts, observed, reference, method='other')
+
+    def test_global_rules_preserve_no_split_and_choose_first_tied_peak(self):
+        reference = np.ones((2, 3))
+        for method in ['globalmax', 'globalSEmax']:
+            self.assertEqual(select_count([1, 2, 3], np.exp(-np.array([.3, .2, .1])),
+                                          reference, method=method)['selected_count'], 1)
+            self.assertEqual(select_count([1, 2, 3], np.exp(-np.array([.1, .3, .3])),
+                                          reference, method=method)['selected_count'], 2)
+
     def test_cli_reuses_observed_fits_runs_references_and_leaves_reserved_alone(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
