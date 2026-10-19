@@ -1,0 +1,2246 @@
+{
+  "schema_version": 4,
+  "corpus": "/mnt/external/algos-archive/oracle-mvp/hierarchy-hr38-v53-auto/hierarchy-hr38-v53-auto-2000-note-v1/subject-collection/subjects.json",
+  "nodes": [
+    {
+      "id": "qualification-001-root",
+      "local": {
+        "note_id": "f36b2b2ff06b229babbd2b479b58b69decf57a8f11309249122f856286955ae4",
+        "number": "3"
+      },
+      "review": {
+        "pair": 1,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-001-specific",
+      "local": {
+        "note_id": "f36b2b2ff06b229babbd2b479b58b69decf57a8f11309249122f856286955ae4",
+        "number": "3.1.1"
+      },
+      "review": {
+        "pair": 1,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-002-root",
+      "local": {
+        "note_id": "5a1550e922fb67d70b327c31781f813a15d4268e432cc746027cec4e409a37f3",
+        "number": "6"
+      },
+      "review": {
+        "pair": 2,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-002-specific",
+      "local": {
+        "note_id": "5a1550e922fb67d70b327c31781f813a15d4268e432cc746027cec4e409a37f3",
+        "number": "6.1.2.1"
+      },
+      "review": {
+        "pair": 2,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-003-root",
+      "local": {
+        "note_id": "1b4662e2df3d37d8600a52e7560ccfd104cbba88a5ef7209ba1d30430e7bd4be",
+        "number": "3"
+      },
+      "review": {
+        "pair": 3,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-003-specific",
+      "local": {
+        "note_id": "1b4662e2df3d37d8600a52e7560ccfd104cbba88a5ef7209ba1d30430e7bd4be",
+        "number": "3.1"
+      },
+      "review": {
+        "pair": 3,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-004-root",
+      "local": {
+        "note_id": "115f67af2367f2ad7bdd6c3036916f5b7c767dc46117c785fee1579e9b67e17e",
+        "number": "2"
+      },
+      "review": {
+        "pair": 4,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-004-specific",
+      "local": {
+        "note_id": "115f67af2367f2ad7bdd6c3036916f5b7c767dc46117c785fee1579e9b67e17e",
+        "number": "2.1"
+      },
+      "review": {
+        "pair": 4,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-005-root",
+      "local": {
+        "note_id": "de9e6a61b180e921dbd4ca541407d3dfa5d4a3aa2b56dbd61a4c40650845f3a3",
+        "number": "1"
+      },
+      "review": {
+        "pair": 5,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-005-specific",
+      "local": {
+        "note_id": "de9e6a61b180e921dbd4ca541407d3dfa5d4a3aa2b56dbd61a4c40650845f3a3",
+        "number": "1.1.1"
+      },
+      "review": {
+        "pair": 5,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-006-root",
+      "local": {
+        "note_id": "4c120be665dc3c70ae012f67f05461a9f88a9c1b8889ad8b907e2c9b6bb86d0f",
+        "number": "1"
+      },
+      "review": {
+        "pair": 6,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-006-specific",
+      "local": {
+        "note_id": "4c120be665dc3c70ae012f67f05461a9f88a9c1b8889ad8b907e2c9b6bb86d0f",
+        "number": "1.1.4.1.1"
+      },
+      "review": {
+        "pair": 6,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-007-root",
+      "local": {
+        "note_id": "ed8736f9e4425280f0a38e97098d9fc5d993374a7b5a5875cadab320d0dc72c8",
+        "number": "3"
+      },
+      "review": {
+        "pair": 7,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-007-specific",
+      "local": {
+        "note_id": "ed8736f9e4425280f0a38e97098d9fc5d993374a7b5a5875cadab320d0dc72c8",
+        "number": "3.1.1"
+      },
+      "review": {
+        "pair": 7,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-008-root",
+      "local": {
+        "note_id": "34739d304bcb38728e522f1fc1782c45864af97ffdf02f290c3ad554ec96d56d",
+        "number": "1"
+      },
+      "review": {
+        "pair": 8,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-008-specific",
+      "local": {
+        "note_id": "34739d304bcb38728e522f1fc1782c45864af97ffdf02f290c3ad554ec96d56d",
+        "number": "1.5.5.1.2"
+      },
+      "review": {
+        "pair": 8,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-009-root",
+      "local": {
+        "note_id": "2c36aa440ba0d7a32e88d27756297337965dda311b6855e2e1d5901f76cb420e",
+        "number": "3"
+      },
+      "review": {
+        "pair": 9,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-009-specific",
+      "local": {
+        "note_id": "2c36aa440ba0d7a32e88d27756297337965dda311b6855e2e1d5901f76cb420e",
+        "number": "3.1.1"
+      },
+      "review": {
+        "pair": 9,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-010-root",
+      "local": {
+        "note_id": "c8bba4ea30138d69b6b72eab56cf8cc4a0e576c29a1f2e19ce6d82028aa983f4",
+        "number": "6"
+      },
+      "review": {
+        "pair": 10,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-010-specific",
+      "local": {
+        "note_id": "c8bba4ea30138d69b6b72eab56cf8cc4a0e576c29a1f2e19ce6d82028aa983f4",
+        "number": "6.1"
+      },
+      "review": {
+        "pair": 10,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-011-root",
+      "local": {
+        "note_id": "10eedb6bae147f8b3ee21907f7a0102163f8f3319bf85826b7e4b9b5f12a7582",
+        "number": "6"
+      },
+      "review": {
+        "pair": 11,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-011-specific",
+      "local": {
+        "note_id": "10eedb6bae147f8b3ee21907f7a0102163f8f3319bf85826b7e4b9b5f12a7582",
+        "number": "6.1"
+      },
+      "review": {
+        "pair": 11,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-012-root",
+      "local": {
+        "note_id": "59fcdc029e2ea9f119c50c7938a7f780bf0867735ce0b5eb6b6c9ec2c8612e57",
+        "number": "4"
+      },
+      "review": {
+        "pair": 12,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-012-specific",
+      "local": {
+        "note_id": "59fcdc029e2ea9f119c50c7938a7f780bf0867735ce0b5eb6b6c9ec2c8612e57",
+        "number": "4.1.2.1"
+      },
+      "review": {
+        "pair": 12,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-013-root",
+      "local": {
+        "note_id": "3893511583aa910570851b5f57e2f900c9ce4f7e93a276235ae593cd9183c0fb",
+        "number": "5"
+      },
+      "review": {
+        "pair": 13,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-013-specific",
+      "local": {
+        "note_id": "3893511583aa910570851b5f57e2f900c9ce4f7e93a276235ae593cd9183c0fb",
+        "number": "5.1.1"
+      },
+      "review": {
+        "pair": 13,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-014-root",
+      "local": {
+        "note_id": "4ae5dfbdfbc0050f7eb2371a7e7408b115838268bb1897dce47aeb8ebe1de2cb",
+        "number": "4"
+      },
+      "review": {
+        "pair": 14,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-014-specific",
+      "local": {
+        "note_id": "4ae5dfbdfbc0050f7eb2371a7e7408b115838268bb1897dce47aeb8ebe1de2cb",
+        "number": "4.1.1"
+      },
+      "review": {
+        "pair": 14,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-015-root",
+      "local": {
+        "note_id": "86be65e1c7a9a0c32b4d27343bd65e67d20802a3bdef0dd27426c40463bf107e",
+        "number": "4"
+      },
+      "review": {
+        "pair": 15,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-015-specific",
+      "local": {
+        "note_id": "86be65e1c7a9a0c32b4d27343bd65e67d20802a3bdef0dd27426c40463bf107e",
+        "number": "4.1.1"
+      },
+      "review": {
+        "pair": 15,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-016-root",
+      "local": {
+        "note_id": "11f1113dbae3de33147fa92da84db7c17876a679823a6d39fcc99120c987d81e",
+        "number": "4"
+      },
+      "review": {
+        "pair": 16,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-016-specific",
+      "local": {
+        "note_id": "11f1113dbae3de33147fa92da84db7c17876a679823a6d39fcc99120c987d81e",
+        "number": "4.1"
+      },
+      "review": {
+        "pair": 16,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-017-root",
+      "local": {
+        "note_id": "101795c79d347b6f08ec148d7757efe9dbc24c22acdeec07238208744fcdb190",
+        "number": "3"
+      },
+      "review": {
+        "pair": 17,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-017-specific",
+      "local": {
+        "note_id": "101795c79d347b6f08ec148d7757efe9dbc24c22acdeec07238208744fcdb190",
+        "number": "3.1.1.1.1"
+      },
+      "review": {
+        "pair": 17,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-018-root",
+      "local": {
+        "note_id": "42a2cf726350600dc15e3f51da96b7af5fabb3510a36c8a39b82c73d8e2c4e65",
+        "number": "5"
+      },
+      "review": {
+        "pair": 18,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-018-specific",
+      "local": {
+        "note_id": "42a2cf726350600dc15e3f51da96b7af5fabb3510a36c8a39b82c73d8e2c4e65",
+        "number": "5.1"
+      },
+      "review": {
+        "pair": 18,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-019-root",
+      "local": {
+        "note_id": "000072c04078ba1fff518b18c65fce6cd69621661ac7bd9122450ff1d29720b8",
+        "number": "2"
+      },
+      "review": {
+        "pair": 19,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-019-specific",
+      "local": {
+        "note_id": "000072c04078ba1fff518b18c65fce6cd69621661ac7bd9122450ff1d29720b8",
+        "number": "2.1.2.1.1"
+      },
+      "review": {
+        "pair": 19,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-020-root",
+      "local": {
+        "note_id": "b12eb8b1357fbec8b48a856dfc2e77db24889df6444a9405afab2cae7993a882",
+        "number": "3"
+      },
+      "review": {
+        "pair": 20,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-020-specific",
+      "local": {
+        "note_id": "b12eb8b1357fbec8b48a856dfc2e77db24889df6444a9405afab2cae7993a882",
+        "number": "3.2.1"
+      },
+      "review": {
+        "pair": 20,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-021-root",
+      "local": {
+        "note_id": "b085d00e00d9fec47718bc9730843403b80d11791051e99722b925edd632f245",
+        "number": "4"
+      },
+      "review": {
+        "pair": 21,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-021-specific",
+      "local": {
+        "note_id": "b085d00e00d9fec47718bc9730843403b80d11791051e99722b925edd632f245",
+        "number": "4.1.1"
+      },
+      "review": {
+        "pair": 21,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-022-root",
+      "local": {
+        "note_id": "2af19b5f5e94daf7fb163e50bd60bad299c992880561d00d40795f18d7785e08",
+        "number": "3"
+      },
+      "review": {
+        "pair": 22,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-022-specific",
+      "local": {
+        "note_id": "2af19b5f5e94daf7fb163e50bd60bad299c992880561d00d40795f18d7785e08",
+        "number": "3.1.1"
+      },
+      "review": {
+        "pair": 22,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-023-root",
+      "local": {
+        "note_id": "1d8cfe52e7a48338b2ce714b9c3c924e114e9fa51b9bc04a48076b67bc544981",
+        "number": "5"
+      },
+      "review": {
+        "pair": 23,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-023-specific",
+      "local": {
+        "note_id": "1d8cfe52e7a48338b2ce714b9c3c924e114e9fa51b9bc04a48076b67bc544981",
+        "number": "5.1"
+      },
+      "review": {
+        "pair": 23,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-024-root",
+      "local": {
+        "note_id": "d8f1ec222f6165ef53eaad84732fe48e8d4be1a49876988a7009d1a9d978358a",
+        "number": "6"
+      },
+      "review": {
+        "pair": 24,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-024-specific",
+      "local": {
+        "note_id": "d8f1ec222f6165ef53eaad84732fe48e8d4be1a49876988a7009d1a9d978358a",
+        "number": "6.1.1.4"
+      },
+      "review": {
+        "pair": 24,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-025-root",
+      "local": {
+        "note_id": "1af07e2df3187dfba8dc3d4f16860778a4efad77a3d4d2c76649d56b40f68f9f",
+        "number": "7"
+      },
+      "review": {
+        "pair": 25,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-025-specific",
+      "local": {
+        "note_id": "1af07e2df3187dfba8dc3d4f16860778a4efad77a3d4d2c76649d56b40f68f9f",
+        "number": "7.1.1"
+      },
+      "review": {
+        "pair": 25,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-026-root",
+      "local": {
+        "note_id": "2538a3c7c51924cc4a1b2ecaad8a59395f5233460cf4b6b2ecec678fe843d967",
+        "number": "4"
+      },
+      "review": {
+        "pair": 26,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-026-specific",
+      "local": {
+        "note_id": "2538a3c7c51924cc4a1b2ecaad8a59395f5233460cf4b6b2ecec678fe843d967",
+        "number": "4.1.1"
+      },
+      "review": {
+        "pair": 26,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-027-root",
+      "local": {
+        "note_id": "e81e601486bf9e861ed6ac925d8da50db1e4f148fd03d1249021bd6eef6e5aaf",
+        "number": "2"
+      },
+      "review": {
+        "pair": 27,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-027-specific",
+      "local": {
+        "note_id": "e81e601486bf9e861ed6ac925d8da50db1e4f148fd03d1249021bd6eef6e5aaf",
+        "number": "2.1"
+      },
+      "review": {
+        "pair": 27,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-028-root",
+      "local": {
+        "note_id": "031b2837d057c1cf0094eab18ed92da20974666bc21aec7acc6e15894431fa47",
+        "number": "2"
+      },
+      "review": {
+        "pair": 28,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-028-specific",
+      "local": {
+        "note_id": "031b2837d057c1cf0094eab18ed92da20974666bc21aec7acc6e15894431fa47",
+        "number": "2.1.1"
+      },
+      "review": {
+        "pair": 28,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-029-root",
+      "local": {
+        "note_id": "b0b1e145dc15d7a17da3f5c9693c1d389c2e980af95ef9e6cca3f74275fc49c7",
+        "number": "5"
+      },
+      "review": {
+        "pair": 29,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-029-specific",
+      "local": {
+        "note_id": "b0b1e145dc15d7a17da3f5c9693c1d389c2e980af95ef9e6cca3f74275fc49c7",
+        "number": "5.1.1"
+      },
+      "review": {
+        "pair": 29,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-030-root",
+      "local": {
+        "note_id": "d83087f4e4d84c62bd0ae705205a4c06a8606cf5267035fb30ee106db2459b3e",
+        "number": "4"
+      },
+      "review": {
+        "pair": 30,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-030-specific",
+      "local": {
+        "note_id": "d83087f4e4d84c62bd0ae705205a4c06a8606cf5267035fb30ee106db2459b3e",
+        "number": "4.1.1"
+      },
+      "review": {
+        "pair": 30,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-031-root",
+      "local": {
+        "note_id": "efa12129d6e671b6ab2f28be2d48a795d6bfe0ec44ff5488131ad3f6069ae044",
+        "number": "3"
+      },
+      "review": {
+        "pair": 31,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-031-specific",
+      "local": {
+        "note_id": "efa12129d6e671b6ab2f28be2d48a795d6bfe0ec44ff5488131ad3f6069ae044",
+        "number": "3.1"
+      },
+      "review": {
+        "pair": 31,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-032-root",
+      "local": {
+        "note_id": "000058a5ca700a3010f4116cde2c8bc7a93825e8dd7284136cbaffc2a0dadac6",
+        "number": "3"
+      },
+      "review": {
+        "pair": 32,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-032-specific",
+      "local": {
+        "note_id": "000058a5ca700a3010f4116cde2c8bc7a93825e8dd7284136cbaffc2a0dadac6",
+        "number": "3.1"
+      },
+      "review": {
+        "pair": 32,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-033-root",
+      "local": {
+        "note_id": "b0ebf70a2874657dc833f7f6d4c09bc103a96938fd611d0a481d67d8864ecf79",
+        "number": "8"
+      },
+      "review": {
+        "pair": 33,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-033-specific",
+      "local": {
+        "note_id": "b0ebf70a2874657dc833f7f6d4c09bc103a96938fd611d0a481d67d8864ecf79",
+        "number": "8.1"
+      },
+      "review": {
+        "pair": 33,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-034-root",
+      "local": {
+        "note_id": "ab1ba1da1659f8004bf3b0b068e19907b3d9e438fd4b4768eda7e242a8b9c03b",
+        "number": "7"
+      },
+      "review": {
+        "pair": 34,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-034-specific",
+      "local": {
+        "note_id": "ab1ba1da1659f8004bf3b0b068e19907b3d9e438fd4b4768eda7e242a8b9c03b",
+        "number": "7.1.1.1"
+      },
+      "review": {
+        "pair": 34,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-035-root",
+      "local": {
+        "note_id": "5326f10d263ac579794c4d984e859988ad942f89212f56d8c7f105a4321ba991",
+        "number": "5"
+      },
+      "review": {
+        "pair": 35,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-035-specific",
+      "local": {
+        "note_id": "5326f10d263ac579794c4d984e859988ad942f89212f56d8c7f105a4321ba991",
+        "number": "5.3.1.1"
+      },
+      "review": {
+        "pair": 35,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-036-root",
+      "local": {
+        "note_id": "430d709b46ec8280cba2bbb756a953d4e4bcfc8b0c5210b1444827788eb9a8ad",
+        "number": "3"
+      },
+      "review": {
+        "pair": 36,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-036-specific",
+      "local": {
+        "note_id": "430d709b46ec8280cba2bbb756a953d4e4bcfc8b0c5210b1444827788eb9a8ad",
+        "number": "3.1.1"
+      },
+      "review": {
+        "pair": 36,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-037-root",
+      "local": {
+        "note_id": "70c2b194548e9c58d20322ccf229e30b353f4dd41cd70d05cb7b984ab356fad7",
+        "number": "1"
+      },
+      "review": {
+        "pair": 37,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-037-specific",
+      "local": {
+        "note_id": "70c2b194548e9c58d20322ccf229e30b353f4dd41cd70d05cb7b984ab356fad7",
+        "number": "1.4.1.1"
+      },
+      "review": {
+        "pair": 37,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-038-root",
+      "local": {
+        "note_id": "1664c859aea593a1417cfbcb1e8517112250cff3ace9bb1a93f28540d5b6f99b",
+        "number": "3"
+      },
+      "review": {
+        "pair": 38,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-038-specific",
+      "local": {
+        "note_id": "1664c859aea593a1417cfbcb1e8517112250cff3ace9bb1a93f28540d5b6f99b",
+        "number": "3.1"
+      },
+      "review": {
+        "pair": 38,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-039-root",
+      "local": {
+        "note_id": "31d98526e74b2b03df1372217698a78e9ef179b7a9243c06b4d5a3044a6fd774",
+        "number": "3"
+      },
+      "review": {
+        "pair": 39,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-039-specific",
+      "local": {
+        "note_id": "31d98526e74b2b03df1372217698a78e9ef179b7a9243c06b4d5a3044a6fd774",
+        "number": "3.1"
+      },
+      "review": {
+        "pair": 39,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-040-root",
+      "local": {
+        "note_id": "f6d3f85cadbafd1c5b3f7132a4c1c8b8e3e78b6e6dbedb3c1d79409f69073ec9",
+        "number": "1"
+      },
+      "review": {
+        "pair": 40,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-040-specific",
+      "local": {
+        "note_id": "f6d3f85cadbafd1c5b3f7132a4c1c8b8e3e78b6e6dbedb3c1d79409f69073ec9",
+        "number": "1.1.1.1.1"
+      },
+      "review": {
+        "pair": 40,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-041-root",
+      "local": {
+        "note_id": "5d01509593970aa188b345b0f69a2477e9df4224b7aada5914e671df3c1efc4e",
+        "number": "9"
+      },
+      "review": {
+        "pair": 41,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-041-specific",
+      "local": {
+        "note_id": "5d01509593970aa188b345b0f69a2477e9df4224b7aada5914e671df3c1efc4e",
+        "number": "9.1"
+      },
+      "review": {
+        "pair": 41,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-042-root",
+      "local": {
+        "note_id": "1ed5dab9bbed558afce88fd6357ef632588873c969af294f3a08355a58427861",
+        "number": "3"
+      },
+      "review": {
+        "pair": 42,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-042-specific",
+      "local": {
+        "note_id": "1ed5dab9bbed558afce88fd6357ef632588873c969af294f3a08355a58427861",
+        "number": "3.1.1.1.1.1"
+      },
+      "review": {
+        "pair": 42,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-043-root",
+      "local": {
+        "note_id": "3324b6a46794b96a6d59d94f0e2fb6fe49e727fc97b77af0a30d3282c1b3d526",
+        "number": "2"
+      },
+      "review": {
+        "pair": 43,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-043-specific",
+      "local": {
+        "note_id": "3324b6a46794b96a6d59d94f0e2fb6fe49e727fc97b77af0a30d3282c1b3d526",
+        "number": "2.1.4"
+      },
+      "review": {
+        "pair": 43,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-044-root",
+      "local": {
+        "note_id": "ca0f5ad87d8f46ea6436eb6f7a030fab338a1d21c7bedc485ce6b9da5026fbe2",
+        "number": "14"
+      },
+      "review": {
+        "pair": 44,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-044-specific",
+      "local": {
+        "note_id": "ca0f5ad87d8f46ea6436eb6f7a030fab338a1d21c7bedc485ce6b9da5026fbe2",
+        "number": "14.2.1.1.1"
+      },
+      "review": {
+        "pair": 44,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-045-root",
+      "local": {
+        "note_id": "3d5b9e51f8472183ce2ae08a300399e2ce7ecab64c37f10a479071108b85794f",
+        "number": "2"
+      },
+      "review": {
+        "pair": 45,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-045-specific",
+      "local": {
+        "note_id": "3d5b9e51f8472183ce2ae08a300399e2ce7ecab64c37f10a479071108b85794f",
+        "number": "2.1.1.1"
+      },
+      "review": {
+        "pair": 45,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-046-root",
+      "local": {
+        "note_id": "8c9ed89f3871729c26f5bc96c879322642e2ed2fa4d0604d3a0deb6943633480",
+        "number": "1"
+      },
+      "review": {
+        "pair": 46,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-046-specific",
+      "local": {
+        "note_id": "8c9ed89f3871729c26f5bc96c879322642e2ed2fa4d0604d3a0deb6943633480",
+        "number": "1.1.1"
+      },
+      "review": {
+        "pair": 46,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-047-root",
+      "local": {
+        "note_id": "1d3f43c1232f81c0a7a2a18bee684c5cc80c2fa77189cad2f1038c5f9070862f",
+        "number": "2"
+      },
+      "review": {
+        "pair": 47,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-047-specific",
+      "local": {
+        "note_id": "1d3f43c1232f81c0a7a2a18bee684c5cc80c2fa77189cad2f1038c5f9070862f",
+        "number": "2.1.1.1"
+      },
+      "review": {
+        "pair": 47,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-048-root",
+      "local": {
+        "note_id": "367aca358c82cf38d3c3073c3a68b806586f697355ddb8f22dee5d4bbee72884",
+        "number": "1"
+      },
+      "review": {
+        "pair": 48,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-048-specific",
+      "local": {
+        "note_id": "367aca358c82cf38d3c3073c3a68b806586f697355ddb8f22dee5d4bbee72884",
+        "number": "1.1.1"
+      },
+      "review": {
+        "pair": 48,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-049-root",
+      "local": {
+        "note_id": "7df5bba8e5ee15f48d3e81b7d9a5d809beee9f6c3f2d861531cf5f555576af97",
+        "number": "1"
+      },
+      "review": {
+        "pair": 49,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-049-specific",
+      "local": {
+        "note_id": "7df5bba8e5ee15f48d3e81b7d9a5d809beee9f6c3f2d861531cf5f555576af97",
+        "number": "1.1"
+      },
+      "review": {
+        "pair": 49,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-050-root",
+      "local": {
+        "note_id": "0000800ee561626116221154f20870a16c463963bd8f31cdcda4bf465cc2a4d4",
+        "number": "2"
+      },
+      "review": {
+        "pair": 50,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-050-specific",
+      "local": {
+        "note_id": "0000800ee561626116221154f20870a16c463963bd8f31cdcda4bf465cc2a4d4",
+        "number": "2.1"
+      },
+      "review": {
+        "pair": 50,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-051-root",
+      "local": {
+        "note_id": "ea53f4584b9e0c3607b92f46e3c75c56ece037b9ccf98a908b4c54ff533b0717",
+        "number": "4"
+      },
+      "review": {
+        "pair": 51,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-051-specific",
+      "local": {
+        "note_id": "ea53f4584b9e0c3607b92f46e3c75c56ece037b9ccf98a908b4c54ff533b0717",
+        "number": "4.1.1.1"
+      },
+      "review": {
+        "pair": 51,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-052-root",
+      "local": {
+        "note_id": "cd9f2b9b90aef540293b1a0f99058ec6cb7486ffb28d33696b9bba2a4789ac2e",
+        "number": "4"
+      },
+      "review": {
+        "pair": 52,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-052-specific",
+      "local": {
+        "note_id": "cd9f2b9b90aef540293b1a0f99058ec6cb7486ffb28d33696b9bba2a4789ac2e",
+        "number": "4.1"
+      },
+      "review": {
+        "pair": 52,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-053-root",
+      "local": {
+        "note_id": "5ca472829653bfb5a6fc9e009f90e05f17fcf9d0dfaf2ec9e8a914385c7f3afb",
+        "number": "1"
+      },
+      "review": {
+        "pair": 53,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-053-specific",
+      "local": {
+        "note_id": "5ca472829653bfb5a6fc9e009f90e05f17fcf9d0dfaf2ec9e8a914385c7f3afb",
+        "number": "1.1.1.1"
+      },
+      "review": {
+        "pair": 53,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-054-root",
+      "local": {
+        "note_id": "000028e698243e5f0edb11fdc939b49c8b7656945096c947cee8e42d35c05f53",
+        "number": "4"
+      },
+      "review": {
+        "pair": 54,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-054-specific",
+      "local": {
+        "note_id": "000028e698243e5f0edb11fdc939b49c8b7656945096c947cee8e42d35c05f53",
+        "number": "4.1.1"
+      },
+      "review": {
+        "pair": 54,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-055-root",
+      "local": {
+        "note_id": "f8fc51efe29a18dcfd8fa1e43708fe8e83aa662a962dbd4cfbdd85dd79b6dfab",
+        "number": "2"
+      },
+      "review": {
+        "pair": 55,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-055-specific",
+      "local": {
+        "note_id": "f8fc51efe29a18dcfd8fa1e43708fe8e83aa662a962dbd4cfbdd85dd79b6dfab",
+        "number": "2.1.1.1"
+      },
+      "review": {
+        "pair": 55,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-056-root",
+      "local": {
+        "note_id": "27652a1924c5efb0be53f27b2e8448373967cea17749ed9ca7e774e51586db6e",
+        "number": "1"
+      },
+      "review": {
+        "pair": 56,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-056-specific",
+      "local": {
+        "note_id": "27652a1924c5efb0be53f27b2e8448373967cea17749ed9ca7e774e51586db6e",
+        "number": "1.1.2.1.1"
+      },
+      "review": {
+        "pair": 56,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-057-root",
+      "local": {
+        "note_id": "0000641033811a0732c0e6a10ebf2f20e94d23d91db0475f7a0443ab3c6dbe19",
+        "number": "4"
+      },
+      "review": {
+        "pair": 57,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-057-specific",
+      "local": {
+        "note_id": "0000641033811a0732c0e6a10ebf2f20e94d23d91db0475f7a0443ab3c6dbe19",
+        "number": "4.1"
+      },
+      "review": {
+        "pair": 57,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-058-root",
+      "local": {
+        "note_id": "5e1f5fb84dadb7bbef5bb94a9627f39028f8f6cf81bc7cbfcacdf73c426a8740",
+        "number": "1"
+      },
+      "review": {
+        "pair": 58,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-058-specific",
+      "local": {
+        "note_id": "5e1f5fb84dadb7bbef5bb94a9627f39028f8f6cf81bc7cbfcacdf73c426a8740",
+        "number": "1.1.1"
+      },
+      "review": {
+        "pair": 58,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-059-root",
+      "local": {
+        "note_id": "8fe407210da620160d8c224b7685967bcd993dba4e76b7987faafaba6855221f",
+        "number": "1"
+      },
+      "review": {
+        "pair": 59,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-059-specific",
+      "local": {
+        "note_id": "8fe407210da620160d8c224b7685967bcd993dba4e76b7987faafaba6855221f",
+        "number": "1.1"
+      },
+      "review": {
+        "pair": 59,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-060-root",
+      "local": {
+        "note_id": "38a4f7bced100c11178f1c6d111b68411da817b4ec8821e04cbf843ef2235c66",
+        "number": "3"
+      },
+      "review": {
+        "pair": 60,
+        "level": "root",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-060-specific",
+      "local": {
+        "note_id": "38a4f7bced100c11178f1c6d111b68411da817b4ec8821e04cbf843ef2235c66",
+        "number": "3.1.1.1.1"
+      },
+      "review": {
+        "pair": 60,
+        "level": "specific",
+        "cohort": "seeded",
+        "family": null,
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-061-root",
+      "local": {
+        "note_id": "e57ef637938243a1c87dc31bed343db7a4a1ab8c8781299b75882e3ff8b49463",
+        "number": "1"
+      },
+      "review": {
+        "pair": 61,
+        "level": "root",
+        "cohort": "challenge",
+        "family": "food",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-061-specific",
+      "local": {
+        "note_id": "e57ef637938243a1c87dc31bed343db7a4a1ab8c8781299b75882e3ff8b49463",
+        "number": "1.1.1.1.1.2"
+      },
+      "review": {
+        "pair": 61,
+        "level": "specific",
+        "cohort": "challenge",
+        "family": "food",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-062-root",
+      "local": {
+        "note_id": "70c8cf9fc82e8754e9852687437ca1ac46ef9e086b5756d2c42d816cf850d94e",
+        "number": "7"
+      },
+      "review": {
+        "pair": 62,
+        "level": "root",
+        "cohort": "challenge",
+        "family": "food",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-062-specific",
+      "local": {
+        "note_id": "70c8cf9fc82e8754e9852687437ca1ac46ef9e086b5756d2c42d816cf850d94e",
+        "number": "7.1.1.1"
+      },
+      "review": {
+        "pair": 62,
+        "level": "specific",
+        "cohort": "challenge",
+        "family": "food",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-063-root",
+      "local": {
+        "note_id": "c6ffc40f74638a4fe7c07c67da4233e5b19f0c6f0efcaf8a4dad03b613e0dafb",
+        "number": "6"
+      },
+      "review": {
+        "pair": 63,
+        "level": "root",
+        "cohort": "challenge",
+        "family": "food",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-063-specific",
+      "local": {
+        "note_id": "c6ffc40f74638a4fe7c07c67da4233e5b19f0c6f0efcaf8a4dad03b613e0dafb",
+        "number": "6.1"
+      },
+      "review": {
+        "pair": 63,
+        "level": "specific",
+        "cohort": "challenge",
+        "family": "food",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-064-root",
+      "local": {
+        "note_id": "75dff855aedeeae86d506f502171cfeb2eeefb30c16dcad720f9ed19d9815058",
+        "number": "1"
+      },
+      "review": {
+        "pair": 64,
+        "level": "root",
+        "cohort": "challenge",
+        "family": "food",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-064-specific",
+      "local": {
+        "note_id": "75dff855aedeeae86d506f502171cfeb2eeefb30c16dcad720f9ed19d9815058",
+        "number": "1.1.1.1.1"
+      },
+      "review": {
+        "pair": 64,
+        "level": "specific",
+        "cohort": "challenge",
+        "family": "food",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-065-root",
+      "local": {
+        "note_id": "b21ceef3ff240b175752303d3f09064a3d644c45b3e3a4abb06d151899d96f66",
+        "number": "5"
+      },
+      "review": {
+        "pair": 65,
+        "level": "root",
+        "cohort": "challenge",
+        "family": "food",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-065-specific",
+      "local": {
+        "note_id": "b21ceef3ff240b175752303d3f09064a3d644c45b3e3a4abb06d151899d96f66",
+        "number": "5.1.1"
+      },
+      "review": {
+        "pair": 65,
+        "level": "specific",
+        "cohort": "challenge",
+        "family": "food",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-066-root",
+      "local": {
+        "note_id": "11a71f0427dd1591173188cd215f9006ef2034ab14d1dc639f9e982a02c18998",
+        "number": "11"
+      },
+      "review": {
+        "pair": 66,
+        "level": "root",
+        "cohort": "challenge",
+        "family": "people",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-066-specific",
+      "local": {
+        "note_id": "11a71f0427dd1591173188cd215f9006ef2034ab14d1dc639f9e982a02c18998",
+        "number": "11.1.1"
+      },
+      "review": {
+        "pair": 66,
+        "level": "specific",
+        "cohort": "challenge",
+        "family": "people",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-067-root",
+      "local": {
+        "note_id": "a12bf5f49c2c6a02eb4af63dd2d3abd1890f7920dc1f8f927ba40b855dd9b930",
+        "number": "2"
+      },
+      "review": {
+        "pair": 67,
+        "level": "root",
+        "cohort": "challenge",
+        "family": "people",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-067-specific",
+      "local": {
+        "note_id": "a12bf5f49c2c6a02eb4af63dd2d3abd1890f7920dc1f8f927ba40b855dd9b930",
+        "number": "2.1"
+      },
+      "review": {
+        "pair": 67,
+        "level": "specific",
+        "cohort": "challenge",
+        "family": "people",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-068-root",
+      "local": {
+        "note_id": "1c5e5ae179d009bf7fcca2115a9e2991fb4047108384257d34e1c01953597cc9",
+        "number": "2"
+      },
+      "review": {
+        "pair": 68,
+        "level": "root",
+        "cohort": "challenge",
+        "family": "people",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-068-specific",
+      "local": {
+        "note_id": "1c5e5ae179d009bf7fcca2115a9e2991fb4047108384257d34e1c01953597cc9",
+        "number": "2.1"
+      },
+      "review": {
+        "pair": 68,
+        "level": "specific",
+        "cohort": "challenge",
+        "family": "people",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-069-root",
+      "local": {
+        "note_id": "74245b7343a30877e12bf236fb26519a66e950a132f7995683b5754c980c3fa3",
+        "number": "1"
+      },
+      "review": {
+        "pair": 69,
+        "level": "root",
+        "cohort": "challenge",
+        "family": "people",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-069-specific",
+      "local": {
+        "note_id": "74245b7343a30877e12bf236fb26519a66e950a132f7995683b5754c980c3fa3",
+        "number": "1.2.1.1.1"
+      },
+      "review": {
+        "pair": 69,
+        "level": "specific",
+        "cohort": "challenge",
+        "family": "people",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-070-root",
+      "local": {
+        "note_id": "652eac3ff3ba40c866d7cb3ac6afa831fde679c86bc71ca5deac474d9e1a0975",
+        "number": "2"
+      },
+      "review": {
+        "pair": 70,
+        "level": "root",
+        "cohort": "challenge",
+        "family": "people",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-070-specific",
+      "local": {
+        "note_id": "652eac3ff3ba40c866d7cb3ac6afa831fde679c86bc71ca5deac474d9e1a0975",
+        "number": "2.3.1.1.1.1"
+      },
+      "review": {
+        "pair": 70,
+        "level": "specific",
+        "cohort": "challenge",
+        "family": "people",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-071-root",
+      "local": {
+        "note_id": "681de56e0d49bb98164cb0eebb4ea1111219ce30ee140a26ebb2fa7fc560eedc",
+        "number": "2"
+      },
+      "review": {
+        "pair": 71,
+        "level": "root",
+        "cohort": "challenge",
+        "family": "plans_preferences",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-071-specific",
+      "local": {
+        "note_id": "681de56e0d49bb98164cb0eebb4ea1111219ce30ee140a26ebb2fa7fc560eedc",
+        "number": "2.1.1.1"
+      },
+      "review": {
+        "pair": 71,
+        "level": "specific",
+        "cohort": "challenge",
+        "family": "plans_preferences",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-072-root",
+      "local": {
+        "note_id": "74860c1e520d0712209d11b58621013b3a7a1a97a08b4aba7e9dbe4ab75e4151",
+        "number": "1"
+      },
+      "review": {
+        "pair": 72,
+        "level": "root",
+        "cohort": "challenge",
+        "family": "plans_preferences",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-072-specific",
+      "local": {
+        "note_id": "74860c1e520d0712209d11b58621013b3a7a1a97a08b4aba7e9dbe4ab75e4151",
+        "number": "1.2.6.1"
+      },
+      "review": {
+        "pair": 72,
+        "level": "specific",
+        "cohort": "challenge",
+        "family": "plans_preferences",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-073-root",
+      "local": {
+        "note_id": "1938cb02254c439404dcee22e625408360c432768bd75d4069bd9dea88bc6559",
+        "number": "4"
+      },
+      "review": {
+        "pair": 73,
+        "level": "root",
+        "cohort": "challenge",
+        "family": "plans_preferences",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-073-specific",
+      "local": {
+        "note_id": "1938cb02254c439404dcee22e625408360c432768bd75d4069bd9dea88bc6559",
+        "number": "4.1.1"
+      },
+      "review": {
+        "pair": 73,
+        "level": "specific",
+        "cohort": "challenge",
+        "family": "plans_preferences",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-074-root",
+      "local": {
+        "note_id": "5df8c0102f59cf43f7e5f607c56977a6eb9778e505c1944b5d57f6ee732943d9",
+        "number": "9"
+      },
+      "review": {
+        "pair": 74,
+        "level": "root",
+        "cohort": "challenge",
+        "family": "plans_preferences",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-074-specific",
+      "local": {
+        "note_id": "5df8c0102f59cf43f7e5f607c56977a6eb9778e505c1944b5d57f6ee732943d9",
+        "number": "9.1"
+      },
+      "review": {
+        "pair": 74,
+        "level": "specific",
+        "cohort": "challenge",
+        "family": "plans_preferences",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-075-root",
+      "local": {
+        "note_id": "0780fc58a56f5d7b45a9ad21cfa10829895a6b3ab93aa62c0d8e5183693be198",
+        "number": "6"
+      },
+      "review": {
+        "pair": 75,
+        "level": "root",
+        "cohort": "challenge",
+        "family": "plans_preferences",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-075-specific",
+      "local": {
+        "note_id": "0780fc58a56f5d7b45a9ad21cfa10829895a6b3ab93aa62c0d8e5183693be198",
+        "number": "6.1.1.1"
+      },
+      "review": {
+        "pair": 75,
+        "level": "specific",
+        "cohort": "challenge",
+        "family": "plans_preferences",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-076-root",
+      "local": {
+        "note_id": "4894af1a178119f1282fade18e76256fcadb8850e9fadd2ce7c0748a631ec70d",
+        "number": "3"
+      },
+      "review": {
+        "pair": 76,
+        "level": "root",
+        "cohort": "challenge",
+        "family": "relationships_actions",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-076-specific",
+      "local": {
+        "note_id": "4894af1a178119f1282fade18e76256fcadb8850e9fadd2ce7c0748a631ec70d",
+        "number": "3.1.1.1"
+      },
+      "review": {
+        "pair": 76,
+        "level": "specific",
+        "cohort": "challenge",
+        "family": "relationships_actions",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-077-root",
+      "local": {
+        "note_id": "61f67f73233f2792de9aca5049f21bc38b7500986a87bfa36c4b2c6419749786",
+        "number": "5"
+      },
+      "review": {
+        "pair": 77,
+        "level": "root",
+        "cohort": "challenge",
+        "family": "relationships_actions",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-077-specific",
+      "local": {
+        "note_id": "61f67f73233f2792de9aca5049f21bc38b7500986a87bfa36c4b2c6419749786",
+        "number": "5.1.1"
+      },
+      "review": {
+        "pair": 77,
+        "level": "specific",
+        "cohort": "challenge",
+        "family": "relationships_actions",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-078-root",
+      "local": {
+        "note_id": "70c8662387bcc861d98a478e4642703e3a24139bf0c3356f6f8af559d484e6fb",
+        "number": "2"
+      },
+      "review": {
+        "pair": 78,
+        "level": "root",
+        "cohort": "challenge",
+        "family": "relationships_actions",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-078-specific",
+      "local": {
+        "note_id": "70c8662387bcc861d98a478e4642703e3a24139bf0c3356f6f8af559d484e6fb",
+        "number": "2.1.1.1"
+      },
+      "review": {
+        "pair": 78,
+        "level": "specific",
+        "cohort": "challenge",
+        "family": "relationships_actions",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-079-root",
+      "local": {
+        "note_id": "0f614da9c4d1d0543aec66b16eb73808cb1564c7f14378154d75f44aac0ea0cc",
+        "number": "9"
+      },
+      "review": {
+        "pair": 79,
+        "level": "root",
+        "cohort": "challenge",
+        "family": "relationships_actions",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-079-specific",
+      "local": {
+        "note_id": "0f614da9c4d1d0543aec66b16eb73808cb1564c7f14378154d75f44aac0ea0cc",
+        "number": "9.1"
+      },
+      "review": {
+        "pair": 79,
+        "level": "specific",
+        "cohort": "challenge",
+        "family": "relationships_actions",
+        "reviewer": "A"
+      }
+    },
+    {
+      "id": "qualification-080-root",
+      "local": {
+        "note_id": "c1c7c407862cbe4dcc5279ceee6b72fb45a378f702afbd74132c73b79950db9e",
+        "number": "4"
+      },
+      "review": {
+        "pair": 80,
+        "level": "root",
+        "cohort": "challenge",
+        "family": "relationships_actions",
+        "reviewer": "B"
+      }
+    },
+    {
+      "id": "qualification-080-specific",
+      "local": {
+        "note_id": "c1c7c407862cbe4dcc5279ceee6b72fb45a378f702afbd74132c73b79950db9e",
+        "number": "4.1"
+      },
+      "review": {
+        "pair": 80,
+        "level": "specific",
+        "cohort": "challenge",
+        "family": "relationships_actions",
+        "reviewer": "B"
+      }
+    }
+  ]
+}

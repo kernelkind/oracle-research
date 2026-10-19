@@ -327,7 +327,7 @@ class PromptAssemblyTests(unittest.TestCase):
                    r'<output>\s*(.*?)\s*</output>\s*</example>')
         old_examples = re.findall(pattern, old_prompt.decode(), re.S)
         schema = json.loads((PROMPTS / 'Hierarchy-bootstrap-v130.output.schema.json').read_text())
-        for version in (148, 149):
+        for version in (148, 149, 150):
             with self.subTest(version=version):
                 path = PROMPTS / f'Hierarchy-bootstrap-v{version}.assembly.json'
                 current, _, prompt = compile_spec(path)
@@ -339,14 +339,20 @@ class PromptAssemblyTests(unittest.TestCase):
                 self.assertEqual(len(examples), len(old_examples))
                 for index, ((input_json, output), (old_input, old_output)) in enumerate(
                         zip(examples, old_examples, strict=True)):
+                    value = experiment_inputs.validate(
+                        {'adapter': 'hierarchy_local_nodes'},
+                        {'inputs': {'INPUT_JSON': input_json}}, output, schema)['parsed']
+                    if version == 150 and index == 2:
+                        self.assertEqual(value['meaning'],
+                            'Transportation of fragile goods is moving goods that are easily damaged '
+                            'from one place to another.')
+                        self.assertEqual(value['title'], 'Fragile goods transportation')
+                        continue
                     expected_input = json.loads(old_input)
                     if version == 149 and index == 2:
                         expected_input['local']['hierarchy']['entries'][0]['subject'] = (
                             'Transportation, including bus and train services')
                     self.assertEqual(json.loads(input_json), expected_input)
-                    value = experiment_inputs.validate(
-                        {'adapter': 'hierarchy_local_nodes'},
-                        {'inputs': {'INPUT_JSON': input_json}}, output, schema)['parsed']
                     self.assertEqual(value, json.loads(old_output))
 
     def test_definition_only_pair_preserves_wrappers_and_changes_shared_rules_together(self):

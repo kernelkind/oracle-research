@@ -1156,6 +1156,41 @@ attempts, including three warmups, with no failures, retries or reuses and
 complete usage. API-equivalent cost is $0.6801948, not subscription cash spend.
 V149 remains experimental; untouched qualification has not started.
 
+### Preserve conditions instead of named illustrations: Bootstrap-v150
+
+Experimental [Bootstrap-v150](Hierarchy-bootstrap-v150.md) resolves the earlier
+"all named alternatives" instruction exposed by V149's failing VPN resolution.
+It preserves legitimate members through general conditions, including defining
+alternatives and jointly required parts. A replacement transport example retains
+the required fragility of the goods while omitting illustrative van/train modes
+copied into its selected subject. The remaining three full examples, title
+policy, shared rules-v13 and Consolidation-v28 companion are unchanged.
+
+The [regression specification](hierarchy-bootstrap-v150-regression-v1.spec.json)
+freezes the same 24 exact inputs, three fresh draws each, with V149 saved answers
+as baselines. The same gate requires all nine agreed-case responses to pass and
+no clear control regression. Qualification remains dependent on that result.
+
+The separate [qualification protocol](hierarchy-bootstrap-v150-heldout-v1.json),
+[selectors](hierarchy-bootstrap-v150-heldout-nodes-v1.json) and
+[specification](hierarchy-bootstrap-v150-heldout-v1.spec.json) freeze 80 further
+posts from 80 authors, paired root/specific entries and three draws (480 planned
+responses). Sixty posts use seeded ordering and twenty use the same declared
+lexical challenge families. Selection excludes all 133 earlier posts and 130
+recorded authors found across 190 prepared Bootstrap envelopes, resolving author
+identities in all three referenced source corpora. No earlier note lacks author
+attribution. All selected posts, normalized texts and authors are disjoint from
+that union; all selected subjects have ASv6.100 provenance. Full prompt-example
+posts are also excluded. These are bounded saved-corpus claims, not exclusion
+from every historical project run or model pretraining.
+
+The rubric is fixed before qualification. The independent AI reviewers can
+retain their earlier review experience but receive no expected V150 qualification
+labels or desired titles. Original reviewer judgments and later adjudications
+will remain separately attributable. Constructors stay V133; this publishes
+experimental source and does not build or adopt a hierarchy. Results and native
+accounting will be appended after the test.
+
 ## Meaning-derived titles: Bootstrap-v130
 
 The user requested a concise title based solely on the explicit meaning.
