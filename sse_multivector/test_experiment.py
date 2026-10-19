@@ -7,12 +7,28 @@ from pathlib import Path
 import subprocess
 import sys
 import tempfile
+import tracemalloc
 import unittest
 
 from sse_multivector.test_extraction_pipeline import FAKE_RUNNER, _isolate_experiment_runner
 
 
 CLI = Path(__file__).with_name("experiment.py")
+
+
+class ExperimentDigestTests(unittest.TestCase):
+    def test_project_digest_preserves_bytes_without_copying_the_whole_document(self):
+        from sse_multivector import experiment_inputs, extraction_pipeline
+
+        value = {'rows': ['x' * (256 * 1024) + '🌿' for _ in range(32)]}
+        expected = hashlib.sha256(extraction_pipeline._canonical_json_bytes(value)).hexdigest()
+        tracemalloc.start()
+        try:
+            self.assertEqual(experiment_inputs.digest(value), expected)
+            _, peak = tracemalloc.get_traced_memory()
+        finally:
+            tracemalloc.stop()
+        self.assertLess(peak, 4 * 1024 * 1024, 'project digest copied the complete document')
 
 
 class ExperimentTests(unittest.TestCase):

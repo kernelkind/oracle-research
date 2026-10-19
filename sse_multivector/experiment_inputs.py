@@ -26,7 +26,7 @@ except ImportError:
 
 
 def digest(value):
-    return hashlib.sha256(engine._canonical_json_bytes(value)).hexdigest()
+    return engine._sha256_json(value)
 
 
 def render(template, inputs):
