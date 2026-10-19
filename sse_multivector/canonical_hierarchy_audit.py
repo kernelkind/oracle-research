@@ -9,12 +9,16 @@ import json
 from pathlib import Path
 
 try:
-    from . import canonical_trial
+    from . import canonical_trial, hierarchy_hdbscan
 except ImportError:
     import canonical_trial
+    from sse_multivector import hierarchy_hdbscan
 
 
+@hierarchy_hdbscan.source_scope(isolated=True, projected_cache_bytes=16 * 1024 * 1024)
 def audit_trial(directory, output, max_choices=6, work_budget=200000):
+    # Both endpoint checks share only this operation's unchanged numerical
+    # identities. Retain a small result view cache, not the generation budget.
     if type(max_choices) is not int or max_choices < 1:
         raise ValueError('max_choices must be positive')
     if type(work_budget) is not int or work_budget < 1:

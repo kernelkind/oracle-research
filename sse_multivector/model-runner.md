@@ -2072,6 +2072,9 @@ independently when construction transitions to complete. Successful checks of
 unchanged evidence are reused within one automatic run, keyed by complete
 controls, vector producers and file identities including change times. Changed
 files invalidate reuse; standalone audits and resumed processes start fresh.
+Within one structural audit, its endpoint checks reuse unchanged numerical
+evidence with a 16 MiB budget for retained result views. Changed controls,
+vector producers or file identities still force validation again.
 Graph and native model-receipt checks still run. Once complete, the coordinator
 drains submitted jobs and writes accounting without advancing the graph again.
 See [measured HR35 checks](../docs/recommendation-engine/hierarchy-advancement-performance.md#compact-numerical-output-and-unchanged-evidence-validation).

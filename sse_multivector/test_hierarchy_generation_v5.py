@@ -86,6 +86,62 @@ class V5ConstructionTests(unittest.TestCase):
             'import json, sys\nassert "--hierarchy-output" in sys.argv[2:], "compact output not requested"'))
         self.construct(spec)
 
+    def test_structural_audit_reuses_unchanged_numerical_checks_with_bounded_results(self):
+        from sse_multivector import canonical_hierarchy_audit
+
+        state = self.construct(self.prepare())
+        expected = sum(len(f['rounds']) for f in state['families'])
+        budgets = []
+        original = hdbscan._validate_saved_round
+
+        def checked(*args, **kwargs):
+            files = hdbscan._RESULT_FILES.get()
+            budgets.append(None if files is None else files._projected_limit)
+            return original(*args, **kwargs)
+
+        with hdbscan.cpu_scope(1), patch.object(hdbscan, '_validate_saved_round', side_effect=checked) as validate:
+            canonical_hierarchy_audit.audit_trial(self.native.root/'v5', self.native.root/'audit.json')
+        self.assertEqual(validate.call_count, expected, 'audit replayed unchanged numerical history')
+        self.assertEqual(budgets, [16 * 1024 * 1024] * expected)
+
+    def test_structural_audit_rechecks_changed_numerical_evidence_before_writing(self):
+        from sse_multivector import canonical_hierarchy_audit, canonical_trial
+
+        state = self.construct(self.prepare())
+        result = Path(state['families'][0]['rounds'][0]['hdbscan']['result'])
+        output = self.native.root/'audit.json'
+        original, calls = canonical_trial._check, 0
+
+        def checked(*args, **kwargs):
+            nonlocal calls
+            value = original(*args, **kwargs)
+            calls += 1
+            if calls == 1:
+                before, stamp = result.read_bytes(), result.stat()
+                changed = before.replace(b'"min_samples":3', b'"min_samples":4', 1)
+                self.assertNotEqual(changed, before)
+                result.write_bytes(changed)
+                os.utime(result, ns=(stamp.st_atime_ns, stamp.st_mtime_ns))
+            return value
+
+        with hdbscan.cpu_scope(1), patch.object(canonical_trial, '_check', side_effect=checked):
+            with self.assertRaisesRegex(ValueError, 'saved HDBSCAN evidence changed'):
+                canonical_hierarchy_audit.audit_trial(self.native.root/'v5', output)
+        self.assertFalse(output.exists())
+
+    def test_structural_audit_starts_fresh_inside_an_existing_source_scope(self):
+        from sse_multivector import canonical_hierarchy_audit, hierarchy_generation
+
+        state = self.construct(self.prepare())
+        expected = sum(len(f['rounds']) for f in state['families'])
+        with hdbscan.cpu_scope(1), hdbscan.source_scope():
+            hierarchy_generation.check_state(state)
+            parent = hdbscan._RESULT_FILES.get()
+            with patch.object(hdbscan, '_validate_saved_round', wraps=hdbscan._validate_saved_round) as validate:
+                canonical_hierarchy_audit.audit_trial(self.native.root/'v5', self.native.root/'audit.json')
+            self.assertEqual(validate.call_count, expected, 'audit inherited an earlier verification verdict')
+            self.assertIs(hdbscan._RESULT_FILES.get(), parent)
+
     def test_legacy_numerical_binary_can_still_resume_with_its_full_output(self):
         spec = self.prepare()
         binary = self.native.root/'hdbscan-fixture'

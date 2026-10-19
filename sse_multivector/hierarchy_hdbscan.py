@@ -169,7 +169,7 @@ def cluster_rounds(state, jobs):
 
 
 @contextmanager
-def source_scope(*, isolated=False):
+def source_scope(*, isolated=False, projected_cache_bytes=_RESULT_CACHE_BYTES):
     """Bounded immutable-result reads shared by one hierarchy coordinator."""
     if not isolated and _RESULT_FILES.get() is not None:
         yield
@@ -177,7 +177,7 @@ def source_scope(*, isolated=False):
     # Large membership trees retain several MiB per compact view. The ordinary
     # receipt reader's 16 MiB default repeatedly evicts those immutable views.
     token = _RESULT_FILES.set(workflow.engine.ReceiptFiles(
-        projected_cache_bytes=_RESULT_CACHE_BYTES))
+        projected_cache_bytes=projected_cache_bytes))
     checks = _VALIDATED_ROUNDS.set({})
     try:
         yield
