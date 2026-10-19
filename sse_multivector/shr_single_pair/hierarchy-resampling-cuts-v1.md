@@ -1,7 +1,9 @@
 # Note-subset recovery of candidate root sections
 
-Experimental numerical investigation, 2026-10-18. **Do not adopt as a HiGen
-policy.** The current target is at most six useful root sections retaining at
+Experimental numerical investigation, 2026-10-18. **Not activated as a HiGen
+policy.** The approved next construction boundary is recorded below; current
+HiGen implementation is unchanged. The current target is at most six useful
+root sections retaining at
 least 90% of original corpus notes, with each section representing at least 10% of the
 original corpus. Earlier measurements below retain their original 80% target.
 The user prefers cut A
@@ -42,8 +44,11 @@ The user clarified that the six-choice ceiling also permits fewer children at
 deeper levels. The existing tests fixed six as an experimental setting; that
 setting is not a requirement to manufacture six groups. The numerical CLI
 already accepts a specified `--sections` count, with six as its default, but
-does not choose the count automatically. How to choose fewer children and when
-to stop subdividing remain open. This clarification changes neither the root
+does not choose the count automatically. The approved next design splits pools
+of more than six current intact groups and uses the existing groups directly
+as leaves once at most six remain; see the approved construction boundary
+below. Note display is outside this construction rule. This changes neither
+the root
 retention/size requirements nor any frozen result or current HiGen behavior.
 
 Stopping an ordinary linkage tree at six branches alone does not enforce the
@@ -2889,16 +2894,12 @@ for all 15 child pairs in `cross-child-matches.json`. The worktree stays for
 these frozen source and artifact paths. No model calls, new encoding, training,
 HiGen activation, official HR registration or UI refresh occur.
 
-The remaining construction decision is when to stop subdividing and when fewer
-than six children are sufficient. Six was fixed for these component tests;
-neither an automatic child-count rule nor a recursive stopping rule has been
-adopted for this research method. Settling that decision is more useful next
-than another unmotivated clustering variant: it determines whether these
-successful individual splits become a complete hierarchy without unnecessary
-depth. No further split, count-policy experiment or integration is authorized
-by this result record.
+Six was fixed for these component tests; they do not implement automatic
+child-count selection or recursive construction. The subsequent investigation
+and approved next construction boundary are recorded below. These saved
+results remain unchanged.
 
-### Manual stopping proposal: finish at the existing intact groups
+### Approved construction boundary: finish at the existing intact groups
 
 The user authorized investigating stopping and fewer-than-six children. First
 review the earlier failures rather than repeat the same reference simulations:
@@ -2908,17 +2909,17 @@ did not qualify an automatic semantic stopping score. The current method has
 since gained group constraints, which already define the smallest parts it
 can separate. Test that existing resolution boundary before adding a new score.
 
-The provisional proposal is:
+After the manual checks below, the user approved this construction rule and
+explicitly separated review-UI note display from hierarchy construction:
 
 1. With more than six current intact groups, retain the existing six-way
    broader subdivision.
-2. With two through six current intact groups, expose those groups directly
-   as terminal choices; do not recluster them or create empty extra choices.
-3. With one current intact group, stop there and expose its notes, without
-   inserting a same-note-set child.
+2. With at most six current intact groups, use those existing groups directly
+   as leaves; do not recluster them or create empty extra choices. A single
+   remaining group is already a leaf, without an additional copy beneath it.
 
-A one-note node is also terminal: no nonempty child note set could be smaller.
-This follows from the narrowing requirement, not a fitted note-count cutoff.
+This construction rule neither specifies how the review UI reveals notes nor
+uses a one-note count as a separate construction stopping condition.
 
 These are the groups already fixed by the completed parent calculation,
 including its reciprocal and one-pass attachment constraints. Apply the
@@ -2927,8 +2928,8 @@ limit, not a learned similarity threshold or a six-note stopping threshold.
 The preference for using the available width in larger pools is a practical
 short-path baseline; it is not proof that six always minimizes navigation or
 that smaller broad counts are never better. Note-set refinement remains a
-required check. This audit does not introduce a repair policy for an invalid
-terminal menu or activate a production stopping rule.
+required check. This approved design does not introduce a repair policy for an
+invalid terminal menu or activate a production stopping rule.
 
 The read-only test validates nine existing producers from both saved thousand-
 note corpora, including all current second-corpus root/child results and the
@@ -2980,8 +2981,9 @@ from forced matches after shrinking the pool.
 
 All nine complete producer/source checks and byte-preserving resumes pass.
 Direct choices reconstruct every selected entry, preserve all parent notes
-and keep the existing groups intact. No implementation changed; the proposal
-is manual research, not adopted HiGen behavior. The independent source rows,
+and keep the existing groups intact. No implementation changed; the grouping
+boundary is approved next design, not implemented HiGen behavior. The
+independent source rows,
 all direct-choice definitions, fixed protocol and validations are retained in
 `/mnt/external/algos-archive/oracle-mvp/section-stopping-manual-v1/` as
 `protocol.json`, `comparison-and-verification.json` and
@@ -2989,8 +2991,9 @@ all direct-choice definitions, fixed protocol and validations are retained in
 temporary documentation worktree is not a frozen execution dependency and can
 be removed after integration; all retained producer worktrees stay unchanged.
 
-This is the simplest next proposed stopping baseline, with the qualifications
-above. Before integration, a complete small-corpus manual construction would
+The grouping boundary is approved with the qualifications above; note display
+remains outside this design. Before integration, a complete small-corpus manual
+construction would
 test actual depth, note coverage and terminal menus together. That would be
 more informative than another isolated successful split or a newly tuned
 count statistic. Such a construction has not been run by this record.
