@@ -3,9 +3,10 @@
 Experimental numerical investigation, 2026-10-18. **Not activated as a HiGen
 policy.** The approved next construction boundary is recorded below; current
 HiGen implementation is unchanged. The current target is at most six useful
-root sections retaining at
-least 90% of original corpus notes, with each section representing at least 10% of the
-original corpus. Earlier measurements below retain their original 80% target.
+root sections retaining at least 90% of notes with usable AS/Bootstrap outputs,
+before clustering or entry selection. Each section's recorded ten-percent
+original-corpus requirement is unchanged. Earlier measurements retain their
+recorded denominators and targets; frozen results are not rewritten.
 The user prefers cut A
 and explicitly accepts broad root topics because deeper levels provide
 narrowing. Root breadth alone is not a failure criterion. The user further
@@ -30,15 +31,26 @@ ASv6.100/Bootstrap-v133 original inputs. The root-level numerical requirements
 are:
 
 - At most six sections; six is a maximum, not a required count.
-- At least 90% of the original corpus's distinct notes represented across them.
+- At least 90% of distinct notes with at least one usable local title/meaning
+  after AS and Bootstrap represented across them, before clustering or entry
+  selection. Omitting an entry during construction cannot lower this denominator.
 - Each section represents at least 10% of that original corpus's distinct notes.
 - Roots should cover distinct information; broad semantic scope within a root
   is acceptable. Shared note IDs alone do not establish duplicate information.
 
-For 100 notes, every section must represent at least ten notes and their union
-must represent at least 90. Deduplicate note IDs within each section and across
-the union separately; section note sets can overlap. Use the original corpus
-size as denominator, rather than only the notes with usable inputs.
+For 100 notes all having usable prompt outputs, every section must represent
+at least ten notes and their union at least 90. Deduplicate note IDs within
+each section and across the union separately; section note sets can overlap.
+The user clarified the coverage denominator after the omission audit: it is
+the post-prompt note count, not the original raw corpus size. Keep the original
+count and upstream exclusions visible separately. Topic usefulness, root
+distinctness and the unresolved entry-selection rule are unchanged.
+
+The existing `section_tree` implementation and saved plans still report coverage
+and its numerical pass condition against `corpus_notes`, the original count.
+This documentation update records the approved requirement; it does not change
+that implementation or mutate frozen experiment results. New evaluations must
+apply the post-prompt denominator explicitly until implementation is updated.
 
 The user clarified that the six-choice ceiling also permits fewer children at
 deeper levels. The existing tests fixed six as an experimental setting; that
@@ -3582,25 +3594,19 @@ completed reduced-input hierarchy:
 | Food | 118 | 460 | 99/100 | 1 |
 | HR37 | 764 | 3,607 | 892/1,000 | 18 |
 
-HR37 therefore needs eight additional notes to reach 900/1,000, rather than
-placement of every one of its 1,582 independent entries. This count does not
-establish which eight notes/links are appropriate or prove that a resulting
-six-section hierarchy would satisfy every quality constraint. The 18 are
-mechanically eligible under the old pass, not semantically certified links.
+Under the subsequently clarified post-prompt denominator, HR37 already exceeds
+the coverage target: 892/912 = 97.8%. The previously inferred need for eight
+extra notes came from using 1,000 as denominator and does not apply. The 18
+links are mechanically eligible under the old pass, not semantically certified.
+Note coverage alone does not prove that a resulting six-section hierarchy
+would satisfy the topic-quality constraints.
 With the same-title links added, non-singleton units cover 896 HR37 notes;
 the remaining inputs were still all forced into the tested full construction.
 
-The agent recommendation is to first build the Food hierarchy using only
-its 118 existing native/reciprocal multi-entry groups. Their 460 entries
-already cover 99/100 notes, so the test needs no additional admission rule
-to meet the user's target. Inspect which note is omitted and whether retained
-notes still have useful topic placements: raw retention alone is insufficient.
-This directly questions mandatory placement of every independent entry before
-adding more similarity rules. HR37 could follow, but which eight additional
-notes/links to use remains undecided. No reduced-input construction,
-supplemental-note selection, deeper eligibility change or coverage-first
-policy is implemented by this task. This is a proposed next test, not an
-approved design.
+The user rejected a Food-only construction proposal as overfitting. The
+subsequent authorized cross-corpus omission audit is recorded below. No
+reduced-input construction, supplemental-note selection, deeper eligibility
+change or coverage-first policy was implemented by this task.
 
 All 75 relevant production/integration tests pass in the task worktree and
 combined main. Frozen source/row identity, exact initial-link filtering,
@@ -3645,9 +3651,17 @@ saved outputs are never overwritten.
 | Hash-selected mixed corpus used in HR37 | 1,000 | 912 | 892 (89.2%) | 20 | 658 |
 
 The 63 and 88 mixed-corpus notes lacking usable meanings are unavailable before
-this rule. Among usable notes, retention is 97.9% and 97.8%, respectively.
-Those conditional percentages do not replace the original-corpus denominator
-or meet the raw ninety-percent requirement for HR37.
+this rule. In HR36, AS returns no subjects for 61 notes and Bootstrap returns
+null for all selected entries on another two notes. HR37's corresponding
+counts are 82 and six. All 5,336 and 5,189 non-null source title/meaning pairs
+are present in the numerical inputs; these exclusions are not vector failures.
+
+The user then clarified that the ninety-percent target applies **after the
+prompts**. Therefore the approved coverage results are Food 99/100 = 99.0%,
+HR36 917/937 = 97.9%, and HR37 892/912 = 97.8%: all three pass the coverage
+target. The preceding table preserves original-corpus counts for transparency;
+they no longer determine the coverage verdict. This does not establish topic
+quality, and the useful-topic omissions below remain relevant.
 
 | Source corpus | Retained units | Retained / original entries | Omitted entries | Retained units supported by only one note |
 |---|---:|---:|---:|---:|
