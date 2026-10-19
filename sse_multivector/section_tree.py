@@ -1,9 +1,10 @@
 """Experimental complete tree from a frozen six-section numerical panel.
 
 Finish at the inherited intact groups when at most six remain. Larger pools
-receive one local reciprocal/frozen-attachment pass and, if still necessary,
-the unchanged six-section fit. This does not generate canonical definitions,
-activate HiGen behavior, or specify review-UI note display.
+receive local reciprocal matching, with the root panel's frozen attachment
+setting, and, if still necessary, the unchanged six-section fit. This does not
+generate canonical definitions, activate HiGen behavior, or specify review-UI
+note display.
 """
 import argparse
 from collections import Counter, deque
@@ -21,9 +22,10 @@ def _root(directory, case_id):
     panel._check_files(plan['code_files'])
     cfg = next((c for c in plan['cases'] if c['id'] == case_id), None)
     if (cfg is None or 6 not in cfg['counts'] or not cfg.get('preserve_groups')
-            or not cfg.get('reciprocal_nearest') or not cfg.get('attach_nearest')
+            or not cfg.get('reciprocal_nearest')
+            or type(cfg.get('attach_nearest', False)) is not bool
             or cfg['minimum_notes'] != 0):
-        raise ValueError('A frozen whole-group six-section reciprocal/attachment case is required')
+        raise ValueError('A frozen whole-group six-section reciprocal case is required')
     panel._check_files(cfg.get('grouping_files', {}))
     vectors, notes, entries = panel._load_source(plan['spec']['sources'][cfg['source']])
     indices = np.asarray(cfg['indices'])
@@ -55,6 +57,7 @@ def prepare(directory, case_id, output, *, corpus_notes, minimum_root_notes):
                 root_panel=str(directory), case_id=case_id, files=files,
                 corpus_notes=corpus_notes, minimum_root_notes=minimum_root_notes,
                 max_children=6, seeds=root['spec']['seeds'],
+                attach_nearest=cfg.get('attach_nearest', False),
                 max_iterations=root['spec']['max_iterations'], time_limit=root['spec']['time_limit'],
                 stopping='Expose at most six inherited groups before another matching pass; '
                          'one group is already a leaf. No separate one-note stopping condition.',
@@ -139,6 +142,7 @@ def run(output):
     panel._check_files(plan['code_files'])
     root, cfg, vectors, notes, entries, root_fit = _root(plan['root_panel'], plan['case_id'])
     if (plan['seeds'] != root['spec']['seeds'] or plan['max_children'] != 6
+            or plan['attach_nearest'] != cfg.get('attach_nearest', False)
             or plan['max_iterations'] != root['spec']['max_iterations']
             or plan['time_limit'] != root['spec']['time_limit']):
         raise ValueError('Tree settings disagree with the frozen root panel')
@@ -152,7 +156,8 @@ def run(output):
         local, local_notes = vectors[indices], notes[indices]
         pairs, attachments, matching = [], [], False
         if identifier != '0' and inherited_count > 6:
-            groups, pairs, attachments = panel._reciprocal_groups(local, groups, attach_nearest=True)
+            groups, pairs, attachments = panel._reciprocal_groups(local, groups,
+                attach_nearest=plan['attach_nearest'])
             matching = True
         count = len(set(groups))
         fitted = None

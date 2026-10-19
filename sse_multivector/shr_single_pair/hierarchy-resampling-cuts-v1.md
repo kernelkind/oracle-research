@@ -3126,3 +3126,27 @@ them. Ignored evidence is under
 exact code paths. Existing producer worktrees and outputs remain unchanged.
 No model calls, encoding, training, official HR registration or UI refresh
 occurred.
+
+### One-way attachment ablation: frozen at every depth
+
+The user authorized comparing the same complete 100-note construction with
+and without one-way nearest attachments. Preserve the corpus, paired vectors,
+original native groups, reciprocal matching, seeds, assignment settings and
+approved stopping boundary. This toggles attachments both initially and during
+larger child-pool matching; it does not disable reciprocal matching or exclude
+previously unassigned entries. Numerical assignment still includes every row.
+
+The research tree previously required attachments at the root and hard-coded
+them during deeper matching. It now accepts either existing root-panel
+`attach_nearest` setting, freezes that value in its own plan, checks agreement
+on resume and applies it at every depth. True retains the existing behavior;
+false omits only that one-way pass. Historical saved source paths and plans
+remain unchanged. No production HiGen behavior is activated.
+
+A failing-first production CLI test adds an unmatched entry beside a matched
+pair. With attachments it must join that fixed unit; without them it must
+remain its own terminal group through real nested construction. Both modes
+use the same original vectors and reciprocal groups. The test also checks
+that every deeper attachment list is empty when disabled and rejects a tree
+setting that disagrees with its frozen root producer. This qualifies the
+experimental toggle, not its semantic outcome.

@@ -13,8 +13,10 @@ from sse_multivector import section_count_panel as panel
 
 
 class SectionTreeTests(unittest.TestCase):
-    def _fixture(self, root, *, one_note=False):
+    def _fixture(self, root, *, one_note=False, attach_nearest=True, outsider=False):
         angles = np.repeat(np.r_[np.arange(12) * .001, np.arange(1, 6)], 2)
+        if outsider:
+            angles = np.r_[angles, .0031]
         notes = np.array(['only' if one_note else f'n{i}' for i in range(len(angles))])
         np.savez(root / 'input.npz', vectors=np.c_[np.cos(angles), np.sin(angles)], notes=notes)
         entries = [dict(id=f'e{i}', title=f'Topic {i // 2}', meaning=f'Definition {i // 2}',
@@ -27,7 +29,7 @@ class SectionTreeTests(unittest.TestCase):
         spec = dict(sources=dict(test=source), counts=[1, 6], seeds=[10, 11],
                     max_iterations=50, time_limit=30, cases=[dict(id='Roots', role='development',
                     source='test', selector=dict(kind='all'), minimum_notes=0, preserve_groups=True,
-                    reciprocal_nearest=True, attach_nearest=True)])
+                    reciprocal_nearest=True, attach_nearest=attach_nearest)])
         (root / 'spec.json').write_text(json.dumps(spec))
         panel.prepare(root / 'spec.json', root / 'panel')
         panel.run(root / 'panel', 'Roots')
@@ -106,6 +108,34 @@ class SectionTreeTests(unittest.TestCase):
             changed = self._cli('run', root / 'tree')
             self.assertNotEqual(changed.returncode, 0)
             self.assertIn('Frozen source changed', changed.stderr)
+
+    def test_cli_freezes_root_attachment_setting_and_uses_it_at_every_depth(self):
+        with tempfile.TemporaryDirectory() as directory:
+            for enabled in [True, False]:
+                root = Path(directory) / str(enabled)
+                root.mkdir()
+                self._fixture(root, attach_nearest=enabled, outsider=True)
+                producer = json.loads((root / 'panel/plan.json').read_text())['cases'][0]
+                self.assertEqual(bool(producer.get('nearest_attachments', [])), enabled)
+                prepared = self._cli('prepare', root / 'panel', 'Roots', root / 'tree',
+                                     '--corpus-notes', 35, '--minimum-root-notes', 1)
+                self.assertEqual(prepared.returncode, 0, prepared.stderr)
+                plan = json.loads((root / 'tree/plan.json').read_text())
+                self.assertEqual(plan['attach_nearest'], enabled)
+                completed = self._cli('run', root / 'tree')
+                self.assertEqual(completed.returncode, 0, completed.stderr)
+                tree = json.loads((root / 'tree/tree.json').read_text())
+                leaves = [n for n in tree['nodes'] if not n['children']]
+                outsider = next(n for n in leaves if 34 in n['indices'])
+                self.assertEqual(len(outsider['indices']) > 1, enabled)
+                if not enabled:
+                    self.assertTrue(any(n['matching_applied'] for n in tree['nodes']))
+                    self.assertTrue(all(not n['nearest_attachments'] for n in tree['nodes']))
+                plan['attach_nearest'] = not enabled
+                (root / 'tree/plan.json').write_text(json.dumps(plan))
+                changed = self._cli('run', root / 'tree')
+                self.assertNotEqual(changed.returncode, 0)
+                self.assertIn('Tree settings disagree', changed.stderr)
 
 
 if __name__ == '__main__':
