@@ -58,6 +58,7 @@ The user distinguishes these new research tests from their source experiments:
 | Six-section-v1-05 | The 485-note S02 section from Six-section-v1-03 |
 | Six-section-v1-06 | The 125-note C03 child from Six-section-v1-05 |
 | Six-section-v1-07 | The 16-note C03 child from Six-section-v1-06 |
+| Six-section-v1-08 | Compare 2–5 children on Six-section-v1-07's same 19 entries; reuse its six-child control |
 
 HR IDs identify the original experiments, not reruns of them. Existing artifact
 paths retain their names to preserve frozen bindings. These research-test IDs
@@ -668,6 +669,61 @@ minimum-effect evidence and full agent assessment are under
 `target/six-section-v1-07/` in the retained `oracle-mvp-six-section-v1-07`
 worktree on external storage. No encoding, inference, training or UI change
 occurred, and all earlier memberships remain unchanged.
+
+### Six-section-v1-08: compare fewer children on the same small section
+
+After clarifying that six is a ceiling, the user approved comparing 2–5 children
+on the same 19 entries from 16 notes. Reuse Six-section-v1-07's complete saved
+**unconstrained** six-child panel as the baseline. Keep the minimum per child
+at zero for every count, so this isolates child count after the separate
+minimum-size effect in Six-section-v1-07. The root coverage/size requirements
+are unchanged; this is a deeper-level research comparison.
+
+Input and entry files are byte-identical to the baseline. Keep all eight seeds,
+the same objective and the 50-iteration limit. At each seed, the initial centers
+for a smaller count are exactly the prefix of the baseline's initial centers.
+Select the lowest objective **within each count**, before manual assessment;
+do not use the raw decreasing objective to choose between counts.
+
+| Children | Selected seed | Objective | Distinct notes per child |
+|---:|---:|---:|---|
+| 2 | 20261021 | 5.227026 | 7, 10 |
+| 3 | 20261020 | 3.884805 | 7, 4, 6 |
+| 4 | 20261021 | 3.321688 | 6, 7, 3, 1 |
+| 5 | 20261025 | 2.780831 | 1, 7, 1, 5, 3 |
+| 6, saved baseline | 20261021 | 2.302839 | 5, 3, 3, 1, 4, 1 |
+
+All eight starts converge at every count. Each selected result keeps all sixteen
+notes and nineteen entries, and every child has a proper, distinct subset of
+the parent's notes. Counts overlap. The CLI's constrained/unconstrained panels
+are identical when the supplied minimum is zero; those duplicate executions
+are not additional independent samples. The six-child baseline is not rerun.
+
+Full manual review finds four children a reasonable provisional balance:
+
+| Descriptive choice | Notes |
+|---|---:|
+| Biology/heredity, including evolution, aging and infertility | 6 |
+| Family relationships | 7 |
+| Young people | 3 |
+| Measles | 1 |
+
+The first choice also contains Climate change, an inherited odd placement
+present on the biology side at every count. Reducing the count does not repair
+it. Two children remain a plausible coarser menu. Three combines Measles with
+young people. Five separately exposes Infertility; six additionally separates
+family roles from families/relatives. The preference for four is an agent
+tradeoff judgment, not human approval or proof of an optimum. No automatic
+count-selection or stopping rule is established by this comparison.
+
+Independent checks verify frozen sources, exact input reuse, every trial's
+objective and note counts, normalized selected centers, initialization
+prefixes and duplicate-panel equality. The existing 24 relevant tests pass.
+Ignored plans, all new panels, the baseline reference, full memberships,
+verification and provisional assessment are under `target/six-section-v1-08/`
+in the retained `oracle-mvp-six-section-v1-08` worktree on external storage.
+No new code behavior, encoding, inference, training, hierarchy or UI change
+occurred. All earlier results remain unchanged.
 
 ## Question and controlled inputs
 
