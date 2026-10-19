@@ -46,11 +46,12 @@ the post-prompt note count, not the original raw corpus size. Keep the original
 count and upstream exclusions visible separately. Topic usefulness, root
 distinctness and the unresolved entry-selection rule are unchanged.
 
-The existing `section_tree` implementation and saved plans still report coverage
-and its numerical pass condition against `corpus_notes`, the original count.
-This documentation update records the approved requirement; it does not change
-that implementation or mutate frozen experiment results. New evaluations must
-apply the post-prompt denominator explicitly until implementation is updated.
+New `section_tree` plans freeze `usable_notes` from the complete post-prompt
+source before entry selection. Coverage and its numerical pass condition use
+that denominator; `original_corpus_notes` and `original_corpus_coverage` retain
+the raw-corpus measurement separately. The caller's root-note minimum remains
+unchanged. Historical plans/results stay bound to their original implementation
+and are not rewritten.
 
 The user clarified that the six-choice ceiling also permits fewer children at
 deeper levels. The existing tests fixed six as an experimental setting; that
@@ -3730,3 +3731,35 @@ updates occur. Ignored evidence is external at
 source/runtime hashes, test/run logs, `runtime-journal.jsonl` and independent
 `verification.txt`. The task worktree `oracle-mvp-groups-only-omission-audit-v1`
 remains for the report's frozen code binding.
+
+### Complete groups-only construction: experimental support
+
+The user authorized complete groups-only construction on the two mixed
+thousand-note corpora used in HR36 and HR37, with one unchanged rule and a
+matched all-entry construction comparison. Saved ASv6.100/Bootstrap-v133
+title/meaning vectors and completed native groupings are reused. No model
+calls, encoding, training, synthetic naming, UI update or HiGen activation
+is part of this numerical test.
+
+`section_count_panel` gains optional boolean `multi_entry_only`. It requires
+all original source rows, native-group preservation and reciprocal matching,
+with no initial one-way attachment. After the original full-source matching
+pass, remove units containing only one original entry. Keep the original
+source arrays intact; freeze selected original indices and renumber groups
+and pair positions without recomputing neighbors after filtering. All native
+groups with at least two original entries remain intact. The default is
+unchanged. This implements the eligibility rule audited above, not a new
+similarity rule or corpus-specific coverage supplement.
+
+The complete-tree coverage denominator now uses all distinct source notes
+with usable post-prompt entries, before selection. Preparation freezes this
+count and execution verifies it against the source. Selected notes cannot
+become their own denominator. Original raw counts/coverage remain separate;
+the explicit root-note minimum and structural checks do not change.
+
+Failing-first production CLI tests exercise both changes: remove independent
+entries while preserving original row/pair mappings across multiple cases;
+reject ambiguous filter-stage settings; fit real roots/children; and verify
+34 selected notes out of 35 usable notes report 34/35 even when the original
+corpus contains 50 notes. Changing the frozen usable-note count is rejected.
+Results and quality assessments follow after the saved-input experiment.

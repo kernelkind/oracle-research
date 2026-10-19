@@ -13,6 +13,50 @@ from sse_multivector.section_count_panel import prepare, run
 
 
 class SectionCountPanelTests(unittest.TestCase):
+    def test_cli_multi_entry_filter_preserves_full_source_pairs_and_original_rows(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            manifest, spec = self._fixture(root)
+            source = spec['sources']['examined']
+            angles = np.array([0, .01, .3, 1, 1.01, 1.4])
+            np.savez(source['input'], vectors=np.c_[np.cos(angles), np.sin(angles)],
+                     notes=np.array(['a' + str(i) for i in range(6)]))
+            entries = json.loads(Path(source['entries']).read_text())
+            for entry in entries:
+                entry['source_group'] = None
+            Path(source['entries']).write_text(json.dumps(entries))
+            for path in [source['input'], source['entries']]:
+                source['files'][path] = hashlib.sha256(Path(path).read_bytes()).hexdigest()
+            spec['cases'] = [dict(case, preserve_groups=True, reciprocal_nearest=True,
+                                 multi_entry_only=True) for case in spec['cases']]
+            manifest.write_text(json.dumps(spec))
+            cli = [sys.executable, '-m', 'sse_multivector.section_count_panel']
+            prepared = subprocess.run(cli + ['prepare', str(manifest), str(root / 'panel')],
+                                      capture_output=True, text=True)
+            self.assertEqual(prepared.returncode, 0, prepared.stderr)
+            case = json.loads((root / 'panel/plan.json').read_text())['cases'][0]
+            self.assertEqual(case['indices'], [0, 1, 3, 4])
+            self.assertEqual(case['entry_ids'], ['0', '1', '3', '4'])
+            self.assertEqual(case['reciprocal_pairs'], [[0, 1], [2, 3]])
+            self.assertEqual(case['groups'], [0, 0, 1, 1])
+            self.assertEqual(case['note_ids'], ['a0', 'a1', 'a3', 'a4'])
+            completed = subprocess.run(cli + ['run', str(root / 'panel'), 'D01'],
+                                       capture_output=True, text=True)
+            self.assertEqual(completed.returncode, 0, completed.stderr)
+
+    def test_multi_entry_filter_rejects_ambiguous_stage_settings(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            manifest, spec = self._fixture(root)
+            cfg = spec['cases'][0]
+            cfg.update(preserve_groups=True, reciprocal_nearest=True, multi_entry_only=True)
+            for setting in [dict(multi_entry_only='yes'), dict(attach_nearest=True),
+                            dict(selector=dict(kind='source_group', value='G1'))]:
+                spec['cases'] = [dict(cfg, **setting)]
+                manifest.write_text(json.dumps(spec))
+                with self.assertRaisesRegex(ValueError, 'multi_entry_only'):
+                    prepare(manifest, root / 'bad')
+
     def test_cli_nested_selector_uses_the_frozen_producer_original_rows(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

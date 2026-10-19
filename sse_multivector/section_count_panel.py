@@ -5,6 +5,7 @@ only the explicitly named case. Count one is the unsplit numerical baseline,
 never an instruction to add a same-note-set child. No count selector is fitted.
 """
 import argparse
+from collections import Counter
 import hashlib
 import json
 from pathlib import Path
@@ -219,7 +220,6 @@ def prepare(specification, output):
             raise ValueError('Unknown section selector')
         if not len(indices):
             raise ValueError('Selected section is empty')
-        selected_notes = sorted(set(notes[indices].tolist()))
         groups = None
         if 'groups' in cfg:
             raise ValueError('Group IDs must be derived from original source entries')
@@ -234,6 +234,12 @@ def prepare(specification, output):
         if (type(cfg.get('attachment_same_title', False)) is not bool
                 or (cfg.get('attachment_same_title') and not cfg.get('attach_nearest'))):
             raise ValueError('attachment_same_title requires a boolean and attach_nearest')
+        if (type(cfg.get('multi_entry_only', False)) is not bool
+                or (cfg.get('multi_entry_only') and (
+                    not cfg.get('reciprocal_nearest') or cfg.get('attach_nearest')
+                    or selector['kind'] != 'all'))):
+            raise ValueError('multi_entry_only requires a boolean, all original rows, '
+                             'reciprocal matching and no initial one-way attachments')
         if 'grouping' in cfg and not cfg.get('preserve_groups'):
             raise ValueError('Saved grouping requires preserve_groups')
         grouping_files = {}
@@ -262,6 +268,19 @@ def prepare(specification, output):
                 attach_nearest=cfg.get('attach_nearest', False),
                 attachment_titles=([entries[i]['title'] for i in indices]
                                    if cfg.get('attachment_same_title') else None))
+        if cfg.get('multi_entry_only'):
+            sizes = Counter(groups)
+            selected = [i for i, g in enumerate(groups) if sizes[g] >= 2]
+            if not selected:
+                raise ValueError('multi_entry_only selected no multi-entry groups')
+            positions = {old: new for new, old in enumerate(selected)}
+            pairs = [[positions[a], positions[b]] for a, b in pairs]
+            indices = indices[selected]
+            retained_identifiers, retained = {}, []
+            for i in selected:
+                retained.append(retained_identifiers.setdefault(groups[i], len(retained_identifiers)))
+            groups = retained
+        selected_notes = sorted(set(notes[indices].tolist()))
         limit = len(indices) if groups is None else len(set(groups))
         counts = [k for k in spec['counts'] if k <= limit]
         if len(selected_notes) < cfg['minimum_notes'] or len(indices) < max(counts) * cfg['minimum_notes']:

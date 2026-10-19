@@ -13,6 +13,36 @@ from sse_multivector import section_count_panel as panel
 
 
 class SectionTreeTests(unittest.TestCase):
+    def test_cli_coverage_uses_all_post_prompt_notes_before_entry_selection(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self._fixture(root, attach_nearest=False, outsider=True)
+            spec = json.loads((root / 'spec.json').read_text())
+            spec['cases'][0]['multi_entry_only'] = True
+            (root / 'filtered.json').write_text(json.dumps(spec))
+            panel.prepare(root / 'filtered.json', root / 'filtered')
+            panel.run(root / 'filtered', 'Roots')
+            prepared = self._cli('prepare', root / 'filtered', 'Roots', root / 'tree',
+                                 '--corpus-notes', 50, '--minimum-root-notes', 1,
+                                 '--child-attachments', 'on')
+            self.assertEqual(prepared.returncode, 0, prepared.stderr)
+            completed = self._cli('run', root / 'tree')
+            self.assertEqual(completed.returncode, 0, completed.stderr)
+            summary = json.loads((root / 'tree/tree.json').read_text())['summary']
+            self.assertAlmostEqual(summary['coverage'], 34 / 35)
+            self.assertEqual(summary['covered_notes'], 34)
+            self.assertEqual(summary['usable_notes'], 35)
+            self.assertEqual(summary['original_corpus_notes'], 50)
+            self.assertAlmostEqual(summary['original_corpus_coverage'], 34 / 50)
+            self.assertTrue(summary['quality_requirements_pass'])
+            plan = json.loads((root / 'tree/plan.json').read_text())
+            self.assertEqual(plan['usable_notes'], 35)
+            plan['usable_notes'] = 34
+            (root / 'tree/plan.json').write_text(json.dumps(plan))
+            changed = self._cli('run', root / 'tree')
+            self.assertNotEqual(changed.returncode, 0)
+            self.assertIn('post-prompt', changed.stderr)
+
     def _fixture(self, root, *, one_note=False, attach_nearest=True, outsider=False):
         angles = np.repeat(np.r_[np.arange(12) * .001, np.arange(1, 6)], 2)
         if outsider:

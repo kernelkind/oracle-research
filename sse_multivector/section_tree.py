@@ -53,13 +53,15 @@ def prepare(directory, case_id, output, *, corpus_notes, minimum_root_notes,
                          'and an optional boolean child attachment setting required')
     directory, output = Path(directory).resolve(), Path(output).resolve()
     root, cfg, _, notes, _, _ = _root(directory, case_id)
-    if len(set(notes[cfg['indices']])) > corpus_notes:
-        raise ValueError('Covered notes exceed the original corpus size')
+    usable_notes = len(set(notes.tolist()))
+    if usable_notes > corpus_notes:
+        raise ValueError('Post-prompt notes exceed the original corpus size')
     files = {str(directory / name): panel._sha(directory / name)
              for name in ['plan.json', f'{case_id}/count-6.json']}
     plan = dict(status='Frozen complete numerical research construction; no HiGen activation',
                 root_panel=str(directory), case_id=case_id, files=files,
-                corpus_notes=corpus_notes, minimum_root_notes=minimum_root_notes,
+                corpus_notes=corpus_notes, usable_notes=usable_notes,
+                minimum_root_notes=minimum_root_notes,
                 max_children=6, seeds=root['spec']['seeds'],
                 attach_nearest=cfg.get('attach_nearest', False),
                 child_attach_nearest=(cfg.get('attach_nearest', False)
@@ -125,7 +127,10 @@ def _summary(nodes, roots, plan):
     unresolved = [n['id'] for n in nodes if n['mode'] == 'unresolved']
     root_counts = [by_id[r]['notes'] for r in roots]
     return dict(covered_notes=len(covered), original_corpus_notes=plan['corpus_notes'],
-                coverage=len(covered) / plan['corpus_notes'],
+                usable_notes=plan['usable_notes'],
+                coverage_basis='Distinct notes with usable prompt outputs before entry selection',
+                coverage=len(covered) / plan['usable_notes'],
+                original_corpus_coverage=len(covered) / plan['corpus_notes'],
                 entries=len(rows), roots=len(roots), root_notes=root_counts,
                 nodes=len(nodes) - 1, leaves=len(leaves),
                 max_children=max(len(n['children']) for n in nodes),
@@ -136,7 +141,7 @@ def _summary(nodes, roots, plan):
                 non_narrowing_edges=non_narrowing, duplicate_note_set_menus=duplicate_menus,
                 unresolved_nodes=unresolved, per_note=per_note,
                 quality_requirements_pass=(not unresolved and not non_narrowing
-                    and len(covered) >= .9 * plan['corpus_notes']
+                    and 10 * len(covered) >= 9 * plan['usable_notes']
                     and min(root_counts) >= plan['minimum_root_notes']))
 
 
@@ -147,6 +152,8 @@ def run(output):
     panel._check_files(plan['files'])
     panel._check_files(plan['code_files'])
     root, cfg, vectors, notes, entries, root_fit = _root(plan['root_panel'], plan['case_id'])
+    if plan['usable_notes'] != len(set(notes.tolist())):
+        raise ValueError('Coverage denominator differs from frozen post-prompt notes')
     if (plan['seeds'] != root['spec']['seeds'] or plan['max_children'] != 6
             or plan['attach_nearest'] != cfg.get('attach_nearest', False)
             or type(plan['child_attach_nearest']) is not bool
