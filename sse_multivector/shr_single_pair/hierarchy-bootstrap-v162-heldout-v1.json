@@ -1,0 +1,75 @@
+{
+  "schema_version": 2,
+  "local_schema_version": 4,
+  "sources": [
+    {
+      "path": "hierarchy-bootstrap-v162-heldout-nodes-v1.json"
+    }
+  ],
+  "review": {
+    "purpose": "Frozen qualification of unchanged Bootstrap-v162 only after the declared 36-input development gate passes. No retuning or selective rerun on qualification outputs.",
+    "seed": "bootstrap-v159-heldout-v1",
+    "prompt_sha256": "c72c9c5f098a23adac79a8e8f60d535f777019c8d7e0f566a4b829d8ee934c61",
+    "corpus_sha256": "8328bfb1e3ff392a69aa74cb3f8656a92bc7c76b66652d61211356262fb0a3ce",
+    "exclusion_manifest": "../../target/bootstrap-v159-fix-v1/qualification-exclusions.json",
+    "exclusion_manifest_sha256": "1a5e3ce37971b3906822a4f7018203bbee57c71664539a580635a87d0115e752",
+    "exclusions": {
+      "prior_bootstrap_envelopes": 163,
+      "prior_note_ids": 213,
+      "prior_normalized_posts": 213,
+      "prior_recorded_authors": 210,
+      "unattributed_prior_notes": 0,
+      "source_corpora": 3,
+      "literal_full_example_posts": 4,
+      "eligible_primary_notes_after_exclusions": 930
+    },
+    "untouched_scope": "All 81 original posts and normalized texts are excluded from every earlier prepared Bootstrap input in this task worktree, including complete V147 and V158 qualification panels. The 80-post core also excludes all 210 prior recorded authors, resolved across all three actual source corpora and matching normalized texts. One supplemental named-work post deliberately comes from a previously seen author and is reported separately; it is not author-disjoint evidence. This is not exclusion from all project history or pretraining.",
+    "selection": "Use original HR38 ASv6.100 notes with a root and descendant; NFKC/casefold/collapsed-whitespace post normalization. Rank core eligible notes by SHA256(seed + :representative: + note_id), choosing 60 distinct authors/texts; rank roots by SHA256(seed + :root: + note_id + : + root_number). Then choose new notes/authors/texts in this fixed order/allocation: food 1, people 5, illustrative_members 7, long_subjects 7. Rank notes by SHA256(seed + :challenge: + family + : + note_id), matching roots by SHA256(seed + :challenge-root: + family + : + note_id + : + root_number). Food/people use V158 exact-root predicates. Illustrative_members requires a descendant subject containing including, such as, or for example. Long_subjects requires the selected deepest descendant subject to contain at least 12 whitespace words. Select each root deepest descendant, breaking ties by longest subject in characters then smallest numeric entry number. These are risk-sampling predicates, not verdict rules. The post-only supplement ranks unused posts from prior authors by SHA256(seed + :post-only-named-work: + note_id), selecting up to five with a nonroot subject of at least eight words containing planned reading, plan to read, intention to read, listed for reading, or reading plan. Select the deepest matching entry with the same length/number tie-breaks and its root. Only one post qualifies. Native schema-4 preparation supplies original source without rewriting.",
+    "sample": {
+      "author_disjoint_core": {
+        "seeded_posts": 60,
+        "challenge_posts": 20,
+        "total_posts": 80,
+        "distinct_authors": 80,
+        "inputs": 160,
+        "outputs": 480
+      },
+      "post_only_named_work_supplement": {
+        "posts": 1,
+        "distinct_authors": 1,
+        "authors_seen_in_development": 1,
+        "inputs": 2,
+        "outputs": 6
+      },
+      "total_posts": 81,
+      "inputs": 162,
+      "fresh_draws_per_input": 3,
+      "expected_outputs": 486
+    },
+    "title_criteria": [
+      "Use only concepts supported by the finalized meaning. The source post or hierarchy cannot supply concepts absent from meaning.",
+      "Give the central topic or stated goal a brief, natural browsing name. Leave actions serving one stated goal, locations, timing and explanatory detail in meaning when they are unnecessary to recognize that topic. A title that restates the detailed definition fails even when accurate.",
+      "Retain recognizable identity and correct roles/relationships. Broader names are allowed for this same topic; shortening must not misattribute a person or relationship.",
+      "No word-count cutoff, shortest-title optimization, punctuation blacklist or prohibition on real compound names. Coequal topics can need a compound title. Evaluate actual wording and meaning, not character counts."
+    ],
+    "meaning_criteria": [
+      "Assess the selected entry against its subject, context, full source post and supplied root hierarchy at its selected level of abstraction.",
+      "No illustrative instances or example members in meaning, whether sourced from the post or elsewhere. Defining kinds, alternatives and jointly required parts are not illustrations.",
+      "Preserve defining scope, supported relationships, negation and numeric boundaries. Qualifications such as living or deceased are not examples and do not fail merely for being qualifications.",
+      "Do not accept unsupported factual specificity or silently resolve genuinely ambiguous source identity. Abstention can be appropriate when explicit meaning cannot be established; distinguish justified uncertainty from a clear omission or invention."
+    ],
+    "verdicts": {
+      "title": "accept/reject/uncertain with a concrete reason; N/A only for a justified null meaning/title pair",
+      "meaning": "accept/reject/uncertain with a concrete reason",
+      "overall": "reject if either dimension clearly fails or payload is invalid; uncertain if neither rejects and either is unresolved; otherwise accept. Native diagnostic errors are reported separately."
+    },
+    "analysis": "Report native validity separately from semantics. Report title, meaning and overall judgments by seeded/challenge core, the separate post-only supplement, level and challenge family. Report any-failure and uncertain-post counts and repeat consistency; paired levels and repeated draws share posts. Do not aggregate the supplement as author-disjoint evidence or turn acceptance fractions into population reliability. No post-hoc criteria, selective reruns or retuning.",
+    "limits": "One saved corpus and one generation model/reasoning setting. Seeded eligible-note sample is not a production population probability sample; challenge cases target risk. Only one new-author food post and one post-only named-work supplement are available under these exclusions. Root-agent judgments are unblinded and not human-calibrated, with possible shared model-family blind spots. No full hierarchy-construction test or Consolidation-v29 semantic qualification. No adoption authorization.",
+    "official_evaluation_guidance": "https://developers.openai.com/api/docs/guides/evaluation-best-practices",
+    "selection_limit": "Only one eligible new-author food post remains; quoted named-reading-plan subjects had zero eligible new authors. Core allocations were set from source availability before qualification outputs. The separate named-work supplement deliberately allows authors already in development and is not author-disjoint evidence.",
+    "review_process": {
+      "assessment": "Root agent assesses all complete source/meaning/title pairs across all three draws under the unchanged V158 criteria. The agent knows the prompt and development results. This is unblinded agent assessment, not independent review, human calibration or an agreement measurement.",
+      "records": "One source-bound native agent review per output. Preserve uncertainty instead of treating it as success; N/A only for justified null pairs. No user labels are invented."
+    }
+  }
+}
