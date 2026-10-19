@@ -29,8 +29,13 @@ def dispersion(vectors, labels):
     return total
 
 
-def select_count(counts, observed, references):
-    """Published smallest-k rule; population SD follows the paper's formula."""
+def select_count(counts, observed, references, *, method='adjacent'):
+    """Compare published decision rules using identical saved gap statistics.
+
+    The default adjacent rule and population SD remain unchanged. Global rules
+    match cluster::maxSE's selection formulas, without changing the dispersion
+    or reference uncertainty to R's different variance convention.
+    """
     observed, references = np.asarray(observed), np.asarray(references)
     if (observed.shape != (len(counts),) or references.ndim != 2
             or references.shape[1] != len(counts) or len(references) < 2
@@ -40,8 +45,15 @@ def select_count(counts, observed, references):
     log_reference = np.log(references)
     gap = log_reference.mean(axis=0) - np.log(observed)
     s = np.sqrt(1 + 1 / len(references)) * log_reference.std(axis=0, ddof=0)
-    chosen = next((i for i in range(len(counts) - 1)
-                   if gap[i] >= gap[i + 1] - s[i + 1]), len(counts) - 1)
+    if method == 'adjacent':
+        chosen = next((i for i in range(len(counts) - 1)
+                       if gap[i] >= gap[i + 1] - s[i + 1]), len(counts) - 1)
+    elif method in ['globalmax', 'globalSEmax']:
+        peak = int(gap.argmax())
+        chosen = peak if method == 'globalmax' else next(
+            (i for i in range(peak) if gap[i] >= gap[peak] - s[peak]), peak)
+    else:
+        raise ValueError('Unknown gap decision method')
     return dict(selected_count=int(counts[chosen]), gap=gap.tolist(), s=s.tolist(),
                 log_observed=np.log(observed).tolist(),
                 mean_log_reference=log_reference.mean(axis=0).tolist(),

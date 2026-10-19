@@ -1228,9 +1228,83 @@ stopping condition's behavior, not which alternative rule is correct.
 All 128 priority reference matrices are independently reconstructed from their
 frozen seeds. Matrix hashes, every selected-label dispersion, cosine objective
 and distinct-note count agree. All eleven reserved cases remain unrun. Neither
-this selector nor any replacement is activated. Before more expensive reference
-generation, the useful next probe is how alternative count decisions use the
+this selector nor any replacement is activated. The comparison below uses the
 already-computed gap curves, retaining these original results unchanged.
+
+### Saved-curve comparison: global selection avoids the early stop
+
+The user authorized comparing decision rules on existing scores, without more
+simulations. `Section-count-rules-v1` compares three established formulas on
+identical gap curves: the original adjacent-count rule, the highest gap over all
+tested counts (`globalmax`), and the smallest count within one reference-error
+unit of that highest gap (`globalSEmax`). The error is taken at the maximum,
+not separately at each candidate. These selection formulas follow
+[R cluster's source](https://github.com/cran/cluster/blob/master/R/clusGap.R);
+the original population-SD convention and all saved statistics remain unchanged.
+This is exploratory comparison after observing the original failure, not blind
+qualification or a new HiGen version.
+
+Sixteen development cases have complete usable statistics: fourteen with 32
+reference samples and two zero-dispersion singleton controls. Eight other cases
+remain incomplete and are excluded; no partial-reference estimate is substituted
+for the planned 32. Parent/child cases remain correlated. Reading, validating
+source identities and comparing all three formulas takes 4.1 seconds, with zero
+new references, clustering fits, encodings, training or model calls. This is the
+cost of reusing existing scores, not the cost of generating scores for new nodes.
+
+| Section | Notes | Original adjacent rule | Highest gap | Smallest within maximum's error |
+|---|---:|---:|---:|---:|
+| Waking/fatigue/time (D04) | 34 | 2 | 6 | 5 |
+| Coffee/materials/food (D05) | 52 | 2 | 6 | 5 |
+| Knowledge/content (D07) | 55 | 4 | 6 | 6 |
+| Family/biology/disease (D19) | 16 | 1 | 6 | 5 |
+| Society/culture/religion (D20) | 43 | 1 | 6 | 5 |
+| Young people (D21) | 3 | 1 | 2 | 1 |
+| Family/relatives (D22) | 4 | 1 | 1 | 1 |
+
+The five changed choices under `globalSEmax` were inspected using the saved
+memberships and original meanings. Agent assessment: D19's five choices expose
+Family, Young people, Biology/heredity, Infertility and Measles; D07 exposes
+separate writing, visual-art, knowledge, questioning, shopping and calendar
+topics. These are more useful distinctions than leaving D19 unsplit, without
+claiming five or six is human gold. Inherited odd memberships remain, including
+Privacy grouped with Donald Trump in D20 and Climate change on D19's biology
+side. Changing the count decision does not repair those assignments.
+
+The highest-gap rule chooses six in all twelve larger mixed sections; this is
+not itself proof those counts are wrong, but it ignores the uncertainty that
+allows smaller choices. `globalSEmax` chooses five or six in those sections,
+while leaving both near-duplicate controls and both singletons unsplit. Comparing
+the separate 16-reference halves, the adjacent rule changes in 2/14 nondegenerate
+cases, versus 1/14 for `globalSEmax`. D19 is still sensitive: five versus three.
+Half-sample agreement is Monte Carlo evidence, not semantic accuracy.
+
+A cheap effort check reuses four disjoint eight-reference blocks from each
+completed case. Under `globalSEmax`, 52/56 block choices match the full 32-sample
+choice, and all four blocks agree in 11/14 cases. The exceptions are D04
+`5,5,5,6`, D05 `5,5,6,5`, and D19 `5,5,3,3`. No new samples are generated.
+This suggests investigating reduced reference work, but does not qualify an
+eight-reference setting or equate count agreement with preserved menu quality.
+
+As an additional structural check, compose the saved 100-note root partition
+with its six saved child partitions. Both rules keep all 100 notes, six roots,
+at most six children at any parent, and strictly smaller note sets for every
+child. The adjacent rule yields 25 child groups; `globalSEmax` yields 33. This
+is a paired numerical two-level check, not a completed hierarchy, a review UI,
+or proof of fewer browsing decisions. No new canonical meanings are generated.
+
+The experimental `select_count(..., method=...)` helper now supports these
+comparisons; its default and HiGen behavior remain unchanged. Tests cover the
+early-stop counterexample, uncertainty at the global peak, unsplit cases, ties
+and unchanged default output. Exact curves, decisions, half-sample decisions,
+consumed input hashes and the two-level checks are ignored in
+`oracle-mvp-section-count-rules-v1/target/section-count-rules-v1/comparison.json`
+on the external drive. Original receipts and numerical outputs are untouched.
+
+`globalSEmax` is the more promising next candidate, not an activated policy.
+The useful next check is unchanged validation on a smaller mixed section and
+narrow controls from the reserved corpus, rather than restarting the full large
+queue. All eleven reserved cases remain unrun at this checkpoint.
 
 Reusable numerical CLI: `sse_multivector/cluster_resampling_probe.py`; tests:
 `sse_multivector/test_cluster_resampling_probe.py`. Input NPZ contains unit
