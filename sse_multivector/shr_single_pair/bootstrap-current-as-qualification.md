@@ -1690,8 +1690,36 @@ versions and keep the common rule synchronized. Publishing the pair does not
 qualify Consolidation-v29 semantics or change constructor pins.
 
 The [regression specification](hierarchy-bootstrap-v161-regression-v1.spec.json)
+retains the same 36 exact inputs, three fresh draws and unchanged gate. No
+qualification response has informed this candidate.
+
+V161 produces 108 valid development responses without diagnostic errors or
+answer reuses. Root review records 96 accepts, one rejection and eleven
+uncertainties. Titles receive 100 accepts, one rejection, three uncertainties and
+four justified null/N/A pairs; meanings receive 100 accepts and eight
+uncertainties. All three relationship meanings omit the illustrative member while
+preserving both domains; all three reading titles briefly identify the intended
+article. All nine original agreed-case responses pass. One stock title still
+reads “Chicken stock preservation and storage plan,” so the gate fails and
+qualification remains unrun. Uncertainties concern three pen definitions, three
+writing-alternative titles, one country definition, two human-only Food definitions
+and two unresolved combined Data-god meanings. That combined topic returns one
+justified null pair. This development result supports the revised rule on the
+exposed failure, without establishing generalization or causal certainty.
+
+### Keep required actions in meaning: Bootstrap-v162
+
+Experimental [Bootstrap-v162](Hierarchy-bootstrap-v162.md) replaces only the
+existing goal-naming sentence. When several required actions serve one goal,
+the title gives that goal one broader name; the required actions remain in
+meaning instead of being appended to the goal. This makes the intended difference
+between a complete definition and a browsing title explicit without a length cap,
+punctuation restriction or new example. Shared rules-v14, Consolidation-v29,
+all examples, schema and model settings are unchanged.
+
+The [regression specification](hierarchy-bootstrap-v162-regression-v1.spec.json)
 retains the same 36 exact inputs, three fresh draws and unchanged gate. Results
-are pending; no qualification response has informed this candidate.
+are pending; no qualification response has informed this revision.
 
 ## Meaning-derived titles: Bootstrap-v130
 

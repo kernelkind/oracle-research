@@ -217,7 +217,12 @@ and one stock title fail, so qualification remains unrun. Experimental
 Consolidation-v29 companion use shared rules-v14: explicitly omit illustrative
 members even when the supplied subject includes them, since the general condition
 already admits them. All wrappers, examples, schema and model settings are
-unchanged from V160. Development testing is pending; constructors stay V133.
+unchanged from V160. Its 108 valid responses receive 96 accepts, one rejection
+and eleven uncertainties. Both recent failures pass all six checks, but one stock
+title appends storage, so qualification remains unrun. Experimental
+[Bootstrap-v162](shr_single_pair/Hierarchy-bootstrap-v162.md) clarifies that
+required actions stay in meaning while the title gives their shared goal one
+broader name. Its development test is pending; constructors stay V133.
 
 Experimental [Bootstrap-v133](shr_single_pair/Hierarchy-bootstrap-v133.md)
 returns a concise, natural `title` derived solely from its finalized `meaning`.
