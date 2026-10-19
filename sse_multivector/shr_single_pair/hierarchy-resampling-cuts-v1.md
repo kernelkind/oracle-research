@@ -3328,3 +3328,139 @@ their compact `contents.txt`, `verification.txt` and `resume-before.json`.
 The worktree `oracle-mvp-hundred-note-attachment-stages-v1` stays for frozen
 code bindings. Historical experiments remain unchanged; no HiGen activation,
 official HR registration, UI change, training or paid inference occurred.
+
+### HR37 transfer of the deeper-only candidate, with a memory guard
+
+The user authorized the unchanged deeper-only candidate on HR37's existing
+hash-selected 1,000-note corpus and explicitly required avoiding system OOM.
+This is a numerical research transfer, not a new HR experiment or HiGen
+activation. Use all 5,189 existing ASv6.100 / Bootstrap-v133 entries from 912
+notes, the same paired title/meaning vectors, native groups, eight seeds,
+50 iterations, six-way fits and the approved intact-group stopping rule.
+The other 88 original notes lack usable saved inputs; they are unavailable
+before this construction, rather than newly discarded.
+
+Reuse `ReciprocalGroups/count-6.json` from the frozen second-corpus component
+panel, with no initial one-way attachments, and enable deeper attachments.
+Its existing selected seed is 20261025. Also run a matched all-enabled
+control using that panel's `NearestAttachments/count-6.json`, preserving
+its selected seed 20261019. Both root fits are reused exactly, not rerun;
+the matched control distinguishes transfer performance from raw retention.
+All source/vector/group inputs and the numerical procedure stay fixed.
+The different root partitions are an intended consequence of changing the
+initial attachment setting, not an additional tuned choice.
+
+Before execution, the system had about 101 GiB available. An actual user
+systemd cgroup probe verified `memory.max=8589934592`,
+`memory.high=6442450944` and `memory.swap.max=0`. Every preparation, full run
+and completed-resume check uses those limits: 8 GiB hard maximum, pressure
+above 6 GiB, and no swap. Jobs run serially, with CPU affinity 0–23 leaving
+four cores free. All new artifacts are on the external drive.
+
+The first guarded preparation exited before Python started because the
+manager's PATH could not find `env` after `taskset`; its log is preserved.
+Explicit executable paths and systemd environment settings resolved that
+launch issue. No experiment input or numerical setting changed. Successful
+candidate preparation peaked at 324.7 MiB. The candidate full construction
+took 7.404 seconds and peaked at **415,027,200 bytes (395.8 MiB)**; the
+control took 6.872 seconds and peaked at **411,676,672 bytes (392.6 MiB)**.
+Both used zero swap and exited successfully. These sequential local timings
+are observations, not a general speedup benchmark.
+
+| Measure | All-enabled control | Deeper-only candidate |
+|---|---:|---:|
+| Distinct notes retained | 912/1,000 (91.2%) | 912/1,000 (91.2%) |
+| Roots / maximum choices per menu | 6 / 6 | 6 / 6 |
+| Non-container nodes | 1,055 | 1,112 |
+| Terminal groups | 780 | 836 |
+| Mean shortest leaf depth | 3.6985 | 3.6875 |
+| Median / P90 shortest leaf depth | 4 / 4 | 4 / 4 |
+| Maximum leaf depth | 5 | 6 |
+| Non-narrowing edges | 3 | 3 |
+| Repeated exact-title families spanning roots | 1 | 8 |
+
+Route depth measures numerical category edges, not actual user effort.
+Coverage follows assignment of all usable inputs and is not accuracy.
+Candidate root note counts are 494, 482, 383, 333, 353 and 443; control counts
+are 383, 553, 325, 306, 414 and 475. They overlap and must not be summed.
+Every root exceeds the 100-note minimum. Both runs finish numerically but
+fail the existing strict note-set-narrowing check; no repair or UI stopping
+shortcut was added. Candidate equality edges occur in dining, software
+repositories and apps branches, each with a child retaining all parent notes.
+
+Several useful controls transfer. In both constructions all seven Food,
+four Cooking, two Coffee, ten Music, 87 Bitcoin and 38 Artificial intelligence
+headings each occupy one terminal group per heading. Both Rooms meanings
+remain together. Nostr occupies two groups containing 46 and one entries;
+the isolated definition is Chinese and describes the same protocol.
+The previous Satoshis duplication remains in both: `L01557` Bitcoin satoshis
+and `L00097` Satoshis each define one hundred-millionth of a bitcoin, but
+the former remains with the Bitcoin group and the latter with Satoshis.
+The variant does not solve these existing meaning/alias distinctions.
+
+The larger corpus exposes lost useful initial attachments. With all stages
+enabled, all 27 People headings share one root and occupy two terminal groups
+(25 and two entries). Deeper-only spreads them across three roots and four
+terminal groups (20, four, two and one). The five Knowledge headings occupy
+one terminal group under the control; deeper-only separates one financial-
+post example into the finance root, away from the other four cognitive
+definitions. Examples make the scope problem concrete:
+
+- `L01477` defines People as human beings considered as individuals, with
+  named people as optional examples. Deeper-only places it in root 2,
+  separate from the generic human-being definitions in root 1.
+- `L00811` defines Knowledge as the cognitive state of possessing awareness
+  or understanding of facts or information, then illustrates it with a claim
+  about an exchange's solvency. Deeper-only puts it in root 5 with finance;
+  the other four Knowledge entries are in root 1. The illustration is not
+  itself a definition restricting Knowledge to finance.
+
+The saved initial attachment trace explains this regression. It joins
+`L00811` Knowledge to `L03419` Knowledge before coarse root assignment.
+It likewise joins People entries `L00817` to `L04372`, `L01477` to `L00514`,
+`L01640` to `L00689`, `L02628` to `L01597`, and `L02889` to `L00514`.
+Without these initial links, some entries enter different roots; subsequent
+root-local attachment cannot reconnect them across those roots. Thus both
+useful global links and harmful global links exist. Disabling the whole
+initial stage does not distinguish them.
+
+The eight split-title families are Donald Trump, People, Trends, Digital
+sovereignty, Events, Knowledge, God and Peace, versus Trends alone in the
+control. This is a descriptive count, not eight labeled errors: headings
+can have distinct meanings, and Trends already separates general change from
+topics gaining attention. The inspected People and Knowledge cases provide
+the concrete redundancy concern. Suggestions and Recommendations also remain
+in different roots in both constructions; their meanings overlap, though
+they need not be exactly equivalent.
+
+The agent recommendation is to retain the all-enabled experimental baseline
+instead of adopting deeper-only generally. The average-depth difference is
+only about 0.011 category edges per note, while maximum depth, terminal count
+and inspected cross-root duplication worsen. This conclusion concerns the
+unchanged stage toggle, not a claim of perfect baseline quality. A useful
+next conservative test would retain initial one-way links only when source
+and destination have the same title, leaving reciprocal matching and deeper
+attachments unchanged. Every useful People/Knowledge link above satisfies
+that condition, while the earlier audience-to-cashew and street-to-stew links
+do not. This is a specific hypothesis for testing, not an approved rule;
+same titles alone do not establish equal meanings, and useful different-title
+links could be lost. No such filtering was performed in this transfer.
+
+No implementation changed; the existing source at `446686a6` was executed.
+Independent checks verify all 5,189 original rows occur once among terminal
+groups, all 436 native groups and each producer's initial units remain
+intact, source hashes stay unchanged, and every usable note remains covered.
+All 608 newly fitted candidate starts converge; its reused root has seven
+of eight converged trials, preserving the earlier unselected 50-iteration
+limit result. Both completed resumes preserve all 152 tree/plan/fit JSON
+files byte-for-byte. Systemd's raw journal retains exact peak-memory bytes.
+
+Ignored evidence is external at
+`/mnt/external/algos-archive/oracle-mvp/second-corpus-deeper-attachments-v1/`:
+`protocol.json`, `baseline-protocol.json`, `tree/`, `baseline/`, complete
+`contents.txt` in both results, preparation/run/resume logs,
+`baseline-live-memory.txt`, `runtime-journal.jsonl`, `verification.txt` and
+`resume-before.json`. The task worktree
+`oracle-mvp-second-corpus-deeper-attachments-v1` remains for frozen code
+bindings. No model calls, new encoding, training, paid resources, official
+HR registration, hierarchy UI change or HiGen activation occurred.
