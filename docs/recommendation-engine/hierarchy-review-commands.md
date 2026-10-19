@@ -743,8 +743,13 @@ cd /home/dev/src/notedeck_worktrees/algos
 
 ## HR39 — 5,000 automatically sampled notes · HiGen V5.3
 
-Generation complete; bounded offline checks and review export remain in progress.
-Review UI is not available yet. Automatic seed `hr39-corpus-v1`,
-ASv6.100, Bootstrap-v133 and Consolidated-grouped-v1.
+Checked review UI: 200 canonical nodes and 2,693 output notes from 5,000 inputs.
+Automatic seed `hr39-corpus-v1`, ASv6.100, Bootstrap-v133 and
+Consolidated-grouped-v1. Full input coverage is unmet; semantic review is pending.
+
+```bash
+cd /home/dev/src/notedeck_worktrees/algos
+./oracle-mvp-hierarchy-hr39-v53-auto/target/hr39-review-ui-v1/launch.sh
+```
 
 [Input, code and accounting record](hierarchy-runs.md#hr39--automatically-sampled-5000-note-higen-v53).

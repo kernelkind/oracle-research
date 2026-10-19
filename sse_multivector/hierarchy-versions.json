@@ -231,6 +231,13 @@
       "artifact_path": "hierarchy-hr38-v53-auto-2000-note-v1/HR38/state.json",
       "sha256": "76f0ecf137d65f6f4d17506617b8bb2d4abf035668ad6ebb4a57bebacff7b244",
       "family": "Hierarchy"
+    },
+    {
+      "version_id": "HR39",
+      "identity": "5e307a548d38765754dfcafd1a78147b3d7711ecebdfc16ecee4a68d81a17870",
+      "artifact_path": "HR39-resumed-1/state.json",
+      "sha256": "a6f8f33fe87b82e87efeecd6af528c27bdf69e50e1ff1ddc6925bfc83715ae67",
+      "family": "Hierarchy"
     }
   ]
 }

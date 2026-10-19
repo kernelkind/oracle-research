@@ -2139,47 +2139,49 @@ charge is zero. Known tokens: 5,962,947 uncached input; 69,536,896 cached input;
 
 ## HR39 — automatically sampled 5,000-note HiGen V5.3
 
-**HiGen V5.3 generation complete: 200 nodes, no execution errors.**
-Bounded offline verification, native accounting and review export remain in progress. Automatic seed `hr39-corpus-v1`
-selected 5,000 original posts from the same frozen English-eligible pool as
-HR36–HR38: 2,000 authors, no manual reviews or topic/author quotas.
-Overlap: HR36 2, HR37 1, HR38 2 notes.
+**Generation complete; partial note coverage.** The saved output has 200
+canonical nodes, six roots and at most six children per node. The full-input
+audit verifies that all 194 edges strictly narrow their note sets. The checked
+review UI contains **2,693 of 5,000 inputs**; 2,307 are outside canonical nodes.
+Of those, 1,911 remain directly on the saved generation root; 396 have no usable
+original meaning (369 empty AS subject lists and 27 with null Bootstrap meanings).
+Full note coverage is unmet and semantic review remains pending.
 
-ASv6.100, Bootstrap-v133, Consolidated-grouped-v1 and full HiGen V5.3 recursion
-retain the HR37/38 controls: GPT-6.1 Sol medium/subscription SSE, prefix caching,
-one-hour deadlines, angular HDBSCAN min_samples=3/min_cluster_size=2/EOM,
-six-choice maximum, no cosine cutoff and the 512-token SSE checkpoint.
-Twelve local CPU workers; shared 30-request teacher queue; no attempt ceiling.
+Automatic seed `hr39-corpus-v1` selected the final 5,000 original posts from the
+frozen 3,774,156-note English-eligible pool: 2,000 authors, no manual reviews or
+topic/author quotas. Overlap: HR36 2, HR37 1, HR38 2 notes. One repeatedly
+provider-blocked AS input was replaced by the next mechanically eligible post
+in the same frozen hash order. Source texts and prompts were unchanged.
+
+ASv6.100, Bootstrap-v133, Consolidated-grouped-v1 and full HiGen V5.3 recursion;
+GPT-6.1 Sol medium/subscription SSE, prefix caching, one-hour deadlines,
+angular HDBSCAN min_samples=3/min_cluster_size=2/EOM, maximum six choices,
+no cosine cutoff, 512-token SSE encoder, 12 local generation CPU workers and
+the shared 30-request provider queue. No attempt ceiling or stage limit.
+
+All 26,243 Bootstrap answers are valid; the final resume reuses 26,234.
+Construction skips 229 null meanings and preserves eight nonblocking diagnostic
+errors. Native execution ends without errors. Storage and single-case recovery
+retain all earlier attempts and source receipts.
+
+Native accounting records **32,068 attempts**, including 105
+prefix warmups and 15 failed attempts, across 105 experiments. The known
+API-equivalent subtotal is **$259.0830936**; 15 failed attempts lack
+usage, so the complete total is unknown. Incremental cash charge is zero.
+Historical interrupted batches and all retries remain counted. Known tokens:
+15,407,562 uncached input; 175,735,296 cached input;
+21,069,444 output, including 4,437,261 reasoning tokens.
+[Native usage](/home/dev/src/notedeck_hierarchy_runs/hr39-v53-auto-5000-note-v1/usage-complete.json).
+
+Generation source stays frozen at Oracle `5b9bfa68` and runner `38561fef`;
+there are no generator source upgrades. Audit/export readers use `a65f4156` /
+`6783316`; native accounting uses `8f59701e` / `fc68dc6`. Offline verification
+runs sequentially with a hard 16 GiB process-tree limit, no swap and one CPU.
+Reader fixes, Git commits, tests and resource evidence are recorded separately
+from generation provenance.
 
 [Initial definition](../../sse_multivector/hierarchy-runs/hr39/hierarchy.spec.json) ·
-[Selection](../../sse_multivector/hierarchy-runs/hr39/corpus-selection.spec.json).
-Native accounting, root coverage and review UI will be recorded after execution.
-
-AS/generator source is frozen at `5b9bfa68`; coordinator and
-teacher transport are frozen at `38561fe`. Source snapshots and all seven
-parameter specifications are hash-bound before the first model call.
-
-One AS input received an explicit provider block twice. Native automatic sampling
-froze the first 5,001 eligible posts; a source-bound selector replaces only that
-post with the next eligible post, retaining exactly 5,000 inputs and their order.
-The original failed experiments and receipts are preserved; `AS-final` reuses
-4,999 verified answers. No post text, prompt, model setting or code was changed.
-[Effective definition](../../../oracle-mvp-hierarchy-hr39-v53-auto/target/hierarchy-hr39-v53-auto-5000-note-v1/hierarchy-final.spec.json) ·
-[Effective selection](../../../oracle-mvp-hierarchy-hr39-v53-auto/target/hierarchy-hr39-v53-auto-5000-note-v1/final-corpus-selection.json).
-
-The native collection verifies all 5,000 final input IDs in order.
-26,243 original L1s enter Bootstrap; 369 notes have valid empty
-AS subject lists and remain in the input inventory.
-
-External archive writes stalled while another archive operation was active. The
-native coordinator resumed in `/home/dev/src/notedeck_hierarchy_runs/hr39-v53-auto-5000-note-v1`
-with the same frozen source, final inputs, prompts and model settings, reusing
-4,916 verified Bootstrap answers. The original batch drained before its
-coordinator was terminated; its 4,918 saved answers and AS receipts remain at
-the original external path for final native deduplicated accounting.
-
-One Bootstrap server error also carried proxy cancellation metadata, preventing
-automatic retry. A native single-case experiment reran the identical frozen
-input successfully. `HR39-resumed-1` retains the same definition and all 5,000
-inputs; its Bootstrap batch has 26,243 valid answers, including 26,234 native
-reuses. All original attempts remain available for final accounting.
+[Effective definition](/home/dev/src/notedeck_hierarchy_runs/hr39-v53-auto-5000-note-v1/hierarchy-final.spec.json) ·
+[Final selection](/home/dev/src/notedeck_hierarchy_runs/hr39-v53-auto-5000-note-v1/final-corpus-selection.json) ·
+[Native audit](/home/dev/src/notedeck_hierarchy_runs/hr39-v53-auto-5000-note-v1/HR39-resumed-1/structural-audit.json) ·
+[Review command](hierarchy-review-commands.md#hr39--5000-automatically-sampled-notes--higen-v53).

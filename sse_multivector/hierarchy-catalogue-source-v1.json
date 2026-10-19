@@ -9613,6 +9613,248 @@
           "sha256": "e2daafc0f43e94e72d82fed48f827c76c991956ae7aa48a9fb493e5032811986"
         }
       ]
+    },
+    {
+      "version_id": "HR39",
+      "name": "ASv6.100 5000-note HiGen V5.3 — automatic corpus / Bootstrap-v133 / Consolidated-grouped-v1",
+      "root": "/home/dev/src/notedeck_hierarchy_runs/hr39-v53-auto-5000-note-v1",
+      "artifact_path": "HR39-resumed-1/state.json",
+      "sha256": "a6f8f33fe87b82e87efeecd6af528c27bdf69e50e1ff1ddc6925bfc83715ae67",
+      "code_provenance": {
+        "schema_version": 1,
+        "version_id": "HR39",
+        "state_sha256": "a6f8f33fe87b82e87efeecd6af528c27bdf69e50e1ff1ddc6925bfc83715ae67",
+        "initial_source_record": "/home/dev/src/notedeck_hierarchy_runs/hr39-v53-auto-5000-note-v1/code-provenance.json",
+        "git": {
+          "oracle": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr39-v53-auto",
+            "git_commit": "5b9bfa689e2b0df5604a698ba84655d293ce4d61",
+            "uncommitted_source": false
+          },
+          "subject_generation": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr39-v53-auto",
+            "git_commit": "5b9bfa689e2b0df5604a698ba84655d293ce4d61",
+            "uncommitted_source": false
+          },
+          "runner_coordinator": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/experiment-runner-hr36-source-v1",
+            "git_commit": "38561fefc5e72171a2a3ac7bcbef21367da6e4d7",
+            "uncommitted_source": false
+          },
+          "bootstrap_transport": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/experiment-runner-hr36-source-v1",
+            "git_commit": "38561fefc5e72171a2a3ac7bcbef21367da6e4d7",
+            "uncommitted_source": false
+          },
+          "consolidation_transport": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/experiment-runner-hr36-source-v1",
+            "git_commit": "38561fefc5e72171a2a3ac7bcbef21367da6e4d7",
+            "uncommitted_source": false
+          }
+        },
+        "initial_git": {
+          "oracle": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr39-v53-auto",
+            "git_commit": "5b9bfa689e2b0df5604a698ba84655d293ce4d61",
+            "uncommitted_source": false
+          },
+          "runner_coordinator": {
+            "path": "/home/dev/src/notedeck_worktrees/algos/experiment-runner-hr36-source-v1",
+            "git_commit": "38561fefc5e72171a2a3ac7bcbef21367da6e4d7",
+            "uncommitted_source": false
+          }
+        },
+        "source_upgrade_count": 0,
+        "frozen_specifications": {
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr39-v53-auto/sse_multivector/hierarchy-runs/hr39/bootstrap.spec.json": "5da359fc785a5e82f04e90d49d096f70f6fe9f3a63d29dcae900d38eb27debfb",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr39-v53-auto/sse_multivector/hierarchy-runs/hr39/consolidation.spec.json": "969c2e6e4f73fe191fbb9bbf3665a045949f8f1decfad069a5b20e5075834a17",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr39-v53-auto/sse_multivector/hierarchy-runs/hr39/corpus-export.spec.json": "62a8d4283a784bad78c7912009b34586cedb48fcb39010865f65f2557c387fdb",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr39-v53-auto/sse_multivector/hierarchy-runs/hr39/corpus-selection.spec.json": "912f056e969a047fa2cbf1f187ff4a371d4835203471c8737b433454d29c73b6",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr39-v53-auto/sse_multivector/hierarchy-runs/hr39/hierarchy.spec.json": "17633c109ed3c7201503953448e4f6b354ce27c851576535ac11687341bc8bd8",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr39-v53-auto/sse_multivector/hierarchy-runs/hr39/subjects.spec.json": "37cb8ec670d5444084b52a73a8d8f7c99a0226cb53f04e883492b03ade5b1c8d",
+          "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr39-v53-auto/sse_multivector/hierarchy-runs/hr39/worker-config.json": "92802d20e9ce7663566b8ee94bd92607b4ca0c9cea8964ab8c50bdc3c8540c72"
+        },
+        "effective_specifications": {
+          "/mnt/external/algos-archive/oracle-mvp/hierarchy-hr39-v53-auto/hierarchy-hr39-v53-auto-5000-note-v1/corpus-reserve-selection.spec.json": "4e0903f4d5ad48fd481e398f4bd5e2927c76ab6b4003b0d88a69cd1e103a7fdd",
+          "/mnt/external/algos-archive/oracle-mvp/hierarchy-hr39-v53-auto/hierarchy-hr39-v53-auto-5000-note-v1/final-corpus-selection.json": "cf431bdac8be8f452729d91768474b59520c6ea402a79bb8a63c3977b7572bbf",
+          "/mnt/external/algos-archive/oracle-mvp/hierarchy-hr39-v53-auto/hierarchy-hr39-v53-auto-5000-note-v1/subjects-final.spec.json": "ca30b195b1be5ec6baa04d803e37463242324b938c4b60b97a32511b46e81570",
+          "/mnt/external/algos-archive/oracle-mvp/hierarchy-hr39-v53-auto/hierarchy-hr39-v53-auto-5000-note-v1/hierarchy-final.spec.json": "f1f3507be0fa95a5618e489b05d8fbf0c6ba33519f8f900f47c3ecde1f2f9b3b"
+        },
+        "runtime": {
+          "cpu_workers": 12,
+          "numerical_executable": "/mnt/external/algos-archive/oracle-mvp/hierarchy-hr39-v53-auto/hierarchy-hr39-v53-auto-5000-note-v1/numerical-runtime/fine-segmentation-candidate",
+          "numerical_executable_sha256": "448aa03e6f35a7cea3d643f91d33135d9c3c4710f0aeee24711081f6b02652d7",
+          "numerical_source_commit": "39530abc58a65a46f6f3a59136b099f080b0c049",
+          "numerical_runtime_provenance": "/mnt/external/algos-archive/oracle-mvp/hierarchy-hr39-v53-auto/hierarchy-hr39-v53-auto-5000-note-v1/numerical-runtime/inherited-provenance.json",
+          "encoder_runtime": {
+            "encoder_class": "sse_multivector.worker.OfficialSseEncoder",
+            "packages": {
+              "tokenizers": "0.22.2",
+              "torch": "2.13.0+cpu",
+              "transformers": "4.57.1"
+            },
+            "python": "3.13.12",
+            "worker_sha256": "eccf48810ca4f43724f7e197d71c25e456d62ed510ba13f8cf40e90127a580fc"
+          },
+          "encoded_original_rows": 25367,
+          "maximum_observed_original_tokens": 184
+        },
+        "offline_readers": {
+          "audit_and_export": {
+            "oracle": "a65f415629e5bc8bf3d5e7066e287f79d61b7bcc",
+            "runner": "6783316afa91260c4f44de1c2cbe913d4ff3d927"
+          },
+          "accounting": {
+            "oracle": "8f59701eed076bd047c9804fbca1b3961724aa0e",
+            "runner": "fc68dc683631c8e9075a1c5d45418a372b112cc3",
+            "generation_changed": false
+          },
+          "provenance": "/home/dev/src/notedeck_hierarchy_runs/hr39-v53-auto-5000-note-v1/verification/reader-provenance.json",
+          "limits": {
+            "memory_max_bytes": 17179869184,
+            "swap_max_bytes": 0,
+            "cpu_cores": 1,
+            "sequential": true
+          },
+          "generation_changed": false
+        },
+        "native_usage": {
+          "report": "/home/dev/src/notedeck_hierarchy_runs/hr39-v53-auto-5000-note-v1/usage-complete.json",
+          "sha256": "61949e1e8858ad1c32724a207dff9c78cafdf41dadf4a851779cd549973e156c",
+          "fresh_attempts": 32068,
+          "known_catalog_cost_estimate_usd": 259.0830935999997,
+          "catalog_cost_estimate_usd": null,
+          "attempts_without_usage": 15,
+          "incremental_cash_usd": 0
+        },
+        "recorded_at_utc": "2026-10-19T09:57:27.235686+00:00",
+        "sidecar": "/home/dev/src/notedeck_hierarchy_runs/hr39-v53-auto-5000-note-v1/HR39-resumed-1/code-provenance.json"
+      },
+      "experimental_parameters": {
+        "generation_policy": "hierarchy-generation-v5.3",
+        "dataset": {
+          "subject_prompt": "ASv6.100",
+          "notes": 5000,
+          "authors": 2000,
+          "selection": "First 5000 mechanically eligible original posts in seeded event-ID hash order; one provider-blocked input replaced by the next eligible post in the frozen 5001-post reserve; no manual review or topic/author quotas",
+          "seed": "hr39-corpus-v1",
+          "raw_source_pool_notes": 5001,
+          "raw_source_pool_sha256": "b8ab939e0c4937372d93b843dc03ce142827ad8bdcfdecee0952ac866bccadd6",
+          "initial_raw_corpus_sha256": "717289ac3786684615087d87a593ccc8a381351ac49eb5021d08eb6a6fe7aede",
+          "final_selection_sha256": "cf431bdac8be8f452729d91768474b59520c6ea402a79bb8a63c3977b7572bbf",
+          "ordered_note_ids_sha256": "68a8c5d1f4e8dab33f980c33c4e88810db16cd3e2ef7f98dc5fc2906cbfc1842",
+          "subject_corpus_sha256": "dbec79575b8a91f7e998a5998577ee077f1a2a7f99fe0791f33102d819538733",
+          "overlap_counts": {
+            "HR36": 2,
+            "HR37": 1,
+            "HR38": 2
+          }
+        },
+        "definition": {
+          "path": "/home/dev/src/notedeck_hierarchy_runs/hr39-v53-auto-5000-note-v1/hierarchy-final.spec.json",
+          "sha256": "f1f3507be0fa95a5618e489b05d8fbf0c6ba33519f8f900f47c3ecde1f2f9b3b"
+        },
+        "parameter_ledger": {
+          "path": "docs/recommendation-engine/hierarchy-parameters.csv",
+          "row": "HR39"
+        },
+        "native_usage": {
+          "complete_report": "/home/dev/src/notedeck_hierarchy_runs/hr39-v53-auto-5000-note-v1/usage-complete.json",
+          "fresh_attempts": 32068,
+          "known_catalog_cost_estimate_usd": 259.0830935999997,
+          "catalog_cost_estimate_usd": null,
+          "attempts_without_usage": 15,
+          "incremental_cash_usd": 0
+        },
+        "qualification": "Native generation complete without execution errors: 200 nodes, six roots, maximum six children and 48 completed lineups. All 194 edges strictly narrow note sets. Canonical-node coverage 2693/5000; 2307 outside: 1911 root-direct-only and 396 without usable original meanings (369 empty AS lists and 27 null Bootstrap notes). Full coverage unmet; semantic review pending. Eight nonblocking diagnostic errors and 229 skipped null meanings preserved. Native review export and UI check pass. Accounting completed; 15 historical failed attempts lack usage, so catalog cost is a known subtotal. Offline jobs execute sequentially under a hard 16 GiB process-tree limit, no swap and one CPU."
+      },
+      "related_outputs": [
+        {
+          "label": "Native completion summary",
+          "path": "HR39-resumed-1/run-summary.json",
+          "sha256": "eca31ac4697f5cd7edc1c48265fc1163f7f2510d26fd7fc16e1b360fd2ac89d6"
+        },
+        {
+          "label": "Full-input structural audit",
+          "path": "HR39-resumed-1/structural-audit.json",
+          "sha256": "c1f8d97591d948c4160475d6ce9c3daeb7f51163cc215041e717e9cda8ffc94a"
+        },
+        {
+          "label": "Native complete usage",
+          "path": "usage-complete.json",
+          "sha256": "61949e1e8858ad1c32724a207dff9c78cafdf41dadf4a851779cd549973e156c"
+        },
+        {
+          "label": "Final automatic selection",
+          "path": "final-corpus-selection.json",
+          "sha256": "cf431bdac8be8f452729d91768474b59520c6ea402a79bb8a63c3977b7572bbf"
+        },
+        {
+          "label": "Frozen input controls",
+          "path": "input-controls.json",
+          "sha256": "cacea157d59ae1b18a5479ec9402550fd0617c06924fddad4e3667d23c71c2af"
+        },
+        {
+          "label": "Frozen generation and reader provenance",
+          "path": "HR39-resumed-1/code-provenance.json",
+          "sha256": "be86e8e8b89fe306399708fe54634f732c9a6a3cebf6bdf35028c102945ae82f"
+        },
+        {
+          "label": "Effective generation definition",
+          "path": "hierarchy-final.spec.json",
+          "sha256": "f1f3507be0fa95a5618e489b05d8fbf0c6ba33519f8f900f47c3ecde1f2f9b3b"
+        },
+        {
+          "label": "Review hierarchy",
+          "path": "hr39-review-ui-v1/hierarchy.json",
+          "sha256": "716bafeb05ad354d26b8ee67bff9b6ab8e48b3306cab6302d9a86c2770499428"
+        },
+        {
+          "label": "Original-note browser",
+          "path": "hr39-review-ui-v1/notes.json",
+          "sha256": "8ec80e293fa21e19d99feaa1853fb1b21a63ed74c3bf978a8d77b54dcc8348b5"
+        },
+        {
+          "label": "Offline viewer check",
+          "path": "hr39-review-ui-v1/check.txt",
+          "sha256": "c2e3917b9c503155995dc343c316e363042466098f038186781e5273dd75f2f1"
+        },
+        {
+          "label": "Review provenance",
+          "path": "hr39-review-ui-v1/provenance.json",
+          "sha256": "2455aa697a6c39a3ad4c7c346509325c399260fb949f880eb7c90bde204cadb0"
+        },
+        {
+          "label": "Offline reader commits and tests",
+          "path": "verification/reader-provenance.json",
+          "sha256": "9c1adcd8a927bf26b82fabf5045e2c038a72b5b7b0cce8a9a2d262dbcd4d1a3c"
+        },
+        {
+          "label": "Bootstrap receipt preflight",
+          "path": "verification/receipt-check-v3.json",
+          "sha256": "748a2ca6ed7baad77cc31ec1a35e495127842c1622d789692199bf8d6e44187d"
+        },
+        {
+          "label": "Bounded structural-audit resources",
+          "path": "verification/audit-bounded-v2.resources.json",
+          "sha256": "707fb73cd7d5d70f6d9eb0a670a74a987dc22ffab521593672a2a04c8ddc0f57"
+        },
+        {
+          "label": "Bounded review-export resources",
+          "path": "verification/export-bounded-v1.resources.json",
+          "sha256": "f3d4bb547704dd9cc0c71e104581512c5fc36631034f3f8bab9947aaeca1211f"
+        },
+        {
+          "label": "Bounded accounting resources",
+          "path": "verification/usage-bounded-v2.resources.json",
+          "sha256": "766cec68971e86c5c90f43b2986128456c93aa6e44dd798731e7406bf2f0a079"
+        },
+        {
+          "label": "Bounded review-check resources",
+          "path": "verification/ui-check-bounded-v1.resources.json",
+          "sha256": "8c52787ebfe4d7d85f91d8988104c4330db556130b6c2fdffcd5bd8f2710aef4"
+        }
+      ]
     }
   ]
 }
