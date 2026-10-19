@@ -143,9 +143,47 @@ class SectionCountGapTests(unittest.TestCase):
             source = self._panel(root)
             result = prepare(source, root / 'subset', references=8, seed=200, cases=['D01'])
             self.assertEqual([c['id'] for c in result['cases']], ['D01'])
+            self.assertEqual(result['role'], 'development')
+            self.assertEqual(result['method'], 'adjacent')
             with self.assertRaisesRegex(ValueError, 'development cases'):
                 prepare(source, root / 'bad', cases=['V01'])
             self.assertFalse((root / 'bad').exists())
+
+    def test_cli_explicit_reserved_screen_freezes_and_applies_global_rule(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = self._panel(root)
+            with self.assertRaisesRegex(ValueError, 'explicit'):
+                prepare(source, root / 'all-reserved', role='reserved')
+            self.assertFalse((root / 'all-reserved').exists())
+            with self.assertRaisesRegex(ValueError, 'reserved cases'):
+                prepare(source, root / 'wrong-role', role='reserved', cases=['D01'])
+            panel.run(source, 'V01')
+            command = [sys.executable, '-m', 'sse_multivector.section_count_gap']
+            prepared = subprocess.run(command + ['prepare', str(source), str(root / 'gap'),
+                '--references', '8', '--seed', '200', '--role', 'reserved',
+                '--method', 'globalSEmax', '--cases', 'V01'], capture_output=True, text=True)
+            self.assertEqual(prepared.returncode, 0, prepared.stderr)
+            plan = json.loads((root / 'gap/plan.json').read_text())
+            self.assertEqual(plan['role'], 'reserved')
+            self.assertEqual(plan['method'], 'globalSEmax')
+            self.assertEqual([c['id'] for c in plan['cases']], ['V01'])
+            self.assertEqual(plan['cases'][0]['original_case']['role'], 'reserved')
+            completed = subprocess.run(command + ['run', str(root / 'gap'), '--workers', '2'],
+                                       capture_output=True, text=True)
+            self.assertEqual(completed.returncode, 0, completed.stderr)
+            cfg = plan['cases'][0]
+            observed = [r['dispersion'] for r in cfg['observed']]
+            values = [[r['dispersion'] for r in json.loads(
+                (root / 'gap/V01' / f'reference-{i:03d}.json').read_text())['rows']]
+                for i in range(8)]
+            saved = json.loads((root / 'gap/V01/result.json').read_text())
+            self.assertEqual(saved['selected_count'], select_count(
+                cfg['counts'], observed, values, method='globalSEmax')['selected_count'])
+            self.assertEqual(saved['separate_halves'], [select_count(
+                cfg['counts'], observed, part, method='globalSEmax')['selected_count']
+                for part in [values[:4], values[4:]]])
+            self.assertFalse((root / 'gap/D01').exists())
 
 
 if __name__ == '__main__':

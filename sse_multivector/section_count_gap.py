@@ -60,16 +60,26 @@ def select_count(counts, observed, references, *, method='adjacent'):
                 at_largest_tested_count=chosen == len(counts) - 1)
 
 
-def prepare(source, output, *, references=32, seed=20261101, cases=None):
+def prepare(source, output, *, references=32, seed=20261101, cases=None,
+            role='development', method='adjacent'):
     source, output = Path(source).resolve(), Path(output).resolve()
     if (type(references) is not int or references < 4 or references % 2
             or type(seed) is not int or seed < 0):
         raise ValueError('An even reference count of at least four and a nonnegative seed required')
+    if role not in ['development', 'reserved']:
+        raise ValueError('Unknown panel role')
+    rules = dict(adjacent='Smallest k with gap(k) >= gap(k+1) - s(k+1); otherwise largest tested k',
+                 globalmax='First k attaining the largest gap over all tested counts',
+                 globalSEmax='Smallest k no later than the first maximum with gap(k) >= gap(maximum) - s(maximum)')
+    if method not in rules:
+        raise ValueError('Unknown gap decision method')
+    if role == 'reserved' and cases is None:
+        raise ValueError('Reserved validation requires explicit case IDs')
     original = panel._read(source / 'plan.json')
     panel._check_files(original['code_files'])
-    eligible = {c['id'] for c in original['cases'] if c['role'] == 'development'}
+    eligible = {c['id'] for c in original['cases'] if c['role'] == role}
     if cases is not None and (not cases or len(set(cases)) != len(cases) or not set(cases) <= eligible):
-        raise ValueError('Select unique existing development cases only')
+        raise ValueError(f'Select unique existing {role} cases only')
     requested = eligible if cases is None else set(cases)
     output.mkdir(parents=True, exist_ok=False)
     sources, selected_cases = {}, []
@@ -131,11 +141,11 @@ def prepare(source, output, *, references=32, seed=20261101, cases=None):
                           observed=observed, data=str(data), rank=rank))
     plan = dict(status='Frozen gap screen; no HiGen integration or count policy',
         source=str(source), cases=selected_cases, files=files,
-        references=references, reference_seed=seed,
+        references=references, reference_seed=seed, role=role, method=method,
         reference_distribution='Uniform full nonzero PCA box plus original mean; no radial projection',
         dispersion='Sum of squared Euclidean distances to arithmetic group means on supplied coordinates',
         clustering='Unchanged spherical partitioner, original note minima and starts; lowest cosine objective',
-        rule='Smallest k with gap(k) >= gap(k+1) - s(k+1); otherwise largest tested k',
+        rule=rules[method],
         uncertainty='Population SD of reference log dispersions times sqrt(1+1/B)',
         singular_cases='No split for zero total dispersion; k >= entry count excluded; other zero dispersions unresolved',
         settings=original['spec'],
@@ -239,9 +249,10 @@ def run(output, *, workers=1):
                 values.append([r['dispersion'] for r in saved['rows']])
                 result['references'].append(dict(path=str(path), sha256=panel._sha(path)))
             observed = [r['dispersion'] for r in cfg['observed']]
-            result.update(select_count(cfg['counts'], observed, values))
+            method = plan.get('method', 'adjacent')
+            result.update(select_count(cfg['counts'], observed, values, method=method))
             half = len(values) // 2
-            result['separate_halves'] = [select_count(cfg['counts'], observed, part)['selected_count']
+            result['separate_halves'] = [select_count(cfg['counts'], observed, part, method=method)['selected_count']
                                         for part in [values[:half], values[half:]]]
         panel._write(output / cfg['id'] / 'result.json', result)
         results.append(result)
@@ -259,13 +270,16 @@ def main():
     prep.add_argument('output', type=Path)
     prep.add_argument('--references', type=int, default=32)
     prep.add_argument('--seed', type=int, default=20261101)
-    prep.add_argument('--cases', nargs='+', help='Explicit development cases; reserved cases remain excluded')
+    prep.add_argument('--cases', nargs='+', help='Explicit cases from the chosen role; required for reserved validation')
+    prep.add_argument('--role', choices=['development', 'reserved'], default='development')
+    prep.add_argument('--method', choices=['adjacent', 'globalmax', 'globalSEmax'], default='adjacent')
     execute = commands.add_parser('run')
     execute.add_argument('output', type=Path)
     execute.add_argument('--workers', type=int, default=1)
     args = parser.parse_args()
     if args.command == 'prepare':
-        result = prepare(args.source, args.output, references=args.references, seed=args.seed, cases=args.cases)
+        result = prepare(args.source, args.output, references=args.references, seed=args.seed,
+                         cases=args.cases, role=args.role, method=args.method)
         print(json.dumps(dict(cases=len(result['cases']), references=result['references'])))
     else:
         result = run(args.output, workers=args.workers)
