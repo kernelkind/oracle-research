@@ -3150,3 +3150,81 @@ use the same original vectors and reciprocal groups. The test also checks
 that every deeper attachment list is empty when disabled and rejects a tree
 setting that disagrees with its frozen root producer. This qualifies the
 experimental toggle, not its semantic outcome.
+
+### Complete 100-note attachment comparison
+
+Both constructions completed under source checkpoint `9678b36d`. The enabled
+control reproduces every node, assignment, heading count and summary value
+of the earlier complete 100-note tree exactly. The two prepared cases share
+all source/vector rows, native groups, reciprocal pairs, seeds and numerical
+settings; only `attach_nearest` differs. Both assign all original entries and
+keep all 58 original native groups intact. Neither result has unresolved
+subdivisions. No repairs or new stopping rules were applied.
+
+| Measure | Attachments enabled | Attachments disabled |
+|---|---:|---:|
+| Notes retained | 100/100 | 100/100 |
+| Root choices / maximum menu width | 6 / 6 | 6 / 6 |
+| Initial fixed units | 204 | 386 |
+| Non-container nodes | 176 | 499 |
+| Terminal groups | 132 | 372 |
+| Maximum leaf depth | 4 | 6 |
+| Mean shortest leaf depth | 2.71 | 3.17 |
+| Median / P90 shortest leaf depth | 3 / 3 | 3 / 4 |
+| Non-narrowing edges | 0 | 8 |
+| Menus containing duplicate child note sets | 0 | 12 |
+| Food-heading leaves | 1 | 4 |
+| Coffee-heading leaves | 3 | 4 |
+
+These are structural category-edge depths, not measured user decisions or
+semantic accuracy. The disabled result fails the existing strict note-set
+narrowing check; this experiment does not decide how to repair such menus.
+Its root note counts are 66, 50, 77, 47, 46 and 31, all above the ten-note
+minimum. Root counts overlap. Disabling attachments retains coverage because
+unattached entries remain independent inputs to numerical assignment.
+
+The 158 initial reciprocal pairs are identical. Enabling the one-way step
+adds 182 initial attachment links, reducing 386 units to 204, and 69 further
+links across 11 child matching rounds. With attachments disabled there are
+35 child matching rounds and 35 deeper six-section fits, versus ten deeper
+fits with attachments. These link counts describe calculations, not labeled
+correct relationships. Increased fragmentation appears both in extra small
+leaves and in repeated descriptions: Food's 32 entries occupy one leaf with
+attachments, versus four leaves containing 29, one, one and one entries
+without them. Nostr and Bitcoin headings remain one leaf each in both modes.
+
+The prespecified suspicious pairs do separate when attachments are disabled:
+
+| Pair | Enabled | Disabled |
+|---|---|---|
+| Audience addressed as "Champs" / Cashews | One leaf | Separate leaves |
+| St Marks Place / Stew | One leaf | Separate leaves |
+| Buster + Punch / Matcha | One leaf | Separate leaves |
+
+This is not three fully repaired groupings. Matcha and melangers remain
+together without any one-way attachment because they are an initial
+reciprocal pair. Thus attachment errors and reciprocal-pair errors both
+exist. Conversely, removing all attachments loses useful concentration:
+near-duplicate Food and Coffee descriptions gain extra leaves. Not every
+repeated title implies equivalence; this is bounded content review rather
+than a gold accuracy score.
+
+The result supports retaining attachments as the current experimental
+baseline, with a demonstrated quality tradeoff rather than blanket removal.
+It does not establish an automatic selective attachment rule. A next
+controlled test could separate initial from deeper attachments, because this
+comparison disables both and cannot identify which stage contributes the
+useful compression versus the additional mixed units. That further test is
+a recommendation, not yet executed or adopted here.
+
+All 71 relevant production/integration tests pass in the task worktree and
+combined main. Both completed resumes preserve all 49 tree/plan/fit JSON
+files byte-for-byte. Ignored evidence is external at
+`/mnt/external/algos-archive/oracle-mvp/hundred-note-attachment-ablation-v1/`:
+the two-case `spec.json`, `root-panel/`, `tree-AttachmentOn/`,
+`tree-AttachmentOff/`, per-node fits and compact `contents.txt` in both trees,
+and independent `verification.txt` / `resume-before.json`.
+The task worktree `oracle-mvp-hundred-note-attachment-ablation-v1` remains
+for the frozen code bindings. Earlier source worktrees and receipts remain
+unchanged. No model calls, encoding, training, official HR registration,
+HiGen activation or UI change occurred.
