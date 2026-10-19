@@ -153,7 +153,7 @@ stated goal instead of listing its actions. V147 demonstrates a preservation
 plan's broader name and asks for a broader name when shortening would misattribute
 a person or relationship.
 Its subsequent [frozen independent qualification](shr_single_pair/bootstrap-current-as-qualification.md#frozen-independent-qualification-of-bootstrap-v147)
-uses 160 inputs from 80 new posts/authors, with three fresh draws each. All 480
+uses 160 inputs from 80 new posts and 80 distinct authors, with three fresh draws each. All 480
 responses validate. Two independent AI reviewers assess separate assigned cases
 without earlier scores or tuning history. Initial review records 463 accepts,
 eleven rejects and six uncertainties; source-based adjudication leaves 463
@@ -169,6 +169,13 @@ unqualified; constructor pins remain V133. Its earlier
 and exact stock-plan variants remain in the same report.
 V140–V146 results and frozen prompts remain available in the same qualification
 report.
+
+The later V149 sampling audit finds one V147 qualification author shared with
+an older control from a second corpus: only 79 of the 80 authors were new to all
+prior development inputs. Frozen inputs and verdicts remain exact; the
+qualification report records this correction. Experimental V149 fixes eight of
+nine agreed-case regression draws, with one VPN meaning still listing example
+places. Its regression gate fails; untouched qualification has not started.
 
 Experimental [Bootstrap-v133](shr_single_pair/Hierarchy-bootstrap-v133.md)
 returns a concise, natural `title` derived solely from its finalized `meaning`.

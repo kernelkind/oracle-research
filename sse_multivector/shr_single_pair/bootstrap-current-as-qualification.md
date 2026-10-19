@@ -959,7 +959,7 @@ The user authorized testing frozen V147 on untouched inputs with fixed criteria
 and independent review. The [pre-call protocol](hierarchy-bootstrap-v147-heldout-v1.json),
 [source selectors](hierarchy-bootstrap-v147-heldout-nodes-v1.json) and
 [native specification](hierarchy-bootstrap-v147-heldout-v1.spec.json) freeze
-80 new posts/authors: 60 selected by a fixed seeded ordering and twenty keyword
+80 new posts from 80 distinct authors: 60 selected by a fixed seeded ordering and twenty keyword
 challenge selections (five each for food, People, plans/preferences and
 relationships/actions). Each post supplies one original root and one specific
 descendant, for 160 inputs and three fresh draws each (480 planned responses).
@@ -974,6 +974,18 @@ exclusion from every historical project experiment or model pretraining. The
 seeded cohort represents eligible saved HR38 notes; it is not a probability
 sample of the production population. The challenge families use declared lexical
 predicates, not semantic gold labels.
+
+**Author-separation correction, found during V149 development:** the original
+author lookup used the HR38 corpus and recorded 46 development authors. Looking
+up all 53 earlier note IDs across HR38 and the refreshed ASv6.100 control corpus
+identifies 51 authors, including five absent from that lookup. One appears in
+the qualification: seeded pair 23, Zapathons and the chief-zapathon-officer
+identity request. Its six responses were accepted. Thus all 80 posts were new,
+but only 79 authors were new to all older development inputs. The three agreed
+failure posts are unaffected. Preserve the original frozen protocol, source
+selectors, inputs, outputs and judgments; this corrects the maintained claim
+instead of rewriting the evidence. Subsequent sampling must resolve authors
+across every referenced source corpus.
 
 Two independent AI reviewers audited the protocol before inference. A handles
 odd post-pair numbers and B handles even ones; both review all three draws of
@@ -1121,7 +1133,28 @@ direct instructions, consistent positive examples and representative evaluation
 with development inputs separated from qualification. No extra reasoning trace,
 word-count optimization, runtime postprocessor or new execution mechanism is
 introduced. Constructors stay V133; V149 and Consolidation-v28 are experimental.
-Results and native accounting will be recorded here after the test.
+All 72 fresh regression outputs validate. Native agent review records 69 accepts,
+one reject and two uncertainties. The furniture example list disappears in all
+three draws, retaining preferred formats and the desk-chair exclusion. Every
+video title now names a video. The VPN list disappears twice but survives in
+draw 3, so only eight of nine agreed-case draws pass and the gate fails.
+
+The failing VPN resolution explicitly says the stadium branch does not justify
+discarding "other named alternatives." Bootstrap's earlier instruction to
+preserve "all named alternatives" competes with the writing-stage distinction
+between examples and defining alternatives. This is a concrete remaining
+instruction conflict; the next change stays on these development inputs.
+
+Required controls survive: all seven jointly specified job tags, all four UK
+constituent parts, writing-tool alternatives, the exact Half-and-half interval
+and weight basis, and the stock plan's complete batch/method/storage conditions.
+The uncertainties concern one Countries definition restricted to sovereign
+states and one stock title that still adds pantry storage. Neither is silently
+accepted or used to invent a word cutoff. All 42 focused mechanical checks pass.
+Native [accounting](hierarchy-bootstrap-v149-fix-usage-v1.json) records 75 new
+attempts, including three warmups, with no failures, retries or reuses and
+complete usage. API-equivalent cost is $0.6801948, not subscription cash spend.
+V149 remains experimental; untouched qualification has not started.
 
 ## Meaning-derived titles: Bootstrap-v130
 
