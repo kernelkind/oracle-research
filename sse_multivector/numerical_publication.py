@@ -56,6 +56,15 @@ _SOURCE_ROLES = {'manifest', 'vectors', 'mapping', 'notes', 'aliases',
                  'baseline', 'request', 'vector_map'}
 _DIAGNOSTICS = {'n_rows', 'dimension', 'initial_components', 'initial_edges',
     'initial_isolated_rows', 'adaptive_underflow_edges', 'final_aggregates'}
+_MEMORY_FIELDS = {'status', 'runner_commit', 'project_commit', 'runner_source_sha256',
+    'limits', 'root_allocation_gib', 'fake_provider_worker_mib', 'full_native_groups',
+    'batch_count', 'full_case_count', 'attempt_cap_per_group',
+    'all_coordinators_and_30_workers_barrier', 'peak_memory_gib', 'technical_failures',
+    'elapsed_seconds', 'memory_events', 'post_worker_memory_gib', 'native_max_rss_gib',
+    'sample_at_peak_current', 'latest_sample', 'saved_support_extra_rss_gib',
+    'combined_peak_plus_saved_support_delta_gib', 'blindspots', 'margin_256',
+    'first_barrier_native_max_rss_gib', 'estimate_note', 'peak_model_workers',
+    'peak_native_coordinators', 'progress_at_stop', 'fake_starts', 'fake_stops', 'service_final'}
 
 
 def _choose(value, names):
@@ -426,6 +435,51 @@ def _merge(sources, path, metadata):
     return results(), _mapping(sources, path.parent, header)
 
 
+def _followup_memory(sources, path, metadata, header):
+    """The saved synthetic coordinator stress summaries, not their worker jobs."""
+    required = {'runner_commit', 'project_commit', 'runner_source_sha256', 'limits',
+        'root_allocation_gib', 'fake_provider_worker_mib', 'full_case_count', 'peak_memory_gib',
+        'all_coordinators_and_30_workers_barrier', 'status'}
+    if (not required <= header.keys() or not ({'full_native_groups', 'batch_count'} & header.keys())
+            or any(not isinstance(header[name], str) or not re.fullmatch('[0-9a-f]{40}', header[name])
+                   for name in ('runner_commit', 'project_commit'))):
+        raise ValueError('unsupported followup-memory-scale summary')
+    settings = {'runner_commit', 'project_commit', 'root_allocation_gib',
+        'fake_provider_worker_mib', 'full_case_count', 'full_native_groups', 'batch_count',
+        'attempt_cap_per_group'}
+    metadata['parameters'] = _allow(_choose(header, settings), settings, metadata, 'memory.workload')
+    metadata['parameters'].update(profile='followup-memory-scale',
+        workload='Synthetic coordinator resource stress with simulated provider workers; no model inference')
+    metadata['parameters']['runner_source_sha256'] = _hashes(header['runner_source_sha256'],
+        {'experiment.py', 'extraction_pipeline.py'}, metadata, 'memory.runner_source_sha256')
+    if len(metadata['parameters']['runner_source_sha256']) != 2:
+        raise ValueError('followup-memory-scale summary requires its two runner source hashes')
+    metadata['parameters']['limits'] = _allow(header['limits'],
+        {'memory.max', 'memory.swap.max', 'memory.oom.group'}, metadata, 'memory.limits')
+    nested = {
+        'sample_at_peak_current': {'elapsed', 'memory_current', 'memory_peak', 'model_workers',
+            'native_coordinators', 'native_rss', 'native_rss_max', 'python_count', 'python_rss', 'events'},
+        'latest_sample': {'elapsed', 'memory_current', 'memory_peak', 'model_workers',
+            'native_coordinators', 'native_rss', 'native_rss_max', 'python_count', 'python_rss', 'events'},
+        'progress_at_stop': {'elapsed', 'completed', 'total', 'barrier_met', 'failures'},
+        'service_final': {'ActiveState', 'SubState', 'Result', 'reason'},
+    }
+    fields = _MEMORY_FIELDS-settings-set(nested)-{'runner_source_sha256', 'limits'}
+    measurements = _allow(_choose(header, fields), fields, metadata, 'memory.measurements')
+    for name, allowed in nested.items():
+        if name in header:
+            measurements[name] = _allow(header[name], allowed, metadata, 'memory.'+name)
+    if 'progress_at_stop' in header:
+        metadata['status'] = 'stopped'
+
+    def results():
+        yield dict(type='measurements', **measurements)
+        for row in sources.items(path, 'real_saved_support_verification.item'):
+            yield dict(type='saved_support_verification', **_allow(row,
+                {'event', 'elapsed', 'rss', 'peak_rss', 'jobs'}, metadata, 'memory.saved_support'))
+    return results(), iter(())
+
+
 def _performance(sources, path, metadata):
     header = sources.fields(path, {'schema_version', 'workload', 'config', 'config_sha256',
         'code_sha256', 'system', 'versions', 'complete', 'checkpoint_saved', 'awaiting_verification',
@@ -440,7 +494,9 @@ def _performance(sources, path, metadata):
         'baseline_in_process_advance_seconds', 'timing_qualification', 'elapsed_seconds',
         'input_entries', 'compact_response_identity', 'result_bytes',
         'groups_and_unassigned_identical', 'native_result_validation_passed',
-        'new_teacher_result_ledgers', 'checks', 'error'})
+        'new_teacher_result_ledgers', 'checks', 'error'} | _MEMORY_FIELDS)
+    if 'fake_provider_worker_mib' in header:
+        return _followup_memory(sources, path, metadata, header)
     if not (header.get('workload') or 'state_sha256' in header or 'request_sha256' in header
             or 'original_state_sha256' in header
             or header.get('kind') == 'offline-no-inference-fixed-input-replay'):

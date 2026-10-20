@@ -180,6 +180,53 @@ class NumericalPublicationTests(unittest.TestCase):
             report.items() if key not in ('request_sha256', 'measurements')}))
         self.assertEqual(rows[1], dict(type='measurements', **report['measurements'][0]))
 
+    def test_followup_memory_summaries_keep_synthetic_workload_and_final_measurements(self):
+        from sse_multivector.numerical_publication import export_results
+        for stopped in (False, True):
+            with self.subTest(stopped=stopped):
+                report = dict(status='stopped early' if stopped else 'completed stress study',
+                    runner_commit='a'*40, project_commit='b'*40,
+                    runner_source_sha256={'experiment.py': 'c'*64, 'extraction_pipeline.py': 'd'*64},
+                    root_allocation_gib=5, fake_provider_worker_mib=256 if stopped else 512,
+                    full_case_count=19793 if stopped else 14880, peak_memory_gib=27.7,
+                    all_coordinators_and_30_workers_barrier=True,
+                    limits={'memory.max': '34359738368', 'memory.swap.max': '0'},
+                    blindspots=['Simulated worker allocations; no model inference.'],
+                    project_root='/private/source', queue_isolation='/private/runtime',
+                    headers={'authorization': 'PRIVATE-MEMORY-TOKEN'})
+                if stopped:
+                    report.update(batch_count=256,
+                        latest_sample=dict(elapsed=288, memory_peak=29710172160, model_workers=1),
+                        progress_at_stop=dict(completed=23, total=256, failures=20),
+                        service_final=dict(ActiveState='inactive', Result='success',
+                                           reason='Stopped after bounded observation'))
+                else:
+                    report.update(full_native_groups=160, elapsed_seconds=238.65,
+                        sample_at_peak_current=dict(elapsed=123.5, native_coordinators=157),
+                        real_saved_support_verification=[dict(event='verification', elapsed=1.5,
+                                                               rss=100, peak_rss=200, jobs=9438)])
+                path = self.write('memory/analysis-'+str(stopped)+'.json', report)
+                (path.parent/'synthetic-worker-answers.json').write_text('not a real model result')
+
+                output = Path(export_results(path, family='performance')['output'])
+
+                metadata = json.loads((output/'experiment.json').read_text())
+                self.assertEqual(metadata['parameters']['profile'], 'followup-memory-scale')
+                self.assertEqual(metadata['parameters']['fake_provider_worker_mib'],
+                                 report['fake_provider_worker_mib'])
+                rows = self.records(output)
+                self.assertEqual(rows[0]['status'], report['status'])
+                self.assertEqual(rows[0]['peak_memory_gib'], 27.7)
+                self.assertEqual(rows[0]['blindspots'], report['blindspots'])
+                self.assertEqual(rows[0].get('progress_at_stop'), report.get('progress_at_stop'))
+                if not stopped:
+                    self.assertEqual(rows[1], dict(type='saved_support_verification',
+                                                  **report['real_saved_support_verification'][0]))
+                text = ''.join(p.read_text() for p in output.iterdir())
+                self.assertNotIn('/private', text)
+                self.assertNotIn('PRIVATE-MEMORY-TOKEN', text)
+                self.assertNotIn('not a real model result', text)
+
     def test_saved_rust_reports_preserve_final_schedules_partitions_and_roots(self):
         from sse_multivector.numerical_publication import export_results
         reports = {
