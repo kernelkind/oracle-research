@@ -5,13 +5,13 @@ recorded post before attempting a whole corpus. The examples below use the
 current publication code and the recorded inputs; they keep new outputs separate
 from the original results.
 
-**Downloads are not available yet.** These instructions and the offline checks
-below use local copies of original research files in the earlier staging layout.
-The agreed [publication plan](downloads.md) uses smaller final outputs hosted on
-Hugging Face. The [local compact file list](publication-files.csv) and its
-[checksums](publication.sha256) are available, but public download paths and
-reader workflows still need testing against those exports.
-The original-file paths below are not promises of public download paths.
+**Downloads are not available yet.** The
+[shared-dataset commands](#check-the-converted-local-selection) prepare, verify
+and restore the local upload files listed in [publication-files.csv](publication-files.csv).
+Restoration recovers original compact exports, not complete native experiment
+directories. The browsing and generation examples below still use local copies
+of original research files in an earlier layout; restoration alone does not
+supply those files. Public paths and hosted reader workflows remain untested.
 
 | What you want to do | Example | Model work |
 | --- | --- | --- |
@@ -435,28 +435,74 @@ Historical AS provenance must still be checked before any current-pipeline reuse
 The [format reference](downloads.md#automated-outputs) explains the payloads and
 their limits. Managed exports refuse unrelated destinations, bind payload
 checksums and preserve unchanged file bytes/mtimes. The supported historical
-selection has been converted locally. Older-format review items, review of the
-selected public contents and testing eventual downloads remain open.
+selection has been converted locally. Review of the selected public contents
+and testing eventual downloads remain open.
 
 ### Check the converted local selection
 
-[Publications](publications.csv) links selected final results to their original
-experiment/source identities. [Publication files](publication-files.csv) records
-every path, byte count and SHA-256 beneath `target/publication-exports/`.
-These paths describe local staging, not an available download.
+[Publications](publications.csv) records 2,988 output/input bundles plus one
+shared-content row. [Publication files](publication-files.csv) and
+[checksums](publication.sha256) describe 9,684 physical files beneath
+`target/publication-dataset/`. Original compact exports stay unchanged in
+`target/publication-exports/`.
 
-With the `ORACLE_ROOT` setup above, verify all 10,015 selected files:
+Publishers prepare both historical and future exports with the same command.
+Preparation and restoration both require a new output directory; an existing
+output is refused. Use a fresh directory for another revision.
+This historical selection uses a private, bound execution audit:
 
 ```bash
-cd "$ORACLE_ROOT/target/publication-exports"
-sha256sum --quiet --check \
-  "$ORACLE_ROOT/docs/experiments/publication.sha256"
+cd "$ORACLE_ROOT"
+python sse_multivector/experiment.py prepare-publication-dataset \
+  target/publication-exports \
+  --output target/publication-dataset \
+  --selection target/publication-audit/shared-dataset-7bee4993/unrun-selection.json
 ```
 
-The command prints failures only and exits zero when every listed checksum
-matches. This checks file bytes; it does not assess scientific correctness or
-perform privacy review. The [measured selection](downloads.md#measured-local-exports)
-describes sizes, input splits and excluded intermediates. The
+The audit and its private source locations are not reader dependencies. For
+all-unrun snapshots, preparation requires execution evidence bound to the saved
+exports and rechecks originals under their read locks. Unclassified or changed
+evidence stops preparation. The audited selection excludes 196 preparations
+proven never executed and retains three ambiguous snapshots. Native exporters
+remain unchanged; a saved all-unrun report alone does not establish nonexecution.
+
+To verify a complete prepared or downloaded dataset:
+
+```bash
+cd "$ORACLE_ROOT"
+python sse_multivector/experiment.py verify-publication-dataset \
+  target/publication-dataset
+```
+
+This checks physical hashes, shared records and references, and each restored
+original file's hash. Shared rows contain numeric IDs, full SHA-256 hashes and
+values; JSON files may contain references such as `{"$ref":123}`.
+`dataset.json` records both physical and original compact-file identities.
+
+To recover one bundle for ordinary JSON inspection or consumers of the original
+compact format:
+
+```bash
+cd "$ORACLE_ROOT"
+python sse_multivector/experiment.py restore-publication-dataset \
+  target/publication-dataset \
+  --output target/restored-publication \
+  --publication historical-studies/crec-119-500-note-vector-v1
+```
+
+Omit `--publication` to restore all included bundles. A single-bundle restore
+needs `dataset.json`, that bundle's files and its referenced shared files; it
+verifies those inputs without requiring unrelated downloads. Whole-dataset
+verification requires all files. Restored compact exports match their original
+bytes and `experiment.json` payload hashes. They do not provide the native plans,
+receipts and run directories required by `show`, `review` or native `verify`.
+
+The complete preparation verified every reconstructed original hash, finished
+in 54.06 seconds and used 108,516 KiB peak resident memory under a 512 MiB
+address-space limit. All 34 relevant runner/project tests passed. This verifies
+file integrity, not scientific correctness or privacy. The
+[measured selection](downloads.md#measured-local-exports) describes sizes and
+exclusions. The
 [conversion-gap table](publication-gaps.csv) now has no open rows. TRUE10's
 export uses its saved run configuration and plan. All 33 formerly unsupported entries
 now have selected evidence or an explicit intermediate/duplicate disposition. The
@@ -579,8 +625,8 @@ its machine-specific deployment commands are not a ready-to-run public recipe.
 
 ## Other experiments and moved files
 
-The [study index](experiments.csv) contains 2,684 selected entries: standalone
-prompt preparations, official hierarchy runs, training runs, historical collections
+The [study index](experiments.csv) contains 2,488 selected entries: native prompt
+preparations, official hierarchy runs, training runs, historical collections
 and the four located historical subject-prompt studies.
 It records saved plan identities and prompt/model settings.
 [Publications](publications.csv) connects them to the exported results;
@@ -756,8 +802,10 @@ were preserved, and nothing was uploaded.
 
 ### Historical backfill checks
 
-The current local selection contains **3,184 output/input directories and 10,015
-files**, totaling **1,178,119,887 bytes**. Every listed file was independently
+Before dataset selection and sharing, the source-export checkpoint contained
+**3,184 output/input directories and 10,015 files**, totaling
+**1,178,119,887 bytes**. These are preserved original compact exports, not current
+upload sizes. Every checkpoint file was independently
 rehashed. Structured payload bindings were checked against their export manifests;
 the five original ASv6.100 Markdown documents match their recorded source hashes.
 Exact prepared-input copies were also checked against their frozen source hashes.
@@ -766,8 +814,9 @@ matches the selected file list, excluding all private selection logs and
 superseded generated copies.
 
 All **27,032 native jobs** were classified in the source audit. The public
-[study index](experiments.csv) retains the 2,547 selected standalone preparations,
-which have distinct frozen plan identities. The remaining
+source-export index selected 2,547 standalone preparations with distinct frozen
+plan identities. The current dataset excludes 196 proven unexecuted preparations
+from that selection and retains three ambiguous snapshots. The other source
 jobs are warmups, internal hierarchy/grading units, manual construction or
 resource-test intermediates, or input preparation. Simulated worker responses
 from the resource tests were excluded; their final measurements were retained.

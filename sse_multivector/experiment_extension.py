@@ -624,6 +624,16 @@ def add_commands(commands):
     p.add_argument('--family', choices=('geometric', 'fuzzy', 'hidef', 'merge-rule',
                                       'comparison', 'performance', 'fine-region', 'pair-scores', 'representation'))
     p.add_argument('--output', type=Path)
+    p = commands.add_parser('prepare-publication-dataset', help='share repeated publication evidence and omit verified unrun preparations; no inference')
+    p.add_argument('source', type=Path)
+    p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--selection', type=Path, help='bound execution evidence for historical unrun snapshots')
+    p = commands.add_parser('verify-publication-dataset', help='verify shared evidence, references and original file identities')
+    p.add_argument('dataset', type=Path)
+    p = commands.add_parser('restore-publication-dataset', help='restore original publication files from shared evidence')
+    p.add_argument('dataset', type=Path)
+    p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--publication', help='restore only this relative publication directory')
     p = commands.add_parser('summarize-experiments', help='summarize native saved usage across experiments; no inference')
     p.add_argument('--spec', type=Path, required=True)
     p.add_argument('--output', type=Path, required=True, help='fresh summary report; never overwrite')
@@ -876,6 +886,18 @@ def add_commands(commands):
 
 
 def handle_command(args):
+    if args.command == 'prepare-publication-dataset':
+        from .publication_dataset import prepare
+        print(json.dumps(prepare(args.source, args.output, args.selection), indent=2))
+        return 0
+    if args.command in ('verify-publication-dataset', 'restore-publication-dataset'):
+        from ._runner_bootstrap import shared
+        publisher = shared('publication_dataset')
+        result = (publisher.verify_dataset(args.dataset)
+                  if args.command == 'verify-publication-dataset'
+                  else publisher.restore_dataset(args.dataset, args.output, publication=args.publication))
+        print(json.dumps(result, indent=2))
+        return 0
     if args.command == 'export-evaluation-results':
         if args.study is not None and args.spec is None:
             raise ValueError('--study requires --spec')

@@ -6,6 +6,9 @@ This workflow checks complete original native experiment files. The agreed
 [publication plan](../docs/experiments/downloads.md) exports used inputs, small
 parameter records and final results; those exports do not require publishing
 all internal receipts and are not verified by this whole-file workflow.
+For the shared compact dataset, use
+[dataset verification and restoration](../docs/experiments/reproduce.md#check-the-converted-local-selection);
+restoration does not recreate native experiment directories.
 
 The shared runner supports read-only `verify EXPERIMENT` for native prompt
 experiments and automatically finds the location metadata bundled in a release.
@@ -2288,8 +2291,25 @@ study `navigation-TRUE10`, uses the same command and binds the saved run
 configuration and plan. It preserves both final graphs, unresolved cycles,
 memberships, assessments and references to existing score bodies.
 All reviewed conversion gaps are closed; privacy review, recorded replay limits
-and hosted download verification remain open. The signed export below retains its existing
-behavior.
+and hosted download verification remain open.
+
+The project CLI `prepare-publication-dataset SOURCE --output OUT` prepares both
+historical and future compact exports through the shared runner. Repeated values
+are stored once in shared JSONL records with numeric IDs and full SHA-256 hashes;
+original paths may contain numeric `$ref` references. `dataset.json` binds
+physical files and the original compact-export hashes.
+All-unrun snapshots require `--selection` with bound execution evidence, which
+is rechecked against originals under existing read locks. Unclassified or changed
+evidence stops preparation. Proven never-executed preparations are excluded;
+unknown execution history stays unknown. Native exporters remain unchanged.
+
+`verify-publication-dataset DATASET` checks the complete package and reconstructed
+original hashes. `restore-publication-dataset DATASET --output OUT` restores
+byte-exact compact exports; `--publication RELDIR` restores one bundle using only
+its files and required shared files. These are not complete native experiment
+directories for `show` or `review`. See the
+[publisher and reader commands](../docs/experiments/reproduce.md#check-the-converted-local-selection).
+The signed export below retains its existing behavior.
 
 ### Review viewer export
 

@@ -523,11 +523,20 @@ Review the actual selected contents for credentials and personal information
 before packaging. Known credential containers were excluded from discovery;
 that is not a completed privacy review of the evidence.
 
-The [publication plan](downloads.md#measured-local-exports) now measures the
-selected local exports: **1.10 GiB**, plus **6.78 GiB** for all 17 evaluated
-adapters. [Publications](publications.csv), [exact files](publication-files.csv)
-and [checksums](publication.sha256) record this selection. The 534.71 GiB source
-inventory and old bundle tables do not define the public download size or layout.
+The [publication plan](downloads.md#measured-local-exports) measures the prepared
+shared dataset: **839.26 MiB (0.82 GiB)**, plus the unchanged **6.78 GiB** for all
+17 evaluated adapters. [Publications](publications.csv), [upload files](publication-files.csv)
+and [checksums](publication.sha256) describe the physical selection. The preserved
+1.10 GiB compact-export checkpoint and 534.71 GiB working-source inventory are
+not current upload sizes.
+
+Packaging excludes 196 preparations proven never executed and retains three
+ambiguous snapshots. It stores repeated content once and verifies exact
+reconstruction of every included compact file. All 34 relevant tests pass;
+the complete local preparation and verification succeeded under a 512 MiB
+address-space limit. All 10,015 original export files remain unchanged.
+The [reader commands](reproduce.md#check-the-converted-local-selection) restore
+compact exports, not native run directories. Hosted reader tests remain open.
 
 Before publication:
 
@@ -540,16 +549,18 @@ Before publication:
   [closed conversion-gap list](publication-gaps.csv).
   The reviewed final evidence has been backfilled through the shared exporters;
   all 27,032 native jobs were classified in the local audit, and the public
-  index retains the 2,547 selected standalone native studies.
+  index retains 2,351 native prompt entries, including the three with unresolved
+  execution history.
   Preserve recorded reproduction limits rather than substituting guessed inputs.
 - Preserve experiment identity, exact selections, versions, reuse and recorded
   outcomes. Report missing evidence without changing original records.
-- Review the existing exact export list and checksums, then link the GitHub index
+- Review the physical dataset file list, shared content and checksums, then link the GitHub index
   to pinned Hugging Face revisions after repository names are chosen. No upload
   is authorized by generating this local list.
 - Update the [reproduction guide](reproduce.md) for those outputs and test it in
   a clean environment, including a complete hierarchy run with public
-  authentication. Its existing local checks use the earlier original-file layout.
+  authentication. The compact dataset's local integrity/restore checks do not
+  replace the earlier original-file examples or a hosted reader test.
 - Provide a maintained, tested command for L1 analysis from saved judgments and
   validate portable training and adapter-inference instructions with the selected
   data and pinned upstream models.

@@ -215,7 +215,7 @@
     }
   },
   "compact_exports": {
-    "state": "Local selected compact exports; not uploaded or approved for publication",
+    "state": "Original self-contained export checkpoint before shared dataset preparation; preserved locally; not the upload size",
     "artifact_root": "target/publication-exports",
     "publications": 3184,
     "files": 10015,
@@ -1146,21 +1146,22 @@
       "new_inference": false,
       "uploads": false,
       "remaining_limits": "Learning-benchmark input/fitter recovery, privacy and hosted-reader testing remain open."
-    }
+    },
+    "catalog_scope": "Original checkpoint catalogs are in Git at 7bee4993; current CSV/checksum catalogs describe publication_dataset physical upload files"
   },
   "discovery_scope": "Top-level discovery counts and follow-ups describe the original local audit; public_index and compact_exports describe the selected public evidence.",
   "public_index": {
     "state": "Selected-study index; exhaustive original audit preserved locally",
     "source_commit": "1f3d541caec8574d1db6a61089f99b9d55863113",
-    "studies": 2684,
+    "studies": 2488,
     "studies_by_kind": {
       "historical collection": 92,
-      "official hierarchy": 37,
       "historical prompt study": 4,
-      "native": 2547,
+      "native": 2351,
+      "official hierarchy": 37,
       "training run": 4
     },
-    "selection": "Original selected rows retain study identities, settings and order; 33 later-selected historical title collections and 11 SSE representation collections are appended from the original index, alongside four later-located historical subject-prompt studies. Representation rows identify manual spans/local SSE explicitly. Six ASv6.100 native rows also link shared final evaluation documents. Six original subject/mask collection rows are also appended with links to 123 additional study/review entries; previously selected studies and ASv6.100 evidence are not duplicated. Twenty-two original early/standalone prompt collection rows are also appended with links to 21 prompt entries and three manual prominence entries; existing native prominence studies remain unchanged. Four original segmentation, fine-region title and frontier collection rows are also appended with links to 16 additional evidence bundles; reused baselines remain references. The original archived-baselines collection row is also appended with links to four final-evidence bundles; TEv4.1 answers reuse existing selected content. Reviewed final hierarchies, partitions, navigation measurements, performance evidence and manual reference inputs are now linked; unsupported entries were resolved without publishing preparation states or duplicate copies. TRUE10 final graphs and assessments use original run/plan bindings and verified existing-score references; no listed conversion gaps remain.",
+    "selection": "Original selected rows retain study identities, settings and order; 33 later-selected historical title collections and 11 SSE representation collections are appended from the original index, alongside four later-located historical subject-prompt studies. Representation rows identify manual spans/local SSE explicitly. Six ASv6.100 native rows also link shared final evaluation documents. Six original subject/mask collection rows are also appended with links to 123 additional study/review entries; previously selected studies and ASv6.100 evidence are not duplicated. Twenty-two original early/standalone prompt collection rows are also appended with links to 21 prompt entries and three manual prominence entries; existing native prominence studies remain unchanged. Four original segmentation, fine-region title and frontier collection rows are also appended with links to 16 additional evidence bundles; reused baselines remain references. The original archived-baselines collection row is also appended with links to four final-evidence bundles; TEv4.1 answers reuse existing selected content. Reviewed final hierarchies, partitions, navigation measurements, performance evidence and manual reference inputs are now linked; unsupported entries were resolved without publishing preparation states or duplicate copies. TRUE10 final graphs and assessments use original run/plan bindings and verified existing-score references; no listed conversion gaps remain. Shared dataset preparation excludes 196 verified unexecuted native preparations, retains three ambiguous saved snapshots, and preserves each remaining trial separately.",
     "original_index_rows": 27193,
     "omitted_internal_and_other_unselected_rows": 24518,
     "remaining_reviews": "open-items.md; publication-gaps.csv tracks conversion gaps only (none remain in the selected evidence)",
@@ -1179,7 +1180,8 @@
       "collection:oracle-mvp-hr35-multicore-replay-v1-multicore-validation-replay-v1",
       "collection:oracle-mvp-shr-student-prep-v1-concurrency-benchmark-v1",
       "collection:research-main-hierarchy-build-v1"
-    ]
+    ],
+    "excluded_unexecuted_preparations": 196
   },
   "generated_data_history_rewrite": {
     "state": "Verified and installed locally; commit mapping and source lookup included in source; remote publication and privacy/identity review remain open",
@@ -1372,5 +1374,155 @@
     "privacy_review": "Still pending for actual publication contents",
     "remaining_items": "publication-gaps.csv",
     "status_scope": "Snapshot at baseline_commit before ASv6.100 document selection and title/representation backfills; see compact_exports.asv6_100_evaluation_documents, historical_title_study_backfill and historical_representation_study_backfill for current resolutions; see compact_exports.historical_subject_mask_study_backfill for the later six-collection resolution. See compact_exports.historical_standalone_prompt_backfill for the later 22-collection resolution. See compact_exports.historical_segmentation_title_frontier_backfill for the later four-collection resolution. See compact_exports.historical_archived_baseline_backfill for the remaining baseline resolution; no legacy collection gaps remain, while unsupported/missing-result gaps remain separate."
+  },
+  "publication_dataset": {
+    "artifact_root": "target/publication-dataset",
+    "state": "Prepared locally; not uploaded",
+    "format": "publication-dataset-v1",
+    "source_artifact_root": "target/publication-exports",
+    "source_export_checkpoint": "7bee4993",
+    "source_snapshot_sha256": "c2426be6ebd558c0f8703a695572d9c49ca9471d3401ae8b8a7e3c16721b4a4f",
+    "included_publications": 2988,
+    "storage_catalog_rows": 2989,
+    "index_rows": 2488,
+    "standalone_prompt_studies": 2351,
+    "files": 9684,
+    "bytes": 880030429,
+    "gzip_bytes": 161706630,
+    "categories": {
+      "evaluation-documents": {
+        "bundles": 1,
+        "files": 5,
+        "bytes": 91107,
+        "gzip_bytes": 34369
+      },
+      "effort_assessment": {
+        "bundles": 5,
+        "files": 15,
+        "bytes": 671591,
+        "gzip_bytes": 128267
+      },
+      "grades": {
+        "bundles": 14,
+        "files": 56,
+        "bytes": 293753220,
+        "gzip_bytes": 53462027
+      },
+      "comparison": {
+        "bundles": 4,
+        "files": 8,
+        "bytes": 2773873,
+        "gzip_bytes": 344542
+      },
+      "validation": {
+        "bundles": 20,
+        "files": 40,
+        "bytes": 10137397,
+        "gzip_bytes": 1219005
+      },
+      "review": {
+        "bundles": 13,
+        "files": 52,
+        "bytes": 117832234,
+        "gzip_bytes": 14592265
+      },
+      "effort": {
+        "bundles": 11,
+        "files": 22,
+        "bytes": 13727109,
+        "gzip_bytes": 1810638
+      },
+      "hierarchy": {
+        "bundles": 250,
+        "files": 770,
+        "bytes": 7583553,
+        "gzip_bytes": 2533265
+      },
+      "inputs": {
+        "bundles": 5,
+        "files": 22,
+        "bytes": 71186478,
+        "gzip_bytes": 10586777
+      },
+      "numerical": {
+        "bundles": 91,
+        "files": 309,
+        "bytes": 115127806,
+        "gzip_bytes": 21644775
+      },
+      "performance": {
+        "bundles": 13,
+        "files": 47,
+        "bytes": 123534,
+        "gzip_bytes": 27852
+      },
+      "historical-prompt": {
+        "bundles": 41,
+        "files": 205,
+        "bytes": 7013338,
+        "gzip_bytes": 1088837
+      },
+      "standalone-prompt": {
+        "bundles": 2351,
+        "files": 7053,
+        "bytes": 152134001,
+        "gzip_bytes": 35503950
+      },
+      "historical-title": {
+        "bundles": 35,
+        "files": 175,
+        "bytes": 2995458,
+        "gzip_bytes": 881984
+      },
+      "representation": {
+        "bundles": 11,
+        "files": 33,
+        "bytes": 880381,
+        "gzip_bytes": 146702
+      },
+      "subject-mask": {
+        "bundles": 123,
+        "files": 615,
+        "bytes": 14109305,
+        "gzip_bytes": 2899941
+      },
+      "shared": {
+        "bundles": 1,
+        "files": 257,
+        "bytes": 69890044,
+        "gzip_bytes": 14801434
+      }
+    },
+    "excluded_unexecuted_preparations": 196,
+    "excluded_files": 588,
+    "excluded_source_bytes": 38541051,
+    "retained_ambiguous_snapshots": 3,
+    "retained_ambiguous_publications": [
+      "prompts/2fb80afb9bd1eda1af8a1182275dd27294bd8eeadc87cde13af785801647b9bc",
+      "prompts/463f3c1a1785ff0e2015388b294ef76edb9956737046dafa1aad9f8aedec5a86",
+      "prompts/79541a650e61366917d57121578f28b0f217086f366e6333827bd28983591814"
+    ],
+    "shared_values": 58232,
+    "shared_files": 256,
+    "shared_bytes": 66448175,
+    "dataset_manifest_bytes": 3441869,
+    "restored_source_bytes": 1139578836,
+    "original_sources_preserved": true,
+    "new_inference": false,
+    "uploads": false,
+    "original_bytes_verified_on_reconstruction": true,
+    "privacy_review": "Pending",
+    "historical_execution_evidence": "Local bound audit; private source paths are not uploaded",
+    "generator_sources": {
+      "sse_multivector/publication_dataset.py": "1a860b1f83fc2518b1812323869f3a16b11a0e8b45798b062d262ff1d14926bf",
+      "experiment-runner/experiment_runner/publication_dataset.py": "c24db5e9e742d180ee9f0243d1c193f1e33fc1bf2f3002d3c2348811bbaf3c62"
+    },
+    "tests_passed": {
+      "shared_runner": 25,
+      "project_cli_and_workflow": 9,
+      "total": 34
+    },
+    "preparation_peak_rss_kib": 108516,
+    "preparation_address_space_limit_bytes": 536870912
   }
 }

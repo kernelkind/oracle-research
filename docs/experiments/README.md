@@ -8,10 +8,11 @@ all 17 evaluated adapters on Hugging Face Models, and used inputs, parameters
 and final experiment results on Hugging Face Datasets. Compact exporters cover
 hierarchies, native prompt studies, validation answers, grading results and
 explicit numerical result families. Supported historical results have been
-converted locally; [selected exports](publications.csv), their
-[exact files](publication-files.csv) and [checksums](publication.sha256) are now
-indexed. [Legacy review items](publication-gaps.csv) remain explicit. Downloads
-are not available yet.
+converted locally and prepared as a shared dataset. [Selected bundles](publications.csv),
+their [upload files](publication-files.csv) and [checksums](publication.sha256)
+are indexed. Repeated content is stored once; the
+[reader commands](reproduce.md#check-the-converted-local-selection) verify the
+dataset and restore original compact exports. Downloads are not available yet.
 
 Start with the [37 official hierarchy runs](hierarchy.md). The index also covers
 four training runs, 17 adapter checkpoints, individual prompt jobs and older
@@ -37,11 +38,13 @@ remain historical evidence; raw source posts are not deprecated by that rule.
 
 ## What the lists record
 
-- [Publications](publications.csv): selected compact outputs, their source and
-  trial identities, format, measured size and selection evidence. Saved hierarchy
-  branches are outputs, not a count of independent trials.
+- [Publications](publications.csv): 2,988 selected output/input bundles plus one
+  shared-content row, with source identities, format, physical sizes and selection
+  evidence. These bundles are not a count of independent trials.
 - [Publication files](publication-files.csv) and [checksums](publication.sha256):
-  every selected local payload and metadata file, including exact prepared inputs.
+  all 9,684 physical upload files under `target/publication-dataset/`, including
+  shared content and `dataset.json`. The manifest also binds the original compact
+  export bytes recovered by restoration.
   The [conversion-gap list](publication-gaps.csv) is now empty. TRUE10's final
   graph is selected with its existing run configuration and plan.
   The 33 formerly unsupported entries now have selected final evidence or an
@@ -51,15 +54,16 @@ remain historical evidence; raw source posts are not deprecated by that rule.
   ASv6.100's final quality summary and four frozen agent rubrics are selected as
   original Markdown; the [study record](../../sse_multivector/subject-prompt-goal-v1/asv6.100-generalization-v1/README.md#publication-files)
   identifies their paths alongside the six existing answer/review bundles.
-- [Experiments](experiments.csv): 2,684 entries linked to selected results:
-  2,547 standalone prompt preparations, 37 official hierarchy runs, four training
+- [Experiments](experiments.csv): 2,488 entries linked to selected results:
+  2,351 native prompt entries, 37 official hierarchy runs, four training
   runs, 92 historical collections and four later-located historical prompt
   studies. These are different kinds of entries,
   not an additive count of independent experiments. Prompt IDs, model settings,
   case counts, provenance and plan/manifest identities are preserved. The
   publication columns link the corresponding compact exports. Internal jobs,
-  warmups and other unselected entries remain in the local audit; outstanding
-  historical evidence remains in [publication gaps](publication-gaps.csv).
+  warmups and other unselected entries remain in the local audit. The dataset
+  excludes 196 preparations proven never executed; three snapshots with ambiguous
+  execution history remain included without being declared executed.
   The historical collections include 33 title/description study groups with 506
   saved answers, recorded reviews and final selections. Their 24 failed attempts
   and reused answers remain distinguishable; see the
@@ -133,6 +137,8 @@ ID in the [publication catalog](publications.csv). Search that exact ID in the
 [file list](publication-files.csv) for its exported filenames and checksums.
 The catalog records the source and export format; a selected bundle can cover
 part of a study without recreating its original working directory.
+Upload files may contain numeric `$ref` references to shared content. Restore
+the compact export before using a consumer that expects its original JSON.
 
 These exports are still local. [Hosting and download preparation](downloads.md#before-downloads-become-available)
 remains open. [All reviewed conversion gaps](publication-gaps.csv) are closed;
@@ -157,8 +163,9 @@ generated-data rewrite is complete; privacy and identity review remains open.
 Hugging Face Models will host all 17 evaluated
 adapters (6.78 GiB). Hugging Face Datasets will host used posts, prepared training
 data, final unsigned hierarchies, standalone prompt answers, evaluation and
-numerical results, and each experiment's parameters. The selected local files
-currently measure 1.10 GiB; missing evidence and reproduction limits remain explicit.
+numerical results, and each experiment's parameters. The prepared shared dataset
+measures 839.26 MiB (0.82 GiB). The preserved source exports measured 1.10 GiB
+before exclusions and sharing; that is not the upload size.
 
 The [publication plan](downloads.md) defines those contents. The new
 [publication file list](publication-files.csv) describes the exact local
@@ -170,9 +177,10 @@ of the entire inventory. Original research files and the original Git history
 are preserved locally.
 
 Preserve original frozen plans, answers and receipts locally. Their complete
-working directories are not required public downloads. The current native
-receipt verifier checks original files; it is not a verifier for the intended
-compact outputs. Review exported data for sensitive information before release.
+working directories are not required public downloads. Use
+`verify-publication-dataset` for the shared package. Restoring it recovers compact
+exports, not native experiment directories or receipt packages. Review the
+actual upload files for sensitive information before release.
 
 ## Reproduction status
 

@@ -2,7 +2,8 @@
 
 **The hosting split and the following data categories are agreed.** Compact
 exporters cover the result families below. The supported historical selection
-has been converted locally and its exact files/checksums are indexed.
+has been converted locally and prepared as a shared dataset with indexed upload
+files and checksums.
 Reproduction limits, repository names and published download paths still need review.
 Nothing has been uploaded. The [generated-data history rewrite](#generated-data-history-rewrite)
 is complete; privacy and identity review remains open.
@@ -11,11 +12,11 @@ is complete; privacy and identity review remains open.
 | --- | --- |
 | GitHub | Code and its history, tests, prompts and their provenance, authored findings, useful documentation, the selected-study index and commit mapping; download size unmeasured |
 | Hugging Face Models | All 17 evaluated adapters, with configurations and pinned base-model references: **6.78 GiB** |
-| Hugging Face Datasets | Posts actually used, prepared training data, final unsigned hierarchies, standalone prompt answers, evaluation results, final numerical results and each experiment's parameters: **1.10 GiB currently staged**, with all reviewed conversion gaps closed |
+| Hugging Face Datasets | Posts actually used, prepared training data, final unsigned hierarchies, standalone prompt answers, evaluation results, final numerical results and parameters: **839.26 MiB (0.82 GiB) prepared locally**, with repeated content stored once |
 
 The GitHub index will link each experiment to its inputs and results at exact
 Hugging Face revisions, with checksums. Readers should be able to download the
-experiments they need independently. Model and dataset files will be hosted on
+bundles they need with their referenced shared files. Model and dataset files will be hosted on
 Hugging Face; GitHub Release attachments are not the delivery plan.
 
 ## Public Git contents
@@ -67,6 +68,9 @@ the shared evaluation documents in their publication notes.
 The final hierarchy/navigation/performance batch adds eight collection rows:
 three restored from the original index and five identified by their saved
 sources and selection specifications. Existing study settings stay unchanged.
+The dataset selection removes 196 native preparations proven never executed
+from that index, leaving 2,488 entries. Three ambiguous snapshots remain
+included with unknown execution history. Original files are preserved.
 `publications.csv` also indexes the selected
 numerical and other
 results; `publication-gaps.csv` keeps outstanding evidence review explicit.
@@ -154,18 +158,30 @@ internal construction responses, optimizer state and upstream model copies
 outside the publication by default. Preserve their originals locally. Complete
 original-run verification does not determine which files belong in the public
 results. Missing historical evidence and incomplete runs must remain explicit.
+Preparations proven never executed are excluded. An all-unrun saved report alone
+is insufficient proof: packaging requires bound execution evidence, rechecked
+against originals, and refuses unclassified or changed evidence.
 
 ## Measured local exports
 
-[Publications](publications.csv) identifies the selected results;
-[publication-files.csv](publication-files.csv) lists every file, size and SHA-256.
-[publication.sha256](publication.sha256) is the corresponding checksum list.
-The ignored local staging root is `target/publication-exports/`. No public
-download or Hugging Face revision has been created.
+[Publications](publications.csv) identifies 2,988 output/input bundles and one
+shared-content catalog row. [Publication files](publication-files.csv) and
+[checksums](publication.sha256) describe the **physical upload files** under
+`target/publication-dataset/`. The original exports remain unchanged under
+`target/publication-exports/`. No public download or Hugging Face revision exists.
+
+Repeated values are stored once in `shared/`. Numeric references such as
+`{"$ref":123}` identify shared records containing `id`, full `sha256` and `value`.
+The 256 shared files contain 58,232 values used by 402,200 references.
+`dataset.json` binds both physical file hashes and the original compact-export
+hashes. Verification checks references and reconstructed bytes; restoration
+recovers the original compact files exactly. See the
+[prepare, verify and restore commands](reproduce.md#check-the-converted-local-selection).
+The category sizes below exclude content charged once to the shared row.
 
 | Data | Selected outputs | Uncompressed size |
 | --- | ---: | ---: |
-| Standalone prompt studies: inputs, final answers and reviews | 2,547 prepared trials | 249.46 MiB |
+| Standalone prompt studies: inputs, final answers and reviews | 2,351 entries, including three execution-unknown snapshots | 145.09 MiB |
 | Historical subject-prompt studies: posts, answers, assessments and measurements | Four studies, 78 calls and 10 distinct posts | 0.36 MiB |
 | Additional historical subject/mask evidence: inputs, answers, assessments, corrections and parameters | Six collections, 123 study/review entries and 1,965 saved responses | 13.46 MiB |
 | Early/standalone prompt and manual prominence evidence | 22 collections, 24 entries and 514 saved final answers | 2.33 MiB |
@@ -173,20 +189,35 @@ download or Hugging Face revision has been created.
 | Frontier model comparisons: answers, inputs, parameters, reviews and measurements | 13 entries, 233 completed answers and three saved partial answers | 4.00 MiB |
 | SSE representation studies: final comparisons, fixed inputs and encoder settings | 11 collections, 381 encoded row identities | 0.84 MiB |
 | ASv6.100 evaluation documents | Final quality summary and four frozen agent rubrics, shared by three trials | 0.09 MiB |
-| Fine-tune, grading and effort evaluations | 67 final/last reports, including 20 validation stages | 665.12 MiB |
+| Fine-tune, grading and effort evaluations | 67 final/last reports, including 20 validation stages | 418.56 MiB |
 | Historical numerical results, including segmentations, archived baselines, Infomap partitions and navigation studies | 91 bundles | 109.79 MiB |
 | Performance measurements | 13 bundles | 0.12 MiB |
 | Unsigned hierarchies, selections and parameters | 37 official runs, 203 saved branch outputs and 10 further historical hierarchies | 7.23 MiB |
 | Used posts, prepared training inputs, manual reference fixtures and adapter hash records | 10,571 shared posts, four prepared files, two reference fixtures, split/settings records and 17 adapter bindings | 67.89 MiB |
-| **Selected non-model files** | **10,015 files** | **1,123.54 MiB (1.10 GiB)** |
+| Shared content and dataset manifest | 256 shared files plus `dataset.json` | 66.65 MiB |
+| **Physical dataset files** | **9,684 files** | **839.26 MiB (0.82 GiB)** |
 | **All 17 evaluated adapters, weights and configurations** | **34 original files, hashed without copying weights** | **6.78 GiB** |
 
-The exact selected non-model total is **1,178,119,887 bytes**. Together with
-the adapter weights/configurations it is **8,458,207,656 bytes (7.88 GiB)**.
-Code and cleaned Git history are additional. Measured gzip level-6 compression
-of each non-model file totals **168,260,249 bytes (160.47 MiB)**; no compressed
-downloads were created and the staged files remain in their original export
-formats.
+The exact physical dataset total is **880,030,429 bytes**, including the
+**3,441,869-byte** dataset manifest. Together with the unchanged adapter files,
+it is **8,160,118,198 bytes (7.60 GiB)**. Code and cleaned Git history are additional.
+Measured per-file gzip level-6 compression totals **161,706,630 bytes
+(154.22 MiB)**; no compressed downloads were created.
+
+The package includes 9,427 original compact-export paths, 256 shared files and
+the manifest. It excludes 196 proven unexecuted preparations: 588 source-export
+files totaling 38,541,051 bytes. Three ambiguous snapshots remain included.
+The included original compact files total 1,139,578,836 bytes before sharing;
+their gzip measurement is 163,807,547 bytes. Sharing therefore reduces raw size
+much more than compressed size.
+
+### Original export checkpoints
+
+The preserved source-export checkpoint contains 10,015 files totaling
+1,178,119,887 bytes (1.10 GiB), or 168,260,249 bytes with gzip level 6.
+Those originals were not altered or deleted. The backfill measurements below
+describe original compact exports before dataset selection and sharing, not
+additional upload files or the current upload size.
 
 The five original evaluation documents retain their Markdown bytes and relative
 paths under `evaluations/asv6.100-generalization-v1/`. Their checksums are listed
@@ -244,7 +275,9 @@ resolved 32 groups needing no separate result export. The other 77 are now
 selected: 33 title/description groups, 11 SSE representation groups, six
 subject/mask groups, 22 early/standalone prompt groups, four
 segmentation/title/frontier groups and one archived-baseline group.
-All 27,032 native jobs have been classified: 2,547 standalone trials are retained; warmups,
+All 27,032 native jobs were classified at the source-export checkpoint, which
+selected 2,547 standalone preparations. The dataset retains 2,351 after the
+196 verified exclusions; warmups,
 internal execution jobs, manual construction intermediates and input-only
 preparations are excluded. Independent repeats remain distinct, and reused
 answers retain their reuse records. The 203 saved hierarchy branches are not
@@ -256,7 +289,7 @@ only by receipt hashes are explicitly labeled `receipt_only`; missing actor
 attribution stays `not_recorded`. Privacy review and
 testing the reader workflow against this exact selection remain open.
 
-The shared used-post file contains 10,571 IDs and measures 3.80 MiB as compact
+The original used-post file contains 10,571 IDs and measures 3.80 MiB as compact
 ID/text JSONL. The four historical prompt studies also include their 10 used
 posts in their own inputs; three are absent from that shared file. Some older
 unstructured records remain incompletely linked, so
@@ -397,6 +430,10 @@ publication. Final evaluation exports retain their supporting judgments.
 Revisions inherit their source role.
 Unmarked historical plans require explicit export or an explicit role when
 preparing a new revision; their frozen originals are not changed.
+Native exporters still preserve preparation snapshots. Dataset preparation is
+the separate step that excludes proven never-executed preparations. All-unrun
+snapshots require fresh bound evidence through `--selection`; unknown evidence
+remains explicit, and unclassified or stale evidence stops preparation.
 
 Historical export streams the saved report and binds its hash and ordered input
 selection. It requires that report and does not reconstruct missing outcomes.
@@ -489,13 +526,14 @@ for a study:
 | Table | Current role |
 | --- | --- |
 | [experiments.csv](experiments.csv) | Selected studies with prompt/model settings, provenance and links to compact exports; rows are not an additive count of independent trials |
-| [publications.csv](publications.csv) | Selected output formats, source/trial identities, sizes and coverage qualifications |
-| [publication-files.csv](publication-files.csv) and [publication.sha256](publication.sha256) | Exact selected payload and metadata paths, sizes and checksums |
+| [publications.csv](publications.csv) | Included bundle identities, physical sizes and coverage qualifications, plus one shared-content row |
+| [publication-files.csv](publication-files.csv) and [publication.sha256](publication.sha256) | Physical dataset upload paths, sizes and checksums, including shared content and `dataset.json` |
 | [publication-gaps.csv](publication-gaps.csv) | Conversion-gap record; currently no open rows |
 | [models.csv](models.csv) | All 17 evaluated adapter checkpoints and their pinned base-model references |
 | [historical-files.csv](historical-files.csv) and [historical-uses.csv](historical-uses.csv) | Original artifact blobs and commit associations from the pre-rewrite audit |
 
-These tables describe local selected exports. Final Hugging Face repository
+These tables describe the prepared local dataset. `dataset.json` also records
+the exact original compact files recoverable by restoration. Final Hugging Face repository
 names, revision links, hosted file layout and compression choices remain open.
 
 ## Local audit copy
