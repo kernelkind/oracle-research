@@ -1,0 +1,426 @@
+{
+  "schema_version": 1,
+  "studies": {
+    "crec-119-500-note-vector-v1": {
+      "profile": "baseline-study",
+      "kind": "crec",
+      "archive": {
+        "path": "sse_multivector/baselines/crec-119-500-note-vector-v1/baseline.tar.zst",
+        "sha256": "34f8a501bcedc6250227d4b4e37da3cd86283aa4dff13ef1e89ec2260613737e"
+      },
+      "members": {
+        "posts": {
+          "member": "target/crec-119-500-note-v1/input/notes.json",
+          "member_sha256": "b5e4665644c2229698cc795399c3510a8ce1535ce13b45382d2d76f50dbdc8d4",
+          "source": {
+            "path": "target/crec-119-500-note-v1/input/notes.json",
+            "sha256": "b5e4665644c2229698cc795399c3510a8ce1535ce13b45382d2d76f50dbdc8d4"
+          }
+        },
+        "input_manifest": {
+          "member": "target/crec-119-500-note-v1/input/manifest.json",
+          "member_sha256": "ac261ae464a89f968c11ac0a9655ea1b25c279afb92d336b508c967e9fb2802e",
+          "source": {
+            "path": "target/crec-119-500-note-v1/input/manifest.json",
+            "sha256": "ac261ae464a89f968c11ac0a9655ea1b25c279afb92d336b508c967e9fb2802e"
+          }
+        },
+        "generation": {
+          "member": "target/crec-119-500-note-v1/generation/manifest.json",
+          "member_sha256": "1767647b9efe77213c648de9f9a727ed11c29755df9d0f0441704ebece5685bb",
+          "source": {
+            "path": "target/crec-119-500-note-v1/generation/manifest.json",
+            "sha256": "1767647b9efe77213c648de9f9a727ed11c29755df9d0f0441704ebece5685bb"
+          }
+        },
+        "answers": {
+          "member": "target/crec-119-500-note-v1/generation/output.json",
+          "member_sha256": "1f597ac1c8eef823efa78560e205e4ff5ea6926b08e132e32021f2b61c8308f2",
+          "source": {
+            "path": "target/crec-119-500-note-v2/reuse-source-v1/generation/output.json",
+            "sha256": "1f597ac1c8eef823efa78560e205e4ff5ea6926b08e132e32021f2b61c8308f2"
+          }
+        },
+        "segments": {
+          "member": "target/crec-119-500-note-v1/fine-segments/segments.json",
+          "member_sha256": "20743474121ee35bdf44142ea1eb1199bbcec4bbab68cc7e563d64ebbb25c1a5",
+          "source": {
+            "path": "target/crec-119-500-note-v1/fine-segments/segments.json",
+            "sha256": "20743474121ee35bdf44142ea1eb1199bbcec4bbab68cc7e563d64ebbb25c1a5"
+          }
+        },
+        "segment_manifest": {
+          "member": "target/crec-119-500-note-v1/fine-segments/manifest.json",
+          "member_sha256": "be8027f7b8c4bf95fb37ed19016e7429038d409a502d56d438f01bd7863ca894",
+          "source": {
+            "path": "target/crec-119-500-note-v1/fine-segments/manifest.json",
+            "sha256": "be8027f7b8c4bf95fb37ed19016e7429038d409a502d56d438f01bd7863ca894"
+          }
+        },
+        "vector_map": {
+          "member": "target/crec-119-500-note-v1/vector-artifact/vector-map.json",
+          "member_sha256": "ea754c5693e6bd6c1570d97aacfc057742e33f0134d63be8c961c3413a84bc19",
+          "source": {
+            "path": "target/crec-119-500-note-v1/vector-artifact/vector-map.json",
+            "sha256": "ea754c5693e6bd6c1570d97aacfc057742e33f0134d63be8c961c3413a84bc19"
+          }
+        },
+        "vector_manifest": {
+          "member": "target/crec-119-500-note-v1/vector-artifact/manifest.json",
+          "member_sha256": "122fc15c0ba9225abf1361aa6f1bb4279c7725d5cc49aa90b06d66217f41092a",
+          "source": {
+            "path": "target/crec-119-500-note-v1/vector-artifact/manifest.json",
+            "sha256": "122fc15c0ba9225abf1361aa6f1bb4279c7725d5cc49aa90b06d66217f41092a"
+          }
+        },
+        "prepared_manifest": {
+          "member": "target/crec-119-500-note-v1/sse-prepared/manifest.json",
+          "member_sha256": "36392b897cb1ac0092aedb6a3d3c0409566f18b103a6e4deab10a9507391d215",
+          "source": {
+            "path": "target/crec-119-500-note-v1/sse-prepared/manifest.json",
+            "sha256": "36392b897cb1ac0092aedb6a3d3c0409566f18b103a6e4deab10a9507391d215"
+          }
+        },
+        "encoder": {
+          "member": "target/crec-119-500-note-v1/sse-prepared/worker-config.json",
+          "member_sha256": "26ba3ea3e4001562b6ab6d5b7c6d992cc927093123a56a7f1115a387c37f38ca",
+          "source": {
+            "path": "target/crec-119-500-note-v1/sse-prepared/worker-config.json",
+            "sha256": "26ba3ea3e4001562b6ab6d5b7c6d992cc927093123a56a7f1115a387c37f38ca"
+          }
+        },
+        "request": {
+          "member": "target/crec-119-500-note-v1/sse-prepared/worker-input.json",
+          "member_sha256": "c23155acd4fc7b7ed3ff531c21c20288cb1aeab06fcef47e24ca05544f2063ee",
+          "source": {
+            "path": "target/crec-119-500-note-v1/sse-prepared/worker-input.json",
+            "sha256": "c23155acd4fc7b7ed3ff531c21c20288cb1aeab06fcef47e24ca05544f2063ee"
+          }
+        },
+        "input_configuration": {
+          "member": "semantic_map/crec-119-generation-input-v1.json",
+          "member_sha256": "eeb4a1f1ecbdccb57192ea90b64c0f6d827de5aed9d5246c8d7a66fa0153d57d",
+          "source": {
+            "path": "semantic_map/crec-119-generation-input-v1.json",
+            "sha256": "eeb4a1f1ecbdccb57192ea90b64c0f6d827de5aed9d5246c8d7a66fa0153d57d"
+          }
+        },
+        "generation_configuration": {
+          "member": "sse_multivector/crec-119-generation-v1.json",
+          "member_sha256": "527a8c7fcf5770b40c03d05d1667b1f334bded6728715a2781c64fbe106fe24c",
+          "source": {
+            "path": "sse_multivector/crec-119-generation-v1.json",
+            "sha256": "527a8c7fcf5770b40c03d05d1667b1f334bded6728715a2781c64fbe106fe24c"
+          }
+        },
+        "segment_configuration": {
+          "member": "sse_multivector/crec-119-segments-v1.json",
+          "member_sha256": "6869525788313dd0492462653da42cc570e49d99f295b84b88f6d663735d44f5",
+          "source": {
+            "path": "sse_multivector/crec-119-segments-v1.json",
+            "sha256": "6869525788313dd0492462653da42cc570e49d99f295b84b88f6d663735d44f5"
+          }
+        },
+        "vector_configuration": {
+          "member": "sse_multivector/crec-119-vector-v1.json",
+          "member_sha256": "b3307e21053a7a8d9f6dd614e8f0daf0a2f219b5843b6a737535cc95d5433407",
+          "source": {
+            "path": "sse_multivector/crec-119-vector-v1.json",
+            "sha256": "b3307e21053a7a8d9f6dd614e8f0daf0a2f219b5843b6a737535cc95d5433407"
+          }
+        }
+      }
+    },
+    "crec-119-500-note-vector-v2": {
+      "profile": "baseline-study",
+      "kind": "crec",
+      "archive": {
+        "path": "sse_multivector/baselines/crec-119-500-note-vector-v2/baseline.tar.zst",
+        "sha256": "086dbfec4116f345f1abc7f4e69fa9298a2a2eafa0d135993ae0c9c31db62208"
+      },
+      "members": {
+        "posts": {
+          "member": "target/crec-119-500-note-v2/input/notes.json",
+          "member_sha256": "af1f82719003ed73aea0f569c0a936733a95f6c366d4d95e1436c7cebae9b5d1",
+          "source": {
+            "path": "target/crec-119-500-note-v2/input/notes.json",
+            "sha256": "af1f82719003ed73aea0f569c0a936733a95f6c366d4d95e1436c7cebae9b5d1"
+          }
+        },
+        "input_manifest": {
+          "member": "target/crec-119-500-note-v2/input/manifest.json",
+          "member_sha256": "5148eb02167bfe5cab15017895a29b0d3897c671b5f8cd1a2683e8ab561390d2",
+          "source": {
+            "path": "target/crec-119-500-note-v2/input/manifest.json",
+            "sha256": "5148eb02167bfe5cab15017895a29b0d3897c671b5f8cd1a2683e8ab561390d2"
+          }
+        },
+        "generation": {
+          "member": "target/crec-119-500-note-v2/generation/manifest.json",
+          "member_sha256": "6a4e97faafc6e926a51f4dba5cfbf5c0933c713d84122debca2ea493293bba84",
+          "source": {
+            "path": "target/crec-119-500-note-v2/generation/manifest.json",
+            "sha256": "6a4e97faafc6e926a51f4dba5cfbf5c0933c713d84122debca2ea493293bba84"
+          }
+        },
+        "answers": {
+          "member": "target/crec-119-500-note-v2/generation/output.json",
+          "member_sha256": "c73019c8f6b31e57732997e951cc0249d9e63be90916963c5e4d14093364e0f3",
+          "source": {
+            "path": "target/crec-119-500-note-v2/generation/output.json",
+            "sha256": "c73019c8f6b31e57732997e951cc0249d9e63be90916963c5e4d14093364e0f3"
+          }
+        },
+        "segments": {
+          "member": "target/crec-119-500-note-v2/fine-segments/segments.json",
+          "member_sha256": "3370f3b330406d15dc82148e30fd039f29688041efc13466285ac100effef6d0",
+          "source": {
+            "path": "target/crec-119-500-note-v2/fine-segments/segments.json",
+            "sha256": "3370f3b330406d15dc82148e30fd039f29688041efc13466285ac100effef6d0"
+          }
+        },
+        "segment_manifest": {
+          "member": "target/crec-119-500-note-v2/fine-segments/manifest.json",
+          "member_sha256": "fb45f328c52c39cf6de4544440ef9133d7abe238fde85db1bc0e5ab27233d502",
+          "source": {
+            "path": "target/crec-119-500-note-v2/fine-segments/manifest.json",
+            "sha256": "fb45f328c52c39cf6de4544440ef9133d7abe238fde85db1bc0e5ab27233d502"
+          }
+        },
+        "vector_map": {
+          "member": "target/crec-119-500-note-v2/vector-artifact/vector-map.json",
+          "member_sha256": "707d11ca0a14114c28a2184362e4a6a9ed05491b8106bb4c3785ca7194f05ecd",
+          "source": {
+            "path": "target/crec-119-500-note-v2/vector-artifact/vector-map.json",
+            "sha256": "707d11ca0a14114c28a2184362e4a6a9ed05491b8106bb4c3785ca7194f05ecd"
+          }
+        },
+        "vector_manifest": {
+          "member": "target/crec-119-500-note-v2/vector-artifact/manifest.json",
+          "member_sha256": "17a7c5dcb615b2e6deca165a502a129cd6d9829eef837cd4a4f015a78acc1b60",
+          "source": {
+            "path": "target/crec-119-500-note-v2/vector-artifact/manifest.json",
+            "sha256": "17a7c5dcb615b2e6deca165a502a129cd6d9829eef837cd4a4f015a78acc1b60"
+          }
+        },
+        "prepared_manifest": {
+          "member": "target/crec-119-500-note-v2/sse-prepared/manifest.json",
+          "member_sha256": "c138ab2c2cc6e5ff5906f68c234efc8962e4180433d318b7f063b8e5c5e9412c",
+          "source": {
+            "path": "target/crec-119-500-note-v2/sse-prepared/manifest.json",
+            "sha256": "c138ab2c2cc6e5ff5906f68c234efc8962e4180433d318b7f063b8e5c5e9412c"
+          }
+        },
+        "encoder": {
+          "member": "target/crec-119-500-note-v2/sse-prepared/worker-config.json",
+          "member_sha256": "726e59907766e7a7068c345214cb32e00e53447d24daa6b0556c626d0c236e34",
+          "source": {
+            "path": "target/crec-119-500-note-v2/sse-prepared/worker-config.json",
+            "sha256": "726e59907766e7a7068c345214cb32e00e53447d24daa6b0556c626d0c236e34"
+          }
+        },
+        "request": {
+          "member": "target/crec-119-500-note-v2/sse-prepared/worker-input.json",
+          "member_sha256": "5fe79963de39f75322699181bc93195d7e4fb48ca8ba3294b0ebce30402f163b",
+          "source": {
+            "path": "target/crec-119-500-note-v2/sse-prepared/worker-input.json",
+            "sha256": "5fe79963de39f75322699181bc93195d7e4fb48ca8ba3294b0ebce30402f163b"
+          }
+        },
+        "input_configuration": {
+          "member": "semantic_map/crec-119-generation-input-v2.json",
+          "member_sha256": "cb987498ba9237b25112e3938a27abddb684f394535bd20794858a383265e142",
+          "source": {
+            "path": "semantic_map/crec-119-generation-input-v2.json",
+            "sha256": "cb987498ba9237b25112e3938a27abddb684f394535bd20794858a383265e142"
+          }
+        },
+        "generation_configuration": {
+          "member": "sse_multivector/crec-119-generation-v2.json",
+          "member_sha256": "faa9aeafb2b44765f78b2900378a42b93bc2775d0183766e1b79090446ae24ee",
+          "source": {
+            "path": "sse_multivector/crec-119-generation-v2.json",
+            "sha256": "faa9aeafb2b44765f78b2900378a42b93bc2775d0183766e1b79090446ae24ee"
+          }
+        },
+        "segment_configuration": {
+          "member": "sse_multivector/crec-119-segments-v2.json",
+          "member_sha256": "6a323bfaa62540d9ee0f075c527e211c3367821bc8671827071ce5f2585754dc",
+          "source": {
+            "path": "sse_multivector/crec-119-segments-v2.json",
+            "sha256": "6a323bfaa62540d9ee0f075c527e211c3367821bc8671827071ce5f2585754dc"
+          }
+        },
+        "vector_configuration": {
+          "member": "sse_multivector/crec-119-vector-v2.json",
+          "member_sha256": "85268c7bc92d90d58da65526609315fcf20c3f212628dfde900fdc8188e369e6",
+          "source": {
+            "path": "sse_multivector/crec-119-vector-v2.json",
+            "sha256": "85268c7bc92d90d58da65526609315fcf20c3f212628dfde900fdc8188e369e6"
+          }
+        },
+        "baseline_posts": {
+          "member": "target/crec-119-500-note-v2/reuse-source-v1/input/notes.json",
+          "member_sha256": "b5e4665644c2229698cc795399c3510a8ce1535ce13b45382d2d76f50dbdc8d4",
+          "source": {
+            "path": "target/crec-119-500-note-v2/reuse-source-v1/input/notes.json",
+            "sha256": "b5e4665644c2229698cc795399c3510a8ce1535ce13b45382d2d76f50dbdc8d4"
+          }
+        },
+        "baseline_answers": {
+          "member": "target/crec-119-500-note-v2/reuse-source-v1/generation/output.json",
+          "member_sha256": "1f597ac1c8eef823efa78560e205e4ff5ea6926b08e132e32021f2b61c8308f2",
+          "source": {
+            "path": "target/crec-119-500-note-v2/reuse-source-v1/generation/output.json",
+            "sha256": "1f597ac1c8eef823efa78560e205e4ff5ea6926b08e132e32021f2b61c8308f2"
+          }
+        },
+        "baseline_generation": {
+          "member": "target/crec-119-500-note-v2/reuse-source-v1/generation/manifest.json",
+          "member_sha256": "1767647b9efe77213c648de9f9a727ed11c29755df9d0f0441704ebece5685bb",
+          "source": {
+            "path": "target/crec-119-500-note-v2/reuse-source-v1/generation/manifest.json",
+            "sha256": "1767647b9efe77213c648de9f9a727ed11c29755df9d0f0441704ebece5685bb"
+          }
+        }
+      }
+    },
+    "communicated-meaning-tev4-1": {
+      "profile": "baseline-study",
+      "kind": "geometry",
+      "archive": {
+        "path": "sse_multivector/baselines/communicated-meaning-tev4-1/baseline.tar.zst",
+        "sha256": "fff03a8b1ed76e45413def0049cdd9fc3c948ae014d5ac94d72fa62f41f8cfa6"
+      },
+      "members": {
+        "analysis": {
+          "member": "./analysis/analysis.json",
+          "member_sha256": "4fafc54d85fbc4e990b2bc9bbf0d515954ba0ad29183dc2e4d3393cda3bbcf27",
+          "source": {
+            "path": "target/sse-communicated-meaning-tev4.1/analysis/analysis.json",
+            "sha256": "4fafc54d85fbc4e990b2bc9bbf0d515954ba0ad29183dc2e4d3393cda3bbcf27"
+          }
+        },
+        "manifest": {
+          "member": "./analysis/manifest.json",
+          "member_sha256": "0174db8bed425446d7e8bfacfbbd5d4bb2084cdb28c3a6178452f4e1cb6917bc",
+          "source": {
+            "path": "target/sse-communicated-meaning-tev4.1/analysis/manifest.json",
+            "sha256": "0174db8bed425446d7e8bfacfbbd5d4bb2084cdb28c3a6178452f4e1cb6917bc"
+          }
+        },
+        "request": {
+          "member": "./worker-input.json",
+          "member_sha256": "247d19d1a390778fa729c95b10960e088fa002844fe19ef7c3b0726041407db2",
+          "source": {
+            "path": "target/sse-communicated-meaning-tev4.1/worker-input.json",
+            "sha256": "247d19d1a390778fa729c95b10960e088fa002844fe19ef7c3b0726041407db2"
+          }
+        },
+        "encoder": {
+          "member": "./sse-config.json",
+          "member_sha256": "94c25fa74ca02169c586372d43e25fd19a3fd2890652e5c4e906599b8c88aa55",
+          "source": {
+            "path": "target/sse-communicated-meaning-tev4.1/sse-config.json",
+            "sha256": "94c25fa74ca02169c586372d43e25fd19a3fd2890652e5c4e906599b8c88aa55"
+          }
+        },
+        "proposal": {
+          "member": "./proposal.json",
+          "member_sha256": "dd351d768ce048d543c950f89c2c9e11e937127e45dca442c0970145d9d24426",
+          "source": {
+            "path": "target/sse-communicated-meaning-tev4.1/proposal.json",
+            "sha256": "dd351d768ce048d543c950f89c2c9e11e937127e45dca442c0970145d9d24426"
+          }
+        },
+        "generation": {
+          "member": "./generation/manifest.json",
+          "member_sha256": "24261aebd5785bb55604050400b1855c7dc17a09c534e29292a9fcae2530acba",
+          "source": {
+            "path": "target/sse-communicated-meaning-tev4.1/generation/manifest.json",
+            "sha256": "24261aebd5785bb55604050400b1855c7dc17a09c534e29292a9fcae2530acba"
+          }
+        },
+        "generation_assembly": {
+          "member": "./generation-manifest.json",
+          "member_sha256": "a57f4ea2f3293694dab969f0ac1a9e1b50edff4019aa000af4c339fedb015700",
+          "source": {
+            "path": "target/sse-communicated-meaning-tev4.1/generation-manifest.json",
+            "sha256": "a57f4ea2f3293694dab969f0ac1a9e1b50edff4019aa000af4c339fedb015700"
+          }
+        },
+        "generation_shard_b": {
+          "member": "./shard-b/generation/manifest.json",
+          "member_sha256": "e98df0e9251d03d483f784a346231b81ec677dd753a6104707c64829ee492f42",
+          "source": {
+            "path": "target/sse-communicated-meaning-tev4.1/shard-b/generation/manifest.json",
+            "sha256": "e98df0e9251d03d483f784a346231b81ec677dd753a6104707c64829ee492f42"
+          }
+        },
+        "generation_shard_c": {
+          "member": "./shard-c/generation/manifest.json",
+          "member_sha256": "5e715aa995e0be464e322a7072282266fbbe461e4bfbdce5abb390072b815041",
+          "source": {
+            "path": "target/sse-communicated-meaning-tev4.1/shard-c/generation/manifest.json",
+            "sha256": "5e715aa995e0be464e322a7072282266fbbe461e4bfbdce5abb390072b815041"
+          }
+        }
+      },
+      "reused_answers": {
+        "publication": "numerical/fine-region-00d974f22ed8935f",
+        "source_id": "8df99b341c8838bf97b6115b1d69f138ecc07f7a5d8ee03e07c90910bee30fe2",
+        "payload": "inputs.jsonl",
+        "sha256": "6de88211dd1f4350dcf12f506a2e23dc9aff24897815a6251564fe4b85603c4f",
+        "records": 194,
+        "notes": 50,
+        "status": "All194 final answer/mask input records already selected; reused as geometry identities, with no new answer records."
+      }
+    },
+    "narrowest-subject-v1": {
+      "profile": "baseline-study",
+      "kind": "geometry",
+      "archive": {
+        "path": "sse_multivector/baselines/narrowest-subject-v1/baseline.tar.zst",
+        "sha256": "04f828b1bf35a8ffba64ff209ca19742859694447a79c9bbd013cd2262f3aab8"
+      },
+      "members": {
+        "analysis": {
+          "member": "analysis/analysis.json",
+          "member_sha256": "39dcea2c4d6d56c9100231f4b90ddafc6652a7667aed0f51cf3f5f6209805608",
+          "source": {
+            "path": "target/sse-multivector-diagnostic-v1/analysis/analysis.json",
+            "sha256": "39dcea2c4d6d56c9100231f4b90ddafc6652a7667aed0f51cf3f5f6209805608"
+          }
+        },
+        "manifest": {
+          "member": "analysis/manifest.json",
+          "member_sha256": "e5432a1314a64e3fc9317d45d3d06996a339ecfea41a76e1c878d8e0d7a7b78b",
+          "source": {
+            "path": "target/sse-multivector-diagnostic-v1/analysis/manifest.json",
+            "sha256": "e5432a1314a64e3fc9317d45d3d06996a339ecfea41a76e1c878d8e0d7a7b78b"
+          }
+        },
+        "request": {
+          "member": "worker-input.json",
+          "member_sha256": "efdc549adadf2e4fb0b5812894ae09c94510571d2ed8b5b01494095456ffd3b7",
+          "source": {
+            "path": "target/sse-multivector-diagnostic-v1/worker-input.json",
+            "sha256": "efdc549adadf2e4fb0b5812894ae09c94510571d2ed8b5b01494095456ffd3b7"
+          }
+        },
+        "encoder": {
+          "member": "config.json",
+          "member_sha256": "5a5ec0b711528ddcde2a8c66501a62435491fa784099586dec8f0289bca23b04",
+          "source": {
+            "path": "target/sse-multivector-diagnostic-v1/config.json",
+            "sha256": "5a5ec0b711528ddcde2a8c66501a62435491fa784099586dec8f0289bca23b04"
+          }
+        }
+      },
+      "proposal": {
+        "path": "sse_multivector/subject-mask-proposal-v3.json",
+        "sha256": "9016cfbaafa43d3fec8286590941c91c2fd6ae8dc488e432317764dc4c2605ae"
+      }
+    }
+  }
+}

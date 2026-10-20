@@ -147,8 +147,8 @@ Original plans and results were not modified.
   not a completed reproduction test.
 
 [Remaining publication items](publication-gaps.csv) record unsupported results,
-the missing configuration and final evidence identified by the historical
-collection review below. Duplicate native jobs, warmups and reused answers must
+and the missing configuration. The historical collection review below is resolved
+for its selected final evidence. Duplicate native jobs, warmups and reused answers must
 not be counted as independent trials.
 
 ### Historical collection review
@@ -157,18 +157,16 @@ The 2026-10-20 review checked all **109 older inventory groups**, comparing thei
 listed files and exact related source directories with the selected exports.
 **32 groups need no separate result export:** 30 have their listed material
 retained in Git, one records a blocked attempt with no generated answers, and
-one is a proposal whose inputs duplicate its executed sibling. The executed
-sibling still needs an export. This resolves those collection-level gaps; it
+one is a proposal whose inputs duplicate its executed sibling. This resolves
+those collection-level gaps; it
 does not resolve the separate placement review of the 196 ambiguous Git files.
 
 The 33 HDB title/description groups, 11 SSE representation studies, six
 subject/mask collections, 22 early/standalone prompt collections and four
-segmentation/title/frontier collections are now selected as described below.
-The remaining **one group needs a final-evidence export**:
-
-| Collections | Groups | Evidence to retain |
-| --- | ---: | --- |
-| Archived baselines | 1 | Four CREC119 answer/segment files and two geometry diagnostics; the TEv4.1 answers are already covered by selected inputs |
+segmentation/title/frontier collections, plus one archived-baseline collection,
+now have selected final evidence: **77 groups** in total. No collection-level
+export gap remains from this review. The separate **33 unsupported results and
+one missing configuration** still need resolution.
 
 The current-baseline omission found in this review is now resolved. The six
 selected **ASv6.100** native bundles retain 180 valid answers and their saved
@@ -201,10 +199,29 @@ decisions separately from agent assessments.
 The review itself made no additional exports or changes to original records.
 The five ASv6.100 documents, 33 title/description study groups, 11 SSE
 representation studies, six subject/mask collections, 22 early/standalone
-prompt collections and four segmentation/title/frontier collections were selected afterward; the
+prompt collections, four segmentation/title/frontier collections and one
+archived-baseline collection were selected afterward; the
 [measured totals](downloads.md#measured-local-exports) include them. The
-remaining-items table names concrete export requirements rather than treating
+remaining-items file names concrete export requirements rather than treating
 every old directory as an unexamined missing dataset.
+
+### Selected archived baseline evidence
+
+Four bundles retain final CREC answers and segments plus TEv4.1 and
+narrowest-subject geometry: **20 files, 6,196,469 bytes (5.91 MiB)**, or
+**1,218,841 bytes (1.16 MiB)** with gzip level 6. CREC answers are parsed,
+assembled note results; v2 reuse remains explicit. TEv4.1's existing answer
+inputs are linked without duplication. The two geometry exports preserve
+36,112 unique pair measurements and their diagnostics. Complete archives remain
+unchanged locally, outside the selected downloads.
+
+All **178 relevant tests** pass. All four actual exports pass under a 512 MiB
+worker address-space limit. The 50 selected originals (69,121,674 bytes), all
+98 independently audited originals and all 9,850 previously selected publication
+files remain unchanged. AS lineage remains unknown; these are historical
+results, not current-pipeline validation. See the
+[commands and source checks](reproduce.md#archived-baseline-checks).
+Nothing was uploaded. Final privacy review and hosted reader tests remain open.
 
 ### Selected segmentation, title and frontier evidence
 

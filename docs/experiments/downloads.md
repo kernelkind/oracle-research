@@ -11,7 +11,7 @@ is complete; privacy and identity review remains open.
 | --- | --- |
 | GitHub | Code and its history, tests, prompts and their provenance, authored findings, useful documentation, the selected-study index and commit mapping; download size unmeasured |
 | Hugging Face Models | All 17 evaluated adapters, with configurations and pinned base-model references: **6.78 GiB** |
-| Hugging Face Datasets | Posts actually used, prepared training data, final unsigned hierarchies, standalone prompt answers, evaluation results, final numerical results and each experiment's parameters: **1.08 GiB currently staged**, with legacy review items remaining |
+| Hugging Face Datasets | Posts actually used, prepared training data, final unsigned hierarchies, standalone prompt answers, evaluation results, final numerical results and each experiment's parameters: **1.08 GiB currently staged**, with unsupported/missing result review remaining |
 
 The GitHub index will link each experiment to its inputs and results at exact
 Hugging Face revisions, with checksums. Readers should be able to download the
@@ -61,7 +61,8 @@ evidence to original blobs, commits and paths. `experiments.csv` now retains the
 identities, settings and order, plus 33 later-selected title/description
 collections, 11 SSE representation collections, six subject/mask collections,
 22 early/standalone prompt collections, four segmentation/title/frontier
-collections and four later-located historical prompt studies. Six ASv6.100 rows additionally link
+collections, one archived-baseline collection and four later-located historical
+prompt studies. Six ASv6.100 rows additionally link
 the shared evaluation documents in their publication notes.
 `publications.csv` also indexes the selected
 numerical and other
@@ -170,17 +171,17 @@ download or Hugging Face revision has been created.
 | SSE representation studies: final comparisons, fixed inputs and encoder settings | 11 collections, 381 encoded row identities | 0.84 MiB |
 | ASv6.100 evaluation documents | Final quality summary and four frozen agent rubrics, shared by three trials | 0.09 MiB |
 | Fine-tune, grading and effort evaluations | 67 final/last reports, including 20 validation stages | 665.12 MiB |
-| Historical numerical results, including nine real-note segmentations | 74 bundles | 93.10 MiB |
+| Historical numerical results, including nine real-note segmentations and four archived baselines | 78 bundles | 99.01 MiB |
 | Performance measurements | 9 | 0.02 MiB |
 | Unsigned hierarchies, selections and parameters | 37 official runs plus 203 saved branch outputs | 5.35 MiB |
 | Used posts, prepared training inputs and adapter hash records | 10,571 posts, four prepared files, split/settings records and 17 adapter bindings | 67.87 MiB |
-| **Selected non-model files** | **9,850 files** | **1,104.85 MiB (1.08 GiB)** |
+| **Selected non-model files** | **9,870 files** | **1,110.76 MiB (1.08 GiB)** |
 | **All 17 evaluated adapters, weights and configurations** | **34 original files, hashed without copying weights** | **6.78 GiB** |
 
-The exact selected non-model total is **1,158,517,363 bytes**. Together with
-the adapter weights/configurations it is **8,438,605,132 bytes (7.86 GiB)**.
+The exact selected non-model total is **1,164,713,832 bytes**. Together with
+the adapter weights/configurations it is **8,444,801,601 bytes (7.86 GiB)**.
 Code and cleaned Git history are additional. Measured gzip level-6 compression
-of each non-model file totals **164,706,425 bytes (157.08 MiB)**; no compressed
+of each non-model file totals **165,925,266 bytes (158.24 MiB)**; no compressed
 downloads were created and the staged files remain in their original export
 formats.
 
@@ -213,16 +214,21 @@ answers link their existing publications. See the
 [title/segmentation checks](reproduce.md#fine-region-title-and-real-note-segmentation-checks)
 and [frontier checks](reproduce.md#frontier-comparison-checks).
 
+The four archived-baseline bundles add **20 files, 6,196,469 bytes (5.91 MiB)**,
+or **1,218,841 bytes (1.16 MiB)** with gzip level 6. They retain parsed assembled
+CREC answers and final segments, plus 36,112 unique pairwise cosine measurements
+and their diagnostics. TEv4.1's existing answer inputs are referenced without
+duplication. Complete original archives remain outside these downloads. See the
+[archived-baseline checks](reproduce.md#archived-baseline-checks).
+
 These are measured selected outputs, not an exhaustive all-history size claim.
 [Remaining items](publication-gaps.csv) identify 33 unsupported result files,
-one result missing its configuration, and final evidence identified by the
-[109-group historical review](open-items.md#historical-collection-review).
-That review resolved 32 groups needing no separate result export. Another 33
-title/description groups, 11 SSE representation groups, six subject/mask groups,
-22 early/standalone prompt groups and four segmentation/title/frontier groups
-are now selected; one archived-baseline group still needs a final evidence export.
-Its unconverted source
-containers are outside these totals.
+and one result missing its configuration. The
+[109-group historical review](open-items.md#historical-collection-review)
+resolved 32 groups needing no separate result export. The other 77 are now
+selected: 33 title/description groups, 11 SSE representation groups, six
+subject/mask groups, 22 early/standalone prompt groups, four
+segmentation/title/frontier groups and one archived-baseline group.
 All 27,032 native jobs have been classified: 2,547 standalone trials are retained; warmups,
 internal execution jobs, manual construction intermediates and input-only
 preparations are excluded. Independent repeats remain distinct, and reused

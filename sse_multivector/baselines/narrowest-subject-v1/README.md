@@ -32,3 +32,14 @@ tar --zstd -tf baseline.tar.zst
 
 This archive is immutable provenance for the retained atomic-subject
 diagnostic.
+
+## Publication files
+
+`historical-studies/narrowest-subject-v1` retains geometry for 187 subjects:
+17,391 unique pairwise cosine measurements, analysis headers and subject
+diagnostics. See the [catalog](../../../docs/experiments/publications.csv),
+[file list](../../../docs/experiments/publication-files.csv) and
+[export commands and checks](../../../docs/experiments/reproduce.md#archived-baseline-checks).
+The files are prepared locally for Hugging Face Datasets; nothing is uploaded.
+AS lineage remains unknown. The full archive remains local and unchanged;
+the inspection commands above require those originals.

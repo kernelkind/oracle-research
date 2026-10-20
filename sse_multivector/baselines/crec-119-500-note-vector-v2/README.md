@@ -100,3 +100,15 @@ nix develop -c cargo run --release --bin scaled-fine-segments -- \
 Do not replace this archive. Any change to the corrected sample, prompts,
 accepted generation output, encoder, floor, or implementation requires a new
 baseline.
+
+## Publication files
+
+`historical-studies/crec-119-500-note-vector-v2` retains 500 posts, 1,268 takeaways
+and 147 final segments as parsed assembled note results. Reuse of 492 notes and
+3,004 final jobs stays separate from eight new notes and 32 new final jobs.
+See the [catalog](../../../docs/experiments/publications.csv),
+[file list](../../../docs/experiments/publication-files.csv) and
+[export commands and checks](../../../docs/experiments/reproduce.md#archived-baseline-checks).
+The files are prepared locally for Hugging Face Datasets; nothing is uploaded.
+AS lineage remains unknown. The full archive remains local and unchanged;
+the inspection commands above require those originals.

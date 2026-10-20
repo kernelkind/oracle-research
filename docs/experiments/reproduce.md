@@ -445,7 +445,7 @@ experiment/source identities. [Publication files](publication-files.csv) records
 every path, byte count and SHA-256 beneath `target/publication-exports/`.
 These paths describe local staging, not an available download.
 
-With the `ORACLE_ROOT` setup above, verify all 9,850 selected files:
+With the `ORACLE_ROOT` setup above, verify all 9,870 selected files:
 
 ```bash
 cd "$ORACLE_ROOT/target/publication-exports"
@@ -457,12 +457,10 @@ The command prints failures only and exits zero when every listed checksum
 matches. This checks file bytes; it does not assess scientific correctness or
 perform privacy review. The [measured selection](downloads.md#measured-local-exports)
 describes sizes, input splits and excluded intermediates. The
-[remaining-items table](publication-gaps.csv) identifies unsupported final
-formats, the required configuration not located for TRUE10/graph, and older
-final evidence still needing export. The
+[remaining-items table](publication-gaps.csv) identifies 33 unsupported final
+results and the required configuration not located for TRUE10/graph. The
 [historical collection review](open-items.md#historical-collection-review)
-distinguishes those omissions from material already retained in Git or selected
-elsewhere.
+resolved its 109 groups through retained material or selected final evidence.
 
 Four old output-note counts include notes present only in the old top container:
 
@@ -580,7 +578,7 @@ its machine-specific deployment commands are not a ready-to-run public recipe.
 
 ## Other experiments and moved files
 
-The [study index](experiments.csv) contains 2,675 selected entries: standalone
+The [study index](experiments.csv) contains 2,676 selected entries: standalone
 prompt preparations, official hierarchy runs, training runs, historical collections
 and the four located historical subject-prompt studies.
 It records saved plan identities and prompt/model settings.
@@ -757,8 +755,8 @@ were preserved, and nothing was uploaded.
 
 ### Historical backfill checks
 
-The current local selection contains **3,151 output/input directories and 9,850
-files**, totaling **1,158,517,363 bytes**. Every listed file was independently
+The current local selection contains **3,155 output/input directories and 9,870
+files**, totaling **1,164,713,832 bytes**. Every listed file was independently
 rehashed. Structured payload bindings were checked against their export manifests;
 the five original ASv6.100 Markdown documents match their recorded source hashes.
 Exact prepared-input copies were also checked against their frozen source hashes.
@@ -791,6 +789,56 @@ remain unresolved. No fresh inference, training or semantic grading occurred.
 This checks the selected supported formats. [Remaining historical exports](publication-gaps.csv)
 remain outside this size/completeness claim. Privacy review and a clean reader
 test against the eventual hosted selection are still pending.
+
+### Archived baseline checks
+
+The [baseline selection](../../sse_multivector/experiment_specs/baseline-study-publication-v1.json)
+binds four compact historical bundles to exact archive members and their saved,
+extracted counterparts:
+
+| Study ID | Selected final evidence |
+| --- | --- |
+| `crec-119-500-note-vector-v1` | 500 posts, 1,311 takeaways and 150 segments |
+| `crec-119-500-note-vector-v2` | 500 posts, 1,268 takeaways and 147 segments |
+| `communicated-meaning-tev4-1` | 194 subjects and 18,721 unique pairwise cosine measurements |
+| `narrowest-subject-v1` | 187 subjects and 17,391 unique pairwise cosine measurements |
+
+A publisher with the original saved repository layout can use:
+
+```bash
+cd "$ORACLE_ROOT"
+python sse_multivector/experiment.py export-evaluation-results \
+  ../oracle-mvp-original \
+  --kind prompt-study \
+  --spec sse_multivector/experiment_specs/baseline-study-publication-v1.json \
+  --study crec-119-500-note-vector-v1 \
+  --output target/baseline-results
+```
+
+Use another exact study ID from the table to export that selection. The command
+checks the frozen hashes against the extracted counterparts without decoding
+archives or making model calls. It needs the original saved layout; compact
+downloads alone do not recreate it. No additional dependency is required.
+Each bundle contains `experiment.json`, `inputs.jsonl`, `answers.jsonl`,
+`judgments.jsonl` and `results.jsonl`. Full archives and working vectors remain
+outside the selected downloads.
+
+The CREC answers preserve **parsed assembled note results**, not raw per-call
+response strings. V2 retains reuse of 492 notes and 3,004 final jobs; its eight
+new notes account for 32 new final jobs. The two geometry bundles retain exact
+cosine values, analysis headers and subject diagnostics. TEv4.1's 194 answer
+inputs already appear in `numerical/fine-region-00d974f22ed8935f/inputs.jsonl`;
+the new bundle references them and intentionally has an empty `answers.jsonl`.
+AS lineage remains unknown. Recorded TP versions do not establish AS provenance,
+and these historical results do not validate the current pipeline.
+
+The four bundles total **20 files, 6,196,469 bytes**, or **1,218,841 bytes** with
+gzip level 6. All **178 relevant tests** pass; all four actual-file exports pass
+under a 512 MiB worker address-space limit. Independent checks verified the four
+archive/member/counterpart mappings. The 50 selected originals (69,121,674 bytes),
+all 98 independently audited originals and all 9,850 previously selected files
+retain their original bytes, modes and modification times. Nothing has been uploaded; final
+publication privacy review and hosted reader tests remain open.
 
 ### Fine-region title and real-note segmentation checks
 

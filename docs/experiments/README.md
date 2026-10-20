@@ -42,16 +42,16 @@ remain historical evidence; raw source posts are not deprecated by that rule.
   branches are outputs, not a count of independent trials.
 - [Publication files](publication-files.csv) and [checksums](publication.sha256):
   every selected local payload and metadata file, including exact prepared inputs.
-  The [remaining items](publication-gaps.csv) distinguish unsupported results,
-  one missing configuration and identified historical evidence needing export.
+  The [remaining items](publication-gaps.csv) identify 33 unsupported results
+  and one missing configuration.
   The [109-group review](open-items.md#historical-collection-review) resolved 32
-  groups that need no separate result export and records what the others lack.
+  groups needing no separate result export; the other 77 now have selected evidence.
   ASv6.100's final quality summary and four frozen agent rubrics are selected as
   original Markdown; the [study record](../../sse_multivector/subject-prompt-goal-v1/asv6.100-generalization-v1/README.md#publication-files)
   identifies their paths alongside the six existing answer/review bundles.
-- [Experiments](experiments.csv): 2,675 entries linked to selected results:
+- [Experiments](experiments.csv): 2,676 entries linked to selected results:
   2,547 standalone prompt preparations, 37 official hierarchy runs, four training
-  runs, 83 historical collections and four later-located historical prompt
+  runs, 84 historical collections and four later-located historical prompt
   studies. These are different kinds of entries,
   not an additive count of independent experiments. Prompt IDs, model settings,
   case counts, provenance and plan/manifest identities are preserved. The
@@ -76,6 +76,9 @@ remain historical evidence; raw source posts are not deprecated by that rule.
   answers and three saved partial answers, with reused baselines and original
   review states kept distinct. See the [title/segmentation checks](reproduce.md#fine-region-title-and-real-note-segmentation-checks)
   and [frontier checks](reproduce.md#frontier-comparison-checks).
+  The archived-baseline collection adds four bundles of final CREC answers,
+  segments and geometry measurements. Assembled answers and reused work remain
+  explicitly identified; see the [archived-baseline checks](reproduce.md#archived-baseline-checks).
   Eleven SSE representation studies also retain their final numerical comparisons
   and fixed inputs; these used manually supplied spans, without subject or mask
   prompt generation. See the [representation checks](reproduce.md#sse-representation-study-checks).
@@ -127,7 +130,7 @@ The catalog records the source and export format; a selected bundle can cover
 part of a study without recreating its original working directory.
 
 These exports are still local. [Hosting and download preparation](downloads.md#before-downloads-become-available)
-remains open. Some older collections still need
+remains open. Unsupported results still need
 [conversion review](publication-gaps.csv); their maintained findings remain
 readable here while that work is pending.
 

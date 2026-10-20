@@ -2269,7 +2269,13 @@ answers, failures, measurements, review bindings and reused-answer references;
 interim teacher results remain interim. See the
 [title/segmentation checks](../docs/experiments/reproduce.md#fine-region-title-and-real-note-segmentation-checks)
 and [frontier checks](../docs/experiments/reproduce.md#frontier-comparison-checks).
-Remaining historical conversions and public download verification remain
+The [archived-baseline selection](experiment_specs/baseline-study-publication-v1.json)
+uses the same offline command for four bundles of parsed assembled CREC answers,
+final segments and geometry measurements. It verifies frozen source hashes
+against saved extracted counterparts without decoding archives. Reused results
+remain identifiable; TEv4.1 answer inputs reference their existing publication.
+See the [archived-baseline commands and checks](../docs/experiments/reproduce.md#archived-baseline-checks).
+Unsupported/missing result review and public download verification remain
 unfinished. The signed export below retains its existing
 behavior.
 

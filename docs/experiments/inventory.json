@@ -217,10 +217,10 @@
   "compact_exports": {
     "state": "Local selected compact exports; not uploaded or approved for publication",
     "artifact_root": "target/publication-exports",
-    "publications": 3151,
-    "files": 9850,
-    "bytes": 1158517363,
-    "gzip_bytes": 164706425,
+    "publications": 3155,
+    "files": 9870,
+    "bytes": 1164713832,
+    "gzip_bytes": 165925266,
     "gzip_method": "Measured gzip level 6 per staged file, in memory; no compressed downloads created",
     "categories": {
       "comparison": {
@@ -266,10 +266,10 @@
         "files": 12
       },
       "numerical": {
-        "bytes": 97620705,
-        "gzip_bytes": 18447349,
-        "bundles": 74,
-        "files": 224
+        "bytes": 103817174,
+        "gzip_bytes": 19666190,
+        "bundles": 78,
+        "files": 244
       },
       "performance": {
         "bytes": 18006,
@@ -320,10 +320,10 @@
         "bundles": 123
       }
     },
-    "gaps": 35,
+    "gaps": 34,
     "gap_status_counts": {
       "unsupported": 33,
-      "legacy_export_needed": 1,
+      "legacy_export_needed": 0,
       "missing": 1
     },
     "native_status_counts": {
@@ -335,10 +335,10 @@
     },
     "adapter_checkpoints": 17,
     "adapter_weight_and_config_bytes": 7280087769,
-    "combined_staged_and_model_bytes": 8438605132,
+    "combined_staged_and_model_bytes": 8444801601,
     "oracle_export_commit": "fcfd4cabcba7102aab81dcffec018c00b4498a55",
     "runner_export_commit": "34d7eb79dc714275145a983ffeb42ddcddc42561",
-    "export_commit_scope": "These commits identify the original selection before historical_study_backfill; the four added bundles bind their exporter source separately by SHA-256. The later original Markdown documents are bound directly by source hashes and file checksums. Each title-study export separately binds its publisher and input-validation code hashes. Representation exports separately bind their adapter source hash and preserve exact native scientific JSON values. Historical subject/mask exports separately bind all declared sources and exporter code by SHA-256. Earlier exports retain their original exporter versions; early/standalone and manual prominence exports separately bind all current exporter/helper sources by SHA-256. Later segmentation, fine-region title and frontier exports bind their exporter/helper sources separately by SHA-256.",
+    "export_commit_scope": "These commits identify the original selection before historical_study_backfill; the four added bundles bind their exporter source separately by SHA-256. The later original Markdown documents are bound directly by source hashes and file checksums. Each title-study export separately binds its publisher and input-validation code hashes. Representation exports separately bind their adapter source hash and preserve exact native scientific JSON values. Historical subject/mask exports separately bind all declared sources and exporter code by SHA-256. Earlier exports retain their original exporter versions; early/standalone and manual prominence exports separately bind all current exporter/helper sources by SHA-256. Later segmentation, fine-region title and frontier exports bind their exporter/helper sources separately by SHA-256. Archived-baseline exports also bind exporter/helper sources and audited archive/member/counterpart identities by SHA-256.",
     "source_originals_preserved": true,
     "fresh_model_inference": false,
     "uploads": false,
@@ -760,23 +760,138 @@
       "fresh_model_inference": false,
       "uploads": false,
       "privacy_review": "Final publication privacy review remains open"
+    },
+    "historical_archived_baseline_backfill": {
+      "baseline_commit": "f1abe376e4101e68ea72c8d50521e322484fd3f4",
+      "format": "historical-study-publication-v1",
+      "collections": 1,
+      "studies": 4,
+      "files": 20,
+      "bytes": 6196469,
+      "gzip_bytes": 1218841,
+      "entries": [
+        {
+          "study_id": "crec-119-500-note-vector-v1",
+          "publication": "historical-studies/crec-119-500-note-vector-v1",
+          "kind": "crec",
+          "counts": {
+            "notes": 500,
+            "segments": 150,
+            "takeaways": 1311
+          },
+          "files": 5,
+          "bytes": 1007715,
+          "gzip_bytes": 300906,
+          "reuse": null,
+          "reused_answers": null
+        },
+        {
+          "study_id": "crec-119-500-note-vector-v2",
+          "publication": "historical-studies/crec-119-500-note-vector-v2",
+          "kind": "crec",
+          "counts": {
+            "notes": 500,
+            "segments": 147,
+            "takeaways": 1268
+          },
+          "files": 5,
+          "bytes": 999581,
+          "gzip_bytes": 299789,
+          "reuse": {
+            "new_final_jobs": 32,
+            "new_notes": 8,
+            "reused_final_jobs": 3004,
+            "reused_notes": 492,
+            "source": {
+              "answers": {
+                "path": "target/crec-119-500-note-v2/reuse-source-v1/generation/output.json",
+                "sha256": "1f597ac1c8eef823efa78560e205e4ff5ea6926b08e132e32021f2b61c8308f2"
+              },
+              "generation": {
+                "path": "target/crec-119-500-note-v2/reuse-source-v1/generation/manifest.json",
+                "sha256": "1767647b9efe77213c648de9f9a727ed11c29755df9d0f0441704ebece5685bb"
+              },
+              "posts": {
+                "path": "target/crec-119-500-note-v2/reuse-source-v1/input/notes.json",
+                "sha256": "b5e4665644c2229698cc795399c3510a8ce1535ce13b45382d2d76f50dbdc8d4"
+              }
+            },
+            "status": "Reused final answers are preserved baseline evidence, not new independent samples; job counts exclude superseded attempts."
+          },
+          "reused_answers": null
+        },
+        {
+          "study_id": "communicated-meaning-tev4-1",
+          "publication": "historical-studies/communicated-meaning-tev4-1",
+          "kind": "geometry",
+          "counts": {
+            "notes": 50,
+            "pairs": 18721,
+            "subjects": 194
+          },
+          "files": 5,
+          "bytes": 2185019,
+          "gzip_bytes": 329118,
+          "reuse": null,
+          "reused_answers": {
+            "notes": 50,
+            "payload": "inputs.jsonl",
+            "publication": "numerical/fine-region-00d974f22ed8935f",
+            "records": 194,
+            "sha256": "6de88211dd1f4350dcf12f506a2e23dc9aff24897815a6251564fe4b85603c4f",
+            "source_id": "8df99b341c8838bf97b6115b1d69f138ecc07f7a5d8ee03e07c90910bee30fe2",
+            "status": "All194 final answer/mask input records already selected; reused as geometry identities, with no new answer records."
+          }
+        },
+        {
+          "study_id": "narrowest-subject-v1",
+          "publication": "historical-studies/narrowest-subject-v1",
+          "kind": "geometry",
+          "counts": {
+            "notes": 32,
+            "pairs": 17391,
+            "subjects": 187
+          },
+          "files": 5,
+          "bytes": 2004154,
+          "gzip_bytes": 289028,
+          "reuse": null,
+          "reused_answers": null
+        }
+      ],
+      "source_files_unchanged": 50,
+      "source_bytes_unchanged": 69121674,
+      "preexisting_selected_files_unchanged": 9850,
+      "selection_spec": {
+        "path": "sse_multivector/experiment_specs/baseline-study-publication-v1.json",
+        "sha256": "9430d499c11af2f168203438d4fe81937a86dc31b0ccf0827107a159bcb6be1f"
+      },
+      "worker_address_space_limit_bytes": 536870912,
+      "checks_passed": 178,
+      "archive_member_mapping": "Independently audited and frozen; export verifies matching archive/member/counterpart hashes without decoding archives",
+      "AS_status": "Unknown lineage; legacy TP versions/manual wording are not assigned an invented AS version",
+      "raw_per_call_response_claim": false,
+      "source_originals_preserved": true,
+      "fresh_model_inference": false,
+      "uploads": false,
+      "privacy_review": "Final publication privacy review remains open"
     }
   },
   "discovery_scope": "Top-level discovery counts and follow-ups describe the original local audit; public_index and compact_exports describe the selected public evidence.",
   "public_index": {
     "state": "Selected-study index; exhaustive original audit preserved locally",
     "source_commit": "1f3d541caec8574d1db6a61089f99b9d55863113",
-    "studies": 2675,
+    "studies": 2676,
     "studies_by_kind": {
-      "historical collection": 83,
+      "historical collection": 84,
       "native": 2547,
       "official hierarchy": 37,
       "training run": 4,
       "historical prompt study": 4
     },
-    "selection": "Original selected rows retain study identities, settings and order; 33 later-selected historical title collections and 11 SSE representation collections are appended from the original index, alongside four later-located historical subject-prompt studies. Representation rows identify manual spans/local SSE explicitly. Six ASv6.100 native rows also link shared final evaluation documents. Six original subject/mask collection rows are also appended with links to 123 additional study/review entries; previously selected studies and ASv6.100 evidence are not duplicated. Twenty-two original early/standalone prompt collection rows are also appended with links to 21 prompt entries and three manual prominence entries; existing native prominence studies remain unchanged. Four original segmentation, fine-region title and frontier collection rows are also appended with links to 16 additional evidence bundles; reused baselines remain references.",
+    "selection": "Original selected rows retain study identities, settings and order; 33 later-selected historical title collections and 11 SSE representation collections are appended from the original index, alongside four later-located historical subject-prompt studies. Representation rows identify manual spans/local SSE explicitly. Six ASv6.100 native rows also link shared final evaluation documents. Six original subject/mask collection rows are also appended with links to 123 additional study/review entries; previously selected studies and ASv6.100 evidence are not duplicated. Twenty-two original early/standalone prompt collection rows are also appended with links to 21 prompt entries and three manual prominence entries; existing native prominence studies remain unchanged. Four original segmentation, fine-region title and frontier collection rows are also appended with links to 16 additional evidence bundles; reused baselines remain references. The original archived-baselines collection row is also appended with links to four final-evidence bundles; TEv4.1 answers reuse existing selected content.",
     "original_index_rows": 27193,
-    "omitted_internal_and_other_unselected_rows": 24522,
+    "omitted_internal_and_other_unselected_rows": 24521,
     "remaining_reviews": "publication-gaps.csv",
     "local_audit": {
       "root": "target/publication-audit/index-before-simplification-1f3d541c",
@@ -978,6 +1093,6 @@
     "uploads": false,
     "privacy_review": "Still pending for actual publication contents",
     "remaining_items": "publication-gaps.csv",
-    "status_scope": "Snapshot at baseline_commit before ASv6.100 document selection and title/representation backfills; see compact_exports.asv6_100_evaluation_documents, historical_title_study_backfill and historical_representation_study_backfill for current resolutions; see compact_exports.historical_subject_mask_study_backfill for the later six-collection resolution. See compact_exports.historical_standalone_prompt_backfill for the later 22-collection resolution. See compact_exports.historical_segmentation_title_frontier_backfill for the later four-collection resolution."
+    "status_scope": "Snapshot at baseline_commit before ASv6.100 document selection and title/representation backfills; see compact_exports.asv6_100_evaluation_documents, historical_title_study_backfill and historical_representation_study_backfill for current resolutions; see compact_exports.historical_subject_mask_study_backfill for the later six-collection resolution. See compact_exports.historical_standalone_prompt_backfill for the later 22-collection resolution. See compact_exports.historical_segmentation_title_frontier_backfill for the later four-collection resolution. See compact_exports.historical_archived_baseline_backfill for the remaining baseline resolution; no legacy collection gaps remain, while unsupported/missing-result gaps remain separate."
   }
 }

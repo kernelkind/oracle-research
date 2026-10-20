@@ -30,3 +30,16 @@ tar --zstd -tf baseline.tar.zst
 
 Do not replace this archive. A changed note set, prompt, mask, checkpoint,
 worker, or inference setting is a new baseline.
+
+## Publication files
+
+`historical-studies/communicated-meaning-tev4-1` retains geometry for 194 subjects:
+18,721 unique pairwise cosine measurements, analysis headers and subject
+diagnostics. Its 194 answer inputs are already selected in
+`numerical/fine-region-00d974f22ed8935f/inputs.jsonl` and are not duplicated.
+See the [catalog](../../../docs/experiments/publications.csv),
+[file list](../../../docs/experiments/publication-files.csv) and
+[export commands and checks](../../../docs/experiments/reproduce.md#archived-baseline-checks).
+The files are prepared locally for Hugging Face Datasets; nothing is uploaded.
+AS lineage remains unknown. The full archive remains local and unchanged;
+the inspection commands above require those originals.
