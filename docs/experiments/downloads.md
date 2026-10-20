@@ -353,9 +353,11 @@ checkpoint with its optimizer state. Optimizer state is not part of this
 publication plan. Base models and the SSE encoder remain pinned upstream
 dependencies. The [reader guide](reproduce.md#prepare-the-fine-tuning-inputs)
 now checks all three saved recipes directly from published metadata and provides
-local GPU and Qwen continuation commands. Fresh GPU execution and adapter-use
-instructions still need validation. These workflows add no datasets or weights
-to the upload selection.
+local GPU and Qwen continuation commands. The
+[adapter-use instructions](reproduce.md#use-a-subject-adapter) describe loading a
+downloaded checkpoint with its pinned base and extracting subjects from one post.
+Fresh GPU execution of the training and inference instructions still needs
+validation. These workflows add no datasets or weights to the upload selection.
 
 ## Automated outputs
 

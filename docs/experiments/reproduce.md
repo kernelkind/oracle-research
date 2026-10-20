@@ -23,6 +23,7 @@ passed in a fresh Linux VM; it does not require these historical files.
 | Try subject identification | Run ASv6.100 on one original HR36 post | Fresh language-model inference |
 | Repeat hierarchy construction | Use HR36's 1,000 saved subject outputs with HiGen V5.3 | New definition writing, local SSE encoding and clustering |
 | Examine fine-tuning results | Read the seven-version L1 comparison | None |
+| Use a subject adapter | Extract subjects from one post with a saved checkpoint | Local GPU inference |
 | Repeat subject training | Check data/order, run a saved pilot recipe, then optionally continue your own Qwen run | GPU training |
 
 ## Obtain the inputs
@@ -702,25 +703,15 @@ the published metadata directly; it does not fabricate a historical manifest.
 tokenization, training or inference. It is an input check, not a CUDA or memory
 qualification. Existing plan destinations are refused.
 
-## Run subject fine-tuning
+## Set up the GPU runtime
 
-These experiments train language models to produce ASv6.100 subject hierarchies;
-they do not train the SSE encoder. The maintained configurations preserve the
-saved model revisions and pilot settings:
+Adapter inference and training use the same pinned runtime. The instructions
+below load an unquantized BF16 base model on one CUDA GPU. The original work
+used 96 GB GPUs; smaller-memory and quantized recipes have not been validated.
+The adapter download is only part of the model: the base weights, host memory
+during loading, and generation cache also need space.
 
-| Configuration | Base model | First-pass checkpoints |
-| --- | --- | --- |
-| `subject-pilot-qwen-v1.json` | Qwen3.8-27B | 200, 400, 600, 800, 1,000 |
-| `subject-pilot-gemma-dense-v1.json` | Gemma 4 31B | 200, 400, 600, 800, 1,000 |
-| `subject-pilot-gemma-moe-v1.json` | Gemma 4 26B-A4B | 200, 400, 600, 800, 1,000 |
-
-All use thinking off, answer-only loss, constant learning rate 0.0001, LoRA
-rank 16/alpha 32, 20,480-token context and a 10,240-token generation allowance.
-Gemma MoE additionally adapts packed expert weights at rank 2/alpha 32. See the
-configurations for exact target modules and batching budgets. The original work
-used 96 GB GPUs; a smaller-memory recipe has not been validated.
-
-On your GPU host, use a clean checkout, restore the inputs above and configure
+On your GPU host, use a clean checkout and configure
 [Docker NVIDIA GPU access](https://docs.docker.com/engine/containers/gpu/).
 Build the Dockerfile's pinned runtime stage using
 [`--target`](https://docs.docker.com/build/building/multi-stage/#stop-at-a-specific-build-stage).
@@ -736,22 +727,127 @@ docker build --target runtime \
   --tag oracle-subject-training .
 mkdir -p target/subject-model-cache
 distillation_python() {
-  docker run --rm --gpus all --entrypoint python \
+  docker run --rm --interactive --gpus all --entrypoint python \
     --mount "type=bind,src=$ORACLE_ROOT,dst=/work" \
     --mount "type=bind,src=$EXPERIMENT_RUNNER_ROOT,dst=/runner,readonly" \
     --mount "type=bind,src=$ORACLE_ROOT/target/subject-model-cache,dst=/model-cache" \
     --env EXPERIMENT_RUNNER_ROOT=/runner --env HF_HOME=/model-cache \
     --workdir /work oracle-subject-training "$@"
 }
+```
+
+Keep this Bash shell open for the examples below. Gated base models require
+your own upstream access. The model cache and generated training state are
+outside the publication dataset.
+
+## Use a subject adapter
+
+These adapters identify subjects within individual posts. Building the corpus's
+browsable hierarchy is a separate step in the [generation guide](../generate-hierarchy.md).
+For inference, you need the selected adapter's `adapter_model.safetensors` and
+`adapter_config.json`, its matching base model, and the **ASv6.100** instruction.
+You do not need the prepared training dataset or optimizer state.
+
+**Adapter download links are pending.** Once available, download one checkpoint's
+two files into a local directory; the example uses
+`target/reproduction/adapters/qwen-checkpoint-3000/`. Match its identity and hashes
+to [models.csv](models.csv) and the published
+`inputs/adapter-hashes/adapters.jsonl`. Use the matching configuration below;
+each pins the original base-model and tokenizer revision.
+
+| Adapter family | Configuration in `sse_multivector/distillation/` | Checkpoints |
+| --- | --- | --- |
+| Qwen3.8-27B | `subject-pilot-qwen-v1.json` | 200, 400, 600, 800, 1000, 2000, 3000 |
+| Gemma 4 31B | `subject-pilot-gemma-dense-v1.json` | 200, 400, 600, 800, 1000 |
+| Gemma 4 26B-A4B | `subject-pilot-gemma-moe-v1.json` | 200, 400, 600, 800, 1000 |
+
+Checkpoint numbers count training-note uses; Qwen's 2000 and 3000 checkpoints
+repeat the same 1,000 training notes. Publishing these checkpoints does not
+designate one as production-approved.
+
+Set up the [GPU runtime](#set-up-the-gpu-runtime), then put one post's exact
+UTF-8 text in `target/reproduction/post.txt`. The following example uses Qwen's
+checkpoint 3000. It calls the existing loader, adapter verification, generation
+and subject parser in
+[distillation_run.py](../../sse_multivector/distillation_run.py):
+
+```bash
+cd "$ORACLE_ROOT"
+distillation_python - <<'PY'
+from pathlib import Path
+from transformers import AutoTokenizer
+from sse_multivector.distillation_run import (
+    generate, load_model, parse_subjects, read_json, verify_adapter,
+)
+
+config = read_json("sse_multivector/distillation/subject-pilot-qwen-v1.json")
+adapter = Path("target/reproduction/adapters/qwen-checkpoint-3000")
+instruction = Path("sse_multivector/subject-prompt-goal-v1/asv6.100/ASv6.100.md").read_text().rstrip()
+post = Path("target/reproduction/post.txt").read_text(encoding="utf-8")
+messages = [{"role": "user", "content": instruction + "\n\n<post>\n" + post + "\n</post>"}]
+
+tokenizer = AutoTokenizer.from_pretrained(
+    config["model"], revision=config["revision"], trust_remote_code=False,
+)
+if tokenizer.pad_token_id is None:
+    tokenizer.pad_token = tokenizer.eos_token
+model = load_model(config, adapter)
+verify_adapter(model, adapter)
+model = model.merge_and_unload(safe_merge=True)
+answer = generate(model, tokenizer, messages, config)
+print(answer["raw"], flush=True)
+if answer["truncated"]:
+    raise ValueError("Subject answer reached its output limit without EOS")
+parse_subjects(answer["raw"])
+PY
+```
+
+The loader applies the pinned base revision before loading the adapter. As in
+the original evaluation, the example verifies the loaded adapter and
+[merges it into the in-memory base](https://huggingface.co/docs/peft/v0.21.0/package_reference/lora#merge-lora-weights-into-the-base-model).
+It leaves the downloaded files unchanged. Generation uses the native chat
+template with thinking off, greedy decoding, a 20,480-token context and up to
+10,240 new tokens. Inputs that cannot fit with that output allowance are refused.
+The full **ASv6.100** instruction matches the one used in training.
+
+The printed answer contains `subjects`, whose entries have `number`, `context`
+and `subject` fields. A truncated or malformed answer raises an error after
+printing the original text; parsing does not establish semantic correctness.
+For another checkpoint, change the adapter directory and use its family's
+configuration from the table. The configuration's training/data fields are not
+used by these inference calls. This example has been checked against the
+existing code and for syntax; a fresh GPU execution remains untested.
+
+## Run subject fine-tuning
+
+These experiments train language models to produce ASv6.100 subject hierarchies;
+they do not train the SSE encoder. The maintained configurations preserve the
+saved model revisions and pilot settings:
+
+| Configuration | Base model | First-pass checkpoints |
+| --- | --- | --- |
+| `subject-pilot-qwen-v1.json` | Qwen3.8-27B | 200, 400, 600, 800, 1,000 |
+| `subject-pilot-gemma-dense-v1.json` | Gemma 4 31B | 200, 400, 600, 800, 1,000 |
+| `subject-pilot-gemma-moe-v1.json` | Gemma 4 26B-A4B | 200, 400, 600, 800, 1,000 |
+
+All use thinking off, answer-only loss, constant learning rate 0.0001, LoRA
+rank 16/alpha 32, 20,480-token context and a 10,240-token generation allowance.
+Gemma MoE additionally adapts packed expert weights at rank 2/alpha 32. See the
+configurations for exact target modules and batching budgets.
+
+Restore the [fine-tuning inputs](#prepare-the-fine-tuning-inputs) and set up the
+[GPU runtime](#set-up-the-gpu-runtime). Preflight downloads the pinned tokenizer
+and checks actual lengths and answer-only tokenization without loading model
+weights:
+
+```bash
+cd "$ORACLE_ROOT"
 distillation_python -m sse_multivector.distillation_run \
   sse_multivector/distillation/subject-pilot-qwen-v1.json \
   --output target/reproduction/qwen-run --through preflight
 ```
 
-Keep this shell open. Preflight downloads the pinned tokenizer and checks actual
-lengths and answer-only tokenization without loading model weights. Gated base
-models require your own upstream access. The model cache and generated training
-state are outside the publication dataset. To run the complete Qwen first pass:
+To run the complete Qwen first pass:
 
 ```bash
 cd "$ORACLE_ROOT"

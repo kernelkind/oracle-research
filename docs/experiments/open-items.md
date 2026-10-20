@@ -590,7 +590,10 @@ Before publication:
   The three published pilot configurations now pass offline data/order checks.
   The guide includes local GPU commands and a continuation configuration bound
   to a reader's own sealed first-pass run; no original optimizer state is
-  published. Fresh GPU execution of this reader workflow remains open.
+  published. The [adapter-use example](reproduce.md#use-a-subject-adapter) uses
+  the existing loader, adapter verification, merge, generator and parser with
+  the original ASv6.100 instruction. Its syntax and source calls are checked;
+  hosted downloads and fresh GPU execution remain open.
 
 The generated-data rewrite is complete. Final privacy and identity review
 remains before publication; any further history cleanup needs its own approval.

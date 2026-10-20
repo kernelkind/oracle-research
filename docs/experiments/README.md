@@ -30,7 +30,7 @@ have been located and checked against their recorded SHA-256 hashes.
 | Repeat fine-tuning | [Training-input checks](reproduce.md#prepare-the-fine-tuning-inputs) and [GPU commands](reproduce.md#run-subject-fine-tuning) | [Training process and results](../planning/fine-tuning-pilot-process.md) |
 | Inspect or repeat recorded experiments | [Reproduction guide](reproduce.md) | [Dataset file checksums](publication.sha256) |
 | Understand the recorded hierarchy experiments | [Run overview](hierarchy.md) and [detailed findings](../recommendation-engine/hierarchy-runs.md) | [Run settings, source versions and corpus identities](hierarchy.csv) |
-| Use or study the subject fine-tunes | [Training process and evaluation](../planning/fine-tuning-pilot-process.md) | [Adapter checkpoints and base versions](models.csv) |
+| Use the subject fine-tunes | [Load an adapter and extract subjects](reproduce.md#use-a-subject-adapter) | [Adapter checkpoints and base versions](models.csv) |
 | Study subject, mask, title, comparison and prominence trials | [Experiment workflow](../../sse_multivector/model-runner.md) | [Selected studies](experiments.csv) |
 | Check publication coverage and limitations | [Open items](open-items.md) | [Remaining review items](publication-gaps.csv) |
 
@@ -194,9 +194,11 @@ and reading the fine-tune comparison. It also explains `verify` for checking
 saved prompt receipts after extraction using bundled location metadata.
 Browsing, HR36 preparation and training-input checks use compact published
 formats. The three saved training recipes pass offline input/order checks;
-local GPU and Qwen continuation commands are documented, with fresh GPU execution
-still untested. Native receipt verification remains separate. Downloads,
-adapter-use instructions and broader historical replay remain unfinished.
+local GPU and Qwen continuation commands are documented. The guide also shows
+loading a saved adapter and extracting subjects through existing code; fresh GPU
+execution of these reader instructions remains untested. Native receipt
+verification remains separate. Downloads and broader historical replay remain
+unfinished.
 Fresh model answers need not match saved answers.
 
 Research records now distinguish original file references from selected result
