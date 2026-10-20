@@ -1,7 +1,9 @@
 # Before publication
 
-This is the inventory as of 2026-10-19. The file list is ready to review;
-archives have not been assembled, uploaded or approved for release.
+This records the source inventory and remaining publication work. The
+[publication plan](downloads.md) now selects used inputs, parameters and final
+results, with all 17 evaluated adapters. The broad source inventory is not the
+final export list. Nothing has been uploaded or approved for public release.
 
 ## Input versions
 
@@ -164,54 +166,49 @@ Review the actual selected contents for credentials and personal information
 before packaging. Known credential containers were excluded from discovery;
 that is not a completed privacy review of the evidence.
 
-The [publication proposal](downloads.md) records the agreed GitHub/Hugging Face
-hosting division and inclusion of all 17 evaluated adapters, with measured sizes.
-The remaining evidence selection is open, including the large clustering files.
-The existing bundle tables still describe the broad inventory;
-they do not select every listed file for publication.
+The [publication plan](downloads.md) records the agreed GitHub/Hugging Face
+hosting division and data categories. Expected non-model data is roughly
+0.5–1 GiB, plus 6.78 GiB for all 17 evaluated adapters. These are planning
+estimates. The 534.71 GiB source inventory and old bundle tables do not define
+the public download size or final layout.
 
-Finish source and original-producer selection from frozen plans and receipts,
-retaining required exceptions to proposed omissions, then verify the staged
-packages. Known shared-download requirements are incomplete, and the
-consolidated dependency index retains only example consumers. Check unused
-candidate posts embedded in larger frozen inputs before selecting whole files.
-The nine official subject corpora have passed this used-ID check; other frozen
-inputs require their own selection review.
+Before publication:
 
-The size audit measured **534.71 GiB** of candidate source files before
-compression. That is neither the approved publication size nor a fully
-deduplicated total. Verify the final contents and checksums before adding exact
-Hugging Face versions and download links. Readers should be able to obtain
-the experiments they need without downloading all research artifacts.
-
-The [reproduction guide](reproduce.md) now provides concrete commands and records
-their validation limits. Before calling the release reproducible end to end:
-
-- Test the downloaded archives in a clean environment, including a complete
-  hierarchy run with public authentication.
-- Prepare the verification metadata below and include it in each evidence
-  package. One local HR39 archive has passed after extraction elsewhere using
-  `verify` without extra options; the full collection has not been verified.
-- Provide a maintained, tested command for the L1 analysis from saved judgments;
-  the saved scores and original verification exist, but that CLI does not.
-- Validate portable training and adapter-inference instructions with the exact
-  datasets, base-model revisions and runtime versions.
+- Define and implement unsigned hierarchy exports, small parameter/status
+  records, per-case prompt/evaluation outputs and final numerical measurements.
+  Use the same export path for normal automated runs and saved historical work.
+- Preserve experiment identity, exact selections, versions, reuse and recorded
+  outcomes. Report missing evidence without changing original records.
+- Build exact exported file lists and checksums; link them from the GitHub index
+  to pinned Hugging Face revisions. Leave repository names and paths open until
+  the export layout is defined.
+- Update the [reproduction guide](reproduce.md) for those outputs and test it in
+  a clean environment, including a complete hierarchy run with public
+  authentication. Its existing local checks use the earlier original-file layout.
+- Provide a maintained, tested command for L1 analysis from saved judgments and
+  validate portable training and adapter-inference instructions with the selected
+  data and pinned upstream models.
 
 Finish history cleanup last and repeat publication checks against the final
-release contents, updating any affected checksums and commit references.
+contents, updating affected checksums and commit references. Preserve original
+working artifacts locally; complete native receipt packages are not a condition
+for publishing the compact final results.
 
 ## Prepare verification metadata
 
-This is a publisher step. Readers extract the package and run `verify`; they
-do not supply paths from the research machine.
+This describes the implemented verifier for complete original native experiment
+files, including the locally tested HR39 package. It is not a requirement to
+include those files in the agreed compact publication. It cannot verify reduced
+exports against the original whole-file hashes. When using a complete local
+package, readers run `verify` without supplying research-machine paths.
 
 Stage the selected native experiments and their required files under one
 extraction root. Include each plan, prepared configuration, run manifest,
 results and any runner/worker upgrade ledgers, all bound source versions, and
 the producer receipts needed by reused answers. Resolve historical input
 versions using the inventory before staging. Use copies of the frozen bytes.
-The file list remains the basis for selecting archive contents; this command
-does not select files, copy evidence or build an archive.
+The command checks only the complete native files staged for this workflow;
+it does not select publication contents, copy evidence or export final results.
 
 An original path can require different historical contents in different plans.
 The current location file maps each original path to one destination, so a

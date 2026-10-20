@@ -5,10 +5,11 @@ recorded post before attempting a whole corpus. The examples below use the
 current publication code and the recorded inputs; they keep new outputs separate
 from the original results.
 
-**Release downloads are not available yet.** These instructions use the planned
-[release layout](README.md#release-layout). The offline checks described at the
-end were performed with local copies of the listed files. A download-to-result
-test remains pending.
+**Downloads are not available yet.** These instructions and the offline checks
+below use local copies of original research files in the earlier staging layout.
+The agreed [publication plan](downloads.md) uses smaller final outputs hosted on
+Hugging Face. The commands and checksums need adaptation and testing against
+those exports; the paths below are not promises of public download paths.
 
 | What you want to do | Example | Model work |
 | --- | --- | --- |
@@ -29,14 +30,14 @@ export RELEASE_ROOT="$ORACLE_ROOT/target/reproduction/release"
 mkdir -p "$RELEASE_ROOT" target/reproduction/history
 ```
 
-The [download plan](downloads.md#start-small) assigns these examples to three
-downloads: `hr39-viewer`, `corpus-42d5ce5211a1` and `fine-tune-comparison`.
-Choose the downloads for the examples you want to follow. Extract their files
-under `RELEASE_ROOT`, preserving their member paths.
+The [locally checked examples](downloads.md#start-small) use three original-file
+groups: `hr39-viewer`, `corpus-42d5ce5211a1` and `fine-tune-comparison`.
+With those original files available locally, place them under `RELEASE_ROOT`
+at the paths below. Public exports may use different files and paths.
 [reproduction.sha256](reproduction.sha256) lists the five files used here
 and their measured checksums. They total about 47 MiB uncompressed; model
-downloads and build dependencies are additional. Archive sizes are not yet
-known. These examples do not require the full research collection.
+downloads and build dependencies are additional. These examples do not require
+the full research collection.
 
 | Files | Purpose |
 | --- | --- |
@@ -44,8 +45,8 @@ known. These examples do not require the full research collection.
 | `datasets/42d5ce5211a1a72b08d8df3d80cb5d5668383d2afd27fbee6df331f567e8baef.json` | HR36's 1,000 posts and ASv6.100 answers |
 | `evidence/oracle-mvp-qwen-continuation-grading-v1/target/pilot-l1-results-v1/{analysis,verification}.json` | Saved fine-tune comparison |
 
-The combined check below requires all three downloads and all five files.
-Individual downloads will also receive their own checksum lists when packaged.
+The combined check below requires all five original files. Published exports
+will receive checksums for their actual contents.
 Once all five files are present, verify them:
 
 ```bash
@@ -299,10 +300,10 @@ base-model revisions and associated training manifests. Inference requires an
 adapter's weights/configuration and its matching base model. Resuming training
 also requires its optimizer/training state and the original prepared dataset.
 These larger files are separate from the five-file example above.
-The [publication proposal](downloads.md#corpora-and-fine-tunes) includes all 17
-evaluated adapters on Hugging Face. It distinguishes adapter use from
-continuation's training-state requirements and identifies the records needed
-for a portable training recipe.
+The [publication plan](downloads.md#corpora-and-fine-tunes) includes all 17
+evaluated adapters on Hugging Face, with prepared training data and settings.
+Optimizer state remains outside that plan; resuming an exact training state
+requires additional local artifacts.
 The inventory still lists all candidates; these are not available downloads.
 
 There is currently no maintained CLI that rebuilds this L1 analysis from the
@@ -327,10 +328,12 @@ pipeline inputs or validation. Original source posts remain usable.
 
 ### Verify a saved prompt experiment after extraction
 
-Check the archive checksums, then extract the experiment's evidence package,
-keeping its directory structure. The package supplies the inputs, saved
-responses and location metadata needed for verification. Readers do not need
-to recreate the research machine's paths or edit any configuration.
+This workflow requires a complete original native experiment package. It does
+not apply to the intended compact publication exports or require publishing
+internal hierarchy-generation responses. For a complete local package, check its
+checksums and extract it with its original structure, bound inputs, responses
+and location metadata. Verification then works without recreating the research
+machine's paths.
 
 Verification requires the Python runtime above, but no credentials or model
 worker. For HR39's saved `HR39-resumed-1/batch-00025` prompt experiment:
@@ -345,8 +348,9 @@ python sse_multivector/experiment.py verify \
 
 The command finds the bundled `experiment-locations.json` automatically. These
 are additional evidence files beyond the five-file example above. The package
-has been tested locally; its release download is still pending. Publishers
-prepare it using the [release checklist](open-items.md#prepare-verification-metadata).
+has been tested locally; publishing it is not part of the compact-output plan.
+The [native verification instructions](open-items.md#prepare-verification-metadata)
+describe how such complete local packages are prepared.
 
 This checks the plan and bound source hashes, the manifest, ledger sequence and
 provenance, and successful response receipts. Reused responses are checked

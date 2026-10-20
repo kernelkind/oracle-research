@@ -2,6 +2,11 @@
 
 ## Verify extracted experiment evidence
 
+This workflow checks complete original native experiment files. The agreed
+[publication plan](../docs/experiments/downloads.md) exports used inputs, small
+parameter records and final results; those exports do not require publishing
+all internal receipts and are not verified by this whole-file workflow.
+
 The shared runner supports read-only `verify EXPERIMENT` for native prompt
 experiments and automatically finds the location metadata bundled in a release.
 It checks frozen plan/source hashes and successful receipts, including original
@@ -12,7 +17,7 @@ unrun cases are reported separately; passing integrity checks is not semantic
 approval or proof that a collection is complete. Location mappings apply only
 to verification. Publishers use `prepare-release` to check staged evidence and
 generate its portable location metadata. See the [reader instructions](../docs/experiments/reproduce.md#verify-a-saved-prompt-experiment-after-extraction)
-and [publisher checklist](../docs/experiments/open-items.md#prepare-verification-metadata)
+and [native verification instructions](../docs/experiments/open-items.md#prepare-verification-metadata)
 for the workflow and verification limits.
 
 ## Bootstrap evidence: conclusions reset, data retained

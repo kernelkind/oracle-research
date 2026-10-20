@@ -3,9 +3,10 @@
 This index connects the research to its inputs and saved results, including
 unsuccessful trials and superseded approaches. Code and history will be published
 on GitHub; reusable models and datasets will be hosted on Hugging Face. The
-[publication proposal](downloads.md) lists what to include, why and its size.
-All 17 evaluated adapters are selected for publication; the remaining evidence
-selection is under review. Download links are not available yet.
+[publication plan](downloads.md) records the agreed contents and hosting split:
+all 17 evaluated adapters on Hugging Face Models, and used inputs, parameters
+and final experiment results on Hugging Face Datasets. Export formats and exact
+file selections still need implementation. Download links are not available yet.
 
 Start with the [37 official hierarchy runs](hierarchy.md). The index also covers
 four training runs, 17 adapter checkpoints, individual prompt jobs and older
@@ -22,7 +23,7 @@ have been located and checked against their recorded SHA-256 hashes.
 | Use or study the subject fine-tunes | [Training process and evaluation](../planning/fine-tuning-pilot-process.md) | [Adapter weights and training state](models.csv) |
 | Study subject, mask, title, comparison and prominence trials | [Experiment workflow](../../sse_multivector/model-runner.md) | [Individual saved experiments and historical collections](experiments.csv) |
 | Find an input or result file | [Collection sizes](collections.csv) | [Exact file list](files/README.md) |
-| Review what to publish or find a reader's requirements | [Publication proposal](downloads.md) | [Candidate bundles](bundles.csv) and [task requirements](download-targets.csv) |
+| Review what to publish or find a reader's requirements | [Publication plan](downloads.md) | [Candidate bundles](bundles.csv) and [task requirements](download-targets.csv) |
 
 The generation guide describes the current implementation. Historical trials
 may require earlier code and prompt versions. A higher prompt version number is
@@ -84,33 +85,22 @@ remain historical evidence; raw source posts are not deprecated by that rule.
 
 ## Release layout
 
-Code, maintained prompts, specifications and these inventories belong in GitHub
-repositories with their research histories preserved. Selected adapters belong
-on Hugging Face Models; selected corpora and reusable experiment evidence belong
-on Hugging Face Datasets. Existing tracked experiment data has not been removed
-or migrated by creating this list.
+GitHub holds code and its history, documentation, prompts, reusable experiment
+specifications and this index. Hugging Face Models holds all 17 evaluated
+adapters (6.78 GiB). Hugging Face Datasets holds used posts, prepared training
+data, final unsigned hierarchies, standalone prompt answers, evaluation and
+numerical results, and each experiment's parameters (roughly 0.5–1 GiB).
 
-Equal measured input hashes share one proposed `datasets/` member. Other
-evidence keeps its original relative layout under `evidence/`. Identical tracked
-Git blobs may also share a member; consumers retain their own source references.
-Content that has not been hashed is not assumed identical because its name or
-size matches another file.
+The [publication plan](downloads.md) defines those contents. The index will link
+to exact published revisions and checksums. [Bundle assignments](bundle-collections.csv)
+and other inventory tables still describe the broader original artifacts; they
+have not been converted into the final export list. Dataset layout and export
+schemas remain open. Existing research files and history have not been changed.
 
-The [publication proposal](downloads.md) records the decision to publish all 17
-evaluated adapters and recommends used posts, saved inputs, results and evaluation
-evidence. It identifies operational files proposed to stay offline and unresolved
-clustering evidence. [Bundle assignments](bundle-collections.csv)
-still describe the broad candidate inventory; they have not been narrowed to
-that proposal. Complete input and producer dependencies need staged verification.
-Published versions, download URLs and checksums will be added for the files
-actually selected; see the [layout status](downloads.md#file-selection-and-archive-layout).
-
-Preserve the original frozen plans, answers and receipts. Some contain absolute
-paths from the research environment. Release preparation supplies portable
-location metadata with the archive; readers do not create their own mappings.
-Any publication redactions need a record of the changes and new checksums.
-Runs that reused answers need the original producer's responses and receipts as
-well as their own output.
+Preserve original frozen plans, answers and receipts locally. Their complete
+working directories are not required public downloads. The current native
+receipt verifier checks original files; it is not a verifier for the intended
+compact outputs. Review exported data for sensitive information before release.
 
 ## Reproduction status
 
@@ -118,10 +108,10 @@ The [reproduction guide](reproduce.md) covers browsing HR39, preparing ASv6.100
 on a recorded HR36 post, repeating HR36 construction with its saved subjects,
 and reading the fine-tune comparison. It also explains `verify` for checking
 saved prompt receipts after extraction using bundled location metadata.
-It records the offline checks performed and distinguishes them from new
-inference and exact historical-code reruns. Release downloads, collection-wide
-verification, portable training/L1 recomputation and replay of historical
-collections remain unfinished. Fresh model answers need not match saved answers.
+Those checks describe current tools and original file formats. The guide still
+needs to be adapted and tested against the planned exports. Downloads, portable
+training/L1 recomputation and replay of historical collections remain unfinished.
+Fresh model answers need not match saved answers.
 
 Generation commits, later audit/export commits and the publication commit serve
 different purposes. Preserve their distinction when history cleanup changes
