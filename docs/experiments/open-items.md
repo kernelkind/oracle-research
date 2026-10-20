@@ -148,14 +148,13 @@ jobs, warmups and reused answers must not be counted as independent trials.
 
 ## Current Oracle/runner compatibility
 
-V5 construction tests currently fail because Oracle calls
-`ReceiptFiles._stamp(path)` on the class, while the installed runner requires
-an instance for `_stamp(self, path)`. The same failures occur on the unchanged
-baseline; the compact hierarchy export did not introduce them. Resolve this
-compatibility issue before claiming a validated V5 end-to-end generation workflow.
-The export checks and local HR39
-preview in the [reproduction guide](reproduce.md#hierarchy-publication-checks)
-do not establish that the full construction suite passes.
+Oracle's numerical validation now calls `_stamp(path)` on its active
+`ReceiptFiles` instance, as required by the shared runner. All 177 relevant
+construction, adapter and publication checks pass, including the 42 that
+previously failed at this call. See the
+[reproduction guide](reproduce.md#hierarchy-publication-checks) for the check
+scope. These local fixtures do not establish successful reproduction of every
+archived experiment or validation with a live provider.
 
 ## Preserve the source history
 

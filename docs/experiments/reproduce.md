@@ -496,9 +496,12 @@ describe exporting this saved graph, not memory needed to generate it or proof
 of million-note scalability. Nothing was uploaded.
 
 A fresh isolated editable runner installation automatically installed its
-dependencies and passed `pip check`; six JSON-projection tests and 38 focused
-Oracle publication checks passed. The broader 165-check Oracle run had the same
-40 errors and two failures as the isolated 127-check unchanged baseline, with
-identical unsuccessful method IDs and no new failures. All 42 arise from the
-existing Oracle/runner compatibility issue that blocks V5 end-to-end validation;
-see [open items](open-items.md#current-oraclerunner-compatibility).
+dependencies and passed `pip check`; six JSON-projection tests passed.
+
+After correcting the receipt-reader instance call used by numerical validation,
+all **177 relevant Oracle checks pass**: 127 V3/V5 construction checks, 38
+publication/viewer/runtime checks and 12 HDBSCAN adapter checks. This includes
+the 42 construction checks that previously failed and a new regression that
+first reproduced the exact call error, then passed with the fix. The checks
+exercise production paths with local fixture runners and encoders; they make
+no paid model calls and do not rerun the archived experiments.

@@ -42,6 +42,21 @@ def fixture(groups=7, distances=None):
 
 
 class HdbscanSectionTests(unittest.TestCase):
+    def test_validation_identities_track_current_evidence_files(self):
+        with tempfile.TemporaryDirectory() as directory:
+            paths = {name: Path(directory)/f'{name}.json' for name in ('request', 'result')}
+            for path in paths.values():
+                path.write_text('{}')
+            state = dict(sources={}, hdbscan_binary='hdbscan',
+                         generation_policy='hierarchy-generation-v5', max_siblings=6)
+            jobs = [(dict(id='F00000'), dict(current=[], groups=[],
+                     hdbscan={name: str(path) for name, path in paths.items()}))]
+            with hdbscan.source_scope():
+                original = hdbscan._validation_identities(state, jobs)
+                self.assertEqual(hdbscan._validation_identities(state, jobs), original)
+                paths['result'].write_text('{"changed": true}')
+                self.assertNotEqual(hdbscan._validation_identities(state, jobs), original)
+
     def test_hierarchy_output_preserves_the_same_groups_and_section_cut(self):
         response, request, mapping = fixture(14)
         expected = hdbscan.section_plan(response, request, mapping, 6)

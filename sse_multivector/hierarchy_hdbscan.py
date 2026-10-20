@@ -89,7 +89,7 @@ def _validate_saved_round(job, state=None):
 def _validation_identities(state, jobs):
     """Bind each check to its controls, vector producers and current evidence files."""
     from . import worker
-    stamp = workflow.engine.ReceiptFiles._stamp
+    stamp = _RESULT_FILES.get()._stamp
     sources = workflow.inputs.digest([state['sources'], state['hdbscan_binary']])
     encodings = {}
     for _, round_ in jobs:
