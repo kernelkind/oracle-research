@@ -5,6 +5,9 @@
 This is a toy protocol. It is not recommended for widespread adoption.
 Efficient hierarchy updates are out of scope.
 
+Use it only in local or private test environments. Do not publish these
+experimental events to public Nostr relays.
+
 The client starts with a hierarchy author's public key and a relay URL.
 One author publishes one hierarchy. The author and relay operator are separate.
 All hierarchy events come from that author and have empty `content`.

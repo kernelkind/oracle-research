@@ -12,12 +12,14 @@ Each choice lets the person direct their own discovery. The goal is to put that 
 
 [Watch the walkthrough in Notedeck (19 seconds)](docs/media/hierarchy-walkthrough.mp4): choose a topic, narrow it down, and view its posts.
 
-The walkthrough shows Notedeck's **Hierarchy** column. Choose a hierarchy available through your Nostr relays, follow progressively narrower topics, and view the posts linked to a topic.
+The walkthrough shows Notedeck's **Hierarchy** column: follow progressively narrower topics and view their linked posts.
+
+The interface uses a [toy hierarchy snapshot protocol](docs/recommendation-engine/design/hierarchy-serving-protocol-decisions.md) for local or private testing. Keep these experimental events off public Nostr relays.
 
 **Notedeck interface source code:** link pending publication.
 <!-- Add the public source-code URL for the Notedeck hierarchy interface before publication. -->
 
-Notedeck reads hierarchies shared through Nostr relays. The [generation guide](docs/generate-hierarchy.md) covers terminal browsing and [exporting a completed hierarchy as signed Nostr notes](docs/generate-hierarchy.md#8-export-as-nostr-notes). Sending those notes to relays is a separate step.
+The [generation guide](docs/generate-hierarchy.md) covers terminal browsing and [exporting a completed hierarchy in the toy Nostr format](docs/generate-hierarchy.md#8-export-as-nostr-notes) for local testing.
 
 ## Goals
 
@@ -41,7 +43,7 @@ Notedeck reads hierarchies shared through Nostr relays. The [generation guide](d
 | --- | --- |
 | Generate a hierarchy from your own posts | [Complete generation workflow](docs/generate-hierarchy.md) |
 | Browse an existing hierarchy without running models | [Browse HR39](docs/experiments/reproduce.md#browse-hr39-without-running-models) |
-| Export a completed hierarchy as Nostr notes | [Offline signing and export](docs/generate-hierarchy.md#8-export-as-nostr-notes) |
+| Export a hierarchy in the toy Nostr format | [Local signing and export](docs/generate-hierarchy.md#8-export-as-nostr-notes) |
 | Extract subjects locally with a trained model | [Use a subject-extraction adapter](docs/experiments/reproduce.md#use-a-subject-adapter) |
 | Inspect the fine-tuning measurements | [Read the saved comparison](docs/experiments/reproduce.md#inspect-the-fine-tune-comparison) |
 | Repeat the subject fine-tuning | [Training inputs and instructions](docs/experiments/reproduce.md#prepare-the-fine-tuning-inputs) |

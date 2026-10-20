@@ -363,9 +363,11 @@ for detailed preparation, receipt and recovery behavior.
 
 ## 8. Export as Nostr notes
 
-To export the completed hierarchy for the Notedeck interface, use
-`export-canonical-nostr`. It creates signed Nostr events in a local JSONL file.
-It makes no model calls and sends nothing to relays.
+For local inspection and private tests of the Notedeck interface, use
+`export-canonical-nostr`. It creates signed Nostr events in a local JSONL file
+using the [toy hierarchy snapshot protocol](recommendation-engine/design/hierarchy-serving-protocol-decisions.md).
+**Keep these experimental events off public Nostr relays.** The command makes
+no model calls and sends nothing to relays.
 
 You need:
 
@@ -399,7 +401,7 @@ more than 500 directly linked posts.
 `hierarchy-events.jsonl` contains kind `8680` node events, children before
 parents, followed by the kind `18680` starting event. Nodes contain titles,
 ordered child references and source-post IDs under the
-[experimental hierarchy protocol](recommendation-engine/design/hierarchy-serving-protocol-decisions.md).
+[toy hierarchy snapshot protocol](recommendation-engine/design/hierarchy-serving-protocol-decisions.md).
 Source post bodies and the secret key are not included. Each node links only
 posts absent from its descendants; posts outside the hierarchy's roots are
 excluded.
@@ -411,9 +413,8 @@ the saved run, supply it with `--uuid-namespace` to retain node UUIDs.
 See the [export reference](../sse_multivector/model-runner.md#offline-nostr-export)
 for the remaining identity and ordering details.
 
-Notedeck discovers hierarchies through the account's read relays. The signed
-events must be published to an appropriate relay before that interface can
-discover them; this export command only creates the local file. This optional
-signing step was not part of the 12-post VM test described above. These
+This guide ends at the local export file; use the terminal viewer above to
+browse without a relay. This optional signing step was not part of the 12-post
+VM test described above. These
 instructions were checked against the existing command and for syntax; no new
 signing or relay publication was performed.
