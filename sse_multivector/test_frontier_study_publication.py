@@ -155,6 +155,34 @@ class FrontierStudyPublicationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'usage'):
             self.export()
 
+    def test_native_usage_aliases_and_transport_summaries_preserve_scientific_evidence(self):
+        usage = dict(input_tokens=3, output_tokens=5, reasoning_output_tokens=2,
+                     cache_write_input_tokens=0, cost=0)
+        upstream = dict(model='saved-model', max_output_tokens=32768,
+                        body_sha256='a'*64, input_sha256='b'*64, prompt_text_sha256='c'*64,
+                        format=dict(type='json_schema', strict=True, name='saved-schema'),
+                        reasoning=dict(effort='high', summary='auto'))
+        value = self.save('study/result.json', dict(stop_reason='aborted', usage=usage,
+            error=dict(code='server_error', error_type='provider_unavailable', message='PRIVATE-POLICY'),
+            response_metadata=dict(
+                error=dict(code=502, error_type='timeout', message='PRIVATE-POLICY'),
+                abort_reason=dict(code=23, name='TimeoutError', message='PRIVATE-POLICY'),
+                transport_error=dict(code=20, name='AbortError', phase='body', message='PRIVATE-POLICY'),
+                upstream_requests=[dict(**upstream, credential_route='PRIVATE-ROUTE')],
+                account_organization='PRIVATE-ORG')))
+        self.select(http_results=[value])
+        output = self.export()
+        data = self.rows(output, 'results.jsonl')[0]['data']
+        self.assertEqual(data['usage'], usage)
+        self.assertEqual(data['stop_reason'], 'aborted')
+        self.assertEqual(data['error'], dict(code='server_error', error_type='provider_unavailable'))
+        self.assertEqual(data['response_metadata'], dict(
+            error=dict(code=502, error_type='timeout'),
+            abort_reason=dict(code=23, name='TimeoutError'),
+            transport_error=dict(code=20, name='AbortError', phase='body'),
+            upstream_requests=[upstream]))
+        self.assertNotIn('PRIVATE-', ''.join(p.read_text() for p in output.iterdir()))
+
     def test_transport_failure_projection_preserves_scientific_error_measurements(self):
         value = self.save('study/measurement.json', dict(
             metrics=dict(error=0.03, relative=dict(error=0.02)),

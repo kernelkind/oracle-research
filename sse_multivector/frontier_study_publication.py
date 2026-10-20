@@ -89,15 +89,16 @@ _TIMING = set('''byte_count comment_count error_gap_ms error_ms event_count even
 first_byte_ms first_event_ms headers_ms last_byte_ms last_event_ms last_non_error_event_ms
 max_byte_gap_ms max_event_gap_ms stream_end_ms'''.split())
 _USAGE = set('''cacheRead cacheWrite cached_tokens cached_input_tokens completion_tokens cost input
-input_tokens output output_tokens output_tokens_including_reasoning prompt_tokens reasoning
+cache_write_input_tokens input_tokens output output_tokens output_tokens_including_reasoning
+prompt_tokens reasoning reasoning_output_tokens
 reasoning_tokens total totalTokens total_tokens'''.split())
 _COST_DETAILS = set('''upstream_inference_completions_cost upstream_inference_cost
 upstream_inference_input_cost upstream_inference_output_cost upstream_inference_prompt_cost'''.split())
 _TOKEN_DETAILS = set('''accepted_prediction_tokens rejected_prediction_tokens audio_tokens
 image_tokens video_tokens reasoning_tokens cached_tokens cache_write_tokens'''.split())
-_STOP_REASONS = {'stop', 'length', 'max_tokens', 'max_output_tokens', 'tool_calls', 'tool_use',
+_STOP_REASONS = {'stop', 'length', 'max_tokens', 'max_output_tokens', 'tool_calls', 'tool_use', 'aborted',
                  'end_turn', 'completed', 'incomplete', 'cancelled', 'error', 'content_filter', 'refusal'}
-_UPSTREAM = {'body_sha256', 'format', 'max_output_tokens', 'model', 'reasoning',
+_UPSTREAM = {'body_sha256', 'input_sha256', 'prompt_text_sha256', 'format', 'max_output_tokens', 'model', 'reasoning',
              'schema_sha256', 'store', 'stream'}
 
 
@@ -142,7 +143,16 @@ def _failure(value):
     if isinstance(value, str):
         match = re.match(r'([1-5][0-9]{2}):(?:\s|$)', value)
         code = int(match[1]) if match else None
-    return {'code': code} if type(code) is int and 100 <= code < 600 else {'status': 'failed'}
+    result = {}
+    if type(code) is int and 0 <= code < 600 or code == 'server_error':
+        result['code'] = code
+    if isinstance(value, dict):
+        for field, allowed in {'name': {'AbortError', 'TimeoutError', 'TypeError'},
+                               'phase': {'headers', 'body'},
+                               'error_type': {'provider_unavailable', 'timeout'}}.items():
+            if isinstance(value.get(field), str) and value[field] in allowed:
+                result[field] = value[field]
+    return result or {'status': 'failed'}
 
 
 def _usage(value, fields=None):
@@ -174,6 +184,20 @@ def _factor(text):
     return text, {}
 
 
+def _upstream(value):
+    result = {name: child for name, child in value.items() if name in _UPSTREAM}
+    for name, child in result.items():
+        nested = {'reasoning': {'effort', 'summary'}, 'format': {'name', 'type', 'strict'}}.get(name)
+        if nested is not None and isinstance(child, dict):
+            result[name] = {field: measured for field, measured in child.items() if field in nested}
+            values = result[name].values()
+        else:
+            values = [child]
+        _require(all(measured is None or type(measured) in (str, int, float, bool)
+                     for measured in values), 'upstream request summary must contain scalar controls')
+    return result
+
+
 def _result(value, sources):
     result = {}
     for key in _RESULT & value.keys():
@@ -185,24 +209,18 @@ def _result(value, sources):
             item = {name: measured for name, measured in item.items() if name in _TIMING
                     and (measured is None or type(measured) in (int, float))}
         if key == 'upstream_request':
-            item = {name: child for name, child in item.items() if name in _UPSTREAM}
-            for name, child in item.items():
-                nested = {'reasoning': {'effort', 'summary'}, 'format': {'type', 'strict'}}.get(name)
-                if nested is not None and isinstance(child, dict):
-                    item[name] = {field: measured for field, measured in child.items() if field in nested}
-                    values = item[name].values()
-                else:
-                    values = [child]
-                _require(all(measured is None or type(measured) in (str, int, float, bool)
-                             for measured in values), 'upstream request summary must contain scalar controls')
+            item = _upstream(item)
         if key == 'error':
             item = _failure(item)
         result[key] = _project(item, sources, key=key)
     if 'response_metadata' in value:
         metadata = {}
         for key, item in value['response_metadata'].items():
-            if key == 'error':
+            if key in {'error', 'abort_reason', 'transport_error'}:
                 metadata[key] = _failure(item)
+            elif key == 'upstream_requests':
+                _require(isinstance(item, list), 'upstream requests must be summary objects')
+                metadata[key] = [_upstream(child) for child in item]
             elif key == 'usage':
                 metadata[key] = _usage(item)
             elif key == 'http_status':
