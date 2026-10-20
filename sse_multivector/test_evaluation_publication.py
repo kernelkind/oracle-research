@@ -270,6 +270,100 @@ class EvaluationPublicationTests(unittest.TestCase):
         self.assertEqual(rows[2]['output'], records[2]['final_output_raw'])
         self.assertNotIn('output_sha256', self.rows(output / 'results.jsonl')[0]['premises'][0])
 
+    def test_final_effort_source_assessment_retains_accuracy_bounds_and_attributed_adjudication(self):
+        from sse_multivector import evaluation_publication as publication
+        adjudication = self.root / 'private/adjudication.json'
+        write(adjudication, dict(schema_version=1, key='question-1', actor='agent',
+            status='resolved', accepted_verdicts=[{'valid': True}], reason='The post supplies the restriction.',
+            gold_status='Source assessment, not human-certified truth.',
+            final_paired_receipt_reconciliation_required=True,
+            evidence={'/home/private/account/auth.json': 'SECRET'}))
+        measures = dict(N=2, same_decision=1, H=1, G=0, A=0, both_correct=1, both_wrong=0,
+            net_loss_count=1, loss_range_count=[1, 1], loss_range_percentage_points=[50., 50.],
+            upper_within_2pp=False)
+        deletion = dict(method='Omit one source component from the measurements.', source_contexts=2,
+            components=2, full_point_loss_percentage_points=50.,
+            deletion_point_range_percentage_points=[0., 100.], largest_absolute_point_change_percentage_points=50.,
+            deletion_truth_envelope_percentage_points=[0., 100.], rows=[dict(note_ids=['post-1'],
+                removed_prompts=1, remaining=measures, by_check={'matching': measures},
+                by_role={'matching': measures}, by_cohort={'random': measures})])
+        result = dict(schema_version=1, status='source_assessed', effort='high', stage=10,
+            accuracy_basis='Agent source judgments; unresolved truth remains unscored.',
+            paired={'path': '/home/private/paired.json', 'sha256': 'b' * 64}, sources={},
+            summary=measures, by_check={'matching': measures}, by_role={'matching': measures},
+            by_cohort={'random': measures}, new_prompts=measures, prior_prompts=measures,
+            role_overlap={'actual_and_compatibility': 1, 'note': 'The roles overlap.'},
+            evidence_verification={'current_adjudications': 1, 'linked_files': 1, 'all_hashes_verified': True},
+            source_component_deletion=deletion, limitations=['A selected panel, not population accuracy.'],
+            rows=[dict(key='question-1', classification='H', roles=['matching'], cohorts=['random'],
+                baseline_normalized_verdict=True, candidate_normalized_verdict=False, in_prior_stage_5=False,
+                source_adjudication=dict(path=str(adjudication), sha256=run.sha256(adjudication),
+                    status='resolved', accepted_normalized_verdicts=[True])),
+                  dict(key='question-2', classification='same_decision', roles=['matching'],
+                       cohorts=['random'], source_adjudication=None)])
+        source = self.root / 'stage-10-high-source-assessment.json'
+        write(source, result)
+        output = self.root / 'publication'
+        publication.export_comparison(source, output)
+        metadata = json.loads((output / 'experiment.json').read_text())
+        self.assertEqual(metadata['parameters']['summary'], measures)
+        self.assertEqual(metadata['parameters']['by_check']['matching'], measures)
+        self.assertEqual(metadata['parameters']['source_component_deletion'], deletion)
+        row = self.rows(output / 'results.jsonl')[0]
+        self.assertIs(row['baseline_normalized_verdict'], True)
+        self.assertIs(row['candidate_normalized_verdict'], False)
+        self.assertEqual(row['source_adjudication']['sha256'], run.sha256(adjudication))
+        judgment = self.rows(output / 'judgments.jsonl')[0]
+        self.assertEqual(judgment['actor'], 'agent')
+        self.assertEqual(judgment['evidence_status'], 'saved')
+        self.assertEqual(judgment['reason'], 'The post supplies the restriction.')
+        self.assertEqual(judgment['accepted_verdicts'], [{'valid': True}])
+        self.assertIs(judgment['final_paired_receipt_reconciliation_required'], True)
+        exported = ''.join(p.read_text() for p in output.iterdir())
+        self.assertNotIn('/home/private', exported)
+        self.assertNotIn('SECRET', exported)
+        self.assertTrue(adjudication.is_file(), 'Deletion measurements must never delete source files.')
+        write(adjudication, {**json.loads(adjudication.read_text()), 'reason': 'Changed after the source was frozen.'})
+        publication.export_comparison(source, output)
+        self.assertEqual(self.rows(output / 'judgments.jsonl')[0]['evidence_status'], 'mismatch')
+        for field, invalid in [('schema_version', 2), ('effort', 'unknown'), ('summary', {})]:
+            with self.subTest(field=field):
+                invalid_source = self.root / (field + '.json')
+                write(invalid_source, {**result, field: invalid})
+                with self.assertRaisesRegex(ValueError, 'source assessment'):
+                    publication.export_comparison(invalid_source, self.root / (field + '-publication'))
+        saved = json.loads(adjudication.read_text())
+        saved.pop('actor')
+        write(adjudication, saved)
+        result['rows'][0]['source_adjudication']['sha256'] = run.sha256(adjudication)
+        write(source, result)
+        publication.export_comparison(source, output)
+        self.assertEqual(self.rows(output / 'judgments.jsonl')[0]['actor'], 'not_recorded')
+
+    def test_source_assessment_cannot_publish_changed_bytes_under_an_earlier_hash(self):
+        from sse_multivector import evaluation_publication as publication
+        adjudication = self.root / 'adjudication.json'
+        write(adjudication, dict(actor='agent', reason='Frozen assessment.'))
+        source = self.root / 'assessment.json'
+        write(source, dict(schema_version=1, stage=5, effort='high', accuracy_basis='Source assessment.',
+            paired={'sha256': 'b' * 64}, summary=dict(N=1, H=0, G=0, A=1),
+            rows=[dict(key='question-1', classification='A',
+                source_adjudication=dict(path=str(adjudication), sha256=run.sha256(adjudication)))]))
+        original_hash = publication._hash
+
+        def change_after_hash(path):
+            checksum = original_hash(path)
+            if Path(path) == adjudication:
+                write(adjudication, dict(actor='agent', reason='Changed after hashing.'))
+            return checksum
+
+        output = self.root / 'publication'
+        with patch.object(publication, '_hash', side_effect=change_after_hash):
+            publication.export_comparison(source, output)
+        judgment = self.rows(output / 'judgments.jsonl')[0]
+        self.assertEqual(judgment['evidence_status'], 'saved')
+        self.assertEqual(judgment['reason'], 'Frozen assessment.')
+
     def test_saved_result_note_identity_must_match_its_answer_and_selection(self):
         from sse_multivector import evaluation_publication as publication
         directory = self.root / 'run/baseline'

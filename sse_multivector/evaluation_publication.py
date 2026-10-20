@@ -620,6 +620,126 @@ def _l1_records(source, models):
                     depth = 1
 
 
+_ACCURACY_FIELDS = {'N', 'same_decision', 'H', 'G', 'A', 'both_correct', 'both_wrong',
+    'net_loss_count', 'loss_range_count', 'loss_range_percentage_points', 'upper_within_2pp'}
+_ASSESSMENT_HEADERS = {'accuracy_basis', 'effort', 'status', 'recorded_at_utc', 'by_check',
+    'by_role', 'by_cohort', 'new_prompts', 'prior_prompts', 'role_overlap', 'evidence_verification',
+    'source_component_deletion', 'limitations', 'decision', 'revision', 'supersedes',
+    'provisional_final_reconciliation', 'paired'}
+
+
+def _accuracy(value):
+    return {key: item for key, item in value.items() if key in _ACCURACY_FIELDS
+            and (type(item) in (int, float, bool) or isinstance(item, list)
+                 and all(type(number) in (int, float) for number in item))}
+
+
+def _assessment_values(value, fields):
+    return {key: item for key, item in value.items() if key in fields
+            and (item is None or type(item) in (str, int, float, bool)
+                 or isinstance(item, list) and all(part is None or type(part) in (str, int, float, bool)
+                                                   for part in item))}
+
+
+def _assessment_measurements(value):
+    """The saved effort-accuracy tables have fixed measurements and named groups."""
+    result = _assessment_values(value, {'schema_version', 'stage', 'effort', 'status',
+        'recorded_at_utc', 'accuracy_basis', 'limitations', 'decision', 'revision'})
+    for field in ('summary', 'new_prompts', 'prior_prompts', 'remaining'):
+        if field in value:
+            result[field] = _accuracy(value[field])
+    for field, names in (('by_check', ('matching', 'support', 'relationship')),
+            ('by_role', ('matching', 'support', 'compatibility', 'actual_relationship')),
+            ('by_cohort', ('random', 'challenge'))):
+        if field in value:
+            result[field] = {name: _accuracy(row) for name, row in value[field].items() if name in names}
+    for field in ('paired', 'supersedes', 'provisional_final_reconciliation'):
+        if isinstance(value.get(field), dict) and 'sha256' in value[field]:
+            result[field] = {'sha256': value[field]['sha256']}
+    for field, names in (('role_overlap', {'actual_and_compatibility', 'note'}),
+            ('evidence_verification', {'current_adjudications', 'linked_files', 'all_hashes_verified'})):
+        if field in value:
+            result[field] = {key: item for key, item in value[field].items() if key in names}
+    if 'source_component_deletion' in value:
+        deletion = value['source_component_deletion']
+        result['source_component_deletion'] = {key: deletion[key] for key in ('method', 'source_contexts',
+            'components', 'full_point_loss_percentage_points', 'deletion_point_range_percentage_points',
+            'largest_absolute_point_change_percentage_points', 'deletion_truth_envelope_percentage_points') if key in deletion}
+        result['source_component_deletion']['rows'] = [dict(
+            {key: row[key] for key in ('note_ids', 'removed_prompts') if key in row},
+            **_assessment_measurements(row)) for row in deletion.get('rows', [])]
+    return result
+
+
+def _export_source_assessment(source, output, header, stamp, execution_status, result):
+    if (header.get('schema_version') != 1 or type(header.get('stage')) is not int
+            or header['stage'] <= 0 or header.get('effort') not in ('xhigh', 'high', 'medium', 'low')
+            or not isinstance(header.get('accuracy_basis'), str)
+            or not isinstance(header.get('summary'), dict)
+            or not all(type(header['summary'].get(key)) is int and header['summary'][key] >= 0
+                       for key in ('N', 'H', 'G', 'A'))
+            or not isinstance(header.get('paired'), dict)
+            or not re.fullmatch('[0-9a-f]{64}', str(header['paired'].get('sha256', '')))):
+        raise ValueError('unrecognized final effort source assessment')
+    metadata = _metadata(source, 'evaluation-source-assessment', execution_status)
+    metadata.update(parameters=_assessment_measurements(header),
+        source=dict(report_sha256=_hash(source), evidence_sha256=_source_hashes(header.get('sources', {}))),
+        evidence='Source adjudications are assessments, not human-certified ground truth; absent actor attribution remains not_recorded.')
+    _retain_status(metadata, output, execution_status)
+    rows = lambda: result.get('rows', []) if result is not None else _items(source, 'rows.item')
+    assessments = {}
+    for row in rows():
+        reference = row.get('source_adjudication')
+        if isinstance(reference, dict):
+            path = Path(reference['path'])
+            path = path if path.is_absolute() else source.parent / path
+            assessments[(path, reference['sha256'])] = None
+
+    def records():
+        for row in rows():
+            projected = _assessment_values(row, {'key', 'classification', 'roles', 'cohorts',
+                'baseline_normalized_verdict', 'candidate_normalized_verdict', 'in_prior_stage_5'})
+            reference = row.get('source_adjudication')
+            projected['source_adjudication'] = ({key: reference[key] for key in ('sha256', 'status',
+                'accepted_normalized_verdicts') if key in reference} if isinstance(reference, dict) else None)
+            yield projected
+        if _stamp(source) != stamp:
+            raise ValueError('saved source assessment changed during export')
+
+    def judgments():
+        for path, checksum in assessments:
+            judgment = dict(source_sha256=checksum, origin='source_assessment', actor='not_recorded',
+                evidence_status='missing')
+            if path.is_file():
+                with path.open('rb') as stream:
+                    raw = stream.read(_READ_LIMIT + 1)
+                if len(raw) > _READ_LIMIT:
+                    raise ValueError('source adjudication exceeds bounded read limit')
+                if hashlib.sha256(raw).hexdigest() != checksum:
+                    judgment['evidence_status'] = 'mismatch'
+                else:
+                    saved = json.loads(raw)
+                    judgment['evidence_status'] = 'saved'
+                    if saved.get('actor') in ('agent', 'user'):
+                        judgment['actor'] = saved['actor']
+                    judgment.update(_assessment_values(saved, {'schema_version', 'judgment_id', 'key',
+                        'recorded_at_utc', 'status', 'accepted_verdicts', 'reason', 'counterexample',
+                        'remaining_ambiguity', 'basis', 'gold_status', 'scope',
+                        'lower_effort_answers_exposed_to_adjudicators', 'initial_source_judgments_revised',
+                        'primary_accuracy_effect', 'revision', 'audit_type', 'limitation',
+                        'final_provisional_receipt_reconciliation_required',
+                        'root_retains_uncertainty_despite_reviewer_agreement',
+                        'final_paired_receipt_reconciliation_required'}))
+                    if 'accepted_verdicts' in saved:
+                        judgment['accepted_verdicts'] = [_assessment_values(verdict, {'valid', 'teacher_id'})
+                            for verdict in saved['accepted_verdicts'] if isinstance(verdict, dict)]
+                    if isinstance(saved.get('supersedes'), dict) and 'sha256' in saved['supersedes']:
+                        judgment['supersedes'] = {'sha256': saved['supersedes']['sha256']}
+            yield judgment
+
+    return _write(output, metadata, {'results.jsonl': records(), 'judgments.jsonl': judgments()}, source)
+
+
 def export_comparison(source, output=None, *, result=None, execution_status=None):
     """Native paired grades, historical L1 measurements or final effort analysis."""
     source = Path(source).resolve()
@@ -627,8 +747,10 @@ def export_comparison(source, output=None, *, result=None, execution_status=None
     output = Path(output) if output is not None else source.parent / 'publication' / source.stem
     header_fields = {'schema_version', 'scope', 'aggregation', 'correctness', 'completeness',
         'qualification', 'score_units', 'reference_basis', 'inference_calls', 'stage',
-        'summary', 'basis', 'panel', 'baseline_freeze', 'sources', 'random', 'challenge'}
+        'summary', 'basis', 'panel', 'baseline_freeze', 'sources', 'random', 'challenge'} | _ASSESSMENT_HEADERS
     header = {key: value for key, value in result.items() if key in header_fields} if result is not None else _project(source, header_fields)
+    if 'accuracy_basis' in header or 'by_check' in header:
+        return _export_source_assessment(source, output, header, stamp, execution_status, result)
     metadata = _metadata(source, 'evaluation-comparison', execution_status)
     metadata.update(parameters={key: _clean(value, key, summary=key in ('random', 'challenge'))
         for key, value in header.items() if key != 'sources'},
