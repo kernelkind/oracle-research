@@ -102,8 +102,14 @@ remain historical evidence; raw source posts are not deprecated by that rule.
 
 ## Release layout
 
-GitHub holds code and its history, documentation, prompts, reusable experiment
-specifications and this index. Hugging Face Models holds all 17 evaluated
+The agreed [public Git layout](downloads.md#public-git-contents) keeps code and
+its history, tests, prompts and their provenance, authored findings, useful
+documentation and a selected-study index. Its estimated compressed history is
+20–30 MiB across both repositories, with about 60 MiB of checked-out files.
+Generated run files and exhaustive workspace catalogs remain tracked today;
+simplifying the tree and index is pending, and history cleanup stays last.
+
+Hugging Face Models holds all 17 evaluated
 adapters (6.78 GiB). Hugging Face Datasets holds used posts, prepared training
 data, final unsigned hierarchies, standalone prompt answers, evaluation and
 numerical results, and each experiment's parameters. The selected local files

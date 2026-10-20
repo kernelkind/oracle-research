@@ -9,7 +9,7 @@ deleting original research or rewriting history.
 
 | Where | What |
 | --- | --- |
-| GitHub | Code and its history, documentation, prompts, reusable experiment specifications and the experiment index |
+| GitHub | Code and its history, tests, prompts and their provenance, authored findings, useful documentation and the selected-study index: **20–30 MiB estimated compressed Git history** across both repositories |
 | Hugging Face Models | All 17 evaluated adapters, with configurations and pinned base-model references: **6.78 GiB** |
 | Hugging Face Datasets | Posts actually used, prepared training data, final unsigned hierarchies, standalone prompt answers, evaluation results, final numerical results and each experiment's parameters: **1.04 GiB currently staged**, with legacy review items remaining |
 
@@ -17,6 +17,59 @@ The GitHub index will link each experiment to its inputs and results at exact
 Hugging Face revisions, with checksums. Readers should be able to download the
 experiments they need independently. Model and dataset files will be hosted on
 Hugging Face; GitHub Release attachments are not the delivery plan.
+
+## Public Git contents
+
+The agreed layout keeps source code, tests and fixtures, reusable specifications,
+versioned prompts, prompt revisions and assembly receipts, and authored research
+findings in Git. Generated run files and exhaustive lists of the original
+workspace stay outside public Git. Selected inputs and final evidence go to
+Hugging Face; preserve the complete original working files locally.
+
+The read-only review at Oracle commit `a45639d2` and runner commit `34d7eb7`
+measured the following proposed reduction. The current tracked tree and history
+have not yet been cleaned.
+
+| Contents | At the reviewed commits | Intended layout |
+| --- | ---: | ---: |
+| Both Git object databases | About 504 MiB | Plan for 20–30 MiB of compressed history |
+| Both checked-out repositories | About 2.67 GiB | About 60 MiB |
+| `docs/experiments/` | 1,286 files, 192.89 MiB | 22 files, about 7.43 MiB |
+
+The Git estimate packs retained historical file versions with their filenames
+and the original commit/tree metadata, discarding the resulting bytes. It also
+includes the runner's complete history and a filtered study index. That check
+measured 22.44 MiB; filtered trees and final cleanup change the exact size. It
+is a planning estimate, not a measured cleaned clone or public download size.
+
+Exclude generated requests/responses, execution state and logs, intermediate
+arrays, rendered output displays and working archives from eventual public Git.
+The proposal identifies 28,666 such current files totaling 2.43 GiB. Keep source,
+prompts and findings within those same experiment directories. In particular,
+retain the 17 authored navigation `RESULTS.md` files that match an overbroad
+ignore rule. Small ambiguous case/recipe files remain included pending review.
+
+For the public index, retain the maintained guides, selected-result catalog,
+checksums, hierarchy/corpus/model summaries and useful provenance/recovery
+tables. Retain `historical-files.csv` and `historical-uses.csv` because they bind
+evidence to original blobs, commits and paths. Reduce `experiments.csv` to its
+2,595 rows with selected-publication links at the reviewed commit, preserving
+their columns. `publications.csv` also indexes the selected numerical and other
+results; `publication-gaps.csv` keeps outstanding evidence review explicit.
+
+Preserve the full original job index locally. Keep `files/**`, `dependencies.csv`,
+`inputs.csv`, `issues.csv`, `spec-inputs.csv`, `collections.csv`, `file-lists.csv`,
+`bundles.csv`, `bundle-files.csv`, `bundle-collections.csv` and
+`download-targets.csv` as local audit material. These exhaustive file/dependency
+catalogs and earlier packaging tables are not additional Hugging Face downloads.
+Their meaningful conclusions remain in the maintained findings and gap records.
+Updating their documentation links and simplifying the tracked index remain
+implementation work.
+
+Preserve the full commit sequence, timestamps and merge relationships, including
+commits left empty after generated files are removed. Keep an old-to-new commit
+mapping and original generation IDs in experiment provenance. History cleanup
+remains the last step and needs separate execution authorization.
 
 ## What belongs
 

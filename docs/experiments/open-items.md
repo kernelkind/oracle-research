@@ -192,6 +192,12 @@ inventory and old bundle tables do not define the public download size or layout
 
 Before publication:
 
+- Implement the agreed [public Git layout](downloads.md#public-git-contents):
+  retain code, tests, prompts, authored findings and a selected-study index;
+  preserve generated run files and exhaustive workspace catalogs locally.
+  Simplify the tracked index and repair its documentation links. Review the
+  small ambiguous case/recipe files, retain authored findings even where current
+  ignore rules match them, and check code/test paths that use original artifacts.
 - Review [remaining conversion items](publication-gaps.csv): 33 unsupported result
   files, one result without its required local configuration, and older inventory
   groups needing review for final data versus material already retained in Git.
@@ -212,7 +218,10 @@ Before publication:
   data and pinned upstream models.
 
 Finish history cleanup last and repeat publication checks against the final
-contents, updating affected checksums and commit references. Preserve original
+contents, updating affected checksums and commit references. Preserve the full
+commit sequence, timestamps and merges, including empty commits left by artifact
+removal, and keep an old-to-new commit mapping. History cleanup needs separate
+execution authorization. Preserve original
 working artifacts locally; complete native receipt packages are not a condition
 for publishing the compact final results.
 
