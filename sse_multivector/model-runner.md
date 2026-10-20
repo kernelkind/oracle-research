@@ -2393,15 +2393,9 @@ sorted short labels; it does not establish a relevance ranking. Nodes with more
 than 500 direct post IDs are rejected.
 
 Requires local `nak` (used with 0.16.2) and a file containing a hexadecimal secret
-key. Replace `SAVED_HIERARCHY` and `KEY_FILE` with those paths:
-
-```bash
-cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
-python3 sse_multivector/experiment.py export-canonical-nostr \
-  SAVED_HIERARCHY \
-  --secret-key-file KEY_FILE \
-  --output target/hierarchy-events.jsonl
-```
+key. The [generation guide's Nostr export step](../docs/generate-hierarchy.md#8-export-as-nostr-notes)
+provides the input requirements, key-file location and complete command for a
+generated hierarchy.
 
 The output file must be new and outside the saved hierarchy directory. Signatures
 and event hashes are verified before writing. The JSON summary gives the author,

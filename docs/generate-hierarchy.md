@@ -360,3 +360,60 @@ if you want to resume or audit the run. The two viewer files are sufficient for
 browsing. See [HiGen V5.3](recommendation-engine/hierarchy-generation-v5.md) for
 the algorithm and [the runner reference](../sse_multivector/model-runner.md)
 for detailed preparation, receipt and recovery behavior.
+
+## 8. Export as Nostr notes
+
+To export the completed hierarchy for the Notedeck interface, use
+`export-canonical-nostr`. It creates signed Nostr events in a local JSONL file.
+It makes no model calls and sends nothing to relays.
+
+You need:
+
+- The complete saved run at `target/hierarchy-example/hierarchy`, including
+  `state.json`, with its original source files still available and unchanged.
+  The compact `publication/hierarchy.jsonl` and terminal-viewer files alone are
+  not sufficient for this command.
+- [`nak`](https://github.com/fiatjaf/nak#nak-the-nostr-army-knife) installed and on
+  your `PATH`. The existing exporter was used with version **0.16.2**.
+- A file outside the checkout containing only your **64-character hexadecimal
+  Nostr secret key**. An `nsec` value is not accepted. The signing key determines
+  the hierarchy's author. Keep this file private; the example below assumes it
+  already exists at `~/.config/oracle-mvp/nostr-key.hex`.
+
+Use the Python environment from the earlier steps:
+
+```bash
+cd "$ORACLE_ROOT"
+source target/hierarchy-env/bin/activate
+python sse_multivector/experiment.py export-canonical-nostr \
+  target/hierarchy-example/hierarchy \
+  --secret-key-file "$HOME/.config/oracle-mvp/nostr-key.hex" \
+  --output target/hierarchy-example/hierarchy-events.jsonl
+```
+
+The output path must be new and outside the saved run directory. The exporter
+verifies event hashes and signatures before writing. It requires original post
+IDs to be full lowercase hexadecimal Nostr event IDs and rejects nodes with
+more than 500 directly linked posts.
+
+`hierarchy-events.jsonl` contains kind `8680` node events, children before
+parents, followed by the kind `18680` starting event. Nodes contain titles,
+ordered child references and source-post IDs under the
+[experimental hierarchy protocol](recommendation-engine/design/hierarchy-serving-protocol-decisions.md).
+Source post bodies and the secret key are not included. Each node links only
+posts absent from its descendants; posts outside the hierarchy's roots are
+excluded.
+
+The printed JSON summary gives the author public key, starting event ID, counts,
+timestamp, UUID namespace and source-state hash. Keep the namespace: if you move
+the saved run, supply it with `--uuid-namespace` to retain node UUIDs.
+`--created-at` can set the event timestamp; the default is the current time.
+See the [export reference](../sse_multivector/model-runner.md#offline-nostr-export)
+for the remaining identity and ordering details.
+
+Notedeck discovers hierarchies through the account's read relays. The signed
+events must be published to an appropriate relay before that interface can
+discover them; this export command only creates the local file. This optional
+signing step was not part of the 12-post VM test described above. These
+instructions were checked against the existing command and for syntax; no new
+signing or relay publication was performed.
