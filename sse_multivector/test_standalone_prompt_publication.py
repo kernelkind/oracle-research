@@ -63,6 +63,21 @@ class StandalonePromptPublicationTests(unittest.TestCase):
     def records(self, output, name):
         return [json.loads(line) for line in (output/name).read_text().splitlines()]
 
+    def test_parameter_field_selection_retains_scientific_scope_without_ledger_prose(self):
+        self.fixture()
+        plan = self.save('study/plan.json',dict(model='saved-model',cost=0,
+            execution='Existing subscription route; no paid fallback.',
+            spending='PRIVATE_CANARY: global ledger reservation.'))
+        fields = [['model'],['cost'],['execution']]
+        self.change('selection.json',lambda x:x['studies']['early-test']['parameters'].append(
+            dict(**plan,fields=fields)))
+        output = self.export()
+        row = next(x for x in self.records(output,'inputs.jsonl') if x['type']=='study_parameters')
+        self.assertEqual(row['source'],dict(**plan,fields=fields))
+        self.assertEqual(row['data'],dict(model='saved-model',cost=0,
+            execution='Existing subscription route; no paid fallback.'))
+        self.assertNotIn('PRIVATE_CANARY',''.join(path.read_text() for path in output.iterdir()))
+
     def change(self, name, change):
         value=json.loads((self.root/name).read_text())
         change(value)

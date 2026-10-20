@@ -138,6 +138,30 @@ class MaskGoalPublicationTests(unittest.TestCase):
         self.assertEqual(plan['data']['cost'],'Subscription only; no additional monetary commitment.')
         self.assertNotIn('PRIVATE_CANARY',''.join(path.read_text() for path in output.iterdir()))
 
+    def test_parameter_field_selection_preserves_scientific_scope_and_numeric_cost(self):
+        self.fixture()
+        plan = self.change('study/plan.json',lambda x:x.update(
+            execution='Saved subscription batch; no paid fallback or baseline calls.',
+            cost=0,spending='PRIVATE_CANARY: global ledger reservation.'))
+        fields = [['schema_version'],['question'],['execution'],['cost']]
+        self.change('selection.json',lambda x:x['studies']['mask-test']['parameters'][0].update(fields=fields))
+        output = self.export()
+        row = next(x for x in self.records(output,'inputs.jsonl') if x['type']=='study_parameters')
+        self.assertEqual(row['source'],dict(**plan,fields=fields))
+        self.assertEqual(row['data'],dict(schema_version=1,question='Does the mask select tea?',
+            execution='Saved subscription batch; no paid fallback or baseline calls.',cost=0))
+        self.assertNotIn('PRIVATE_CANARY',''.join(path.read_text() for path in output.iterdir()))
+
+    def test_parameter_field_selection_rejects_missing_duplicate_and_nonroot_paths(self):
+        from sse_multivector.historical_study_publication import export_results
+        for i,fields in enumerate([[],None,[[]],[['missing']],[['question'],['question']],
+                                   [['execution','nested']],[[True]],['question']]):
+            with self.subTest(fields=fields):
+                self.fixture()
+                self.change('selection.json',lambda x:x['studies']['mask-test']['parameters'][0].update(fields=fields))
+                with self.assertRaisesRegex(ValueError,'field|root'):
+                    export_results(self.root,self.root/'selection.json','mask-test',self.root/('invalid-'+str(i)))
+
     def test_examples_remain_in_template_and_exact_supplied_entities_stay_separate(self):
         self.fixture()
         prompt = '<example><post>\nExample post.\n</post><subject>\nExample subject\n</subject></example>\n'

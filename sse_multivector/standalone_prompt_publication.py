@@ -233,8 +233,9 @@ def prepare(sources, selection, metadata):
         inputs.append(dict(type='saved_input',source=saved._binding(declaration),
                            data=saved._project(value,sources),omitted_unused_inventories=omitted))
     for declaration in selection.get('parameters',[]):
-        inputs.append(dict(type='study_parameters',source=saved._binding(declaration),
-                           data=saved._project(_parameters(sources.read(declaration['path'])),sources)))
+        value,origin = saved._parameter_fields(sources.read(declaration['path']),declaration)
+        inputs.append(dict(type='study_parameters',source=origin,
+                           data=saved._project(_parameters(value),sources)))
     for declaration in selection.get('baseline_references',[]):
         value = sources.read(declaration['path'])
         output = value.get('output',value) if isinstance(value,dict) else value

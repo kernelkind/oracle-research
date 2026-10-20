@@ -41,6 +41,24 @@ def _binding(selection):
     return dict(path=selection['path'],sha256=selection['sha256'])
 
 
+def _parameter_fields(value, declaration):
+    """Select reviewed root fields while retaining the original source binding."""
+    origin = _binding(declaration)
+    if 'fields' in declaration:
+        fields = declaration['fields']
+        _require(isinstance(value,dict) and isinstance(fields,list) and fields,
+                 'parameter field selection requires an object and nonempty root paths')
+        selected = []
+        for path in fields:
+            _require(isinstance(path,list) and len(path)==1 and isinstance(path[0],str)
+                     and path[0] in value,'selected parameter root field is missing or invalid')
+            _require(path[0] not in selected,'selected parameter fields repeat')
+            selected.append(path[0])
+        value = {key:value[key] for key in selected}
+        origin['fields'] = fields
+    return value,origin
+
+
 def _portable(text, sources):
     """Convert known repository prefixes without changing scientific wording."""
     prefixes = (str(sources.root),'/home/dev/src/notedeck_worktrees/algos/oracle-mvp',
@@ -179,8 +197,9 @@ def prepare(sources, selection, metadata):
         inputs.append(dict(type='saved_input',source=_binding(declaration),
             data=_project(sources.read(declaration['path']),sources,omissions=omissions)))
     for declaration in selection.get('parameters',[]):
-        inputs.append(dict(type='study_parameters',source=_binding(declaration),
-            data=_project(sources.read(declaration['path']),sources,omissions=omissions)))
+        value,origin = _parameter_fields(sources.read(declaration['path']),declaration)
+        inputs.append(dict(type='study_parameters',source=origin,
+            data=_project(value,sources,omissions=omissions)))
     for declaration in selection.get('answers',[]):
         output = sources.read(declaration['path'])
         manifest_decl = declaration['manifest']

@@ -3048,7 +3048,63 @@
       "parameters": [
         {
           "path": "sse_multivector/mask-prompt-goal-v1/mpv3.37-probe-v1/plan.json",
-          "sha256": "3a1c8ed24b5da615c8823f1a7cd5963bbcfcef22d3f9a42efa8444462b2b19a1"
+          "sha256": "3a1c8ed24b5da615c8823f1a7cd5963bbcfcef22d3f9a42efa8444462b2b19a1",
+          "fields": [
+            [
+              "approval"
+            ],
+            [
+              "baseline_directory"
+            ],
+            [
+              "baseline_sources"
+            ],
+            [
+              "calls"
+            ],
+            [
+              "competing_explanations"
+            ],
+            [
+              "decision"
+            ],
+            [
+              "execution"
+            ],
+            [
+              "limits"
+            ],
+            [
+              "model"
+            ],
+            [
+              "predeclared_evaluation"
+            ],
+            [
+              "prompt_sha256"
+            ],
+            [
+              "provider"
+            ],
+            [
+              "question"
+            ],
+            [
+              "reasoning_effort"
+            ],
+            [
+              "repetitions_per_input"
+            ],
+            [
+              "scope_overrides"
+            ],
+            [
+              "status"
+            ],
+            [
+              "version"
+            ]
+          ]
         }
       ],
       "records": [
@@ -3280,7 +3336,60 @@
       "parameters": [
         {
           "path": "sse_multivector/mask-prompt-goal-v1/mpv3.43-probe-v1/plan.json",
-          "sha256": "e1e0d1e45180c3d61befa6dd4fb47b4324540e5a4a549b2c0acb53f60abd3409"
+          "sha256": "e1e0d1e45180c3d61befa6dd4fb47b4324540e5a4a549b2c0acb53f60abd3409",
+          "fields": [
+            [
+              "approval"
+            ],
+            [
+              "baseline_directory"
+            ],
+            [
+              "baseline_policy_corrections"
+            ],
+            [
+              "calls"
+            ],
+            [
+              "competing_explanations"
+            ],
+            [
+              "decision"
+            ],
+            [
+              "execution"
+            ],
+            [
+              "limits"
+            ],
+            [
+              "model"
+            ],
+            [
+              "predeclared_evaluation"
+            ],
+            [
+              "prompt_sha256"
+            ],
+            [
+              "provider"
+            ],
+            [
+              "question"
+            ],
+            [
+              "reasoning_effort"
+            ],
+            [
+              "repetitions_per_input"
+            ],
+            [
+              "status"
+            ],
+            [
+              "version"
+            ]
+          ]
         }
       ],
       "records": [
