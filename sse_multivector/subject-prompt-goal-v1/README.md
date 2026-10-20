@@ -2,9 +2,11 @@
 
 **Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
 
-The original ASv6.26/ASv6.27/ASv6.28 reports referenced here were located in the
-original research checkout. Their inclusion in the publication remains pending;
-see the [evidence checklist](../../docs/experiments/open-items.md#original-file-links-and-replay).
+The ASv6.26/ASv6.27/ASv6.28 reports below are included in Git. Their used posts,
+final answers, recorded assessments and measurements are selected in the
+[publication catalog](../../docs/experiments/publications.csv); each report names
+its bundle. Original working artifacts remain local. These results are historical
+evidence from before ASv6.100.
 
 **Current SOTA SP: [ASv6.100](./asv6.100/ASv6.100.md)**, designated by the user on
 2026-10-04. It is the baseline for future SP comparisons. The
@@ -23,13 +25,13 @@ All 84 final calls were isolated first attempts. The single exposed reserved ent
 
 The exact frozen prompt is [ASv6.23.md](./asv6.23/ASv6.23.md). This is a pilot stopping decision, not a universal accuracy claim.
 
-The ASv6.28 six-note follow-up (`./asv6.28-fresh-v1/RESULTS.md`) is complete: six additional varied notes, one fresh Astra-low ASv6.28 call each, **no ASv6.23 calls**. All 91 generated subjects were reviewed; no definite unsupported additions were identified. Independent subjects appeared across the new note types, but broader coverage remains uneven—for example, the cat entry names Carl rather than cats generally. That is a coverage observation, not a factual error. Keep ASv6.28 unchanged; inspecting a short saved-output sample in the review tool is proposed, not yet done. ASv6.23 remains frozen and ASv6.28 is not promoted. All six original notes and generated subjects (`./asv6.28-fresh-v1/full-outputs.md`).
+The [ASv6.28 six-note follow-up](./asv6.28-fresh-v1/RESULTS.md) is complete: six additional varied notes, one fresh Astra-low ASv6.28 call each, **no ASv6.23 calls**. All 91 generated subjects were reviewed; no definite unsupported additions were identified. Independent subjects appeared across the new note types, but broader coverage remains uneven—for example, the cat entry names Carl rather than cats generally. That is a coverage observation, not a factual error. Keep ASv6.28 unchanged; inspecting a short saved-output sample in the review tool is proposed, not yet done. ASv6.23 remains frozen and ASv6.28 is not promoted. All six original notes and generated subjects (`./asv6.28-fresh-v1/full-outputs.md`).
 
-The earlier ASv6.28 comparison (`./asv6.28-comparison-v1/RESULTS.md`) used four reused notes, three fresh Astra-low calls per prompt per note, with frozen ASv6.23 as the control. The approved rewrite independently named Coffee shops in 2/3 outputs versus 0/3 controls; cookie dialogs, beets and raised-bed gardening also gained independent entries. All 270 subjects were reviewed and no definite unsupported additions were identified. Some entries remain narrower than the checked subjects. That result motivated the completed candidate-only follow-up above, not replacement of ASv6.23. The redundant baseline calls from that comparison were not repeated. All original notes and generated subjects (`./asv6.28-comparison-v1/full-outputs.md`).
+The earlier [ASv6.28 comparison](./asv6.28-comparison-v1/RESULTS.md) used four reused notes, three fresh Astra-low calls per prompt per note, with frozen ASv6.23 as the control. The approved rewrite independently named Coffee shops in 2/3 outputs versus 0/3 controls; cookie dialogs, beets and raised-bed gardening also gained independent entries. All 270 subjects were reviewed and no definite unsupported additions were identified. Some entries remain narrower than the checked subjects. That result motivated the completed candidate-only follow-up above, not replacement of ASv6.23. The redundant baseline calls from that comparison were not repeated. All original notes and generated subjects (`./asv6.28-comparison-v1/full-outputs.md`).
 
-The earlier ASv6.27 subject-index experiment (`./asv6.27-comparison-v1/RESULTS.md`) produced shorter headings but did not independently name Coffee shops in any trial. All 194 subjects were reviewed and no definite unsupported additions were identified. That report counted Vivaldi-specific tracker settings as covering Tracker blocking; ASv6.28 records such entries separately as narrower, so that count is not directly comparable across reports. Removing the context field was considered but not run; the approved ASv6.28 rewrite retained it. ASv6.23 remains frozen.
+The earlier [ASv6.27 subject-index experiment](./asv6.27-comparison-v1/RESULTS.md) produced shorter headings but did not independently name Coffee shops in any trial. All 194 subjects were reviewed and no definite unsupported additions were identified. That report counted Vivaldi-specific tracker settings as covering Tracker blocking; ASv6.28 records such entries separately as narrower, so that count is not directly comparable across reports. Removing the context field was considered but not run; the approved ASv6.28 rewrite retained it. ASv6.23 remains frozen.
 
-The earlier ASv6.26 comparison against frozen ASv6.23 (`./asv6.26-comparison-v1/RESULTS.md`) added some useful broader subjects but also failed to independently name Coffee shops. Its 254 subjects and all raw evidence remain preserved. The proposed worked-example approach was not run; the user chose the separate subject-index experiment instead.
+The earlier [ASv6.26 comparison against frozen ASv6.23](./asv6.26-comparison-v1/RESULTS.md) added some useful broader subjects but also failed to independently name Coffee shops. Its 254 subjects and all raw evidence remain preserved. The proposed worked-example approach was not run; the user chose the separate subject-index experiment instead.
 
 ## Earlier checkpoints
 

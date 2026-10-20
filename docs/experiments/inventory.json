@@ -217,10 +217,10 @@
   "compact_exports": {
     "state": "Local selected compact exports; not uploaded or approved for publication",
     "artifact_root": "target/publication-exports",
-    "publications": 2939,
-    "files": 8812,
-    "bytes": 1118483825,
-    "gzip_bytes": 156711874,
+    "publications": 2943,
+    "files": 8832,
+    "bytes": 1118863911,
+    "gzip_bytes": 156803067,
     "gzip_method": "Measured gzip level 6 per staged file, in memory; no compressed downloads created",
     "categories": {
       "comparison": {
@@ -252,6 +252,12 @@
         "gzip_bytes": 2201585,
         "bundles": 240,
         "files": 720
+      },
+      "historical-prompt": {
+        "bundles": 4,
+        "files": 20,
+        "bytes": 380086,
+        "gzip_bytes": 91193
       },
       "inputs": {
         "bytes": 71170710,
@@ -305,27 +311,51 @@
     },
     "adapter_checkpoints": 17,
     "adapter_weight_and_config_bytes": 7280087769,
-    "combined_staged_and_model_bytes": 8398571594,
+    "combined_staged_and_model_bytes": 8398951680,
     "oracle_export_commit": "fcfd4cabcba7102aab81dcffec018c00b4498a55",
     "runner_export_commit": "34d7eb79dc714275145a983ffeb42ddcddc42561",
+    "export_commit_scope": "These commits identify the original selection before historical_study_backfill; the four added bundles bind their exporter source separately by SHA-256",
     "source_originals_preserved": true,
     "fresh_model_inference": false,
     "uploads": false,
     "privacy_review": "Pending review of the actual selected public contents",
-    "scope": "Measured selected supported exports. Gaps remain explicit; this is not an exhaustive all-history size claim."
+    "scope": "Measured selected supported exports. Gaps remain explicit; this is not an exhaustive all-history size claim.",
+    "historical_study_backfill": {
+      "scope": "Four separately selected historical subject-prompt studies; broader legacy collection review remains open",
+      "category": "historical-prompt",
+      "studies": 4,
+      "calls": 78,
+      "subjects": 809,
+      "unique_posts": 10,
+      "files": 20,
+      "bytes": 380086,
+      "gzip_bytes": 91193,
+      "exporter_sha256": "4e825ef96bca47de720b3ee610812d66d0c7efa8c106d55ac2151efe8beb20db",
+      "generated_subjects_deprecated": true,
+      "raw_posts_deprecated": false,
+      "study_inputs_include_all_source_posts": true,
+      "shared_used_posts_dataset_changed": false,
+      "posts_matching_existing_shared_used_posts": 7,
+      "additional_posts_outside_shared_used_posts": 3,
+      "shared_post_overlap_verification": "Exact saved post text checked separately before this catalog update",
+      "source_originals_preserved": true,
+      "fresh_model_inference": false,
+      "uploads": false
+    }
   },
   "discovery_scope": "Top-level discovery counts and follow-ups describe the original local audit; public_index and compact_exports describe the selected public evidence.",
   "public_index": {
     "state": "Selected-study index; exhaustive original audit preserved locally",
     "source_commit": "1f3d541caec8574d1db6a61089f99b9d55863113",
-    "studies": 2595,
+    "studies": 2599,
     "studies_by_kind": {
       "historical collection": 7,
       "native": 2547,
       "official hierarchy": 37,
-      "training run": 4
+      "training run": 4,
+      "historical prompt study": 4
     },
-    "selection": "Original rows with nonempty publication links; every selected column/value and row order preserved",
+    "selection": "Original rows with nonempty publication links; every selected column/value and row order preserved; four additionally selected historical prompt studies are indexed separately from the original inventory",
     "original_index_rows": 27193,
     "omitted_internal_and_other_unselected_rows": 24598,
     "remaining_reviews": "publication-gaps.csv",

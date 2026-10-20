@@ -58,7 +58,8 @@ checksums, hierarchy/corpus/model summaries and useful provenance/recovery
 tables. Retain `historical-files.csv` and `historical-uses.csv` because they bind
 evidence to original blobs, commits and paths. `experiments.csv` now retains the
 2,595 rows with selected-publication links from the reviewed index, preserving
-all their columns and values. `publications.csv` also indexes the selected
+all their columns and values, plus four later-located historical prompt studies.
+`publications.csv` also indexes the selected
 numerical and other
 results; `publication-gaps.csv` keeps outstanding evidence review explicit.
 
@@ -157,18 +158,19 @@ download or Hugging Face revision has been created.
 | Data | Selected outputs | Uncompressed size |
 | --- | ---: | ---: |
 | Standalone prompt studies: inputs, final answers and reviews | 2,547 prepared trials | 249.46 MiB |
+| Historical subject-prompt studies: posts, answers, assessments and measurements | Four studies, 78 calls and 10 distinct posts | 0.36 MiB |
 | Fine-tune, grading and effort evaluations | 67 final/last reports, including 20 validation stages | 665.12 MiB |
 | Historical numerical results | 73 | 78.85 MiB |
 | Performance measurements | 9 | 0.02 MiB |
 | Unsigned hierarchies, selections and parameters | 37 official runs plus 203 saved branch outputs | 5.35 MiB |
 | Used posts, prepared training inputs and adapter hash records | 10,571 posts, four prepared files, split/settings records and 17 adapter bindings | 67.87 MiB |
-| **Selected non-model files** | **8,812 files** | **1,066.67 MiB (1.04 GiB)** |
+| **Selected non-model files** | **8,832 files** | **1,067.03 MiB (1.04 GiB)** |
 | **All 17 evaluated adapters, weights and configurations** | **34 original files, hashed without copying weights** | **6.78 GiB** |
 
-The exact selected non-model total is **1,118,483,825 bytes**. Together with
-the adapter weights/configurations it is **8,398,571,594 bytes (7.82 GiB)**.
+The exact selected non-model total is **1,118,863,911 bytes**. Together with
+the adapter weights/configurations it is **8,398,951,680 bytes (7.82 GiB)**.
 Code and cleaned Git history are additional. Measured gzip level-6 compression
-of each non-model file totals **156,711,874 bytes (149.45 MiB)**; no compressed
+of each non-model file totals **156,803,067 bytes (149.54 MiB)**; no compressed
 downloads were created and the staged files remain in their original export
 formats.
 
@@ -189,8 +191,10 @@ only by receipt hashes are explicitly labeled `receipt_only`; missing actor
 attribution stays `not_recorded`. Privacy review, unsupported-format review and
 testing the reader workflow against this exact selection remain open.
 
-The confirmed used-post set contains 10,571 IDs and measures 3.80 MiB as compact
-ID/text JSONL. Some older unstructured records remain incompletely linked, so
+The shared used-post file contains 10,571 IDs and measures 3.80 MiB as compact
+ID/text JSONL. The four historical prompt studies also include their 10 used
+posts in their own inputs; three are absent from that shared file. Some older
+unstructured records remain incompletely linked, so
 that count is not a claim of exhaustive coverage. The four prepared training
 files below add 63.74 MiB. Media and complete signed source-event envelopes are
 not included in these measurements.
@@ -333,6 +337,17 @@ Historical export streams the saved report and binds its hash and ordered input
 selection. It requires that report and does not reconstruct missing outcomes.
 Metadata explicitly records that later receipt/review-sidecar changes have not
 been incorporated and receipt validation has not been performed.
+
+The offline `export-evaluation-results --kind prompt-study` adapter handles older
+subject-prompt studies saved before the native experiment format. It keeps used
+posts once per study in `inputs.jsonl`, final answers in `answers.jsonl`, recorded
+assessments in `judgments.jsonl`, and final summary measurements in `results.jsonl`.
+Its `experiment.json` binds saved sources, parameters, prompt versions, diagnostic
+definitions and review caveats. Opaque review IDs are joined to their original
+calls; recorded agent assessments remain distinct from user decisions. Original
+working directories, rendered requests, credentials and transport logs are
+excluded. This is an explicit historical export; current native experiments
+continue using their automatic three-file format above.
 
 ### Evaluations
 

@@ -191,10 +191,11 @@ The check found no remaining links to the reviewed removed files and no newly
 missing file destinations. Other pre-existing missing links remain outside this
 repair's scope.
 
-Six report references in the [subject-prompt investigation](../../sse_multivector/subject-prompt-goal-v1/README.md)
-are still outside this checkout: `RESULTS.md` and `full-outputs.md` for
-`asv6.28-fresh-v1` and `asv6.28-comparison-v1`, and `RESULTS.md` for
-`asv6.27-comparison-v1` and `asv6.26-comparison-v1`.
+The four authored ASv6.26–ASv6.28 reports linked from the
+[subject-prompt investigation](../../sse_multivector/subject-prompt-goal-v1/README.md)
+are now included in Git. The original `full-outputs.md` views for
+`asv6.28-fresh-v1` and `asv6.28-comparison-v1` remain local; their source posts
+and final answers are included in the compact dataset exports.
 
 All six originals were located on 2026-10-20 in the `research-main` checkout
 under `sse_multivector/subject-prompt-goal-v1/`; see [source roots](source-roots.csv).
@@ -211,10 +212,18 @@ These checks establish agreement with the saved records, not independent
 semantic validation.
 ASv6.26–ASv6.28 results remain historical evidence under the ASv6.100 rule.
 
-Publication inclusion remains pending. The original references remain visible,
-and the older collections retain their explicit [conversion gaps](publication-gaps.csv).
-Locating these files has not added reports to Git or answers to the selected
-Hugging Face exports.
+The four selected bundles appear under `prompt-studies/` in the
+[publication catalog](publications.csv), with exact filenames and hashes in
+[publication files](publication-files.csv). Their **20 files total 380,086 bytes**,
+or **91,193 bytes** measured with gzip level 6. They retain all 78 raw answers,
+78 per-call assessments, three shared interpretation notes, all four final
+summaries and the parameters needed to interpret their probes. Actor labels
+remain unknown where the saved review does not record them. Source files are
+unchanged in bytes, modification times and modes. These exports are still local;
+upload and privacy review remain pending.
+
+This covers these four studies only. The older collection's broader
+[conversion gap](publication-gaps.csv) remains open.
 
 Some existing code also requires original artifacts:
 

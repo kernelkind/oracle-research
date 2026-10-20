@@ -332,6 +332,26 @@ preparation, execution and review refresh the same export automatically. Native
 hierarchy children, coordinator-created grading jobs and cache warmups are
 excluded from separate prompt exports; final evaluations retain their judgments.
 
+For an older subject-prompt study saved with `calls.json`, `input.json`,
+`plan.json`, final outputs and review records:
+
+```bash
+cd "$ORACLE_ROOT"
+python sse_multivector/experiment.py export-evaluation-results \
+  target/saved-prompt-study --kind prompt-study \
+  --output target/saved-prompt-study-results
+```
+
+This publisher command requires the original saved study directory. A report
+copied into Git or a compact download alone does not provide that working layout.
+It exports exact used posts in `inputs.jsonl`, final responses in `answers.jsonl`,
+recorded assessments in `judgments.jsonl`, final measurements in `results.jsonl`
+and parameters/source hashes in `experiment.json`. Reviews retain their recorded
+attribution and caveats; they do not establish user approval. Preparation and
+output bindings are checked without running models. Authentication settings,
+rendered requests and transport logs are excluded, and original files remain
+unchanged. Known pre-ASv6.100 results are labeled as historical deprecated data.
+
 For fine-tune validation answers, final grading reports and final comparisons:
 
 ```bash
@@ -389,7 +409,7 @@ experiment/source identities. [Publication files](publication-files.csv) records
 every path, byte count and SHA-256 beneath `target/publication-exports/`.
 These paths describe local staging, not an available download.
 
-With the `ORACLE_ROOT` setup above, verify all 8,812 selected files:
+With the `ORACLE_ROOT` setup above, verify all 8,832 selected files:
 
 ```bash
 cd "$ORACLE_ROOT/target/publication-exports"
@@ -522,8 +542,9 @@ its machine-specific deployment commands are not a ready-to-run public recipe.
 
 ## Other experiments and moved files
 
-The [study index](experiments.csv) contains 2,595 selected entries: standalone
-prompt studies, official hierarchy runs, training runs and historical collections.
+The [study index](experiments.csv) contains 2,599 selected entries: standalone
+prompt preparations, official hierarchy runs, training runs, historical collections
+and the four located historical subject-prompt studies.
 It records saved plan identities and prompt/model settings.
 [Publications](publications.csv) connects them to the exported results;
 [publication files](publication-files.csv) lists their exact files and hashes.
@@ -697,8 +718,8 @@ were preserved, and nothing was uploaded.
 
 ### Historical backfill checks
 
-The current local selection contains **2,939 output/input directories and 8,812
-files**, totaling **1,118,483,825 bytes**. Every listed file was independently
+The current local selection contains **2,943 output/input directories and 8,832
+files**, totaling **1,118,863,911 bytes**. Every listed file was independently
 rehashed, and every payload binding was checked against its export manifest.
 Exact prepared-input copies were also checked against their frozen source hashes.
 The complete staged file tree

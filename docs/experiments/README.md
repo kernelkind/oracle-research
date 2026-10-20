@@ -46,9 +46,10 @@ remain historical evidence; raw source posts are not deprecated by that rule.
   one missing configuration and older inventory groups needing review. An older
   group may include code/prompts already retained in Git; it is not automatically
   a missing public dataset.
-- [Experiments](experiments.csv): 2,595 entries linked to selected results:
+- [Experiments](experiments.csv): 2,599 entries linked to selected results:
   2,547 standalone prompt preparations, 37 official hierarchy runs, four training
-  runs and seven historical collections. These are different kinds of entries,
+  runs, seven historical collections and four later-located historical prompt
+  studies. These are different kinds of entries,
   not an additive count of independent experiments. Prompt IDs, model settings,
   case counts, provenance and plan/manifest identities are preserved. The
   publication columns link the corresponding compact exports. Internal jobs,
@@ -159,8 +160,8 @@ exports, as explained [above](#reading-the-research-records). The reviewed links
 to removed generated files have been repaired. Some saved-result tests and
 replay scripts still require original artifacts; their
 [clean-checkout replay plan](open-items.md#original-file-links-and-replay)
-remains open. Reports awaiting inclusion and unfinished conversions are recorded
-there too.
+remains open. The four located ASv6.26–ASv6.28 reports and their selected compact
+results are now included; broader historical conversion gaps remain explicit.
 
 Generation commits, later audit/export commits and the publication commit serve
 different purposes. Their original IDs remain in the evidence. The
