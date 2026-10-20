@@ -1,0 +1,496 @@
+{
+  "schema_version": 1,
+  "studies": {
+    "atomic-subject-asv6.10-test-v1": {
+      "dependencies": [
+        {
+          "experiment_id": "atomic-subject-asv6.8-vs-asv6.9-v1",
+          "policy": "Saved ASv6.9 baseline reused; no new baseline calls",
+          "run_ids": [
+            "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.9-trial-1/run/output.json",
+            "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.9-trial-2/run/output.json",
+            "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.9-trial-3/run/output.json"
+          ]
+        }
+      ],
+      "input_selections": [
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/selection.json",
+          "sha256": "690335e79555545837ab408161c93864809e83e8d5cdc6e5144b99bc8dfc5289"
+        }
+      ],
+      "parameters": [
+        {
+          "path": "sse_multivector/atomic-subject-asv6.10-test-v1/plan.json",
+          "sha256": "4f2474f1b672b3d99ec48398d4152219f00cbb8d569f183f0b8a2f3a504fd9cf"
+        }
+      ],
+      "profile": "atomic",
+      "records": [
+        {
+          "path": "sse_multivector/atomic-subject-asv6.10-test-v1/assistant-analysis.json",
+          "role": "assistant_assessment",
+          "sha256": "cd75c2b088cf496c1da55e0a9c7dae7bcae07301d4b827dfaf96e236050a9a0d"
+        }
+      ],
+      "runs": [
+        {
+          "config": "sse_multivector/atomic-subject-asv6.10-test-v1/trial-1/config.json",
+          "input": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/input.json",
+          "manifest": "sse_multivector/atomic-subject-asv6.10-test-v1/trial-1/run/manifest.json",
+          "output": "sse_multivector/atomic-subject-asv6.10-test-v1/trial-1/run/output.json",
+          "receipt": "sse_multivector/atomic-subject-asv6.10-test-v1/trial-1/run/results.jsonl",
+          "registry": "sse_multivector/atomic-subject-asv6.10-test-v1/subject-prompts.json",
+          "trial": 1
+        },
+        {
+          "config": "sse_multivector/atomic-subject-asv6.10-test-v1/trial-2/config.json",
+          "input": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/input.json",
+          "manifest": "sse_multivector/atomic-subject-asv6.10-test-v1/trial-2/run/manifest.json",
+          "output": "sse_multivector/atomic-subject-asv6.10-test-v1/trial-2/run/output.json",
+          "receipt": "sse_multivector/atomic-subject-asv6.10-test-v1/trial-2/run/results.jsonl",
+          "registry": "sse_multivector/atomic-subject-asv6.10-test-v1/subject-prompts.json",
+          "trial": 2
+        },
+        {
+          "config": "sse_multivector/atomic-subject-asv6.10-test-v1/trial-3/config.json",
+          "input": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/input.json",
+          "manifest": "sse_multivector/atomic-subject-asv6.10-test-v1/trial-3/run/manifest.json",
+          "output": "sse_multivector/atomic-subject-asv6.10-test-v1/trial-3/run/output.json",
+          "receipt": "sse_multivector/atomic-subject-asv6.10-test-v1/trial-3/run/results.jsonl",
+          "registry": "sse_multivector/atomic-subject-asv6.10-test-v1/subject-prompts.json",
+          "trial": 3
+        }
+      ],
+      "validation_sources": [
+        {
+          "path": "sse_multivector/atomic-subject-asv6.10-test-v1/trial-1/run/output.json",
+          "sha256": "cede69e78e1647b2f2fc70c5202a6fbf4ddb47864ec1534b82ee11840f0bcb74"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.10-test-v1/trial-1/run/manifest.json",
+          "sha256": "7170c263952ac245831b1655db93a16a8c487b272ecb3039256c72276d9f14ed"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.10-test-v1/trial-1/run/results.jsonl",
+          "sha256": "f6f5a56f85b541454d5d8b5999079eaa1d0856096bc337fd63c7daef75438b03"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/input.json",
+          "sha256": "04356b84eab64ded75fd90f7536844663bfc0b1095a6cc9bf9782feca4fbf59c"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.10-test-v1/subject-prompts.json",
+          "sha256": "c23f32b2a52cd93cb34f6779b73494e1755c82af2b0abb1d47927ab728585bc9"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.10-test-v1/trial-1/config.json",
+          "sha256": "6c50c1f8b3771cf8bfcb7349c1e4cbae8bd0759c0634fa94f49e381ec252f722"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.10-test-v1/trial-2/run/output.json",
+          "sha256": "3fe71ffc1309d92c6d96d26ac91ec2b7895b51a2fa92fb51b2ebfa91b2eea668"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.10-test-v1/trial-2/run/manifest.json",
+          "sha256": "7170c263952ac245831b1655db93a16a8c487b272ecb3039256c72276d9f14ed"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.10-test-v1/trial-2/run/results.jsonl",
+          "sha256": "dc770947a8ba0ac5ebbbe572a26417bbcd9e401244bd57814554502fc3e06654"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.10-test-v1/trial-2/config.json",
+          "sha256": "6c50c1f8b3771cf8bfcb7349c1e4cbae8bd0759c0634fa94f49e381ec252f722"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.10-test-v1/trial-3/run/output.json",
+          "sha256": "6dd6c9320a80421183f91a2fdc6f518427ac67fd09f69248ab310d3788a27b71"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.10-test-v1/trial-3/run/manifest.json",
+          "sha256": "7170c263952ac245831b1655db93a16a8c487b272ecb3039256c72276d9f14ed"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.10-test-v1/trial-3/run/results.jsonl",
+          "sha256": "88c8b982f3c1575dba6a010dbf46d2f32dc5a53c56b407a65833cf4ab150bbb1"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.10-test-v1/trial-3/config.json",
+          "sha256": "6c50c1f8b3771cf8bfcb7349c1e4cbae8bd0759c0634fa94f49e381ec252f722"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.10-proposal-v1/ASv6.10.md",
+          "sha256": "7e8f3051e05963a09f5a87ea738cd2d428c146fd17620d8ed756966426f3bd82"
+        }
+      ]
+    },
+    "atomic-subject-asv6.11-test-v1": {
+      "dependencies": [
+        {
+          "experiment_id": "atomic-subject-asv6.8-vs-asv6.10-holdout-v1",
+          "policy": "Saved ASv6.10 holdout baseline reused; no new baseline calls",
+          "run_ids": [
+            "sse_multivector/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/asv6.10/run/output.json"
+          ]
+        }
+      ],
+      "input_selections": [
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/selection.json",
+          "sha256": "d304b69b8a673acf2430e96334087f7ca39138391b12c4e76c411a72dd2008f5"
+        }
+      ],
+      "parameters": [
+        {
+          "path": "sse_multivector/atomic-subject-asv6.11-test-v1/plan.json",
+          "sha256": "e0343bcb77bd0d1f7d53ad83939bcb419139fc15c46eebafd6229f4a74d1988e"
+        }
+      ],
+      "profile": "atomic",
+      "records": [
+        {
+          "path": "sse_multivector/atomic-subject-asv6.11-test-v1/assistant-analysis.json",
+          "role": "assistant_assessment",
+          "sha256": "a8a918966ade0336fee94fa9f301cb147d3e85f156a49bfe4df3678b16a783e4"
+        }
+      ],
+      "runs": [
+        {
+          "config": "sse_multivector/atomic-subject-asv6.11-test-v1/config.json",
+          "input": "sse_multivector/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/input.json",
+          "manifest": "sse_multivector/atomic-subject-asv6.11-test-v1/run/manifest.json",
+          "output": "sse_multivector/atomic-subject-asv6.11-test-v1/run/output.json",
+          "receipt": "sse_multivector/atomic-subject-asv6.11-test-v1/run/results.jsonl",
+          "registry": "sse_multivector/atomic-subject-asv6.11-test-v1/subject-prompts.json",
+          "trial": 1
+        }
+      ],
+      "validation_sources": [
+        {
+          "path": "sse_multivector/atomic-subject-asv6.11-test-v1/run/output.json",
+          "sha256": "f01d62368af0b227fa568fe96f14cc02091cb00b51508b89e5f9497b34c43ac0"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.11-test-v1/run/manifest.json",
+          "sha256": "59a893cfc5ea782fe294c1da55d0be77819826707ee49c0e8e5b15f0c5cee704"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.11-test-v1/run/results.jsonl",
+          "sha256": "6a27c5e91c71ee63903d081f165e9f93ea74a13a07b4fbc391b1226c3e2a7709"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/input.json",
+          "sha256": "3be78fb3d0297a40254a458f5b9c9548b1174495dbcb6a1e1bd4ca31875bf4c8"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.11-test-v1/subject-prompts.json",
+          "sha256": "aa87f67c346d9a097aae5d4631572db52cfec5d7415d8634085c206388baa933"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.11-test-v1/config.json",
+          "sha256": "14a4f4d1dca6d81a67616851fa10586e24807b9dc3c502a108d668c1d0e08de8"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.11-proposal-v1/ASv6.11.md",
+          "sha256": "6da1062662ffff98ae2c714071d25eea3b03af2c3af691ba0c218706bea94221"
+        }
+      ]
+    },
+    "atomic-subject-asv6.8-vs-asv6.10-holdout-v1": {
+      "dependencies": [],
+      "input_selections": [
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/selection.json",
+          "sha256": "d304b69b8a673acf2430e96334087f7ca39138391b12c4e76c411a72dd2008f5"
+        }
+      ],
+      "parameters": [
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/plan.json",
+          "sha256": "757b306d0f556bce363d5308d24ac354391bfeaf8c62afc7fd5a8d1e10cfd1e9"
+        }
+      ],
+      "profile": "atomic",
+      "records": [
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/assistant-analysis.json",
+          "role": "assistant_assessment",
+          "sha256": "c85982bac09592905af48eca983f5341ebd8f0c38f4c13ebfc9905640ed63f1f"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/review-focus.json",
+          "role": "open_review_questions",
+          "sha256": "8e1c9806492708deb68642fbbc182cc3e49dc3ef8e10c1f4f6ea133c2a819e35"
+        }
+      ],
+      "runs": [
+        {
+          "config": "sse_multivector/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/asv6.8/config.json",
+          "input": "sse_multivector/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/input.json",
+          "manifest": "sse_multivector/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/asv6.8/run/manifest.json",
+          "output": "sse_multivector/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/asv6.8/run/output.json",
+          "receipt": "sse_multivector/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/asv6.8/run/results.jsonl",
+          "registry": "sse_multivector/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/subject-prompts.json",
+          "trial": 1
+        },
+        {
+          "config": "sse_multivector/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/asv6.10/config.json",
+          "input": "sse_multivector/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/input.json",
+          "manifest": "sse_multivector/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/asv6.10/run/manifest.json",
+          "output": "sse_multivector/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/asv6.10/run/output.json",
+          "receipt": "sse_multivector/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/asv6.10/run/results.jsonl",
+          "registry": "sse_multivector/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/subject-prompts.json",
+          "trial": 1,
+          "user_review": {
+            "path": "target/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/asv6.10-review-session.json",
+            "sha256": "7bd8673a23383ecc05451907e7ddc40a97c55563e3fdcd9d089d0b237b7677c3"
+          }
+        }
+      ],
+      "validation_sources": [
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/asv6.8/run/output.json",
+          "sha256": "3f5a329fff308226be47f123e13240d053e89c285be072c307b437e9344516d4"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/asv6.8/run/manifest.json",
+          "sha256": "aad64ca2c1e2c0cc251ca38a765a3d5b2814b955d5406ecb5f2cd829614787a1"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/asv6.8/run/results.jsonl",
+          "sha256": "84e846678361eef365b4ea1b8553c46166c62d0e830f1911152cc416279f9f70"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/input.json",
+          "sha256": "3be78fb3d0297a40254a458f5b9c9548b1174495dbcb6a1e1bd4ca31875bf4c8"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/subject-prompts.json",
+          "sha256": "8b129fdbb54662995a0c5fb2cdcabfd54ea8b1f69a51d2378e99dd5aceb009a8"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/asv6.8/config.json",
+          "sha256": "ca728c111c82ac149f36041de6a4086332b2616ca967241ad66aa87e5e54c60c"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/asv6.10/run/output.json",
+          "sha256": "0c94ba39835592f3a522421298311af0f9375d9805675e8b5bf6db359341740c"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/asv6.10/run/manifest.json",
+          "sha256": "e9a508f55e5ac80f2de09b88d56d0751b468eae1db632f3797ea73d47f285532"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/asv6.10/run/results.jsonl",
+          "sha256": "8e74a296e597bd0ecda4266b304794fc46b783982a930585d602b491fbe4a92b"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.10-holdout-v1/asv6.10/config.json",
+          "sha256": "5edf30dc7b6c765576953fd96afdb08fb8c52044fc816cfb17d87fe495649f6c"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/ASv6.8.md",
+          "sha256": "8b1112a30a5384f87bd010d616db75cd27eb45daf8f2cf2906e408086f840fcf"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.10-proposal-v1/ASv6.10.md",
+          "sha256": "7e8f3051e05963a09f5a87ea738cd2d428c146fd17620d8ed756966426f3bd82"
+        }
+      ]
+    },
+    "atomic-subject-asv6.8-vs-asv6.9-v1": {
+      "dependencies": [],
+      "input_selections": [
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/selection.json",
+          "sha256": "690335e79555545837ab408161c93864809e83e8d5cdc6e5144b99bc8dfc5289"
+        }
+      ],
+      "parameters": [
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/plan.json",
+          "sha256": "4a864785d00df50713ad4c26d159ed907cfb668bfe10144cbe70e17b9ccdcd28"
+        }
+      ],
+      "profile": "atomic",
+      "records": [
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/assistant-analysis.json",
+          "role": "assistant_assessment",
+          "sha256": "05f705cbdeca240a1e7d3717c98c3d9bdaa8744688b3413599a061416e84e204"
+        }
+      ],
+      "runs": [
+        {
+          "config": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.8-trial-1/config.json",
+          "input": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/input.json",
+          "manifest": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.8-trial-1/run/manifest.json",
+          "output": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.8-trial-1/run/output.json",
+          "receipt": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.8-trial-1/run/results.jsonl",
+          "registry": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/subject-prompts.json",
+          "trial": 1
+        },
+        {
+          "config": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.9-trial-1/config.json",
+          "input": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/input.json",
+          "manifest": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.9-trial-1/run/manifest.json",
+          "output": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.9-trial-1/run/output.json",
+          "receipt": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.9-trial-1/run/results.jsonl",
+          "registry": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/subject-prompts.json",
+          "trial": 1
+        },
+        {
+          "config": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.8-trial-2/config.json",
+          "input": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/input.json",
+          "manifest": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.8-trial-2/run/manifest.json",
+          "output": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.8-trial-2/run/output.json",
+          "receipt": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.8-trial-2/run/results.jsonl",
+          "registry": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/subject-prompts.json",
+          "trial": 2
+        },
+        {
+          "config": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.9-trial-2/config.json",
+          "input": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/input.json",
+          "manifest": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.9-trial-2/run/manifest.json",
+          "output": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.9-trial-2/run/output.json",
+          "receipt": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.9-trial-2/run/results.jsonl",
+          "registry": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/subject-prompts.json",
+          "trial": 2
+        },
+        {
+          "config": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.8-trial-3/config.json",
+          "input": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/input.json",
+          "manifest": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.8-trial-3/run/manifest.json",
+          "output": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.8-trial-3/run/output.json",
+          "receipt": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.8-trial-3/run/results.jsonl",
+          "registry": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/subject-prompts.json",
+          "trial": 3
+        },
+        {
+          "config": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.9-trial-3/config.json",
+          "input": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/input.json",
+          "manifest": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.9-trial-3/run/manifest.json",
+          "output": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.9-trial-3/run/output.json",
+          "receipt": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.9-trial-3/run/results.jsonl",
+          "registry": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/subject-prompts.json",
+          "trial": 3
+        }
+      ],
+      "validation_sources": [
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.8-trial-1/run/output.json",
+          "sha256": "b2ee5bbeedfc8bf86f3958a20e1c184926adae291d52269e2ef73caa5216aae3"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.8-trial-1/run/manifest.json",
+          "sha256": "09a18c2340dd699bae2248e506db255ec980294653f38829e73c5f2b5d00e531"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.8-trial-1/run/results.jsonl",
+          "sha256": "28dd502b58cb926328a93c9e29a2308aeb74605a132509340a14d67b2ec96ca0"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/input.json",
+          "sha256": "04356b84eab64ded75fd90f7536844663bfc0b1095a6cc9bf9782feca4fbf59c"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/subject-prompts.json",
+          "sha256": "10049106b573d02558fc1ba6921c1191ac717e8d358018ce8f249e015fd4ca8b"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.8-trial-1/config.json",
+          "sha256": "7d7a260c79075d386097d9d5bff9cf54d5b39a7bb1ca0d55ee174b25d1b57944"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.9-trial-1/run/output.json",
+          "sha256": "c45a85a9efadda6ab12772c7106b0f5f1aa9fd79f99960cac88080cc3ba2d5f3"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.9-trial-1/run/manifest.json",
+          "sha256": "59147912f4c51fc9c2691bc219ed37b6de0718904a8802cae86455bde0cf1d3a"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.9-trial-1/run/results.jsonl",
+          "sha256": "20156aa33d7bf2c59eaa6ed2f39b3488dc16a15f4e8addd7c65614ff4865bb3e"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.9-trial-1/config.json",
+          "sha256": "dd99589606643a410b757f39bf17cb7ebdf03fa797c2927cbe224486b7e79aeb"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.8-trial-2/run/output.json",
+          "sha256": "816fa096b9ca25eeb463ab27342d5199ba13889fe32e03992097052d8e000e4d"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.8-trial-2/run/manifest.json",
+          "sha256": "09a18c2340dd699bae2248e506db255ec980294653f38829e73c5f2b5d00e531"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.8-trial-2/run/results.jsonl",
+          "sha256": "621af7b03d2553d6bb69d76e2c92d8e73ae2888846c6490941fe104bc02b359c"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.8-trial-2/config.json",
+          "sha256": "7d7a260c79075d386097d9d5bff9cf54d5b39a7bb1ca0d55ee174b25d1b57944"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.9-trial-2/run/output.json",
+          "sha256": "c5afb86fc816c89f19b2148eba4ffbd6812a38907cad0b668fd6bb5399a1275d"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.9-trial-2/run/manifest.json",
+          "sha256": "59147912f4c51fc9c2691bc219ed37b6de0718904a8802cae86455bde0cf1d3a"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.9-trial-2/run/results.jsonl",
+          "sha256": "88b8c69c27cbe29b66ccb2e62250025ad7bf5be6c88902b999f2f850eef8da4e"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.9-trial-2/config.json",
+          "sha256": "dd99589606643a410b757f39bf17cb7ebdf03fa797c2927cbe224486b7e79aeb"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.8-trial-3/run/output.json",
+          "sha256": "2115fd1bc270efe795b439e70928fb88f2b4948e291427bed60f665b87c64a18"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.8-trial-3/run/manifest.json",
+          "sha256": "09a18c2340dd699bae2248e506db255ec980294653f38829e73c5f2b5d00e531"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.8-trial-3/run/results.jsonl",
+          "sha256": "432a28530d2b77f5627d78efd2ec11849afe2c8de3eeaa6a24c8fdb06ea7ebdc"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.8-trial-3/config.json",
+          "sha256": "7d7a260c79075d386097d9d5bff9cf54d5b39a7bb1ca0d55ee174b25d1b57944"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.9-trial-3/run/output.json",
+          "sha256": "9fb89a67d4eff66d2d747cc98f75ebfa524aec56b22444865ee90526909756d5"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.9-trial-3/run/manifest.json",
+          "sha256": "59147912f4c51fc9c2691bc219ed37b6de0718904a8802cae86455bde0cf1d3a"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.9-trial-3/run/results.jsonl",
+          "sha256": "de1f4129a422f0e6b825806f47e95a12433ebffa6e930aae49aaff50ee1fe484"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/main/asv6.9-trial-3/config.json",
+          "sha256": "dd99589606643a410b757f39bf17cb7ebdf03fa797c2927cbe224486b7e79aeb"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/ASv6.8.md",
+          "sha256": "8b1112a30a5384f87bd010d616db75cd27eb45daf8f2cf2906e408086f840fcf"
+        },
+        {
+          "path": "sse_multivector/atomic-subject-asv6.8-vs-asv6.9-v1/ASv6.9.md",
+          "sha256": "944517a2514751d6599d24ae1484f0fa8bd533fed434ac3af4a22c64401333f0"
+        }
+      ]
+    }
+  }
+}

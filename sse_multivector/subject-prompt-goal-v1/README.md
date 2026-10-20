@@ -134,4 +134,4 @@ Every generated subject is preserved verbatim in each run's `output.json` and `r
 
 No personal notes, previous prompt text, raw output or user decision is to be edited. Masks and downstream processing are outside this goal.
 
-See [conversion gaps](../../docs/experiments/publication-gaps.csv) for `collection:tracked-subject-prompt-goal-v1`.
+Selected final evidence: 55 additional study/review entries linked from `collection:tracked-subject-prompt-goal-v1` in the [study index](../../docs/experiments/experiments.csv), with exact files in the [publication catalog](../../docs/experiments/publications.csv). The four previously selected studies and ASv6.100 answer/review bundles remain covered separately; its five [evaluation documents](asv6.100-generalization-v1/README.md#publication-files) are shared without duplication.

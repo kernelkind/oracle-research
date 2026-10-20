@@ -70,4 +70,4 @@ This is a development test on previously examined notes, with one new call per n
 
 The user started a [subject-prompt goal](../subject-prompt-goal-v1/README.md). Routine semantic review and prompt iteration are now delegated to the assistant under a fixed validation plan. This test remains the starting evidence; its observations are not overwritten or converted into user decisions.
 
-See [conversion gaps](../../docs/experiments/publication-gaps.csv) for `collection:tracked-atomic-subject-asv6.11-test-v1`.
+Selected final answers, recorded assessments and parameters: `historical-studies/atomic-subject-asv6.11-test-v1`. See the [publication catalog](../../docs/experiments/publications.csv) and [file checksums](../../docs/experiments/publication-files.csv).

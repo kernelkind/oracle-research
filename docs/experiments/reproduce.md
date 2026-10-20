@@ -359,6 +359,12 @@ command or `experiment.json` wrapper. The [study record](../../sse_multivector/s
 lists their paths. Their original source hashes are the publication-file
 checksums; the six existing native bundles contain the answers and reviews.
 
+For the six additional subject/mask collections, the same command accepts an
+explicit selection and study ID. `SOURCE_ROOT` is the original repository root,
+rather than an individual study directory. The
+[subject/mask checks](#historical-subject-and-mask-study-checks) describe the
+three selections, source requirements and five-file output.
+
 For the selected legacy title/description studies, a publisher with the exact
 original saved files can use the maintained
 [selection specification](../../sse_multivector/experiment_specs/title-study-publication-v1.json):
@@ -439,7 +445,7 @@ experiment/source identities. [Publication files](publication-files.csv) records
 every path, byte count and SHA-256 beneath `target/publication-exports/`.
 These paths describe local staging, not an available download.
 
-With the `ORACLE_ROOT` setup above, verify all 9,035 selected files:
+With the `ORACLE_ROOT` setup above, verify all 9,650 selected files:
 
 ```bash
 cd "$ORACLE_ROOT/target/publication-exports"
@@ -574,7 +580,7 @@ its machine-specific deployment commands are not a ready-to-run public recipe.
 
 ## Other experiments and moved files
 
-The [study index](experiments.csv) contains 2,643 selected entries: standalone
+The [study index](experiments.csv) contains 2,649 selected entries: standalone
 prompt preparations, official hierarchy runs, training runs, historical collections
 and the four located historical subject-prompt studies.
 It records saved plan identities and prompt/model settings.
@@ -751,8 +757,8 @@ were preserved, and nothing was uploaded.
 
 ### Historical backfill checks
 
-The current local selection contains **2,988 output/input directories and 9,035
-files**, totaling **1,122,552,402 bytes**. Every listed file was independently
+The current local selection contains **3,111 output/input directories and 9,650
+files**, totaling **1,136,661,707 bytes**. Every listed file was independently
 rehashed. Structured payload bindings were checked against their export manifests;
 the five original ASv6.100 Markdown documents match their recorded source hashes.
 Exact prepared-input copies were also checked against their frozen source hashes.
@@ -785,6 +791,87 @@ remain unresolved. No fresh inference, training or semantic grading occurred.
 This checks the selected supported formats. [Remaining historical exports](publication-gaps.csv)
 remain outside this size/completeness claim. Privacy review and a clean reader
 test against the eventual hosted selection are still pending.
+
+### Historical subject and mask study checks
+
+Six original collections now link 123 additional study/review entries under
+`historical-studies/`. Their 1,965 exact saved responses comprise 114 atomic
+subject answers, 931 subject-goal answers and 920 mask-goal responses. The latter
+include mask answers and the subject, comparison and position responses used by
+those studies. These are saved-response counts, including reuse, rather than
+counts of independent calls.
+
+The maintained selections bind each original source by SHA-256:
+
+| Selection | Entries | Study IDs |
+| --- | ---: | --- |
+| [Atomic subjects](../../sse_multivector/experiment_specs/atomic-study-publication-v1.json) | 4 | `atomic-subject-…` |
+| [Subject goals](../../sse_multivector/experiment_specs/subject-goal-publication-v1.json) | 55 | Exact keys in `studies`, such as `asv6.12` |
+| [Mask goals](../../sse_multivector/experiment_specs/mask-goal-publication-v1.json) | 64 | `mask-prompt-goal-v1/…` |
+
+A publisher with the exact saved files can export one selected entry without
+inference. This example runs the publication code with the original files in
+a sibling directory named `oracle-mvp-original`:
+
+```bash
+cd "$ORACLE_ROOT"
+python sse_multivector/experiment.py export-evaluation-results \
+  ../oracle-mvp-original \
+  --kind prompt-study \
+  --spec sse_multivector/experiment_specs/atomic-study-publication-v1.json \
+  --study atomic-subject-asv6.10-test-v1 \
+  --output target/atomic-subject-results
+```
+
+Pass the original repository root as the source argument. All declared files
+must be present with matching hashes, including any source-bound scientific review
+state. A clean checkout or compact download alone does not provide that original
+layout. Moved files can remain behind links; their complete contents must still
+match the declared hashes. This command neither runs models nor changes sources.
+
+Each entry contains `experiment.json`, `inputs.jsonl`, `answers.jsonl`,
+`judgments.jsonl` and `results.jsonl`. Shared posts and prompt templates are
+referenced within the entry rather than expanding every request. Raw answers
+retain their exact strings and hashes; separately parsed answers keep their
+source binding. Scientific parameters retain recorded ordering, normalization,
+isolation, repeat/reuse policies and execution limits. Credentials, account
+locations, private execution identifiers and transport logs are excluded.
+
+The 197 scientific assessment, comparison, measurement and correction records
+remain separate from two explicit user rejections. Undecided subjects acquire
+no decision; missing reviewer identity stays unknown. Later corrections do not
+replace earlier assessments. The failed MPv3.26 attempt retains its outcome
+without a credential diagnostic. ASv6.47's sampler retains three reused-answer
+references and no new answers. Known pre-ASv6.100 subject outputs stay deprecated
+historical evidence; unknown lineage stays unknown. Raw posts are not deprecated.
+
+The four previously selected subject studies, ASv6.100's 180 native answers and
+its five evaluation documents retain their existing publication links. They are
+not duplicated in these 123 entries.
+
+All 85 historical-study, older prompt/title, evaluation and publication-workflow
+tests pass:
+
+```bash
+cd "$ORACLE_ROOT"
+PYTHONPATH=.:sse_multivector python -m unittest \
+  sse_multivector.test_historical_study_publication \
+  sse_multivector.test_atomic_study_publication \
+  sse_multivector.test_historical_study_cli \
+  sse_multivector.test_subject_goal_publication \
+  sse_multivector.test_mask_goal_publication \
+  sse_multivector.test_prompt_study_publication \
+  sse_multivector.test_title_study_publication \
+  sse_multivector.test_evaluation_publication \
+  sse_multivector.test_publication_workflow
+```
+
+All 123 real-file commands also pass under a 512 MiB worker address-space limit.
+Their 615 files total 14,109,305 bytes (2,899,941 bytes with gzip level 6).
+Every declared source and payload hash matches. All 3,266 selected original
+files retain their bytes, hashes, modes and modification times. This verifies
+the selected saved evidence; it does not re-evaluate scientific quality or
+complete the final publication privacy review.
 
 ### Historical title study checks
 

@@ -161,12 +161,12 @@ one is a proposal whose inputs duplicate its executed sibling. The executed
 sibling still needs an export. This resolves those collection-level gaps; it
 does not resolve the separate placement review of the 196 ambiguous Git files.
 
-The 33 HDB title/description groups and 11 SSE representation studies are now
-selected as described below. The remaining **33 groups need final-evidence exports**:
+The 33 HDB title/description groups, 11 SSE representation studies and six
+subject/mask collections are now selected as described below. The remaining
+**27 groups need final-evidence exports**:
 
 | Collections | Groups | Evidence to retain |
 | --- | ---: | --- |
-| Atomic subject and subject/mask goal studies | 6 | Missing final answers, assessments and measurements; four previously selected studies remain covered |
 | Other standalone prompt studies | 22 | Early title/mask trials, mask comparisons and three manual prominence studies; retain partial results and distinguish reused answers |
 | Real-note, hierarchy-title and frontier studies | 4 | Final segment selections, title answers and judgments, model comparisons and recorded reviews |
 | Archived baselines | 1 | Four CREC119 answer/segment files and two geometry diagnostics; the TEv4.1 answers are already covered by selected inputs |
@@ -179,7 +179,6 @@ verbatim under `evaluations/asv6.100-generalization-v1/`, totaling **91,107 byte
 measurements and the criterion IDs used by the reviews. All 60 summary/rubric
 case IDs match the selected answers; the 119 unrun plan rows are not additional
 answers. See the [study's file list](../../sse_multivector/subject-prompt-goal-v1/asv6.100-generalization-v1/README.md#publication-files).
-The broader subject-goal group still has historical evidence needing export.
 Older AS results remain historical; unknown provenance or reviewer identity
 stays unknown.
 
@@ -200,11 +199,34 @@ erase successful individual responses in a partial run. Preserve actual user
 decisions separately from agent assessments.
 
 The review itself made no additional exports or changes to original records.
-The five ASv6.100 documents, 33 title/description study groups and 11 SSE
-representation studies were selected afterward; the
+The five ASv6.100 documents, 33 title/description study groups, 11 SSE
+representation studies and six subject/mask collections were selected afterward; the
 [measured totals](downloads.md#measured-local-exports) include them. The
 remaining-items table names concrete export requirements rather than treating
 every old directory as an unexamined missing dataset.
+
+### Selected subject/mask evidence
+
+The six subject/mask collections now link 123 additional study/review entries:
+**615 files, 14,109,305 bytes (13.46 MiB)**, or **2,899,941 bytes (2.77 MiB)**
+measured with gzip level 6. Their 1,965 exact saved responses remain bound to
+used inputs, prompts, receipts and recorded settings. Saved reuse and independent
+trials remain distinguishable; the response total is not a fresh-call count.
+
+The 197 scientific assessment, comparison, measurement and correction records
+retain their recorded attribution. Two explicit user rejections are preserved;
+undecided subjects stay undecided. Original reviews and later corrections remain
+separate. The four previously selected subject studies, ASv6.100's 180 native
+answers and its five evaluation documents remain linked without duplication.
+
+The [shared offline command](reproduce.md#historical-subject-and-mask-study-checks)
+checks exact source hashes and preserves scientific methods while excluding
+credentials, account locations and private execution identifiers. All 85 relevant
+tests pass. All 123 real-file exports also pass under a 512 MiB worker address-space
+limit. The 3,266 selected source files (57,992,724 bytes) retain their bytes,
+hashes, modes and modification times. No models ran and nothing was uploaded.
+Known old-AS derivatives remain deprecated historical evidence; unknown lineage
+stays unknown. Final publication privacy review remains open.
 
 ### Selected title/description evidence
 
@@ -395,7 +417,7 @@ before packaging. Known credential containers were excluded from discovery;
 that is not a completed privacy review of the evidence.
 
 The [publication plan](downloads.md#measured-local-exports) now measures the
-selected local exports: **1.04 GiB**, plus **6.78 GiB** for all 17 evaluated
+selected local exports: **1.06 GiB**, plus **6.78 GiB** for all 17 evaluated
 adapters. [Publications](publications.csv), [exact files](publication-files.csv)
 and [checksums](publication.sha256) record this selection. The 534.71 GiB source
 inventory and old bundle tables do not define the public download size or layout.

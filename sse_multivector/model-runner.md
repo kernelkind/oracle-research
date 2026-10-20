@@ -2243,6 +2243,13 @@ and excludes private execution settings. See the
 The 11 selected SSE representation diagnostics use
 `export-numerical-results SOURCE --family representation --output OUTPUT`;
 see the [saved-layout commands and checks](../docs/experiments/reproduce.md#sse-representation-study-checks).
+The six subject/mask collections use
+`export-evaluation-results SOURCE_ROOT --kind prompt-study --spec SELECTION --study ID --output OUTPUT`.
+`SOURCE_ROOT` is the repository containing the exact original saved files. The
+three maintained selections bind 123 study/review entries and their source hashes;
+see the [subject/mask commands and checks](../docs/experiments/reproduce.md#historical-subject-and-mask-study-checks).
+This path preserves scientific methods and recorded judgments while excluding
+concrete credentials and private execution identifiers. It performs no inference.
 Remaining historical conversions and public download verification remain
 unfinished. The signed export below retains its existing
 behavior.

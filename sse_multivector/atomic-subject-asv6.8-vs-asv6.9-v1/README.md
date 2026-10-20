@@ -47,4 +47,4 @@ Output totals include reported reasoning tokens. The failed attempt reported no 
 
 Current execution status: `./status.json`.
 
-See [conversion gaps](../../docs/experiments/publication-gaps.csv) for `collection:tracked-atomic-subject-asv6.8-vs-asv6.9-v1`.
+Selected final answers, recorded assessments and parameters: `historical-studies/atomic-subject-asv6.8-vs-asv6.9-v1`. See the [publication catalog](../../docs/experiments/publications.csv) and [file checksums](../../docs/experiments/publication-files.csv).
