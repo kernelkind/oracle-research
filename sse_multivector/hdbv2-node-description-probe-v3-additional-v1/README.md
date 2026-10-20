@@ -105,4 +105,4 @@ The next work should target this scope problem without forcing every output into
 
 This is a purposively selected same-corpus sample with one output per node. It is not an unseen-note holdout or a representative accuracy estimate. It contains no new comparative v2 runs and cannot measure a causal prompt improvement on these six nodes.
 
-**Publication status:** `collection:tracked-hdbv2-node-description-probe-v3-additional-v1` remains in the [conversion review list](../../docs/experiments/publication-gaps.csv); a complete compact-data conversion has not been established.
+**Publication status:** `collection:tracked-hdbv2-node-description-probe-v3-additional-v1` is selected as `title-studies/hdbv2-node-description-probe-v3-additional-v1` in the [publication catalog](../../docs/experiments/publications.csv), with [exact files and hashes](../../docs/experiments/publication-files.csv). The local export preserves saved answers and recorded assessments; input AS lineage remains unverified. Nothing has been uploaded.

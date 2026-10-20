@@ -87,4 +87,4 @@ Exact baseline inputs (`./inputs-v21.json`), exact candidate inputs (`./inputs-v
 
 The [official evaluation guidance](https://developers.openai.com/api/docs/guides/evaluation-best-practices#what-are-evals) informs scoped comparisons and calibration to human judgment, not the semantic verdicts.
 
-**Publication status:** `collection:tracked-hdbv2-node-description-probe-v22` remains in the [conversion review list](../../../docs/experiments/publication-gaps.csv); a complete compact-data conversion has not been established.
+**Publication status:** `collection:tracked-hdbv2-node-description-probe-v22` is selected as `title-studies/hdbv2-node-description-probe-v22` in the [publication catalog](../../../docs/experiments/publications.csv), with [exact files and hashes](../../../docs/experiments/publication-files.csv). The local export preserves saved answers and recorded assessments; input AS lineage remains unverified. Nothing has been uploaded.

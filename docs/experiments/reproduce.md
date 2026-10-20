@@ -359,6 +359,29 @@ command or `experiment.json` wrapper. The [study record](../../sse_multivector/s
 lists their paths. Their original source hashes are the publication-file
 checksums; the six existing native bundles contain the answers and reviews.
 
+For the selected legacy title/description studies, a publisher with the exact
+original saved files can use the maintained
+[selection specification](../../sse_multivector/experiment_specs/title-study-publication-v1.json):
+
+```bash
+cd "$ORACLE_ROOT"
+python sse_multivector/experiment.py export-evaluation-results \
+  sse_multivector/hdbv2-node-description-probe-v21 \
+  --kind title-study \
+  --spec sse_multivector/experiment_specs/title-study-publication-v1.json \
+  --output target/title-study-results
+```
+
+The source directory's parent must contain the exact declared study files and
+shared inputs; a clean checkout or compact download alone does not have that
+original layout. The command makes no model calls. Its five files are
+`experiment.json`, `inputs.jsonl`, `answers.jsonl`, `judgments.jsonl` and
+`results.jsonl`. They retain final answers, scientific findings, recorded reviews,
+failure outcomes and necessary inputs/settings. Source hashes, UTF-8 mask spans,
+prompt substitution and receipt bindings are checked; unknown scientific fields
+or ambiguous joins stop the export. Rendered requests, account settings and
+transport logs are excluded. See the [checks](#historical-title-study-checks).
+
 For fine-tune validation answers, final grading reports and final comparisons:
 
 ```bash
@@ -416,7 +439,7 @@ experiment/source identities. [Publication files](publication-files.csv) records
 every path, byte count and SHA-256 beneath `target/publication-exports/`.
 These paths describe local staging, not an available download.
 
-With the `ORACLE_ROOT` setup above, verify all 8,837 selected files:
+With the `ORACLE_ROOT` setup above, verify all 9,002 selected files:
 
 ```bash
 cd "$ORACLE_ROOT/target/publication-exports"
@@ -551,13 +574,14 @@ its machine-specific deployment commands are not a ready-to-run public recipe.
 
 ## Other experiments and moved files
 
-The [study index](experiments.csv) contains 2,599 selected entries: standalone
+The [study index](experiments.csv) contains 2,632 selected entries: standalone
 prompt preparations, official hierarchy runs, training runs, historical collections
 and the four located historical subject-prompt studies.
 It records saved plan identities and prompt/model settings.
 [Publications](publications.csv) connects them to the exported results;
 [publication files](publication-files.csv) lists their exact files and hashes.
-Each export's `experiment.json` records its versions and bindings.
+Structured exports record their versions and bindings in `experiment.json`;
+the original Markdown documents use direct source hashes.
 
 The complete original index and workspace discovery tables are preserved in the
 local audit described in [open items](open-items.md). They cover internal jobs,
@@ -727,8 +751,8 @@ were preserved, and nothing was uploaded.
 
 ### Historical backfill checks
 
-The current local selection contains **2,944 output/input directories and 8,837
-files**, totaling **1,118,955,018 bytes**. Every listed file was independently
+The current local selection contains **2,977 output/input directories and 9,002
+files**, totaling **1,121,672,021 bytes**. Every listed file was independently
 rehashed. Structured payload bindings were checked against their export manifests;
 the five original ASv6.100 Markdown documents match their recorded source hashes.
 Exact prepared-input copies were also checked against their frozen source hashes.
@@ -761,3 +785,42 @@ remain unresolved. No fresh inference, training or semantic grading occurred.
 This checks the selected supported formats. [Remaining historical exports](publication-gaps.csv)
 remain outside this size/completeness claim. Privacy review and a clean reader
 test against the eventual hosted selection are still pending.
+
+### Historical title study checks
+
+The 33 title/description publication groups contain 506 saved answers and 24
+separate failed attempts, with three final 61-group title sets. All 183 selected
+titles bind to their chosen saved answers, including 32 reused answers from
+other selected studies. Published inputs preserve original order, exact masks
+and the recorded deduplication or hashtag condition. Reconstructing the requests
+from those inputs and exported templates reproduces all 506 request hashes;
+the raw answer strings also reproduce their saved hashes. These are mechanical
+checks, not new assessments or approval of the titles.
+
+The maintained selection contains only paths, hashes and input/template bindings.
+Frozen parameters retain their scientific fields; private execution and billing
+containers are excluded. Unknown fields fail explicitly. A selected-title view
+reuses an input reference only when its exact masks match the chosen call.
+Otherwise its original evidence remains present. Comments without an author or
+decision field remain unattributed comments. Unresolved external file references
+are explicitly identified; they are not guessed from a shared filename.
+
+All 62 title-study, projection, mask-input, older prompt-study, evaluation-export
+and publication-workflow tests pass:
+
+```bash
+cd "$ORACLE_ROOT"
+PYTHONPATH=.:sse_multivector python -m unittest \
+  sse_multivector.test_title_study_publication \
+  sse_multivector.test_title_study_records \
+  sse_multivector.test_category_title_inputs \
+  sse_multivector.test_prompt_study_publication \
+  sse_multivector.test_evaluation_publication \
+  sse_multivector.test_publication_workflow
+```
+
+All 33 real-file exports also pass with a 512 MiB address-space limit and about
+31 MiB maximum resident memory. The 2,262 input/receipt/source files read by
+these exports retain their bytes, modes and modification times. No new model
+answers, user decisions or semantic judgments were created. All output hashes
+and sizes are listed in [publication files](publication-files.csv).

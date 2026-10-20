@@ -125,4 +125,4 @@ Cached input tokens are reported separately from thread identity; prefix caching
 
 This six-node purposive sample is not a representative accuracy estimate, and one result per version per node is not enough to isolate prompt effects from output variation. No automatically generated title was treated as the uniquely correct answer.
 
-**Publication status:** `collection:tracked-hdbv2-node-description-probe-v3` remains in the [conversion review list](../../docs/experiments/publication-gaps.csv); a complete compact-data conversion has not been established.
+**Publication status:** `collection:tracked-hdbv2-node-description-probe-v3` is selected as `title-studies/hdbv2-node-description-probe-v3` in the [publication catalog](../../docs/experiments/publications.csv), with [exact files and hashes](../../docs/experiments/publication-files.csv). The local export preserves saved answers and recorded assessments; input AS lineage remains unverified. Nothing has been uploaded.

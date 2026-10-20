@@ -70,4 +70,4 @@ New Astra usage: 26,674 input tokens, including 1,920 cached input tokens; 559 o
 
 CREC-127 is the existing tracking card. Plane tools were unavailable, so its external status/comment could not be updated.
 
-**Publication status:** `collection:tracked-hdbv2-node-description-probe-v20-astra-low-v1` remains in the [conversion review list](../../docs/experiments/publication-gaps.csv); a complete compact-data conversion has not been established.
+**Publication status:** `collection:tracked-hdbv2-node-description-probe-v20-astra-low-v1` is selected as `title-studies/hdbv2-node-description-probe-v20-astra-low-v1` in the [publication catalog](../../docs/experiments/publications.csv), with [exact files and hashes](../../docs/experiments/publication-files.csv). The local export preserves saved answers and recorded assessments; input AS lineage remains unverified. Nothing has been uploaded.

@@ -35,4 +35,4 @@ This is optional inspection, not a request to adjudicate twelve uncertain decisi
 
 These are six reused development groups, not a holdout or an accuracy estimate. Two calls per group show repeatability on this sample, not general reliability. Historical output differences alone cannot establish causation.
 
-**Publication status:** `collection:tracked-hdbv2-node-description-probe-v12` remains in the [conversion review list](../../docs/experiments/publication-gaps.csv); a complete compact-data conversion has not been established.
+**Publication status:** `collection:tracked-hdbv2-node-description-probe-v12` is selected as `title-studies/hdbv2-node-description-probe-v12` in the [publication catalog](../../docs/experiments/publications.csv), with [exact files and hashes](../../docs/experiments/publication-files.csv). The local export preserves saved answers and recorded assessments; input AS lineage remains unverified. Nothing has been uploaded.

@@ -47,4 +47,4 @@ The two earlier v16 dog results (`../hdbv2-node-description-probe-v16/comparison
 
 The [official GPT-5.6 guidance](https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6#prompt-migration-workflow) informed changing one input feature while keeping the prompt and execution settings fixed. It does not establish the semantic interpretation or generalizability of this result.
 
-**Publication status:** `collection:tracked-hdbv2-node-description-v16-hashtag-diagnostic-v1` remains in the [conversion review list](../../docs/experiments/publication-gaps.csv); a complete compact-data conversion has not been established.
+**Publication status:** `collection:tracked-hdbv2-node-description-v16-hashtag-diagnostic-v1` is selected as `title-studies/hdbv2-node-description-v16-hashtag-diagnostic-v1` in the [publication catalog](../../docs/experiments/publications.csv), with [exact files and hashes](../../docs/experiments/publication-files.csv). The local export preserves saved answers and recorded assessments; input AS lineage remains unverified. Nothing has been uploaded.

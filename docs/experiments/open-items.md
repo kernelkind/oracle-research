@@ -161,11 +161,11 @@ one is a proposal whose inputs duplicate its executed sibling. The executed
 sibling still needs an export. This resolves those collection-level gaps; it
 does not resolve the separate placement review of the 196 ambiguous Git files.
 
-The remaining **77 groups need final-evidence exports**:
+The 33 HDB title/description groups are now selected as described below. The
+remaining **44 groups need final-evidence exports**:
 
 | Collections | Groups | Evidence to retain |
 | --- | ---: | --- |
-| HDB title and description studies | 33 | 506 successful saved answers, final title selections, comparisons and recorded assessments; preserve 24 failed attempts separately from successful answers |
 | Atomic subject and subject/mask goal studies | 6 | Missing final answers, assessments and measurements; four previously selected studies remain covered |
 | Other standalone prompt studies | 22 | Early title/mask trials, mask comparisons and three manual prominence studies; retain partial results and distinguish reused answers |
 | SSE representation diagnostics | 11 | Final numerical comparisons and decisions with their fixed inputs and parameters |
@@ -201,10 +201,35 @@ erase successful individual responses in a partial run. Preserve actual user
 decisions separately from agent assessments.
 
 The review itself made no additional exports or changes to original records.
-The five ASv6.100 documents were selected afterward; the
-[measured totals](downloads.md#measured-local-exports) include them. The
+The five ASv6.100 documents and the 33 title/description study groups were selected
+afterward; the [measured totals](downloads.md#measured-local-exports) include them. The
 remaining-items table names concrete export requirements rather than treating
 every old directory as an unexamined missing dataset.
+
+### Selected title/description evidence
+
+All 33 reviewed title/description groups now have local publication files under
+`title-studies/`: **165 files, 2,717,003 bytes (2.59 MiB)**, or **818,640 bytes
+(0.78 MiB)** measured with gzip level 6. Their 506 exact saved answers, final
+comparisons, recorded assessments and selections are bound to the used masks,
+source posts, prompt text and saved model settings. The inputs contain **89
+distinct posts**, totaling 27,506 UTF-8 text bytes. AS lineage remains unknown.
+
+The three 61-group final title sets preserve their original selections, including
+**32 reused answers**. Reuse references do not add new answers or trials. The
+**24 failed attempts** remain separate, with unreported usage recorded as unknown.
+All **480 review-comment entries** retain unknown authorship and carry no inferred
+user decision. Explicit saved decisions and agent judgments remain separate.
+
+The shared offline command and maintained selection are documented in the
+[reproduction guide](reproduce.md#historical-title-study-checks). All 62 relevant
+tests pass, and all 33 original collections export successfully. Verification
+reconstructed all 506 requests from the published templates and inputs and
+checked every raw answer hash. The 2,262 read source files, totaling 5,128,111
+bytes, retain their original bytes, modes and modification times. Worker peak
+memory was about 31 MiB under a 512 MiB address-space limit. No models were run
+and nothing was uploaded. Privacy review and the remaining historical formats
+remain open.
 
 ## Current Oracle/runner compatibility
 

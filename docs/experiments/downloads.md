@@ -57,9 +57,10 @@ For the public index, retain the maintained guides, selected-result catalog,
 checksums, hierarchy/corpus/model summaries and useful provenance/recovery
 tables. Retain `historical-files.csv` and `historical-uses.csv` because they bind
 evidence to original blobs, commits and paths. `experiments.csv` now retains the
-2,595 rows with selected-publication links from the reviewed index, preserving
-their study identities, settings and order, plus four later-located historical
-prompt studies. Six ASv6.100 rows additionally link the shared evaluation
+2,595 initially selected rows from the reviewed index, preserving their study
+identities, settings and order, plus 33 later-selected title/description
+collections and four later-located historical prompt studies. Six ASv6.100 rows
+additionally link the shared evaluation
 documents in their publication notes.
 `publications.csv` also indexes the selected
 numerical and other
@@ -161,19 +162,20 @@ download or Hugging Face revision has been created.
 | --- | ---: | ---: |
 | Standalone prompt studies: inputs, final answers and reviews | 2,547 prepared trials | 249.46 MiB |
 | Historical subject-prompt studies: posts, answers, assessments and measurements | Four studies, 78 calls and 10 distinct posts | 0.36 MiB |
+| Historical title/description studies: inputs, answers, recorded reviews, final selections and parameters | 33 collections, 506 saved answers and 24 failed attempts | 2.59 MiB |
 | ASv6.100 evaluation documents | Final quality summary and four frozen agent rubrics, shared by three trials | 0.09 MiB |
 | Fine-tune, grading and effort evaluations | 67 final/last reports, including 20 validation stages | 665.12 MiB |
 | Historical numerical results | 73 | 78.85 MiB |
 | Performance measurements | 9 | 0.02 MiB |
 | Unsigned hierarchies, selections and parameters | 37 official runs plus 203 saved branch outputs | 5.35 MiB |
 | Used posts, prepared training inputs and adapter hash records | 10,571 posts, four prepared files, split/settings records and 17 adapter bindings | 67.87 MiB |
-| **Selected non-model files** | **8,837 files** | **1,067.12 MiB (1.04 GiB)** |
+| **Selected non-model files** | **9,002 files** | **1,069.71 MiB (1.04 GiB)** |
 | **All 17 evaluated adapters, weights and configurations** | **34 original files, hashed without copying weights** | **6.78 GiB** |
 
-The exact selected non-model total is **1,118,955,018 bytes**. Together with
-the adapter weights/configurations it is **8,399,042,787 bytes (7.82 GiB)**.
+The exact selected non-model total is **1,121,672,021 bytes**. Together with
+the adapter weights/configurations it is **8,401,759,790 bytes (7.82 GiB)**.
 Code and cleaned Git history are additional. Measured gzip level-6 compression
-of each non-model file totals **156,837,436 bytes (149.57 MiB)**; no compressed
+of each non-model file totals **157,656,076 bytes (150.35 MiB)**; no compressed
 downloads were created and the staged files remain in their original export
 formats.
 
@@ -187,8 +189,9 @@ These are measured selected outputs, not an exhaustive all-history size claim.
 [Remaining items](publication-gaps.csv) identify 33 unsupported result files,
 one result missing its configuration, and final evidence identified by the
 [109-group historical review](open-items.md#historical-collection-review).
-That review resolved 32 groups needing no separate result export. The remaining
-source containers have not yet been converted or added to these measured totals.
+That review resolved 32 groups needing no separate result export. Another 33
+title/description groups are now selected; 44 historical groups still need final
+evidence exports. Their unconverted source containers are outside these totals.
 All 27,032 native jobs have been classified: 2,547 standalone trials are retained; warmups,
 internal execution jobs, manual construction intermediates and input-only
 preparations are excluded. Independent repeats remain distinct, and reused

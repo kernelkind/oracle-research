@@ -82,4 +82,4 @@ The [official GPT-5.6 guidance](https://developers.openai.com/api/docs/guides/pr
 
 CREC-127 remains the tracking card. Plane tools were not available in this session, so its external status/comment could not be updated.
 
-**Publication status:** `collection:tracked-hdbv2-node-description-probe-v18` remains in the [conversion review list](../../docs/experiments/publication-gaps.csv); a complete compact-data conversion has not been established.
+**Publication status:** `collection:tracked-hdbv2-node-description-probe-v18` is selected as `title-studies/hdbv2-node-description-probe-v18` in the [publication catalog](../../docs/experiments/publications.csv), with [exact files and hashes](../../docs/experiments/publication-files.csv). The local export preserves saved answers and recorded assessments; input AS lineage remains unverified. Nothing has been uploaded.

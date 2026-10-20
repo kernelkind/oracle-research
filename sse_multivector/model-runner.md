@@ -2233,8 +2233,15 @@ role. Unmarked historical plans require explicit selection. These exporters pres
 assessments, measurements and parameters, without publishing construction
 requests or vector/distance working data. The supported historical selection is
 now [indexed with exact local files and checksums](../docs/experiments/downloads.md#measured-local-exports).
-Unsupported formats, older inventory-group review and public download
-verification remain unfinished. The signed export below retains its existing
+The 33 selected historical title/description studies additionally use
+`export-evaluation-results SOURCE --kind title-study --spec SELECTION --output OUTPUT`.
+The maintained [selection](experiment_specs/title-study-publication-v1.json)
+binds exact original sources, prompts and input conditions. This publisher path
+checks saved requests and receipts, preserves recorded assessments and reuse,
+and excludes private execution settings. See the
+[commands and checks](../docs/experiments/reproduce.md#historical-title-study-checks).
+Remaining historical conversions and public download verification remain
+unfinished. The signed export below retains its existing
 behavior.
 
 ### Review viewer export

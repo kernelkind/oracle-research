@@ -615,7 +615,8 @@ def add_commands(commands):
                    help='publication directory; default DIRECTORY/publication; refreshes this experiment only')
     p = commands.add_parser('export-evaluation-results', help='export final saved evaluation answers, grades or comparisons; no inference')
     p.add_argument('source', type=Path)
-    p.add_argument('--kind', required=True, choices=('validation', 'grades', 'review', 'comparison', 'prompt-study'))
+    p.add_argument('--kind', required=True, choices=('validation', 'grades', 'review', 'comparison', 'prompt-study', 'title-study'))
+    p.add_argument('--spec', type=Path, help='explicit saved title-study publication selection')
     p.add_argument('--output', type=Path)
     p = commands.add_parser('export-numerical-results', help='export supported final numerical groups, graphs or measurements; no inference')
     p.add_argument('source', type=Path)
@@ -875,6 +876,13 @@ def add_commands(commands):
 
 def handle_command(args):
     if args.command == 'export-evaluation-results':
+        if args.kind == 'title-study':
+            from .title_study_publication import export_results
+            result = export_results(args.source, args.spec, args.output)
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+            return 0
+        if args.spec is not None:
+            raise ValueError('--spec is supported only for title-study publication')
         if args.kind == 'prompt-study':
             from .prompt_study_publication import export_results
             result = export_results(args.source, args.output)
