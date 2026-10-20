@@ -1,9 +1,13 @@
 # Before publication
 
-This records the source inventory and remaining publication work. The
+This records findings from the source audit and remaining publication work. The
 [publication plan](downloads.md) now selects used inputs, parameters and final
-results, with all 17 evaluated adapters. The broad source inventory is not the
-final export list. Nothing has been uploaded or approved for public release.
+results, with all 17 evaluated adapters. The public [study index](experiments.csv)
+contains selected studies, runs and collections. The complete original index
+and discovery tables are preserved locally under
+`target/publication-audit/index-before-simplification-1f3d541c/docs/experiments/`.
+The audit counts below describe that broader source inventory. Nothing has been
+uploaded or approved for public release.
 
 ## Input versions
 
@@ -46,9 +50,9 @@ recorded by its original experiment:
   recovery, not a separately discovered backup.
 
 These nine files are saved under the publication checkout's ignored
-`target/publication-inputs/` directory and included in [part-1251.csv](files/part-1251.csv)
-for delivery under `datasets/`. Their contents are not committed to Git.
-Original files, plans and receipts were not modified.
+`target/publication-inputs/` directory. Their identities and recovery procedures
+remain in [exact alternatives](dependency-alternatives.csv); their contents are
+not committed to Git. Original files, plans and receipts were not modified.
 
 Three earlier versions of
 `oracle-mvp-shr-pair-correctness-v1:target/hierarchy-nine-note-children-v3/state.json`
@@ -64,8 +68,9 @@ remain unlocated. They affect these eight saved experiments beneath
 All eight retain prepared cases and saved responses. Their missing state
 versions prevent complete source verification and regeneration of those cases
 from the original state. Preserve the available evidence with this limitation;
-the current state file is not a substitute. The affected entries are marked in
-[experiments](experiments.csv) and [issues](issues.csv).
+the current state file is not a substitute. The complete local audit retains the
+affected bindings; [selected studies](experiments.csv) and
+[publications](publications.csv) identify the retained results.
 
 The search checked 658 indexed state/configuration files, 167 additional direct
 copies under known source roots, indexed historical hashes, the configuration's
@@ -89,15 +94,14 @@ older versions of these files under `research-main:sse_multivector/experiment_sp
 
 All five match their original recorded hashes. The three Git blobs and their
 commits are present in the publication clone. The two recovered files are saved
-under ignored `target/publication-inputs/` and listed in
-[part-1252.csv](files/part-1252.csv). [Exact alternatives](dependency-alternatives.csv)
+under ignored `target/publication-inputs/`. [Exact alternatives](dependency-alternatives.csv)
 records each source, hash and recovery procedure. No additional unresolved
 versions were found; the three state versions above remain unlocated.
 
 All **62 recorded encoder bindings** also match: two checkpoint copies and two
 configuration/tokenizer directory copies shared by the hierarchy runs. Directory
 hashes use the production worker's `canonical_tree_sha256` function. Measured
-hashes are recorded in [runtime inputs](runtime-inputs.csv) and the file lists.
+hashes are recorded in [runtime inputs](runtime-inputs.csv).
 
 Files were hashed in 1 MiB chunks, with size and modification checks to detect
 concurrent edits. No concurrent changes were detected. This completes checking
@@ -107,23 +111,22 @@ unfinished.
 
 ### Large experiment plans
 
-All **42 plans** that exceeded the initial 32 MiB read limit are now indexed as
-native experiments. Their entries contain prompt versions, provider/model
+The source audit indexed all **42 plans** that exceeded the initial 32 MiB read
+limit. Its native experiment entries contain prompt versions, provider/model
 settings, case counts, saved plan and manifest identities, code-provenance
 references and located result files. Complete frozen settings remain in each
 original plan.
 
 Their **34,091 source references** resolve to **6,092 input files**, all matching
 the recorded hashes. Of these, 6,067 had measured hashes and unchanged file
-metadata; the remaining 25 were hashed in 1 MiB chunks. This adds 25 dependency
-rows and one previously unlisted file: a saved **DSLv2** relationship prompt in
-[part-1253.csv](files/part-1253.csv). No new source mismatches or missing inputs
-were found.
+metadata; the remaining 25 were hashed in 1 MiB chunks. The local audit added
+25 dependency rows and one previously unlisted file: a saved **DSLv2**
+relationship prompt. No new source mismatches or missing inputs were found.
 
-**33 plans have located result files.** The other nine have no result file at
-their recorded or adjacent locations. They remain evidence of preparation;
+That audit located result files for **33 plans**. The other nine had no result
+file at their recorded or adjacent locations. They remain evidence of preparation;
 absence of that file alone does not establish a failed run or lost results.
-Their individual entries are included in [issues](issues.csv).
+Their individual findings remain in the complete local audit.
 
 The streaming JSON pass read 8,200,509,108 bytes with a peak parser memory use
 of about 24 MiB. Raw plan-file hashes were also measured. This checked metadata
@@ -133,18 +136,19 @@ Original plans and results were not modified.
 
 ## Saved results and verification
 
-- **3,182 native plans** have no `results.jsonl` at the recorded location or
-  beside their saved plan. Some may be prepared jobs that never ran. Establish
-  their status from the saved records before calling them failed experiments or
-  missing results. They remain indexed as evidence of preparation.
+- The discovery snapshot found **3,182 native plans** without `results.jsonl` at
+  the recorded location or beside their saved plan. Some may be prepared jobs
+  that never ran. Their individual findings remain in the local audit; absence
+  of that file alone does not establish a failed run or lost results.
 - Indexed input and encoder hashes have been checked as described above. The
   three unlocated state versions remain a source-verification limitation.
-- Adapter configurations identify pinned base-model revisions. Adapter weights,
-  other unmeasured evidence and the eventual archives still need checksums.
-  Having a saved file is not a completed reproduction test.
+- Adapter configurations identify pinned base-model revisions. Check eventual
+  hosted downloads against their selected file hashes; having a saved file is
+  not a completed reproduction test.
 
-[Detailed issues](issues.csv) retain the individual findings. Duplicate native
-jobs, warmups and reused answers must not be counted as independent trials.
+[Remaining publication items](publication-gaps.csv) record unsupported results,
+the missing configuration and older groups still needing review. Duplicate
+native jobs, warmups and reused answers must not be counted as independent trials.
 
 ## Current Oracle/runner compatibility
 
@@ -192,17 +196,17 @@ inventory and old bundle tables do not define the public download size or layout
 
 Before publication:
 
-- Implement the agreed [public Git layout](downloads.md#public-git-contents):
-  retain code, tests, prompts, authored findings and a selected-study index;
-  preserve generated run files and exhaustive workspace catalogs locally.
-  Simplify the tracked index and repair its documentation links. Review the
+- Continue the agreed [public Git layout](downloads.md#public-git-contents):
+  the tracked index now covers selected studies, with exhaustive workspace
+  catalogs preserved locally. Review the
   small ambiguous case/recipe files, retain authored findings even where current
   ignore rules match them, and check code/test paths that use original artifacts.
 - Review [remaining conversion items](publication-gaps.csv): 33 unsupported result
   files, one result without its required local configuration, and older inventory
   groups needing review for final data versus material already retained in Git.
   The supported selection has been backfilled through the normal exporters;
-  all 27,032 native jobs have an explicit selection classification in the index.
+  all 27,032 native jobs were classified in the local audit, and the public
+  index retains the 2,547 selected standalone native studies.
   Do not substitute guessed outcomes or entire working directories for
   unsupported formats.
 - Preserve experiment identity, exact selections, versions, reuse and recorded

@@ -20,16 +20,15 @@ have been located and checked against their recorded SHA-256 hashes.
 
 ## Where to start
 
-| Work | Read first | Inventory |
+| Work | Read first | Index |
 | --- | --- | --- |
 | Find converted final results | [Measured selection](downloads.md#measured-local-exports) | [Exports](publications.csv), [files](publication-files.csv) and [remaining review items](publication-gaps.csv) |
 | Generate a hierarchy from posts | [Generation guide](../generate-hierarchy.md) | [Official hierarchy runs](hierarchy.csv) |
 | Inspect or repeat recorded experiments | [Reproduction guide](reproduce.md) | [Five example input files and checksums](reproduction.sha256) |
 | Understand the recorded hierarchy experiments | [Run overview](hierarchy.md) and [detailed findings](../recommendation-engine/hierarchy-runs.md) | [Run settings, source versions and corpus identities](hierarchy.csv) |
-| Use or study the subject fine-tunes | [Training process and evaluation](../planning/fine-tuning-pilot-process.md) | [Adapter weights and training state](models.csv) |
-| Study subject, mask, title, comparison and prominence trials | [Experiment workflow](../../sse_multivector/model-runner.md) | [Individual saved experiments and historical collections](experiments.csv) |
-| Find an input or result file | [Collection sizes](collections.csv) | [Exact file list](files/README.md) |
-| Review what to publish or find a reader's requirements | [Publication plan](downloads.md) | [Candidate bundles](bundles.csv) and [task requirements](download-targets.csv) |
+| Use or study the subject fine-tunes | [Training process and evaluation](../planning/fine-tuning-pilot-process.md) | [Adapter checkpoints and base versions](models.csv) |
+| Study subject, mask, title, comparison and prominence trials | [Experiment workflow](../../sse_multivector/model-runner.md) | [Selected studies](experiments.csv) |
+| Check publication coverage and limitations | [Open items](open-items.md) | [Remaining review items](publication-gaps.csv) |
 
 The generation guide describes the current implementation. Historical trials
 may require earlier code and prompt versions. A higher prompt version number is
@@ -47,13 +46,14 @@ remain historical evidence; raw source posts are not deprecated by that rule.
   one missing configuration and older inventory groups needing review. An older
   group may include code/prompts already retained in Git; it is not automatically
   a missing public dataset.
-- [Experiments](experiments.csv): native saved experiment plans, the official
-  hierarchy runs, and collections predating the native runner. These are
-  different kinds of entries, not an additive count of independent experiments.
-  Native entries retain prompt IDs, model settings, case counts and plan/manifest
-  identities. Their source file contains the complete frozen settings. The
-  publication columns link converted results and distinguish internal jobs,
-  warmups, input preparation and outstanding review items.
+- [Experiments](experiments.csv): 2,595 entries linked to selected results:
+  2,547 standalone prompt preparations, 37 official hierarchy runs, four training
+  runs and seven historical collections. These are different kinds of entries,
+  not an additive count of independent experiments. Prompt IDs, model settings,
+  case counts, provenance and plan/manifest identities are preserved. The
+  publication columns link the corresponding compact exports. Internal jobs,
+  warmups and other unselected entries remain in the local audit; outstanding
+  historical evidence remains in [publication gaps](publication-gaps.csv).
 - [Hierarchy runs](hierarchy.csv): recorded outcomes, generator versions, corpus
   identities and original generation code versions for each run. Status and
   input/output counts are transcribed from the comparison workbook; they have
@@ -63,22 +63,13 @@ remain historical evidence; raw source posts are not deprecated by that rule.
   sharing a selection. [Shared corpora](corpora.csv) connect those identities to
   the located input files; [code versions](code-versions.csv) record whether
   the cited generation commits are available in the publication clones.
-- [Inputs](inputs.csv): source files, measured SHA-256 identities where available,
-  and example locations and consumers. Counts summarize repeated references;
-  the exact file lists retain the individual source locations. These include
-  collected subjects and other prepared inputs, not only raw post corpora.
-  A blank consumer count means only an example consumer was indexed, not zero
-  consumers.
-- [Dependencies](dependencies.csv): recorded source locations, located copies,
-  expected hashes and verification status, with repeated bindings consolidated.
-  Each row gives an example consumer; the complete bindings remain in the saved
-  experiment plans. [Specification inputs](spec-inputs.csv) retain the individual
-  maintained-spec references. A located file with a different hash is not a
-  substitute for the original input. [Exact alternatives](dependency-alternatives.csv)
-  identify saved copies or recoveries with the expected hash without changing a
-  frozen experiment's original binding. Recovery entries record their sources
-  and exact procedure. [Input recovery findings](open-items.md#historical-input-recovery)
-  explain the eleven recovered files and the three state versions still unlocated.
+- [Input recovery findings](open-items.md#historical-input-recovery),
+  [exact alternatives](dependency-alternatives.csv) and
+  [reference resolutions](reference-resolutions.csv): recovered input identities,
+  source locations and recovery procedures. A located file with a different hash
+  does not replace an experiment's original input. The findings preserve the
+  eleven recoveries and three state versions still unlocated. Selected exported
+  input files and their hashes appear in [publication files](publication-files.csv).
 - [Runtime inputs](runtime-inputs.csv): hierarchy recipes and the encoder assets
   they reference, including recorded checkpoint and tokenizer/configuration
   hashes. Expected hashes and newly measured hashes are recorded separately;
@@ -86,9 +77,6 @@ remain historical evidence; raw source posts are not deprecated by that rule.
 - [Models](models.csv): adapter weights, configurations and the separate
   optimizer/training state needed to resume training. Using an adapter requires
   its pinned base model; it does not require optimizer state.
-- [Files](files/README.md): one row per candidate local file, its size, source location,
-  proposed archive member path and any measured hash or existing Git blob ID.
-  This is an explicit list, not permission to archive entire directories.
 - [Historical files](historical-files.csv): additional artifact blobs found in
   Git history but absent from the current index. Each row identifies the exact
   blob and its size. The reported path is one historical name, not a complete
@@ -97,8 +85,8 @@ remain historical evidence; raw source posts are not deprecated by that rule.
 - [Source roots](source-roots.csv): names used to describe original artifact
   locations without embedding this machine's absolute home paths in the index.
 - [Open items](open-items.md): missing references, provenance checks and work
-  remaining before publication. [Detailed issues](issues.csv) preserve the
-  individual findings.
+  remaining before publication. [Publication gaps](publication-gaps.csv) retain
+  the individual outstanding conversion and collection-review items.
 
 ## Release layout
 
@@ -106,8 +94,10 @@ The agreed [public Git layout](downloads.md#public-git-contents) keeps code and
 its history, tests, prompts and their provenance, authored findings, useful
 documentation and a selected-study index. Its estimated compressed history is
 20–30 MiB across both repositories, with about 60 MiB of checked-out files.
-Generated run files and exhaustive workspace catalogs remain tracked today;
-simplifying the tree and index is pending, and history cleanup stays last.
+The selected-study index is now in place. The exhaustive workspace catalogs
+are preserved in the [local audit](downloads.md#local-audit-copy). Generated run
+files elsewhere in the repository still need separate cleanup; history cleanup
+stays last.
 
 Hugging Face Models holds all 17 evaluated
 adapters (6.78 GiB). Hugging Face Datasets holds used posts, prepared training
@@ -118,9 +108,7 @@ currently measure 1.04 GiB; older-format review items remain explicit.
 The [publication plan](downloads.md) defines those contents. The new
 [publication file list](publication-files.csv) describes the exact local
 selection. Hugging Face repository names, published revisions and download
-testing remain open. [Bundle assignments](bundle-collections.csv) and other
-older inventory tables describe the broader original artifacts, rather than
-these compact outputs. The [implemented export formats](downloads.md#automated-outputs)
+testing remain open. The [implemented export formats](downloads.md#automated-outputs)
 serve normal workflows and selected saved results. Unsupported historical
 schemas need an explicit adapter; local conversion does not establish coverage
 of the entire inventory. Original research files and history are preserved.
@@ -148,8 +136,10 @@ commit IDs, and provide a mapping for references affected by that cleanup.
 
 ## Inventory method and limits
 
-The [inventory record](inventory.json) identifies the publication code snapshot,
-counts and resource bounds. Discovery starts with tracked research files,
+The [inventory record](inventory.json) separates the original discovery snapshot
+from the current selected-study index. The full discovery catalogs are retained
+locally with their hashes and original commit. Discovery started with tracked
+research files,
 maintained specifications, the official hierarchy ledger, referenced artifact
 directories and saved native experiment plans. Native plans provide source
 bindings; saved request-history entries identify original response producers.
@@ -157,8 +147,9 @@ Discovery includes recorded paths on mounted external storage. Equivalent mount
 and workspace paths were matched by device and inode, retaining one listed
 location for each of those files; the relocated input contents were also hashed.
 
-The file list records sizes without loading file contents. Identified inputs
-are hashed in 1 MiB chunks. The discovery pass capped input hashing at 128 MiB;
+The original file list recorded sizes without loading file contents. Identified
+inputs were hashed in 1 MiB chunks. The discovery pass capped input hashing at
+128 MiB;
 the larger official HR39 corpus was checked separately. The follow-up checked
 all 9,556 remaining indexed input bindings, including the 15 oversized inputs,
 and all 62 recorded encoder bindings. Five additional historical-version
@@ -168,13 +159,15 @@ with a streaming reader. Their 34,091 source references all match located inputs
 [large-plan findings](open-items.md#large-experiment-plans) describe that check
 and the nine plans without located result files. No discovered native plans
 remain unparsed. Other evidence and final archives still need checksum
-verification. File sizes and modification times are checked again at the end
-to detect concurrent edits.
+verification. The original checks compared file sizes and modification times
+again at the end to detect concurrent edits.
 
 The historical-input checks add eleven recovered files to the explicit list.
 Their complete contents were checked against the original expected hashes;
 original source paths and expected hashes remain unchanged. The inventory record
 separates the follow-ups from the discovery snapshot and lists their scope.
+The public file list contains only the selected compact exports, rather than
+every candidate file encountered during that audit.
 
 Build caches, virtual environments, runtime lock files, known credential containers and
 unreviewed symlink targets are excluded. Known unit/integration fixture outputs

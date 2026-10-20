@@ -28,7 +28,8 @@ Hugging Face; preserve the complete original working files locally.
 
 The read-only review at Oracle commit `a45639d2` and runner commit `34d7eb7`
 measured the following proposed reduction. The current tracked tree and history
-have not yet been cleaned.
+still contain generated run files; the selected-study index has now been
+simplified.
 
 | Contents | At the reviewed commits | Intended layout |
 | --- | ---: | ---: |
@@ -52,19 +53,22 @@ ignore rule. Small ambiguous case/recipe files remain included pending review.
 For the public index, retain the maintained guides, selected-result catalog,
 checksums, hierarchy/corpus/model summaries and useful provenance/recovery
 tables. Retain `historical-files.csv` and `historical-uses.csv` because they bind
-evidence to original blobs, commits and paths. Reduce `experiments.csv` to its
-2,595 rows with selected-publication links at the reviewed commit, preserving
-their columns. `publications.csv` also indexes the selected numerical and other
+evidence to original blobs, commits and paths. `experiments.csv` now retains the
+2,595 rows with selected-publication links from the reviewed index, preserving
+all their columns and values. `publications.csv` also indexes the selected
+numerical and other
 results; `publication-gaps.csv` keeps outstanding evidence review explicit.
 
-Preserve the full original job index locally. Keep `files/**`, `dependencies.csv`,
+The full original job index is preserved in the [local audit copy](#local-audit-copy).
+`files/**`, `dependencies.csv`,
 `inputs.csv`, `issues.csv`, `spec-inputs.csv`, `collections.csv`, `file-lists.csv`,
 `bundles.csv`, `bundle-files.csv`, `bundle-collections.csv` and
-`download-targets.csv` as local audit material. These exhaustive file/dependency
+`download-targets.csv` are also local audit material. These exhaustive
+file/dependency
 catalogs and earlier packaging tables are not additional Hugging Face downloads.
 Their meaningful conclusions remain in the maintained findings and gap records.
-Updating their documentation links and simplifying the tracked index remain
-implementation work.
+The public index and its documentation links have been updated. Removing
+generated run files elsewhere in the repository remains separate work.
 
 Preserve the full commit sequence, timestamps and merge relationships, including
 commits left empty after generated files are removed. Keep an old-to-new commit
@@ -177,8 +181,10 @@ revision and a model card linking its training data, results and loading instruc
 
 Their weights total **7,280,022,320 bytes**; configurations add 65,449 bytes.
 [models.csv](models.csv) records all 17 exact checkpoint identities and base
-revisions; [bundle-files.csv](bundle-files.csv) identifies the weight/configuration
-pairs. Publication does not designate any checkpoint as production-approved.
+revisions. The selected `inputs/adapter-hashes/adapters.jsonl`, listed in
+[publication files](publication-files.csv), binds each weight/configuration pair
+to its hashes and sizes. Publication does not designate any checkpoint as
+production-approved.
 The [final L1 comparison](../planning/fine-tuning-pilot-process.md#l1-only-test-results-october-15)
 uses Qwen checkpoints 1000 and 3000 and each Gemma model's checkpoint 1000;
 the other evaluated checkpoints will also be published.
@@ -350,28 +356,44 @@ reader instructions and checksums once the public selections and paths are final
 
 ## File selection and archive layout
 
-The existing inventories describe source research artifacts. They are useful
-for locating evidence and preserving its associations, but are broader than the
-agreed publication:
+Use the selected-result tables to identify the inputs and final evidence needed
+for a study:
 
 | Table | Current role |
 | --- | --- |
-| [experiments.csv](experiments.csv) | Locate native jobs, official runs and historical collections; entries are not a count of independent trials |
-| [files/README.md](files/README.md) and [file-lists.csv](file-lists.csv) | Locate original files and their measured identities |
-| [bundles.csv](bundles.csv), [bundle-files.csv](bundle-files.csv) and [bundle-collections.csv](bundle-collections.csv) | Earlier candidate groupings and original file selections, not the final Hugging Face layout |
-| [download-targets.csv](download-targets.csv) | Earlier reader-task dependencies; revise for the new exports |
+| [experiments.csv](experiments.csv) | Selected studies with prompt/model settings, provenance and links to compact exports; rows are not an additive count of independent trials |
+| [publications.csv](publications.csv) | Selected output formats, source/trial identities, sizes and coverage qualifications |
+| [publication-files.csv](publication-files.csv) and [publication.sha256](publication.sha256) | Exact selected payload and metadata paths, sizes and checksums |
+| [publication-gaps.csv](publication-gaps.csv) | Unsupported results, missing configuration and older collections still needing review |
+| [models.csv](models.csv) | All 17 evaluated adapter checkpoints and their pinned base-model references |
 | [historical-files.csv](historical-files.csv) and [historical-uses.csv](historical-uses.csv) | Artifact blobs in Git history and their original commit associations |
 
-The broad inventory measured **534.71 GiB** of candidate source files. That is
-working storage, not the amount to publish. A `delivery=archive` row or a whole
-original directory does not define a public download. Final repository names,
-file layout and any compression choices remain open. Add exact file lists,
-revision links and checksums for the outputs actually exported.
+These tables describe local selected exports. Final Hugging Face repository
+names, revision links, hosted file layout and compression choices remain open.
+
+## Local audit copy
+
+The original discovery audit measured **534.71 GiB** of candidate source files
+and indexed 27,032 native jobs. Those working-storage totals and internal job
+counts do not describe the selected downloads or independent trials.
+
+For publication maintainers, the complete pre-simplification index is preserved
+under ignored `target/publication-audit/index-before-simplification-1f3d541c/`.
+Its `docs/experiments/` subtree contains all 1,286 original files, including the
+27,193-row job/collection index and exhaustive file/dependency tables.
+`manifest.jsonl` records each file's original Git blob, byte count and SHA-256;
+the copy was rehashed against that manifest. The recorded source commit is
+`1f3d541c`. This local audit copy is outside the public repository and download set.
+
+The public `experiments.csv` retains the selected rows in their original order
+with every column and value preserved. Outstanding older collection/result
+reviews remain in `publication-gaps.csv`; the retained findings and provenance
+tables preserve meaningful recovery and missing-evidence qualifications.
 
 ## Before downloads become available
 
-Implement and review a representative export for each result type, then apply
-that same workflow to the historical experiments. Check that exported inputs,
+Review the remaining unsupported historical formats using the shared exporters.
+Check that exported inputs,
 parameters, result identities and status agree with the saved evidence, including
 reuse and incomplete runs. Review the selected data for sensitive information.
 Test reader instructions using only the proposed downloads and documented

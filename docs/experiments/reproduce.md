@@ -490,10 +490,18 @@ its machine-specific deployment commands are not a ready-to-run public recipe.
 
 ## Other experiments and moved files
 
-Use [experiments.csv](experiments.csv) to identify the saved plan and prompt
-version, then the [file lists](files/README.md) and [dependencies](dependencies.csv)
-to find its inputs, answers and receipts. Some historical plans have unresolved
-input versions or no saved results; see [open items](open-items.md).
+The [study index](experiments.csv) contains 2,595 selected entries: standalone
+prompt studies, official hierarchy runs, training runs and historical collections.
+It records saved plan identities and prompt/model settings.
+[Publications](publications.csv) connects them to the exported results;
+[publication files](publication-files.csv) lists their exact files and hashes.
+Each export's `experiment.json` records its versions and bindings.
+
+The complete original index and workspace discovery tables are preserved in the
+local audit described in [open items](open-items.md). They cover internal jobs,
+warmups and original receipt dependencies as well as selected studies. Historical
+input-version limitations remain documented there. The compact exports do not
+contain complete original native receipt packages.
 
 Outputs derived from subjects older than **ASv6.100** are historical evidence,
 including their downstream hierarchies and evaluations. They are not current
@@ -665,8 +673,9 @@ The complete staged file tree
 matches the selected file list, excluding all private selection logs and
 superseded generated copies.
 
-All **27,032 native jobs** have a recorded classification. The 2,547 selected
-standalone preparations have distinct frozen plan identities. The remaining
+All **27,032 native jobs** were classified in the source audit. The public
+[study index](experiments.csv) retains the 2,547 selected standalone preparations,
+which have distinct frozen plan identities. The remaining
 jobs are warmups, internal hierarchy/grading units, manual construction or
 resource-test intermediates, or input preparation. Simulated worker responses
 from the resource tests were excluded; their final measurements were retained.

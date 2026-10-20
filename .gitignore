@@ -1,4 +1,18 @@
 /target/
+
+# Exhaustive publication discovery catalogs stay in the local audit copy.
+/docs/experiments/files/
+/docs/experiments/dependencies.csv
+/docs/experiments/inputs.csv
+/docs/experiments/issues.csv
+/docs/experiments/spec-inputs.csv
+/docs/experiments/collections.csv
+/docs/experiments/file-lists.csv
+/docs/experiments/bundles.csv
+/docs/experiments/bundle-files.csv
+/docs/experiments/bundle-collections.csv
+/docs/experiments/download-targets.csv
+
 /reference_map/.*.lock
 __pycache__/
 .model-request-history/

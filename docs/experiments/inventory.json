@@ -313,5 +313,29 @@
     "uploads": false,
     "privacy_review": "Pending review of the actual selected public contents",
     "scope": "Measured selected supported exports. Gaps remain explicit; this is not an exhaustive all-history size claim."
+  },
+  "discovery_scope": "Top-level discovery counts and follow-ups describe the original local audit; public_index and compact_exports describe the selected public evidence.",
+  "public_index": {
+    "state": "Selected-study index; exhaustive original audit preserved locally",
+    "source_commit": "1f3d541caec8574d1db6a61089f99b9d55863113",
+    "studies": 2595,
+    "studies_by_kind": {
+      "historical collection": 7,
+      "native": 2547,
+      "official hierarchy": 37,
+      "training run": 4
+    },
+    "selection": "Original rows with nonempty publication links; every selected column/value and row order preserved",
+    "original_index_rows": 27193,
+    "omitted_internal_and_other_unselected_rows": 24598,
+    "remaining_reviews": "publication-gaps.csv",
+    "local_audit": {
+      "root": "target/publication-audit/index-before-simplification-1f3d541c",
+      "files": 1286,
+      "bytes": 202264168,
+      "manifest": "manifest.jsonl",
+      "sha256_rechecked": true
+    },
+    "history_cleanup_performed": false
   }
 }
