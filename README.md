@@ -72,4 +72,4 @@ The publication includes posts actually used in experiments, prepared training i
 
 ## License
 
-A project license has not yet been specified.
+Unless otherwise noted, this project is licensed under the **GNU General Public License, version 3 or later** (`GPL-3.0-or-later`). See [LICENSE](LICENSE).
