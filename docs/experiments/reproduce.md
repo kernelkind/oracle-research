@@ -9,13 +9,11 @@ from the original results.
 [shared-dataset commands](#check-the-converted-local-selection) prepare, verify
 and restore the local upload files listed in [publication-files.csv](publication-files.csv).
 Restoration recovers original compact exports, not complete native experiment
-directories. The browsing and generation examples below still use local copies
-of original research files in an earlier layout; restoration alone does not
-supply those files. Public paths and hosted reader workflows remain untested.
-In the clean-VM check, HR39 and the used-posts collection restored successfully,
-but `export-canonical-viewer` required an internal `state.json` absent from the
-compact export. Browsing directly from the published `hierarchy.jsonl` and posts
-still needs a supported command.
+directories. HR39 browsing below uses the restored hierarchy and used-posts
+collection; this path passed local export, validation and interactive checks.
+The later subject-extraction, construction and fine-tune examples still use
+original research files in an earlier layout. Public paths and hosted reader
+workflows remain untested.
 
 To generate and browse a new hierarchy from your own posts, use the
 [generation guide](../generate-hierarchy.md). Its complete 12-post workflow
@@ -40,45 +38,72 @@ export RELEASE_ROOT="$ORACLE_ROOT/target/reproduction/release"
 mkdir -p "$RELEASE_ROOT" target/reproduction/history
 ```
 
-The [locally checked examples](downloads.md#start-small) use three original-file
-groups: `hr39-viewer`, `corpus-42d5ce5211a1` and `fine-tune-comparison`.
-With those original files available locally, place them under `RELEASE_ROOT`
-at the paths below. Public exports may use different files and paths.
-[reproduction.sha256](reproduction.sha256) lists the five files used here
-and their measured checksums. They total about 47 MiB uncompressed; model
-downloads and build dependencies are additional. These examples do not require
-the full research collection.
+For HR39 browsing, use the compact dataset files in the next section. No
+original native run directory is needed.
+
+The later subject-extraction, construction and fine-tune examples require three
+original files under `RELEASE_ROOT` at the paths below. They total 44.74 MiB;
+[reproduction.sha256](reproduction.sha256) retains their measured checksums.
+Restoring the compact dataset does not supply these original files. Model
+downloads and build dependencies are additional.
 
 | Files | Purpose |
 | --- | --- |
-| `evidence/hierarchy-run-store/hr39-v53-auto-5000-note-v1/hr39-review-ui-v1/{hierarchy,notes}.json` | Saved HR39 viewer |
 | `datasets/42d5ce5211a1a72b08d8df3d80cb5d5668383d2afd27fbee6df331f567e8baef.json` | HR36's 1,000 posts and ASv6.100 answers |
 | `evidence/oracle-mvp-qwen-continuation-grading-v1/target/pilot-l1-results-v1/{analysis,verification}.json` | Saved fine-tune comparison |
 
-The combined check below requires all five original files. Published exports
-will receive checksums for their actual contents.
-Once all five files are present, verify them:
+If using those later examples, verify the three original files:
 
 ```bash
 cd "$RELEASE_ROOT"
 sha256sum --check "$ORACLE_ROOT/docs/experiments/reproduction.sha256"
 ```
 
-These checks identify the input bytes used for this guide. They do not replace
-the eventual release archive checksums or privacy review.
+The HR39 workflow below verifies its compact inputs during restoration instead.
 
 ## Browse HR39 without running models
 
-Use Linux and the repository's Nix build environment. Build the viewer:
+Use Linux, Python 3.13, the matching `experiment-runner` checkout and the
+repository's Nix build environment. Install the runner's Python package and
+build the viewer. No account login, language model or encoder checkpoint is
+needed:
 
 ```bash
 cd "$ORACLE_ROOT"
+if [ -z "${EXPERIMENT_RUNNER_ROOT:-}" ]; then
+  if [ -f experiment-runner/experiment_runner/__init__.py ]; then
+    export EXPERIMENT_RUNNER_ROOT="$ORACLE_ROOT/experiment-runner"
+  else
+    export EXPERIMENT_RUNNER_ROOT="$(realpath ../experiment-runner)"
+  fi
+fi
+python3.13 -m venv target/hierarchy-env
+source target/hierarchy-env/bin/activate
+python -m pip install -e "$EXPERIMENT_RUNNER_ROOT"
 nix --extra-experimental-features 'nix-command flakes' develop \
   --command cargo build --locked --release --jobs 1 \
   --bin sse-subject-navigation
-export HR39_VIEWER="$RELEASE_ROOT/evidence/hierarchy-run-store/hr39-v53-auto-5000-note-v1/hr39-review-ui-v1"
+```
+
+Start from `target/publication-dataset`, the prepared local collection or its
+eventual downloaded copy. Restore `hierarchies/HR39` and `inputs/used-posts`
+into separate new directories. Each restore verifies its file hashes:
+
+```bash
+cd "$ORACLE_ROOT"
+python sse_multivector/experiment.py restore-publication-dataset \
+  target/publication-dataset --publication hierarchies/HR39 \
+  --output target/reproduction/hr39
+python sse_multivector/experiment.py restore-publication-dataset \
+  target/publication-dataset --publication inputs/used-posts \
+  --output target/reproduction/used-posts
+python sse_multivector/experiment.py export-canonical-viewer \
+  target/reproduction/hr39 \
+  --posts target/reproduction/used-posts/posts.jsonl \
+  --output target/reproduction/hr39-viewer
 target/release/sse-subject-navigation \
-  --categories "$HR39_VIEWER/hierarchy.json" "$HR39_VIEWER/notes.json" \
+  --categories target/reproduction/hr39-viewer/hierarchy.json \
+  target/reproduction/hr39-viewer/notes.json \
   --check
 ```
 
@@ -88,13 +113,23 @@ Then browse it:
 ```bash
 cd "$ORACLE_ROOT"
 target/release/sse-subject-navigation \
-  --categories "$HR39_VIEWER/hierarchy.json" "$HR39_VIEWER/notes.json"
+  --categories target/reproduction/hr39-viewer/hierarchy.json \
+  target/reproduction/hr39-viewer/notes.json
 ```
 
 This opens the existing result: six root choices representing 2,693 of the 5,000
 input notes. It does not regenerate the hierarchy or establish that its topic
 choices are semantically correct. The [HR39 record](../recommendation-engine/hierarchy-runs.md#hr39--automatically-sampled-5000-note-higen-v53)
 describes the run and its review status.
+
+`export-canonical-viewer --posts` checks both payload hashes in `experiment.json`,
+the graph and its counts, and the presence of each referenced post exactly once.
+The post file may be JSONL records with `note_id` and `text`, or JSON containing
+a `notes` array. It is streamed; only represented posts are retained. Viewer
+files preserve root and child order, shared branches, definitions and direct
+post references, and bind the supplied post text by SHA-256. The source files
+are read-only. No construction history, vectors, model responses, signing key
+or network access is required. An empty hierarchy has no nodes to browse.
 
 ## Try ASv6.100 on a recorded post
 

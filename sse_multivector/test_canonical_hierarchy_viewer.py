@@ -1,7 +1,9 @@
 """Offline canonical viewer exports through the production experiment CLI."""
 import hashlib
 import json
+import tracemalloc
 import unittest
+import uuid
 
 from sse_multivector import test_experiment as fixtures
 
@@ -31,6 +33,185 @@ class CanonicalHierarchyViewerTests(unittest.TestCase):
             'status': 'shaped_candidate', 'shape': {'roots': ['C002', 'C001'],
                 'semantic_certified': False, 'group_task_coverage': 'unknown',
                 'qualification': 'Retained meanings and supporting entries are unchanged.'}})
+
+    def publication(self):
+        state_path = self.source()
+        state = json.loads(state_path.read_text())
+        state['note_ids'] = ['n1', 'unused', 'n3']
+        state_path.write_text(json.dumps(state))
+        self.cli('export-hierarchy-results', 'trial', '--output', 'published')
+        source_posts = json.loads((self.root / 'notes.json').read_text())['notes']
+        posts = self.root / 'posts.jsonl'
+        posts.write_text(''.join(json.dumps(row) + '\n' for row in source_posts))
+        return self.root / 'published', posts
+
+    def rewrite_events(self, directory, events):
+        payload = directory / 'hierarchy.jsonl'
+        payload.write_text(''.join(json.dumps(row) + '\n' for row in events))
+        record = json.loads((directory / 'experiment.json').read_text())
+        record['files'][payload.name] = hashlib.sha256(payload.read_bytes()).hexdigest()
+        (directory / 'experiment.json').write_text(json.dumps(record))
+
+    def test_published_hierarchy_browses_with_posts_without_native_sources_or_inference(self):
+        from sse_multivector.canonical_hierarchy_nostr import UNSIGNED_NAMESPACE
+
+        directory, posts = self.publication()
+        before = {p.name: p.read_bytes() for p in (self.root / 'published').iterdir()}
+        (self.root / 'trial/state.json').unlink()
+        (self.root / 'notes.json').unlink()
+
+        self.cli('export-canonical-viewer', 'published', '--posts', posts,
+                 '--output', 'viewer')
+
+        view = json.loads((self.root / 'viewer/hierarchy.json').read_text())
+        notes_path = self.root / 'viewer/notes.json'
+        self.assertEqual(view['hierarchy_id'], 'trial')
+        self.assertEqual(view['source_sha256'], hashlib.sha256(notes_path.read_bytes()).hexdigest())
+        self.assertEqual(view['notes'], [
+            {'note_id': 'n1', 'note_short_id': 'N001'},
+            {'note_id': 'n3', 'note_short_id': 'N003'}])
+        self.assertEqual(json.loads(notes_path.read_text()), {'notes': [
+            {'note_id': 'n1', 'text': 'First original\npost.'},
+            {'note_id': 'n3', 'text': 'Third original post. '}]})
+        ids = {key: str(uuid.uuid5(UNSIGNED_NAMESPACE, key))
+               for key in ('C001', 'C002', 'C003')}
+        nodes = {node['node_id']: node for node in view['nodes']}
+        self.assertEqual(set(nodes), {'VIEW_ROOT', *ids.values()})
+        self.assertEqual(nodes['VIEW_ROOT']['children'], [ids['C002'], ids['C001']])
+        self.assertEqual(nodes['VIEW_ROOT']['note_ids'], [])
+        self.assertEqual(nodes[ids['C001']]['children'], [ids['C003']])
+        self.assertEqual(nodes[ids['C002']]['children'], [ids['C003']])
+        self.assertEqual(nodes[ids['C001']]['note_ids'], [])
+        self.assertEqual(nodes[ids['C002']]['note_ids'], ['N003'])
+        self.assertEqual(nodes[ids['C003']]['note_ids'], ['N001'])
+        self.assertEqual(nodes[ids['C003']]['label'], 'Shared heading')
+        self.assertIn('Shared fixed meaning', nodes[ids['C003']]['analysis'])
+        self.assertIn('shaped_candidate', nodes['VIEW_ROOT']['analysis'])
+        self.assertIn('not human gold', nodes['VIEW_ROOT']['analysis'])
+        self.assertEqual(before, {p.name: p.read_bytes()
+                                 for p in (self.root / 'published').iterdir()})
+        self.assertEqual(fixtures.ExperimentTests.calls(self), [])
+
+    def test_published_payload_checksums_are_verified_before_writing(self):
+        directory, posts = self.publication()
+        for name in ('input-note-ids.txt', 'hierarchy.jsonl'):
+            with self.subTest(payload=name):
+                path = directory / name
+                original = path.read_bytes()
+                path.write_bytes(original.replace(b'n1', b'changed', 1))
+                refused = self.cli('export-canonical-viewer', directory, '--posts', posts,
+                                   '--output', 'bad-hash', ok=False)
+                self.assertIn('published hierarchy checksum mismatch: ' + name, refused.stderr)
+                self.assertFalse((self.root / 'bad-hash').exists())
+                path.write_bytes(original)
+
+    def test_published_missing_duplicate_or_empty_post_text_is_refused(self):
+        directory, posts = self.publication()
+        rows = [json.loads(line) for line in posts.read_text().splitlines()]
+        for name, changed, error in (
+            ('missing', rows[1:], 'missing referenced note IDs'),
+            ('duplicate', [*rows, rows[0]], 'repeat a referenced note ID'),
+            ('empty', [{**rows[0], 'text': ' '}, *rows[1:]], 'post text is empty'),
+        ):
+            with self.subTest(failure=name):
+                posts.write_text(''.join(json.dumps(row) + '\n' for row in changed))
+                refused = self.cli('export-canonical-viewer', directory, '--posts', posts,
+                                   '--output', name, ok=False)
+                self.assertIn(error, refused.stderr)
+                self.assertFalse((self.root / name).exists())
+        self.assertEqual(fixtures.ExperimentTests.calls(self), [])
+
+    def test_published_invalid_graphs_are_refused_without_repair_or_partial_output(self):
+        directory, posts = self.publication()
+        original = [json.loads(line) for line in (directory / 'hierarchy.jsonl').read_text().splitlines()]
+        for name in ('cycle', 'unknown-child', 'duplicate-child', 'duplicate-node',
+                     'missing-root', 'missing-entry', 'duplicate-entry', 'outside-selection'):
+            with self.subTest(failure=name):
+                events = json.loads(json.dumps(original))
+                leaf, parent, other_parent, entry = events
+                identifier = lambda row: next(tag[1] for tag in row['tags'] if tag[0] == 'd')
+                if name == 'cycle':
+                    leaf['tags'].append(['child', identifier(parent)])
+                elif name == 'unknown-child':
+                    parent['tags'].append(['child', str(uuid.uuid4())])
+                elif name == 'duplicate-child':
+                    parent['tags'].append(['child', identifier(leaf)])
+                elif name == 'duplicate-node':
+                    events.insert(0, leaf)
+                elif name == 'missing-root':
+                    entry['tags'].pop()
+                elif name == 'missing-entry':
+                    events.pop()
+                elif name == 'duplicate-entry':
+                    events.append(entry)
+                else:
+                    leaf['tags'].append(['e', 'outside-selection'])
+                self.rewrite_events(directory, events)
+                refused = self.cli('export-canonical-viewer', directory, '--posts', posts,
+                                   '--output', name, ok=False)
+                self.assertIn('published', refused.stderr)
+                self.assertFalse((self.root / name).exists())
+        self.assertEqual(fixtures.ExperimentTests.calls(self), [])
+
+    def test_published_counts_must_match_and_native_preview_options_are_refused(self):
+        directory, posts = self.publication()
+        metadata = directory / 'experiment.json'
+        record = json.loads(metadata.read_text())
+        record['outcome']['represented_notes'] += 1
+        metadata.write_text(json.dumps(record))
+        refused = self.cli('export-canonical-viewer', directory, '--posts', posts,
+                           '--output', 'wrong-count', ok=False)
+        self.assertIn('published hierarchy counts differ', refused.stderr)
+        for option in ('--base-viewer', '--root-admissions'):
+            refused = self.cli('export-canonical-viewer', directory, '--posts', posts,
+                               '--output', 'preview', option, 'native-preview', ok=False)
+            self.assertIn('do not accept native admission previews', refused.stderr)
+        self.assertFalse((self.root / 'wrong-count').exists())
+        self.assertFalse((self.root / 'preview').exists())
+
+    def test_published_empty_hierarchy_has_no_browsable_result(self):
+        directory, posts = self.publication()
+        self.rewrite_events(directory, [dict(kind=18680, tags=[], content='')])
+        refused = self.cli('export-canonical-viewer', directory, '--posts', posts,
+                           '--output', 'empty', ok=False)
+        self.assertIn('has no nodes to browse', refused.stderr)
+        self.assertFalse((self.root / 'empty').exists())
+
+    def test_published_deprecated_subjects_remain_labeled_as_historical_evidence(self):
+        directory, posts = self.publication()
+        metadata = directory / 'experiment.json'
+        record = json.loads(metadata.read_text())
+        record['input'].update(deprecated=True, subject_prompt_versions=['ASv6.13'])
+        metadata.write_text(json.dumps(record))
+        self.cli('export-canonical-viewer', directory, '--posts', posts, '--output', 'historical')
+        view = json.loads((self.root / 'historical/hierarchy.json').read_text())
+        analysis = view['nodes'][0]['analysis']
+        self.assertIn('ASv6.13', analysis)
+        self.assertIn('Historical evidence', analysis)
+        self.assertIn('deprecated', analysis)
+
+    def test_published_json_posts_are_streamed_and_unrelated_text_is_not_retained(self):
+        from sse_multivector.canonical_hierarchy_viewer import export_viewer
+
+        directory, original = self.publication()
+        posts = self.root / 'large-posts.json'
+        with posts.open('w') as stream:
+            stream.write('{"notes":[')
+            for index in range(256):
+                json.dump(dict(note_id=f'unrelated-{index}', text='x' * 65536), stream)
+                stream.write(',')
+            stream.write(','.join(original.read_text().splitlines()))
+            stream.write(']}')
+        tracemalloc.start()
+        try:
+            result = export_viewer(directory, self.root / 'streamed', posts=posts)
+            _, peak = tracemalloc.get_traced_memory()
+        finally:
+            tracemalloc.stop()
+        self.assertEqual(result['note_count'], 2)
+        self.assertLess(peak, 4 * 1024 * 1024, 'unrelated source text was retained in memory')
+        notes = json.loads((self.root / 'streamed/notes.json').read_text())['notes']
+        self.assertEqual({note['note_id'] for note in notes}, {'n1', 'n3'})
 
     def test_legacy_audit_uses_root_selection_without_selecting_the_whole_corpus(self):
         path = self.source()

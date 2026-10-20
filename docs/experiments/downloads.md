@@ -511,12 +511,17 @@ unfinished. These local exports have not published the collection.
 
 ## Start small
 
-The [reproduction guide](reproduce.md) documents checks already performed on five
-existing files: HR39 viewer data, HR36 saved subject inputs and the L1 comparison.
-Those files total 46.55 MiB and are listed in [reproduction.sha256](reproduction.sha256).
-They demonstrate the current tools; they do not prescribe the new download
-layout or require publishing all five original files unchanged. Update the
-reader instructions and checksums once the public selections and paths are final.
+The [HR39 browsing instructions](reproduce.md#browse-hr39-without-running-models)
+use the restored compact hierarchy and used-posts collection. Local checks
+reproduced six roots, 200 nodes and 2,693 represented posts, including interactive
+browsing. No native run files, model downloads or login are needed. Hosted
+download checks remain pending.
+
+The later HR36 extraction/construction and L1 comparison examples still require
+three original files, totaling 44.74 MiB, listed in
+[reproduction.sha256](reproduction.sha256). They demonstrate existing tools;
+they do not prescribe the public download layout or require publishing those
+original files unchanged.
 
 ## File selection and archive layout
 

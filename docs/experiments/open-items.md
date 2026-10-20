@@ -573,9 +573,11 @@ Before publication:
   export and browsing then passed without credentials. Immediate invalidation
   of an already-issued access token was not tested, and the runner has no logout
   command.
-  HR39 and used-posts restoration passed there, but the existing viewer exporter
-  requires internal `state.json`; it cannot yet browse the compact publication
-  files. These checks do not replace a hosted reader test.
+  HR39 and used-posts restoration passed there. The viewer exporter now also
+  accepts those compact files with `--posts`: local restoration, hash/graph
+  checks and interactive browsing passed with six roots, 200 nodes and 2,693
+  represented posts, without native state or credentials. These checks do not
+  replace a hosted reader test.
 - Provide a maintained, tested command for L1 analysis from saved judgments and
   validate portable training and adapter-inference instructions with the selected
   data and pinned upstream models.

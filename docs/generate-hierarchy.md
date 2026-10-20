@@ -350,6 +350,10 @@ category's notes. Exporting and browsing make no model calls. Keep both viewer
 files together: the hierarchy binds the exact `notes.json` bytes by hash, and
 the browser does not retrieve missing text from Nostr.
 
+For a compact published result, use `export-canonical-viewer --posts` with its
+original posts instead of native run files. The [HR39 example](experiments/reproduce.md#browse-hr39-without-running-models)
+shows restoration, export and browsing without models or login.
+
 All generated files in this example live under ignored `target/`. Preserve the
 source posts, collected subjects, saved experiment history and hierarchy state
 if you want to resume or audit the run. The two viewer files are sufficient for

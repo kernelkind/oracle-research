@@ -1,7 +1,9 @@
 """Export saved canonical graphs for the existing original-note review UI."""
 import hashlib
 import json
+from graphlib import CycleError, TopologicalSorter
 from pathlib import Path
+import uuid
 
 try:
     from .canonical_hierarchy import read_hierarchy
@@ -67,11 +69,167 @@ def _root_admissions(saved, directory, study):
         new_root_placements=sum(len(notes) for notes in additions.values()))
 
 
-def export_viewer(directory, output, *, root_admissions=None, base_viewer=None):
+def _payload_lines(directory, record, name):
+    digest = hashlib.sha256()
+    with (directory / name).open('rb') as stream:
+        for line in stream:
+            digest.update(line)
+            yield line
+    if digest.hexdigest() != record['files'].get(name):
+        raise ValueError('published hierarchy checksum mismatch: ' + name)
+
+
+def _published_graph(directory):
+    """Read the published graph itself, without reconstructing native state."""
+    from .canonical_hierarchy_nostr import ENTRY_KIND, NODE_KIND
+    from .hierarchy_publication import FORMAT
+
+    record = json.loads((directory / 'experiment.json').read_bytes())
+    if (not isinstance(record, dict)
+            or record.get('format') != FORMAT or record.get('schema_version') != 1
+            or not isinstance(record.get('experiment_id'), str)
+            or not record['experiment_id'].strip()
+            or not isinstance(record.get('files'), dict)
+            or not isinstance(record.get('input'), dict)
+            or type(record['input'].get('count')) is not int):
+        raise ValueError('expected a hierarchy-publication-v1 directory')
+    selected = set()
+    for line in _payload_lines(directory, record, 'input-note-ids.txt'):
+        note = line.decode('utf-8').rstrip('\r\n')
+        if not note.strip() or note in selected:
+            raise ValueError('published input note IDs must be nonempty and unique')
+        selected.add(note)
+    if len(selected) != record['input']['count']:
+        raise ValueError('published input count differs from its selection')
+    nodes, roots = {}, None
+    for line in _payload_lines(directory, record, 'hierarchy.jsonl'):
+        event = json.loads(line)
+        if (not isinstance(event, dict) or set(event) != {'kind', 'tags', 'content'}
+                or event['kind'] not in (NODE_KIND, ENTRY_KIND)
+                or not isinstance(event['content'], str)
+                or not isinstance(event['tags'], list)):
+            raise ValueError('invalid unsigned hierarchy record')
+        tags = {}
+        allowed = {'d', 'title', 'child', 'e'} if event['kind'] == NODE_KIND else {'child'}
+        for tag in event['tags']:
+            if (not isinstance(tag, list) or len(tag) != 2
+                    or any(not isinstance(value, str) or not value.strip() for value in tag)
+                    or tag[0] not in allowed):
+                raise ValueError('invalid unsigned hierarchy tag')
+            tags.setdefault(tag[0], []).append(tag[1])
+        if any(len(values) != len(set(values)) for values in tags.values()):
+            raise ValueError('published hierarchy repeats a tag reference')
+        if event['kind'] == ENTRY_KIND:
+            if roots is not None or event['content']:
+                raise ValueError('published hierarchy requires one empty root entry')
+            roots = tags.get('child', [])
+            continue
+        if (len(tags.get('d', [])) != 1 or len(tags.get('title', [])) != 1
+                or not event['content'].strip()):
+            raise ValueError('published nodes require one ID, title and nonempty definition')
+        identifier = tags['d'][0]
+        if str(uuid.UUID(identifier)) != identifier or identifier in nodes:
+            raise ValueError('published node UUIDs must be unique and canonical')
+        nodes[identifier] = dict(node_id=identifier, label=tags['title'][0],
+            children=tags.get('child', []), note_ids=tags.get('e', []),
+            meaning=event['content'])
+    if roots is None:
+        raise ValueError('published hierarchy root entry is missing')
+    if not nodes:
+        raise ValueError('published hierarchy has no nodes to browse')
+    parents = {identifier: [] for identifier in nodes}
+    needed = set()
+    for identifier, node in nodes.items():
+        needed.update(node['note_ids'])
+        for child in node['children']:
+            if child not in nodes:
+                raise ValueError('published hierarchy references an unknown child')
+            parents[child].append(identifier)
+    try:
+        list(TopologicalSorter(parents).static_order())
+    except CycleError as error:
+        raise ValueError('published hierarchy contains a cycle') from error
+    if set(roots) != {identifier for identifier, links in parents.items() if not links}:
+        raise ValueError('published hierarchy roots differ from the graph')
+    if not needed <= selected:
+        raise ValueError('published hierarchy references a post outside its input selection')
+    if record.get('outcome') != dict(nodes=len(nodes), roots=len(roots), represented_notes=len(needed)):
+        raise ValueError('published hierarchy counts differ from experiment.json')
+    return record, nodes, roots, parents, needed
+
+
+def _published_posts(path, needed):
+    """Stream once; retain only the posts referenced by the saved graph."""
+    import ijson
+
+    notes, short_ids = [], {}
+    with Path(path).open('rb') as stream:
+        rows = (json.loads(line) for line in stream) if Path(path).suffix == '.jsonl' else (
+            ijson.items(stream, 'notes.item'))
+        for index, row in enumerate(rows, 1):
+            if (not isinstance(row, dict) or not isinstance(row.get('note_id'), str)
+                    or not row['note_id'].strip() or not isinstance(row.get('text'), str)):
+                raise ValueError('source posts require note_id and text strings')
+            identifier = row['note_id']
+            if identifier not in needed:
+                continue
+            if identifier in short_ids:
+                raise ValueError('source posts repeat a referenced note ID: ' + identifier)
+            if not row['text'].strip():
+                raise ValueError('referenced source post text is empty: ' + identifier)
+            short_ids[identifier] = f'N{index:03d}'
+            notes.append(dict(note_id=identifier, text=row['text']))
+    if set(short_ids) != needed:
+        raise ValueError('source posts are missing referenced note IDs: '
+                         + ', '.join(sorted(needed - short_ids.keys())[:5]))
+    return notes, short_ids
+
+
+def _write_viewer(output, identifier, originals, short_ids, nodes, roots):
+    notes_bytes = (json.dumps({'notes': originals}, ensure_ascii=False, indent=2) + '\n').encode()
+    hierarchy = dict(schema_version=2, hierarchy_id=identifier,
+        source_sha256=hashlib.sha256(notes_bytes).hexdigest(), root_node_id='VIEW_ROOT',
+        notes=[dict(note_id=note, note_short_id=short) for note, short in short_ids.items()],
+        nodes=nodes)
+    output.mkdir(parents=True)
+    (output / 'notes.json').write_bytes(notes_bytes)
+    (output / 'hierarchy.json').write_text(json.dumps(hierarchy, ensure_ascii=False, indent=2) + '\n')
+    return dict(hierarchy=str(output / 'hierarchy.json'), notes=str(output / 'notes.json'),
+                nodes=len(nodes) - 1, roots=len(roots), note_count=len(originals))
+
+
+def _export_published_viewer(directory, output, posts):
+    record, nodes, roots, parents, needed = _published_graph(directory)
+    originals, short_ids = _published_posts(posts, needed)
+    provenance = 'Subject prompt versions: ' + json.dumps(record['input'].get('subject_prompt_versions'))
+    if record['input'].get('deprecated') is True:
+        provenance += '\nHistorical evidence: derived subjects predate ASv6.100 and are deprecated.'
+    view_nodes = [dict(node_id='VIEW_ROOT', label=record['experiment_id'],
+        children=roots, note_ids=[], analysis=
+        'Display-only container for published roots. Not a hierarchy node.\n\n'
+        f"Source: {directory / 'hierarchy.jsonl'}\n"
+        f"SHA-256: {record['files']['hierarchy.jsonl']}\n"
+        f"Status: {record.get('status', 'unknown')}; not human gold.\n{provenance}\n"
+        f"{len(nodes)} nodes; {len(originals)} represented posts; "
+        f"{record['input']['count']} input posts.")]
+    for identifier, node in nodes.items():
+        view_nodes.append(dict(node_id=identifier, label=node['label'],
+            children=node['children'], note_ids=[short_ids[note] for note in node['note_ids']],
+            analysis=f"Published UUID: {identifier}\nHeading: {node['label']}\n"
+                     f"Fixed meaning: {node['meaning']}\n"
+                     f"Parents: {', '.join(parents[identifier]) or '(root)'}"))
+    return _write_viewer(output, record['experiment_id'], originals, short_ids, view_nodes, roots)
+
+
+def export_viewer(directory, output, *, posts=None, root_admissions=None, base_viewer=None):
     """Preserve canonical nodes and their notes; the display container has no notes."""
     directory, output = Path(directory).resolve(), Path(output).resolve()
     if output.exists():
         raise ValueError('viewer output must not exist')
+    if posts is not None:
+        if root_admissions is not None or base_viewer is not None:
+            raise ValueError('published hierarchies do not accept native admission previews')
+        return _export_published_viewer(directory, output, posts)
     if base_viewer is not None and root_admissions is None:
         raise ValueError('base viewer is only supported for saved admission previews')
     state_path = directory / 'state.json'
@@ -101,8 +259,6 @@ def export_viewer(directory, output, *, root_admissions=None, base_viewer=None):
             raise ValueError('admission source notes are missing')
         preview.update(base_covered_notes=base_count,preview_covered_notes=len(originals),
                        corpus_notes=len(corpus))
-    references = [{'note_id': note, 'note_short_id': short} for note, short in short_ids.items()]
-    notes_bytes = (json.dumps({'notes': originals}, ensure_ascii=False, indent=2) + '\n').encode()
     qualification = state.get('shape', {}).get('qualification', '')
     if preview:
         qualification += '\nExperimental preview includes saved conservative root additions; original hierarchy unchanged.'
@@ -125,13 +281,8 @@ def export_viewer(directory, output, *, root_admissions=None, base_viewer=None):
             f"Canonical parents: {', '.join(node['parents']) or '(root)'}"})
     if preview:
         view_nodes[0]['label'] = directory.name+' (conservative root-admission preview)'
-    hierarchy = {'schema_version': 2, 'hierarchy_id': output.name if preview else directory.name,
-        'source_sha256': hashlib.sha256(notes_bytes).hexdigest(), 'root_node_id': 'VIEW_ROOT',
-        'notes': references, 'nodes': view_nodes}
-    output.mkdir(parents=True)
-    (output / 'notes.json').write_bytes(notes_bytes)
-    (output / 'hierarchy.json').write_text(json.dumps(hierarchy, ensure_ascii=False, indent=2) + '\n')
+    result = _write_viewer(output, output.name if preview else directory.name,
+                           originals, short_ids, view_nodes, roots)
     if preview:
         (output/'root-admissions.json').write_text(json.dumps(preview,ensure_ascii=False,indent=2)+'\n')
-    return {'hierarchy': str(output / 'hierarchy.json'), 'notes': str(output / 'notes.json'),
-            'nodes': len(nodes), 'roots': len(roots), 'note_count': len(originals)}
+    return result

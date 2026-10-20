@@ -859,9 +859,11 @@ def add_commands(commands):
     p = commands.add_parser('evaluate-canonical-policy-trial', help='compare native frozen baseline and policy trials; no inference')
     p.add_argument('--source', type=Path, required=True)
     p.add_argument('--output', type=Path, required=True)
-    p = commands.add_parser('export-canonical-viewer', help='export saved canonical nodes and original notes for review; no inference')
+    p = commands.add_parser('export-canonical-viewer', help='export native or published hierarchies and original posts for review; no inference')
     p.add_argument('directory', type=Path)
     p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--posts', type=Path,
+                   help='read a compact publication directory with source posts in JSONL or notes JSON; no native state required')
     p.add_argument('--root-admissions',type=Path,
                    help='preview source-bound saved conservative root additions; no hierarchy mutation')
     p.add_argument('--base-viewer',type=Path,
@@ -1184,7 +1186,7 @@ def handle_command(args):
             from .canonical_hierarchy_viewer import export_viewer
         except ImportError:
             from canonical_hierarchy_viewer import export_viewer
-        print(json.dumps(export_viewer(args.directory, args.output, root_admissions=args.root_admissions,
+        print(json.dumps(export_viewer(args.directory, args.output, posts=args.posts, root_admissions=args.root_admissions,
                                       base_viewer=args.base_viewer), ensure_ascii=False, indent=2))
         return 0
     elif args.command == 'export-canonical-nostr':

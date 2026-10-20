@@ -2314,14 +2314,14 @@ The signed export below retains its existing behavior.
 ### Review viewer export
 
 Inspect saved results with the existing `export-canonical-viewer` command only
-when requested. Exported headings show the topic and canonical node ID; the
+when requested. Native exports show the topic and canonical node ID; the
 navigation menu shows note counts. The display-only top container has no direct
 notes: exports include only notes represented beneath canonical roots. Notes
 outside children remain available inside canonical nodes. Saved constructor
 state, including root-level unclaimed-note evidence, is unchanged. Supporting
 note IDs remain available for note browsing without being enumerated in headings
 or details.
-Offline export verifies the saved constructor sources and receipts and may run
+Native export verifies the saved constructor sources and receipts and may run
 from a different checkout; advancing construction still requires its bound
 checkout or a reviewed source upgrade.
 
@@ -2335,10 +2335,22 @@ scores, regenerate children or perform inference. The output includes
 experimental preview, not a production HiGen policy.
 Optional `--base-viewer VERIFIED_EXPORT` reuses an existing export's
 `provenance.json` after checking the exact state, corpus and exported-file hashes,
-instead of revalidating the historical construction inputs. Ordinary exports
+instead of revalidating the historical construction inputs. Ordinary native exports
 retain their full validation. The
 [HR38 preview](shr_single_pair/hierarchy-note-bend-admission-v1.md#saved-hr38-preview)
 records the coverage gain and remaining quality limitations.
+
+For a restored `hierarchy-publication-v1` directory, supply `--posts FILE` to
+the same command. It reads `experiment.json`, `input-note-ids.txt` and
+`hierarchy.jsonl`, verifies the two payload hashes, graph structure and recorded
+counts, and streams source posts from JSONL or a JSON `notes` array. Every
+referenced post must have exactly one supplied text. Only represented posts are
+retained, with their exact text bound to the viewer by SHA-256. Root/child order,
+shared nodes, definitions and direct post references are preserved. Recorded
+subject-prompt versions and deprecated-derived-data status appear in the root
+analysis. An empty hierarchy has no nodes to browse. This path needs no native
+state, receipts, models, credentials or network, and does not accept native
+admission-preview options. See the [HR39 example](../docs/experiments/reproduce.md#browse-hr39-without-running-models).
 Source-bound Compare preparation remains available for evaluating
 fixed V3, V3.1 or V3.2 definitions independently. Historical `audit-canonical-trial`,
 `shape-canonical-trial`, candidate measurements and policy-cost comparisons are
