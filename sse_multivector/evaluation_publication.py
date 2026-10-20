@@ -6,6 +6,7 @@ Original inputs, signed receipts and sealed test answers are never changed.
 """
 from contextlib import contextmanager
 import fcntl
+import gzip
 import hashlib
 import json
 from pathlib import Path
@@ -96,13 +97,18 @@ def _read(path):
 
 def _items(path, prefix):
     import ijson
-    with Path(path).open('rb') as source:
+    with _open_json(path) as source:
         yield from ijson.items(source, prefix, use_float=True)
+
+
+def _open_json(path):
+    path = Path(path)
+    return gzip.open(path, 'rb') if path.suffix == '.gz' else path.open('rb')
 
 
 def _project(path, fields):
     from experiment_runner.json_projection import project
-    with Path(path).open('rb') as source:
+    with _open_json(path) as source:
         return project(source, fields)
 
 
@@ -136,6 +142,9 @@ def _clean(value, field=None, *, summary=False):
     if isinstance(value, dict):
         if field in ('statuses', 'snapshot_states'):
             return _counts(value)
+        if field == 'raw_agent_reference':
+            return {effort: _clean(item, 'reference_measurements') for effort, item in value.items()
+                    if effort in ('xhigh', 'high', 'medium', 'low')}
         if field in ('versions', 'roles', 'roles_by_cohort'):
             return {key: _clean(item, 'summary', summary=True) for key, item in value.items()
                     if re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._-]*', key)}
@@ -144,7 +153,10 @@ def _clean(value, field=None, *, summary=False):
                     if key in ('actual', 'expected', 'automated', 'reference', 'automated_minus_reference')}
                     for metric, comparison in value.items()
                     if metric in ('correctness', 'coverage') and isinstance(comparison, dict)}
-        fields = (_QUALIFICATION_FIELDS if field == 'qualification' else
+        fields = ({'status', 'resolved_occurrences', 'unresolved_occurrences', 'labels',
+                   'agrees_reference', 'disagrees_reference', 'unresolved_reference'}
+                    if field == 'reference_measurements' else
+                  _QUALIFICATION_FIELDS if field == 'qualification' else
                   {'actor', 'role', 'verdict', 'comment', 'time', 'input_sha256',
                    'output_sha256', 'current', 'reason', 'check', 'prompt_sha256'}
                     if field in ('reviews', 'audits', 'assessment') else
@@ -525,8 +537,13 @@ def export_grades(report_path, output=None, *, execution_status=None):
     automatic = (run / 'automatic.json').is_file()
     output = Path(output) if output is not None else (run if automatic else report_path.parent) / 'publication'
     header = _project(report_path, {'schema_version', 'policy', 'automatic_status', 'analysis_only',
-        'semantic_audits_applied', 'corrections_applied', 'adjudication_summary', 'automatic_summary', 'sources', 'coverage'})
-    if 'policy' not in header:
+        'semantic_audits_applied', 'corrections_applied', 'adjudication_summary', 'automatic_summary',
+        'sources', 'coverage', 'inference_calls'})
+    legacy_collection = (header.get('schema_version') == 1
+        and isinstance(header.get('coverage'), str) and bool(header['coverage'])
+        and isinstance(header.get('sources'), dict)
+        and type(header.get('inference_calls')) is int and header['inference_calls'] == 0)
+    if 'policy' not in header and not legacy_collection:
         raise ValueError('expected saved final grading report')
     return _export_grading(report_path, output, header, execution_status,
         run if automatic else report_path, 'grading', stamp)
@@ -576,7 +593,7 @@ def _export_grading(report_path, output, header, execution_status, identity, kin
 def _l1_records(source, models):
     import ijson
     version, capture, depth = None, None, 0
-    with source.open('rb') as stream:
+    with _open_json(source) as stream:
         for prefix, event, value in ijson.parse(stream, use_float=True):
             if capture is not None:
                 field, builder = capture

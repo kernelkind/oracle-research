@@ -1,5 +1,6 @@
 """Compact final evaluation results follow the production saved output paths."""
 import hashlib
+import gzip
 import json
 import os
 from pathlib import Path
@@ -180,6 +181,63 @@ class EvaluationPublicationTests(unittest.TestCase):
                 if filename == 'comparison.json':
                     summary = json.loads((output / 'experiment.json').read_text())['parameters']['random']
                     self.assertEqual(summary['versions']['qwen-pass3']['statuses']['automated']['malformed'], 1)
+
+    def test_legacy_final_coverage_collection_preserves_recorded_grades_without_inventing_policy(self):
+        from sse_multivector import evaluation_publication as publication
+        from experiment_runner import inputs
+        ledger = self.root / 'native/run/results.jsonl'
+        raw = '{"valid":true,"reason":"Supported in the post."}'
+        record = dict(case='case-1', input_sha256='i' * 64, output=raw, status='complete')
+        write(ledger, record)
+        scores = dict(correctness=dict(numerator=1, denominator=1, value=1.0),
+                      coverage=dict(numerator=1, denominator=2, value=0.5))
+        source = self.root / 'final-reviewed-collected-review.json'
+        result = dict(schema_version=1, coverage=str(self.root / 'coverage'), output=str(source),
+            sources={str(ledger): run.sha256(ledger)}, inference_calls=0,
+            random=dict(answers=[dict(id='answer-1', note_id='post-1',
+                scoring=dict(status='complete', scores=scores), dependencies=[],
+                premises=[dict(case_id='case-1', input_sha256='i' * 64,
+                    output_sha256=hashlib.sha256(raw.encode()).hexdigest(),
+                    receipt=dict(results_path=str(ledger), record_sha256=inputs.digest(record)))],
+                coverage_inconsistencies=[])]), challenge=dict(answers=[]))
+        write(source, result)
+        output = self.root / 'publication'
+        publication.export_grades(source, output)
+        self.assertEqual(self.rows(output / 'results.jsonl')[0]['scoring']['scores'], scores)
+        self.assertEqual(self.rows(output / 'judgments.jsonl')[0]['output'], raw)
+        self.assertNotIn('policy', json.loads((output / 'experiment.json').read_text())['parameters'])
+        for field, invalid in [('schema_version', 2), ('coverage', {}), ('sources', []), ('inference_calls', 1)]:
+            with self.subTest(field=field):
+                broken = self.root / (field + '.json')
+                write(broken, {**result, field: invalid})
+                with self.assertRaisesRegex(ValueError, 'final grading report'):
+                    publication.export_grades(broken, self.root / (field + '-publication'))
+
+    def test_final_effort_reference_measurements_survive_plain_and_gzipped_sources(self):
+        from sse_multivector import evaluation_publication as publication
+        counts = dict(agrees_reference=3, disagrees_reference=1, unresolved_reference=2)
+        references = dict(status='agrees_reference', resolved_occurrences=1,
+                          unresolved_occurrences=0, labels=[None, True])
+        result = dict(schema_version=1, stage=60, inference_calls=0,
+            summary=dict(raw_agent_reference=dict(xhigh=counts)),
+            rows=[dict(key='question-1', input_sha256='i' * 64,
+                       raw_agent_reference=dict(xhigh=references))])
+        for compressed in (False, True):
+            with self.subTest(compressed=compressed):
+                source = self.root / ('effort.json.gz' if compressed else 'effort.json')
+                if compressed:
+                    with gzip.open(source, 'wt') as stream:
+                        json.dump(result, stream)
+                else:
+                    write(source, result)
+                before = (source.read_bytes(), source.stat().st_mtime_ns)
+                output = self.root / ('gzip-publication' if compressed else 'plain-publication')
+                publication.export_comparison(source, output)
+                self.assertEqual(self.rows(output / 'results.jsonl')[0]['raw_agent_reference']['xhigh'], references)
+                metadata = json.loads((output / 'experiment.json').read_text())
+                self.assertEqual(metadata['parameters']['summary']['raw_agent_reference']['xhigh'], counts)
+                self.assertEqual(metadata['source']['report_sha256'], run.sha256(source))
+                self.assertEqual((source.read_bytes(), source.stat().st_mtime_ns), before)
 
     def test_saved_result_note_identity_must_match_its_answer_and_selection(self):
         from sse_multivector import evaluation_publication as publication
