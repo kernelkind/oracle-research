@@ -14,7 +14,7 @@ Each choice lets the person direct their own discovery. The goal is to put that 
 
 The walkthrough shows Notedeck's **Hierarchy** column: follow progressively narrower topics and view their linked posts.
 
-The interface uses a [toy hierarchy snapshot protocol](docs/recommendation-engine/design/hierarchy-serving-protocol-decisions.md) for local or private testing. Keep these experimental events off public Nostr relays.
+The interface uses a [toy hierarchy snapshot protocol](docs/recommendation-engine/design/hierarchy-serving-protocol-decisions.md) developed for this prototype. The format is intended for local or private testing, so please avoid publishing its experimental events to public Nostr relays.
 
 **Notedeck interface source code:** link pending publication.
 <!-- Add the public source-code URL for the Notedeck hierarchy interface before publication. -->

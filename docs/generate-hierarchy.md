@@ -363,11 +363,13 @@ for detailed preparation, receipt and recovery behavior.
 
 ## 8. Export as Nostr notes
 
-For local inspection and private tests of the Notedeck interface, use
-`export-canonical-nostr`. It creates signed Nostr events in a local JSONL file
+`export-canonical-nostr` saves a completed hierarchy as signed Nostr events in a
+local JSONL file
 using the [toy hierarchy snapshot protocol](recommendation-engine/design/hierarchy-serving-protocol-decisions.md).
-**Keep these experimental events off public Nostr relays.** The command makes
-no model calls and sends nothing to relays.
+
+The format is intended for local or private testing. Please avoid publishing
+its experimental events to public Nostr relays. Exporting makes no model calls
+and sends nothing to relays.
 
 You need:
 

@@ -2,11 +2,9 @@
 
 `toy` `experimental`
 
-This is a toy protocol. It is not recommended for widespread adoption.
-Efficient hierarchy updates are out of scope.
-
-Use it only in local or private test environments. Do not publish these
-experimental events to public Nostr relays.
+This is a toy protocol for experimenting with hierarchy browsing in local or
+private test environments. Please avoid publishing its experimental events to
+public Nostr relays. Efficient hierarchy updates are out of scope.
 
 The client starts with a hierarchy author's public key and a relay URL.
 One author publishes one hierarchy. The author and relay operator are separate.

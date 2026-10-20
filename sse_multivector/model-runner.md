@@ -2385,8 +2385,8 @@ events for the [toy snapshot protocol](../docs/recommendation-engine/design/hier
 regular kind `8680` nodes, children before parents, followed by the replaceable
 kind `18680` starting event. Root and child order follow the saved review graph.
 
-Use this toy format only for local or private testing. Keep its experimental
-events off public Nostr relays.
+This toy format is intended for local or private testing. Please avoid
+publishing its experimental events to public Nostr relays.
 
 Each node lists only source post IDs absent from all its descendants. This is
 the review UI's "outside children" calculation, including all notes at leaves;
