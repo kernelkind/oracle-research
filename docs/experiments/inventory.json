@@ -213,5 +213,105 @@
       "issue_counts_and_local_document_links": "passed",
       "peak_validation_rss_KiB": 686440
     }
+  },
+  "compact_exports": {
+    "state": "Local selected compact exports; not uploaded or approved for publication",
+    "artifact_root": "target/publication-exports",
+    "publications": 2939,
+    "files": 8812,
+    "bytes": 1118483825,
+    "gzip_bytes": 156711874,
+    "gzip_method": "Measured gzip level 6 per staged file, in memory; no compressed downloads created",
+    "categories": {
+      "comparison": {
+        "bytes": 2773873,
+        "gzip_bytes": 344542,
+        "bundles": 4,
+        "files": 8
+      },
+      "effort": {
+        "bytes": 13727109,
+        "gzip_bytes": 1810638,
+        "bundles": 11,
+        "files": 22
+      },
+      "effort_assessment": {
+        "bytes": 671591,
+        "gzip_bytes": 128267,
+        "bundles": 5,
+        "files": 15
+      },
+      "grades": {
+        "bytes": 411967591,
+        "gzip_bytes": 59902298,
+        "bundles": 14,
+        "files": 56
+      },
+      "hierarchy": {
+        "bytes": 5609426,
+        "gzip_bytes": 2201585,
+        "bundles": 240,
+        "files": 720
+      },
+      "inputs": {
+        "bytes": 71170710,
+        "gzip_bytes": 10580284,
+        "bundles": 3,
+        "files": 12
+      },
+      "numerical": {
+        "bytes": 82676756,
+        "gzip_bytes": 15504631,
+        "bundles": 73,
+        "files": 219
+      },
+      "performance": {
+        "bytes": 18006,
+        "gzip_bytes": 9627,
+        "bundles": 9,
+        "files": 27
+      },
+      "review": {
+        "bytes": 243150221,
+        "gzip_bytes": 16662900,
+        "bundles": 13,
+        "files": 52
+      },
+      "standalone-prompt": {
+        "bytes": 261580918,
+        "gzip_bytes": 47698801,
+        "bundles": 2547,
+        "files": 7641
+      },
+      "validation": {
+        "bytes": 25137624,
+        "gzip_bytes": 1868301,
+        "bundles": 20,
+        "files": 40
+      }
+    },
+    "gaps": 143,
+    "gap_status_counts": {
+      "unsupported": 33,
+      "legacy_collection_review": 109,
+      "missing": 1
+    },
+    "native_status_counts": {
+      "intermediate": 477,
+      "warmup": 9360,
+      "internal": 14630,
+      "exported": 2547,
+      "input_preparation": 18
+    },
+    "adapter_checkpoints": 17,
+    "adapter_weight_and_config_bytes": 7280087769,
+    "combined_staged_and_model_bytes": 8398571594,
+    "oracle_export_commit": "fcfd4cabcba7102aab81dcffec018c00b4498a55",
+    "runner_export_commit": "34d7eb79dc714275145a983ffeb42ddcddc42561",
+    "source_originals_preserved": true,
+    "fresh_model_inference": false,
+    "uploads": false,
+    "privacy_review": "Pending review of the actual selected public contents",
+    "scope": "Measured selected supported exports. Gaps remain explicit; this is not an exhaustive all-history size claim."
   }
 }

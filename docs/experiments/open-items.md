@@ -184,27 +184,26 @@ Review the actual selected contents for credentials and personal information
 before packaging. Known credential containers were excluded from discovery;
 that is not a completed privacy review of the evidence.
 
-The [publication plan](downloads.md) records the agreed GitHub/Hugging Face
-hosting division and data categories. Expected non-model data is roughly
-0.5–1 GiB, plus 6.78 GiB for all 17 evaluated adapters. These are planning
-estimates. The 534.71 GiB source inventory and old bundle tables do not define
-the public download size or final layout.
+The [publication plan](downloads.md#measured-local-exports) now measures the
+selected local exports: **1.04 GiB**, plus **6.78 GiB** for all 17 evaluated
+adapters. [Publications](publications.csv), [exact files](publication-files.csv)
+and [checksums](publication.sha256) record this selection. The 534.71 GiB source
+inventory and old bundle tables do not define the public download size or layout.
 
 Before publication:
 
-- Review and backfill the implemented [hierarchy exports](downloads.md#automated-outputs)
-  using the same export path as automated construction. They retain unsigned
-  hierarchy data, the exact input selection and small parameter/status records.
-  Historical backfilling is not complete.
-- Review and backfill the implemented prompt/evaluation and numerical exports.
-  Check each historical source against its explicit supported format. Native
-  prompt reports missing from disk and unsupported older schemas remain gaps;
-  do not substitute guessed outcomes or whole working directories.
+- Review [remaining conversion items](publication-gaps.csv): 33 unsupported result
+  files, one result without its required local configuration, and older inventory
+  groups needing review for final data versus material already retained in Git.
+  The supported selection has been backfilled through the normal exporters;
+  all 27,032 native jobs have an explicit selection classification in the index.
+  Do not substitute guessed outcomes or entire working directories for
+  unsupported formats.
 - Preserve experiment identity, exact selections, versions, reuse and recorded
   outcomes. Report missing evidence without changing original records.
-- Build exact exported file lists and checksums; link them from the GitHub index
-  to pinned Hugging Face revisions. Leave repository names and paths open until
-  the export layout is defined.
+- Review the existing exact export list and checksums, then link the GitHub index
+  to pinned Hugging Face revisions after repository names are chosen. No upload
+  is authorized by generating this local list.
 - Update the [reproduction guide](reproduce.md) for those outputs and test it in
   a clean environment, including a complete hierarchy run with public
   authentication. Its existing local checks use the earlier original-file layout.

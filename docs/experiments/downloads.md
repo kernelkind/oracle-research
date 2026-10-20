@@ -1,8 +1,9 @@
 # Publication contents and hosting
 
 **The hosting split and the following data categories are agreed.** Compact
-exporters cover the result families below. Historical conversion, exact file
-selections, repository names and download paths still need review.
+exporters cover the result families below. The supported historical selection
+has been converted locally and its exact files/checksums are indexed. Older
+formats, repository names and published download paths still need review.
 Nothing has been uploaded, and this plan does not authorize uploading,
 deleting original research or rewriting history.
 
@@ -10,7 +11,7 @@ deleting original research or rewriting history.
 | --- | --- |
 | GitHub | Code and its history, documentation, prompts, reusable experiment specifications and the experiment index |
 | Hugging Face Models | All 17 evaluated adapters, with configurations and pinned base-model references: **6.78 GiB** |
-| Hugging Face Datasets | Posts actually used, prepared training data, final unsigned hierarchies, standalone prompt answers, evaluation results, final numerical results and each experiment's parameters: **roughly 0.5–1 GiB** |
+| Hugging Face Datasets | Posts actually used, prepared training data, final unsigned hierarchies, standalone prompt answers, evaluation results, final numerical results and each experiment's parameters: **1.04 GiB currently staged**, with legacy review items remaining |
 
 The GitHub index will link each experiment to its inputs and results at exact
 Hugging Face revisions, with checksums. Readers should be able to download the
@@ -51,28 +52,48 @@ outside the publication by default. Preserve their originals locally. Complete
 original-run verification does not determine which files belong in the public
 results. Missing historical evidence and incomplete runs must remain explicit.
 
-## Estimated data size
+## Measured local exports
 
-These are planning estimates before compression, not measured download sizes
-or an exact export list. Code and cleaned Git history are additional.
+[Publications](publications.csv) identifies the selected results;
+[publication-files.csv](publication-files.csv) lists every file, size and SHA-256.
+[publication.sha256](publication.sha256) is the corresponding checksum list.
+The ignored local staging root is `target/publication-exports/`. No public
+download or Hugging Face revision has been created.
 
-| Data | Estimated size |
-| --- | ---: |
-| Standalone prompt studies, including inputs, final answers and reviews | 150–300 MiB |
-| Fine-tune and grading-method evaluations | 150–250 MiB |
-| Historical numerical studies | 100–300 MiB |
-| Performance and scaling results | 1–20 MiB |
-| Final hierarchies and parameter records | 1–20 MiB |
-| Used posts and prepared training data | About 68 MiB |
-| **Non-model data total, rounded** | **0.5–1 GiB** |
-| **All evaluated adapter weights** | **6.78 GiB** |
+| Data | Selected outputs | Uncompressed size |
+| --- | ---: | ---: |
+| Standalone prompt studies: inputs, final answers and reviews | 2,547 prepared trials | 249.46 MiB |
+| Fine-tune, grading and effort evaluations | 67 final/last reports, including 20 validation stages | 665.12 MiB |
+| Historical numerical results | 73 | 78.85 MiB |
+| Performance measurements | 9 | 0.02 MiB |
+| Unsigned hierarchies, selections and parameters | 37 official runs plus 203 saved branch outputs | 5.35 MiB |
+| Used posts, prepared training inputs and adapter hash records | 10,571 posts, four prepared files, split/settings records and 17 adapter bindings | 67.87 MiB |
+| **Selected non-model files** | **8,812 files** | **1,066.67 MiB (1.04 GiB)** |
+| **All 17 evaluated adapters, weights and configurations** | **34 original files, hashed without copying weights** | **6.78 GiB** |
 
-Allow roughly **8 GiB** for the data and adapters together before compression.
-The estimate uses bounded samples of native answers: about 124 MiB for prompt
-research and 127 MiB for grading after removing repeated requests and envelopes.
-The 3,400 identified fine-tune answers measure about 22 MiB in compact records.
-Identified historical numerical result files total about 189 MiB before removing
-overlap. These measurements guide the ranges; they are not a finished export.
+The exact selected non-model total is **1,118,483,825 bytes**. Together with
+the adapter weights/configurations it is **8,398,571,594 bytes (7.82 GiB)**.
+Code and cleaned Git history are additional. Measured gzip level-6 compression
+of each non-model file totals **156,711,874 bytes (149.45 MiB)**; no compressed
+downloads were created and the staged files remain in their original export
+formats.
+
+These are measured selected outputs, not an exhaustive all-history size claim.
+[Remaining items](publication-gaps.csv) identify 33 unsupported result files,
+one result missing its configuration, and older inventory groups still needing
+review. Those groups can include code/prompts already in Git or results covered
+elsewhere; they are not automatically additional missing datasets. All 27,032
+native jobs have been classified: 2,547 standalone trials are retained; warmups,
+internal execution jobs, manual construction intermediates and input-only
+preparations are excluded. Independent repeats remain distinct, and reused
+answers retain their reuse records. The 203 saved hierarchy branches are not
+claimed to be independent trials.
+
+Every selected file was rehashed and every payload binding checked. All selected
+evaluation answers and supporting judgments were located. Older judgments bound
+only by receipt hashes are explicitly labeled `receipt_only`; missing actor
+attribution stays `not_recorded`. Privacy review, unsupported-format review and
+testing the reader workflow against this exact selection remain open.
 
 The confirmed used-post set contains 10,571 IDs and measures 3.80 MiB as compact
 ID/text JSONL. Some older unstructured records remain incompletely linked, so
@@ -261,9 +282,9 @@ Unsupported historical schemas fail explicitly.
 
 All these exports use staged, managed output directories and payload hashes.
 An unchanged refresh preserves bytes and modification times; unrelated files or
-another source's destination are refused. Historical backfilling and final
-download verification remain unfinished. Implementing exporters has not
-published the collection.
+another source's destination are refused. The [local historical selection](#measured-local-exports)
+has been backfilled; unsupported formats and final download verification remain
+unfinished. These local exports have not published the collection.
 
 ## Start small
 

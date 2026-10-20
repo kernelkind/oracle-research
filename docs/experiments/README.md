@@ -7,8 +7,11 @@ on GitHub; reusable models and datasets will be hosted on Hugging Face. The
 all 17 evaluated adapters on Hugging Face Models, and used inputs, parameters
 and final experiment results on Hugging Face Datasets. Compact exporters cover
 hierarchies, native prompt studies, validation answers, grading results and
-explicit numerical result families. Historical conversion, exact file selection
-and download links remain unfinished.
+explicit numerical result families. Supported historical results have been
+converted locally; [selected exports](publications.csv), their
+[exact files](publication-files.csv) and [checksums](publication.sha256) are now
+indexed. [Legacy review items](publication-gaps.csv) remain explicit. Downloads
+are not available yet.
 
 Start with the [37 official hierarchy runs](hierarchy.md). The index also covers
 four training runs, 17 adapter checkpoints, individual prompt jobs and older
@@ -19,6 +22,7 @@ have been located and checked against their recorded SHA-256 hashes.
 
 | Work | Read first | Inventory |
 | --- | --- | --- |
+| Find converted final results | [Measured selection](downloads.md#measured-local-exports) | [Exports](publications.csv), [files](publication-files.csv) and [remaining review items](publication-gaps.csv) |
 | Generate a hierarchy from posts | [Generation guide](../generate-hierarchy.md) | [Official hierarchy runs](hierarchy.csv) |
 | Inspect or repeat recorded experiments | [Reproduction guide](reproduce.md) | [Five example input files and checksums](reproduction.sha256) |
 | Understand the recorded hierarchy experiments | [Run overview](hierarchy.md) and [detailed findings](../recommendation-engine/hierarchy-runs.md) | [Run settings, source versions and corpus identities](hierarchy.csv) |
@@ -34,11 +38,22 @@ remain historical evidence; raw source posts are not deprecated by that rule.
 
 ## What the lists record
 
+- [Publications](publications.csv): selected compact outputs, their source and
+  trial identities, format, measured size and selection evidence. Saved hierarchy
+  branches are outputs, not a count of independent trials.
+- [Publication files](publication-files.csv) and [checksums](publication.sha256):
+  every selected local payload and metadata file, including exact prepared inputs.
+  The [remaining items](publication-gaps.csv) distinguish unsupported results,
+  one missing configuration and older inventory groups needing review. An older
+  group may include code/prompts already retained in Git; it is not automatically
+  a missing public dataset.
 - [Experiments](experiments.csv): native saved experiment plans, the official
   hierarchy runs, and collections predating the native runner. These are
   different kinds of entries, not an additive count of independent experiments.
   Native entries retain prompt IDs, model settings, case counts and plan/manifest
-  identities. Their source file contains the complete frozen settings.
+  identities. Their source file contains the complete frozen settings. The
+  publication columns link converted results and distinguish internal jobs,
+  warmups, input preparation and outstanding review items.
 - [Hierarchy runs](hierarchy.csv): recorded outcomes, generator versions, corpus
   identities and original generation code versions for each run. Status and
   input/output counts are transcribed from the comparison workbook; they have
@@ -91,17 +106,18 @@ GitHub holds code and its history, documentation, prompts, reusable experiment
 specifications and this index. Hugging Face Models holds all 17 evaluated
 adapters (6.78 GiB). Hugging Face Datasets holds used posts, prepared training
 data, final unsigned hierarchies, standalone prompt answers, evaluation and
-numerical results, and each experiment's parameters (roughly 0.5–1 GiB).
+numerical results, and each experiment's parameters. The selected local files
+currently measure 1.04 GiB; older-format review items remain explicit.
 
-The [publication plan](downloads.md) defines those contents. The index will link
-to exact published revisions and checksums. [Bundle assignments](bundle-collections.csv)
-and other inventory tables still describe the broader original artifacts; they
-have not been converted into the final export list. Dataset layout remains
-open. The [implemented export formats](downloads.md#automated-outputs) serve
-normal workflows and explicitly selected saved results. Unsupported historical
-schemas need an explicit adapter; exporting one format does not establish
-coverage of the entire inventory. Original research files and history are
-preserved.
+The [publication plan](downloads.md) defines those contents. The new
+[publication file list](publication-files.csv) describes the exact local
+selection. Hugging Face repository names, published revisions and download
+testing remain open. [Bundle assignments](bundle-collections.csv) and other
+older inventory tables describe the broader original artifacts, rather than
+these compact outputs. The [implemented export formats](downloads.md#automated-outputs)
+serve normal workflows and selected saved results. Unsupported historical
+schemas need an explicit adapter; local conversion does not establish coverage
+of the entire inventory. Original research files and history are preserved.
 
 Preserve original frozen plans, answers and receipts locally. Their complete
 working directories are not required public downloads. The current native

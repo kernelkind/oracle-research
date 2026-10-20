@@ -8,8 +8,9 @@ from the original results.
 **Downloads are not available yet.** These instructions and the offline checks
 below use local copies of original research files in the earlier staging layout.
 The agreed [publication plan](downloads.md) uses smaller final outputs hosted on
-Hugging Face. The compact exporters are documented below, but the download paths
-and checksums still need adaptation and testing against the published exports.
+Hugging Face. The [local compact file list](publication-files.csv) and its
+[checksums](publication.sha256) are available, but public download paths and
+reader workflows still need testing against those exports.
 The original-file paths below are not promises of public download paths.
 
 | What you want to do | Example | Model work |
@@ -302,8 +303,9 @@ the metadata. The input's deprecation field records known pre-ASv6.100 lineage;
 unknown provenance remains `null`, and `false` is not semantic approval.
 
 These three files are publication outputs; the browser above still uses its
-separate viewer files. Backfilling all historical hierarchies and testing the
-eventual public downloads remain unfinished.
+separate viewer files. The local backfill includes all 37 official outputs and
+203 supported historical branch outputs. Unsupported older formats and testing
+the eventual public downloads remain open.
 
 ### Export other compact results
 
@@ -376,9 +378,47 @@ Historical AS provenance must still be checked before any current-pipeline reuse
 
 The [format reference](downloads.md#automated-outputs) explains the payloads and
 their limits. Managed exports refuse unrelated destinations, bind payload
-checksums and preserve unchanged file bytes/mtimes. Backfilling the full research
-inventory, checking the selected public contents and testing the eventual
-downloads remain open.
+checksums and preserve unchanged file bytes/mtimes. The supported historical
+selection has been converted locally. Older-format review items, review of the
+selected public contents and testing eventual downloads remain open.
+
+### Check the converted local selection
+
+[Publications](publications.csv) links selected final results to their original
+experiment/source identities. [Publication files](publication-files.csv) records
+every path, byte count and SHA-256 beneath `target/publication-exports/`.
+These paths describe local staging, not an available download.
+
+With the `ORACLE_ROOT` setup above, verify all 8,812 selected files:
+
+```bash
+cd "$ORACLE_ROOT/target/publication-exports"
+sha256sum --quiet --check \
+  "$ORACLE_ROOT/docs/experiments/publication.sha256"
+```
+
+The command prints failures only and exits zero when every listed checksum
+matches. This checks file bytes; it does not assess scientific correctness or
+perform privacy review. The [measured selection](downloads.md#measured-local-exports)
+describes sizes, input splits and excluded intermediates. The
+[remaining-items table](publication-gaps.csv) identifies unsupported final
+formats, the required configuration not located for TRUE10/graph, and older
+inventory groups needing review. Those groups may include material already in
+Git or represented by other exports; they are not all missing datasets.
+
+Four old output-note counts include notes present only in the old top container:
+
+| Run | Recorded output notes | Notes under published topics | Top-container-only notes |
+| --- | ---: | ---: | ---: |
+| HR27 | 46 | 43 | 3 |
+| HR28 | 94 | 87 | 7 |
+| HR29 | 198 | 177 | 21 |
+| HR30 | 976 | 582 | 394 |
+
+The saved states reproduce these counts exactly. The unsigned hierarchy retains
+actual topic nodes, while the complete ordered input selection remains separate.
+The original ledger and graphs were preserved; the publication table explains
+the difference. Completion and graph coverage do not establish semantic quality.
 
 ### Which code is being repeated?
 
@@ -614,3 +654,38 @@ peak resident memory. Numerical previews ranged from about 14 KiB for a small
 comparison to 7.81 MiB for native fuzzy memberships. These samples do not measure
 the final collection or establish conversion of the entire inventory. Originals
 were preserved, and nothing was uploaded.
+
+### Historical backfill checks
+
+The current local selection contains **2,939 output/input directories and 8,812
+files**, totaling **1,118,483,825 bytes**. Every listed file was independently
+rehashed, and every payload binding was checked against its export manifest.
+Exact prepared-input copies were also checked against their frozen source hashes.
+The complete staged file tree
+matches the selected file list, excluding all private selection logs and
+superseded generated copies.
+
+All **27,032 native jobs** have a recorded classification. The 2,547 selected
+standalone preparations have distinct frozen plan identities. The remaining
+jobs are warmups, internal hierarchy/grading units, manual construction or
+resource-test intermediates, or input preparation. Simulated worker responses
+from the resource tests were excluded; their final measurements were retained.
+The historical hierarchy selection adds 203 saved final/last branch outputs to
+the 37 official runs without treating those branches as independent trials.
+
+All 67 selected evaluation sources passed their answer and judgment joins:
+zero missing selected answers, zero missing judgments and zero conflicting
+judgment hashes. **1,966** older judgments have `receipt_only` bindings; this
+does not invent an absent separate output hash. Source-assessment actor fields
+remain `not_recorded` wherever the originals did not identify an actor.
+
+Conversion workers used a 512 MiB process address-space cap. Recorded prompt
+and evaluation peaks were about 163 MiB and 158 MiB respectively. Historical
+format regressions passed 20 evaluation/paired/native checks and 78 numerical
+checks (four GPU skips); four final production-CLI integration checks also
+passed. The two broader evaluation compatibility failures described above
+remain unresolved. No fresh inference, training or semantic grading occurred.
+
+This checks the selected supported formats. [Older review items](publication-gaps.csv)
+remain outside this size/completeness claim. Privacy review and a clean reader
+test against the eventual hosted selection are still pending.

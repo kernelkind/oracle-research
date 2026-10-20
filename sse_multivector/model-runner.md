@@ -2231,9 +2231,11 @@ coordinator-created grading jobs and cache warmups from separate prompt exports;
 final evaluations retain supporting judgments. Revisions inherit their source
 role. Unmarked historical plans require explicit selection. These exporters preserve final answers,
 assessments, measurements and parameters, without publishing construction
-requests or vector/distance working data. Historical conversion and public
-download verification remain unfinished. The signed export below retains its
-existing behavior.
+requests or vector/distance working data. The supported historical selection is
+now [indexed with exact local files and checksums](../docs/experiments/downloads.md#measured-local-exports).
+Unsupported formats, older inventory-group review and public download
+verification remain unfinished. The signed export below retains its existing
+behavior.
 
 ### Review viewer export
 
