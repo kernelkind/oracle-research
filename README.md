@@ -60,9 +60,23 @@ The generation workflow uses the separate `experiment-runner` to execute languag
 
 ## Results
 
+### Hierarchy generation
+
 The [largest completed HiGen V5.3 run (HR39)](docs/recommendation-engine/hierarchy-runs.md#hr39--automatically-sampled-5000-note-higen-v53) processed 5,000 notes and produced six root choices representing 2,693 of them. Review of the hierarchy's semantic quality remained pending.
 
-[Fine-tuning trials](docs/planning/fine-tuning-pilot-process.md#l1-only-test-results-october-15) improved subject identification over the corresponding untuned models in a 200-note evaluation, although subjects were still missed. These results concern subject identification; evaluation of the complete hierarchy-generation process remains separate.
+### Subject fine-tuning
+
+The saved evaluation on the same **200 test notes** found these changes after one training pass over **1,000 notes**. The measurements concern the top-level subjects extracted from each post.
+
+**Correctness** measures whether returned subjects are supported by the post. **Coverage** measures how many of the top-level reference subjects were recovered. Scores are averaged over the 200 notes, with invalid outputs scored as zero.
+
+| Model | Correctness, untuned → fine-tuned | Coverage of reference subjects, untuned → fine-tuned |
+| --- | ---: | ---: |
+| Qwen3.8-27B | 67.0% → 96.1% | 42.1% → 61.6% |
+| Gemma 4 31B | 93.7% → 96.6% | 46.2% → 55.0% |
+| Gemma 4 26B-A4B | 88.0% → 89.8% | 42.9% → 55.8% |
+
+Two additional Qwen passes increased correctness to **97.5%**, while coverage fell to **57.1%**. These results assess subject extraction; they do not establish the quality of the resulting global hierarchy. See the [full results and scoring definitions](docs/planning/fine-tuning-pilot-process.md#l1-only-test-results-october-15) and [instructions for inspecting the saved comparison](docs/experiments/reproduce.md#inspect-the-fine-tune-comparison).
 
 ## Experiments and data
 
