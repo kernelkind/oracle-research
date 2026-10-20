@@ -47,6 +47,13 @@ class ContinuationContractTests(unittest.TestCase):
         self.assertEqual(plan, run.subject_training_plan(self.data, self.config))
         self.assertNotEqual(plan["note_ids"][8:16], plan["note_ids"][16:24])
 
+    def test_local_continuation_configuration_uses_the_same_sealed_parent(self):
+        config=run.continuation_config(self.parent, self.parent/'data', additional_passes=2)
+        self.assertEqual(config['continuation'],self.config['continuation'])
+        self.assertEqual(config['training_milestones'],[16,24])
+        self.assertEqual(run.subject_training_plan(self.data,config)['note_ids'],
+                         run.subject_training_plan(self.data,self.config)['note_ids'])
+
     def test_parent_files_and_original_recipe_cannot_change(self):
         for key in ("manifest_sha256", "plan_sha256", "checkpoint_sha256"):
             config = copy.deepcopy(self.config)

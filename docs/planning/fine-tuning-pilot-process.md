@@ -111,6 +111,10 @@ The frozen grading worktrees and runners remain necessary for the original
 source, policy and provider-receipt paths. No additional GPU or paid grading
 resource was used.
 
+The [training instructions](../experiments/reproduce.md#run-subject-fine-tuning)
+describe repeating the pilot recipes and continuing a reader's own Qwen run;
+their offline input checks passed, while fresh GPU execution remains untested.
+
 ## Approved Qwen continuation (October 14)
 
 The user selected **Qwen3.8-27B**, approved **two additional complete passes over

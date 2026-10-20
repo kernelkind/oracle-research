@@ -9,8 +9,9 @@ from the original results.
 [shared-dataset commands](#check-the-converted-local-selection) prepare, verify
 and restore the local upload files listed in [publication-files.csv](publication-files.csv).
 Restoration recovers original compact exports, not complete native experiment
-directories. All four examples below use restored compact exports and selected
-inputs. Public paths and hosted reader workflows remain untested.
+directories. Browsing, HR36 preparation and training-input checks
+use restored compact files. Hosted reader workflows and a fresh GPU training
+run have not been tested for this guide.
 
 To generate and browse a new hierarchy from your own posts, use the
 [generation guide](../generate-hierarchy.md). Its complete 12-post workflow
@@ -22,7 +23,7 @@ passed in a fresh Linux VM; it does not require these historical files.
 | Try subject identification | Run ASv6.100 on one original HR36 post | Fresh language-model inference |
 | Repeat hierarchy construction | Use HR36's 1,000 saved subject outputs with HiGen V5.3 | New definition writing, local SSE encoding and clustering |
 | Examine fine-tuning results | Read the seven-version L1 comparison | None |
-| Repeat training or recompute L1 scores | See the unfinished workflows below | GPU training; offline scoring from saved judgments |
+| Repeat subject training | Check data/order, run a saved pilot recipe, then optionally continue your own Qwen run | GPU training |
 
 ## Obtain the inputs
 
@@ -35,11 +36,11 @@ export RELEASE_ROOT="$ORACLE_ROOT/target/reproduction/release"
 mkdir -p "$RELEASE_ROOT" target/reproduction/history
 ```
 
-The four examples restore their required files from `target/publication-dataset`,
+The reader examples restore their required files from `target/publication-dataset`,
 the prepared local collection or its eventual downloaded copy. Restoration
 verifies the file hashes. No original native run directory or full research
-corpus is needed for these examples. Model downloads and build dependencies are
-additional.
+corpus is needed for these examples. Training also requires upstream base-model
+weights. Model downloads and build dependencies are additional.
 
 ## Browse HR39 without running models
 
@@ -664,14 +665,132 @@ Optimizer state remains outside that plan; resuming an exact training state
 requires additional local artifacts.
 The inventory still lists all candidates; these are not available downloads.
 
-There is currently no maintained CLI that rebuilds this L1 analysis from the
-saved judgments. The shared runner's `compare-distillation-grades` compares
-automated and audited full-hierarchy grades; it does not compute this table.
-Likewise, `run-distillation-automatic-grading` can make new model calls and is not
-an offline score viewer. Portable training, adapter inference and complete
-regrading instructions still need their own validation. The historical
-[training runbook](../planning/fine-tuning-pilot-process.md) records what was done;
-its machine-specific deployment commands are not a ready-to-run public recipe.
+The sections below provide training-input checks and local GPU commands.
+For evaluation, `compare-distillation-grades` compares automated and audited
+full-hierarchy grades, and `run-distillation-automatic-grading` can make new model
+calls. Neither command computes this saved L1 table. The historical
+[training runbook](../planning/fine-tuning-pilot-process.md) records the original
+hardware, qualification and results.
+
+## Prepare the fine-tuning inputs
+
+Start here for training. Use the Python environment from the
+earlier examples and runner commit `140fa38` or later. That version restores
+directories whose metadata is nested, as it is for these inputs.
+
+```bash
+cd "$ORACLE_ROOT"
+source target/hierarchy-env/bin/activate
+python sse_multivector/experiment.py restore-publication-dataset \
+  target/publication-dataset --publication inputs/prepared-training \
+  --output target/reproduction/subject-training
+for student in qwen gemma-dense gemma-moe; do
+  python -m sse_multivector.distillation_run \
+    "sse_multivector/distillation/subject-pilot-${student}-v1.json" \
+    --output "target/reproduction/${student}-plan" --through plan
+done
+```
+
+This checks all four prepared file hashes, the ordered 1,000/100/200 split,
+author/content separation, the full ASv6.100 instruction and saved teacher
+targets. It writes `input-check.json` and `training-plan.json` for each recipe.
+Each first pass uses all 1,000 training notes once, shuffling only within its
+200-note checkpoint blocks, with eight examples per update. The loader reads
+the published metadata directly; it does not fabricate a historical manifest.
+
+`--through plan` imports no model runtime, downloads no weights and performs no
+tokenization, training or inference. It is an input check, not a CUDA or memory
+qualification. Existing plan destinations are refused.
+
+## Run subject fine-tuning
+
+These experiments train language models to produce ASv6.100 subject hierarchies;
+they do not train the SSE encoder. The maintained configurations preserve the
+saved model revisions and pilot settings:
+
+| Configuration | Base model | First-pass checkpoints |
+| --- | --- | --- |
+| `subject-pilot-qwen-v1.json` | Qwen3.8-27B | 200, 400, 600, 800, 1,000 |
+| `subject-pilot-gemma-dense-v1.json` | Gemma 4 31B | 200, 400, 600, 800, 1,000 |
+| `subject-pilot-gemma-moe-v1.json` | Gemma 4 26B-A4B | 200, 400, 600, 800, 1,000 |
+
+All use thinking off, answer-only loss, constant learning rate 0.0001, LoRA
+rank 16/alpha 32, 20,480-token context and a 10,240-token generation allowance.
+Gemma MoE additionally adapts packed expert weights at rank 2/alpha 32. See the
+configurations for exact target modules and batching budgets. The original work
+used 96 GB GPUs; a smaller-memory recipe has not been validated.
+
+On your GPU host, use a clean checkout, restore the inputs above and configure
+[Docker NVIDIA GPU access](https://docs.docker.com/engine/containers/gpu/).
+Build the Dockerfile's pinned runtime stage using
+[`--target`](https://docs.docker.com/build/building/multi-stage/#stop-at-a-specific-build-stage).
+It supplies the recorded Python/CUDA packages without requiring the private
+deployment package. The image and base-model downloads need substantial storage
+beyond the research dataset. The shell function below runs Python in that
+runtime with the source and model-cache mounts:
+
+```bash
+cd "$ORACLE_ROOT"
+docker build --target runtime \
+  --file sse_multivector/distillation/Dockerfile \
+  --tag oracle-subject-training .
+mkdir -p target/subject-model-cache
+distillation_python() {
+  docker run --rm --gpus all --entrypoint python \
+    --mount "type=bind,src=$ORACLE_ROOT,dst=/work" \
+    --mount "type=bind,src=$EXPERIMENT_RUNNER_ROOT,dst=/runner,readonly" \
+    --mount "type=bind,src=$ORACLE_ROOT/target/subject-model-cache,dst=/model-cache" \
+    --env EXPERIMENT_RUNNER_ROOT=/runner --env HF_HOME=/model-cache \
+    --workdir /work oracle-subject-training "$@"
+}
+distillation_python -m sse_multivector.distillation_run \
+  sse_multivector/distillation/subject-pilot-qwen-v1.json \
+  --output target/reproduction/qwen-run --through preflight
+```
+
+Keep this shell open. Preflight downloads the pinned tokenizer and checks actual
+lengths and answer-only tokenization without loading model weights. Gated base
+models require your own upstream access. The model cache and generated training
+state are outside the publication dataset. To run the complete Qwen first pass:
+
+```bash
+cd "$ORACLE_ROOT"
+distillation_python -m sse_multivector.distillation_run \
+  sse_multivector/distillation/subject-pilot-qwen-v1.json \
+  --output target/reproduction/qwen-run --through report
+```
+
+This loads the pinned base, saves untuned validation/test answers, trains through
+five milestones and evaluates each checkpoint on the 100 validation notes. It
+also saves the final checkpoint's 200 test answers. Saved invalid answers remain
+measured failures. Resume with the same configuration and output path; native
+seals and state checks remain in force. For a Gemma pilot, use its configuration
+and a separate run directory.
+
+After **your own first pass completes**, repeat Qwen's two additional passes by
+binding a configuration to that run's sealed checkpoint. Keep the same container
+mounts so saved paths remain valid:
+
+```bash
+cd "$ORACLE_ROOT"
+distillation_python -m sse_multivector.distillation_run \
+  --prepare-continuation target/reproduction/qwen-run \
+  --data target/reproduction/subject-training \
+  --output target/reproduction/qwen-continuation.json
+distillation_python -m sse_multivector.distillation_run \
+  target/reproduction/qwen-continuation.json \
+  --output target/reproduction/qwen-continuation-plan --through plan
+distillation_python -m sse_multivector.distillation_run \
+  target/reproduction/qwen-continuation.json \
+  --output target/reproduction/qwen-continuation-run --through report
+```
+
+This preserves the parent optimizer and training order, then adds two full
+passes over the same notes, ending at 2,000 and 3,000 total note uses. It reuses
+your saved baselines. Public adapter weights alone cannot resume the original
+research checkpoint because its optimizer state is not included. New GPU
+results need not match historical answers or scores. The offline checks above
+passed; these public GPU commands have not been run as a fresh end-to-end test.
 
 ## Other experiments and moved files
 

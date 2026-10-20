@@ -27,6 +27,7 @@ have been located and checked against their recorded SHA-256 hashes.
 | Generate a hierarchy from posts | [Generation guide](../generate-hierarchy.md) | [Official hierarchy runs](hierarchy.csv) |
 | Browse a published hierarchy | [HR39 browsing instructions](reproduce.md#browse-hr39-without-running-models) | [Selected compact files](publication-files.csv) |
 | Inspect the fine-tune comparison | [Saved scores from the compact bundle](reproduce.md#inspect-the-fine-tune-comparison) | [Selected evaluation files](publication-files.csv) |
+| Repeat fine-tuning | [Training-input checks](reproduce.md#prepare-the-fine-tuning-inputs) and [GPU commands](reproduce.md#run-subject-fine-tuning) | [Training process and results](../planning/fine-tuning-pilot-process.md) |
 | Inspect or repeat recorded experiments | [Reproduction guide](reproduce.md) | [Dataset file checksums](publication.sha256) |
 | Understand the recorded hierarchy experiments | [Run overview](hierarchy.md) and [detailed findings](../recommendation-engine/hierarchy-runs.md) | [Run settings, source versions and corpus identities](hierarchy.csv) |
 | Use or study the subject fine-tunes | [Training process and evaluation](../planning/fine-tuning-pilot-process.md) | [Adapter checkpoints and base versions](models.csv) |
@@ -191,12 +192,11 @@ The [reproduction guide](reproduce.md) covers browsing HR39, preparing ASv6.100
 on a recorded HR36 post, repeating HR36 construction with its saved subjects,
 and reading the fine-tune comparison. It also explains `verify` for checking
 saved prompt receipts after extraction using bundled location metadata.
-All four reader examples use compact published formats and selected inputs;
-HR36 construction includes the saved subject trees needed by Bootstrap. Native
-receipt verification remains separate. The guide also documents the compact
-result exporters; published-download testing remains open.
-Downloads, portable training/L1 recomputation and replay of historical
-collections remain unfinished.
+Browsing, HR36 preparation and training-input checks use compact published
+formats. The three saved training recipes pass offline input/order checks;
+local GPU and Qwen continuation commands are documented, with fresh GPU execution
+still untested. Native receipt verification remains separate. Downloads,
+adapter-use instructions and broader historical replay remain unfinished.
 Fresh model answers need not match saved answers.
 
 Research records now distinguish original file references from selected result

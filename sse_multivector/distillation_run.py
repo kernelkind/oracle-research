@@ -66,9 +66,60 @@ def seal_files(directory, name, filenames):
         write_json(path, hashes)
 
 
+def published_data_manifest(directory):
+    """Expose published splits/hashes to native checks, retaining their provenance.
+
+    This is a loader view, not a reconstruction of the historical manifest.
+    """
+    metadata = directory / 'metadata'
+    record = read_json(metadata / 'experiment.json')
+    if (record.get('schema_version') != 1
+            or record.get('format') != 'prepared-training-inputs-publication-v1'
+            or set(record.get('files', {})) != {'files.jsonl', 'splits.jsonl', 'training-settings.jsonl'}
+            or record.get('tasks', {}).keys() != {'subjects'}):
+        raise ValueError('expected published subject training metadata')
+    bindings = {str((metadata/'experiment.json').resolve()): sha256(metadata/'experiment.json')}
+    payloads = {}
+    for name, binding in record['files'].items():
+        path = metadata / name
+        if path.stat().st_size != binding['bytes'] or sha256(path) != binding['sha256']:
+            raise ValueError('published training metadata hash mismatch: '+name)
+        with path.open(encoding='utf-8') as stream:
+            payloads[name] = [json.loads(line, object_pairs_hook=unique_object) for line in stream]
+        if len(payloads[name]) != binding['records']:
+            raise ValueError('published training metadata count mismatch: '+name)
+        bindings[str(path.resolve())] = binding['sha256']
+    files = payloads['files.jsonl']
+    if ({row['name'] for row in files} != {'train.jsonl', 'evaluation.jsonl', 'test.jsonl', 'references.jsonl'}
+            or len(files) != 4):
+        raise ValueError('published training files differ')
+    outputs = {}
+    for row in files:
+        path = directory / row['name']
+        if path.stat().st_size != row['bytes']:
+            raise ValueError('published training data hash/size mismatch: '+row['name'])
+        outputs[row['name']] = row['source_sha256']
+    splits = {name: [] for name in ('train', 'evaluation', 'test')}
+    for row in payloads['splits.jsonl']:
+        split = row['split']
+        if (split not in splits or type(row['position']) is not int
+                or row['position'] != len(splits[split])):
+            raise ValueError('published training split positions differ')
+        splits[split].append(row['note_id'])
+    if {name: len(ids) for name, ids in splits.items()} != record['split_counts']:
+        raise ValueError('published training split counts differ')
+    return dict(schema_version=2, source_format=record['format'],
+        publication_source_id=record['source_id'],
+        original_manifest_sha256=record.get('source', {}).get('sha256'),
+        seed=record['seed'], tasks=record['tasks'], inputs=bindings, outputs=outputs,
+        subject_instruction_sha256=record['subject_instruction_sha256'],
+        **{name+'_note_ids': ids for name, ids in splits.items()})
+
+
 def load_data(directory, mask_prompt=None):
     directory = Path(directory)
-    manifest = read_json(directory / "manifest.json")
+    manifest = (read_json(directory / "manifest.json") if (directory/'manifest.json').is_file()
+                else published_data_manifest(directory))
     if manifest["schema_version"] != 2:
         raise ValueError("expected dataset schema 2")
     tasks = set(manifest["tasks"])
@@ -80,8 +131,8 @@ def load_data(directory, mask_prompt=None):
         path = directory / (name + ".jsonl")
         if sha256(path) != manifest["outputs"][path.name]:
             raise ValueError(f"dataset hash mismatch: {path.name}")
-        rows[name] = [json.loads(line, object_pairs_hook=unique_object)
-                      for line in path.read_text().splitlines()]
+        with path.open(encoding='utf-8') as stream:
+            rows[name] = [json.loads(line, object_pairs_hook=unique_object) for line in stream]
     if "mask" in tasks:
         if mask_prompt is None or sha256(mask_prompt) not in manifest["inputs"].values():
             raise ValueError("mask prompt hash differs from prepared data")
@@ -108,7 +159,8 @@ def load_data(directory, mask_prompt=None):
         if not ids or len(ids) != len(set(ids)) or [r["note_id"] for r in rows[name]] != ids:
             raise ValueError(f"{name} example IDs disagree with split")
     if tasks == {"subjects"}:
-        if len(rows["train"]) != len(train) or len(manifest["train_note_ids"]) != len(train):
+        if (len(rows["train"]) != len(train) or len(manifest["train_note_ids"]) != len(train)
+                or [row['note_id'] for row in rows['train']] != manifest['train_note_ids']):
             raise ValueError("expected one subject example per training note")
         for row in rows["train"]:
             target = row["completion"]
@@ -796,6 +848,24 @@ def train(config, tokenizer, data, output):
     write_json(staging / "complete.json", file_hashes(staging))
     staging.rename(output / "adapter")
     return reloaded
+
+
+def continuation_config(parent_run, data, *, additional_passes=2):
+    """Bind a new configuration to the original pilot's sealed final checkpoint."""
+    if type(additional_passes) is not int or additional_passes < 1:
+        raise ValueError('additional passes must be positive')
+    parent_run = Path(parent_run).resolve()
+    original = read_json(parent_run/'manifest.json')['config']
+    if 'continuation' in original or 'preparation' in original:
+        raise ValueError('continuation requires an original subject pilot')
+    count = original['training_milestones'][-1]
+    checkpoint = parent_run/'checkpoints'/f'checkpoint-{count}'
+    return {**original, 'data': str(Path(data).resolve()),
+        'training_milestones': [count*(i+2) for i in range(additional_passes)],
+        'continuation': dict(parent_run=str(parent_run),
+            manifest_sha256=sha256(parent_run/'manifest.json'),
+            plan_sha256=sha256(parent_run/'training-plan.json'),
+            checkpoint_sha256=sha256(checkpoint/'complete.json'))}
 
 
 def subject_parent(data, config):
@@ -1839,7 +1909,6 @@ def verify_subject_run(output, data, config, through="report", *, package=None):
 
 
 def run(config_path, output, through="report"):
-    import torch
     config, output = read_json(config_path), Path(output)
     required = {"model", "revision", "data", "mask_prompt", "device", "quantization", "seed",
         "max_length", "max_new_tokens", "max_subjects", "max_steps", "save_steps", "batch_size",
@@ -1892,8 +1961,6 @@ def run(config_path, output, through="report"):
         raise ValueError("unsupported device or quantization")
     if config["quantization"] == "nf4" and config["device"] != "cuda":
         raise ValueError("NF4 requires CUDA")
-    load_gpu_packages(config)
-    from transformers import AutoTokenizer, set_seed
     local_model = Path(config["model"])
     if not local_model.is_dir() and not re.fullmatch(r"[a-f0-9]{40}", config["revision"] or ""):
         raise ValueError("remote models require an immutable revision")
@@ -1908,6 +1975,22 @@ def run(config_path, output, through="report"):
         if set(data["manifest"]["tasks"]) != {"subjects"}:
             raise ValueError("subject pilot requires subjects-only data")
         subject_training_plan(data, config)
+    if through == 'plan':
+        if not pilot or preparing:
+            raise ValueError('plan requires a subject pilot configuration')
+        if output.exists():
+            raise ValueError('plan output already exists')
+        output.mkdir(parents=True)
+        write_json(output/'training-plan.json', subject_training_plan(data, config))
+        write_json(output/'input-check.json', dict(config=config, dataset=data['manifest'],
+            split_counts={name: len(data[name]) for name in ('train', 'evaluation', 'test') if name in data},
+            model_weights_loaded=False, inference_calls=0,
+            qualification='Input hashes, splits, prompts, teacher targets and training order only; no tokenization or CUDA checks.'))
+        print('stage: plan complete (no model runtime or weights loaded)', flush=True)
+        return
+    import torch
+    load_gpu_packages(config)
+    from transformers import AutoTokenizer, set_seed
     torch.set_num_threads(config["threads"])
     set_seed(config["seed"])
     code = Path(__file__).parent
@@ -2020,10 +2103,27 @@ def run(config_path, output, through="report"):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("config", type=Path)
+    parser.add_argument("config", type=Path, nargs='?')
+    parser.add_argument('--prepare-continuation', type=Path, metavar='PARENT_RUN',
+                        help='write a local continuation configuration from a sealed original pilot; no inference')
+    parser.add_argument('--data', type=Path, help='prepared data for --prepare-continuation')
+    parser.add_argument('--additional-passes', type=int, default=2)
     parser.add_argument("--output", required=True, type=Path)
-    parser.add_argument("--through", choices=("preflight", "baseline", "train", "report", "preparation"), default="report")
+    parser.add_argument("--through", choices=("plan", "preflight", "baseline", "train", "report", "preparation"), default="report")
     args = parser.parse_args()
+    if args.prepare_continuation is not None:
+        if args.config is not None or args.data is None or args.through != 'report':
+            parser.error('--prepare-continuation requires --data, --output and no positional config or --through')
+        if args.output.exists() or args.output.is_symlink():
+            raise ValueError('continuation configuration already exists')
+        config = continuation_config(args.prepare_continuation, args.data,
+                                     additional_passes=args.additional_passes)
+        subject_training_plan(load_data(args.data), config)
+        write_json(args.output, config)
+        print('Continuation configuration saved; no model runtime or weights loaded.', flush=True)
+        return
+    if args.config is None or args.data is not None or args.additional_passes != 2:
+        parser.error('supply a config, or use --prepare-continuation with --data')
     run(args.config, args.output, args.through)
 
 

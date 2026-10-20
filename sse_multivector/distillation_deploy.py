@@ -16,7 +16,7 @@ import time
 
 from gte.full_build_package import write_manifest, verify_manifest
 from sse_multivector.distillation_run import (load_data, read_json, sha256, write_json,
-    preparation_data, shared_code_files, subject_parent, subject_stage_summary, subject_test_summary, verify_subject_run)
+    preparation_data, shared_code_files, continuation_config, subject_parent, subject_stage_summary, subject_test_summary, verify_subject_run)
 
 
 CODE_ROOT = Path(__file__).resolve().parents[1]
@@ -228,16 +228,7 @@ def prepare_continuation(parent_run, data, preparation_config, output, *, name, 
         cache['models'] = [model for model in cache['models']
                           if (model['model'], model['revision']) == (original['model'], original['revision'])]
         validate(cache)
-    if "continuation" in original or "preparation" in original:
-        raise ValueError("continuation requires an original subject pilot")
-    count = original["training_milestones"][-1]
-    checkpoint = parent_run / "checkpoints" / f"checkpoint-{count}"
-    config = {**original, "data": str(Path(data).resolve()),
-        "training_milestones": [count * (i + 2) for i in range(additional_passes)],
-        "continuation": {"parent_run": str(parent_run),
-            "manifest_sha256": sha256(parent_run / "manifest.json"),
-            "plan_sha256": sha256(parent_run / "training-plan.json"),
-            "checkpoint_sha256": sha256(checkpoint / "complete.json")}}
+    config = continuation_config(parent_run, data, additional_passes=additional_passes)
     preparation = {**read_json(preparation_config), "data": config["data"]}
     with tempfile.TemporaryDirectory() as temporary:
         root = Path(temporary)

@@ -582,12 +582,15 @@ Before publication:
   checks and interactive browsing passed with six roots, 200 nodes and 2,693
   represented posts, without native state or credentials. These checks do not
   replace a hosted reader test.
-- Provide a maintained, tested command for L1 analysis from saved judgments and
-  validate portable training and adapter-inference instructions with the selected
-  data and pinned upstream models. The saved seven-version comparison now displays
+- Validate fresh GPU execution and adapter-inference instructions with the selected
+  data and pinned upstream models. The saved seven-version comparison displays
   from its restored compact bundle without original research directories; all
   seven rows match the 200 published per-note scores per version. This does not
   rebuild the underlying semantic judgments.
+  The three published pilot configurations now pass offline data/order checks.
+  The guide includes local GPU commands and a continuation configuration bound
+  to a reader's own sealed first-pass run; no original optimizer state is
+  published. Fresh GPU execution of this reader workflow remains open.
 
 The generated-data rewrite is complete. Final privacy and identity review
 remains before publication; any further history cleanup needs its own approval.

@@ -1,0 +1,46 @@
+{
+  "batch_size": 1,
+  "device": "cuda",
+  "efficient_attention": true,
+  "evaluation_tasks": [
+    "subjects"
+  ],
+  "fused_linear_cross_entropy": true,
+  "gradient_accumulation_steps": 8,
+  "gradient_checkpointing": true,
+  "learning_rate": 0.0001,
+  "lora_alpha": 32,
+  "lora_rank": 16,
+  "lora_target_modules": [
+    "q_proj",
+    "k_proj",
+    "v_proj",
+    "o_proj",
+    "gate_proj",
+    "up_proj",
+    "down_proj"
+  ],
+  "max_length": 20480,
+  "max_new_tokens": {
+    "subjects": 10240
+  },
+  "model": "google/gemma-4-31B-it",
+  "quantization": "none",
+  "revision": "842da3794eaa0b77d5f08bae87a17459d91ff475",
+  "seed": 17,
+  "subject_batching": {
+    "attention_matrix_count": 0,
+    "budget_bytes": 94489280512,
+    "prefill_bytes_per_token": 262144,
+    "workspace_bytes": 12884901888
+  },
+  "threads": 8,
+  "training_milestones": [
+    200,
+    400,
+    600,
+    800,
+    1000
+  ],
+  "data": "target/reproduction/subject-training"
+}

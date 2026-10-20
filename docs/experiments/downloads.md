@@ -351,7 +351,11 @@ repeating teacher answers already present in the prepared files.
 Training instructions must distinguish repeating training from resuming an exact
 checkpoint with its optimizer state. Optimizer state is not part of this
 publication plan. Base models and the SSE encoder remain pinned upstream
-dependencies. Portable training and adapter-use instructions still need testing.
+dependencies. The [reader guide](reproduce.md#prepare-the-fine-tuning-inputs)
+now checks all three saved recipes directly from published metadata and provides
+local GPU and Qwen continuation commands. Fresh GPU execution and adapter-use
+instructions still need validation. These workflows add no datasets or weights
+to the upload selection.
 
 ## Automated outputs
 
