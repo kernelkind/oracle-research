@@ -2,7 +2,9 @@
 
 **Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
 
-The original ASv6.26/ASv6.27/ASv6.28 reports referenced here are outside this checkout; their recovery remains open.
+The original ASv6.26/ASv6.27/ASv6.28 reports referenced here were located in the
+original research checkout. Their inclusion in the publication remains pending;
+see the [evidence checklist](../../docs/experiments/open-items.md#original-file-links-and-replay).
 
 **Current SOTA SP: [ASv6.100](./asv6.100/ASv6.100.md)**, designated by the user on
 2026-10-04. It is the baseline for future SP comparisons. The

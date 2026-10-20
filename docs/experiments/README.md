@@ -159,7 +159,8 @@ exports, as explained [above](#reading-the-research-records). The reviewed links
 to removed generated files have been repaired. Some saved-result tests and
 replay scripts still require original artifacts; their
 [clean-checkout replay plan](open-items.md#original-file-links-and-replay)
-remains open. Missing reports and unfinished conversions are recorded there too.
+remains open. Reports awaiting inclusion and unfinished conversions are recorded
+there too.
 
 Generation commits, later audit/export commits and the publication commit serve
 different purposes. Their original IDs remain in the evidence. The

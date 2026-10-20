@@ -194,10 +194,27 @@ repair's scope.
 Six report references in the [subject-prompt investigation](../../sse_multivector/subject-prompt-goal-v1/README.md)
 are still outside this checkout: `RESULTS.md` and `full-outputs.md` for
 `asv6.28-fresh-v1` and `asv6.28-comparison-v1`, and `RESULTS.md` for
-`asv6.27-comparison-v1` and `asv6.26-comparison-v1`. Recovery remains open;
-the original references remain visible. Older collections also retain their
-explicit [conversion gaps](publication-gaps.csv). Labeling these references
-does not supply the missing reports or exported answers.
+`asv6.27-comparison-v1` and `asv6.26-comparison-v1`.
+
+All six originals were located on 2026-10-20 in the `research-main` checkout
+under `sse_multivector/subject-prompt-goal-v1/`; see [source roots](source-roots.csv).
+They total **63,170 bytes**: **26,613 bytes** for the four authored `RESULTS.md`
+reports and **36,557 bytes** for the two complete-output files. They were never
+tracked in the original repository or its preserved pre-rewrite Git backup;
+the generated-data rewrite did not remove them.
+
+The four studies' saved outputs account for **78 calls and 809 subjects** from
+**10 distinct source posts**, matching the reported counts. All 78 outputs
+identify saved preparation manifests whose hashes match their recorded bindings.
+The two referenced complete-output files reproduce the saved subject strings.
+These checks establish agreement with the saved records, not independent
+semantic validation.
+ASv6.26–ASv6.28 results remain historical evidence under the ASv6.100 rule.
+
+Publication inclusion remains pending. The original references remain visible,
+and the older collections retain their explicit [conversion gaps](publication-gaps.csv).
+Locating these files has not added reports to Git or answers to the selected
+Hugging Face exports.
 
 Some existing code also requires original artifacts:
 
