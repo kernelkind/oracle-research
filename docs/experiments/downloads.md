@@ -27,14 +27,14 @@ workspace stay outside public Git. Selected inputs and final evidence go to
 Hugging Face; preserve the complete original working files locally.
 
 The read-only review at Oracle commit `a45639d2` and runner commit `34d7eb7`
-measured the following proposed reduction. The current tracked tree and history
-still contain generated run files; the selected-study index has now been
-simplified.
+measured the following proposed reduction. The selected-study index is now
+simplified, and the reviewed generated run files are untracked from the current
+tree. Those files remain locally at the same paths and remain in Git history.
 
 | Contents | At the reviewed commits | Intended layout |
 | --- | ---: | ---: |
 | Both Git object databases | About 504 MiB | Plan for 20–30 MiB of compressed history |
-| Both checked-out repositories | About 2.67 GiB | About 60 MiB |
+| Both repositories' tracked file contents | About 2.67 GiB | About 60 MiB |
 | `docs/experiments/` | 1,286 files, 192.89 MiB | 22 files, about 7.43 MiB |
 
 The Git estimate packs retained historical file versions with their filenames
@@ -43,12 +43,15 @@ includes the runner's complete history and a filtered study index. That check
 measured 22.44 MiB; filtered trees and final cleanup change the exact size. It
 is a planning estimate, not a measured cleaned clone or public download size.
 
-Exclude generated requests/responses, execution state and logs, intermediate
-arrays, rendered output displays and working archives from eventual public Git.
-The proposal identifies 28,666 such current files totaling 2.43 GiB. Keep source,
-prompts and findings within those same experiment directories. In particular,
-retain the 17 authored navigation `RESULTS.md` files that match an overbroad
-ignore rule. Small ambiguous case/recipe files remain included pending review.
+The ordinary untracking change covers **28,307 reviewed generated files**,
+totaling **2,608,765,945 bytes (2.43 GiB)**: requests/responses, execution state
+and logs, intermediate arrays, rendered displays and working archives. Source,
+prompts, authored plans and findings, manually supplied definitions/controls,
+fixtures, reusable usage specifications and frozen package contracts remain
+tracked. This includes the 17 navigation `RESULTS.md` files and pinned HiDeF
+runtime lock. All **196 ambiguous files** remain tracked
+pending review. Existing workspace files keep their paths and occupy the same
+local storage; a fresh checkout omits the untracked files.
 
 For the public index, retain the maintained guides, selected-result catalog,
 checksums, hierarchy/corpus/model summaries and useful provenance/recovery
@@ -67,8 +70,10 @@ The full original job index is preserved in the [local audit copy](#local-audit-
 file/dependency
 catalogs and earlier packaging tables are not additional Hugging Face downloads.
 Their meaningful conclusions remain in the maintained findings and gap records.
-The public index and its documentation links have been updated. Removing
-generated run files elsewhere in the repository remains separate work.
+The public index and its navigation links have been updated. Authored research
+documents still contain links to original generated files; repairing those
+[reader links and original-file replay dependencies](open-items.md#original-file-links-and-replay)
+remains open before publication.
 
 Preserve the full commit sequence, timestamps and merge relationships, including
 commits left empty after generated files are removed. Keep an old-to-new commit
@@ -384,6 +389,11 @@ Its `docs/experiments/` subtree contains all 1,286 original files, including the
 `manifest.jsonl` records each file's original Git blob, byte count and SHA-256;
 the copy was rehashed against that manifest. The recorded source commit is
 `1f3d541c`. This local audit copy is outside the public repository and download set.
+
+The generated-file untracking has separate before/after integrity records under
+ignored `target/publication-audit/generated-untracking-bfbdc288/`, binding paths,
+original Git blobs, byte counts and SHA-256 hashes. The generated files themselves
+stay at their original workspace paths.
 
 The public `experiments.csv` retains the selected rows in their original order
 with every column and value preserved. Outstanding older collection/result

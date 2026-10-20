@@ -168,6 +168,41 @@ fixture disagrees with the runner's concurrency setting. Both reproduce using
 the unchanged Oracle code with the same runner. They remain unresolved; passing
 export checks do not establish that every evaluation workflow is compatible.
 
+## Original-file links and replay
+
+The reviewed generated files are untracked but remain at their original local
+paths. A read-only scan found **745 direct local-file link occurrences across
+143 retained Markdown files**, pointing to **613 generated files** absent from
+a clean checkout. This count excludes fenced examples and does not include
+pre-existing missing or outside-repository links.
+
+Examples include [scalability findings](../planning/scalability.md) linking to
+saved resource summaries and responses, and the retained
+[TRUE07 findings](../../sse_multivector/navigation-research-v1/TRUE07/RESULTS.md)
+linking to `source-evidence.json` and `semantic-review.json`.
+Reader-link repair remains open: connect claims to the selected public evidence
+where applicable and identify references that require local originals. Retaining
+the authored findings does not make their original artifact links portable.
+
+Some existing code also requires original artifacts:
+
+- The [saved Infomap tests](../../sse_multivector/test_infomap_saved_results.py)
+  read the saved I01–I04 graphs, configurations, hierarchies and original source
+  files.
+- The [omission-call tests](../../sse_multivector/real-note-fine-segmentation-v1/test_omission_calls.py)
+  read saved omission-call records and the original `N001-AS/config.json`.
+- The legacy [segmentation preparation loader](../../sse_multivector/real-note-fine-segmentation-v1/generation.py)
+  still requires original example/reference configurations in addition to the
+  retained frozen package contracts. Those configurations remain local.
+- `run-fine-region-scc-preflight.sh`, `run-fine-region-partition-pilot.sh` and
+  `run-fine-region-hierarchy-pilot.sh` require the original
+  `sse_multivector/baselines/communicated-meaning-tev4-1/baseline.tar.zst`.
+
+These tests and historical entry points still need a clean-checkout replay plan.
+The compact exports do not supply their original file layouts. No claim that
+all tests or historical workflows run with only the public selection has been
+established.
+
 ## Preserve the source history
 
 Of 41 recorded generation commits, 40 are present in the publication clones.
@@ -197,10 +232,10 @@ inventory and old bundle tables do not define the public download size or layout
 Before publication:
 
 - Continue the agreed [public Git layout](downloads.md#public-git-contents):
-  the tracked index now covers selected studies, with exhaustive workspace
-  catalogs preserved locally. Review the
-  small ambiguous case/recipe files, retain authored findings even where current
-  ignore rules match them, and check code/test paths that use original artifacts.
+  the selected-study index and reviewed generated-file untracking are in place;
+  local files retain their original paths. The 196 ambiguous files
+  remain tracked. Review them and resolve the
+  [reader-link and original-file replay work](#original-file-links-and-replay).
 - Review [remaining conversion items](publication-gaps.csv): 33 unsupported result
   files, one result without its required local configuration, and older inventory
   groups needing review for final data versus material already retained in Git.

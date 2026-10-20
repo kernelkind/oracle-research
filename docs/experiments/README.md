@@ -93,11 +93,13 @@ remain historical evidence; raw source posts are not deprecated by that rule.
 The agreed [public Git layout](downloads.md#public-git-contents) keeps code and
 its history, tests, prompts and their provenance, authored findings, useful
 documentation and a selected-study index. Its estimated compressed history is
-20–30 MiB across both repositories, with about 60 MiB of checked-out files.
+20–30 MiB across both repositories, with about 60 MiB of tracked file contents.
 The selected-study index is now in place. The exhaustive workspace catalogs
-are preserved in the [local audit](downloads.md#local-audit-copy). Generated run
-files elsewhere in the repository still need separate cleanup; history cleanup
-stays last.
+are preserved in the [local audit](downloads.md#local-audit-copy). The reviewed
+28,307 generated run files are now untracked and remain locally at the same
+paths. Source, prompts, authored plans and findings, reusable specifications and
+fixtures stay tracked, along with 196 ambiguous files awaiting review. History
+cleanup stays last.
 
 Hugging Face Models holds all 17 evaluated
 adapters (6.78 GiB). Hugging Face Datasets holds used posts, prepared training
@@ -129,6 +131,12 @@ documents the compact result exporters; published-download testing remains open.
 Downloads, portable training/L1 recomputation and replay of historical
 collections remain unfinished.
 Fresh model answers need not match saved answers.
+
+Authored findings still link to original generated files, and some saved-result
+tests and replay scripts require those files. They remain available locally;
+[reader-link and replay work](open-items.md#original-file-links-and-replay)
+is required before claiming the documentation and workflows work from a clean
+public checkout.
 
 Generation commits, later audit/export commits and the publication commit serve
 different purposes. Preserve their distinction when history cleanup changes

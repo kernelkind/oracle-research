@@ -20,7 +20,7 @@ __pycache__/
 
 # Experiment data stays local. Ignore files, not experiment directories: those
 # also contain source code, tests, prompts and maintained documentation.
-# Existing tracked artifacts are unaffected; these rules do not untrack them.
+# Reviewed generated files stay untracked; reusable sources remain eligible.
 /sse_multivector/*-v[0-9]*/**/*.json
 /sse_multivector/*-v[0-9]*/**/*.jsonl
 /sse_multivector/*-v[0-9]*/**/*.csv
@@ -117,7 +117,6 @@ __pycache__/
 # Rendered trial inputs, outputs and per-post reports are data even in Markdown.
 /sse_multivector/*-v[0-9]*/**/RESULTS.md
 /sse_multivector/*-v[0-9]*/**/full-outputs.md
-/sse_multivector/*-v[0-9]*/**/run/model-instructions.md
 /sse_multivector/subject-prompt-goal-v1/asv*-v[0-9]*/N[0-9][0-9][0-9].md
 /sse_multivector/subject-prompt-goal-v1/asv*-v[0-9]*/E[0-9][0-9][0-9][0-9].md
 /sse_multivector/subject-prompt-goal-v1/asv*-v[0-9]*/[HJ][0-9][0-9][0-9][0-9][0-9].md
@@ -138,3 +137,51 @@ __pycache__/
 /sse_multivector/**/*.gguf
 /sse_multivector/**/*.parquet
 /sse_multivector/**/*.arrow
+
+# Remaining reviewed generated outputs; retain all local files.
+/sse_multivector/**/model-instructions.md
+/sse_multivector/**/full-*-outputs.md
+/sse_multivector/atomic-subject-*-v[0-9]*/**/results.md
+/sse_multivector/subject-prompt-goal-v1/context-examples-comparison-v1/results.md
+/sse_multivector/subject-prompt-goal-v1/relation-rule-ablation-v1/results.md
+/sse_multivector/mask-prompt-*-v[0-9]*/masks.md
+/sse_multivector/real-note-fine-segmentation-v1/**/review.txt
+/sse_multivector/real-note-fine-segmentation-v1/**/unassigned.txt
+/sse_multivector/real-note-fine-segmentation-v1/omission-audit-v1/**/prompt.txt
+/sse_multivector/real-note-fine-segmentation-v1/corpus-audit/representative-complete-notes.md
+/sse_multivector/[mt]pv*-iteration-*/**/*.json
+/sse_multivector/[mt]pv*-iteration-*/**/*.jsonl
+/sse_multivector/**/*.f64le
+/sse_multivector/**/*.u32le
+/sse_multivector/baselines/**/baseline.tar.zst
+/sse_multivector/hidef-experiment-v*/**/graph.net
+/sse_multivector/infomap-experiment-v*/**/graph.net
+/sse_multivector/infomap-experiment-v*/**/native.tree
+/sse_multivector/navigation-research-v1/SGC03/construction/*.json.gz
+/sse_multivector/navigation-research-v1/CPC02/source/nltk/METADATA
+/sse_multivector/navigation-research-v1/CPC02/source/nltk/RECORD
+
+# These are authored findings, not generated result displays.
+!/sse_multivector/navigation-research-v1/**/RESULTS.md
+
+# Frozen authored experimental cases and expected judgments.
+!/sse_multivector/navigation-research-v1/**/*fixture.json
+
+# Authored experimental plans and prompt proposals.
+!/sse_multivector/**/plan.json
+!/sse_multivector/**/run-plan.json
+!/sse_multivector/**/proposal.json
+
+# Curated diagnostic definitions and expected controls.
+!/sse_multivector/navigation-research-v1/SRR01/manual.json
+!/sse_multivector/navigation-research-v1/SRR0[23]-definitions.json
+!/sse_multivector/navigation-research-v1/SRR0[23]/definitions.json
+!/sse_multivector/navigation-research-v1/DSP01/analytical-controls.json
+
+# Versioned frozen prompt-package contracts; generation outputs stay ignored.
+!/sse_multivector/subject-prompt-goal-v1/asv6.23/frozen.json
+!/sse_multivector/mask-prompt-goal-v1/frozen.json
+
+# Authored narrative assessments retained pending role review.
+!/sse_multivector/hdbv2-node-description-probe-v23/comparison-v1/analysis.json
+!/sse_multivector/subject-prompt-goal-v1/effort-comparison-v1/assessment.json
