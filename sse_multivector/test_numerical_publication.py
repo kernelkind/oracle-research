@@ -162,6 +162,24 @@ class NumericalPublicationTests(unittest.TestCase):
         self.assertNotIn('checkpoint_hashes', (Path(output)/'results.jsonl').read_text())
         self.assertNotIn('/private', (Path(output)/'experiment.json').read_text())
 
+    def test_native_performance_keeps_final_counts_timings_and_validation_results(self):
+        from sse_multivector.numerical_publication import export_results
+        report = dict(request_sha256='a'*64, elapsed_seconds=1.5, input_entries=12,
+            compact_response_identity='compact-hierarchy', result_bytes=2500,
+            groups_and_unassigned_identical=True, native_result_validation_passed=True,
+            state_unchanged=True, teacher_calls=0, new_teacher_result_ledgers=0,
+            checks='all state and source checks; no inference',
+            measurements=[dict(mode='validation', wall_seconds=.5,
+                                                  validated_rounds=7)])
+        path = self.write('performance.json', report)
+
+        output = export_results(path, family='performance')['output']
+
+        rows = self.records(output)
+        self.assertEqual(rows[0], dict(type='measurements', **{key: value for key, value in
+            report.items() if key not in ('request_sha256', 'measurements')}))
+        self.assertEqual(rows[1], dict(type='measurements', **report['measurements'][0]))
+
     def test_saved_rust_reports_preserve_final_schedules_partitions_and_roots(self):
         from sse_multivector.numerical_publication import export_results
         reports = {

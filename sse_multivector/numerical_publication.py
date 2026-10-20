@@ -437,7 +437,10 @@ def _performance(sources, path, metadata):
         'kind', 'all_six_requests_and_results_byte_identical', 'observed_cpu_processes',
         'native_advance_completed', 'nodes_exact', 'notes_exact', 'all_prepared_case_inputs_exact',
         'all_membership_additions_exact', 'experiments', 'families', 'standalone_advance_wall_seconds',
-        'baseline_in_process_advance_seconds', 'timing_qualification', 'error'})
+        'baseline_in_process_advance_seconds', 'timing_qualification', 'elapsed_seconds',
+        'input_entries', 'compact_response_identity', 'result_bytes',
+        'groups_and_unassigned_identical', 'native_result_validation_passed',
+        'new_teacher_result_ledgers', 'checks', 'error'})
     if not (header.get('workload') or 'state_sha256' in header or 'request_sha256' in header
             or 'original_state_sha256' in header
             or header.get('kind') == 'offline-no-inference-fixed-input-replay'):
@@ -476,7 +479,8 @@ def _performance(sources, path, metadata):
                     'peak_cuda_allocated_bytes', 'available_system_bytes_after',
                     'supervised_tokens_per_example', 'seconds', 'median_batch_seconds',
                     'examples_per_second', 'wall_seconds', 'user_seconds', 'system_seconds',
-                    'peak_rss_kib', 'mode', 'bytes', 'node', 'request.json', 'result.json'},
+                    'peak_rss_kib', 'mode', 'bytes', 'node', 'request.json', 'result.json',
+                    'validated_rounds'},
                     metadata, 'performance.'+field))
     return results(), iter(())
 
