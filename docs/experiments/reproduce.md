@@ -299,10 +299,10 @@ base-model revisions and associated training manifests. Inference requires an
 adapter's weights/configuration and its matching base model. Resuming training
 also requires its optimizer/training state and the original prepared dataset.
 These larger files are separate from the five-file example above.
-The [publication proposal](downloads.md#corpora-and-fine-tunes) recommends the
-four adapters in the final comparison, with the other 13 evaluated checkpoints
-optional. It distinguishes adapter use from continuation's training-state
-requirements and identifies the records needed for a portable training recipe.
+The [publication proposal](downloads.md#corpora-and-fine-tunes) includes all 17
+evaluated adapters on Hugging Face. It distinguishes adapter use from
+continuation's training-state requirements and identifies the records needed
+for a portable training recipe.
 The inventory still lists all candidates; these are not available downloads.
 
 There is currently no maintained CLI that rebuilds this L1 analysis from the

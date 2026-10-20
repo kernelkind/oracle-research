@@ -1,7 +1,8 @@
 # Proposed publication contents
 
-**Hosting is agreed; the contents below are a proposal for review.** Keep code,
-Git history, prompts, documentation and the experiment index on GitHub. Publish
+**Hosting and inclusion of all 17 evaluated adapters are agreed. Other contents
+remain a proposal for review.** Keep code, Git history, prompts, documentation
+and the experiment index on GitHub. Publish
 reusable adapters on Hugging Face Models and experiment datasets on Hugging Face
 Datasets. The index will link each experiment to the exact published versions.
 Nothing in this proposal authorizes uploading, deleting originals or rewriting
@@ -9,8 +10,8 @@ history. Downloads have not been packaged or published.
 
 The aim is to let readers inspect what was tried, check the evidence behind the
 results, use the trained models and repeat experiments. Include unsuccessful
-and superseded work. Publishing every intermediate weight or operational log
-is a separate choice from preserving its experiment's inputs and results.
+and superseded work. Publish every evaluated adapter checkpoint so readers can
+run the intermediate training stages as well as the final comparisons.
 
 ## Recommended contents
 
@@ -24,7 +25,7 @@ is a separate choice from preserving its experiment's inputs and results.
 | Final or last partial hierarchies, run status and failure evidence | Show the outcome of each construction experiment | Complete selection not yet isolated; the exported HR39 viewer files are **1.80 MiB** |
 | Evaluation answers, raw judgments, final grades, per-note scores and recorded reviews | Allow inspection of why results received their scores, including intermediate training stages | Complete selection not yet isolated. The L1 summary is **3.37 MiB**; its 117 directly declared sources total **441.33 MiB**, with upstream dependencies additional |
 | Saved vectors, their source bindings and consequential clustering results | Preserve the numerical evidence used to construct hierarchies | Existing binary vectors/numeric arrays total **3.80 GiB**; the clustering-file decision is separate below |
-| Four adapters used in the final L1 comparison, with configurations and training records | Let readers use and compare the models behind the reported results | **1.62 GiB** of weights; exact checkpoints below. Base models remain upstream dependencies |
+| All 17 evaluated adapters, with configurations and training records | Let readers run every evaluated training stage and compare the models behind the reported results | **6.78 GiB** of weights; exact checkpoints below. Base models remain upstream dependencies |
 | Qwen checkpoint-1000 training state and parent-checkpoint metadata | Preserve the starting point of the recorded two-pass continuation | **0.87 GiB** for `training-state.pt`; metadata additional |
 | Research artifacts found only in Git history | Preserve their evidence and original commit associations before history cleanup | **294 blobs, 19.45 MiB**; potential overlap with current files is not subtracted |
 
@@ -82,26 +83,28 @@ files has evidence of use somewhere in the audited experiments, although an
 individual hierarchy may use only a subset. Preserve historical/deprecated
 labels for generated data derived from subject prompts older than **ASv6.100**.
 
-For the subject fine-tunes, propose these four weight downloads. Each includes
+Publish **all 17 evaluated subject fine-tune adapters on Hugging Face**. Each includes
 `adapter_model.safetensors` and `adapter_config.json`, with its pinned base-model
 revision and a model card linking its training data, results and loading instructions.
 
-| Existing adapter ID | Reason for inclusion | Weights and configuration |
-| --- | --- | ---: |
-| `adapter-qwen-pilot-checkpoint-1000` | Qwen after one pass; also the continuation's parent | 445.41 MiB |
-| `adapter-qwen-continuation-checkpoint-3000` | Qwen after three passes, selected using validation | 445.41 MiB |
-| `adapter-gemma-dense-pilot-checkpoint-1000` | Dense Gemma after one pass | 467.14 MiB |
-| `adapter-gemma-moe-pilot-checkpoint-1000` | Gemma MoE after one pass | 297.85 MiB |
+| Adapter family | Checkpoints | Count | Weights and configuration per checkpoint |
+| --- | --- | ---: | ---: |
+| Qwen3.8-27B pilot | 200, 400, 600, 800, 1000 | 5 | 445.41 MiB |
+| Qwen3.8-27B continuation | 2000, 3000 | 2 | 445.41 MiB |
+| Gemma 4 31B dense pilot | 200, 400, 600, 800, 1000 | 5 | 467.14 MiB |
+| Gemma 4 26B-A4B MoE pilot | 200, 400, 600, 800, 1000 | 5 | 297.85 MiB |
 
-These are the four fine-tuned entries in the
-[final L1 comparison](../planning/fine-tuning-pilot-process.md#l1-only-test-results-october-15).
-Their weights total **1,736,233,072 bytes**; configurations add 13,844 bytes.
-This proposal does not designate any checkpoint as production-approved.
-[models.csv](models.csv) retains all 17 checkpoint identities and base revisions.
+Their weights total **7,280,022,320 bytes**; configurations add 65,449 bytes.
+[models.csv](models.csv) records all 17 exact checkpoint identities and base
+revisions; [bundle-files.csv](bundle-files.csv) identifies the weight/configuration
+pairs. Publication does not designate any checkpoint as production-approved.
+The [final L1 comparison](../planning/fine-tuning-pilot-process.md#l1-only-test-results-october-15)
+uses Qwen checkpoints 1000 and 3000 and each Gemma model's checkpoint 1000;
+the other evaluated checkpoints will also be published.
 
 Retain saved validation answers and available evaluations for **all 17** training
-checkpoints, including those whose weights are optional below. Qwen's pass-two
-test answers remain sealed/unreviewed and are outside this proposed publication;
+checkpoints. Qwen's pass-two test answers remain sealed/unreviewed and are outside
+this proposed publication;
 this does not exclude its validation results.
 
 All three pilots use the same 1,000 training, 100 validation and 200 test notes.
@@ -120,7 +123,7 @@ For repeating the recorded Qwen continuation, also retain checkpoint-1000's
 metadata. Inference does not read optimizer state. Portable inference and training
 instructions still need validation against the complete dependencies.
 
-## Optional weights and files to keep offline
+## Files proposed to stay offline
 
 These are proposed publication omissions, not deletion instructions. Keep the
 originals. Retain an otherwise omitted file whenever it is a required frozen
@@ -128,7 +131,6 @@ input or the only evidence explaining a result or failure.
 
 | Files | Existing size | Proposed treatment |
 | --- | ---: | --- |
-| Other 13 evaluated adapters: checkpoints 200/400/600/800 for each model, plus Qwen 2000 | **5.16 GiB** of weights | Optional downloads for readers who want to run intermediate stages. Keep their saved answers/evaluations online regardless |
 | Eight preparation adapters, at steps 1 and 3 | **3.23 GiB** | Keep weights offline; publish preparation measurements and relevant results. These checked GPU/numerical operation rather than model quality |
 | Other optimizer/training states, including preparation states | **19.17 GiB** | Keep offline unless resuming those additional checkpoints is a public requirement. Keep the Qwen continuation parent state above |
 | Routine `scheduling.jsonl` histories | **98.66 GiB** | Keep offline, except records supporting performance findings or otherwise unexplained failures |
@@ -265,8 +267,8 @@ guide, and link exact file versions and checksums from the GitHub index.
 
 ## Before downloads become available
 
-Agree the optional checkpoints and unresolved numerical evidence, then complete
-the exact input/producer selections. Review the selected contents
+Resolve the remaining evidence selection, particularly the clustering files,
+then complete the exact input/producer selections. Review the selected contents
 for sensitive information, and prepare the verification metadata. Then build
 and test one bundle at a time, with the original storage unavailable during
 the extraction test. Add URLs, archive checksums and measured download sizes

@@ -4,7 +4,8 @@ This index connects the research to its inputs and saved results, including
 unsuccessful trials and superseded approaches. Code and history will be published
 on GitHub; reusable models and datasets will be hosted on Hugging Face. The
 [publication proposal](downloads.md) lists what to include, why and its size.
-Exact contents remain under review; download links are not available yet.
+All 17 evaluated adapters are selected for publication; the remaining evidence
+selection is under review. Download links are not available yet.
 
 Start with the [37 official hierarchy runs](hierarchy.md). The index also covers
 four training runs, 17 adapter checkpoints, individual prompt jobs and older
@@ -95,10 +96,10 @@ Git blobs may also share a member; consumers retain their own source references.
 Content that has not been hashed is not assumed identical because its name or
 size matches another file.
 
-The [publication proposal](downloads.md) recommends used posts, saved inputs and
-results, evaluation evidence and four comparison adapters. It distinguishes
-optional intermediate weights, operational files proposed to stay offline and
-unresolved clustering evidence. [Bundle assignments](bundle-collections.csv)
+The [publication proposal](downloads.md) records the decision to publish all 17
+evaluated adapters and recommends used posts, saved inputs, results and evaluation
+evidence. It identifies operational files proposed to stay offline and unresolved
+clustering evidence. [Bundle assignments](bundle-collections.csv)
 still describe the broad candidate inventory; they have not been narrowed to
 that proposal. Complete input and producer dependencies need staged verification.
 Published versions, download URLs and checksums will be added for the files

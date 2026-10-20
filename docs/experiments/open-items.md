@@ -165,9 +165,9 @@ before packaging. Known credential containers were excluded from discovery;
 that is not a completed privacy review of the evidence.
 
 The [publication proposal](downloads.md) records the agreed GitHub/Hugging Face
-hosting division and recommends contents with their measured sizes. Exact
-selection remains open, including optional intermediate adapters and the large
-clustering files. The existing bundle tables still describe the broad inventory;
+hosting division and inclusion of all 17 evaluated adapters, with measured sizes.
+The remaining evidence selection is open, including the large clustering files.
+The existing bundle tables still describe the broad inventory;
 they do not select every listed file for publication.
 
 Finish source and original-producer selection from frozen plans and receipts,
