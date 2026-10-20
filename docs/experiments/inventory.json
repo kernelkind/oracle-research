@@ -1381,14 +1381,14 @@
     "format": "publication-dataset-v1",
     "source_artifact_root": "target/publication-exports",
     "source_export_checkpoint": "7bee4993",
-    "source_snapshot_sha256": "21f5db4dc83eb076c85fb9c8f4b2164b5c518f08ff8b487dd227803409643de3",
+    "source_snapshot_sha256": "8dee95dcde8067120b31fe32f6b4f32b8f8a099fcaffd8f7b1c2d089bcb258fc",
     "included_publications": 2989,
     "storage_catalog_rows": 2990,
     "index_rows": 2488,
     "standalone_prompt_studies": 2351,
     "files": 9686,
-    "bytes": 885017950,
-    "gzip_bytes": 162439616,
+    "bytes": 885002003,
+    "gzip_bytes": 162436389,
     "categories": {
       "evaluation-documents": {
         "bundles": 1,
@@ -1459,8 +1459,8 @@
       "historical-prompt": {
         "bundles": 41,
         "files": 205,
-        "bytes": 7013338,
-        "gzip_bytes": 1088837
+        "bytes": 6998667,
+        "gzip_bytes": 1086134
       },
       "standalone-prompt": {
         "bundles": 2351,
@@ -1472,7 +1472,7 @@
         "bundles": 35,
         "files": 175,
         "bytes": 2995458,
-        "gzip_bytes": 881984
+        "gzip_bytes": 881985
       },
       "representation": {
         "bundles": 11,
@@ -1483,8 +1483,8 @@
       "subject-mask": {
         "bundles": 123,
         "files": 615,
-        "bytes": 14109305,
-        "gzip_bytes": 2899941
+        "bytes": 14108029,
+        "gzip_bytes": 2899439
       },
       "hierarchy-inputs": {
         "bundles": 1,
@@ -1496,7 +1496,7 @@
         "bundles": 1,
         "files": 257,
         "bytes": 69890657,
-        "gzip_bytes": 14801574
+        "gzip_bytes": 14801551
       }
     },
     "excluded_unexecuted_preparations": 196,
@@ -1512,16 +1512,16 @@
     "shared_files": 256,
     "shared_bytes": 66448175,
     "dataset_manifest_bytes": 3442482,
-    "restored_source_bytes": 1144565744,
+    "restored_source_bytes": 1144549797,
     "original_sources_preserved": true,
     "new_inference": false,
     "uploads": false,
     "original_bytes_verified_on_reconstruction": true,
-    "privacy_review": "Pending",
+    "privacy_review": "Recorded second-review disclosures removed and independently verified locally; final release-content review and publication approval remain open",
     "historical_execution_evidence": "Local bound audit; private source paths are not uploaded",
     "generator_sources": {
       "sse_multivector/publication_dataset.py": "1a860b1f83fc2518b1812323869f3a16b11a0e8b45798b062d262ff1d14926bf",
-      "experiment-runner/experiment_runner/publication_dataset.py": "c24db5e9e742d180ee9f0243d1c193f1e33fc1bf2f3002d3c2348811bbaf3c62"
+      "experiment-runner/experiment_runner/publication_dataset.py": "63e89dba5e09149a24a430f39ea7987e6380a922a196ba422c16b4f13b339308"
     },
     "tests_passed": {
       "shared_runner": 25,
@@ -1553,7 +1553,28 @@
         "numerical_construction": "not_run"
       }
     },
-    "previous_preparation_peak_rss_kib": 108516
+    "previous_preparation_peak_rss_kib": 108516,
+    "privacy_rebuild": {
+      "state": "Regenerated, natively verified, independently reviewed and installed locally; not uploaded",
+      "affected_compact_exports": 76,
+      "changed_restored_files": 115,
+      "unchanged_restored_files": 9314,
+      "unchanged_shared_shards": 256,
+      "unchanged_shared_values": 58232,
+      "original_sources_preserved": true,
+      "saved_answers_and_scientific_settings_preserved": true,
+      "scientific_numeric_measurements_preserved": true,
+      "exporter_regression_and_integration_tests_passed": 110,
+      "dataset_manifest_sha256": "6e647b4efac070a06230067035b27f6a50db3421b686c3bd5ecabf4b7943f1f9",
+      "exporter_code_revision": "662c87ca6e8004cedfcb781a3f7df697339050c8",
+      "new_inference": false,
+      "uploads": false,
+      "final_native_verification_passed": true,
+      "independent_privacy_and_preservation_review_passed": true,
+      "original_source_files_rehashed": 2458,
+      "original_source_files_unchanged": true,
+      "initial_73_exports_jsonl_rows_preserved": 3513
+    }
   },
   "privacy_history_rewrite": {
     "state": "Verified locally; publication and review of other assets remain open",
@@ -1569,6 +1590,31 @@
     "bundled_commit_map": "docs/experiments/commit-map.txt",
     "bundled_commit_map_sha256": "35500c8e566456a53bb38386aa2d4e3b841bc0187a3d0f73125fbf9e44d693e5",
     "prior_commit_mapping_composed": true,
+    "private_originals_preserved": true,
+    "runner_history_rewritten": false,
+    "uploads": false
+  },
+  "privacy_followup_rewrite": {
+    "state": "Verified and installed locally; final release-content review and publication approval remain open",
+    "original_head": "fc441f36cdca4c7d096694285a22d2eee131549a",
+    "rewritten_head": "041c9a7d790d078f91d74373d6a71c6997b7b74b",
+    "scope": "Reviewed copied account-wide finances, actual private account and infrastructure administration, private tool-session identifiers, and provider activity identifiers in selected exports",
+    "original_commits": 3043,
+    "retained_commits": 3042,
+    "newly_empty_commits_removed": 1,
+    "meaningful_merges_retained": 397,
+    "originally_empty_research_milestones_retained": 11,
+    "reviewed_blob_replacements": 2005,
+    "changed_retained_commit_messages": 43,
+    "every_original_public_tree_verified": true,
+    "retained_authors_committers_dates_preserved": true,
+    "parent_order_and_nonredundant_ancestry_preserved": true,
+    "tag_preserved": true,
+    "replaced_private_objects_absent_from_publication_store": true,
+    "bundled_commit_map": "docs/experiments/commit-map.txt",
+    "bundled_commit_map_sha256": "3c3b615ba6b71e4290a6d6c03fee35f003b76ad9f522aa680769d91cc060ef4a",
+    "composed_source_aliases": 9219,
+    "prior_history_records_preserved": true,
     "private_originals_preserved": true,
     "runner_history_rewritten": false,
     "uploads": false

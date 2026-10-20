@@ -12,7 +12,7 @@ is complete; privacy and identity review remains open.
 | --- | --- |
 | GitHub | Code and its history, tests, prompts and their provenance, authored findings, useful documentation, the selected-study index and commit mapping; download size unmeasured |
 | Hugging Face Models | All 17 evaluated adapters, with configurations and pinned base-model references: **6.78 GiB** |
-| Hugging Face Datasets | Posts actually used, prepared training data, selected starting subjects, final unsigned hierarchies, standalone prompt answers, evaluation results, final numerical results and parameters: **844.02 MiB (0.82 GiB) prepared locally**, with repeated content stored once |
+| Hugging Face Datasets | Posts actually used, prepared training data, selected starting subjects, final unsigned hierarchies, standalone prompt answers, evaluation results, final numerical results and parameters: **844.00 MiB (0.82 GiB) prepared locally**, with repeated content stored once |
 
 The GitHub index will link each experiment to its inputs and results at exact
 Hugging Face revisions, with checksums. Readers should be able to download the
@@ -188,10 +188,10 @@ The category sizes below exclude content charged once to the shared row.
 | --- | ---: | ---: |
 | Standalone prompt studies: inputs, final answers and reviews | 2,351 entries, including three execution-unknown snapshots | 145.09 MiB |
 | Historical subject-prompt studies: posts, answers, assessments and measurements | Four studies, 78 calls and 10 distinct posts | 0.36 MiB |
-| Additional historical subject/mask evidence: inputs, answers, assessments, corrections and parameters | Six collections, 123 study/review entries and 1,965 saved responses | 13.46 MiB |
+| Additional historical subject/mask evidence: inputs, answers, assessments, corrections and parameters | Six collections, 123 study/review entries and 1,965 saved responses | 13.45 MiB |
 | Early/standalone prompt and manual prominence evidence | 22 collections, 24 entries and 514 saved final answers | 2.33 MiB |
 | Historical title/description studies: inputs, answers, recorded reviews, final selections and parameters | 35 collections, 556 saved answers and 24 failed attempts | 2.86 MiB |
-| Frontier model comparisons: answers, inputs, parameters, reviews and measurements | 13 entries, 233 completed answers and three saved partial answers | 4.00 MiB |
+| Frontier model comparisons: answers, inputs, parameters, reviews and measurements | 13 entries, 233 completed answers and three saved partial answers | 3.98 MiB |
 | SSE representation studies: final comparisons, fixed inputs and encoder settings | 11 collections, 381 encoded row identities | 0.84 MiB |
 | ASv6.100 evaluation documents | Final quality summary and four frozen agent rubrics, shared by three trials | 0.09 MiB |
 | Fine-tune, grading and effort evaluations | 67 final/last reports, including 20 validation stages | 418.56 MiB |
@@ -201,22 +201,23 @@ The category sizes below exclude content charged once to the shared row.
 | Used posts, prepared training inputs, manual reference fixtures and adapter hash records | 10,571 shared posts, four prepared files, two reference fixtures, split/settings records and 17 adapter bindings | 67.89 MiB |
 | HR36 starting subjects | 1,000 ordered posts; 25,258 local entries, including 5,378 top-level subjects | 4.76 MiB |
 | Shared content and dataset manifest | 256 shared files plus `dataset.json` | 66.65 MiB |
-| **Physical dataset files** | **9,686 files** | **844.02 MiB (0.82 GiB)** |
+| **Physical dataset files** | **9,686 files** | **844.00 MiB (0.82 GiB)** |
 | **All 17 evaluated adapters, weights and configurations** | **34 original files, hashed without copying weights** | **6.78 GiB** |
 
-The exact physical dataset total is **885,017,950 bytes**, including the
+The exact physical dataset total is **885,002,003 bytes**, including the
 **3,442,482-byte** dataset manifest. Together with the unchanged adapter files,
-it is **8,165,105,719 bytes (7.60 GiB)**. Code and cleaned Git history are additional.
-Measured per-file gzip level-6 compression totals **162,439,616 bytes
+it is **8,165,089,772 bytes (7.60 GiB)**. Code and cleaned Git history are additional.
+Measured per-file gzip level-6 compression totals **162,436,389 bytes
 (154.91 MiB)**; no compressed downloads were created.
 
 The package includes 9,429 original compact-export paths, 256 shared files and
 the manifest. It excludes 196 proven unexecuted preparations: 588 source-export
 files totaling 38,541,051 bytes. Three ambiguous snapshots remain included.
-The included original compact files total 1,144,565,744 bytes before sharing.
+The included original compact files total 1,144,549,797 bytes before sharing.
 HR36's two starting-input files were added after the original export checkpoint;
-all previously included payloads and metadata remain byte-exact. Sharing reduces
-raw size much more than compressed size.
+that addition preserved the earlier payloads. A later privacy review rebuilt
+76 affected exports while preserving original research evidence privately.
+Sharing reduces raw size much more than compressed size.
 
 ### Original export checkpoints
 
@@ -232,8 +233,8 @@ directly; they have no `experiment.json` wrapper. The six existing ASv6.100 nati
 bundles retain the 180 answers and reviews, and their study-index notes link
 these shared documents. No additional trial or duplicated answer bundle is added.
 
-The six subject/mask collections add **615 files, 14,109,305 bytes**, or
-**2,899,941 bytes** measured with gzip level 6. They preserve exact saved answers
+The six subject/mask collections add **615 files, 14,108,029 bytes**, or
+**2,899,439 bytes** measured with gzip level 6. They preserve exact saved answers
 and recorded methods, assessments, corrections and user decisions. Reused answers
 remain identifiable; the 1,965 responses are not a count of independent calls.
 The four previously selected studies and existing ASv6.100 evidence are not

@@ -1296,6 +1296,17 @@ unchanged. Nothing has been uploaded; publication privacy review remains open.
 
 ### Frontier comparison checks
 
+The follow-up privacy review rebuilt 76 subject, frontier, title-audit,
+prominence, mask and standalone exports. Their source bindings, saved answers
+and scientific measurements were checked against the private originals. Frontier metadata uses reviewed,
+hash-bound field selections in the maintained specification. Each selected
+record lists its retained paths in `source.fields`; omitted array positions stay
+`null` so original indices remain stable. This distinguishes selection from an
+original recorded null. Transport failures retain codes and classified failure
+details, without raw account-policy diagnostics. Per-experiment costs and usage
+remain; cumulative account bookkeeping and provider activity IDs are excluded.
+The corrected exporters pass 110 relevant regression and integration tests.
+
 The [frontier selection](../../sse_multivector/experiment_specs/frontier-study-publication-v1.json)
 names 13 entries from one historical collection: compatibility tests, subject
 comparisons, recorded completion variants, a mask-cost study and the interim
@@ -1314,7 +1325,7 @@ python sse_multivector/experiment.py export-evaluation-results \
 Other study IDs are exact keys in the selection's `studies` object. This command
 performs no model calls.
 
-The **65 files total 4,193,178 bytes**, or **627,081 bytes** with gzip level 6.
+The **65 files total 4,178,196 bytes**, or **624,335 bytes** with gzip level 6.
 They retain **233 completed raw answers**, three partial strings from failed
 attempts, 73 recorded failed attempts and 17 outcomes absent from their individual
 frozen runs. Later continuations remain separate; an absent result in an initial
@@ -1474,8 +1485,10 @@ Each entry contains `experiment.json`, `inputs.jsonl`, `answers.jsonl`,
 referenced within the entry rather than expanding every request. Raw answers
 retain their exact strings and hashes; separately parsed answers keep their
 source binding. Scientific parameters retain recorded ordering, normalization,
-isolation, repeat/reuse policies and execution limits. Credentials, account
-locations, private execution identifiers and transport logs are excluded.
+isolation, repeat/reuse policies and execution limits. Export metadata omits
+the reviewed credential fields, account locations, private execution identifiers
+and raw transport logs. Saved answer bodies remain verbatim; final review of
+the selected contents remains open.
 
 The 197 scientific assessment, comparison, measurement and correction records
 remain separate from two explicit user rejections. Undecided subjects acquire
@@ -1507,7 +1520,7 @@ PYTHONPATH=.:sse_multivector python -m unittest \
 ```
 
 All 123 real-file commands also pass under a 512 MiB worker address-space limit.
-Their 615 files total 14,109,305 bytes (2,899,941 bytes with gzip level 6).
+Their 615 files total 14,108,029 bytes (2,899,439 bytes with gzip level 6).
 Every declared source and payload hash matches. All 3,266 selected original
 files retain their bytes, hashes, modes and modification times. This verifies
 the selected saved evidence; it does not re-evaluate scientific quality or

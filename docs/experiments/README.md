@@ -167,7 +167,7 @@ Hugging Face Models will host all 17 evaluated
 adapters (6.78 GiB). Hugging Face Datasets will host used posts, prepared training
 data, selected starting subjects, final unsigned hierarchies, standalone prompt
 answers, evaluation and numerical results, and each experiment's parameters.
-The prepared shared dataset measures 844.02 MiB (0.82 GiB). The preserved source
+The prepared shared dataset measures 844.00 MiB (0.82 GiB). The preserved source
 exports measured 1.10 GiB
 before exclusions and sharing; that is not the upload size.
 
@@ -209,13 +209,16 @@ replay scripts still require original artifacts; their
 remains open. The four located ASv6.26–ASv6.28 reports and their selected compact
 results are now included; broader historical conversion gaps remain explicit.
 
-Reviewed personal account telemetry and billing records are excluded from this
-Git history. Reviewed identifying account and rental metadata has also been
-removed from research records and replaced with synthetic values in test fixtures. The
-commit mapping includes both history cleanups; revisions removed solely for
+The reviewed account bookkeeping, private account and infrastructure
+administration, and tool-session identifiers have been removed throughout the
+publication history. The affected compact exports were rebuilt through corrected
+exporters; measured experiment costs, scientific settings, failures and raw
+answers were preserved. Original records remain private. The bundled commit map
+composes the generated-data and privacy rewrites; revisions removed solely for
 private content resolve to the same public source state in their retained
 ancestor. The real spending ledger stays private; offline budget tests use
-`tests/fixtures/budget-ledger.json`.
+`tests/fixtures/budget-ledger.json`. Final review of the release contents and
+publication approval remain open.
 
 Generation commits, later audit/export commits and the publication commit serve
 different purposes. Their original IDs remain in the evidence. The

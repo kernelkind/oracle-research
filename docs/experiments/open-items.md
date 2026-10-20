@@ -315,7 +315,7 @@ describe the exact selection. Final publication privacy review remains open.
 ### Selected subject/mask evidence
 
 The six subject/mask collections now link 123 additional study/review entries:
-**615 files, 14,109,305 bytes (13.46 MiB)**, or **2,899,941 bytes (2.77 MiB)**
+**615 files, 14,108,029 bytes (13.45 MiB)**, or **2,899,439 bytes (2.77 MiB)**
 measured with gzip level 6. Their 1,965 exact saved responses remain bound to
 used inputs, prompts, receipts and recorded settings. Saved reuse and independent
 trials remain distinguishable; the response total is not a fresh-call count.
@@ -327,8 +327,9 @@ separate. The four previously selected subject studies, ASv6.100's 180 native
 answers and its five evaluation documents remain linked without duplication.
 
 The [shared offline command](reproduce.md#historical-subject-and-mask-study-checks)
-checks exact source hashes and preserves scientific methods while excluding
-credentials, account locations and private execution identifiers. All 85 relevant
+checks exact source hashes and preserves scientific methods. Export metadata
+omits the reviewed credential fields, account locations and private execution
+identifiers; saved answer bodies remain verbatim. All 85 relevant
 tests pass. All 123 real-file exports also pass under a 512 MiB worker address-space
 limit. The 3,266 selected source files (57,992,724 bytes) retain their bytes,
 hashes, modes and modification times. No models ran and nothing was uploaded.
@@ -524,7 +525,7 @@ before packaging. Known credential containers were excluded from discovery;
 that is not a completed privacy review of the evidence.
 
 The [publication plan](downloads.md#measured-local-exports) measures the prepared
-shared dataset: **844.02 MiB (0.82 GiB)**, plus the unchanged **6.78 GiB** for all
+shared dataset: **844.00 MiB (0.82 GiB)**, plus the unchanged **6.78 GiB** for all
 17 evaluated adapters. [Publications](publications.csv), [upload files](publication-files.csv)
 and [checksums](publication.sha256) describe the physical selection. The preserved
 1.10 GiB compact-export checkpoint and 534.71 GiB working-source inventory are
@@ -534,8 +535,9 @@ Packaging excludes 196 preparations proven never executed and retains three
 ambiguous snapshots. It stores repeated content once and verifies exact
 reconstruction of every included compact file. All 34 relevant tests pass;
 the complete local preparation and verification succeeded under a 512 MiB
-address-space limit. All 10,015 checkpoint export files remain unchanged;
-HR36's two starting-subject input files were added separately.
+address-space limit. The original checkpoint files are preserved privately; a
+later privacy review rebuilt 76 affected exports. HR36's two starting-subject
+input files were added separately.
 The [reader commands](reproduce.md#check-the-converted-local-selection) restore
 compact exports, not native run directories. Hosted reader tests remain open.
 The HR36 examples now prepare directly from restored selected posts and saved
@@ -595,8 +597,12 @@ Before publication:
   the original ASv6.100 instruction. Its syntax and source calls are checked;
   hosted downloads and fresh GPU execution remain open.
 
-The generated-data rewrite is complete. Final privacy and identity review
-remains before publication; any further history cleanup needs its own approval.
+The generated-data rewrite and the approved follow-up privacy cleanup are
+complete locally. The follow-up removed copied account bookkeeping, private
+account and infrastructure administration, and tool-session identifiers from
+history and selected exports. Measured experiment costs, settings, raw answers
+and scientific failures were preserved. Final release-content review and
+publication approval remain open; further history changes need approval.
 Repeat publication checks against the final contents, preserving original
 generation IDs and an old-to-new mapping across any further rewrite. Preserve
 original working artifacts locally; complete native receipt packages are not a
