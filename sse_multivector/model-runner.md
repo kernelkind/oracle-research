@@ -2240,6 +2240,9 @@ binds exact original sources, prompts and input conditions. This publisher path
 checks saved requests and receipts, preserves recorded assessments and reuse,
 and excludes private execution settings. See the
 [commands and checks](../docs/experiments/reproduce.md#historical-title-study-checks).
+The 11 selected SSE representation diagnostics use
+`export-numerical-results SOURCE --family representation --output OUTPUT`;
+see the [saved-layout commands and checks](../docs/experiments/reproduce.md#sse-representation-study-checks).
 Remaining historical conversions and public download verification remain
 unfinished. The signed export below retains its existing
 behavior.

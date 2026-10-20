@@ -217,10 +217,10 @@
   "compact_exports": {
     "state": "Local selected compact exports; not uploaded or approved for publication",
     "artifact_root": "target/publication-exports",
-    "publications": 2977,
-    "files": 9002,
-    "bytes": 1121672021,
-    "gzip_bytes": 157656076,
+    "publications": 2988,
+    "files": 9035,
+    "bytes": 1122552402,
+    "gzip_bytes": 157802778,
     "gzip_method": "Measured gzip level 6 per staged file, in memory; no compressed downloads created",
     "categories": {
       "comparison": {
@@ -306,12 +306,18 @@
         "files": 165,
         "bytes": 2717003,
         "gzip_bytes": 818640
+      },
+      "representation": {
+        "bundles": 11,
+        "files": 33,
+        "bytes": 880381,
+        "gzip_bytes": 146702
       }
     },
-    "gaps": 78,
+    "gaps": 67,
     "gap_status_counts": {
       "unsupported": 33,
-      "legacy_export_needed": 44,
+      "legacy_export_needed": 33,
       "missing": 1
     },
     "native_status_counts": {
@@ -323,10 +329,10 @@
     },
     "adapter_checkpoints": 17,
     "adapter_weight_and_config_bytes": 7280087769,
-    "combined_staged_and_model_bytes": 8401759790,
+    "combined_staged_and_model_bytes": 8402640171,
     "oracle_export_commit": "fcfd4cabcba7102aab81dcffec018c00b4498a55",
     "runner_export_commit": "34d7eb79dc714275145a983ffeb42ddcddc42561",
-    "export_commit_scope": "These commits identify the original selection before historical_study_backfill; the four added bundles bind their exporter source separately by SHA-256. The later original Markdown documents are bound directly by source hashes and file checksums. Each title-study export separately binds its publisher and input-validation code hashes.",
+    "export_commit_scope": "These commits identify the original selection before historical_study_backfill; the four added bundles bind their exporter source separately by SHA-256. The later original Markdown documents are bound directly by source hashes and file checksums. Each title-study export separately binds its publisher and input-validation code hashes. Representation exports separately bind their adapter source hash and preserve exact native scientific JSON values.",
     "source_originals_preserved": true,
     "fresh_model_inference": false,
     "uploads": false,
@@ -473,23 +479,49 @@
       "source_originals_preserved": true,
       "fresh_model_inference": false,
       "uploads": false
+    },
+    "historical_representation_study_backfill": {
+      "baseline_commit": "7907d4aa684bbda54bfca2eef53121185064353d",
+      "family": "representation",
+      "format": "numerical-publication-v1",
+      "studies": 11,
+      "files": 33,
+      "bytes": 880381,
+      "gzip_bytes": 146702,
+      "encoded_vector_rows": 381,
+      "scientific_outcomes": {
+        "did_not_pass": 5,
+        "passed": 6
+      },
+      "primary_compound_matrix_cells": 2025,
+      "primary_compound_matrix_precision": "original saved CSV decimal strings",
+      "source_files_unchanged": 99,
+      "source_bytes_unchanged": 2575740,
+      "maximum_worker_peak_rss_KiB": 28852,
+      "worker_address_space_limit_bytes": 536870912,
+      "checks_passed": 40,
+      "subject_generation": "not_applicable; manually supplied text spans",
+      "context_request_binding": "original fixture/source-note hashes verified; request hash agrees across original records; compiled request bytes absent, not reconstructed",
+      "source_originals_preserved": true,
+      "fresh_model_inference": false,
+      "uploads": false
     }
   },
   "discovery_scope": "Top-level discovery counts and follow-ups describe the original local audit; public_index and compact_exports describe the selected public evidence.",
   "public_index": {
     "state": "Selected-study index; exhaustive original audit preserved locally",
     "source_commit": "1f3d541caec8574d1db6a61089f99b9d55863113",
-    "studies": 2632,
+    "studies": 2643,
     "studies_by_kind": {
-      "historical collection": 40,
+      "historical collection": 51,
       "native": 2547,
       "official hierarchy": 37,
       "training run": 4,
       "historical prompt study": 4
     },
-    "selection": "Original selected rows retain study identities, settings and order; 33 later-selected historical title collections are appended from the original index, alongside four later-located historical subject-prompt studies. Six ASv6.100 native rows also link shared final evaluation documents.",
+    "selection": "Original selected rows retain study identities, settings and order; 33 later-selected historical title collections and 11 SSE representation collections are appended from the original index, alongside four later-located historical subject-prompt studies. Representation rows identify manual spans/local SSE explicitly. Six ASv6.100 native rows also link shared final evaluation documents.",
     "original_index_rows": 27193,
-    "omitted_internal_and_other_unselected_rows": 24565,
+    "omitted_internal_and_other_unselected_rows": 24554,
     "remaining_reviews": "publication-gaps.csv",
     "local_audit": {
       "root": "target/publication-audit/index-before-simplification-1f3d541c",
@@ -691,6 +723,6 @@
     "uploads": false,
     "privacy_review": "Still pending for actual publication contents",
     "remaining_items": "publication-gaps.csv",
-    "status_scope": "Snapshot at baseline_commit before ASv6.100 document selection and title-study backfill; see compact_exports.asv6_100_evaluation_documents and compact_exports.historical_title_study_backfill for current resolutions"
+    "status_scope": "Snapshot at baseline_commit before ASv6.100 document selection and title/representation backfills; see compact_exports.asv6_100_evaluation_documents, historical_title_study_backfill and historical_representation_study_backfill for current resolutions"
   }
 }

@@ -22,7 +22,7 @@ else:
 
 FORMAT = 'numerical-publication-v1'
 FAMILIES = ('geometric', 'fuzzy', 'hidef', 'merge-rule', 'comparison', 'performance',
-            'fine-region', 'pair-scores')
+            'fine-region', 'pair-scores', 'representation')
 _CONFIG = {'run_id', 'method', 'config', 'parameters', 'sources', 'code', 'python',
     'numpy', 'dependencies', 'source_code_sha256', 'graph_policy_source_sha256',
     'dependency_lock_sha256', 'vector_count', 'dimensions', 'canonical_order_sha256',
@@ -777,7 +777,13 @@ def export_results(source, output=None, family=None, *, source_values=None):
         experiment_id=source.name, status='not_recorded', sources={},
         exporter_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest())
     sources = _Sources(metadata, source_values)
-    if family in ('geometric', 'fuzzy', 'hidef', 'pair-scores'):
+    if family == 'representation':
+        if __package__:
+            from .representation_publication import export_records
+        else:
+            from representation_publication import export_records
+        results, inputs = export_records(sources, source, metadata)
+    elif family in ('geometric', 'fuzzy', 'hidef', 'pair-scores'):
         adapter = {'geometric': _geometric, 'fuzzy': _fuzzy, 'hidef': _hidef,
                    'pair-scores': _pair_scores}[family]
         results, inputs = adapter(sources, source, metadata)

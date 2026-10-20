@@ -49,9 +49,9 @@ remain historical evidence; raw source posts are not deprecated by that rule.
   ASv6.100's final quality summary and four frozen agent rubrics are selected as
   original Markdown; the [study record](../../sse_multivector/subject-prompt-goal-v1/asv6.100-generalization-v1/README.md#publication-files)
   identifies their paths alongside the six existing answer/review bundles.
-- [Experiments](experiments.csv): 2,632 entries linked to selected results:
+- [Experiments](experiments.csv): 2,643 entries linked to selected results:
   2,547 standalone prompt preparations, 37 official hierarchy runs, four training
-  runs, 40 historical collections and four later-located historical prompt
+  runs, 51 historical collections and four later-located historical prompt
   studies. These are different kinds of entries,
   not an additive count of independent experiments. Prompt IDs, model settings,
   case counts, provenance and plan/manifest identities are preserved. The
@@ -62,6 +62,9 @@ remain historical evidence; raw source posts are not deprecated by that rule.
   saved answers, recorded reviews and final selections. Their 24 failed attempts
   and reused answers remain distinguishable; see the
   [publication checks](reproduce.md#historical-title-study-checks).
+  Eleven SSE representation studies also retain their final numerical comparisons
+  and fixed inputs; these used manually supplied spans, without subject or mask
+  prompt generation. See the [representation checks](reproduce.md#sse-representation-study-checks).
 - [Hierarchy runs](hierarchy.csv): recorded outcomes, generator versions, corpus
   identities and original generation code versions for each run. Status and
   input/output counts are transcribed from the comparison workbook; they have

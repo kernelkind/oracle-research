@@ -621,7 +621,7 @@ def add_commands(commands):
     p = commands.add_parser('export-numerical-results', help='export supported final numerical groups, graphs or measurements; no inference')
     p.add_argument('source', type=Path)
     p.add_argument('--family', choices=('geometric', 'fuzzy', 'hidef', 'merge-rule',
-                                      'comparison', 'performance', 'fine-region', 'pair-scores'))
+                                      'comparison', 'performance', 'fine-region', 'pair-scores', 'representation'))
     p.add_argument('--output', type=Path)
     p = commands.add_parser('summarize-experiments', help='summarize native saved usage across experiments; no inference')
     p.add_argument('--spec', type=Path, required=True)

@@ -161,14 +161,13 @@ one is a proposal whose inputs duplicate its executed sibling. The executed
 sibling still needs an export. This resolves those collection-level gaps; it
 does not resolve the separate placement review of the 196 ambiguous Git files.
 
-The 33 HDB title/description groups are now selected as described below. The
-remaining **44 groups need final-evidence exports**:
+The 33 HDB title/description groups and 11 SSE representation studies are now
+selected as described below. The remaining **33 groups need final-evidence exports**:
 
 | Collections | Groups | Evidence to retain |
 | --- | ---: | --- |
 | Atomic subject and subject/mask goal studies | 6 | Missing final answers, assessments and measurements; four previously selected studies remain covered |
 | Other standalone prompt studies | 22 | Early title/mask trials, mask comparisons and three manual prominence studies; retain partial results and distinguish reused answers |
-| SSE representation diagnostics | 11 | Final numerical comparisons and decisions with their fixed inputs and parameters |
 | Real-note, hierarchy-title and frontier studies | 4 | Final segment selections, title answers and judgments, model comparisons and recorded reviews |
 | Archived baselines | 1 | Four CREC119 answer/segment files and two geometry diagnostics; the TEv4.1 answers are already covered by selected inputs |
 
@@ -201,8 +200,9 @@ erase successful individual responses in a partial run. Preserve actual user
 decisions separately from agent assessments.
 
 The review itself made no additional exports or changes to original records.
-The five ASv6.100 documents and the 33 title/description study groups were selected
-afterward; the [measured totals](downloads.md#measured-local-exports) include them. The
+The five ASv6.100 documents, 33 title/description study groups and 11 SSE
+representation studies were selected afterward; the
+[measured totals](downloads.md#measured-local-exports) include them. The
 remaining-items table names concrete export requirements rather than treating
 every old directory as an unexamined missing dataset.
 
@@ -230,6 +230,35 @@ bytes, retain their original bytes, modes and modification times. Worker peak
 memory was about 31 MiB under a 512 MiB address-space limit. No models were run
 and nothing was uploaded. Privacy review and the remaining historical formats
 remain open.
+
+### Selected SSE representation evidence
+
+The 11 SSE representation studies now have local publication files under
+`representations/`: **33 files, 880,381 bytes (0.84 MiB)**, or **146,702 bytes
+(0.14 MiB)** measured with gzip level 6. They retain their original final
+comparisons and outcomes: six studies passed their frozen criteria and five did
+not. Their fixed inputs
+include controlled fixtures, manually supplied text spans and source-post
+provenance. No subject or mask prompt generated these inputs, so AS version
+classification is not applicable. They remain historical diagnostic evidence.
+
+The compound-subject study retains its required full 45-by-45 cosine table.
+The other studies retain their saved comparisons, rankings, medians and verdicts;
+raw vectors and duplicate all-pairs CSV views are excluded. Existing scientific
+interpretations remain in Git unchanged. A modified fixture derived from a real
+post retains its own encoded-input identity separately from the source post.
+
+For the context-counterfactual study, the original fixture hash is verified and
+the recorded worker-request hash agrees across the analysis, manifest and
+receipt. The original compiled worker-request bytes are absent, so this does
+not claim to have reconstructed that hash. See the
+[publication commands and checks](reproduce.md#sse-representation-study-checks).
+
+All 40 relevant tests and all 11 real-file publication commands pass. Independent
+checks preserve all 381 encoded identities, every native result value and all
+2,025 compound-matrix cells. The 99 original files, totaling 2,575,740 bytes,
+retain their hashes, bytes, modes and modification times. Workers peaked at about
+28 MiB under a 512 MiB address-space limit. No models were run or files uploaded.
 
 ## Current Oracle/runner compatibility
 

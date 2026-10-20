@@ -439,7 +439,7 @@ experiment/source identities. [Publication files](publication-files.csv) records
 every path, byte count and SHA-256 beneath `target/publication-exports/`.
 These paths describe local staging, not an available download.
 
-With the `ORACLE_ROOT` setup above, verify all 9,002 selected files:
+With the `ORACLE_ROOT` setup above, verify all 9,035 selected files:
 
 ```bash
 cd "$ORACLE_ROOT/target/publication-exports"
@@ -574,7 +574,7 @@ its machine-specific deployment commands are not a ready-to-run public recipe.
 
 ## Other experiments and moved files
 
-The [study index](experiments.csv) contains 2,632 selected entries: standalone
+The [study index](experiments.csv) contains 2,643 selected entries: standalone
 prompt preparations, official hierarchy runs, training runs, historical collections
 and the four located historical subject-prompt studies.
 It records saved plan identities and prompt/model settings.
@@ -751,8 +751,8 @@ were preserved, and nothing was uploaded.
 
 ### Historical backfill checks
 
-The current local selection contains **2,977 output/input directories and 9,002
-files**, totaling **1,121,672,021 bytes**. Every listed file was independently
+The current local selection contains **2,988 output/input directories and 9,035
+files**, totaling **1,122,552,402 bytes**. Every listed file was independently
 rehashed. Structured payload bindings were checked against their export manifests;
 the five original ASv6.100 Markdown documents match their recorded source hashes.
 Exact prepared-input copies were also checked against their frozen source hashes.
@@ -824,3 +824,56 @@ All 33 real-file exports also pass with a 512 MiB address-space limit and about
 these exports retain their bytes, modes and modification times. No new model
 answers, user decisions or semantic judgments were created. All output hashes
 and sizes are listed in [publication files](publication-files.csv).
+
+### SSE representation study checks
+
+These 11 historical studies used manually supplied text spans to test SSE
+representations. Their original final comparisons, recorded outcomes, fixed
+inputs and encoder settings are selected under `representations/`. No automatic
+subject or mask generation was involved; AS version classification does not
+apply.
+
+A publisher with the original saved study layout can prepare these files
+without inference:
+
+```bash
+cd "$ORACLE_ROOT"
+python sse_multivector/experiment.py export-numerical-results \
+  sse_multivector/mask-fidelity-location-v1 \
+  --family representation \
+  --output target/representation-results
+```
+
+Use the study directory containing `experiment.json` and `worker-input.json`,
+rather than its `result/` subdirectory. The context-counterfactual study instead
+uses `sse_multivector/context-counterfactual-result-v1` and its original sibling
+fixture and source-note files. A clean checkout or selected download alone does
+not contain the complete original source layout.
+
+The three output files are `experiment.json`, `inputs.jsonl` and `results.jsonl`.
+They retain native result values, including failed scientific comparisons,
+without rerunning the encoder or assessing the results again. The compound
+study's complete cosine table is a required measured result; raw vectors,
+token-index diagnostics and duplicate CSV views are excluded.
+
+The context fixture hash is checked against the saved records. Its worker-request
+hash is checked for agreement across the analysis, manifest and receipt; the
+missing compiled request bytes prevent recomputing that hash. Recorded review
+and authorization fields describe the saved study and grant no new approval.
+
+All 40 representation, numerical-publication and publication-workflow tests pass:
+
+```bash
+cd "$ORACLE_ROOT"
+PYTHONPATH=.:sse_multivector python -m unittest \
+  sse_multivector.test_representation_publication \
+  sse_multivector.test_numerical_publication \
+  sse_multivector.test_publication_workflow
+```
+
+The 11 real-file publication commands also pass under a 512 MiB address-space
+limit, with about 28 MiB peak resident memory. The selected 33 files total
+880,381 bytes (146,702 bytes with gzip level 6). Independent checks match every
+native analysis, proposal/fixture and saved worker input, all 381 encoded row
+identities and all 2,025 compound-matrix cells. All 99 original files retain
+their bytes, hashes, modes and modification times. No encoder or model ran.
