@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "studies": {
+    "multicore-numerical-replay-v1": {
+      "profile": "performance-study",
+      "kind": "numerical-equivalence",
+      "reports": [
+        {
+          "id": "multicore-numerical-replay-v1",
+          "path": "target/multicore-numerical-replay-v1/numerical-equivalence.json",
+          "sha256": "310b8972c3d2e4b3d042d8025e9a8a93b78aa55f36e4b90740f196c4f31db1f4"
+        }
+      ],
+      "limitations": [
+        "Recorded offline runtime/equivalence evidence; no semantic quality or current-pipeline approval is implied.",
+        "Exact executable/request/hardware bindings are not fully present in these small final reports. Recorded timing qualifications and source hashes remain unchanged.",
+        "The prior check replacing only one changed source hash was superseded by this final two-source normalization; it is not a separate failed numerical experiment."
+      ]
+    },
+    "multicore-numerical-replay-v2": {
+      "profile": "performance-study",
+      "kind": "numerical-runtime-equivalence",
+      "reports": [
+        {
+          "id": "multicore-numerical-replay-v2",
+          "path": "target/multicore-numerical-replay-v2/equivalence.json",
+          "sha256": "64153e468ddf36f57eea47ac592f3fbf94d070ff43b79481b7a0a89871ccdf7a"
+        }
+      ],
+      "limitations": [
+        "Recorded offline runtime/equivalence evidence; no semantic quality or current-pipeline approval is implied.",
+        "Exact executable/request/hardware bindings are not fully present in these small final reports. Recorded timing qualifications and source hashes remain unchanged."
+      ]
+    },
+    "multicore-validation-replay-v1": {
+      "profile": "performance-study",
+      "kind": "validation-equivalence",
+      "reports": [
+        {
+          "id": "multicore-validation-replay-v1",
+          "path": "target/multicore-validation-replay-v1/equivalence.json",
+          "sha256": "f3b65f71ae3c3c2a4e2045cb19f188011d2a165b23bf94f69e942ee9ac59c17c"
+        }
+      ],
+      "limitations": [
+        "Recorded offline runtime/equivalence evidence; no semantic quality or current-pipeline approval is implied.",
+        "Exact executable/request/hardware bindings are not fully present in these small final reports. Recorded timing qualifications and source hashes remain unchanged."
+      ]
+    },
+    "concurrency-benchmark-v1": {
+      "profile": "performance-study",
+      "kind": "learning-concurrency",
+      "reports": [
+        {
+          "id": "concurrent-v2-ettin1b",
+          "path": "target/concurrency-benchmark-v1/concurrent-v2-ettin1b/report.json",
+          "sha256": "4eaec3e77f4b7f3a7a4b79515e87437f988cd1e79f5483ce85ffdf1a83250a3c"
+        },
+        {
+          "id": "concurrent-v2-qwen27",
+          "path": "target/concurrency-benchmark-v1/concurrent-v2-qwen27/report.json",
+          "sha256": "3ae6fd56b01c6f67fe05ef92dd25ad438f17a8b4c9799dc471310b29eda5b66e"
+        },
+        {
+          "id": "sequential-v2-ettin1b",
+          "path": "target/concurrency-benchmark-v1/sequential-v2-ettin1b/report.json",
+          "sha256": "d6d19e60672e1fcd9c29582280c01c2dc1fb62eb64efadd9e2fd3ad838a432a7"
+        },
+        {
+          "id": "sequential-v2-qwen27",
+          "path": "target/concurrency-benchmark-v1/sequential-v2-qwen27/report.json",
+          "sha256": "c1648ebf630ab70e21ad8a4a170e51709faae4476666652934b682d0c3b1d57d"
+        }
+      ],
+      "summary": {
+        "path": "target/concurrency-benchmark-v1/summary.json",
+        "sha256": "1c8c659facb2793b658cfa46ee4407356a5e18ed6d2070c7f0b09f732d0cdbe1"
+      },
+      "reused_inputs": [
+        {
+          "role": "train",
+          "publication": "prompts/f9f6aa9498e1fc052792c3425be7bcffc26ef956c00b9d6ffe7101341b257d59",
+          "records": 184,
+          "payloads": {
+            "inputs.jsonl": {
+              "bytes": 414477,
+              "records": 184,
+              "sha256": "c96062d35e3f2bca9ede0ebe8321ff345e308d80bf4ff0e5d96d88a49ff13694"
+            },
+            "results.jsonl": {
+              "bytes": 288263,
+              "records": 184,
+              "sha256": "3e20b05638d1440a6e9a8abd19e71f6ef0208a7a300b7365af2bffaeb370e3d2"
+            }
+          },
+          "input_status": "184 teacher source cases are already selected; exact admitted180-case subset remains unresolved."
+        },
+        {
+          "role": "evaluation",
+          "publication": "prompts/7c87cd5a3ba11033a72512ce2fd6f89a291a2dc0a70e285a59318e69f93175b9",
+          "records": 46,
+          "payloads": {
+            "inputs.jsonl": {
+              "bytes": 106657,
+              "records": 46,
+              "sha256": "53e6eca5769079e3015e547149361e308ef595d8935c26f9e64b1e06859ab9ff"
+            },
+            "results.jsonl": {
+              "bytes": 70862,
+              "records": 46,
+              "sha256": "65e80ae5b7f955553017ebe4cbb0e4b46cfea75892315ee2a11c2890ce5b873b"
+            }
+          },
+          "input_status": "All46 case IDs and teacher targets match saved baseline/checkpoint decisions."
+        }
+      ],
+      "limitations": [
+        "One sequential/concurrent pair, sequential first, with staggered loading and uncontrolled caches/run variation. The two models and four saved model/condition reports are not four independent benchmark repetitions.",
+        "Teacher agreement is provisional development evidence, not semantic gold, human approval or final-task qualification.",
+        "The exact admitted180-case TRAIN data and frozen manifest/fitter locations are unresolved. Their recorded SHA-256 bindings are preserved; the184-case teacher population is not claimed to be the exact prepared training file.",
+        "The recorded frozen runtime and prepared-target directories were absent at their documented paths during the read-only review; current fitter code has a different hash. No missing artifact was reconstructed or relabeled."
+      ]
+    }
+  }
+}

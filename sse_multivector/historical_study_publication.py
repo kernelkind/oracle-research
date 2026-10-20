@@ -18,7 +18,10 @@ _PROFILES = {'atomic': 'atomic_study_publication',
              'title-audit': 'title_audit_publication',
              'segmentation-study': 'segmentation_study_publication',
              'frontier-study': 'frontier_study_publication',
-             'baseline-study': 'baseline_study_publication'}
+             'baseline-study': 'baseline_study_publication',
+             'saved-hierarchy': 'saved_hierarchy_publication',
+             'navigation-study': 'navigation_study_publication',
+             'performance-study': 'performance_study_publication'}
 
 
 def _canonical(value):

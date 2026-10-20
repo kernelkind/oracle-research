@@ -1,0 +1,481 @@
+{
+  "schema_version": 1,
+  "studies": {
+    "navigation-CPC01": {
+      "profile": "navigation-study",
+      "kind": "gliclass",
+      "directory": "sse_multivector/navigation-research-v1/CPC01/run",
+      "configuration": {
+        "path": "sse_multivector/navigation-research-v1/CPC01/run/config.json",
+        "sha256": "f12874f7495227ed41362615e57a5c73eec9859406b001e3e45b6d9e0639a558"
+      },
+      "inputs": {
+        "path": "sse_multivector/navigation-research-v1/CPC01/run/inputs.json",
+        "sha256": "7328c07e4ff270c908ed556e495556a6dfb2a2dc9ff6e1e20b38c243e5625c0a"
+      },
+      "scores": {
+        "path": "sse_multivector/navigation-research-v1/CPC01/run/scores.json",
+        "sha256": "d0ad9ed9d9e858f281006ead9366cf53602dff41566ed4f6e6d52f9084e88262"
+      },
+      "producer": {
+        "path": "sse_multivector/navigation-research-v1/CPC01/run/native_category_probe.py",
+        "sha256": "cad81a925511405cd2326832a2fce6f50839ac95b75b22fdc24c044426c9d33c"
+      },
+      "records": [
+        {
+          "path": "sse_multivector/navigation-research-v1/CPC01/analysis/result.json",
+          "sha256": "ea77d3bca7b3cf7a3e5de46773cac2f48d396a15199698ae25bbccb822c5fd21",
+          "role": "membership_result"
+        },
+        {
+          "path": "sse_multivector/navigation-research-v1/CPC01/audit.json",
+          "sha256": "3d47b77b055908d94f9f8be049377ecd217011c763b91c8647cc241212202259",
+          "role": "assessment"
+        },
+        {
+          "path": "sse_multivector/navigation-research-v1/CPC01-JUDGMENTS.json",
+          "sha256": "affb9758243b2b8458546e913f316f0640580dee49ba68b060282ad24a6e2bbc",
+          "role": "judgments"
+        }
+      ],
+      "parameters": [
+        {
+          "path": "sse_multivector/navigation-research-v1/CPC01/analysis/config.json",
+          "sha256": "e59aecd27950b0f2d5e15277e5703b2655fb5d45a34c6fcdea038b755a4a6be6"
+        },
+        {
+          "path": "sse_multivector/navigation-research-v1/CPC01/analysis/prepared-config.json",
+          "sha256": "5265f43c2f00e1b4f11c237f1348b1bcd8bf18bba4396c00c8ca706f78b565ab"
+        },
+        {
+          "path": "sse_multivector/navigation-research-v1/CPC01/prescore-manifest.json",
+          "sha256": "1dbc8e97ecc0a920e4d96debec071ae4f96efb4bf514e589c17057f5fa660849"
+        }
+      ],
+      "expected_counts": {
+        "score_records": 11340,
+        "measurements": 11340
+      },
+      "limitations": [
+        "Saved historical diagnostic evidence. Recorded judgments are not new user approvals.",
+        "Run scores and analysis copies are the same source evidence; literal and thresholded membership/path results remain separate recorded conditions."
+      ],
+      "existing_inputs": {
+        "path": "target/publication-exports/numerical/pair-scores-1e64065272f7c57c/inputs.jsonl",
+        "sha256": "e174fbb892bc08496342aecf6513c6a2fbe1e9ef4edb72c71cf12b453aa4d469",
+        "publication": "numerical/pair-scores-1e64065272f7c57c",
+        "rows": 945
+      },
+      "existing_grounding": {
+        "path": "target/publication-exports/numerical/geometric-5ba567412fcd2e7a/inputs.jsonl",
+        "sha256": "fb8333473db8159042d7e19378ad4bc0644c39787a00a0b3af27e8b0d265b957",
+        "publication": "numerical/geometric-5ba567412fcd2e7a",
+        "rows": 916
+      },
+      "candidates": {
+        "path": "sse_multivector/navigation-research-v1/CPC01/analysis/candidates.json",
+        "sha256": "9ce3ac27636b6cd7aa28f71d9aeebe0f0eda092beb5a01f4937f9e5cb6614308"
+      },
+      "analysis_binding": {
+        "path": "sse_multivector/navigation-research-v1/CPC01/analysis/config.json",
+        "sha256": "e59aecd27950b0f2d5e15277e5703b2655fb5d45a34c6fcdea038b755a4a6be6"
+      }
+    },
+    "navigation-RSE01": {
+      "profile": "navigation-study",
+      "kind": "rse",
+      "directory": "sse_multivector/navigation-research-v1/RSE01",
+      "configuration": {
+        "path": "sse_multivector/navigation-research-v1/RSE01/config.json",
+        "sha256": "56b4e4cedf85d850e2ad4c13ec4566872422eed474e429676c33dcc6be9a4c28"
+      },
+      "inputs": {
+        "path": "sse_multivector/navigation-research-v1/RSE01/inputs.json",
+        "sha256": "886ea3f362d95c02077f2c7b7c7cd45370e29d86b7120f4de29c9d4a7d3ed277"
+      },
+      "scores": {
+        "path": "sse_multivector/navigation-research-v1/RSE01/scores.json",
+        "sha256": "592c216f705a02fc8f13554a9504fe19fb66b02199ad203cbe6123262be5e1f4"
+      },
+      "producer": {
+        "path": "sse_multivector/navigation-research-v1/RSE01/rse_category_probe.py",
+        "sha256": "3cdb1f4882aed6789661bcd46a57cf8ccfa30ca52693c30011059b56b1fa352e"
+      },
+      "records": [
+        {
+          "path": "sse_multivector/navigation-research-v1/RSE01/checks.json",
+          "sha256": "b7ddec8a56fa25aec0f5ef43433c2270f06a2da0580a0f87739f98d759bda077",
+          "role": "comparisons"
+        },
+        {
+          "path": "sse_multivector/navigation-research-v1/RSE01/analysis.json",
+          "sha256": "029eda46423d035f2c299f4744bf5f78905c88f78ddfb911b957e823dab08222",
+          "role": "analysis"
+        },
+        {
+          "path": "sse_multivector/navigation-research-v1/RSE01/verification.json",
+          "sha256": "37cdf2639a1217c8845347b3965c22fc51387627eca911ec0e7d30ab88b49770",
+          "role": "verification"
+        }
+      ],
+      "parameters": [
+        {
+          "path": "sse_multivector/navigation-research-v1/RSE01/fixture.json",
+          "sha256": "d3efece72ebf6f03e4c0b5fe9b1c588fbece361b00599b34389c242a699c2c35"
+        }
+      ],
+      "expected_counts": {
+        "score_records": 32400,
+        "measurements": 64800
+      },
+      "limitations": [
+        "Saved historical diagnostic evidence. Recorded judgments are not new user approvals.",
+        "Constructed category fixture, not automatic subject generation. Native entailment scores are not calibrated probabilities."
+      ],
+      "existing_inputs": {
+        "path": "target/publication-exports/numerical/pair-scores-9c5f98ada943ce6b/inputs.jsonl",
+        "sha256": "6d64afbae60ed78b865027cb1ef4c37e3958328ae03bf0bda0413064f5530025",
+        "publication": "numerical/pair-scores-9c5f98ada943ce6b",
+        "rows": 180
+      }
+    },
+    "navigation-TCC01": {
+      "profile": "navigation-study",
+      "kind": "gliclass",
+      "directory": "sse_multivector/navigation-research-v1/TCC01",
+      "configuration": {
+        "path": "sse_multivector/navigation-research-v1/TCC01/config.json",
+        "sha256": "89cead16a9a633e8e20fc3255d8833786244596f1600666634e754c3acabbe10"
+      },
+      "inputs": {
+        "path": "sse_multivector/navigation-research-v1/TCC01/inputs.json",
+        "sha256": "608e1ea1a50b904d95fb87ee59b181bd474950da5d6fcabdf832ade402281718"
+      },
+      "scores": {
+        "path": "sse_multivector/navigation-research-v1/TCC01/scores.json",
+        "sha256": "d70c22e4592431e23eac0af4dbad7db2f7114bc14084a12e9b8471cea7ab28b6"
+      },
+      "producer": {
+        "path": "sse_multivector/navigation-research-v1/TCC01/native_category_probe.py",
+        "sha256": "72c535b571b528b57fb3c5162f7ac984d44c3eca7c788672d2498797c4c74821"
+      },
+      "records": [
+        {
+          "path": "sse_multivector/navigation-research-v1/TCC01/audit.json",
+          "sha256": "3df4b564ffdb35c2b07e8b348c6febd062b94f78baef67bc4a4460e0f6b15555",
+          "role": "assessment"
+        }
+      ],
+      "parameters": [],
+      "expected_counts": {
+        "score_records": 140,
+        "measurements": 336
+      },
+      "limitations": [
+        "Saved historical diagnostic evidence. Recorded judgments are not new user approvals."
+      ],
+      "existing_inputs": {
+        "path": "target/publication-exports/numerical/pair-scores-1e64065272f7c57c/inputs.jsonl",
+        "sha256": "e174fbb892bc08496342aecf6513c6a2fbe1e9ef4edb72c71cf12b453aa4d469",
+        "publication": "numerical/pair-scores-1e64065272f7c57c",
+        "rows": 945
+      },
+      "existing_grounding": {
+        "path": "target/publication-exports/numerical/geometric-5ba567412fcd2e7a/inputs.jsonl",
+        "sha256": "fb8333473db8159042d7e19378ad4bc0644c39787a00a0b3af27e8b0d265b957",
+        "publication": "numerical/geometric-5ba567412fcd2e7a",
+        "rows": 916
+      }
+    },
+    "navigation-TCC02": {
+      "profile": "navigation-study",
+      "kind": "gliclass",
+      "directory": "sse_multivector/navigation-research-v1/TCC02/run",
+      "configuration": {
+        "path": "sse_multivector/navigation-research-v1/TCC02/run/config.json",
+        "sha256": "ef6d8444f59e9f33c440a53a6e91a5cf10378eae526acf9634dc92bf2d284892"
+      },
+      "inputs": {
+        "path": "sse_multivector/navigation-research-v1/TCC02/run/inputs.json",
+        "sha256": "41d307c728ef730d3952729da087bc3a9b1ab6978c7a40307cae1e0796489928"
+      },
+      "scores": {
+        "path": "sse_multivector/navigation-research-v1/TCC02/run/scores.json",
+        "sha256": "6706eb7db7f02b163ef76e6c557cce0eb99d0d58d27fa88d1e8e5aad2060878c"
+      },
+      "producer": {
+        "path": "sse_multivector/navigation-research-v1/TCC02/run/native_category_probe.py",
+        "sha256": "cad81a925511405cd2326832a2fce6f50839ac95b75b22fdc24c044426c9d33c"
+      },
+      "records": [
+        {
+          "path": "sse_multivector/navigation-research-v1/TCC02/audit.json",
+          "sha256": "4b857cd56d97e067d68121ebce7c4029b4b3bee08495158405f3f01773342c44",
+          "role": "assessment"
+        },
+        {
+          "path": "sse_multivector/navigation-research-v1/TCC02/judgments.json",
+          "sha256": "84b7956288baa597e8741f744fc3eda6320dadeea216e8a8ef4928fef05f8565",
+          "role": "judgments"
+        }
+      ],
+      "parameters": [],
+      "expected_counts": {
+        "score_records": 50,
+        "measurements": 50
+      },
+      "limitations": [
+        "Saved historical diagnostic evidence. Recorded judgments are not new user approvals."
+      ],
+      "existing_inputs": {
+        "path": "target/publication-exports/numerical/pair-scores-1e64065272f7c57c/inputs.jsonl",
+        "sha256": "e174fbb892bc08496342aecf6513c6a2fbe1e9ef4edb72c71cf12b453aa4d469",
+        "publication": "numerical/pair-scores-1e64065272f7c57c",
+        "rows": 945
+      },
+      "existing_grounding": {
+        "path": "target/publication-exports/numerical/geometric-5ba567412fcd2e7a/inputs.jsonl",
+        "sha256": "fb8333473db8159042d7e19378ad4bc0644c39787a00a0b3af27e8b0d265b957",
+        "publication": "numerical/geometric-5ba567412fcd2e7a",
+        "rows": 916
+      }
+    },
+    "navigation-TCC03": {
+      "profile": "navigation-study",
+      "kind": "gliclass",
+      "directory": "sse_multivector/navigation-research-v1/TCC03/run",
+      "configuration": {
+        "path": "sse_multivector/navigation-research-v1/TCC03/run/config.json",
+        "sha256": "ac12f2a488a07e5549f132b0c0499b8112139afffc1889c9c7c948b4f7412c3a"
+      },
+      "inputs": {
+        "path": "sse_multivector/navigation-research-v1/TCC03/run/inputs.json",
+        "sha256": "cf1e0503093db789588242b07a656e5e10b4ecd9828340438fe84be181fd71ef"
+      },
+      "scores": {
+        "path": "sse_multivector/navigation-research-v1/TCC03/run/scores.json",
+        "sha256": "c4a9622724939d7477d55eeb5766f0e1d4292d71c6c2bcfda6830e971dc8c6ba"
+      },
+      "producer": {
+        "path": "sse_multivector/navigation-research-v1/TCC03/run/native_category_probe.py",
+        "sha256": "cad81a925511405cd2326832a2fce6f50839ac95b75b22fdc24c044426c9d33c"
+      },
+      "records": [
+        {
+          "path": "sse_multivector/navigation-research-v1/TCC03/audit.json",
+          "sha256": "efd4876e64578246547607942e7ec21113567a382c308182da6a4c4bf4e720d5",
+          "role": "assessment"
+        },
+        {
+          "path": "sse_multivector/navigation-research-v1/TCC03/judgments.json",
+          "sha256": "9c2ed1bce74b0b2d1f9c31144b697c39da26d9aabe0618ea0aeedc9929e0ade2",
+          "role": "judgments"
+        }
+      ],
+      "parameters": [],
+      "expected_counts": {
+        "score_records": 362,
+        "measurements": 362
+      },
+      "limitations": [
+        "Saved historical diagnostic evidence. Recorded judgments are not new user approvals."
+      ],
+      "existing_inputs": {
+        "path": "target/publication-exports/numerical/pair-scores-1e64065272f7c57c/inputs.jsonl",
+        "sha256": "e174fbb892bc08496342aecf6513c6a2fbe1e9ef4edb72c71cf12b453aa4d469",
+        "publication": "numerical/pair-scores-1e64065272f7c57c",
+        "rows": 945
+      },
+      "existing_grounding": {
+        "path": "target/publication-exports/numerical/geometric-5ba567412fcd2e7a/inputs.jsonl",
+        "sha256": "fb8333473db8159042d7e19378ad4bc0644c39787a00a0b3af27e8b0d265b957",
+        "publication": "numerical/geometric-5ba567412fcd2e7a",
+        "rows": 916
+      }
+    },
+    "navigation-TCC04": {
+      "profile": "navigation-study",
+      "kind": "gliclass",
+      "directory": "sse_multivector/navigation-research-v1/TCC04/run",
+      "configuration": {
+        "path": "sse_multivector/navigation-research-v1/TCC04/run/config.json",
+        "sha256": "a5d1a9bb5cdc2467bf46a9fead44fe868c38b0ce0de1f6f239db14514dae7e00"
+      },
+      "inputs": {
+        "path": "sse_multivector/navigation-research-v1/TCC04/run/inputs.json",
+        "sha256": "8a2568d5cab703520224c99d0d07798800969f9810661d40ffc70a85cf9fdfa1"
+      },
+      "scores": {
+        "path": "sse_multivector/navigation-research-v1/TCC04/run/scores.json",
+        "sha256": "cb2f1d889a250aa6661d4baa59854cc900cb5d6db22e609ba19bd599dc14cb3d"
+      },
+      "producer": {
+        "path": "sse_multivector/navigation-research-v1/TCC04/run/native_category_probe.py",
+        "sha256": "cad81a925511405cd2326832a2fce6f50839ac95b75b22fdc24c044426c9d33c"
+      },
+      "records": [
+        {
+          "path": "sse_multivector/navigation-research-v1/TCC04/audit.json",
+          "sha256": "945cf4d6b98b0480bcd786d33f8fcef064a9d73534e00bca3f04c85f5d7436f3",
+          "role": "assessment"
+        },
+        {
+          "path": "sse_multivector/navigation-research-v1/TCC04/judgments.json",
+          "sha256": "6ca67fbdfee05abe45afae3ec6a08edc16997cb0c9681540499978ea40668245",
+          "role": "judgments"
+        },
+        {
+          "path": "sse_multivector/navigation-research-v1/TCC04/combined-development-tradeoffs.json",
+          "sha256": "163206e474e3502565c16e08fe81d36b4d7457dfaaa8941f85f93971de96516a",
+          "role": "retrospective_tradeoffs"
+        }
+      ],
+      "parameters": [
+        {
+          "path": "sse_multivector/navigation-research-v1/TCC04/prescore-manifest.json",
+          "sha256": "eae365d13032ddee59c71b2179b1fc7baa42c5434b2159d57cbb7756c6a5a255"
+        }
+      ],
+      "expected_counts": {
+        "score_records": 435,
+        "measurements": 435
+      },
+      "limitations": [
+        "Saved historical diagnostic evidence. Recorded judgments are not new user approvals.",
+        "Frozen cutoff transfer and retrospective combined development tradeoffs are distinct; unresolved judgments remain unresolved."
+      ],
+      "existing_inputs": {
+        "path": "target/publication-exports/numerical/pair-scores-1e64065272f7c57c/inputs.jsonl",
+        "sha256": "e174fbb892bc08496342aecf6513c6a2fbe1e9ef4edb72c71cf12b453aa4d469",
+        "publication": "numerical/pair-scores-1e64065272f7c57c",
+        "rows": 945
+      },
+      "existing_grounding": {
+        "path": "target/publication-exports/numerical/geometric-5ba567412fcd2e7a/inputs.jsonl",
+        "sha256": "fb8333473db8159042d7e19378ad4bc0644c39787a00a0b3af27e8b0d265b957",
+        "publication": "numerical/geometric-5ba567412fcd2e7a",
+        "rows": 916
+      }
+    },
+    "navigation-USM01": {
+      "profile": "navigation-study",
+      "kind": "lmms",
+      "directory": "sse_multivector/navigation-research-v1/USM01/run",
+      "configuration": {
+        "path": "sse_multivector/navigation-research-v1/USM01/run/config.json",
+        "sha256": "701420c59ff3fbfa744e8a4cf6ada1d4b27198d0246ef579bbf19d4c7007a534"
+      },
+      "inputs": {
+        "path": "sse_multivector/navigation-research-v1/USM01/run/inputs.json",
+        "sha256": "299f352480a9f013a198e37a83fac3ab24492b288ed23edd3cff3ed62fec7d7b"
+      },
+      "scores": {
+        "path": "sse_multivector/navigation-research-v1/USM01/run/scores.json",
+        "sha256": "25cbc66adcd8bdff2f420ca87772a92562cf726db3bd5cb280044dc3ed63f50e"
+      },
+      "producer": {
+        "path": "sse_multivector/navigation-research-v1/USM01/run/lmms_occurrence_probe.py",
+        "sha256": "e72374ee62c6f6e6caeba27175b43bd39efa0d382899a938b29f898f76300f7e"
+      },
+      "records": [
+        {
+          "path": "sse_multivector/navigation-research-v1/USM01/lookup-audit.json",
+          "sha256": "85adec7376b82215604bc0d9a57ca81a033037a04c948f1873aa53a93b520a8d",
+          "role": "lookup_audit"
+        },
+        {
+          "path": "sse_multivector/navigation-research-v1/USM01/verification.json",
+          "sha256": "ae76eda42a5b11d2c1035041e9af996cb9244a13dc5b51fbc1fbad4c35d854c9",
+          "role": "verification"
+        }
+      ],
+      "parameters": [
+        {
+          "path": "sse_multivector/navigation-research-v1/USM01/execution.json",
+          "sha256": "a43045d7dc866168a7db6e84cfb9623665b6245b3fcf46dab6c9b3d79c214626"
+        }
+      ],
+      "expected_counts": {
+        "score_records": 134,
+        "measurements": 1579
+      },
+      "limitations": [
+        "Saved historical diagnostic evidence. Recorded judgments are not new user approvals."
+      ],
+      "existing_inputs": {
+        "path": "target/publication-exports/numerical/pair-scores-1e64065272f7c57c/inputs.jsonl",
+        "sha256": "e174fbb892bc08496342aecf6513c6a2fbe1e9ef4edb72c71cf12b453aa4d469",
+        "publication": "numerical/pair-scores-1e64065272f7c57c",
+        "rows": 945
+      },
+      "existing_grounding": {
+        "path": "target/publication-exports/numerical/geometric-5ba567412fcd2e7a/inputs.jsonl",
+        "sha256": "fb8333473db8159042d7e19378ad4bc0644c39787a00a0b3af27e8b0d265b957",
+        "publication": "numerical/geometric-5ba567412fcd2e7a",
+        "rows": 916
+      },
+      "encoder_words": {
+        "path": "sse_multivector/navigation-research-v1/USM01/run/tokenization.json",
+        "sha256": "c406fc6783d95086ca7ad427bdd98b1a08ca190a7ec5d8331712d5a327fcb772"
+      }
+    },
+    "navigation-USM02": {
+      "profile": "navigation-study",
+      "kind": "lmms-pos",
+      "directory": "sse_multivector/navigation-research-v1/USM02/run",
+      "configuration": {
+        "path": "sse_multivector/navigation-research-v1/USM02/run/config.json",
+        "sha256": "04d826b9993ff1af254f693aad853585230a5a2d7578fbefabfe1fdba9f3c780"
+      },
+      "inputs": {
+        "path": "sse_multivector/navigation-research-v1/USM01/run/inputs.json",
+        "sha256": "299f352480a9f013a198e37a83fac3ab24492b288ed23edd3cff3ed62fec7d7b"
+      },
+      "scores": {
+        "path": "sse_multivector/navigation-research-v1/USM02/run/scores.json",
+        "sha256": "c06b9b6fa7f8c1cbdeed54e5675edfa0398f7e3d5afa6d18650022670a702d17"
+      },
+      "producer": {
+        "path": "sse_multivector/navigation-research-v1/USM02/run/lmms_pos_control.py",
+        "sha256": "9abaeae884c1aa29a1e67e4c92a21799272c4c80bd6afad7cefcfb767e12567e"
+      },
+      "records": [
+        {
+          "path": "sse_multivector/navigation-research-v1/USM02/verification.json",
+          "sha256": "0660e3557c13b1e06fd91ea4b462f8c868f9366c63acaa837febb02e22164850",
+          "role": "verification"
+        }
+      ],
+      "parameters": [],
+      "expected_counts": {
+        "score_records": 134,
+        "measurements": 425
+      },
+      "limitations": [
+        "Saved historical diagnostic evidence. Recorded judgments are not new user approvals.",
+        "Reuses USM01 vectors; no new encoder run. Only the new surface-word/POS rankings are emitted."
+      ],
+      "existing_inputs": {
+        "path": "target/publication-exports/numerical/pair-scores-1e64065272f7c57c/inputs.jsonl",
+        "sha256": "e174fbb892bc08496342aecf6513c6a2fbe1e9ef4edb72c71cf12b453aa4d469",
+        "publication": "numerical/pair-scores-1e64065272f7c57c",
+        "rows": 945
+      },
+      "existing_grounding": {
+        "path": "target/publication-exports/numerical/geometric-5ba567412fcd2e7a/inputs.jsonl",
+        "sha256": "fb8333473db8159042d7e19378ad4bc0644c39787a00a0b3af27e8b0d265b957",
+        "publication": "numerical/geometric-5ba567412fcd2e7a",
+        "rows": 916
+      },
+      "source_scores": {
+        "path": "sse_multivector/navigation-research-v1/USM01/run/scores.json",
+        "sha256": "25cbc66adcd8bdff2f420ca87772a92562cf726db3bd5cb280044dc3ed63f50e"
+      },
+      "source_experiment": "navigation-USM01",
+      "helper": {
+        "path": "sse_multivector/navigation-research-v1/USM02/run/lmms_occurrence_probe.py",
+        "sha256": "5198222e7c73ab691510b27fe38aaa9be01c5113aebd4530436b7dcc9e8e5912"
+      }
+    }
+  }
+}

@@ -1,0 +1,455 @@
+{
+  "schema_version": 1,
+  "studies": {
+    "saved-hierarchy-GDC09": {
+      "profile": "saved-hierarchy",
+      "kind": "categories",
+      "hierarchy": {
+        "path": "sse_multivector/geometric-hierarchy-v1/GDC09/categories.json",
+        "sha256": "99c9c937cebc75814de1b30d3a9f80c017360aa7b2a7de5f65bf24b5750e4f4d"
+      },
+      "posts": {
+        "path": "sse_multivector/real-note-fine-segmentation-v1/reviewed-input.json",
+        "sha256": "9de47b1a66867e612aaf706da5002d4b04b4e9d8192e3782330a693dd1dea019"
+      },
+      "reused_inputs": {
+        "publication": "historical-studies/real-note-fine-segmentation-v1",
+        "payload": "inputs.jsonl",
+        "sha256": "50ea6df1077a517f62ff651f4c3023e08b6d113ea6c0b67a466a5d325cc22f0f",
+        "scope": "Exact already-selected original100 post texts; mask representations retain their own bound identities."
+      },
+      "parameters": [
+        {
+          "path": "sse_multivector/geometric-hierarchy-v1/GDC09/configuration.json",
+          "sha256": "4354efe8b96e3c3ec669ec56f8a6ca68b01f4059f3bd8427d8f74859bb4e2c20"
+        }
+      ]
+    },
+    "saved-hierarchy-ND02-NP01": {
+      "profile": "saved-hierarchy",
+      "kind": "categories",
+      "hierarchy": {
+        "path": "sse_multivector/navigation-research-v1/ND02-NP01/categories.json",
+        "sha256": "eaf4b4eb594ef4c722b0017f2a8be38195847f6acc37318c89e353fdf5a46963"
+      },
+      "posts": {
+        "path": "sse_multivector/real-note-fine-segmentation-v1/reviewed-input.json",
+        "sha256": "9de47b1a66867e612aaf706da5002d4b04b4e9d8192e3782330a693dd1dea019"
+      },
+      "reused_inputs": {
+        "publication": "historical-studies/real-note-fine-segmentation-v1",
+        "payload": "inputs.jsonl",
+        "sha256": "50ea6df1077a517f62ff651f4c3023e08b6d113ea6c0b67a466a5d325cc22f0f",
+        "scope": "Exact already-selected original100 post texts; mask representations retain their own bound identities."
+      },
+      "parameters": [
+        {
+          "path": "sse_multivector/navigation-research-v1/ND02-NP01/selection.json",
+          "sha256": "9dcc006e34f350500042380b00bcfbe83a86434b87c89a0c451ff342ff40f334"
+        },
+        {
+          "path": "sse_multivector/navigation-research-v1/ND02-NP01/diagnostic.json",
+          "sha256": "5cc61282909cdb66478825ce208a7596f44ec22846da6f348793e25a8df22693"
+        }
+      ]
+    },
+    "saved-hierarchy-ND02-baseline": {
+      "profile": "saved-hierarchy",
+      "kind": "categories",
+      "hierarchy": {
+        "path": "sse_multivector/navigation-research-v1/ND02-baseline/categories.json",
+        "sha256": "af105e3b94abe149714ce4e95f0882adcabad4a016f14d5952847919c1d1817c"
+      },
+      "posts": {
+        "path": "sse_multivector/real-note-fine-segmentation-v1/reviewed-input.json",
+        "sha256": "9de47b1a66867e612aaf706da5002d4b04b4e9d8192e3782330a693dd1dea019"
+      },
+      "reused_inputs": {
+        "publication": "historical-studies/real-note-fine-segmentation-v1",
+        "payload": "inputs.jsonl",
+        "sha256": "50ea6df1077a517f62ff651f4c3023e08b6d113ea6c0b67a466a5d325cc22f0f",
+        "scope": "Exact already-selected original100 post texts; mask representations retain their own bound identities."
+      },
+      "parameters": [
+        {
+          "path": "sse_multivector/navigation-research-v1/ND02-baseline/selection.json",
+          "sha256": "3b4dff9ad4acc47bf87855c05701e6fc692ef4c3d25f400972e55a4e44c0255a"
+        },
+        {
+          "path": "sse_multivector/navigation-research-v1/ND02-baseline/diagnostic.json",
+          "sha256": "c1df646f905d4e4d4f07763c7e5f080e7e323ef568abbfc0d8ae41d533cccee3"
+        }
+      ]
+    },
+    "saved-hierarchy-NP00": {
+      "profile": "saved-hierarchy",
+      "kind": "categories",
+      "hierarchy": {
+        "path": "sse_multivector/navigation-research-v1/NP00/categories.json",
+        "sha256": "13d16f9886e71bf1c5d6150ebaafae439d186c90f7cceb3fa32eeaa2fe53846d"
+      },
+      "posts": {
+        "path": "sse_multivector/real-note-fine-segmentation-v1/reviewed-input.json",
+        "sha256": "9de47b1a66867e612aaf706da5002d4b04b4e9d8192e3782330a693dd1dea019"
+      },
+      "reused_inputs": {
+        "publication": "historical-studies/real-note-fine-segmentation-v1",
+        "payload": "inputs.jsonl",
+        "sha256": "50ea6df1077a517f62ff651f4c3023e08b6d113ea6c0b67a466a5d325cc22f0f",
+        "scope": "Exact already-selected original100 post texts; mask representations retain their own bound identities."
+      },
+      "parameters": [
+        {
+          "path": "sse_multivector/navigation-research-v1/NP00/selection.json",
+          "sha256": "84eaf433edf66eb040d54f25f1e323706af233d3132d9ceeea36269a44cf52a6"
+        }
+      ]
+    },
+    "saved-hierarchy-NP01": {
+      "profile": "saved-hierarchy",
+      "kind": "categories",
+      "hierarchy": {
+        "path": "sse_multivector/navigation-research-v1/NP01/categories.json",
+        "sha256": "b443c7ff2f8dfa6c4638e94bea85261a353c3b4c2649bf95cb2c84f6e924f51f"
+      },
+      "posts": {
+        "path": "sse_multivector/real-note-fine-segmentation-v1/reviewed-input.json",
+        "sha256": "9de47b1a66867e612aaf706da5002d4b04b4e9d8192e3782330a693dd1dea019"
+      },
+      "reused_inputs": {
+        "publication": "historical-studies/real-note-fine-segmentation-v1",
+        "payload": "inputs.jsonl",
+        "sha256": "50ea6df1077a517f62ff651f4c3023e08b6d113ea6c0b67a466a5d325cc22f0f",
+        "scope": "Exact already-selected original100 post texts; mask representations retain their own bound identities."
+      },
+      "parameters": [
+        {
+          "path": "sse_multivector/navigation-research-v1/NP01/selection.json",
+          "sha256": "6a098bfc83c76b7a568ceaf009b2fc94214fa867d7269916dcd60a22013874b2"
+        }
+      ]
+    },
+    "saved-hierarchy-TRUE11": {
+      "profile": "saved-hierarchy",
+      "kind": "categories",
+      "hierarchy": {
+        "path": "sse_multivector/navigation-research-v1/TRUE11/categories.json",
+        "sha256": "db41d9ea8513c9e4ab2b84c73c45253edd2b4fe6a36c40c4a7e34f46c86f178e"
+      },
+      "posts": {
+        "path": "sse_multivector/real-note-fine-segmentation-v1/reviewed-input.json",
+        "sha256": "9de47b1a66867e612aaf706da5002d4b04b4e9d8192e3782330a693dd1dea019"
+      },
+      "reused_inputs": {
+        "publication": "historical-studies/real-note-fine-segmentation-v1",
+        "payload": "inputs.jsonl",
+        "sha256": "50ea6df1077a517f62ff651f4c3023e08b6d113ea6c0b67a466a5d325cc22f0f",
+        "scope": "Exact already-selected original100 post texts; mask representations retain their own bound identities."
+      },
+      "parameters": [
+        {
+          "path": "sse_multivector/navigation-research-v1/TRUE11/plan.json",
+          "sha256": "683f4f2516777f8e70653638eedf0bff5b4172422021d7405bd2e72b9e7da2a8"
+        },
+        {
+          "path": "sse_multivector/navigation-research-v1/TRUE11/packaging-verification.json",
+          "sha256": "396ae6a9bf793d99cd57fe0fd4c61a9350e178c4c701d37c7f108c5d58045a3b"
+        }
+      ]
+    },
+    "saved-hierarchy-TRUE12": {
+      "profile": "saved-hierarchy",
+      "kind": "categories",
+      "hierarchy": {
+        "path": "sse_multivector/navigation-research-v1/TRUE12/hierarchy/categories.json",
+        "sha256": "d631cbade4e824513e4bffed5e0c5a49761d4224080d2c004459c8b1ecfe1f58"
+      },
+      "posts": {
+        "path": "sse_multivector/real-note-fine-segmentation-v1/reviewed-input.json",
+        "sha256": "9de47b1a66867e612aaf706da5002d4b04b4e9d8192e3782330a693dd1dea019"
+      },
+      "reused_inputs": {
+        "publication": "historical-studies/real-note-fine-segmentation-v1",
+        "payload": "inputs.jsonl",
+        "sha256": "50ea6df1077a517f62ff651f4c3023e08b6d113ea6c0b67a466a5d325cc22f0f",
+        "scope": "Exact already-selected original100 post texts; mask representations retain their own bound identities."
+      },
+      "parameters": [
+        {
+          "path": "sse_multivector/navigation-research-v1/TRUE12/hierarchy/manifest.json",
+          "sha256": "4e62d319d165c4258e124bb50e464becbf368226158078b4f2dc5f6520100ce2"
+        }
+      ]
+    },
+    "saved-hierarchy-TRUE13": {
+      "profile": "saved-hierarchy",
+      "kind": "categories",
+      "hierarchy": {
+        "path": "sse_multivector/navigation-research-v1/TRUE13/categories.json",
+        "sha256": "3ce4607c1d3d4b0e7068c795bfaf47890a21aa872c5d0f1c6ad97e8a7491216b"
+      },
+      "posts": {
+        "path": "sse_multivector/real-note-fine-segmentation-v1/reviewed-input.json",
+        "sha256": "9de47b1a66867e612aaf706da5002d4b04b4e9d8192e3782330a693dd1dea019"
+      },
+      "reused_inputs": {
+        "publication": "historical-studies/real-note-fine-segmentation-v1",
+        "payload": "inputs.jsonl",
+        "sha256": "50ea6df1077a517f62ff651f4c3023e08b6d113ea6c0b67a466a5d325cc22f0f",
+        "scope": "Exact already-selected original100 post texts; mask representations retain their own bound identities."
+      },
+      "parameters": [
+        {
+          "path": "sse_multivector/navigation-research-v1/TRUE13/plan.json",
+          "sha256": "8a8ce9efbb852c0e1bcf541e39e01b5ee06ede3e6f51c8ac9579ded7fcbb8f5c"
+        },
+        {
+          "path": "sse_multivector/navigation-research-v1/TRUE13/frozen.json",
+          "sha256": "2c52f8b869a0608e9757df0df1261f6f011c8f9d6c8df12d6512bfaccff64521"
+        },
+        {
+          "path": "sse_multivector/navigation-research-v1/TRUE13/completion.json",
+          "sha256": "71fd7e86a0275a4c375229b25ef4d8864b24fe87f5400f66075eae7f5666e740"
+        }
+      ]
+    },
+    "saved-hierarchy-TRUE14": {
+      "profile": "saved-hierarchy",
+      "kind": "categories",
+      "hierarchy": {
+        "path": "sse_multivector/navigation-research-v1/TRUE14/categories.json",
+        "sha256": "65e5474276fefb9a32fea10db810ff91dc6b7b996c240106101640555a45b2c8"
+      },
+      "posts": {
+        "path": "sse_multivector/real-note-fine-segmentation-v1/reviewed-input.json",
+        "sha256": "9de47b1a66867e612aaf706da5002d4b04b4e9d8192e3782330a693dd1dea019"
+      },
+      "reused_inputs": {
+        "publication": "historical-studies/real-note-fine-segmentation-v1",
+        "payload": "inputs.jsonl",
+        "sha256": "50ea6df1077a517f62ff651f4c3023e08b6d113ea6c0b67a466a5d325cc22f0f",
+        "scope": "Exact already-selected original100 post texts; mask representations retain their own bound identities."
+      },
+      "parameters": [
+        {
+          "path": "sse_multivector/navigation-research-v1/TRUE14/plan.json",
+          "sha256": "77a59c008312bf0516695f819e89b1ee549be462d5f1e26aabfd90369276a3e0"
+        },
+        {
+          "path": "sse_multivector/navigation-research-v1/TRUE14/frozen.json",
+          "sha256": "ecc71b943cc6d03e2e6ea6e56028d458b3ab7d3a1286cf62eddd7e32b2d8a023"
+        },
+        {
+          "path": "sse_multivector/navigation-research-v1/TRUE14/verification.json",
+          "sha256": "529f6c7253445c4a08b1938b42a5470e11dc47dd0b367841a9a2eaf042cade45"
+        },
+        {
+          "path": "sse_multivector/navigation-research-v1/TRUE14/packaging-manifest.json",
+          "sha256": "061249bb1f8876be0792320e22d00ab1c43ed350dccffb94919a9665578d5bd7"
+        }
+      ]
+    },
+    "saved-hierarchy-HR02-NMP09": {
+      "profile": "saved-hierarchy",
+      "kind": "categories",
+      "hierarchy": {
+        "path": "target/hierarchy-build-v1/hr02-cross-branch-v1/view/categories.json",
+        "sha256": "349161a8f0d9d35a2cd1544bab6a5eae862446b318e8edd80629d78cdb36972a"
+      },
+      "posts": {
+        "path": "sse_multivector/hierarchy-refresh-v1/masked-posts.json",
+        "sha256": "380e6eb4a2035ec714bd9a1304c77d35bbd5bff04f71e0a018082f1d465369f8"
+      },
+      "reused_inputs": {
+        "publication": "historical-studies/real-note-fine-segmentation-v1",
+        "payload": "inputs.jsonl",
+        "sha256": "50ea6df1077a517f62ff651f4c3023e08b6d113ea6c0b67a466a5d325cc22f0f",
+        "scope": "Exact already-selected original100 post texts; mask representations retain their own bound identities."
+      },
+      "parameters": [
+        {
+          "path": "target/hierarchy-build-v1/hr02-cross-branch-v1/state.json",
+          "sha256": "3934d9724ad5d731070ccb3810acd4128aba7d6d103e25c1f89503b3efe532af",
+          "fields": [
+            "experiment_id",
+            "policy"
+          ]
+        },
+        {
+          "path": "target/hierarchy-build-v1/hr02-cross-branch-v1/view/verification.json",
+          "sha256": "8cba036ab6caa999d07bb6709e8618e264259d56090657d5f7e8f47d87c2e2d0",
+          "fields": [
+            "counts",
+            "placement_merge_conflicts"
+          ]
+        }
+      ]
+    },
+    "infomap-I01": {
+      "profile": "saved-hierarchy",
+      "kind": "infomap",
+      "hierarchy": {
+        "path": "sse_multivector/infomap-experiment-v1/I01/hierarchy.json",
+        "sha256": "3bce2f970ade3a579b18781925ae1b25ab0ff1182d4afc9942a2f92634349ccb"
+      },
+      "configuration": {
+        "path": "sse_multivector/infomap-experiment-v1/I01/configuration.json",
+        "sha256": "c81c79663c51d3796cbcfa3c5a56035e51363cc7c4a2c184914be33389c8a42f"
+      },
+      "vector_map": {
+        "path": "sse_multivector/real-note-fine-segmentation-v1/vectors/vector-map.json",
+        "sha256": "8c2a3eebf84855cc676b3a5812aa53401ec9ddf66292139daa7a4ee17a574712"
+      },
+      "reused_inputs": {
+        "mask_inputs": {
+          "publication": "historical-studies/real-note-fine-segmentation-v1",
+          "payload": "inputs.jsonl",
+          "sha256": "50ea6df1077a517f62ff651f4c3023e08b6d113ea6c0b67a466a5d325cc22f0f",
+          "scope": "Exact already-selected original100 post texts; mask representations retain their own bound identities."
+        },
+        "canonical_aliases": {
+          "publication": "numerical/merge-rule-d36bfa5ec6402214",
+          "payload": "inputs.jsonl",
+          "sha256": "2b92dd7ef20f756e33360785552b9973ad95f41b40c1703d3b3ba85d9fb56eb7",
+          "records": 916
+        }
+      }
+    },
+    "infomap-I02": {
+      "profile": "saved-hierarchy",
+      "kind": "infomap",
+      "hierarchy": {
+        "path": "sse_multivector/infomap-experiment-v1/I02/hierarchy.json",
+        "sha256": "95773ee8e35f21469971e052d920b820eb08aefe1f4fdf520c8e3c68f0891e33"
+      },
+      "configuration": {
+        "path": "sse_multivector/infomap-experiment-v1/I02/configuration.json",
+        "sha256": "45524323e2850c890855b8838a452f313631497a9b4b1062dea20e11893080fa"
+      },
+      "vector_map": {
+        "path": "sse_multivector/real-note-fine-segmentation-v1/vectors/vector-map.json",
+        "sha256": "8c2a3eebf84855cc676b3a5812aa53401ec9ddf66292139daa7a4ee17a574712"
+      },
+      "reused_inputs": {
+        "mask_inputs": {
+          "publication": "historical-studies/real-note-fine-segmentation-v1",
+          "payload": "inputs.jsonl",
+          "sha256": "50ea6df1077a517f62ff651f4c3023e08b6d113ea6c0b67a466a5d325cc22f0f",
+          "scope": "Exact already-selected original100 post texts; mask representations retain their own bound identities."
+        },
+        "canonical_aliases": {
+          "publication": "numerical/merge-rule-d36bfa5ec6402214",
+          "payload": "inputs.jsonl",
+          "sha256": "2b92dd7ef20f756e33360785552b9973ad95f41b40c1703d3b3ba85d9fb56eb7",
+          "records": 916
+        }
+      }
+    },
+    "infomap-I03": {
+      "profile": "saved-hierarchy",
+      "kind": "infomap",
+      "hierarchy": {
+        "path": "sse_multivector/infomap-experiment-v1/I03/hierarchy.json",
+        "sha256": "8953153bae20393d7e3283c5114a34c7b5ca1c348cad9a59b616648b3d71e466"
+      },
+      "configuration": {
+        "path": "sse_multivector/infomap-experiment-v1/I03/configuration.json",
+        "sha256": "256dc035524cd698c31f343e14f8134a7269a29dcc78aaffd2f15dfe72026107"
+      },
+      "vector_map": {
+        "path": "sse_multivector/real-note-fine-segmentation-v1/vectors/vector-map.json",
+        "sha256": "8c2a3eebf84855cc676b3a5812aa53401ec9ddf66292139daa7a4ee17a574712"
+      },
+      "reused_inputs": {
+        "mask_inputs": {
+          "publication": "historical-studies/real-note-fine-segmentation-v1",
+          "payload": "inputs.jsonl",
+          "sha256": "50ea6df1077a517f62ff651f4c3023e08b6d113ea6c0b67a466a5d325cc22f0f",
+          "scope": "Exact already-selected original100 post texts; mask representations retain their own bound identities."
+        },
+        "canonical_aliases": {
+          "publication": "numerical/merge-rule-d36bfa5ec6402214",
+          "payload": "inputs.jsonl",
+          "sha256": "2b92dd7ef20f756e33360785552b9973ad95f41b40c1703d3b3ba85d9fb56eb7",
+          "records": 916
+        }
+      }
+    },
+    "infomap-I04": {
+      "profile": "saved-hierarchy",
+      "kind": "infomap",
+      "hierarchy": {
+        "path": "sse_multivector/infomap-experiment-v1/I04/hierarchy.json",
+        "sha256": "bbbdb14c56d7a9768be72afcc12a51d69fc4196344c0a0a648f203832520d048"
+      },
+      "configuration": {
+        "path": "sse_multivector/infomap-experiment-v1/I04/configuration.json",
+        "sha256": "85fc63d45741c76d9c2c787126b062d263f46b896e3a66e338244d44ad15471d"
+      },
+      "vector_map": {
+        "path": "sse_multivector/real-note-fine-segmentation-v1/vectors/vector-map.json",
+        "sha256": "8c2a3eebf84855cc676b3a5812aa53401ec9ddf66292139daa7a4ee17a574712"
+      },
+      "reused_inputs": {
+        "mask_inputs": {
+          "publication": "historical-studies/real-note-fine-segmentation-v1",
+          "payload": "inputs.jsonl",
+          "sha256": "50ea6df1077a517f62ff651f4c3023e08b6d113ea6c0b67a466a5d325cc22f0f",
+          "scope": "Exact already-selected original100 post texts; mask representations retain their own bound identities."
+        },
+        "canonical_aliases": {
+          "publication": "numerical/merge-rule-d36bfa5ec6402214",
+          "payload": "inputs.jsonl",
+          "sha256": "2b92dd7ef20f756e33360785552b9973ad95f41b40c1703d3b3ba85d9fb56eb7",
+          "records": 916
+        }
+      }
+    },
+    "reference-manual-coffee-hierarchy-v1": {
+      "profile": "saved-hierarchy",
+      "kind": "reference",
+      "hierarchy": {
+        "path": "sse_multivector/manual-coffee-hierarchy-v1/hierarchy.json",
+        "sha256": "378a7514783d457e832491cfb8c25aa63a63759dfff0e96e9e87b3e596c3b798"
+      },
+      "reused_inputs": {
+        "publication": "historical-studies/real-note-fine-segmentation-v1",
+        "payload": "inputs.jsonl",
+        "sha256": "50ea6df1077a517f62ff651f4c3023e08b6d113ea6c0b67a466a5d325cc22f0f",
+        "scope": "Exact already-selected original100 post texts; mask representations retain their own bound identities."
+      },
+      "reference_bindings": [
+        {
+          "path": "sse_multivector/manual-coffee-hierarchy-v1/m06-comparison.json",
+          "sha256": "78e0ecfd6876e95f183adf50ea96e22351533e9f19f434456a5815bcf76be869"
+        },
+        {
+          "path": "sse_multivector/real-note-fine-segmentation-v1/reviewed-input.json",
+          "sha256": "9de47b1a66867e612aaf706da5002d4b04b4e9d8192e3782330a693dd1dea019"
+        }
+      ]
+    },
+    "reference-manual-subject-hierarchy-v1": {
+      "profile": "saved-hierarchy",
+      "kind": "reference",
+      "hierarchy": {
+        "path": "sse_multivector/manual-subject-hierarchy-v1/hierarchy.json",
+        "sha256": "dd883ef5bdb86490e73bf2f79e34c757bdafb1a12331a48f75dbc149b850c35f"
+      },
+      "reused_inputs": {
+        "fine_segments_publication": "numerical/fine-region-baa0fabaac64ba5c",
+        "partition_inputs_publication": "numerical/fine-region-00d974f22ed8935f"
+      },
+      "reference_bindings": [
+        {
+          "path": "sse_multivector/fine-region-hierarchy-result-v2/analysis.json",
+          "sha256": "1371b94a47675652e85f54a294a78f6f34fbc508727236b596f2f9be37a48643"
+        },
+        {
+          "path": "sse_multivector/fine-region-partition-result-v1/analysis.json",
+          "sha256": "e7296fdad9b69fedd37cf28bbbbb07ade54a399c49c5aa2a9f4f5944d1e6b26e"
+        }
+      ]
+    }
+  }
+}

@@ -42,16 +42,17 @@ remain historical evidence; raw source posts are not deprecated by that rule.
   branches are outputs, not a count of independent trials.
 - [Publication files](publication-files.csv) and [checksums](publication.sha256):
   every selected local payload and metadata file, including exact prepared inputs.
-  The [remaining items](publication-gaps.csv) identify 33 unsupported results
-  and one missing configuration.
+  The [remaining item](publication-gaps.csv) is TRUE10's missing configuration.
+  The 33 formerly unsupported entries now have selected final evidence or an
+  explicit intermediate/duplicate disposition.
   The [109-group review](open-items.md#historical-collection-review) resolved 32
   groups needing no separate result export; the other 77 now have selected evidence.
   ASv6.100's final quality summary and four frozen agent rubrics are selected as
   original Markdown; the [study record](../../sse_multivector/subject-prompt-goal-v1/asv6.100-generalization-v1/README.md#publication-files)
   identifies their paths alongside the six existing answer/review bundles.
-- [Experiments](experiments.csv): 2,676 entries linked to selected results:
+- [Experiments](experiments.csv): 2,684 entries linked to selected results:
   2,547 standalone prompt preparations, 37 official hierarchy runs, four training
-  runs, 84 historical collections and four later-located historical prompt
+  runs, 92 historical collections and four later-located historical prompt
   studies. These are different kinds of entries,
   not an additive count of independent experiments. Prompt IDs, model settings,
   case counts, provenance and plan/manifest identities are preserved. The
@@ -79,6 +80,9 @@ remain historical evidence; raw source posts are not deprecated by that rule.
   The archived-baseline collection adds four bundles of final CREC answers,
   segments and geometry measurements. Assembled answers and reused work remain
   explicitly identified; see the [archived-baseline checks](reproduce.md#archived-baseline-checks).
+  The final conversion batch adds 28 bundles of saved hierarchies, partitions,
+  manual reference fixtures, navigation measurements and performance results.
+  See the [shared export command and limits](reproduce.md#saved-hierarchy-navigation-and-performance-checks).
   Eleven SSE representation studies also retain their final numerical comparisons
   and fixed inputs; these used manually supplied spans, without subject or mask
   prompt generation. See the [representation checks](reproduce.md#sse-representation-study-checks).
@@ -130,9 +134,8 @@ The catalog records the source and export format; a selected bundle can cover
 part of a study without recreating its original working directory.
 
 These exports are still local. [Hosting and download preparation](downloads.md#before-downloads-become-available)
-remains open. Unsupported results still need
-[conversion review](publication-gaps.csv); their maintained findings remain
-readable here while that work is pending.
+remains open. [TRUE10's missing configuration](publication-gaps.csv) is the
+remaining conversion gap; its maintained findings remain readable here.
 
 ## Release layout
 
@@ -154,7 +157,7 @@ Hugging Face Models will host all 17 evaluated
 adapters (6.78 GiB). Hugging Face Datasets will host used posts, prepared training
 data, final unsigned hierarchies, standalone prompt answers, evaluation and
 numerical results, and each experiment's parameters. The selected local files
-currently measure 1.08 GiB; older-format review items remain explicit.
+currently measure 1.09 GiB; missing evidence and reproduction limits remain explicit.
 
 The [publication plan](downloads.md) defines those contents. The new
 [publication file list](publication-files.csv) describes the exact local

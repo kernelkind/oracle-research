@@ -2275,8 +2275,16 @@ final segments and geometry measurements. It verifies frozen source hashes
 against saved extracted counterparts without decoding archives. Reused results
 remain identifiable; TEv4.1 answer inputs reference their existing publication.
 See the [archived-baseline commands and checks](../docs/experiments/reproduce.md#archived-baseline-checks).
-Unsupported/missing result review and public download verification remain
-unfinished. The signed export below retains its existing
+The same command now supports the
+[saved-hierarchy](experiment_specs/saved-hierarchy-publication-v1.json),
+[navigation](experiment_specs/navigation-study-publication-v1.json) and
+[performance](experiment_specs/performance-study-publication-v1.json) selections.
+Their 28 bundles preserve final hierarchies/partitions, manual reference inputs,
+navigation measurements and performance reports. Categorized hierarchy results
+use unsigned `kind`/`tags`/`content` records; Infomap retains its native numerical
+format. See the [shared example and replay limits](../docs/experiments/reproduce.md#saved-hierarchy-navigation-and-performance-checks).
+TRUE10's missing configuration, privacy review and hosted download verification
+remain unresolved. The signed export below retains its existing
 behavior.
 
 ### Review viewer export

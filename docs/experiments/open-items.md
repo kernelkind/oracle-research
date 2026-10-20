@@ -146,10 +146,11 @@ Original plans and results were not modified.
   hosted downloads against their selected file hashes; having a saved file is
   not a completed reproduction test.
 
-[Remaining publication items](publication-gaps.csv) record unsupported results,
-and the missing configuration. The historical collection review below is resolved
-for its selected final evidence. Duplicate native jobs, warmups and reused answers must
-not be counted as independent trials.
+[The remaining publication item](publication-gaps.csv) records TRUE10's missing
+configuration. The 33 formerly unsupported entries now have selected evidence
+or an explicit intermediate/duplicate disposition. The historical collection
+review below is resolved for its selected final evidence. Duplicate native jobs,
+warmups and reused answers must not be counted as independent trials.
 
 ### Historical collection review
 
@@ -165,8 +166,8 @@ The 33 HDB title/description groups, 11 SSE representation studies, six
 subject/mask collections, 22 early/standalone prompt collections and four
 segmentation/title/frontier collections, plus one archived-baseline collection,
 now have selected final evidence: **77 groups** in total. No collection-level
-export gap remains from this review. The separate **33 unsupported results and
-one missing configuration** still need resolution.
+export gap remains from this review. The later conversion batch resolves the
+separate 33 unsupported entries; **TRUE10's missing configuration** remains open.
 
 The current-baseline omission found in this review is now resolved. The six
 selected **ASv6.100** native bundles retain 180 valid answers and their saved
@@ -204,6 +205,22 @@ archived-baseline collection were selected afterward; the
 [measured totals](downloads.md#measured-local-exports) include them. The
 remaining-items file names concrete export requirements rather than treating
 every old directory as an unexamined missing dataset.
+
+### Selected hierarchy, navigation and performance evidence
+
+The final conversion batch adds **28 bundles, 140 files and 10,973,854 bytes
+(10.47 MiB)**, or **2,078,449 bytes (1.98 MiB)** with gzip level 6. It retains
+14 final hierarchy/partition outputs, two manual reference fixtures, eight
+navigation studies and four performance units. HR02 uses its final view;
+CPC01's run and analysis form one study. The intermediate HR35 source-hash
+comparison does not become a separate result.
+
+All **219 relevant tests** pass. Originals remain unchanged and nothing was
+uploaded. The performance evidence still lacks the exact admitted 180-case
+training selection and frozen fitter/runtime version needed for full replay.
+Unknown provenance remains unknown, and reference fixtures are not generated
+trial outcomes. See the [shared export command and limits](reproduce.md#saved-hierarchy-navigation-and-performance-checks).
+Final privacy review and hosted reader tests remain open.
 
 ### Selected archived baseline evidence
 
@@ -497,7 +514,7 @@ before packaging. Known credential containers were excluded from discovery;
 that is not a completed privacy review of the evidence.
 
 The [publication plan](downloads.md#measured-local-exports) now measures the
-selected local exports: **1.08 GiB**, plus **6.78 GiB** for all 17 evaluated
+selected local exports: **1.09 GiB**, plus **6.78 GiB** for all 17 evaluated
 adapters. [Publications](publications.csv), [exact files](publication-files.csv)
 and [checksums](publication.sha256) record this selection. The 534.71 GiB source
 inventory and old bundle tables do not define the public download size or layout.
@@ -509,14 +526,11 @@ Before publication:
   local files retain their original paths. The 196 ambiguous files
   remain tracked. Review them and resolve the remaining
   [original-file replay and evidence gaps](#original-file-links-and-replay).
-- Review [remaining conversion items](publication-gaps.csv): 33 unsupported result
-  files, one result without its required local configuration, and the final
-  evidence identified in the [historical collection review](#historical-collection-review).
-  The supported selection has been backfilled through the normal exporters;
+- Resolve or explicitly retain [TRUE10's missing configuration](publication-gaps.csv).
+  The reviewed final evidence has been backfilled through the shared exporters;
   all 27,032 native jobs were classified in the local audit, and the public
   index retains the 2,547 selected standalone native studies.
-  Do not substitute guessed outcomes or entire working directories for
-  unsupported formats.
+  Preserve recorded reproduction limits rather than substituting guessed inputs.
 - Preserve experiment identity, exact selections, versions, reuse and recorded
   outcomes. Report missing evidence without changing original records.
 - Review the existing exact export list and checksums, then link the GitHub index

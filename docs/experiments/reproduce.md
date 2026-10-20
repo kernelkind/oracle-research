@@ -445,7 +445,7 @@ experiment/source identities. [Publication files](publication-files.csv) records
 every path, byte count and SHA-256 beneath `target/publication-exports/`.
 These paths describe local staging, not an available download.
 
-With the `ORACLE_ROOT` setup above, verify all 9,870 selected files:
+With the `ORACLE_ROOT` setup above, verify all 10,010 selected files:
 
 ```bash
 cd "$ORACLE_ROOT/target/publication-exports"
@@ -457,8 +457,9 @@ The command prints failures only and exits zero when every listed checksum
 matches. This checks file bytes; it does not assess scientific correctness or
 perform privacy review. The [measured selection](downloads.md#measured-local-exports)
 describes sizes, input splits and excluded intermediates. The
-[remaining-items table](publication-gaps.csv) identifies 33 unsupported final
-results and the required configuration not located for TRUE10/graph. The
+[remaining-items table](publication-gaps.csv) identifies the required
+configuration not located for TRUE10/graph. All 33 formerly unsupported entries
+now have selected evidence or an explicit intermediate/duplicate disposition. The
 [historical collection review](open-items.md#historical-collection-review)
 resolved its 109 groups through retained material or selected final evidence.
 
@@ -578,7 +579,7 @@ its machine-specific deployment commands are not a ready-to-run public recipe.
 
 ## Other experiments and moved files
 
-The [study index](experiments.csv) contains 2,676 selected entries: standalone
+The [study index](experiments.csv) contains 2,684 selected entries: standalone
 prompt preparations, official hierarchy runs, training runs, historical collections
 and the four located historical subject-prompt studies.
 It records saved plan identities and prompt/model settings.
@@ -755,8 +756,8 @@ were preserved, and nothing was uploaded.
 
 ### Historical backfill checks
 
-The current local selection contains **3,155 output/input directories and 9,870
-files**, totaling **1,164,713,832 bytes**. Every listed file was independently
+The current local selection contains **3,183 output/input directories and 10,010
+files**, totaling **1,175,687,686 bytes**. Every listed file was independently
 rehashed. Structured payload bindings were checked against their export manifests;
 the five original ASv6.100 Markdown documents match their recorded source hashes.
 Exact prepared-input copies were also checked against their frozen source hashes.
@@ -789,6 +790,51 @@ remain unresolved. No fresh inference, training or semantic grading occurred.
 This checks the selected supported formats. [Remaining historical exports](publication-gaps.csv)
 remain outside this size/completeness claim. Privacy review and a clean reader
 test against the eventual hosted selection are still pending.
+
+### Saved hierarchy, navigation and performance checks
+
+Three maintained selections cover the final 33 formerly unsupported entries.
+They produce 28 bundles; duplicate and intermediate records do not become
+separate studies:
+
+| Selection under `sse_multivector/experiment_specs/` | Contents |
+| --- | --- |
+| [saved-hierarchy-publication-v1.json](../../sse_multivector/experiment_specs/saved-hierarchy-publication-v1.json) | 14 final hierarchies/partitions and two manual reference fixtures |
+| [navigation-study-publication-v1.json](../../sse_multivector/experiment_specs/navigation-study-publication-v1.json) | Eight navigation studies |
+| [performance-study-publication-v1.json](../../sse_multivector/experiment_specs/performance-study-publication-v1.json) | Four units containing seven final reports and their summary |
+
+With the original saved files arranged under the source repository root:
+
+```bash
+cd "$ORACLE_ROOT"
+python sse_multivector/experiment.py export-evaluation-results \
+  ../oracle-mvp-original \
+  --kind prompt-study \
+  --spec sse_multivector/experiment_specs/saved-hierarchy-publication-v1.json \
+  --study saved-hierarchy-GDC09 \
+  --output target/saved-hierarchy-results
+```
+
+For another entry, use its specification and exact key from that file's
+`studies` object. Each selection checks its original source hashes; compact
+downloads alone do not recreate the required source layout. The command performs
+no model calls. The five-file historical-study format keeps results, inputs,
+judgments and parameters separate.
+
+Categorized hierarchies use unsigned `kind`/`tags`/`content` records in
+`results.jsonl`; original assignments remain bound in their input records.
+Infomap partitions retain their native numerical meaning. The two manual
+fixtures remain reference inputs, not generated trial outcomes. HR02 retains
+its final view rather than its preparation state. CPC01's run and complementary
+analysis form one unit; the redundant HR35 source-hash comparison is excluded.
+
+The batch totals **140 files, 10,973,854 bytes**, or **2,078,449 bytes** with
+gzip level 6. All **219 relevant tests** pass. The exact admitted 180-case
+training selection and frozen fitter/runtime version remain unlocated for the
+learning benchmark; saved measurements do not establish full replay. Unknown
+AS provenance stays unknown. Original evidence remains unchanged; nothing was
+uploaded. TRUE10's missing configuration, final privacy review and hosted reader
+tests remain open.
 
 ### Archived baseline checks
 
