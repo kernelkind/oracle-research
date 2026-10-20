@@ -176,10 +176,11 @@ formats.
 
 These are measured selected outputs, not an exhaustive all-history size claim.
 [Remaining items](publication-gaps.csv) identify 33 unsupported result files,
-one result missing its configuration, and older inventory groups still needing
-review. Those groups can include code/prompts already in Git or results covered
-elsewhere; they are not automatically additional missing datasets. All 27,032
-native jobs have been classified: 2,547 standalone trials are retained; warmups,
+one result missing its configuration, and final evidence identified by the
+[109-group historical review](open-items.md#historical-collection-review).
+That review resolved 32 groups needing no separate result export. The remaining
+source containers have not yet been converted or added to these measured totals.
+All 27,032 native jobs have been classified: 2,547 standalone trials are retained; warmups,
 internal execution jobs, manual construction intermediates and input-only
 preparations are excluded. Independent repeats remain distinct, and reused
 answers retain their reuse records. The 203 saved hierarchy branches are not
@@ -416,7 +417,7 @@ for a study:
 | [experiments.csv](experiments.csv) | Selected studies with prompt/model settings, provenance and links to compact exports; rows are not an additive count of independent trials |
 | [publications.csv](publications.csv) | Selected output formats, source/trial identities, sizes and coverage qualifications |
 | [publication-files.csv](publication-files.csv) and [publication.sha256](publication.sha256) | Exact selected payload and metadata paths, sizes and checksums |
-| [publication-gaps.csv](publication-gaps.csv) | Unsupported results, missing configuration and older collections still needing review |
+| [publication-gaps.csv](publication-gaps.csv) | Unsupported results, missing configuration and identified historical evidence needing export |
 | [models.csv](models.csv) | All 17 evaluated adapter checkpoints and their pinned base-model references |
 | [historical-files.csv](historical-files.csv) and [historical-uses.csv](historical-uses.csv) | Original artifact blobs and commit associations from the pre-rewrite audit |
 
@@ -444,7 +445,7 @@ stay at their original workspace paths.
 
 The public `experiments.csv` retains the selected rows in their original order
 with every column and value preserved. Outstanding older collection/result
-reviews remain in `publication-gaps.csv`; the retained findings and provenance
+exports remain in `publication-gaps.csv`; the retained findings and provenance
 tables preserve meaningful recovery and missing-evidence qualifications.
 
 ## Before downloads become available

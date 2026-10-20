@@ -296,10 +296,10 @@
         "files": 40
       }
     },
-    "gaps": 143,
+    "gaps": 111,
     "gap_status_counts": {
       "unsupported": 33,
-      "legacy_collection_review": 109,
+      "legacy_export_needed": 77,
       "missing": 1
     },
     "native_status_counts": {
@@ -321,7 +321,7 @@
     "privacy_review": "Pending review of the actual selected public contents",
     "scope": "Measured selected supported exports. Gaps remain explicit; this is not an exhaustive all-history size claim.",
     "historical_study_backfill": {
-      "scope": "Four separately selected historical subject-prompt studies; broader legacy collection review remains open",
+      "scope": "Four separately selected historical subject-prompt studies; broader legacy final-evidence exports remain outstanding",
       "category": "historical-prompt",
       "studies": 4,
       "calls": 78,
@@ -423,5 +423,141 @@
     "original_files_altered": false,
     "privacy_identity_review": "pending; this rewrite only removed generated data",
     "uploads": false
+  },
+  "legacy_collection_review": {
+    "date": "2026-10-20",
+    "baseline_commit": "86bc4bb69ea2e0c2f2a186f7b1c3344f6bbc1c30",
+    "scope": "All 109 previously unclassified historical collection groups, with bounded reads of exact related source directories in original research-main and named baseline archive members",
+    "groups_reviewed": 109,
+    "group_actions": {
+      "git_retained": 32,
+      "export_needed": 77
+    },
+    "groups_needing_no_separate_export": {
+      "listed_material_retained_in_git": [
+        "tracked-bounded-hierarchy-v1",
+        "tracked-branch-comparison-prompt-v1",
+        "tracked-distillation-review-v1",
+        "tracked-gte",
+        "tracked-hdbv2-node-description-probe-v35",
+        "tracked-hdbv2-node-description-probe-v36",
+        "tracked-hdbv2-node-description-probe-v37",
+        "tracked-hdbv2-node-description-probe-v38",
+        "tracked-hierarchy-construction-prompt-v1",
+        "tracked-node-description-prompt-v1",
+        "tracked-node-description-prompt-v2",
+        "tracked-node-description-prompt-v3",
+        "tracked-node-merge-prompt-jev-v1",
+        "tracked-node-merge-prompt-jev-v2",
+        "tracked-node-sorting-prompt-v1",
+        "tracked-node-sorting-prompt-v2",
+        "tracked-node-subsumption-prompt-astra-masks-v1",
+        "tracked-node-subsumption-prompt-jev-v2",
+        "tracked-node-subsumption-prompt-jev-v3",
+        "tracked-node-subsumption-prompt-luna-v1",
+        "tracked-node-subsumption-prompt-luna-v2",
+        "tracked-node-subsumption-prompt-luna-v3",
+        "tracked-node-subsumption-prompt-v2",
+        "tracked-node-subsumption-prompt-v3",
+        "tracked-parent-candidate-prompt-v1",
+        "tracked-reference_map",
+        "tracked-semantic_map",
+        "tracked-shr_single_pair",
+        "tracked-sse_multivector",
+        "tracked-topic_map"
+      ],
+      "blocked_attempt_without_answers": "tracked-mask-prompt-astra-low-v1",
+      "proposal_inputs_duplicate_executed_sibling": "tracked-mask-prompt-recognition-proposal-v1",
+      "scope_limit": "These resolve the listed collection gaps, not every related untracked run or the separate Git placement review of 196 ambiguous files"
+    },
+    "remaining_by_family": {
+      "hdb_title_description_studies": 33,
+      "atomic_subject_and_subject_mask_goal_studies": 6,
+      "other_standalone_prompt_studies": 22,
+      "sse_representation_diagnostics": 11,
+      "real_note_hierarchy_title_and_frontier_studies": 4,
+      "archived_baselines": 1
+    },
+    "current_asv6_100_missing_evidence": {
+      "covered_answers": 180,
+      "covered_answers_with_saved_reviews": 180,
+      "selected_native_bundles": 6,
+      "unrun_rows_are_not_answers": 119,
+      "missing_sources": [
+        {
+          "source": "research-main:sse_multivector/experiments/sp-autonomous-v1/asv6.100-generalization-v1/quality-summary.md",
+          "role": "final_per_input_per_trial_consistency_measurements",
+          "source_bytes": 11240,
+          "source_sha256": "1ff6c6343be011523a70c9fd70adda6f036cc3343b400ce1b3dc62394bbc052a",
+          "tracked_in_publication_git": false
+        },
+        {
+          "source": "research-main:sse_multivector/experiments/sp-autonomous-v1/asv6.100-generalization-v1/real-selection/rubric-a.md",
+          "role": "frozen_agent_rubric_definitions",
+          "source_bytes": 21571,
+          "source_sha256": "610288bbca1a6db9e36e184a548e6829f444280bb565e5d33ce49f27b2ee8005",
+          "tracked_in_publication_git": false
+        },
+        {
+          "source": "research-main:sse_multivector/experiments/sp-autonomous-v1/asv6.100-generalization-v1/real-selection/rubric-b.md",
+          "role": "frozen_agent_rubric_definitions",
+          "source_bytes": 22488,
+          "source_sha256": "f9845a4e5fdb18e38b9671c5800112135db7c189b639533f5f4f272b512a5468",
+          "tracked_in_publication_git": false
+        },
+        {
+          "source": "research-main:sse_multivector/experiments/sp-autonomous-v1/asv6.100-generalization-v1/prospective-audit/rubric.md",
+          "role": "frozen_agent_rubric_definitions",
+          "source_bytes": 14816,
+          "source_sha256": "d5f492cb978c2e4a48a0d1b24f6fd8e9dfa58c4b96ae5050c12fe252be95980f",
+          "tracked_in_publication_git": false
+        },
+        {
+          "source": "research-main:sse_multivector/experiments/sp-autonomous-v1/asv6.100-generalization-v1/authored-new/rubric.md",
+          "role": "frozen_agent_rubric_definitions",
+          "source_bytes": 20992,
+          "source_sha256": "c72956f484154380f2e1ec46b8360178d85a987396165f64dfdfb3697da918b2",
+          "tracked_in_publication_git": false
+        }
+      ],
+      "source_bytes": 91107
+    },
+    "source_size_qualifications": {
+      "hdb_saved_successful_answers": 506,
+      "hdb_answer_file_bytes": 94310,
+      "real_note_final_segment_field_bytes": 678060,
+      "meaning": "Existing source files or serialized final fields only; neither is a completed compact-export size or a new independent-trial count"
+    },
+    "private_review_reports": [
+      {
+        "path": "target/publication-audit/legacy-review-86bc4bb6/root-retained-review.json",
+        "sha256": "39743c2350dc5c92ca7c6af6f0105c05ec3ba617cba9bb440c677722c3b59e21"
+      },
+      {
+        "path": "target/publication-audit/legacy-review-86bc4bb6/hdb-review.json",
+        "sha256": "f4f06c8f3fad0305b7cc35e39ce2da5a4dcb282e47833d1bf63e693d55fb1304"
+      },
+      {
+        "path": "target/publication-audit/legacy-review-86bc4bb6/subject-mask-goals-review.json",
+        "sha256": "eb2965867cc393b9dea08393f05325224ac7f85d3ad5bf5a08068177164e67fb"
+      },
+      {
+        "path": "target/publication-audit/legacy-review-86bc4bb6/other-prompts-review.json",
+        "sha256": "ac47275e83a47de2a72c7f97230bf3b4a0e9e695c7c85d1b7dca173757a21c42"
+      },
+      {
+        "path": "target/publication-audit/legacy-review-86bc4bb6/realnote-review.json",
+        "sha256": "fac9612a7c3c79fba805c78b7f87c8306eb4b531252f4adac94c9f1395a17102"
+      }
+    ],
+    "selected_publications_unchanged": 2943,
+    "selected_payload_files_unchanged": 8832,
+    "selected_non_model_bytes_unchanged": 1118863911,
+    "source_originals_preserved": true,
+    "fresh_model_inference": false,
+    "new_exports": false,
+    "uploads": false,
+    "privacy_review": "Still pending for actual publication contents",
+    "remaining_items": "publication-gaps.csv"
   }
 }

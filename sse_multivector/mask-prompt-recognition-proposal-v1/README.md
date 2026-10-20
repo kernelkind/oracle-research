@@ -25,4 +25,8 @@ The meditation selection uses the exact highlighted ranges the user approved, no
 
 Even correct judgments on all six masks would establish only a small development result, not a reliable general-purpose reviewer. False alarms on the acceptable masks matter as much as detecting the known errors. ASv6.8, SSE, segmentation, generated data, user decisions, and prompt defaults stay unchanged.
 
-See [conversion gaps](../../docs/experiments/publication-gaps.csv) for `collection:tracked-mask-prompt-recognition-proposal-v1`.
+The publication review found no separate result to export from this proposal.
+Its fixed inputs match the executed
+[recognition study](../mask-prompt-recognition-sol-low-v1/README.md), whose final
+answers and judgments remain in [conversion gaps](../../docs/experiments/publication-gaps.csv)
+as `collection:tracked-mask-prompt-recognition-sol-low-v1`.

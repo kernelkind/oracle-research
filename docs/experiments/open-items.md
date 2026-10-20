@@ -147,8 +147,59 @@ Original plans and results were not modified.
   not a completed reproduction test.
 
 [Remaining publication items](publication-gaps.csv) record unsupported results,
-the missing configuration and older groups still needing review. Duplicate
-native jobs, warmups and reused answers must not be counted as independent trials.
+the missing configuration and final evidence identified by the historical
+collection review below. Duplicate native jobs, warmups and reused answers must
+not be counted as independent trials.
+
+### Historical collection review
+
+The 2026-10-20 review checked all **109 older inventory groups**, comparing their
+listed files and exact related source directories with the selected exports.
+**32 groups need no separate result export:** 30 have their listed material
+retained in Git, one records a blocked attempt with no generated answers, and
+one is a proposal whose inputs duplicate its executed sibling. The executed
+sibling still needs an export. This resolves those collection-level gaps; it
+does not resolve the separate placement review of the 196 ambiguous Git files.
+
+The remaining **77 groups need final-evidence exports**:
+
+| Collections | Groups | Evidence to retain |
+| --- | ---: | --- |
+| HDB title and description studies | 33 | 506 successful saved answers, final title selections, comparisons and recorded assessments; preserve 24 failed attempts separately from successful answers |
+| Atomic subject and subject/mask goal studies | 6 | Missing final answers, assessments and measurements; four previously selected studies remain covered |
+| Other standalone prompt studies | 22 | Early title/mask trials, mask comparisons and three manual prominence studies; retain partial results and distinguish reused answers |
+| SSE representation diagnostics | 11 | Final numerical comparisons and decisions with their fixed inputs and parameters |
+| Real-note, hierarchy-title and frontier studies | 4 | Final segment selections, title answers and judgments, model comparisons and recorded reviews |
+| Archived baselines | 1 | Four CREC119 answer/segment files and two geometry diagnostics; the TEv4.1 answers are already covered by selected inputs |
+
+The subject-goal group includes a current-baseline omission: the six selected
+**ASv6.100** native bundles retain 180 valid answers and their saved reviews,
+but not `quality-summary.md` or four frozen evaluation rubrics. Those five files
+total **91,107 bytes** and explain the per-input/per-trial measurements and the
+criterion IDs used by the reviews. The 119 unrun rows in the saved plans are not
+additional answers. Older AS results remain historical; unknown provenance or
+reviewer identity stays unknown.
+
+Final evidence is often much smaller than its original container. The 506 HDB
+answer files total **94,310 bytes** before their comparisons and assessments.
+The nine real-note response files contain large working arrays, but their final
+segment/unassigned fields serialize to **678,060 bytes**, before required input,
+tree and review evidence. Neither measurement is a completed export-size estimate.
+Exclude intermediate embeddings, clustering distance arrays and duplicate answer
+views. Numerical measurements that are themselves a study's result still belong.
+
+A saved hash reference does not publish the referenced content: the selected
+fine-region hierarchy records a title-review hash, but omits the 31 judgments.
+The later frontier result files were located in the original main checkout;
+their absence from the publication checkout does not mean they were lost.
+Teacher-parity results remain interim. A missing aggregate file also does not
+erase successful individual responses in a partial run. Preserve actual user
+decisions separately from agent assessments.
+
+This was an evidence review. No additional data was exported, no original
+records were changed, and the measured selected totals remain unchanged. The
+remaining-items table now names concrete export requirements rather than treating
+every old directory as an unexamined missing dataset.
 
 ## Current Oracle/runner compatibility
 
@@ -298,8 +349,8 @@ Before publication:
   remain tracked. Review them and resolve the remaining
   [original-file replay and evidence gaps](#original-file-links-and-replay).
 - Review [remaining conversion items](publication-gaps.csv): 33 unsupported result
-  files, one result without its required local configuration, and older inventory
-  groups needing review for final data versus material already retained in Git.
+  files, one result without its required local configuration, and the final
+  evidence identified in the [historical collection review](#historical-collection-review).
   The supported selection has been backfilled through the normal exporters;
   all 27,032 native jobs were classified in the local audit, and the public
   index retains the 2,547 selected standalone native studies.

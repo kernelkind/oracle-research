@@ -43,9 +43,9 @@ remain historical evidence; raw source posts are not deprecated by that rule.
 - [Publication files](publication-files.csv) and [checksums](publication.sha256):
   every selected local payload and metadata file, including exact prepared inputs.
   The [remaining items](publication-gaps.csv) distinguish unsupported results,
-  one missing configuration and older inventory groups needing review. An older
-  group may include code/prompts already retained in Git; it is not automatically
-  a missing public dataset.
+  one missing configuration and identified historical evidence needing export.
+  The [109-group review](open-items.md#historical-collection-review) resolved 32
+  groups that need no separate result export and records what the others lack.
 - [Experiments](experiments.csv): 2,599 entries linked to selected results:
   2,547 standalone prompt preparations, 37 official hierarchy runs, four training
   runs, seven historical collections and four later-located historical prompt

@@ -423,8 +423,10 @@ perform privacy review. The [measured selection](downloads.md#measured-local-exp
 describes sizes, input splits and excluded intermediates. The
 [remaining-items table](publication-gaps.csv) identifies unsupported final
 formats, the required configuration not located for TRUE10/graph, and older
-inventory groups needing review. Those groups may include material already in
-Git or represented by other exports; they are not all missing datasets.
+final evidence still needing export. The
+[historical collection review](open-items.md#historical-collection-review)
+distinguishes those omissions from material already retained in Git or selected
+elsewhere.
 
 Four old output-note counts include notes present only in the old top container:
 
@@ -748,6 +750,6 @@ checks (four GPU skips); four final production-CLI integration checks also
 passed. The two broader evaluation compatibility failures described above
 remain unresolved. No fresh inference, training or semantic grading occurred.
 
-This checks the selected supported formats. [Older review items](publication-gaps.csv)
+This checks the selected supported formats. [Remaining historical exports](publication-gaps.csv)
 remain outside this size/completeness claim. Privacy review and a clean reader
 test against the eventual hosted selection are still pending.
