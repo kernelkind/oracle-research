@@ -17,6 +17,10 @@ but `export-canonical-viewer` required an internal `state.json` absent from the
 compact export. Browsing directly from the published `hierarchy.jsonl` and posts
 still needs a supported command.
 
+To generate and browse a new hierarchy from your own posts, use the
+[generation guide](../generate-hierarchy.md). Its complete 12-post workflow
+passed in a fresh Linux VM; it does not require these historical files.
+
 | What you want to do | Example | Model work |
 | --- | --- | --- |
 | Explore a completed hierarchy | Browse HR39's saved topics and posts | None |

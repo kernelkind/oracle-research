@@ -558,16 +558,21 @@ Before publication:
   to pinned Hugging Face revisions after repository names are chosen. No upload
   is authorized by generating this local list.
 - Update the [reproduction guide](reproduce.md) for those outputs and test it in
-  a clean environment, including a complete hierarchy run with public
-  authentication. A clean Debian 13 VM with 8 GiB RAM and four CPU cores passed
-  runtime installation, both Rust builds, public encoder downloads and hashes,
-  12-post subject-request preparation and seven offline direct-authentication
-  tests. Live device login, renewal and remote revocation also passed: renewal
-  succeeded before revocation and failed afterward with
-  `401 refresh_token_invalidated`; the VM credential file was removed. No model
-  requests ran. Immediate invalidation of an already-issued access token was not
-  tested, and the runner has no logout command. Encoder inference and complete
-  generation remain untested.
+  a clean environment. The [generation guide](../generate-hierarchy.md) passed
+  a complete 12-post run in a fresh Debian 13 VM with 8 GiB RAM and four CPU
+  cores: installation, both Rust builds, public encoder downloads and hashes,
+  subject extraction, definition writing, CPU encoding, clustering, unsigned
+  export and interactive browsing. The result has six roots and 13 nodes
+  representing all twelve posts; this is a workflow test, not semantic approval.
+  Runner commit `577aef3180f3cc969170ab6f7ac347070de798d4` fixes the Python
+  3.13.5 request-delivery hang discovered there. The stopped original subject
+  attempt was retained; a new batch inherited its exact inputs and settings.
+  Seven offline direct-authentication tests also passed. After generation,
+  renewal succeeded before remote revocation and failed afterward with
+  `401 refresh_token_invalidated`; the VM credential file was removed. Offline
+  export and browsing then passed without credentials. Immediate invalidation
+  of an already-issued access token was not tested, and the runner has no logout
+  command.
   HR39 and used-posts restoration passed there, but the existing viewer exporter
   requires internal `state.json`; it cannot yet browse the compact publication
   files. These checks do not replace a hosted reader test.

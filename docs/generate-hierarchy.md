@@ -14,18 +14,16 @@ and million-note scalability remain project goals. Start with a few dozen posts:
 the current numerical implementation includes quadratic distance matrices, and
 there is no established minimum-RAM specification for this workflow.
 
-The commands and configurations below are provided for publication preparation.
-Setup was checked in a fresh Debian 13 VM with 8 GiB RAM, four CPU cores and
-a 48 GiB disk, using clean Git clones without host caches or credentials.
-Dependency installation, both Rust builds, public encoder downloads and hash
-checks, and subject-request preparation for 12 real posts passed. Seven offline
-direct-authentication tests passed with simulated providers. Live provider login,
-renewal and remote revocation also passed: renewal succeeded before revocation,
-then failed with `401 refresh_token_invalidated`; the VM credential file was
-removed. This made no model requests and did not test immediate invalidation of
-an already-issued access token. Encoder inference and a complete hierarchy run
-remain unvalidated. The final public repository URLs and runner submodule setup
-remain pending.
+These instructions passed an end-to-end test in a fresh Debian 13 VM with
+8 GiB RAM, four CPU cores and a 48 GiB disk, using clean Git checkouts without
+host caches or credentials. Twelve real posts produced six root choices and
+13 hierarchy nodes representing all twelve posts. The test covered installation,
+public encoder downloads and hash checks, subject extraction, definition writing,
+CPU encoding, clustering, unsigned publication export and interactive browsing.
+Offline export and browsing also passed after the VM login was revoked.
+This validates the small workflow; semantic quality and larger-corpus resource
+requirements remain separate questions. The final public repository URLs and
+runner submodule setup remain pending.
 
 ## 1. Install the runtime
 
@@ -35,8 +33,9 @@ pinned Rust/C build environment. Python's `venv` and `pip`, `curl`, and
 match the recorded CPU runtime; the guide does not require a GPU or a container.
 
 Use `experiment-runner` at commit
-`fb9cfb4c49c9e1c61dfcca11772b46480e0b3209`, the revision used for the
-fresh-machine setup check. Place its source checkout either inside Oracle as
+`577aef3180f3cc969170ab6f7ac347070de798d4`, the revision used for the
+complete VM test. It fixes incomplete request delivery on Python 3.13.5.
+Place its source checkout either inside Oracle as
 `experiment-runner/` or alongside it as `../experiment-runner/`. An explicit
 `EXPERIMENT_RUNNER_ROOT` selects a different checkout. The final publication
 submodule setup remains pending.
@@ -97,8 +96,11 @@ Credentials are saved outside the repository at
 `EXPERIMENT_RUNNER_AUTH_FILE` can select another file outside the repository.
 Do not put credentials in the example JSON files.
 
-The runner does not yet provide a logout command. The VM check above exercised
-OpenAI's remote revocation endpoint directly; deleting a local credential file
+The runner does not yet provide a logout command. After generation, the VM test
+exercised OpenAI's remote revocation endpoint directly: renewal succeeded before
+revocation, then failed with `401 refresh_token_invalidated`. The local credential
+file was removed. This verifies revocation of renewal; immediate invalidation of
+an already-issued access token was not tested. Deleting a local credential file
 alone does not revoke the credential at OpenAI.
 
 On Anvil, leave `EXPERIMENT_RUNNER_AUTH` unset to continue using the selected
@@ -293,7 +295,10 @@ If subject extraction or hierarchy construction stops, inspect the reported
 failure and resume with the same `run` or `run-hierarchy` command once it is
 resolved. Previously saved valid results remain available for reuse. Do not
 rerun `prepare` into an existing output directory or delete receipts to force
-progress. Invalid answers and changed frozen sources require investigation.
+progress. Saved terminal failures do not retry automatically after a code fix.
+For a subject batch, `prepare --from` into a new directory preserves the original
+attempt while allowing a new run; collect from that new directory after it
+passes. Invalid answers and changed frozen sources require investigation.
 
 After construction completes or blocks, `run-hierarchy` writes
 `target/hierarchy-example/hierarchy/publication/`. It also attempts this export

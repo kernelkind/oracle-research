@@ -34,7 +34,7 @@ The [current prototype, HiGen V5.3](docs/recommendation-engine/hierarchy-generat
 
 ## Generate a hierarchy
 
-Follow [the generation guide](docs/generate-hierarchy.md) to set up the models and runner, process your own posts, and browse the resulting hierarchy. It includes example configurations; validation of the complete setup on a fresh machine remains pending.
+Follow [the generation guide](docs/generate-hierarchy.md) to set up the models and runner, process your own posts, and browse the resulting hierarchy. Its example configurations passed a complete 12-post test in a fresh Linux VM.
 
 ## Current status and results
 
