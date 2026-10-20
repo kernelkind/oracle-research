@@ -502,9 +502,11 @@ def _judgments(requests, assessments):
                     if expected is None:
                         continue
                     raw = record.get('final_output_raw', record.get('output'))
-                    valid = isinstance(raw, str) and expected == {hashlib.sha256(raw.encode()).hexdigest()}
+                    recorded_hashes = expected - {None}
+                    valid = isinstance(raw, str) and recorded_hashes <= {hashlib.sha256(raw.encode()).hexdigest()}
                     result = dict(record_sha256=checksum,
-                        evidence_status='saved' if valid else 'mismatch')
+                        evidence_status='saved' if valid else 'mismatch',
+                        output_binding='receipt_and_output_hash' if recorded_hashes else 'receipt_only')
                     if valid:
                         result['output'] = raw
                         result.update({key: record[key] for key in (

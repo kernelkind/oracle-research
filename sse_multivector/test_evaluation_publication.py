@@ -239,6 +239,37 @@ class EvaluationPublicationTests(unittest.TestCase):
                 self.assertEqual(metadata['source']['report_sha256'], run.sha256(source))
                 self.assertEqual((source.read_bytes(), source.stat().st_mtime_ns), before)
 
+    def test_older_receipts_without_separate_output_hash_remain_distinct_from_hash_conflicts(self):
+        from sse_multivector import evaluation_publication as publication
+        from experiment_runner import inputs
+        ledger = self.root / 'native/run/results.jsonl'
+        records = [dict(case='case-' + str(i), input_sha256='i' * 64,
+                        final_output_raw='{"valid":true,"reason":"Evidence ' + str(i) + '."}',
+                        status='complete') for i in range(3)]
+        ledger.parent.mkdir(parents=True)
+        ledger.write_text(''.join(json.dumps(record) + '\n' for record in records))
+        premises = [dict(case_id=record['case'], input_sha256=record['input_sha256'],
+                         receipt=dict(results_path=str(ledger), record_sha256=inputs.digest(record)))
+                    for record in records]
+        premises[1]['output_sha256'] = 'f' * 64
+        premises.append({**premises[2],
+            'output_sha256': hashlib.sha256(records[2]['final_output_raw'].encode()).hexdigest()})
+        source = self.root / 'grades.json'
+        write(source, dict(schema_version=1, policy='Recorded grading policy', sources={},
+            random=dict(answers=[dict(id='answer-1', note_id='post-1',
+                                     scoring={}, premises=premises, dependencies=[])]),
+            challenge=dict(answers=[])))
+        output = self.root / 'publication'
+        publication.export_grades(source, output)
+        rows = self.rows(output / 'judgments.jsonl')
+        self.assertEqual([row['evidence_status'] for row in rows], ['saved', 'mismatch', 'saved'])
+        self.assertEqual([row['output_binding'] for row in rows],
+                         ['receipt_only', 'receipt_and_output_hash', 'receipt_and_output_hash'])
+        self.assertEqual(rows[0]['output'], records[0]['final_output_raw'])
+        self.assertNotIn('output', rows[1])
+        self.assertEqual(rows[2]['output'], records[2]['final_output_raw'])
+        self.assertNotIn('output_sha256', self.rows(output / 'results.jsonl')[0]['premises'][0])
+
     def test_saved_result_note_identity_must_match_its_answer_and_selection(self):
         from sse_multivector import evaluation_publication as publication
         directory = self.root / 'run/baseline'
