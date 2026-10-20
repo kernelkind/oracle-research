@@ -1,5 +1,7 @@
 # V22 versus v23: interpreting names and tags
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 V23 did not fix the Coffeechain title: **all three responses were “Coffee shop chains.”** The two control groups remained appropriate. There is no demonstrated reason to adopt the added instruction.
 
 Both versions ran three times on each group: **18 fresh Astra-low calls**. V23 adds only the approved instruction about interpreting names and tags. Exact masks, ordering, model, effort and wrapper stayed fixed. Earlier outputs were not substituted for fresh baseline calls.
@@ -74,6 +76,8 @@ The only ambiguous title is the same “Coffee chains” wording already present
 - Generation used **41,631 input tokens** (5,760 cached) and **1,117 output tokens** (924 reasoning): **42,748 input plus output**. Subcounts are included, not additional. Main-agent work and the independent audit are excluded.
 - Existing authorized Codex subscription only; no API billing, purchase, rental, account switch, saved-title replacement, prompt freeze, TRUE run or hierarchy change. Tracking card: CREC-127. No Plane tool was available.
 
-[Exact v22 inputs](./inputs-v22.json), [exact v23 inputs](./inputs-v23.json), [every output and per-call usage](./comparison.json), [run plan](./run-plan.json), [verification](./verification.json).
+Exact v22 inputs (`./inputs-v22.json`), exact v23 inputs (`./inputs-v23.json`), every output and per-call usage (`./comparison.json`), [run plan](./run-plan.json), verification (`./verification.json`).
 
 The [official evaluation guidance](https://developers.openai.com/api/docs/guides/evaluation-best-practices#what-are-evals) informed the scoped comparison and respect for human judgments, not the semantic verdicts.
+
+**Publication status:** `collection:tracked-hdbv2-node-description-probe-v23` remains in the [conversion review list](../../../docs/experiments/publication-gaps.csv); a complete compact-data conversion has not been established.

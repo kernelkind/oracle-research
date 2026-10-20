@@ -1,5 +1,7 @@
 # SCC hierarchy preflight
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 ## Question
 
 Does the Sub-Cluster Component algorithm (SCC) turn the 22 accepted fine
@@ -23,10 +25,15 @@ future 500-note corpus.
   `fine-region-hierarchy-title-candidates-v1/review-decisions.json` (SHA-256
   `28fe9c3ebed018e5fea9a41b081253b965a946f8c70fab9c9464cbc04090f405`).
 
-The machine-readable result is [`analysis.json`](analysis.json). It binds the
+The machine-readable result is `analysis.json`. It binds the
 input and implementation hashes and records every merging round, parent,
 child, and admitted nearest-neighbor edge. Thresholds that produced no merge
 remain in the frozen schedule but are not emitted as rounds.
+
+The selected release export is `numerical/fine-region-09082305cac3bef2` in the
+[publication catalogue](../../docs/experiments/publications.csv). It contains
+JSONL results derived from `analysis.json` and records that original file's
+SHA-256 in its `experiment.json` manifest.
 
 ## Schedules
 

@@ -1,5 +1,7 @@
 # M02 complete-hierarchy semantic and source audit
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 ## Result and boundary
 
 All **915 raw transitions, 916 canonical vectors, 945 original-ID masks and 2,490 fragments** are accounted for. **408 transitions have exact recursive matches in fully audited M01/M04/M05/M06/M07/M08/M09; the remaining 507 were inspected bottom-up.** All 945 masks, including every alias separately, and all 100 complete supplied originals were freshly read. Every actual child pair was inspected; reuse preserves prior qualifications rather than automatically approving an inherited link.
@@ -22,7 +24,7 @@ The actual source hashes match M02 and all seven reuse runs. Canonical ordering 
 | notes | `9de47b1a66867e612aaf706da5002d4b04b4e9d8192e3782330a693dd1dea019` |
 | Saved M02.json | `d4557450e5f11577dd11542682c5a3506befd3f9a555f108d32bf4bfadd8bd27` |
 
-Source locations are [vector map](../real-note-fine-segmentation-v1/vectors/vector-map.json), [complete supplied originals](../real-note-fine-segmentation-v1/reviewed-input.json), and [saved M02](M02.json). Every fragment count agrees with its byte-span count, and every fragment equals the corresponding UTF-8 slice of its original: **0 span-count or byte-content mismatches across 2,490 fragments**. Original-ID aliases were not collapsed during this check.
+Source locations are vector map (`../real-note-fine-segmentation-v1/vectors/vector-map.json`), complete supplied originals (`../real-note-fine-segmentation-v1/reviewed-input.json`), and saved M02 (`M02.json`). Every fragment count agrees with its byte-span count, and every fragment equals the corresponding UTF-8 slice of its original: **0 span-count or byte-content mismatches across 2,490 fragments**. Original-ID aliases were not collapsed during this check.
 
 There are **28 multi-ID canonical leaves: 27 pairs and one triple**, accounting for the 29-ID difference. Twenty-six have identical fragment arrays. The two differently segmented aliases were both read and checked:
 
@@ -1492,3 +1494,9 @@ Format: `id=left+right canonical/IDs/notes D|H R:run/id|N@inspection-root`. `D` 
 1829=1826+1827 491/507/75 D N@upper
 1830=1828+1829 916/945/100 D N@upper
 ```
+
+**Selected release data:** The [publication catalog](../../docs/experiments/publications.csv) identifies the compact final-result export derived from the saved source:
+
+- `numerical/merge-rule-3f10ba1de03b4799` — original `M02.json`, bound by its recorded source SHA-256.
+
+The export uses the publication format; the original files referenced above remain outside this checkout. Downloads are still being prepared.

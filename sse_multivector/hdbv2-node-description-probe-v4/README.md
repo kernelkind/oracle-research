@@ -1,5 +1,7 @@
 # V4 node-title experiment and review
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 Both fresh prompts titled the weather group as fall despite two masks supplying frost/sunrise information without independently establishing the season. This was assessed as an unresolved failure under the per-instance standard used at the time. The approved collective-context standard below changes how that evidence should be judged; old verdicts are preserved, not automatically reversed. Subsequent user feedback also identified omitted food context in Sea salt. V4 is versioned but not frozen or selected as the replacement.
 
 ## Open the review
@@ -57,7 +59,7 @@ The hypothesis was that this contrast would help preserve shared subject-definin
 
 ## V6 — example-free comparison
 
-V6 defines the desired shared meaning directly: interpret each instance's fragments together, preserve shared context and relationships, generalize differences, and shorten the wording without broadening the meaning. It contains no examples. The [pre-run plan](../hdbv2-node-description-probe-v6/run-plan.json) and [exact comparison](../hdbv2-node-description-probe-v6/comparison.json) preserve the six unchanged groups and twelve new isolated Sol low calls: one v3 and one v6 per group, at most three concurrent calls.
+V6 defines the desired shared meaning directly: interpret each instance's fragments together, preserve shared context and relationships, generalize differences, and shorten the wording without broadening the meaning. It contains no examples. The [pre-run plan](../hdbv2-node-description-probe-v6/run-plan.json) and exact comparison (`../hdbv2-node-description-probe-v6/comparison.json`) preserve the six unchanged groups and twelve new isolated Sol low calls: one v3 and one v6 per group, at most three concurrent calls.
 
 | Node | Fresh v3 | V6 | Original assistant judgment of v6 |
 | --- | --- | --- | --- |
@@ -76,7 +78,7 @@ Only the art judgment was queued for user input. The independent reviewer reject
 /home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/hdbv2-node-description-probe-v6/run-review.sh
 ```
 
-The [focused batch](../hdbv2-node-description-probe-v6/review-uncertain.json) uses a fresh v6 session. The [complete six-card batch](../hdbv2-node-description-probe-v6/review.json), [all assistant comments](../hdbv2-node-description-probe-v6/review-all-comments.json), [assessments](../hdbv2-node-description-probe-v6/assistant-assessments.json), and [execution verification](../hdbv2-node-description-probe-v6/verification.json) remain available. No assistant judgments are copied into user decisions and no previous review data is changed.
+The focused batch (`../hdbv2-node-description-probe-v6/review-uncertain.json`) uses a fresh v6 session. The complete six-card batch (`../hdbv2-node-description-probe-v6/review.json`), all assistant comments (`../hdbv2-node-description-probe-v6/review-all-comments.json`), assessments (`../hdbv2-node-description-probe-v6/assistant-assessments.json`), and execution verification (`../hdbv2-node-description-probe-v6/verification.json`) remain available. No assistant judgments are copied into user decisions and no previous review data is changed.
 
 Verification confirmed exact prompt reconstruction, all 25 masks / 54 fragments, twelve distinct fresh threads/workspaces, one successful attempt per call, no tool events, and unchanged raw responses. The existing release TUI loaded both batches and their hash-bound comments; temporary sessions verified the separate comment, scrolling, baseline comparison, and exit without recording approvals. No production Rust code changed. Total usage was 21,616 input and 1,094 output tokens, including 984 reasoning tokens, with no cached input; existing subscription only.
 
@@ -100,7 +102,7 @@ This is a materially different prompt and input format, not a formatting-only ch
 
 ## V9 — flat-fragment trial
 
-Six fresh Sol low calls used the revised V9 on the same six complete groups. Each prompt contained the same exact fragments, in the same order and with duplicate occurrences retained, but without instance bundles. No full notes, IDs, generated subject descriptions, examples, or assessments were supplied. The [pre-run plan](../hdbv2-node-description-probe-v9/run-plan.json), [complete results with fragments](../hdbv2-node-description-probe-v9/comparison.json), and raw per-node records are preserved.
+Six fresh Sol low calls used the revised V9 on the same six complete groups. Each prompt contained the same exact fragments, in the same order and with duplicate occurrences retained, but without instance bundles. No full notes, IDs, generated subject descriptions, examples, or assessments were supplied. The [pre-run plan](../hdbv2-node-description-probe-v9/run-plan.json), complete results with fragments (`../hdbv2-node-description-probe-v9/comparison.json`), and raw per-node records are preserved.
 
 | Node | Exact V9 output | Main assessment |
 | --- | --- | --- |
@@ -119,9 +121,9 @@ Open only the two uncertain titles, with complete flat fragments and separate re
 /home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/hdbv2-node-description-probe-v9/run-review.sh
 ```
 
-The [complete six-card batch](../hdbv2-node-description-probe-v9/review.json) is also preserved. Numeric row labels identify fragments for review; the model saw no row numbers. The original note/vector/mask associations remain in source packets, not reconstructed in the model input. B displays the earlier V6 output as historical context, not a new paired control. The UI retains its generic “fit every mask” wording: this review concerns collective interpretation, not independent proof by each fragment. User sessions start without decisions, and prior sessions remain unchanged.
+The complete six-card batch (`../hdbv2-node-description-probe-v9/review.json`) is also preserved. Numeric row labels identify fragments for review; the model saw no row numbers. The original note/vector/mask associations remain in source packets, not reconstructed in the model input. B displays the earlier V6 output as historical context, not a new paired control. The UI retains its generic “fit every mask” wording: this review concerns collective interpretation, not independent proof by each fragment. User sessions start without decisions, and prior sessions remain unchanged.
 
-[Verification](../hdbv2-node-description-probe-v9/verification.json) confirmed all 54 fragments, six distinct fresh threads/workspaces, first-attempt success, no tools or schema, unchanged wrapper/model/executable, and exact output/hash agreement. Usage: 10,908 input and 220 output tokens, including 125 reasoning tokens; no cached input. Existing subscription only, no API-key billing or rental. Existing release TUI loaded both batches and comments; temporary-session checks covered scrolling, navigation, historical comparison and safe exit without decisions.
+Verification (`../hdbv2-node-description-probe-v9/verification.json`) confirmed all 54 fragments, six distinct fresh threads/workspaces, first-attempt success, no tools or schema, unchanged wrapper/model/executable, and exact output/hash agreement. Usage: 10,908 input and 220 output tokens, including 125 reasoning tokens; no cached input. Existing subscription only, no API-key billing or rental. Existing release TUI loaded both batches and comments; temporary-session checks covered scrolling, navigation, historical comparison and safe exit without decisions.
 
 V9 is not ready to freeze from these results. This is one selected development trial, not a general accuracy estimate. Neither V8 nor V9's original wording was run, so the observed problems cannot be attributed specifically to flattening or the removed clause. No further prompt change or experiment is selected by this result alone.
 
@@ -129,7 +131,7 @@ V9 is not ready to freeze from these results. This is one selected development t
 
 The user approved a trimmed grouped-mask prompt, saved exactly as [v10](../fine-region-title-prompt-versions.json). It asks for a concise title naming the subject expressed collectively, interprets the quoted text within each instance together, uses group evidence without contradicting explicit meaning, and preserves shared context and relationships. Provenance wording and the final prohibition on broader wording are removed. V8, V9 and frozen selector V1 remain unchanged.
 
-Six fresh isolated Sol low calls used the same 25 masks / 54 fragments. Each numbered instance is one vector's mask, with its exact fragments individually quoted and separated by semicolons. The model received no full notes, IDs, subject descriptions or judgments. See the [pre-run plan](../hdbv2-node-description-probe-v10/run-plan.json) and [complete results with masks](../hdbv2-node-description-probe-v10/comparison.json).
+Six fresh isolated Sol low calls used the same 25 masks / 54 fragments. Each numbered instance is one vector's mask, with its exact fragments individually quoted and separated by semicolons. The model received no full notes, IDs, subject descriptions or judgments. See the [pre-run plan](../hdbv2-node-description-probe-v10/run-plan.json) and complete results with masks (`../hdbv2-node-description-probe-v10/comparison.json`).
 
 | Node | Exact V10 output | Main assessment |
 | --- | --- | --- |
@@ -140,7 +142,7 @@ Six fresh isolated Sol low calls used the same 25 masks / 54 fragments. Each num
 | S3d2aa08f70 | Negative Opinions of Audiobook Literature | Accept: grounded negative audiobook opinions; wording is awkward |
 | S96e55b4730 | Weekend well-wishes to everyone | Accept: covers both Saturday and Sunday wishes |
 
-An independent reviewer, given only these current exact inputs/outputs and the collective-context contract, also accepts all six. [Assessments](../hdbv2-node-description-probe-v10/assistant-assessments.json) distinguish semantic judgments from wording imperfections. No user decisions are assigned, and no uncertain-only review is required. The all-six sampler is optional:
+An independent reviewer, given only these current exact inputs/outputs and the collective-context contract, also accepts all six. Assessments (`../hdbv2-node-description-probe-v10/assistant-assessments.json`) distinguish semantic judgments from wording imperfections. No user decisions are assigned, and no uncertain-only review is required. The all-six sampler is optional:
 
 ```bash
 /home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/hdbv2-node-description-probe-v10/run-review.sh
@@ -148,7 +150,7 @@ An independent reviewer, given only these current exact inputs/outputs and the c
 
 It shows complete grouped masks and a separate reasoning comment. B displays historical V9 output, not a freshly rerun control. The generic UI question about fitting every mask is interpreted collectively, not as independent proof by each mask.
 
-[Execution verification](../hdbv2-node-description-probe-v10/verification.json) confirmed exact input reconstruction and UTF-8 source spans, six fresh threads/workspaces, first-attempt success, no tools or schema, unchanged wrapper/model/executable, and exact output/provenance hashes. Usage: 10,814 input and 208 output tokens, including 150 reasoning tokens; no cached input. Existing subscription only, no API-key billing or rental. The existing release TUI loaded the batch and separate comments at 100×36; next-card navigation, historical comparison and safe exit were checked using a temporary session with all outcomes still empty. No production code changed.
+Execution verification (`../hdbv2-node-description-probe-v10/verification.json`) confirmed exact input reconstruction and UTF-8 source spans, six fresh threads/workspaces, first-attempt success, no tools or schema, unchanged wrapper/model/executable, and exact output/provenance hashes. Usage: 10,814 input and 208 output tokens, including 150 reasoning tokens; no cached input. Existing subscription only, no API-key billing or rental. The existing release TUI loaded the batch and separate comments at 100×36; next-card navigation, historical comparison and safe exit were checked using a temporary session with all outcomes still empty. No production code changed.
 
 The previously rejected Home restriction and food-list output do not recur here. That is improvement in this selected sample, not proof that grouped input alone caused it: both prompt wording and input organization differ from V9, and no fresh paired control was run. V10 remains unfrozen. The subsequent unchanged-prompt test is recorded below.
 
@@ -165,7 +167,7 @@ The user approved a small diverse new sample, not another prompt revision. We se
 | S5ea79ac96e | Eggs: Laying, Preserving, and Cooking | Accept: common subject and related activities; subtitle need not be exhaustive |
 | Se7ebc25cf1 | Wine and Food Pairings | Uncertain, lean reject: food association versus a specific pairing relationship |
 
-The [complete results](../hdbv2-node-description-probe-v10-additional-v1/comparison.json) and [separate assessments](../hdbv2-node-description-probe-v10-additional-v1/assistant-assessments.json) preserve the disagreements. The independent reviewer accepts the rave interpretation, questions the synthesis of the time-related title, and shares the wine uncertainty. Main review treats the time title as a wording weakness, not a clear semantic error. Importantly, not drinking wine does not contradict discussing wine pairings, and the risotto/white-wine mask alone does not establish ingredient versus accompaniment. The disputed issue is how much specific context the group licenses, not a proven contradiction or a return to independent proof by every mask.
+The complete results (`../hdbv2-node-description-probe-v10-additional-v1/comparison.json`) and separate assessments (`../hdbv2-node-description-probe-v10-additional-v1/assistant-assessments.json`) preserve the disagreements. The independent reviewer accepts the rave interpretation, questions the synthesis of the time-related title, and shares the wine uncertainty. Main review treats the time title as a wording weakness, not a clear semantic error. Importantly, not drinking wine does not contradict discussing wine pairings, and the risotto/white-wine mask alone does not establish ingredient versus accompaniment. The disputed issue is how much specific context the group licenses, not a proven contradiction or a return to independent proof by every mask.
 
 Review only the two main uncertainties, with all their masks and separate reasoning:
 
@@ -173,9 +175,9 @@ Review only the two main uncertainties, with all their masks and separate reason
 /home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/hdbv2-node-description-probe-v10-additional-v1/run-review.sh
 ```
 
-The full six-card [sampler](../hdbv2-node-description-probe-v10-additional-v1/review.json) is retained. No baseline title was generated for these groups; B states that rather than supplying a fabricated comparison. The user subsequently rejected the wine title: “agree, it is not nececessarily pairing.” The rave title remains undecided. These decisions do not establish a general support-count rule or return to the broadest-mask standard. The following controlled deletion trial tests a possible contributor without changing the prior prompt or review records.
+The full six-card sampler (`../hdbv2-node-description-probe-v10-additional-v1/review.json`) is retained. No baseline title was generated for these groups; B states that rather than supplying a fabricated comparison. The user subsequently rejected the wine title: “agree, it is not nececessarily pairing.” The rave title remains undecided. These decisions do not establish a general support-count rule or return to the broadest-mask standard. The following controlled deletion trial tests a possible contributor without changing the prior prompt or review records.
 
-[Verification](../hdbv2-node-description-probe-v10-additional-v1/verification.json) confirms unchanged V10/registry/wrapper/CLI/Sol-low settings, six fresh threads and empty workspaces, exact source-byte fragments and input reconstruction, first-attempt success, no tools/schema, and matching provenance/output hashes. Usage: 10,933 input and 146 output tokens, including 82 reasoning tokens; no cached input or additional billing. Existing release TUI loaded focused/all packets and separate comments at 100×36, with temporary-session navigation and safe exit checks; no user approvals were created. The checked-in prompt remains unchanged and unfrozen.
+Verification (`../hdbv2-node-description-probe-v10-additional-v1/verification.json`) confirms unchanged V10/registry/wrapper/CLI/Sol-low settings, six fresh threads and empty workspaces, exact source-byte fragments and input reconstruction, first-attempt success, no tools/schema, and matching provenance/output hashes. Usage: 10,933 input and 146 output tokens, including 82 reasoning tokens; no cached input or additional billing. Existing release TUI loaded focused/all packets and separate comments at 100×36, with temporary-session navigation and safe exit checks; no user approvals were created. The checked-in prompt remains unchanged and unfrozen.
 
 ## V11 — remove cross-instance clarification
 
@@ -194,7 +196,7 @@ Six complete existing groups supply 27 masks / 49 fragments. Art, rave and wine 
 
 Both versions repeat the user-rejected wine relationship. Art remains useful without forcing the bare art mask to determine the category's breadth. Fresh V10 also drops the old rave-specific wording, so that change cannot be credited to deletion. Coffee preparation and weekend wishes remain accurate. Main and independent reviewers leave V11's Events and Flavor Variations uncertain: each could reasonably describe the group, but could also elevate one member's additional detail into a category-level restriction or distracting theme. They are not declared failures. The independent reviewer finds V11's explicit grinding/roasting title more informative; main review does not treat that wording preference as evidence of overall superiority.
 
-The [complete comparison](../hdbv2-node-description-probe-v11/comparison.json), [main assessments](../hdbv2-node-description-probe-v11/assistant-assessments.json), [independent assessment](../hdbv2-node-description-probe-v11/independent-assessments.json), and all raw calls are preserved. This trial does not demonstrate improvement from the deletion. One output per variant/group cannot establish reliable behavior or isolate a causal effect; all six are development groups, not an unseen holdout. No further prompt edit or test is implied by these results.
+The complete comparison (`../hdbv2-node-description-probe-v11/comparison.json`), main assessments (`../hdbv2-node-description-probe-v11/assistant-assessments.json`), independent assessment (`../hdbv2-node-description-probe-v11/independent-assessments.json`), and all raw calls are preserved. This trial does not demonstrate improvement from the deletion. One output per variant/group cannot establish reliable behavior or isolate a causal effect; all six are development groups, not an unseen holdout. No further prompt edit or test is implied by these results.
 
 Only the two new uncertainties are surfaced, with all masks, separate reasoning, and B to compare the fresh V10 response:
 
@@ -215,19 +217,19 @@ New review data does not require rebuilding. If the executable is missing or
 not executable, the launcher prints the build command and exits. Earlier
 experiment launchers are unchanged.
 
-The [all-six review](../hdbv2-node-description-probe-v11/review.json) is also retained. New sessions contain no prefilled decisions. The existing tool still says “fit every mask”; the intended judgment is collective category meaning, not independent proof of every title qualifier by every mask. No production UI change was made for this prompt test.
+The all-six review (`../hdbv2-node-description-probe-v11/review.json`) is also retained. New sessions contain no prefilled decisions. The existing tool still says “fit every mask”; the intended judgment is collective category meaning, not independent proof of every title qualifier by every mask. No production UI change was made for this prompt test.
 
-[Verification](../hdbv2-node-description-probe-v11/verification.json) confirms exact input/source spans, unchanged V1–V10 entries, twelve distinct threads/workspaces, first-attempt success, no tools/schema, matching hashes and raw outputs. Usage: 21,488 input and 288 output tokens (171 reasoning included), no cache. Existing subscription only. The focused TUI, comments, next-card navigation, paired comparison and safe exit were checked using a temporary session without decisions. CREC-127 synchronization was blocked by HTTP 403; no new card or status transition was made.
+Verification (`../hdbv2-node-description-probe-v11/verification.json`) confirms exact input/source spans, unchanged V1–V10 entries, twelve distinct threads/workspaces, first-attempt success, no tools/schema, matching hashes and raw outputs. Usage: 21,488 input and 288 output tokens (171 reasoning included), no cache. Existing subscription only. The focused TUI, comments, next-card navigation, paired comparison and safe exit were checked using a temporary session without decisions. CREC-127 synchronization was blocked by HTTP 403; no new card or status transition was made.
 
 ## Evidence and reproducibility
 
 - [Run plan](run-plan.json) records selection, hypothesis and fixed settings before generation.
-- [Source packets](source-packets.json) retain all 25 masks / 54 exact UTF-8 fragments from six complete HDBv2 groups, including full original notes for provenance. Full notes, review judgments and target answers were not passed to the model.
-- [Comparison](comparison.json) contains exact outputs, hashes, fresh thread IDs, usage and separate assistant judgments.
-- [Original complete batch](review.json) preserves all six exact generated titles and complete masks, unchanged.
-- [Assistant assessments](assistant-assessments.json) distinguish four confident accepts, one confident rejection, and one uncertain judgment. These are not user decisions.
-- [Focused UI batch](review-uncertain.json) contains only that uncertain item, with unchanged titles/masks and the assistant's opinion. Selection happens before opening the UI; the UI only presents supplied items and records the user's decisions.
-- [Supplementary assistant comment](review-comments.json) adds the explanation in its own section without changing the focused batch or saved user approval. It is not a new model result or a new approval question.
+- Source packets (`source-packets.json`) retain all 25 masks / 54 exact UTF-8 fragments from six complete HDBv2 groups, including full original notes for provenance. Full notes, review judgments and target answers were not passed to the model.
+- Comparison (`comparison.json`) contains exact outputs, hashes, fresh thread IDs, usage and separate assistant judgments.
+- Original complete batch (`review.json`) preserves all six exact generated titles and complete masks, unchanged.
+- Assistant assessments (`assistant-assessments.json`) distinguish four confident accepts, one confident rejection, and one uncertain judgment. These are not user decisions.
+- Focused UI batch (`review-uncertain.json`) contains only that uncertain item, with unchanged titles/masks and the assistant's opinion. Selection happens before opening the UI; the UI only presents supplied items and records the user's decisions.
+- Supplementary assistant comment (`review-comments.json`) adds the explanation in its own section without changing the focused batch or saved user approval. It is not a new model result or a new approval question.
 - Each node/version directory contains its exact `config.json` and unedited run manifest, output, result log and model instructions.
 - All twelve fresh isolated Sol low calls succeeded on attempt one, with at most three concurrent calls. Independent audit verified input reconstruction, complete membership, source spans, exact hashes, distinct threads/workspaces, no tools, and preserved v1–v3 registry entries and previous raw artifacts. No retries or best-output selection.
 - Original UI verification: the CLI test first failed against the old binary for the missing title-review entrypoint. All 7 new and 84 relevant existing tests then passed. The full six-card artifact was checked against every raw output and all original UTF-8 mask ranges. Those original tests and artifacts are retained unchanged.
@@ -240,3 +242,5 @@ The [all-six review](../hdbv2-node-description-probe-v11/review.json) is also re
 | v4 | 10988 | 815 | 762 | 0 |
 
 Existing Codex subscription only; no new API billing or rented compute. This is a six-node selected comparison with one output per version per node. It is not a representative accuracy estimate or proof that all contrastive examples fail. No new semantic verdict is presumed to have user approval.
+
+**Publication status:** `collection:tracked-hdbv2-node-description-probe-v4` remains in the [conversion review list](../../docs/experiments/publication-gaps.csv); a complete compact-data conversion has not been established.

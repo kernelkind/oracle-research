@@ -1,5 +1,7 @@
 # Grounding concepts in source occurrences
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 The next representation need not repair the existing DRS graph. There are
 already source-token offsets for all fifteen selected descriptions. A contextual
 sense matcher can operate on those occurrences directly. However, reusing the
@@ -55,7 +57,7 @@ heat. It must not be counted as another demonstrated candidate exclusion.
 The DRS-generated `grilling.v.01` is a separate invalid-identifier problem.
 
 The complete changed candidate sets, totals and input hashes are in
-[the lookup audit](./USM01/lookup-audit.json). This audit used NLTK 3.9.2 and
+the lookup audit (`./USM01/lookup-audit.json`). This audit used NLTK 3.9.2 and
 the same WordNet 3.0 archive as [the mapping audit](./MAPPING-VALIDATION.md).
 The script below reproduces the totals without running a neural model.
 

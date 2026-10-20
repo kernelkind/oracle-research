@@ -1,5 +1,7 @@
 # Fine-tuning pilot
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../docs/experiments/README.md#reading-the-research-records).
+
 For the experiment's sequence—shared data, untuned baselines, training,
 evaluation, and model comparison—start with
 [the pilot walkthrough](../docs/planning/fine-tuning-pilot-process.md).
@@ -1456,9 +1458,9 @@ The read-only annotation audit found these complete-note packages:
 
 | Package | Notes | Distinct accepted masks after exact deduplication |
 |---|---:|---:|
-| [Food/drink](real-note-fine-segmentation-v1/reviewed-input.json) | 100 | 918 |
-| [Coverage expansion](real-note-fine-segmentation-v1/coverage-expansion-v1/masks-reviewed/reviewed-input.json) | 48 | 400 |
-| [Music](real-note-fine-segmentation-v1/music-generation-v1/masks-effective-mapped/reviewed-input.json) | 100 | 1,058 |
+| Food/drink (`real-note-fine-segmentation-v1/reviewed-input.json`) | 100 | 918 |
+| Coverage expansion (`real-note-fine-segmentation-v1/coverage-expansion-v1/masks-reviewed/reviewed-input.json`) | 48 | 400 |
+| Music (`real-note-fine-segmentation-v1/music-generation-v1/masks-effective-mapped/reviewed-input.json`) | 100 | 1,058 |
 | Total | 248 | 2,376 |
 
 The files contain 2,434 accepted masks before deduplication and 58 exact

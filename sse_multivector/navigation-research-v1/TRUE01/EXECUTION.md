@@ -1,5 +1,7 @@
 # TRUE01 execution and verification
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 Run locally on September 12, 2026. No training, paid resources, GPU, quantization, or remote model code. Earlier experiment files were not changed.
 
 ## Model and input identity
@@ -8,10 +10,10 @@ Run locally on September 12, 2026. No training, paid resources, GPU, quantizatio
 - Loaded parameters: **11,307,321,344**, all float32, evaluation/inference mode.
 - All five checkpoint weight hashes matched the published pinned manifest. Every missing/unexpected/mismatched/error list was empty.
 - Original HRC03 fixture SHA256: `d3efece72ebf6f03e4c0b5fe9b1c588fbece361b00599b34389c242a699c2c35`.
-- Exact prepared inputs and runner hash: [started.json](started.json).
-- Model file hashes: [model-files.json](model-files.json). Packages and loading diagnostics: [config.json](config.json).
+- Exact prepared inputs and runner hash: `started.json`.
+- Model file hashes: `model-files.json`. Packages and loading diagnostics: `config.json`.
 
-Input lengths were at most 39 tokens for the sentence format and 29 for bare descriptions. Nothing was truncated. Each pair’s actual model text and token IDs are preserved in [scores.jsonl](scores.jsonl).
+Input lengths were at most 39 tokens for the sentence format and 29 for bare descriptions. Nothing was truncated. Each pair’s actual model text and token IDs are preserved in `scores.jsonl`.
 
 ## Binary generation detail
 
@@ -32,7 +34,7 @@ Inference used one CPU process, four threads, batch size four, a **60 GiB memory
 - First batch: **171.1 seconds**, including demand-loading weight pages. Subsequent batches generally took about 4–6 seconds.
 - Peak process RSS: **43.62 GiB**. Observed scope memory stayed below its 60 GiB limit, with zero scope swap.
 
-The model process exited successfully and is no longer running. [Raw completion measurements](completion.json).
+The model process exited successfully and is no longer running. Raw completion measurements (`completion.json`).
 
 ## Test-first checks and independent replay
 
@@ -40,7 +42,7 @@ The new test module first failed because the runner did not exist. Added rendere
 
 A clean-context independent agent reviewed the frozen expectations before outputs existed, audited the runner, and later reviewed every primary-format disagreement. No subagent performed model inference or altered data.
 
-The separate read-only [verifier](verify.py) imports no production scoring code and loads no neural model. It reconstructs every pair’s direction and serialization from the frozen fixture, retokenizes the actual input strings, decodes complete saved outputs, checks EOS and raw-logit argmax, recomputes scores with NumPy, and independently recounts decisions. All 180 match. Maximum probability replay difference: **5.55e-16**. Artifact hashes and the runner’s recorded hash match. [Verification results](verification.json).
+The separate read-only [verifier](verify.py) imports no production scoring code and loads no neural model. It reconstructs every pair’s direction and serialization from the frozen fixture, retokenizes the actual input strings, decodes complete saved outputs, checks EOS and raw-logit argmax, recomputes scores with NumPy, and independently recounts decisions. All 180 match. Maximum probability replay difference: **5.55e-16**. Artifact hashes and the runner’s recorded hash match. Verification results (`verification.json`).
 
 This verifies the saved calculation and protocol; it is not an independent second model run or proof that our expected semantic labels are universally correct.
 
@@ -53,3 +55,5 @@ systemd-run --user --scope --quiet --unit=oracle-true01-repeat -p MemoryMax=60G 
 ```
 
 Use a new output directory. The runner refuses to overwrite an existing or interrupted run. Run `TRUE01/verify.py` with the same Python/LD_LIBRARY_PATH environment to replay the saved result without model inference.
+
+**Selected data:** Compact pair-score results, inputs and parameters for `TRUE01` are selected for release as `numerical/pair-scores-44261922841cf8b2` in the [publication catalog](../../../docs/experiments/publications.csv). These compact exports use a different format. Other cited artifacts remain separate originals.

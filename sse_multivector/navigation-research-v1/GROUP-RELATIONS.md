@@ -1,5 +1,7 @@
 # Relations between mask groups
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 LGR01 found two lexical parent proposals among the 22 frozen MDH02 groups.
 One repeats Bread → Sourdough bread. The other uses the animal meaning of
 Carnivore to propose Carnivore → Dog, although the existing Carnivore group
@@ -79,7 +81,7 @@ relationship. A separately justified broader category remains possible.
 
 The dictionary's animal relation is not itself erroneous. Its transfer to these
 fixed groups is unsupported. Complete notes and every mask for both groups are
-retained in [groups.json](./LGR01/groups.json); the original N100 and N048 were
+retained in `./LGR01/groups.json`; the original N100 and N048 were
 also inspected, not inferred from the short words.
 
 ## Missed and unresolved relationships
@@ -175,9 +177,9 @@ or generic topic-classification score is adopted as a hierarchy relation.
 ## Reproduction and verification
 
 Runner: [mask_group_lexical_relations.py](../mask_group_lexical_relations.py).
-[Every pair](./LGR01/relations.json), [complete group evidence](./LGR01/groups.json),
-[selected dictionary entries and ancestors](./LGR01/lexicon.json),
-[configuration](./LGR01/config.json).
+Every pair (`./LGR01/relations.json`), complete group evidence (`./LGR01/groups.json`),
+selected dictionary entries and ancestors (`./LGR01/lexicon.json`),
+configuration (`./LGR01/config.json`).
 
 Original lookup used NLTK 3.9.2 and the WordNet 3.0 archive at NLTK-data commit
 `96f9b3252457a2b97e52aec64c3dfceeb5c312d5`, SHA-256

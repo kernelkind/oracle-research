@@ -1,5 +1,7 @@
 # ASv6.13: Sol low versus medium
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 Medium did not improve the targeted context problems. Both settings produced **8/18 fully accepted outputs**. Do not switch to medium on this evidence.
 
 Each setting processed the same six notes three times. A fully accepted output has no erroneous or unresolved subject and no missing meaning. Every output is included below.
@@ -43,7 +45,7 @@ One independent reviewer preferred rejecting D24 medium trial 2 subjects 22–23
 
 This is a comparison on six known difficult notes, not corpus-wide validation. It does not prove medium cannot help elsewhere. ASv6.8 remains frozen, and no final-validation notes were used.
 
-[Predeclared plan](./proposal.json) · [Concurrency amendment](./parallel-amendment.json) · [Complete judgments](./review.json) · [Integrity checks](./verification.json) · [Decision](./assessment.json)
+[Predeclared plan](./proposal.json) · Concurrency amendment (`./parallel-amendment.json`) · Complete judgments (`./review.json`) · Integrity checks (`./verification.json`) · [Decision](./assessment.json)
 
 ## D10 — OpenAI hiring Riley Walz
 
@@ -998,3 +1000,5 @@ Fully accepted.
 20. Bitcoin remains usable when every other financial rail can be cut.
 21. Enforcement is tightening.
 22. The post asks how many additional actors will conclude, as enforcement tightens, that Bitcoin is usable for settlement when other financial rails can be cut.
+
+See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-subject-prompt-goal-v1`.

@@ -1,5 +1,7 @@
 # Removing v21’s wording-or-format sentence
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 Removing the sentence did not fix Coffeechain. Both versions returned **Coffee shop chains in all three trials**. The food and coffee-preparation controls stayed on their subjects.
 
 The existing v21 prompt and 61 saved titles remain unchanged. This is a diagnostic, not a new frozen prompt.
@@ -68,7 +70,7 @@ All six titles cover coffee-bean preparation, including grinding and roasting. F
 
 Removing that sentence alone did not produce the improvement we hypothesized. This does not prove the sentence has no influence, and it does not identify the actual cause of the commercial-chain interpretation. No control returned a title about phrases or keywords, but three trials cannot establish that the sentence is generally unnecessary.
 
-An independent, fresh-context reviewer accepted the commercial-chain title as a plausible interpretation. I disagree for the already user-established reason: the masks do not establish shops or businesses. That disagreement is preserved in [independent-review.json](./independent-review.json); the other review agrees on the controls. No semantic judgment here is recorded as a new user decision.
+An independent, fresh-context reviewer accepted the commercial-chain title as a plausible interpretation. I disagree for the already user-established reason: the masks do not establish shops or businesses. That disagreement is preserved in `./independent-review.json`; the other review agrees on the controls. No semantic judgment here is recorded as a new user decision.
 
 Recommendation: leave v21 unchanged. The Coffeechain issue remains unresolved; this deletion is not a demonstrated fix.
 
@@ -84,4 +86,6 @@ Recommendation: leave v21 unchanged. The Coffeechain issue remains unresolved; t
 
 The [official evaluation guidance](https://developers.openai.com/api/docs/guides/evaluation-best-practices#what-are-evals) informed scoped comparisons, saved evidence and calibration to human judgment—not the semantic verdicts.
 
-[Exact prepared v21 inputs](./inputs-v21.json), [exact candidate inputs](./inputs-without-sentence.json), [all results and per-call usage](./comparison.json), [integrity checks](./verification.json).
+Exact prepared v21 inputs (`./inputs-v21.json`), exact candidate inputs (`./inputs-without-sentence.json`), all results and per-call usage (`./comparison.json`), integrity checks (`./verification.json`).
+
+**Publication status:** `collection:tracked-hdbv21-format-sentence-v1` remains in the [conversion review list](../../docs/experiments/publication-gaps.csv); a complete compact-data conversion has not been established.

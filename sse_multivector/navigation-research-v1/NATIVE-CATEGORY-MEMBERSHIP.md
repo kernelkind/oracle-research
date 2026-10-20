@@ -1,5 +1,7 @@
 # Native text-to-category membership
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 TCC01 finds useful recognition of shared subjects, but the model's default
 membership decisions are unreliable. Reversing the same category list changes
 which records it accepts. Supplying categories individually removes many such
@@ -47,7 +49,7 @@ list is part of the model input, so its influence must be tested.[^4]
 ## What stayed fixed
 
 All 14 descriptions from DSP01 were used unchanged, with their full source
-notes and masks retained in [inputs.json](./TCC01/inputs.json). Only each saved
+notes and masks retained in `./TCC01/inputs.json`. Only each saved
 `subject` string entered the model. Other parts of the original note cannot
 explain the model's assignments, because it never saw them.
 
@@ -58,12 +60,12 @@ correct taxonomy. Broader and overlapping memberships are allowed.
 
 Each description was scored with all eight categories, with the identical
 list reversed, and with each category supplied alone. All 336 logits and
-sigmoid scores are preserved in [scores.json](./TCC01/scores.json), including
+sigmoid scores are preserved in `./TCC01/scores.json`, including
 every value below the native 0.5 threshold. No threshold was tuned.
 
 The [pre-run plan](./TCC01-PLAN.md) distinguishes its focused judgments from
 other initially unjudged assignments. The subsequent
-[complete semantic audit](./TCC01/audit.json) covers all 14 records and all
+complete semantic audit (`./TCC01/audit.json`) covers all 14 records and all
 scores, retaining five scope-dependent assignments as unjudged. It is an
 assistant assessment, not a record of user approval.
 
@@ -223,7 +225,7 @@ the other three labels; no published numerical ground truth was assumed.
 
 The isolated runtime uses Transformers 4.48.2 and the pre-paper native source
 revision. All source/model/package hashes and rendered input tokens are in
-[config.json](./TCC01/config.json). The longest input is 55 tokens, with no
+`./TCC01/config.json`. The longest input is 55 tokens, with no
 truncation. The measured checkpoint has **186,545,922** float32 parameters;
 the pre-run plan's metadata-derived count was one lower. Exact weight loading
 succeeded with no missing, unexpected or mismatched keys.

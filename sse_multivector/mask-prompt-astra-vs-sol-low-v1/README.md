@@ -1,5 +1,7 @@
 # Sol low versus Astra low
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 **Astra improved several recurring mask errors, but it did not solve the task. It was also less consistent on the gossip/market-thesis example.**
 
 Both models ran on Codex CLI **0.153.0**, with the unchanged mask prompt, the same 12 fixed ASv6.8 subjects and four complete notes, and low reasoning. Each subject ran three times per model: **72 fresh, isolated calls**. The new Sol runs are the comparator, not the older runs on CLI 0.150.1.
@@ -36,7 +38,7 @@ That response remains in the data. It was not retried, repaired, or replaced.
 
 Five M09 outputs select the bare word **Bitcoin**, which occurs twice in the note: all three Astra outputs and two Sol outputs. Their selected words match the approved semantic scope, but the model does not specify which occurrence to use.
 
-That ambiguity remains unresolved. It is not silently repaired or counted as a new problem introduced by Astra. Both possible highlights appear in [all masks](./masks.md).
+That ambiguity remains unresolved. It is not silently repaired or counted as a new problem introduced by Astra. Both possible highlights appear in all masks (`./masks.md`).
 
 All 36 Astra responses are JSON arrays of exact source fragments in source order. Sol returned 35 such arrays; two are out of source order, leaving 33 order-valid outputs. These are mechanical checks, not semantic accuracy.
 
@@ -66,7 +68,7 @@ It is **not** evidence that the prompt is ready to freeze, that Astra is uniform
 - `plan.json`: the approved question, unchanged inputs, and declared execution order.
 - `selection.json`: the fixed subjects and complete original notes.
 - `astra-trial-1/` through `astra-trial-3/`, and `sol-trial-1/` through `sol-trial-3/`: exact configurations, rendered prompts, manifests, minimal instructions, and raw outputs.
-- [All masks with complete notes and analysis](./masks.md): every output, grouping only identical fragment arrays.
+- All masks with complete notes and analysis (`./masks.md`): every output, grouping only identical fragment arrays.
 - `assistant-review.json`: all 72 assistant assessments and their reasons.
 - `mechanical-checks.json`: exact-source, source-order, and occurrence checks.
 - `verification.json`: configuration/argv checks, prompt/output hashes, isolation, resources, and token totals.
@@ -76,3 +78,5 @@ All 72 calls have distinct new threads and empty workdirs, with no overlap again
 The earlier CLI 0.150.1 rejection remains preserved in `../mask-prompt-astra-low-v1/` and is excluded from this comparison. Historical results, frozen prompts/registries, user reviews, production code, and user notes documents are unchanged. No SSE encoding, subject regeneration, hierarchy work, or default-model change occurred.
 
 The runtime-only migration followed [OpenAI's model-parameter guidance](https://developers.openai.com/api/docs/guides/latest-model#gpt-6-astra-update-api-and-model-parameters); it supplied compatibility checks, not the semantic verdict.
+
+See [conversion gaps](../../docs/experiments/publication-gaps.csv) for `collection:tracked-mask-prompt-astra-vs-sol-low-v1`.

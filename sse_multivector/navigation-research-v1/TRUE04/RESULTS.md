@@ -1,5 +1,7 @@
 # TRUE04 — Containment across all 61 generated group titles
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 TRUE recovered many useful parent–child relationships. It also accepted some wrong relationships in both directions, which would create false category equivalences if used directly to build the graph.
 
 All **3,660 ordered questions** ran, without cosine filtering. The original 61 groups have **58 distinct title strings**; repeated Food, Coffee and Bitcoin groups remain separate. The exact v20/Astra-low titles, model, input wording and cutoff were unchanged. No hierarchy was constructed.
@@ -40,7 +42,7 @@ Some useful accepted questions:
 | Bitcoin | Satoshi Bitcoin Units | Yes | 0.624657 |
 | Nostr | Grow Nostr Campaign | Yes | 0.603691 |
 
-All 64 accepted title questions, not just these examples, appear in [the complete review](REVIEW.md). Scores in this report are rounded to six decimals; exact values are preserved in [scores.jsonl](scores.jsonl).
+All 64 accepted title questions, not just these examples, appear in [the complete review](REVIEW.md). Scores in this report are rounded to six decimals; exact values are preserved in `scores.jsonl`.
 
 ## The six distinct incorrect accepted questions
 
@@ -135,8 +137,10 @@ All 44 earlier TRUE03 inputs and decisions reproduced unchanged: 41/44 still mat
 An independent audit verified every input, score and saved decision, replayed all first-token probabilities from the saved logits, and independently reproduced the complete semantic-analysis arithmetic. It did not re-adjudicate semantic judgments. The one offline CPU run took **76 minutes**, with about **44.24 GiB peak process memory** and no run-scope swap. No additional inference was used for verification.
 
 - [Every accepted relationship and missed nomination](REVIEW.md), [all 3,660 decisions](DECISIONS.md).
-- [Exact inputs](inputs.json), [native outputs and full-precision scores](scores.jsonl), [semantic analysis](semantic-analysis.json), [accepted-pair judgments](title-pair-judgments.json).
-- [Frozen plan](../TRUE04-PLAN.md), [pre-score reference](../true04-reference.json), [reference-review history](../TRUE04-REFERENCE-REVIEW.md), [fresh review of misses](missed-reference-review.json).
-- [Execution, tests and resource details](EXECUTION.md), [independent verification](verification.json), [completion hashes](completion.json).
+- Exact inputs (`inputs.json`), native outputs and full-precision scores (`scores.jsonl`), semantic analysis (`semantic-analysis.json`), accepted-pair judgments (`title-pair-judgments.json`).
+- [Frozen plan](../TRUE04-PLAN.md), pre-score reference (`../true04-reference.json`), [reference-review history](../TRUE04-REFERENCE-REVIEW.md), fresh review of misses (`missed-reference-review.json`).
+- [Execution, tests and resource details](EXECUTION.md), independent verification (`verification.json`), completion hashes (`completion.json`).
 
 The 449 MiB raw-logit file remains locally preserved as `first-token-logits.npy`, excluded from Git by an exact path rule. Its hash is in the completion record. Inputs, outputs, source snapshots, reviews and summaries are retained in Git; prior experiments remain intact.
+
+**Selected data:** Compact pair-score results, inputs and parameters for `TRUE04` are selected for release as `numerical/pair-scores-7dd83c45e206d5c8` in the [publication catalog](../../../docs/experiments/publications.csv). These compact exports use a different format. Other cited artifacts remain separate originals.

@@ -1,5 +1,7 @@
 # Released models for category subsumption
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 ## Conclusion
 
 Released models exist that can read two texts together and predict a directional relationship. The choices are materially broader than independently embedded descriptions. However, no verified release combines convincing evidence for general, multiword topical-category subsumption with a ready, reliable accept/reject decision.
@@ -257,13 +259,13 @@ The public search covers direct ontology subsumption, semantic-relation typing, 
 
 [^29]: TAUR-dev, [verified experimental Gemma-2 checkpoint](https://huggingface.co/TAUR-dev/rankalign-v6-gemma-2-2b-d0.15-e2-hc-b2d-dbl-all-tcs-ln-p0-nv1-ng1-fsx-sm0.1). Revision: 8e2c8d83391d31713d69782d2e5aaf236ae5dc47. Its loss configuration and dataset name must not be conflated with the paper’s principal variant.
 
-[^30]: Project evidence, [RSE01 results](./RSE01/RESULTS.md), [complete cases](./RSE01/CASES.md), and [independent inference verification](./RSE01/verification.json). These are prior local experiments, not new measurements in this review.
+[^30]: Project evidence, [RSE01 results](./RSE01/RESULTS.md), [complete cases](./RSE01/CASES.md), and independent inference verification (`./RSE01/verification.json`). These are prior local experiments, not new measurements in this review.
 
 [^31]: [Language Models as Hierarchy Encoders](https://arxiv.org/html/2401.11374v4); [official HiT release](https://github.com/KRR-Oxford/HierarchyTransformers).
 
 [^32]: [Language Models as Ontology Encoders](https://arxiv.org/html/2507.14334v1); [OnT checkpoint inventory](https://github.com/HuiYang1997/OnT).
 
-[^33]: [DSR paper](https://aclanthology.org/2024.acl-long.249/), ACL 2024; [released ChangeIsKey classifier](https://huggingface.co/ChangeIsKey/change-type-classifier). Earlier project measurements: [SRR01](./SRR01/scores.json), [SRR02](./SRR02/scores.json), [SRR03](./SRR03/scores.json). These are not new evidence here.
+[^33]: [DSR paper](https://aclanthology.org/2024.acl-long.249/), ACL 2024; [released ChangeIsKey classifier](https://huggingface.co/ChangeIsKey/change-type-classifier). Earlier project measurements: SRR01 (`./SRR01/scores.json`), SRR02 (`./SRR02/scores.json`), SRR03 (`./SRR03/scores.json`). These are not new evidence here.
 
 [^34]: [RelBERT checkpoint and training configuration](https://huggingface.co/relbert/relbert-roberta-large); [official lexical-classification evaluator that fits an MLP](https://github.com/asahi417/relbert/blob/master/relbert/evaluation/lexical_relation_classification.py); [2025 journal extension](https://orca.cardiff.ac.uk/id/eprint/179566/).
 
@@ -276,3 +278,11 @@ The public search covers direct ontology subsumption, semantic-relation typing, 
 [^38]: [GaussCSE paper](https://aclanthology.org/2024.eacl-short.36/) and [empty official model repository](https://huggingface.co/yoda122/gausscse/tree/main); [GumbelCSE paper](https://doi.org/10.1109/ACCESS.2026.3691815) and [code](https://github.com/iehok/GumbelCSE); [subspace-embedding paper](https://arxiv.org/abs/2508.16687) and [code](https://github.com/gabmoreira/subembed); [DualCSE paper](https://aclanthology.org/2026.findings-eacl.74/), [official code](https://github.com/iehok/DualCSE), and [qualified third-party weights](https://huggingface.co/AtPeak/dualcse/tree/main).
 
 [^39]: Hugging Face, [production zero-shot classification scoring](https://github.com/huggingface/transformers/blob/main/src/transformers/pipelines/zero_shot_classification.py). The numerical example is illustrative arithmetic, not a model observation.
+
+**Selected data:** The [publication catalog](../../docs/experiments/publications.csv) lists compact pair-score results, inputs and parameters selected for release for these saved runs:
+
+- `SRR01` — `numerical/pair-scores-40ce4abc5f6c4cfd`.
+- `SRR02` — `numerical/pair-scores-491376be0d396173`.
+- `SRR03` — `numerical/pair-scores-55e2f987d071484a`.
+
+These compact exports use a different format. Other cited artifacts remain separate originals.

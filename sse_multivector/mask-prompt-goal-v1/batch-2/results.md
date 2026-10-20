@@ -1,8 +1,10 @@
 # Second mask batch
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 All six masks accepted. Across the first two batches, 11 of 12 are accepted; the initial M05 scope error remains recorded. No prompt edits, retries or hand corrections.
 
-Each section shows one unchanged ASv6.23 subject and its complete original note. Where a returned fragment occurs more than once, the first source-order-compatible placement is highlighted; all alternatives are saved in [review.json](./review.json).
+Each section shows one unchanged ASv6.23 subject and its complete original note. Where a returned fragment occurs more than once, the first source-order-compatible placement is highlighted; all alternatives are saved in `./review.json`.
 
 ## M07
 
@@ -120,4 +122,6 @@ Accept. The app and chapter-end button clause retain the feature, its destinatio
 
 Run the two already-planned additional M05 calls, unchanged, to see whether the initial added-affinity error recurs. These count toward development repeats; neither replaces its first result. The current prompt has not yet passed development or final validation.
 
-Six mask calls used 15,580 input and 737 output tokens. Cached input and reasoning are included in those totals. No pressure guard fired. [Verification](./verification.json) preserves source placements, execution identity and usage.
+Six mask calls used 15,580 input and 737 output tokens. Cached input and reasoning are included in those totals. No pressure guard fired. Verification (`./verification.json`) preserves source placements, execution identity and usage.
+
+See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-mask-prompt-goal-v1`.

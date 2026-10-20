@@ -1,5 +1,7 @@
 # TRUE04 — Review the collection, not 3,660 separate questions
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../../docs/experiments/README.md#reading-the-research-records).
+
 The 61 category titles were reviewed as a collection. Clearly unrelated combinations were excluded by their meanings, without using TRUE's answers to decide what deserved review. Both directions were then examined for plausible or uncertain pairs.
 
 **Result:** the cutoff misses **17 of the 64 non-Nostr relationships judged reasonable** in this review. Native answers miss **24 of those 64**. There are also **63 uncertain non-Nostr directions**, which are not counted as correct or incorrect.
@@ -18,7 +20,7 @@ The 61 source groups have 58 distinct title strings. Repeated Food, Coffee and B
 
 The review considered cross-topic exceptions rather than making impermeable subject groups. Music in Coffee Shops was considered against Art as well as Coffee. Advice on Meat Consumption was considered against Communication as well as eating-related categories. Coffee Bean Preparation versus Nostr needed no individual model-driven inspection.
 
-A fresh reviewer saw only the 61 titles and repository instructions. A second fresh reviewer saw nine scope-sensitive title pairs. Neither saw model predictions, scores, prior judgments, or source notes. The coordinating reviewer had already seen earlier results; this is therefore **not** claimed to be a fully blinded new benchmark. The original screens and final scope decisions are preserved in [screen.json](screen.json).
+A fresh reviewer saw only the 61 titles and repository instructions. A second fresh reviewer saw nine scope-sensitive title pairs. Neither saw model predictions, scores, prior judgments, or source notes. The coordinating reviewer had already seen earlier results; this is therefore **not** claimed to be a fully blinded new benchmark. The original screens and final scope decisions are preserved in `screen.json`.
 
 ## Results with Nostr-related categories set aside
 
@@ -68,7 +70,7 @@ The score is the full-vocabulary probability of first generating token `1`. It i
 
 Food is interpreted as the broad browsing subject that includes drinks, culinary activities and food businesses. Communication includes explicitly named communicative activities such as advice and well-wishes. These are stated semantic scope choices, not meanings established by TRUE.
 
-Every original direction represented by a listed finding, its exact input, full-precision score and source group IDs are preserved in [comparison.json](comparison.json). Repeated titles can have minute score differences; all values remain in the JSON even when the rounded display coincides.
+Every original direction represented by a listed finding, its exact input, full-precision score and source group IDs are preserved in `comparison.json`. Repeated titles can have minute score differences; all values remain in the JSON even when the rounded display coincides.
 
 ## Seven more reasonable relationships rejected only by native answers
 
@@ -106,7 +108,7 @@ All 63 non-Nostr uncertain directions, their predictions and exact scores are li
 
 The 65 cards show A's exact category title above a box containing all its masks, followed by B's title and mask box. Each mask retains its vector ID and brackets around each fragment. My explanation of the uncertainty remains separate. U001–U063 are the non-Nostr questions; U064–U065 are the two previously set-aside questions. Identical title pairs appear once; where a title represents several original groups, its box includes all their masks, deduplicating only repeated vector IDs. Every original source score remains in the optional details.
 
-The masks come from the saved [title-generation record](../titles.json); they are display evidence, not new input to TRUE. TRUE received only the category titles. Adding the masks does not change the questions or invalidate existing answers, comments, or the saved review position.
+The masks come from the saved title-generation record (`../titles.json`); they are display evidence, not new input to TRUE. TRUE received only the category titles. Adding the masks does not change the questions or invalidate existing answers, comments, or the saved review position.
 
 Answer **Does category A contain category B?** A is the proposed parent and B the proposed child. A records Yes; R records No; S skips; C edits an optional comment, saved with Enter. These answers do not approve or reject my uncertainty statement.
 
@@ -114,7 +116,7 @@ Left/right visits all cards, including reviewed ones. A, B, and my comment remai
 
 Ctrl-C exits; the same command resumes the saved current card. To reopen a particular card, append `--start-at U001` (or another card ID). You do not have to finish the batch.
 
-User answers and comments are saved separately in `target/true04-uncertainty-review/decisions.json`, bound to [the exact review packet](uncertainty-review.json). No decisions are prefilled, and no hierarchy changes or new model calls are performed. The original read-only `run-true04-review.sh` remains available and unchanged.
+User answers and comments are saved separately in `target/true04-uncertainty-review/decisions.json`, bound to the exact review packet (`uncertainty-review.json`). No decisions are prefilled, and no hierarchy changes or new model calls are performed. The original read-only `run-true04-review.sh` remains available and unchanged.
 
 ## Conclusion
 
@@ -123,3 +125,5 @@ The user's collection-first approach substantially reduces the review burden whi
 TRUE still provides useful containment decisions, but both rules miss some reasonable broader/narrower relationships. The lower cutoff recovers seven additional reasonable non-Nostr relationships and accepts three clearly wrong ones. Native agreement is never used as the answer key.
 
 The semantic audit did not change the original experiment outputs, earlier reviews, titles, masks, cutoff, model configuration, or UI. The subsequent decision review adds a separate saved-review mode without changing those results. Neither step is a new model experiment, a full accuracy estimate, or a constructed hierarchy.
+
+**Selected data:** Compact pair-score results, inputs and parameters for `TRUE04` are selected for release as `numerical/pair-scores-7dd83c45e206d5c8` in the [publication catalog](../../../../docs/experiments/publications.csv). These compact exports use a different format. Other cited artifacts remain separate originals.

@@ -1,5 +1,7 @@
 # TRUE08 — Does the meat/seafood category miss foods other than Steak?
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 Yes. With the unchanged 0.142 cutoff, TRUE also missed **Shrimp dishes**. It accepted Brisket, Roast chicken and Grilled salmon. Native generation answered No to every case.
 
 ## Experiment
@@ -82,7 +84,7 @@ After TRUE08, I checked earlier scores before recommending a new basic-food test
 | Food | Brisket | 0.6264764137890964 | Yes | Yes |
 | Red meat | Brisket | 0.47173792530090025 | No | Yes |
 
-TRUE already recognizes some simpler relationships for the same foods. We do not need to rerun those checks. These are reused historical results, not additional TRUE08 trials, and the parent meanings differ. They argue against a blanket inability to recognize these food categories but do not prove why the combined parent is difficult. Exact input strings and provenance are in [existing-comparisons.json](./existing-comparisons.json); old node memberships are not being treated as current categories.
+TRUE already recognizes some simpler relationships for the same foods. We do not need to rerun those checks. These are reused historical results, not additional TRUE08 trials, and the parent meanings differ. They argue against a blanket inability to recognize these food categories but do not prove why the combined parent is difficult. Exact input strings and provenance are in `./existing-comparisons.json`; old node memberships are not being treated as current categories.
 
 **Approved follow-up completed:** [TRUE09](../TRUE09/RESULTS.md) separately compared the combined “meat or seafood” category and the “foods featuring” qualification, holding the food children and inference settings fixed. Expectations were checked before scoring the different-scope parents. This was a diagnostic; production titles and the cutoff remain unchanged. All TRUE08 measurements above are preserved.
 
@@ -105,9 +107,11 @@ The fixed parent and repeated Steak node are bound to existing v21 category IDs.
 
 ## Record
 
-- [Pre-inference plan](./plan.json), [semantic review](./semantic-review.json), [titles](./titles.json), [exact inputs](./inputs.json), and [freeze manifest](./frozen.json).
-- [Every raw score](./run/scores.jsonl), [logits](./run/first-token-logits.npy), [configuration](./run/config.json), [derived analysis](./analysis.json), and [resource record](./resources.json).
-- Independent [verification](./verification.json) reproduced all 16 scores and decisions and checked frozen inputs, prior artifacts and unchanged model settings. The Steak forward result exactly reproduces TRUE07. Its reverse score differs only by about 0.000000025, with no decision change.
+- [Pre-inference plan](./plan.json), semantic review (`./semantic-review.json`), titles (`./titles.json`), exact inputs (`./inputs.json`), and freeze manifest (`./frozen.json`).
+- Every raw score (`./run/scores.jsonl`), logits (`./run/first-token-logits.npy`), configuration (`./run/config.json`), derived analysis (`./analysis.json`), and resource record (`./resources.json`).
+- Independent verification (`./verification.json`) reproduced all 16 scores and decisions and checked frozen inputs, prior artifacts and unchanged model settings. The Steak forward result exactly reproduces TRUE07. Its reverse score differs only by about 0.000000025, with no decision change.
 - Offline local run: 63.6 seconds including checkpoint verification/loading; 43.37 GiB peak process RSS. One model process, 60GiB scope memory limit, no scope swap. All 42 relevant regressions passed before and after.
 - Shared production code and all frozen TRUE07 inputs/raw outputs remain unchanged. The legacy fixture schema tag is TRUE03; runtime identity is TRUE08. Raw shared DECISIONS.md says “holdout,” but this is a selected diagnostic.
 - No hierarchy, title change, extra model comparison or UI was generated. Existing Plane card is CREC-127; the Plane tool was unavailable, so no external card update is claimed.
+
+**Selected data:** Compact pair-score results, inputs and parameters for `TRUE08/run` are selected for release as `numerical/pair-scores-e42f023da4b36520` in the [publication catalog](../../../docs/experiments/publications.csv). These compact exports use a different format. Other cited artifacts remain separate originals.

@@ -1,5 +1,7 @@
 # v13: six new HDBv2 groups
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 The prompt was unchanged. Each complete group received two fresh Sol-low calls.
 
 The assistant initially accepted three groups and surfaced five distinct uncertain titles from the other three. The user has now completed that focused review: cooking and both communication titles were approved; both mental-state titles were rejected. These are judgments on a selected sample, not an accuracy estimate.
@@ -23,7 +25,7 @@ The assistant initially accepted three groups and surfaced five distinct uncerta
 
 The user clarified the first mental-title rejection: “not concise enough. could've been mental state change or something along those lines”. This is an example of the desired brevity, not an exact required title or a confirmed objection to the waking context. The second rejection has no separately recorded user rationale.
 
-The approvals show that instructions, maxims, and responsible are acceptable in these particular titles; no blanket ban on those words is warranted. The three groups not surfaced remain assistant-assessed, not user-approved. The original session and the separate chat clarification are preserved in [the v14 baseline review record](../hdbv2-node-description-probe-v14/baseline-user-review.json).
+The approvals show that instructions, maxims, and responsible are acceptable in these particular titles; no blanket ban on those words is warranted. The three groups not surfaced remain assistant-assessed, not user-approved. The original session and the separate chat clarification are preserved in the v14 baseline review record (`../hdbv2-node-description-probe-v14/baseline-user-review.json`).
 
 ## Assistant concerns before that review
 
@@ -71,3 +73,5 @@ The optional `run-review-all.sh` exposes all twelve calls. Its decisions are sto
 ## Next test
 
 The user approved restoring “most precise and concise” in the opening, without adding a separate brevity instruction. The [v14 retest](../hdbv2-node-description-probe-v14/README.md) changes only that wording and has been completed on these same six groups. Neither candidate is frozen; frozen v1 remains unchanged.
+
+**Publication status:** `collection:tracked-hdbv2-node-description-probe-v13-additional-v1` remains in the [conversion review list](../../docs/experiments/publication-gaps.csv); a complete compact-data conversion has not been established.

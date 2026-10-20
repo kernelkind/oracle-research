@@ -1,5 +1,7 @@
 # Grammatical structure and shared subjects
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 DSP01 finds usable local phrase structure, but exposes a limit of treating exact
 grammatical matches as a replacement for semantic interpretation.
 Different grammatical structures can support the same browsing subject.
@@ -13,7 +15,7 @@ This is a 14-record diagnostic, not a broad accuracy benchmark.
 The [pre-run plan](./DSP01-PLAN.md) fixes 14 existing subject descriptions from
 14 notes, selected from CAP04/PPR01 evidence. Stanza reads the exact descriptions,
 not the full notes and not their masks. Full originals and masks are retained
-in [inputs.json](./DSP01/inputs.json) for judging what those descriptions mean.
+in `./DSP01/inputs.json` for judging what those descriptions mean.
 
 The released English EWT pipeline produces grammatical word trees. Its parser
 uses a BiLSTM/biaffine architecture trained for dependency annotations, with
@@ -23,7 +25,7 @@ containment. The pinned no-character-language-model configuration and its
 training/evaluation qualifications are in the plan.[^1]
 
 All words, offsets, lemmas, parts of speech, heads and relation labels are saved
-in [parses.json](./DSP01/parses.json), together with all 1,121 within-sentence
+in `./DSP01/parses.json`, together with all 1,121 within-sentence
 word-pair paths. Every occurrence remains separate. No similarity threshold,
 path-length cutoff or category acceptance rule was introduced.
 
@@ -99,7 +101,7 @@ does not automatically identify the common meaning of the two positive records.
 
 ## Simple phrase evidence and remaining omissions
 
-The complete [audit](./DSP01/audit.json) covers all 14 records, including:
+The complete audit (`./DSP01/audit.json`) covers all 14 records, including:
 
 - **Morning greetings:** rows 258 and 192 share the good/morning adjective
   relation despite hyphenation. Coffee-only row 551 does not. CAP04 already

@@ -1,5 +1,7 @@
 # Do the two examples help Astra keep each subject self-contained?
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 Not reliably in this comparison. They helped the hiring note, but did not fix the CEO note that motivated this test. ASv6.21 is not adopted.
 
 We ran the unchanged ASv6.13 and ASv6.21 prompts on the same six original notes: three fresh calls per prompt per note, all using Astra low. ASv6.21 adds only the existing swimming-pool and tapestry examples. There were 36 calls and 631 generated subjects. Every subject and each note's meaning coverage were reviewed.
@@ -95,7 +97,7 @@ Both prompts kept the fee/mempool context without inventing units or arithmetic.
 
 No subject errors were identified in the dashboard, insurance or Iran/Bitcoin outputs under either prompt. In particular, the earlier URL-derived dashboard name and incorrect insurance attribution did not recur here.
 
-One ASv6.13 CEO subject's infidelity interpretation remains unresolved because the quotation is clipped. Whether ASv6.21 trial 3 lost the overall investment-analysis framing is also unresolved. Neither uncertainty is silently counted as success. [Every source, output and individual judgment](./full-outputs.md) is preserved.
+One ASv6.13 CEO subject's infidelity interpretation remains unresolved because the quotation is clipped. Whether ASv6.21 trial 3 lost the overall investment-analysis framing is also unresolved. Neither uncertainty is silently counted as success. Every source, output and individual judgment (`./full-outputs.md`) is preserved.
 
 ## What this establishes
 
@@ -113,4 +115,6 @@ All 36 calls used unique threads and working directories. The isolated runner, p
 
 Token usage: ASv6.13 used 47,331 input and 6,751 output tokens; ASv6.21 used 51,435 input and 6,291 output tokens. Reasoning tokens are already included in those output totals. Provider prefix caching does not imply conversation reuse.
 
-[Predeclared comparison](./proposal.json) · [Assessment](./assessment.json) · [Review reconciliation](./review-reconciliation.json) · [Verification](./verification.json)
+[Predeclared comparison](./proposal.json) · Assessment (`./assessment.json`) · Review reconciliation (`./review-reconciliation.json`) · Verification (`./verification.json`)
+
+See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-subject-prompt-goal-v1`.

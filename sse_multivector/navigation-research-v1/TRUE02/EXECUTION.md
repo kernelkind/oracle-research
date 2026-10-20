@@ -1,5 +1,7 @@
 # TRUE02 execution and verification
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 Run locally on September 12, 2026. No training, paid resources, downloads, GPU, quantization, or remote model code. TRUE01 and all earlier artifacts remain byte-for-byte unchanged.
 
 ## Frozen identity
@@ -27,7 +29,7 @@ The host had approximately 100 GiB available RAM before launch. One model proces
 - Observed scope swap: **zero**. The configured no-swap limit remained in force.
 - Exit status: **0**. The inference scope is inactive; no model process remains.
 
-[Raw completion measurements and output hashes](completion.json). The approximately 19 MiB result directory retains all 150 full-vocabulary first-token logit arrays.
+Raw completion measurements and output hashes (`completion.json`). The approximately 19 MiB result directory retains all 150 full-vocabulary first-token logit arrays.
 
 ## Tests and independent checks
 
@@ -40,7 +42,7 @@ env LD_LIBRARY_PATH=/nix/store/8lahnh9pn3lrrnhax5nk7ibvjcbjmnkm-gcc-15.2.0-lib/l
 
 The separate [verifier](verify.py) imports no production scoring code and loads no neural model. It independently reconstructs all 150 expected directions and input strings, checks saved source/model/artifact hashes against TRUE01, retokenizes the inputs, decodes native answers, recomputes full-vocabulary probabilities using NumPy, checks the frozen cutoff, and recounts per-domain/per-kind errors, complete-pair correctness, and score inversions.
 
-All checks pass; maximum score-replay difference is **4.44e-16**. The verifier ran in its own 2 GiB, no-swap, two-CPU scope. [Complete verification result](verification.json).
+All checks pass; maximum score-replay difference is **4.44e-16**. The verifier ran in its own 2 GiB, no-swap, two-CPU scope. Complete verification result (`verification.json`).
 
 A separate reviewer also checked all semantic expectations before scoring and, after scoring, inspected every error and the input/scoring snapshots. It found no required answer-key correction or implementation/scoring mismatch. This verifies the executed protocol, not universal semantic truth or a second independent model run.
 
@@ -59,3 +61,5 @@ To verify the saved result without inference:
 ```bash
 systemd-run --user --scope --quiet --unit=oracle-true02-verify -p MemoryMax=2G -p MemorySwapMax=0 -p CPUQuota=200% env HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1 TOKENIZERS_PARALLELISM=false OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 LD_LIBRARY_PATH=/nix/store/8lahnh9pn3lrrnhax5nk7ibvjcbjmnkm-gcc-15.2.0-lib/lib:/nix/store/b2swxfi8srrbsafvh9iyyhd26mz9giwf-zlib-1.3.2/lib /tmp/oracle-nli-probe-venv/bin/python sse_multivector/navigation-research-v1/TRUE02/verify.py
 ```
+
+**Selected data:** Compact pair-score results, inputs and parameters for `TRUE02` are selected for release as `numerical/pair-scores-e0df9005e4fdba93` in the [publication catalog](../../../docs/experiments/publications.csv). These compact exports use a different format. Other cited artifacts remain separate originals.

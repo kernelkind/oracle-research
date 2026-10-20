@@ -1,5 +1,7 @@
 # Complete HDBv2 title run — v15
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 All 61 accepted HDBv2 groups now have a saved v15 output: 12 reused first trials and 49 new calls. This is output coverage, not approval of all titles or a completed hierarchy.
 
 Later follow-up: the [complete v20/Astra-low title run](../hdbv2-node-titles-v20-astra-low/README.md) covers these same 61 groups with unchanged masks. This v15 artifact remains intact as the earlier result; the later run has its own outputs and review sessions.
@@ -44,7 +46,7 @@ The saved 41-group review has 37 valid / 4 invalid clicks. The later garden/allo
 
 The three excluded groups are S14b6e36e21, S3d2aa08f70 and S68ce4fd21f. Garden group Saadde5a7ec stays included. Thus 61 groups are included; every one contains at least two distinct notes. Group acceptance is separate from title acceptance.
 
-Sources: [full HDBv2 groups](../real-note-fine-segmentation-v1/hdbscan-cross-note/review/review.json), [original decisions](../real-note-fine-segmentation-v1/cross-note-density-v1/user-response.json), [documented retraction](../real-note-fine-segmentation-v1/cross-note-density-v1/README.md), [baseline record](../real-note-fine-segmentation-v1/results.md).
+Sources: full HDBv2 groups (`../real-note-fine-segmentation-v1/hdbscan-cross-note/review/review.json`), original decisions (`../real-note-fine-segmentation-v1/cross-note-density-v1/user-response.json`), [documented retraction](../real-note-fine-segmentation-v1/cross-note-density-v1/README.md), [baseline record](../real-note-fine-segmentation-v1/results.md).
 
 ## Fixed inputs and execution
 
@@ -64,3 +66,5 @@ The [first v15 run](../hdbv2-node-description-probe-v15/README.md) and [six-new-
 Two independent read-only reviews covered the first 32 new outputs; I reviewed all 49. `assessment-audit.json` records disagreements. `verification.json` checks the unchanged prompt, source membership/spans/fragments, raw output identity, isolated execution, usage and review packaging. Focused, problem and full views were smoke-tested without recording user decisions.
 
 V15 remains unfrozen. No hierarchy links, subsumption calls or membership changes were made. The three review questions are resolved. The user subsequently confirmed the four problems above in chat and approved a targeted v16 test; no reject clicks were fabricated. The [v16 results](../hdbv2-node-description-probe-v16/README.md) preserve two new trials on those four groups and five accepted controls. The assistant finds usable titles twice for three former failure groups; the dog group still fails. The user accepted v16's only uncertain title, “Temporal deceleration.” No focused review questions remain. This complete v15 artifact and all raw outputs remain intact; v16 is not frozen or installed as its replacement.
+
+**Publication status:** `collection:tracked-hdbv2-node-titles-v15` remains in the [conversion review list](../../docs/experiments/publication-gaps.csv); a complete compact-data conversion has not been established.

@@ -1,5 +1,7 @@
 # Mask recognition — Sol low
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 Sol low recognized some added meaning, but did not reliably recognize the mask errors we tested.
 
 | Fixed mask problem | Trial 1 | Trial 2 | Trial 3 |
@@ -18,7 +20,7 @@ Can the same model recognize missing or additional meaning in existing masks, wh
 
 The approved [prompt](./recognition-prompt.md) assessed six existing masks for three fixed ASv6.8 subjects across two original notes. Each subject had one acceptable and one incorrect mask. We ran three independent trials per mask: **18 fresh calls**, all **gpt-5.6-sol, low reasoning**. Every call saw exactly one highlighted mask in its complete note and the subject. It saw no competing masks, expected judgments, review comments, or earlier answers.
 
-The [plan](./plan.json) and [expected judgments](./expected-judgments.json) are pre-inference snapshots of the approved proposal. Nothing was repaired or rerun after seeing an answer. These are reused development examples, not an unseen holdout or a population-accuracy estimate.
+The [plan](./plan.json) and expected judgments (`./expected-judgments.json`) are pre-inference snapshots of the approved proposal. Nothing was repaired or rerun after seeing an answer. These are reused development examples, not an unseen holdout or a population-accuracy estimate.
 
 ## What follows
 
@@ -37,4 +39,6 @@ ASv6.8, mask defaults, SSE, segmentation, production code, and all saved human d
 - Usage: 40,371 input tokens, including 2,176 cached input tokens; 1,140 output tokens, including 741 reasoning tokens. Cached input did not add previous responses to the recorded prompt. Existing subscription only; no new paid API or rented-compute commitment.
 - All 50 protected files remained unchanged, including prompts, registries, source data, user reviews, the runner, and the budget ledger.
 
-Raw input/output and event records are in `trial-{1,2,3}/run/`. [assistant-review.json](./assistant-review.json) contains the per-call semantic judgments; [verification.json](./verification.json) contains the execution, isolation, resource, and integrity checks. [cases.json](./cases.json) preserves exact note text and source occurrences.
+Raw input/output and event records are in `trial-{1,2,3}/run/`. `./assistant-review.json` contains the per-call semantic judgments; `./verification.json` contains the execution, isolation, resource, and integrity checks. `./cases.json` preserves exact note text and source occurrences.
+
+See [conversion gaps](../../docs/experiments/publication-gaps.csv) for `collection:tracked-mask-prompt-recognition-sol-low-v1`.

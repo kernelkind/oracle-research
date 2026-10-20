@@ -1,3 +1,5 @@
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 V identifies a vector and its mask. S identifies a segment. ⟦…⟧ marks the exact selected text. Every note below is complete, including URLs; only those mask markers and blockquote prefixes have been inserted. Repeated notes are shown again when their masks differ.
 
 ## 1. A close coffee neighbor remains ungrouped in baseline
@@ -13,7 +15,7 @@ V277
 
 > ⟦More coffee⟧ in cool places https://image.nostr.build/f09d0a87aad1f999f48a1c3ff1ce4ea08db05749888f258359c12719943797ad.jpg
 
-Measured facts: [the saved neighbor inspection](unassigned-neighbor-inspection.json) records cosine 0.9541135626375935 for V342–V277, across two different notes. In [baseline](hdbscan-baseline/review/review.json), V277 belongs to Sbb8511308a and V342 appears in [unassigned instances](hdbscan-baseline/review/unassigned.json). In [density](hdbscan-density/review/review.json), both belong to S34b70d4196.
+Measured facts: the saved neighbor inspection (`unassigned-neighbor-inspection.json`) records cosine 0.9541135626375935 for V342–V277, across two different notes. In baseline (`hdbscan-baseline/review/review.json`), V277 belongs to Sbb8511308a and V342 appears in unassigned instances (`hdbscan-baseline/review/unassigned.json`). In density (`hdbscan-density/review/review.json`), both belong to S34b70d4196.
 
 “Fetching coffee” and “More coffee” share selected coffee content despite differing in action and quantity. This is a concrete baseline grouping omission next to a highly similar saved vector, recovered by the density result. The cosine is descriptive evidence, not a clustering threshold or a guarantee that every member of S34b70d4196 is valid. It does not establish why either configuration made its assignments.
 
@@ -65,7 +67,7 @@ V865
 > 
 > ⟦#coffeechain⟧ #plebchain 
 
-Measured memberships from the [baseline](hdbscan-baseline/review/review.json) and [leaf](hdbscan-leaf/review/review.json) reviews, also checked against [leaf unassigned instances](hdbscan-leaf/review/unassigned.json):
+Measured memberships from the baseline (`hdbscan-baseline/review/review.json`) and leaf (`hdbscan-leaf/review/review.json`) reviews, also checked against leaf unassigned instances (`hdbscan-leaf/review/unassigned.json`):
 
 | Result | Segment or status | Instances |
 | --- | --- | --- |
@@ -74,7 +76,7 @@ Measured memberships from the [baseline](hdbscan-baseline/review/review.json) an
 | Leaf | S317bb50727 | V126, V656, V865 |
 | Leaf | Ungrouped | V297, V797 |
 
-The [leaf assessment](assistant-leaf-changes.json) accepts both child segments individually but finds the split needless. The two-member segment selects “coffeechain” without the hash sign; the three-member segment selects “#coffeechain”. This observed partition is not a demonstrated semantic distinction or an explanation of the algorithm's cause. V297 selects exactly the same hashtag as the three-member segment. V797 adds “Sipping” while retaining that hashtag. Their unmasked music, travel, breakfast or roasting details do not remove this shared selected meaning. The result reduces one seven-note recurrence to two- and three-note groups and excludes two relevant instances.
+The leaf assessment (`assistant-leaf-changes.json`) accepts both child segments individually but finds the split needless. The two-member segment selects “coffeechain” without the hash sign; the three-member segment selects “#coffeechain”. This observed partition is not a demonstrated semantic distinction or an explanation of the algorithm's cause. V297 selects exactly the same hashtag as the three-member segment. V797 adds “Sipping” while retaining that hashtag. Their unmasked music, travel, breakfast or roasting details do not remove this shared selected meaning. The result reduces one seven-note recurrence to two- and three-note groups and excludes two relevant instances.
 
 ## 3. Density loses a valid coffee-shop music group entirely
 
@@ -94,6 +96,6 @@ V295
 
 > Awwww yeah. Baby Got Back ⟦playing⟧ in the ⟦coffee shop⟧. 😂 #⟦music⟧str #coffeechain
 
-Measured facts: [baseline](hdbscan-baseline/review/review.json) places V035, V036 and V295 together in S6f2f479441. The [final baseline assessment](assistant-baseline-final.json) marks that segment valid. V035 and V036 are variants from one original note; V295 comes from a second note. The segment is absent from the [density review](hdbscan-density/review/review.json), and all three instances appear in [density's unassigned list](hdbscan-density/review/unassigned.json), not in replacement segments.
+Measured facts: baseline (`hdbscan-baseline/review/review.json`) places V035, V036 and V295 together in S6f2f479441. The final baseline assessment (`assistant-baseline-final.json`) marks that segment valid. V035 and V036 are variants from one original note; V295 comes from a second note. The segment is absent from the density review (`hdbscan-density/review/review.json`), and all three instances appear in density's unassigned list (`hdbscan-density/review/unassigned.json`), not in replacement segments.
 
 The selected rave at a coffee shop and music playing in a coffee shop share a concrete activity and kind of venue. They need not describe the same music or event. This judgment does not require opening the video URL or importing the unselected song title. Density therefore loses valid two-note grouping coverage here. That is a grouping-result regression; losing the group alone does not show an SSE representation failure or identify the cause.

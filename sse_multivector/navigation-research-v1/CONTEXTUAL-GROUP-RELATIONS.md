@@ -1,5 +1,7 @@
 # Contextual group relations
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 GDR01 recovered the shared greeting meaning of GM and Good morning when both
 were replaced by source-checked descriptions. It retained the one-way relation
 from Sourdough bread to Bread and proposed no relation between the other tested
@@ -79,7 +81,7 @@ For context, these two complete originals support the shared greeting meaning:
 
 These are examples, not the only inspected members. All six GM masks and all
 four Good morning masks, including their complete notes, remain in the saved
-[group evidence](./GDR01/groups.json). The groups have different note sets;
+group evidence (`./GDR01/groups.json`). The groups have different note sets;
 equivalent meanings would call for collecting their notes together, not a
 redundant parent–child step.
 
@@ -159,8 +161,8 @@ group. No automatic grouping or parent method is established by these tests.
 
 ## Reproduction and integrity
 
-[Frozen inputs](./GDR01/fixture.json), [every score](./GDR01/scores.json),
-[classifier disagreements](./GDR01/summary.json), [configuration](./GDR01/config.json).
+[Frozen inputs](./GDR01/fixture.json), every score (`./GDR01/scores.json`),
+classifier disagreements (`./GDR01/summary.json`), configuration (`./GDR01/config.json`).
 The eight saved groups are exactly equal to their LGR01 inputs, including all
 source notes and masks. Nothing was removed to improve the result.
 
@@ -198,3 +200,5 @@ discarded completed result is hidden by the reported comparison.
 
 [^1]: Moskvoretskii et al. (2024), [TaxoLLaMA](https://aclanthology.org/2024.acl-long.127/); [pinned author prompt code](https://github.com/VityaVitalich/TaxoLLaMA/blob/7881f9fd26c4ab935d98ffce0fac91eb1fac621c/pipeline_src/dataset/prompt_schemas.py), [scoring code](https://github.com/VityaVitalich/TaxoLLaMA/blob/7881f9fd26c4ab935d98ffce0fac91eb1fac621c/TExEval-2_testdata_1.2/est_ppl.py), [adapter configuration](https://huggingface.co/VityaVitalich/TaxoLLaMA/blob/16eee40bf4205c1de762711fff1b907590cf5fd4/adapter_config.json).
 [^2]: Yin and Roth (2018), [Term Definitions Help Hypernymy Detection](https://aclanthology.org/S18-2025.pdf), sections 3–4. Read for both-sided definitions, training, ablations and error mechanisms; not reproduced here.
+
+**Selected data:** Compact pair-score results, inputs and parameters for `GDR01` are selected for release as `numerical/pair-scores-3e12777c9a08d409` in the [publication catalog](../../docs/experiments/publications.csv). These compact exports use a different format. Other cited artifacts remain separate originals.

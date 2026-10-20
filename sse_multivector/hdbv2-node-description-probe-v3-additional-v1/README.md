@@ -1,5 +1,7 @@
 # V3 node descriptions: six additional nodes
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 The unchanged v3 prompt produced several useful descriptions, including an appropriately broad Literature title. The main concern is Fall’s Arrival: two member masks describe frost and sunrise but do not establish fall. This is an assistant-identified restriction, not a user-confirmed verdict.
 
 These are six additional HDBv2 nodes, not a new corpus: 25 masks from 13 notes, three of which also appeared in the prior sample. Nodes were selected from masks before inspecting outputs. No earlier result, mask, grouping or prompt was changed.
@@ -15,7 +17,7 @@ These are six additional HDBv2 nodes, not a new corpus: 25 masks from 13 notes, 
 | Sbec762f76f | `Mental Health Concerns` |
 | S6fefae17d0 | `Family` |
 
-The following is every input mask, in the order supplied to the model. Each V identifier is one vector; multiple bracketed fragments on its line form one mask. Repeated masks are retained. Full original notes and exact byte ranges are preserved in [source-packets.json](source-packets.json), but were not supplied to the model.
+The following is every input mask, in the order supplied to the model. Each V identifier is one vector; multiple bracketed fragments on its line form one mask. Repeated masks are retained. Full original notes and exact byte ranges are preserved in `source-packets.json`, but were not supplied to the model.
 
 ## S53be040f52
 
@@ -98,7 +100,9 @@ The next work should target this scope problem without forcing every output into
 - [Registered v3](../fine-region-title-prompt-versions.json) was unchanged, as were the executable, wrapper, Sol model and low effort used previously.
 - Six fresh calls, at most three concurrent, all succeeded on attempt one. An independent read-only audit verified all 25 masks / 49 source fragments, exact prompt rendering, six distinct fresh threads/workspaces, matching raw outputs, and no model tool calls. No retries or best-output selection occurred.
 - Each node directory contains its exact config and unedited run manifest, output, result log and model instructions. Only numbered source fragments and the exact v3 question/constraint entered the user prompt. Source notes, rationales and review instructions did not.
-- [Measured results](results.json) preserve titles, hashes, thread IDs, usage and separate assistant assessments.
+- Measured results (`results.json`) preserve titles, hashes, thread IDs, usage and separate assistant assessments.
 - Usage: 10,681 input tokens and 582 output tokens; 530 reasoning tokens are included in output, with 0 cached input tokens. Existing Codex subscription only; no new API billing or rented compute.
 
 This is a purposively selected same-corpus sample with one output per node. It is not an unseen-note holdout or a representative accuracy estimate. It contains no new comparative v2 runs and cannot measure a causal prompt improvement on these six nodes.
+
+**Publication status:** `collection:tracked-hdbv2-node-description-probe-v3-additional-v1` remains in the [conversion review list](../../docs/experiments/publication-gaps.csv); a complete compact-data conversion has not been established.

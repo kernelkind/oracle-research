@@ -1,8 +1,10 @@
 # HDFv3 — inspection evidence
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 All new group IDs below refer to **HDFv3 seed 123**. Old IDs refer to **HDFv2 original seed 123**, which exactly replayed HDFv1. Descriptions explain the evidence; no subject titles were generated or inserted into the TUI. These are analyst judgments, not user approvals.
 
-The user requested a chat handoff rather than a TUI. [comparison.json](./comparison.json) preserves exact memberships, counterpart searches, raw occurrences, persistent-family support, ancestors, aliases, and source hashes. Complete original notes remain in the unchanged `../../real-note-fine-segmentation-v1/reviewed-input.json` source artifact.
+The user requested a chat handoff rather than a TUI. `./comparison.json` preserves exact memberships, counterpart searches, raw occurrences, persistent-family support, ancestors, aliases, and source hashes. Complete original notes remain in the unchanged `../../real-note-fine-segmentation-v1/reviewed-input.json` source artifact.
 
 ## A useful added child
 
@@ -91,3 +93,9 @@ All masks concern eggs: an omelette, using up eggs, century-egg preservation, co
 ## Review limits
 
 The main and independent reviewer inspected the frozen cases and the four new sampled groups, checking original notes where context mattered. Additional targeted checks include the second-coffee pair and the appliance/tomato groups. They did not judge every new group. Seed comparisons establish membership recurrence, not universal correctness. All concerns and positives leave masks, labels, memberships, and parameters unchanged.
+
+**Selected release data:** The [publication catalog](../../../docs/experiments/publications.csv) identifies the compact final-result export derived from the saved source:
+
+- `numerical/comparison-57fb1c0a8acd9334` — original `comparison.json`, bound by its recorded source SHA-256.
+
+The export uses the publication format; the original files referenced above remain outside this checkout. Downloads are still being prepared.

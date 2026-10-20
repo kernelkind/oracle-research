@@ -171,18 +171,33 @@ export checks do not establish that every evaluation workflow is compatible.
 ## Original-file links and replay
 
 The reviewed generated files are untracked but remain at their original local
-paths. A read-only scan found **745 direct local-file link occurrences across
+paths. The initial scan found **745 direct local-file link occurrences across
 143 retained Markdown files**, pointing to **613 generated files** absent from
-a clean checkout. This count excludes fenced examples and does not include
-pre-existing missing or outside-repository links.
+a clean checkout. A follow-up check of all tracked Markdown found five more
+occurrences, for **750 links across 145 documents** to those same 613 files.
+These counts exclude fenced examples and other pre-existing missing or
+outside-repository links.
 
-Examples include [scalability findings](../planning/scalability.md) linking to
-saved resource summaries and responses, and the retained
-[TRUE07 findings](../../sse_multivector/navigation-research-v1/TRUE07/RESULTS.md)
-linking to `source-evidence.json` and `semantic-review.json`.
-Reader-link repair remains open: connect claims to the selected public evidence
-where applicable and identify references that require local originals. Retaining
-the authored findings does not make their original artifact links portable.
+Those 750 links now show their exact original paths as text instead of broken
+hyperlinks. Another 88 unavailable or outside-checkout references were labeled,
+and two relative links to retained source documents were corrected. Verified
+selected exports are identified separately by publication ID; the findings,
+measurements and original provenance are unchanged. For example, the
+[scalability findings](../planning/scalability.md) identify their local resource
+records, and the [TRUE07 findings](../../sse_multivector/navigation-research-v1/TRUE07/RESULTS.md)
+distinguish original review files from the selected score export.
+See [reading the research records](README.md#reading-the-research-records).
+The check found no remaining links to the reviewed removed files and no newly
+missing file destinations. Other pre-existing missing links remain outside this
+repair's scope.
+
+Six report references in the [subject-prompt investigation](../../sse_multivector/subject-prompt-goal-v1/README.md)
+are still outside this checkout: `RESULTS.md` and `full-outputs.md` for
+`asv6.28-fresh-v1` and `asv6.28-comparison-v1`, and `RESULTS.md` for
+`asv6.27-comparison-v1` and `asv6.26-comparison-v1`. Recovery remains open;
+the original references remain visible. Older collections also retain their
+explicit [conversion gaps](publication-gaps.csv). Labeling these references
+does not supply the missing reports or exported answers.
 
 Some existing code also requires original artifacts:
 
@@ -254,8 +269,8 @@ Before publication:
 - Continue the agreed [public Git layout](downloads.md#public-git-contents):
   the selected-study index and reviewed generated-file untracking are in place;
   local files retain their original paths. The 196 ambiguous files
-  remain tracked. Review them and resolve the
-  [reader-link and original-file replay work](#original-file-links-and-replay).
+  remain tracked. Review them and resolve the remaining
+  [original-file replay and evidence gaps](#original-file-links-and-replay).
 - Review [remaining conversion items](publication-gaps.csv): 33 unsupported result
   files, one result without its required local configuration, and older inventory
   groups needing review for final data versus material already retained in Git.

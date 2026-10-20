@@ -1,5 +1,7 @@
 # Complete note evidence for category membership
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 TCC03 restores the judged Coffee note ordering by allowing every existing
 description of each note to contribute. Morning greetings remains separated.
 This is a useful result: an incorrectly ordered individual witness need not
@@ -24,7 +26,7 @@ description exceeds a fixed threshold, intended as a proxy for a genuinely
 supporting mask. It does not establish that support, calculate its probability,
 or combine evidence inside the model.
 
-The [plan](./TCC03-PLAN.md) and [full-note judgments](./TCC03/judgments.json)
+The [plan](./TCC03-PLAN.md) and full-note judgments (`./TCC03/judgments.json`)
 were frozen before additional inference. The main and independent reviewers
 read all 20 originals and 181 descriptions/masks. These are previously examined
 notes, not a new holdout. Coffeechain-only and caffeine-only cases remain
@@ -111,7 +113,7 @@ The remaining changed supported Coffee maxima—rows879, 672, 285 and 697—are
 grounded coffee descriptions. All eight supported greeting maxima remain
 unchanged and come from genuine greeting masks. Every one of the 40 expanded
 note/category maxima was independently inspected; the source evidence is in
-[inputs.json](./TCC03/inputs.json), not inferred from the winning score.
+`./TCC03/inputs.json`, not inferred from the winning score.
 
 ## Where expansion hurts
 
@@ -166,7 +168,7 @@ additional descriptions affect arbitrary notes or categories.
 Rows are existing subject/mask record IDs, not hierarchy nodes. The judgment
 is for the full note. Each table includes every note, including unresolved
 category-scope cases. Full precision, all attaining rows and all inversions
-are in [audit.json](./TCC03/audit.json).
+are in `./TCC03/audit.json`.
 
 ### Coffee
 
@@ -245,7 +247,7 @@ paths, not a classifier benchmark or manually supplied category list.
 ## Reproduction and preservation
 
 All 362 scores and rendered token inputs are preserved in
-[run/scores.json](./TCC03/run/scores.json). The offline replay is byte-identical,
+`./TCC03/run/scores.json`. The offline replay is byte-identical,
 including the runner snapshot, with matching model/source hashes, packages
 and native checks. Full originals and masks retain their source records exactly.
 
@@ -264,7 +266,7 @@ packaging before wrap-up.
 Use the TCC02 reproduction command with input
 `sse_multivector/navigation-research-v1/TCC03/inputs.json` and a new output
 directory. Model revision, native source and all runtime settings are identical;
-[run/config.json](./TCC03/run/config.json) records them. To reproduce the audit,
+`./TCC03/run/config.json` records them. To reproduce the audit,
 group the saved scores by category and note, take the maximum over the frozen
 control rows or all rows, retain every attaining row, and compare all supported
 notes with all unsupported notes from the frozen judgment file. No threshold

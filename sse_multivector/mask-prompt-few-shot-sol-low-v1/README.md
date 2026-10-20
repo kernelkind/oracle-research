@@ -1,5 +1,7 @@
 # Worked-example mask test — Sol low
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 The six examples did not produce a reliable improvement on these four notes. The insurance mask improved in one more trial, while the Bitcoin and gossip masks became worse. No prompt or model default is being changed.
 
 This is a completed development test, not a prompt freeze or an unseen holdout.
@@ -16,11 +18,11 @@ These are my assessments against the fixed subjects and existing review decision
 
 | Item and observation | Original prompt | Revised prompt |
 | --- | --- | --- |
-| [M05](./masks.md#m05): “life” missing from the understanding-life mask | 1/3 | 2/3 |
-| [M07](./masks.md#m07): extra state-backing meaning in the insurance mask | 2/3 | 1/3 |
-| [M09](./masks.md#m09): mask matches the approved Bitcoin value-under-restrictions scope | 2/3 | 0/3 |
-| [M11](./masks.md#m11): CEO incident identified without the extra call setup | 0/3 | 0/3 |
-| [M12](./masks.md#m12): extra call-setup meaning in the gossip/framing mask | 1/3 | 2/3 |
+| M05 (`./masks.md#m05`): “life” missing from the understanding-life mask | 1/3 | 2/3 |
+| M07 (`./masks.md#m07`): extra state-backing meaning in the insurance mask | 2/3 | 1/3 |
+| M09 (`./masks.md#m09`): mask matches the approved Bitcoin value-under-restrictions scope | 2/3 | 0/3 |
+| M11 (`./masks.md#m11`): CEO incident identified without the extra call setup | 0/3 | 0/3 |
+| M12 (`./masks.md#m12`): extra call-setup meaning in the gossip/framing mask | 1/3 | 2/3 |
 
 M09 now omits “restricted actors” in two trials. The third omits “Bitcoin” and adds the actors' actual shift toward settlement. The earlier prompt produced the previously approved semantic scope twice, although “Bitcoin” could refer to either of two source occurrences.
 
@@ -40,7 +42,7 @@ Source order still failed:
 
 Thus 33/36 outputs from each prompt met the JSON, exact-string, and source-order checks. This does not mean 33 masks had correct meaning. Neither prompt produced an M05 response with both complete meaning and valid source order.
 
-Two original M09 masks permit two source occurrences of “Bitcoin.” The two out-of-order revised M09 masks also permit two placements if array order is disregarded for display. Both are shown in [masks.md](./masks.md); no occurrence is silently chosen. Revised M02 trial 2 is different: source order uniquely selects the first “Zhang Lu.”
+Two original M09 masks permit two source occurrences of “Bitcoin.” The two out-of-order revised M09 masks also permit two placements if array order is disregarded for display. Both are shown in `./masks.md`; no occurrence is silently chosen. Revised M02 trial 2 is different: source order uniquely selects the first “Zhang Lu.”
 
 ## What this establishes
 
@@ -51,9 +53,9 @@ This does not establish that worked examples cannot help. There are only four pr
 ## Reproduction and resources
 
 - [Prompt snapshot](./mask-prompt.md), approved in commit `128985ac1a2d44d903fa51e345a4621b48864d57`.
-- [Plan](./plan.json) and [unchanged notes/subjects](./selection.json).
-- New raw outputs: [trial 1](./trial-1/run/output.json), [trial 2](./trial-2/run/output.json), [trial 3](./trial-3/run/output.json). Each run also preserves its rendered inputs, process arguments, thread ID, raw event log, usage, and response hashes.
-- [Every mask inline](./masks.md), [individual assistant assessments](./assistant-review.json), [mechanical checks](./mechanical-checks.json), [verification](./verification.json).
+- [Plan](./plan.json) and unchanged notes/subjects (`./selection.json`).
+- New raw outputs: trial 1 (`./trial-1/run/output.json`), trial 2 (`./trial-2/run/output.json`), trial 3 (`./trial-3/run/output.json`). Each run also preserves its rendered inputs, process arguments, thread ID, raw event log, usage, and response hashes.
+- Every mask inline (`./masks.md`), individual assistant assessments (`./assistant-review.json`), mechanical checks (`./mechanical-checks.json`), verification (`./verification.json`).
 
 Every new call used a separate process, thread, and empty workdir. All 36 thread/workdir IDs were distinct and absent from 205 earlier records checked. Local manifests show prior conversation, repository instructions, user configuration, tools, and web access disabled or excluded; raw events contain no tool calls or errors. Prompt/output hashes match all 72 saved records. These checks establish local harness isolation, not visibility into undisclosed service internals.
 
@@ -70,3 +72,5 @@ Reported usage:
 | Median call time | 5.407 seconds | 5.727 seconds |
 
 Timing is observational, not a controlled latency benchmark. The calls used the existing Codex subscription; no paid API, rented resources, or account switch was used. Prompts, registries, budget ledger, saved baseline results, and user review decisions were not modified. There were no retries or output repairs.
+
+See [conversion gaps](../../docs/experiments/publication-gaps.csv) for `collection:tracked-mask-prompt-few-shot-sol-low-v1`.

@@ -1,5 +1,7 @@
 # Source meanings and paired refinements
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 USC01 automatically constructs a useful local Cooking → Cooking with meat
 destination. It also exposes an incorrect construction assumption: requiring
 two different word occurrences can remove notes without adding a different
@@ -21,7 +23,7 @@ A pair asserts co-presence, not an ingredient, causal, or action-object relation
 The [pre-run plan](./USC01-PLAN.md) records the hypothesis, alternatives, method
 fit, and decision. [Complete notes with their original inline masks and all word
 assignments](./USM02/SOURCE-RESULTS.md) supply the source evidence. Exact candidate
-memberships, source witnesses and links are in [the construction result](./USC01/construction/result.json).
+memberships, source witnesses and links are in the construction result (`./USC01/construction/result.json`).
 
 | Construction | Single concepts only | With pairs |
 | --- | ---: | ---: |
@@ -37,8 +39,8 @@ the constructed graph. Those 202 are the complete generalized semantic-audit
 scope, not a hand-selected list of successful categories.
 
 Two independent review partitions cover every one of those 202 patterns and
-all 2,504 saved witnesses: [first half](./USC01/semantic-audit-a.json),
-[second half](./USC01/semantic-audit-b.json). Their judgments were reviewed
+all 2,504 saved witnesses: first half (`./USC01/semantic-audit-a.json`),
+second half (`./USC01/semantic-audit-b.json`). Their judgments were reviewed
 against the source records. Broad, unexpected and same-note-set meanings are
 not automatically failures; unsupported witnesses and missing notes are kept
 separate from whether the resulting category could be useful.
@@ -183,7 +185,7 @@ and is not an isolated measurement of the Python process. Historical files are
 preserved; current runners measure `/proc/self/status` `VmHWM` instead. Neither
 run encoded text, downloaded a model, or used paid resources.
 
-[Verification records](./USC01/verification.json) preserve exact hashes, the
+Verification records (`./USC01/verification.json`) preserve exact hashes, the
 42 overlapping-endpoint cases, source witnesses, replay checks and audit
 coverage. Twelve LMMS tests, three occurrence-construction tests and 61 existing
 semantic-construction tests pass. This verifies the implementation and saved

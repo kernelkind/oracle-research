@@ -1,5 +1,7 @@
 # Complete HDBv2 title run — v20, Astra-low
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 All 61 accepted groups from the original 100-note HDBv2 run now have a v20/Astra-low title: 55 new calls and six reused first trials. The groups, masks and prompt are unchanged. This completes title generation, not hierarchy construction or a prompt/model freeze.
 
 No title objections remain for this run: 59 titles were assistant-accepted, and the user approved the two titles raised for judgment. The original assistant assessments remain preserved as pre-review evidence, not outstanding failures. This is not an estimated general error rate or a claim that the user individually reviewed all 61.
@@ -53,10 +55,12 @@ One successful call, S0c034c4006, logged an internal Codex shell-snapshot valida
 
 ## Evidence and verification
 
-[titles.json](./titles.json) contains every exact selected output, its raw result path, reuse alternatives and my original per-group reasoning. Its separate `user_review` section records the two later approvals without rewriting the original assessments. `new/<group>/` preserves each of the 55 configurations, manifests and raw outputs. Reused records remain in the [original Astra probe](../hdbv2-node-description-probe-v20-astra-low-v1/README.md).
+`./titles.json` contains every exact selected output, its raw result path, reuse alternatives and my original per-group reasoning. Its separate `user_review` section records the two later approvals without rewriting the original assessments. `new/<group>/` preserves each of the 55 configurations, manifests and raw outputs. Reused records remain in the [original Astra probe](../hdbv2-node-description-probe-v20-astra-low-v1/README.md).
 
-The source packets match the v15 source artifact byte for byte. Independent integrity review checked scope, byte spans, prompt rendering, model settings, raw-output identity, hashes and isolation. A final packaging audit checked the assembled titles, review masks, comments and reuse paths. [verification.json](./verification.json) records the checks and the warning above.
+The source packets match the v15 source artifact byte for byte. Independent integrity review checked scope, byte spans, prompt rendering, model settings, raw-output identity, hashes and isolation. A final packaging audit checked the assembled titles, review masks, comments and reuse paths. `./verification.json` records the checks and the warning above.
 
 Both review views were opened with the existing production binary. The focused view showed both items and their separate comments; the full view showed all 61 and the existing comparison view. Smoke-test sessions were saved only under `/tmp/`, with all decisions unset. No review-tool code was changed.
 
 Plane card CREC-127 could not be updated because no Plane tool was available in this session. No card status change is claimed.
+
+**Publication status:** `collection:tracked-hdbv2-node-titles-v20-astra-low` remains in the [conversion review list](../../docs/experiments/publication-gaps.csv); a complete compact-data conversion has not been established.

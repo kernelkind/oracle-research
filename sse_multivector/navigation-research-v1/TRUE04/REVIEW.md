@@ -1,18 +1,20 @@
 # TRUE04 — Every accepted title relationship and every missed nomination
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 Each question asks: **Does A contain B?** TRUE received only the exact titles, in this order:
 
 ```text
 premise: This text is about {B}. hypothesis: This text is about {A}.
 ```
 
-The 61 original groups include repeated Food, Coffee and Bitcoin titles. This document shows each distinct ordered title pair once. [DECISIONS.md](DECISIONS.md) preserves every original group ID and all 3,660 directions; [scores.jsonl](scores.jsonl) contains each exact input and full-precision score.
+The 61 original groups include repeated Food, Coffee and Bitcoin titles. This document shows each distinct ordered title pair once. [DECISIONS.md](DECISIONS.md) preserves every original group ID and all 3,660 directions; `scores.jsonl` contains each exact input and full-precision score.
 
 Scores below are rounded to six decimals. They are the full-vocabulary probability of first generating token `1`, not cosine or calibrated containment confidence. **Native** is the generated Yes/No answer. The separate frozen cutoff accepts scores **greater than 0.142**.
 
 ## Accepted relationships
 
-The cutoff accepted 106 original directions, representing 64 distinct title pairs. Every one was reviewed. The categories below are semantic judgments, not model outputs. [Judgments and reasons](title-pair-judgments.json) preserve every accepted title pair's rationale and reviewer disagreements.
+The cutoff accepted 106 original directions, representing 64 distinct title pairs. Every one was reviewed. The categories below are semantic judgments, not model outputs. Judgments and reasons (`title-pair-judgments.json`) preserve every accepted title pair's rationale and reviewer disagreements.
 
 All entries in the following three tables were accepted by the cutoff, including those whose native answer was No.
 
@@ -97,7 +99,7 @@ All entries in the following three tables were accepted by the cutoff, including
 
 ## Missed relationships nominated before score inspection
 
-The [frozen reference](../true04-reference.json) nominated 120 clear original directions, representing 75 distinct title pairs. The cutoff missed 30 directions, representing the 23 questions below. **Native and cutoff both answered No to every row.** These nominations are not a complete or infallible answer key.
+The frozen reference (`../true04-reference.json`) nominated 120 clear original directions, representing 75 distinct title pairs. The cutoff missed 30 directions, representing the 23 questions below. **Native and cutoff both answered No to every row.** These nominations are not a complete or infallible answer key.
 
 A fresh reviewer, shown titles without scores, upheld 20 distinct nominations and found three unresolved. The original nominations remain unchanged; the disagreement is recorded rather than counted silently as proven model error.
 
@@ -136,8 +138,10 @@ A fresh reviewer, shown titles without scores, upheld 20 distinct nominations an
 
 Food was interpreted broadly to include beverages, as is reasonable for content discovery; that scope is an explicit review choice, not a demonstrated universal meaning of the bare title. Plebchain was not confirmed by the fresh reviewer. Communication's scope is uncertain when used as a parent of advice merely because advice is a communicative act.
 
-The [fresh review](missed-reference-review.json) and [pre-score rationales with all 30 scored directions](semantic-analysis.json) preserve both sides. Unlisted rejected questions were not automatically judged correct.
+The fresh review (`missed-reference-review.json`) and pre-score rationales with all 30 scored directions (`semantic-analysis.json`) preserve both sides. Unlisted rejected questions were not automatically judged correct.
 
 ## What this record does not establish
 
 These are category-title comparisons. The model did not see the masks, source notes or prior grouping decisions, and this test does not re-evaluate whether a title describes its source group. No graph was repaired or adopted, and no missing parent was generated. [Main findings](RESULTS.md) explain what the observed decisions support.
+
+**Selected data:** Compact pair-score results, inputs and parameters for `TRUE04` are selected for release as `numerical/pair-scores-7dd83c45e206d5c8` in the [publication catalog](../../../docs/experiments/publications.csv). These compact exports use a different format. Other cited artifacts remain separate originals.

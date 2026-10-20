@@ -1,14 +1,16 @@
 # ASv6.8 versus ASv6.10: 20-note holdout
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 ASv6.10 improved the targeted calculation and commentary examples, but the user rejected both subjects in the focused review: the chart-link item and the execution-interpretation item. Unclear slang and non-English coverage remain unresolved. ASv6.8 remains the frozen default.
 
-[Complete notes, all 305 subjects, and per-note analysis](./results.md)
+Complete notes, all 305 subjects, and per-note analysis (`./results.md`)
 
 ## What happened
 
 The next 20 unused development notes were selected from the frozen 500-note order before generation. Both unchanged prompts ran once on every note: **40 fresh isolated Sol-low calls**, sequentially. All completed on their first attempt. No output edits, masks, SSE, repair calls or default changes.
 
-“Unused” means absent from the saved subject/claim-development inputs and mask-comparison selections listed in [selection.json](./selection.json). It does not mean that no earlier corpus-wide pipeline ever encoded the notes. The audit covered 38 input/selection files; 93 of the 500 corpus notes were excluded, leaving 407 eligible. Selection was mechanical, not based on content.
+“Unused” means absent from the saved subject/claim-development inputs and mask-comparison selections listed in `./selection.json`. It does not mean that no earlier corpus-wide pipeline ever encoded the notes. The audit covered 38 input/selection files; 93 of the 500 corpus notes were excluded, leaving 407 eligible. Selection was mechanical, not based on content.
 
 ## What the comparison shows
 
@@ -37,7 +39,7 @@ These requirements led to the separate [ASv6.11 prompt](../atomic-subject-asv6.1
 
 N08's Snow/snow interpretations and N12's non-English phrase remain unresolved, but are not requested in this review. Neither is automatically approved or rejected.
 
-The [review focus](./review-focus.json) preserves all four original review questions, complete source notes and exact subject strings. Its empty decision fields are not the live review session. [Assistant analysis](./assistant-analysis.json) also records the less clear provenance questions in N07, N14 and N20 rather than treating every URL-related subject as invalid.
+The review focus (`./review-focus.json`) preserves all four original review questions, complete source notes and exact subject strings. Its empty decision fields are not the live review session. Assistant analysis (`./assistant-analysis.json`) also records the less clear provenance questions in N07, N14 and N20 rather than treating every URL-related subject as invalid.
 
 ### Existing review tool
 
@@ -63,9 +65,9 @@ The subject filter passed 84 review tests, including six new tests covering CLI 
 
 ## Verification and limits
 
-[Verification](./verification.json) checked 40 distinct threads and working directories, no reuse of the 54 prior comparison calls, one turn per call, no tool activity, exact rendered prompts, raw-output hashes, unchanged exported subject strings and all 93 prior protected files. The seven new frozen input/config/plan files also stayed unchanged. A subsequent documentation-only follow-up link in the prior test README is recorded separately; it does not alter any prior result.
+Verification (`./verification.json`) checked 40 distinct threads and working directories, no reuse of the 54 prior comparison calls, one turn per call, no tool activity, exact rendered prompts, raw-output hashes, unchanged exported subject strings and all 93 prior protected files. The seven new frozen input/config/plan files also stayed unchanged. A subsequent documentation-only follow-up link in the prior test README is recorded separately; it does not alter any prior result.
 
-[Runtime](./runtime.json): 4m23.457s for ASv6.8 and 4m28.746s for ASv6.10. Host memory and I/O pressure stayed quiet at sampled checks; available memory remained above 109 GiB. Launcher memory reports of 17M and 16.8M exclude the separate Codex scopes. Existing subscription only; no paid API/rental or credential changes.
+Runtime (`./runtime.json`): 4m23.457s for ASv6.8 and 4m28.746s for ASv6.10. Host memory and I/O pressure stayed quiet at sampled checks; available memory remained above 109 GiB. Launcher memory reports of 17M and 16.8M exclude the separate Codex scopes. Existing subscription only; no paid API/rental or credential changes.
 
 | Version | Input tokens | Cached input | Output tokens | Included reasoning tokens |
 | --- | ---: | ---: | ---: | ---: |
@@ -73,3 +75,5 @@ The subject filter passed 84 review tests, including six new tests covering CLI 
 | ASv6.10 | 45,136 | 7,680 | 7,149 | 4,564 |
 
 This is one paired generation per note, in two sequential blocks, from an existing frozen corpus—not a repeatability estimate, a random sample of all Nostr, or evidence that every prompt change caused its observed difference. No new default has been approved.
+
+See [conversion gaps](../../docs/experiments/publication-gaps.csv) for `collection:tracked-atomic-subject-asv6.8-vs-asv6.10-holdout-v1`.

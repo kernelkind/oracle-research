@@ -1,6 +1,8 @@
 # Category titles v21 versus v20
 
-The [complete 61-group v21 title set](../hdbv2-node-titles-v21-astra-low/titles.json)
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
+The complete 61-group v21 title set (`../hdbv2-node-titles-v21-astra-low/titles.json`)
 is now generated and reviewed by the assistant: 14 exact-input outputs reused and
 47 missing outputs generated with the unchanged prompt and Astra low. Eight exact
 same-note mask duplicates were removed before generation/review. Sixty titles are
@@ -136,7 +138,7 @@ These use separate new sessions under target/. Existing review decisions are unt
 
 comparison.json contains every title, raw-result path, usage and main-assistant assessment. assistant-review.json preserves the per-output judgments; blind-review-input.json and blind-review-key.json preserve the independent review setup. Source notes and byte spans remain in the unchanged ../hdbv2-node-titles-v20-astra-low/source-packets.json.
 
-V21 remains an un-frozen candidate. The [three-pair follow-up](../hdbv21-pairs-v1/analysis.json)
+V21 remains an un-frozen candidate. The three-pair follow-up (`../hdbv21-pairs-v1/analysis.json`)
 checks title-only interpretations against the masks. Two historical relationships became
 clearer; the raw-milk comparison instead demonstrated a more specific category description.
 The user accepted the questioned chicken-derived title after seeing the complete notes
@@ -145,3 +147,5 @@ concern and the user's decision are recorded separately in the follow-up.
 This is evidence about description clarity and scope, not TRUE accuracy or hierarchy quality.
 
 Existing tracking card: CREC-127. Plane tools were unavailable, so no external card update or status change is claimed.
+
+**Publication status:** `collection:tracked-hdbv2-node-description-probe-v21` remains in the [conversion review list](../../docs/experiments/publication-gaps.csv); a complete compact-data conversion has not been established.

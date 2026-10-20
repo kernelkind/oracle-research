@@ -1,5 +1,7 @@
 # TRUE01 — Promising scores; native answers miss valid relationships
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 TRUE is worth investigating further for category containment. Its native answers accepted no invalid relationship in this small test, but missed several valid ones. More importantly, with the sentence input format, its scores placed every valid relationship above every invalid one. That is useful evidence—not a validated deployment rule.
 
 ## What we tested
@@ -49,4 +51,6 @@ A justified next test would choose a decision rule using one set of category pai
 
 This is not an apples-to-apples accuracy comparison with HRC03/RSE01: those studies primarily tested forced parent preference, while this one tests individual containment decisions on a smaller selected subset.
 
-[Every decision](DECISIONS.md) · [All unexpected answers](ERRORS.md) · [Frozen plan](../TRUE01-PLAN.md) · [Execution and verification](EXECUTION.md) · [Raw scores and complete inputs](scores.jsonl).
+[Every decision](DECISIONS.md) · [All unexpected answers](ERRORS.md) · [Frozen plan](../TRUE01-PLAN.md) · [Execution and verification](EXECUTION.md) · Raw scores and complete inputs (`scores.jsonl`).
+
+**Selected data:** Compact pair-score results, inputs and parameters for `TRUE01` are selected for release as `numerical/pair-scores-44261922841cf8b2` in the [publication catalog](../../../docs/experiments/publications.csv). These compact exports use a different format. Other cited artifacts remain separate originals.

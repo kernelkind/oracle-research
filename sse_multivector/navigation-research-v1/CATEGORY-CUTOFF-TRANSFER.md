@@ -1,5 +1,7 @@
 # Transfer of a category cutoff
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 The cutoff fitted on Coffee and Morning greetings did not transfer usefully to
 Bread, Chicken and Salt. It missed **10 of 13 supported assignments**. The
 unchanged native cutoff missed none and admitted **one of 21 unsupported
@@ -245,7 +247,7 @@ how to estimate the correction without new category judgments.
 
 “row” identifies a saved CAP04 description and its mask, not a hierarchy node
 or a newly generated SSE vector. Every maximum has one attaining row.
-All scores below are rounded for display; [the audit](./TCC04/audit.json)
+All scores below are rounded for display; the audit (`./TCC04/audit.json`)
 preserves exact values and supporting-witness scores.
 
 | Category | Note | Source judgment | Maximum score | Attaining description | Native 0.5 | Frozen cutoff |
@@ -293,7 +295,7 @@ Before adding category-specific calibration, a separate retrospective check
 enumerated all shared-cutoff outcomes on the combined TCC03 and TCC04 maxima.
 This calculation uses already exposed judgments. It does not change the frozen
 TCC04 test or turn these outcomes into validation. The complete calculation is
-in [combined development tradeoffs](./TCC04/combined-development-tradeoffs.json).
+in combined development tradeoffs (`./TCC04/combined-development-tradeoffs.json`).
 
 There are 76 note/category assignments from 32 distinct notes: 32 supported,
 36 unsupported and eight unresolved. These are the 76 measured pairs, not all
@@ -320,7 +322,7 @@ contains eight supported, six unsupported and three unresolved notes, so the
 pooled result hides a substantial local problem. All six unresolved admissions
 at this tradeoff are Coffee/N005 and N034, Morning greetings/N018, N045 and N052,
 and Chicken/N023. Its full original scores and masks remain in
-[TCC03 inputs](./TCC03/inputs.json) and [TCC03 audit](./TCC03/audit.json).
+TCC03 inputs (`./TCC03/inputs.json`) and TCC03 audit (`./TCC03/audit.json`).
 
 This is enough to keep a simple shared rule as a **research component**, not
 enough to adopt it. It would be a methodological mistake to infer that a more
@@ -387,15 +389,15 @@ construction diagnostic more consequential than introducing that mismatch now.
 
 ## Evidence and reproduction
 
-- [Frozen plan](./TCC04-PLAN.md), [judgments](./TCC04/judgments.json) and
-  [prescore hashes](./TCC04/prescore-manifest.json).
-- [All 145 unchanged input records](./TCC04/inputs.json): complete originals,
+- [Frozen plan](./TCC04-PLAN.md), judgments (`./TCC04/judgments.json`) and
+  prescore hashes (`./TCC04/prescore-manifest.json`).
+- All 145 unchanged input records (`./TCC04/inputs.json`): complete originals,
   subject descriptions, fragments, source-note IDs and GDC09 alias references.
-- [Every request and score](./TCC04/run/scores.json): exact rendered input,
+- Every request and score (`./TCC04/run/scores.json`): exact rendered input,
   token IDs, logits and native sigmoid scores.
-- [Audit](./TCC04/audit.json): every note maximum, both decisions, every error,
+- Audit (`./TCC04/audit.json`): every note maximum, both decisions, every error,
   prespecified supporting witnesses and independent audit.
-- [Runtime configuration](./TCC04/run/config.json) and
+- Runtime configuration (`./TCC04/run/config.json`) and
   [the exact executed runner](./TCC04/run/native_category_probe.py).
 - Prior [decision-method research](./CATEGORY-DECISION-METHODS.md) explains
   the fixed cutoff, alternatives and their actual supervision requirements.

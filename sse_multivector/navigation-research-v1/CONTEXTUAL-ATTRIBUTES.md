@@ -1,5 +1,7 @@
 # Contextual attributes for category construction
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 CSA01 checks whether contextual word senses could replace CAP02's literal word
 features. Correct senses can add useful abstractions, but they do not supply
 the complete meaning of a masked phrase or all legitimate topical relationships.
@@ -43,9 +45,9 @@ of the source. No SPLADE model or cutoff was tested.
 ## Source audit
 
 The [plan](./CSA01-PLAN.md) preceded the new lookup. All twelve queries and 227
-returned senses/ancestors are saved in [the lexical record](./CSA01-lexicon.json).
+returned senses/ancestors are saved in the lexical record (`./CSA01-lexicon.json`).
 The ten exact masks and complete original notes are in
-[the source record](./CSA01-sources.json). Source texts were inspected, not
+the source record (`./CSA01-sources.json`). Source texts were inspected, not
 reconstructed from labels. The interpretations below are diagnostic judgments,
 not model outputs or manual repairs to the corpus.
 
@@ -247,8 +249,8 @@ print(json.dumps(load_wordnet(queries, Path("/tmp/navigation-wordnet-data")),
                  ensure_ascii=False, indent=2))'
 ```
 
-[CSA01-result.json](./CSA01-result.json) records source/module hashes and the
-selected ancestor paths. [CSA01-sources.json](./CSA01-sources.json) preserves
+`./CSA01-result.json` records source/module hashes and the
+selected ancestor paths. `./CSA01-sources.json` preserves
 complete original text, exact mask fragments and byte spans for ten masks from
 ten notes. Every saved source range is checked against GDC09; the lookup and
 paths are replayed against the existing production functions. These checks

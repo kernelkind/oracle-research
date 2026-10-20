@@ -1,10 +1,12 @@
 # Mask recognition — full results
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 Each ID below is one fixed mask. Every call received the complete note with that mask highlighted and the same supplied subject. It did not receive the expected judgment, another mask, or earlier answers.
 
 Sol low judged each mask three times in fresh contexts. `missing_meaning` lists required meaning absent from the mask; `additional_meaning` lists meaning outside the supplied subject. An empty array means the model reported no issue of that kind.
 
-The expected judgments were recorded before the calls. My analysis below is separate from your saved decisions. Source files and review provenance are in [expected-judgments.json](./expected-judgments.json).
+The expected judgments were recorded before the calls. My analysis below is separate from your saved decisions. Source files and review provenance are in `./expected-judgments.json`.
 
 ## M05-1: Meditation — life is included
 
@@ -175,3 +177,5 @@ Analysis: Trial 1 missed the extra meaning. Trials 2 and 3 correctly identified 
 The checker detected state backing in all three trials and the added settlement activity in two. It never detected the missing life reference. It raised no false alarms on the three acceptable masks across their nine calls.
 
 That is evidence of selective, incomplete recognition—not a reliable checker. The test does not explain why generation fails or establish results beyond these six reused masks. No generated mask was repaired, no prompt default changed, and no new user approval was recorded.
+
+See [conversion gaps](../../docs/experiments/publication-gaps.csv) for `collection:tracked-mask-prompt-recognition-sol-low-v1`.

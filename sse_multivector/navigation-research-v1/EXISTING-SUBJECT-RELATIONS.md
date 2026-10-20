@@ -1,5 +1,7 @@
 # Existing subjects for group relations
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 GDR02 removes GDR01's hand-written descriptions. Existing generated subjects
 recover the greeting equivalence, but also produce incorrect category relations
 and reject obvious members. They are useful context, not a validated automatic
@@ -23,9 +25,9 @@ The fixed classifier is `MoritzLaurer/deberta-v3-base-zeroshot-v2.0`, revision
 `This text is about {text}.` A score above 0.5 flags a pair for inspection; it
 is not a calibrated probability or an adopted acceptance threshold.
 
-The [pre-run plan](./GDR02-PLAN.md), [all inputs and scores](./GDR02/scores.json),
-[candidate provenance](./GDR02/candidates.json), [complete source notes and masks](./GDR02/groups.json)
-and [coverage summaries](./GDR02/summary.json) are preserved.
+The [pre-run plan](./GDR02-PLAN.md), all inputs and scores (`./GDR02/scores.json`),
+candidate provenance (`./GDR02/candidates.json`), complete source notes and masks (`./GDR02/groups.json`)
+and coverage summaries (`./GDR02/summary.json`) are preserved.
 
 ## Useful signal
 
@@ -189,3 +191,5 @@ LD_LIBRARY_PATH=/nix/store/8lahnh9pn3lrrnhax5nk7ibvjcbjmnkm-gcc-15.2.0-lib/lib:/
 
 [^1]: Yin and Roth (2018), [Term Definitions Help Hypernymy Detection](https://aclanthology.org/S18-2025.pdf), section 3.3 and section 4 analysis. This experiment is not a reproduction of HyperDef.
 [^2]: Moritz Laurer, [DeBERTa zero-shot model card](https://huggingface.co/MoritzLaurer/deberta-v3-base-zeroshot-v2.0#how-to-use-the-models), accessed September 11, 2026.
+
+**Selected data:** Compact pair-score results, inputs and parameters for `GDR02` are selected for release as `numerical/pair-scores-73a3d2de97c2627c` in the [publication catalog](../../docs/experiments/publications.csv). These compact exports use a different format. Other cited artifacts remain separate originals.

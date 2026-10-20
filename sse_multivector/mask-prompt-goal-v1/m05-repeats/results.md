@@ -1,5 +1,7 @@
 # M05 repeats
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 The two new calls returned exactly the same mask as the first. All three are judged to contain the same extra affinity meaning.
 
 Subject: A call for Salvadorans to make their presence known.
@@ -16,4 +18,6 @@ The unchanged prompt therefore fails the agreed repeatability check. Eleven othe
 
 Stop expanding this version. Investigate a small general scope-instruction change, keeping the eleven accepted examples as regression checks. Neither the subject nor its earlier judgments will be rewritten to make the candidate pass.
 
-The two calls used 4,900 input and 30 output tokens, with fresh threads and workdirs. No tools, retries, hand corrections or pressure stops. [Raw judgments and checks](./review.json)
+The two calls used 4,900 input and 30 output tokens, with fresh threads and workdirs. No tools, retries, hand corrections or pressure stops. Raw judgments and checks (`./review.json`)
+
+See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-mask-prompt-goal-v1`.

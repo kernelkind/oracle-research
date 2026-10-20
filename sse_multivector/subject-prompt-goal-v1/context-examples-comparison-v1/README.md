@@ -1,5 +1,7 @@
 # ASv6.13 versus ASv6.21: context examples
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 ASv6.21 is not promoted. The candidate preserved the CEO note's context in two of three outputs; ASv6.13 did not in any. The candidate did not meet the predeclared improvement condition across two notes. Both prompts had 7 of 18 fully accepted outputs.
 
 ## What changed
@@ -39,7 +41,7 @@ Other findings:
 
 “Fully accepted” means all subjects and whole-note coverage were accepted. Broad, overlapping and repeated subjects remain allowed. Unresolved judgments are neither proven failures nor passes.
 
-These totals include the later [review correction](../semantic-review-audit-v3.json): B24's eighth subject refers to “the quoted employee’s question” without identifying the CEO context. It was incorrectly accepted. The original review and decision retain their initial totals, 265 accepted and 37 erroneous control subjects. This correction changes no clean-output count, target count or comparison decision.
+These totals include the later review correction (`../semantic-review-audit-v3.json`): B24's eighth subject refers to “the quoted employee’s question” without identifying the CEO context. It was incorrectly accepted. The original review and decision retain their initial totals, 265 accepted and 37 erroneous control subjects. This correction changes no clean-output count, target count or comparison decision.
 
 ## Decision
 
@@ -49,11 +51,13 @@ ASv6.13 remains the earlier broadly tested reference; ASv6.8 remains the frozen 
 
 ## Evidence
 
-- [Full notes, every output, and judgments](./results.md)
+- Full notes, every output, and judgments (`./results.md`)
 - [Exact candidate prompt](../asv6.21/ASv6.21.md) and [frozen comparison proposal](./proposal.json)
-- [Decision](./assessment.json) and [complete review](./review.json)
-- [Artifact and review verification](./verification.json)
-- [First 24-call decision](./first-two-decision.json)
-- Blind reviews: [first two trials](./blind-review-first-two.json), [third trial](./blind-review-third.json)
+- Decision (`./assessment.json`) and complete review (`./review.json`)
+- Artifact and review verification (`./verification.json`)
+- First 24-call decision (`./first-two-decision.json`)
+- Blind reviews: first two trials (`./blind-review-first-two.json`), third trial (`./blind-review-third.json`)
 
 Prompt/trial identities were hidden until each review was saved. Those original review files remain unchanged. The later correction is disclosed separately and was made with identities known; it is not a new blinded judgment. These selected difficult notes do not estimate corpus-wide accuracy. The comparison isolates the added example group, not either example separately or the value of examples in general.
+
+See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-subject-prompt-goal-v1`.

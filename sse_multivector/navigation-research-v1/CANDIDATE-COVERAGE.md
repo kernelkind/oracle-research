@@ -1,5 +1,7 @@
 # Candidate coverage
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 CAP01 identifies a restrictive candidate rule in MDH02. It does not identify a
 failure of SSE, explain the relation classifiers' errors, or improve GDC09 yet.
 The subsequent [CAP02 test](./SHARED-CANDIDATE-CONSTRUCTION.md) examines
@@ -37,8 +39,8 @@ original across their 27 source notes. They are an explanatory subset of the
 inventory, not an exhaustive semantic evaluation of its 315 excluded features.
 `food` was noticed before the audit; this is not a blind holdout.
 
-Complete inventory and input/source hashes: [CAP01-inventory.json](./CAP01-inventory.json).
-All masks and originals for the six rows above: [CAP01-sources.json](./CAP01-sources.json).
+Complete inventory and input/source hashes: `./CAP01-inventory.json`.
+All masks and originals for the six rows above: `./CAP01-sources.json`.
 Question and competing explanations recorded before running: [CAP01-PLAN.md](./CAP01-PLAN.md).
 
 ## What the original notes establish

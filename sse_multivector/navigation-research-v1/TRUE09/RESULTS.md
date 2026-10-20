@@ -1,5 +1,7 @@
 # TRUE09 — Separating the combined category from “Foods featuring”
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 TRUE recognizes the five foods under **Meat** or **Seafood**. Combining those parent categories lowers every positive score. Adding **Foods featuring** also lowers most scores, but not uniformly. The original Steak miss therefore is not simply a failure to recognize steak as meat.
 
 ## Experiment
@@ -44,7 +46,7 @@ premise: This text is about Steak. hypothesis: This text is about Meat or seafoo
 premise: This text is about Steak. hypothesis: This text is about Foods featuring meat or seafood.
 ```
 
-Those are four separate calls/inputs, not one combined premise. TRUE saw no masks, notes, expected answers or analysis. Reverse checks swapped A and B. Every exact input is preserved in [inputs.json](./inputs.json).
+Those are four separate calls/inputs, not one combined premise. TRUE saw no masks, notes, expected answers or analysis. Reverse checks swapped A and B. Every exact input is preserved in `./inputs.json`.
 
 **Native** is the model's complete generated 0/1 answer. **Cutoff** is our separate rule: score strictly greater than 0.142 means Yes. The score is the full-vocabulary probability of first output token 209 (“1”), not cosine or a calibrated probability of category containment. The checkpoint, framing, cutoff and inference settings remained unchanged.
 
@@ -169,11 +171,13 @@ Do not fit a lower cutoff here. An earlier incorrect relationship, **Foods featu
 
 The original parent and Steak are existing v21 nodes; the other descriptions are controlled diagnostic inputs, not newly generated HDBSCAN groups. [TRUE08's original masks](../TRUE08/RESULTS.md#existing-masks) provide their source context. No masks were changed or supplied to this model.
 
-- [Plan](./plan.json), [semantic review](./semantic-review.json), [titles](./titles.json), [fixture](./fixture.json), [freeze manifest](./frozen.json).
-- [Every raw score](./run/scores.jsonl), [raw logits](./run/first-token-logits.npy), [configuration](./run/config.json), [derived analysis](./analysis.json).
-- Independent [verification](./verification.json) checked all 76 raw scores, complete native outputs and cutoff decisions, the frozen files, and 51 preserved inputs/artifacts.
+- [Plan](./plan.json), semantic review (`./semantic-review.json`), titles (`./titles.json`), [fixture](./fixture.json), freeze manifest (`./frozen.json`).
+- Every raw score (`./run/scores.jsonl`), raw logits (`./run/first-token-logits.npy`), configuration (`./run/config.json`), derived analysis (`./analysis.json`).
+- Independent verification (`./verification.json`) checked all 76 raw scores, complete native outputs and cutoff decisions, the frozen files, and 51 preserved inputs/artifacts.
 - All 16 repeated original-parent inputs and answers reproduce TRUE08. Ten logits rows are identical; six have small numerical differences. Maximum score difference is 0.00000020972746420100385, with no decision changes.
-- Local offline inference took 112.7 seconds including verification/loading, with 43.29 GiB peak process RSS. One model process, 60 GiB scope memory cap, no scope swap; [resources](./resources.json). No new paid resource or API call.
+- Local offline inference took 112.7 seconds including verification/loading, with 43.29 GiB peak process RSS. One model process, 60 GiB scope memory cap, no scope swap; resources (`./resources.json`). No new paid resource or API call.
 - All 42 relevant regression tests passed before and after. Shared production code, model settings, frozen earlier results, category titles and cutoff remain unchanged.
 - The legacy fixture schema tag is TRUE03 and the raw shared decisions heading says “holdout.” Runtime identity is TRUE09; this is a selected diagnostic, not a holdout.
 - No hierarchy or UI was generated. Existing tracking card is CREC-127; no Plane tool was available, so no external card update is claimed.
+
+**Selected data:** Compact pair-score results, inputs and parameters for `TRUE09/run` are selected for release as `numerical/pair-scores-5e07db0afb5b7b6e` in the [publication catalog](../../../docs/experiments/publications.csv). These compact exports use a different format. Other cited artifacts remain separate originals.

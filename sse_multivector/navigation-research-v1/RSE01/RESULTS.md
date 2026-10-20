@@ -1,5 +1,7 @@
 # RSE01 — Different strengths, no overall parent-selection improvement
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 RSE selected the intended parent in 49/60 comparisons, the same total as HierarCaps. It improved software and some wording-sensitive cases, but introduced other clear mistakes. Its directional score did not outperform ordinary cosine on its own vectors. This run does not establish RSE as a better standalone category-placement mechanism.
 
 ## What changed
@@ -112,8 +114,8 @@ This test does not identify whether remaining problems principally reflect noun-
 
 ## Reproduction and preserved evidence
 
-[Plan](../RSE01-PLAN.md) · [Execution](EXECUTION.md) · [Every case](CASES.md) · [Analysis](analysis.json) · [Inputs](inputs.json) · [Raw embeddings and entailment relation](embeddings.json) · [All 32,400 scores](scores.json) · [Verification](verification.json).
+[Plan](../RSE01-PLAN.md) · [Execution](EXECUTION.md) · [Every case](CASES.md) · Analysis (`analysis.json`) · Inputs (`inputs.json`) · Raw embeddings and entailment relation (`embeddings.json`) · All 32,400 scores (`scores.json`) · Verification (`verification.json`).
 
 Six new tests and 17 existing regression tests pass. The 180 inputs are byte-identical to HRC03's prepared inputs; token counts range from 4 to 16, below the author's 32-token limit. No truncation. The released model has 355,369,984 parameters and 1,024-dimensional vectors. The main run used about 2.99 GiB peak process memory and 13.35 seconds total, including 5.65 seconds of encoding. CPU only, two threads, one bounded model process at a time; no paid resources. Previous artifacts are unchanged.
 
-Independent verification instantiated the pinned author's complete RSE class and reproduced all 180 embeddings and the entailment relation bit-for-bit. It independently recalculated all 32,400 pairs, 60 matched and 240 mixed-wording comparisons. Author float32 cosine differs from saved double-precision scores by at most 2.385e-7; no parent, direction or cosine choice changes. The verifier took 11.68 seconds and peaked at about 3.01 GiB. Its source hashes, compatibility details and enforced resource limits are in [verification.json](verification.json).
+Independent verification instantiated the pinned author's complete RSE class and reproduced all 180 embeddings and the entailment relation bit-for-bit. It independently recalculated all 32,400 pairs, 60 matched and 240 mixed-wording comparisons. Author float32 cosine differs from saved double-precision scores by at most 2.385e-7; no parent, direction or cosine choice changes. The verifier took 11.68 seconds and peaked at about 3.01 GiB. Its source hashes, compatibility details and enforced resource limits are in `verification.json`.

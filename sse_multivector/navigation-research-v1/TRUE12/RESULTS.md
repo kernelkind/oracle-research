@@ -1,5 +1,7 @@
 # TRUE12 — Can independent membership recover missing notes?
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 The old score cutoff recovers all nine clear missing notes, but also adds one unwanted note and five uncertain notes. TRUE's own Yes/No answers recover only one of the nine.
 
 This is evidence that checking membership separately from HDBSCAN can recover useful content. It is not evidence that this TRUE configuration is a reliable final membership system. The existing hierarchy has not been changed.
@@ -114,11 +116,13 @@ The next useful step is to review the six questionable additions before changing
 
 ## Records
 
-- [Judgments frozen before inference](./semantic-review-before-inference.json)
-- [Primary native-answer analysis](./analysis.json) and [note memberships with evidence quality](./memberships.json)
-- [Historical-cutoff diagnostic](./cutoff-diagnostic.json); reproducible by running `cutoff_diagnostic.py` from the repository root
-- [Every mask decision with complete source note and exact model input](./comparison-details.json)
-- [Frozen inputs](./inputs.json), [raw model outputs](./scores.jsonl), [execution](./execution.json), [model configuration](./config.json) and [completion hashes](./completion.json)
-- [Verification](./verification.json)
+- Judgments frozen before inference (`./semantic-review-before-inference.json`)
+- Primary native-answer analysis (`./analysis.json`) and note memberships with evidence quality (`./memberships.json`)
+- Historical-cutoff diagnostic (`./cutoff-diagnostic.json`); reproducible by running `cutoff_diagnostic.py` from the repository root
+- Every mask decision with complete source note and exact model input (`./comparison-details.json`)
+- Frozen inputs (`./inputs.json`), raw model outputs (`./scores.jsonl`), execution (`./execution.json`), model configuration (`./config.json`) and completion hashes (`./completion.json`)
+- Verification (`./verification.json`)
 
 The cached TRUE checkpoint ran locally on CPU, float32, four threads, batch size four. Inference took 41.4 minutes; the complete run took 42.0 minutes including loading and verification. Peak process RSS was 46.3 GiB, with a 60 GiB limit and swap disabled for the process. No paid compute or training was used. All 110 TRUE tests pass. Raw logits remain local; their hash is recorded rather than committing the large array.
+
+**Selected data:** Compact pair-score results, inputs and parameters for `TRUE12` are selected for release as `numerical/pair-scores-d45d05c77df1a6c4` in the [publication catalog](../../../docs/experiments/publications.csv). These compact exports use a different format. Other cited artifacts remain separate originals.

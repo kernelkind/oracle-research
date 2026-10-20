@@ -1,8 +1,10 @@
 # Astra masks for every subject in ten additional notes
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 All 60 mask calls returned. My initial review found **55 masks with no issue**, **one mask-scope question**, and **four supplied subjects that need separate judgment**. I found no clear mask-selection failure. The user has now approved all five masks in the review sample, resolving the mask-scope question. This is not approval of all 60 masks or evidence of perfect accuracy.
 
-[Every supplied subject, full original note and inline mask](./masks.md)
+Every supplied subject, full original note and inline mask (`./masks.md`)
 
 ## Review outcome and remaining questions
 
@@ -88,7 +90,7 @@ These checks cover recorded local inputs, processes and returned events. They ca
 | ASv6.8 / Sol low | 10 | 20,999 | 3,350 |
 | Masks / Astra low | 60 | 149,959 | 3,188 |
 
-Cached input is included in input totals; reasoning tokens are included in output totals. Per-call usage and times are in [verification.json](./verification.json).
+Cached input is included in input totals; reasoning tokens are included in output totals. Per-call usage and times are in `./verification.json`.
 
 ## What follows from this
 
@@ -98,14 +100,16 @@ The distinction between actual corpus inputs, task-specific judgments and human 
 
 ## Saved evidence
 
-- [selection.json](./selection.json): selected notes, source positions and exclusion provenance.
+- `./selection.json`: selected notes, source positions and exclusion provenance.
 - [plan.json](./plan.json): scope and controls fixed before inference.
-- [fixed-subjects.json](./fixed-subjects.json): all 60 unedited subjects, fixed before masks.
-- [review-basis-before-masks.json](./review-basis-before-masks.json): review criteria and initial subject concerns, never sent to the models.
-- [assistant-review.json](./assistant-review.json): initial assistant mask/subject judgments for every item, preserved unchanged; the user review outcome is recorded above.
-- [mechanical-checks.json](./mechanical-checks.json): fragments and all source-order-valid placements.
-- [review-preparation.json](./review-preparation.json): sample selection and explicit source-occurrence display convention.
-- [verification.json](./verification.json): hashes, isolation and execution checks.
+- `./fixed-subjects.json`: all 60 unedited subjects, fixed before masks.
+- `./review-basis-before-masks.json`: review criteria and initial subject concerns, never sent to the models.
+- `./assistant-review.json`: initial assistant mask/subject judgments for every item, preserved unchanged; the user review outcome is recorded above.
+- `./mechanical-checks.json`: fragments and all source-order-valid placements.
+- `./review-preparation.json`: sample selection and explicit source-occurrence display convention.
+- `./verification.json`: hashes, isolation and execution checks.
 - `subjects-1/`, `subjects-2/`, `masks-1/` and `masks-2/`: exact configurations, manifests, outputs and raw call records.
 
 No user notes document, existing prompt, production code, SSE artifact or segmentation result was changed. The only decision correction was the explicitly authorized N06-S06 rejection-to-approval change. CREC-125 remains In Review with four subject-generation questions open; neither the model nor mask prompt was frozen.
+
+See [conversion gaps](../../docs/experiments/publication-gaps.csv) for `collection:tracked-mask-prompt-astra-ten-note-v1`.

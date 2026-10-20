@@ -1,5 +1,7 @@
 # Individual-category discrimination
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 TCC02 changes the earlier conclusion in one important respect: Coffee's
 supported and unsupported descriptions no longer separate perfectly. Morning
 greetings still separates on these records. Neither result establishes a
@@ -16,9 +18,9 @@ The 25 records come from 20 notes outside TCC01's 14 notes. Two descriptions
 are identical, so there are 24 distinct subject strings. Other strings can
 still express the same meaning. The complete originals,
 source masks and existing subject descriptions are preserved in
-[inputs.json](./TCC02/inputs.json). The main agent and an independent reviewer
+`./TCC02/inputs.json`. The main agent and an independent reviewer
 read that evidence before scores existed; the assistant judgments and open
-scope boundaries are frozen in [judgments.json](./TCC02/judgments.json).
+scope boundaries are frozen in `./TCC02/judgments.json`.
 They are not user approvals or a random sample of the corpus.
 
 Each request supplies one unchanged subject description and one category:
@@ -46,7 +48,7 @@ At the unchanged native 0.5 cutoff, Coffee accepts all 11 supported records,
 9 of 13 unsupported records, and its one unjudged record. Morning greetings
 accepts all 8 supported records, 14 of 16 unsupported records, and its one
 unjudged record. All 50 scores, including rejected values and logits, are in
-[scores.json](./TCC02/run/scores.json). No cutoff was selected.
+`./TCC02/run/scores.json`. No cutoff was selected.
 
 ## Coffee: every inverted pair
 
@@ -167,7 +169,7 @@ remain unresolved. This refinement of note consequences does not change any
 frozen TCC02 witness judgment: the supplied grinding and coffee descriptions
 do not themselves express greetings.
 
-The [audit](./TCC02/audit.json) enumerates these cases. This is a consequence
+The audit (`./TCC02/audit.json`) enumerates these cases. This is a consequence
 audit of the tested records, not an exhaustive classification of every subject
 in their notes or a corpus-wide quality estimate.
 
@@ -204,7 +206,7 @@ input and judgment hashes are preserved in the audit.
 One CPU process, two Torch threads, 50 primary scores: 1.69 seconds inference
 and about 4.9 GiB peak RSS. No paid resource, frontier generation or new model
 download. The exact runtime and native source are recorded in
-[config.json](./TCC02/run/config.json).
+`./TCC02/run/config.json`.
 
 Run from the repository root, using a new output directory:
 

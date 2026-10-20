@@ -65,6 +65,6 @@ then the smallest implementation. Preserve USM01 and the GDC09 browser unchanged
 No paid resource, model download or review-tool packaging.
 
 Method and implementation background remain in
-[the source-occurrence research](./SOURCE-OCCURRENCE-GROUNDING.md) and
-[USM01 results](./USM01-RESULTS.md). This test isolates an observed mechanism
+[the source-occurrence research](../../SOURCE-OCCURRENCE-GROUNDING.md) and
+[USM01 results](../../USM01-RESULTS.md). This test isolates an observed mechanism
 within that method rather than selecting a new technique from a model catalogue.

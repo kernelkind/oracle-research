@@ -1,5 +1,7 @@
 # ASv6.13 versus ASv6.19
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 Neither prompt passes the development test. ASv6.19 improved some outputs but introduced an unstated calculation and left several recurring problems unresolved.
 
 | Same 28 notes, one output per prompt | ASv6.13 | ASv6.19 | Required |
@@ -59,7 +61,7 @@ ASv6.13 kept “three weeks before the post,” “one week before the post,” 
 
 ## Review consistency
 
-The [second review audit](../semantic-review-audit-v2.json) separately corrects five earlier decisions. It does not edit their original review files or generated text.
+The second review audit (`../semantic-review-audit-v2.json`) separately corrects five earlier decisions. It does not edit their original review files or generated text.
 
 - The known short/style/emotional meanings in two older D08 outputs were covered, even though extra literal-flight subjects remained unresolved. Another older D08 output demonstrably omitted short stature.
 - Two ASv6.17 subjects about possible investor/cloud-provider actions were reasonably supported by the Riley Walz post. They were too strictly rejected merely for expressing a possibility instead of repeating a question. The metadata comparison's adjusted ASv6.17 total is 185/227 accepted subjects, previously 183/227; its 8/27 clean outputs and overall conclusion are unchanged.
@@ -75,14 +77,16 @@ The [completed confirmation](../contract-confirmation-v1/README.md) found 18/36 
 
 ## Evidence and execution
 
-- [ASv6.13 full source notes and generated subjects](./asv6.13/output.json)
-- [ASv6.19 full source notes and generated subjects](./asv6.19/output.json)
-- [Subject-by-subject and whole-note reviews](./review.json)
-- [Provenance verification](./verification.json) and [read-only verifier](./verify.py)
-- [Sequential execution and host-pressure observations](./runtime.json)
+- ASv6.13 full source notes and generated subjects (`./asv6.13/output.json`)
+- ASv6.19 full source notes and generated subjects (`./asv6.19/output.json`)
+- Subject-by-subject and whole-note reviews (`./review.json`)
+- Provenance verification (`./verification.json`) and [read-only verifier](./verify.py)
+- Sequential execution and host-pressure observations (`./runtime.json`)
 
 Verification found 56 unique threads and working directories, one turn and no tool events per call, no reuse across 339 earlier calls checked, exact prompts and inputs, unedited raw outputs, and a review for every generated subject. This verifies execution and preservation, not the semantic truth of the judgments.
 
 Across the 56 calls: 121,416 input tokens and 17,707 output tokens. The output total includes 9,677 reasoning tokens; the input total includes 17,280 cached tokens. No new paid API or rental was used.
 
 Minimum observed available memory was 105.21 GiB; the maximum observed memory and I/O PSI averages were both zero. All generation units finished. No final-validation input, criterion, frozen prompt, model, mask, embedding or downstream artifact was changed.
+
+See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-subject-prompt-goal-v1`.

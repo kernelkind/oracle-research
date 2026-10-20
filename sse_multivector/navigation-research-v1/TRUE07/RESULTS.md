@@ -1,5 +1,7 @@
 # TRUE07 — Does ordinary title wording change containment decisions?
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 TRUE sometimes misses a valid relationship because of wording. This was clear for Bitcoin and satoshis. Steak remained a miss across all three wordings; the coffee relationships and related noncontainments stayed correct.
 
 ## What changed
@@ -167,7 +169,7 @@ The diagnostic does not establish how often wording causes errors across real ca
 
 ## Source masks
 
-These are all 24 canonical v21 masks for the eight categories. They were available to semantic review, not to TRUE. Quoted parts of one mask belong together; masks were not combined across instances. ↵ denotes an original line break. Exact full notes, byte ranges and original note IDs are preserved in [source-evidence.json](./source-evidence.json). The older source packets also contain V691 and V190, exact same-note/same-range duplicates of V690 and V189; these were already deduplicated in v21, before this experiment. Nothing was removed based on TRUE07 scores.
+These are all 24 canonical v21 masks for the eight categories. They were available to semantic review, not to TRUE. Quoted parts of one mask belong together; masks were not combined across instances. ↵ denotes an original line break. Exact full notes, byte ranges and original note IDs are preserved in `./source-evidence.json`. The older source packets also contain V691 and V190, exact same-note/same-range duplicates of V690 and V189; these were already deduplicated in v21, before this experiment. Nothing was removed based on TRUE07 scores.
 
 ### Bitcoin · S50475065d8
 
@@ -219,9 +221,11 @@ These are all 24 canonical v21 masks for the eight categories. They were availab
 
 ## Reproduction and preservation
 
-- Pre-inference [plan](./plan.json), [semantic review](./semantic-review.json), [variants](./variants.json), [exact 60 inputs](./inputs.json) and [hash manifest](./frozen.json).
-- Complete [raw scores](./run/scores.jsonl), [raw logits](./run/first-token-logits.npy), [inference configuration](./run/config.json), [analysis](./analysis.json) and [resource record](./resources.json).
-- Independent [verification](./verification.json) reproduced every score and decision, checked all frozen/source hashes, and found no discrepancies. Exact repeated inputs retained their old decisions; maximum score difference from TRUE05/06 was 0.0000000482. All 42 relevant regression tests passed before and after inference.
+- Pre-inference [plan](./plan.json), semantic review (`./semantic-review.json`), variants (`./variants.json`), exact 60 inputs (`./inputs.json`) and hash manifest (`./frozen.json`).
+- Complete raw scores (`./run/scores.jsonl`), raw logits (`./run/first-token-logits.npy`), inference configuration (`./run/config.json`), analysis (`./analysis.json`) and resource record (`./resources.json`).
+- Independent verification (`./verification.json`) reproduced every score and decision, checked all frozen/source hashes, and found no discrepancies. Exact repeated inputs retained their old decisions; maximum score difference from TRUE05/06 was 0.0000000482. All 42 relevant regression tests passed before and after inference.
 - The local run used the cached pinned TRUE weights, CPU float32 and four threads. It took 105.1 seconds including model verification/loading, with 43.53 GiB peak process RSS. No external model API, rental, training or download.
 - Existing v21 titles, source masks, TRUE05, TRUE06 and shared inference code were not changed. The shared fixture's TRUE03 tag is only schema compatibility; the runtime experiment is TRUE07. The generic raw DECISIONS.md uses the word “holdout”; this experiment is not a holdout.
 - No UI, category graph or later model comparison was built in this task. CREC-127 is the existing tracking card; Plane MCP was unavailable, so no external card update is claimed.
+
+**Selected data:** Compact pair-score results, inputs and parameters for `TRUE07/run` are selected for release as `numerical/pair-scores-d1116bc357976e0f` in the [publication catalog](../../../docs/experiments/publications.csv). These compact exports use a different format. Other cited artifacts remain separate originals.

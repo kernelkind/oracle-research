@@ -1,5 +1,7 @@
 # Subject input rendering
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 GDR03 establishes that GDR02's input formatting affected some errors, but fixing
 it does not make this classifier a reliable hierarchy constructor. Removing the
 extra premise wrapper improves several correct matches and introduces incorrect
@@ -70,7 +72,7 @@ The direct-premise condition adds six previously absent positive group direction
 | Getting up → Good morning | .0609 | .6989 | Getting up is not itself a greeting; the frozen Rise group also contains rising prices. |
 
 These were checked against the complete source groups in
-[GDR02/groups.json](./GDR02/groups.json). They cannot be credited as emergent
+`./GDR02/groups.json`. They cannot be credited as emergent
 valid hierarchy relations merely because they are plausible associations.
 
 The earlier Nostr → Music mistake also rises from .6805 to .9827. The incorrect
@@ -121,8 +123,8 @@ recovery, or meaningful complete paths. The original hierarchy remains untouched
 
 ## Reproduction
 
-[All changed inputs and scores](./GDR03/scores.json),
-[decision counts](./GDR03/summary.json), [model and source hashes](./GDR03/config.json).
+All changed inputs and scores (`./GDR03/scores.json`),
+decision counts (`./GDR03/summary.json`), model and source hashes (`./GDR03/config.json`).
 Every row identifies its original GDR02 pair and retains its baseline score.
 All source strings and masks can be recovered from GDR02's preserved artifacts.
 
@@ -146,3 +148,10 @@ reproduces GDR01's original 224 scores exactly; no baseline result was replaced.
 
 [^1]: Moritz Laurer, [DeBERTa zero-shot model card](https://huggingface.co/MoritzLaurer/deberta-v3-base-zeroshot-v2.0#how-to-use-the-models), accessed September 11, 2026.
 [^2]: Shen et al. (2025), [A Unified Taxonomy-Guided Instruction Tuning Framework for Entity Set Expansion and Taxonomy Expansion](https://aclanthology.org/2025.findings-acl.167.pdf), sections 3.1–3.4 and 4.3, [author repository](https://github.com/yanzhen4/TaxoInstruct). This is a research lead, not our experimental result.
+
+**Selected data:** The [publication catalog](../../docs/experiments/publications.csv) lists compact pair-score results, inputs and parameters selected for release for these saved runs:
+
+- `GDR02` — `numerical/pair-scores-73a3d2de97c2627c`.
+- `GDR03` — `numerical/pair-scores-2d84a7975adb7d2d`.
+
+These compact exports use a different format. Other cited artifacts remain separate originals.

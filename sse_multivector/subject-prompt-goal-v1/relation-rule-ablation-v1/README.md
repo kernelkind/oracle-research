@@ -1,5 +1,7 @@
 # Removing the two relationship warnings
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 ASv6.20 did not improve the context failures this comparison targeted. Stop this change after the first 24 calls; the remaining 12 calls cannot rescue its predeclared acceptance condition.
 
 ASv6.20 is exactly ASv6.13 with two special warnings about statement proximity and co-mention removed. The general requirement for stated or reasonably implied relationships remains. No other prompt, source, model or runner setting changed.
@@ -40,7 +42,7 @@ These selected notes cannot measure corpus-wide accuracy. Different subject coun
 - ASv6.13’s second D24 output attributed the separate two-model interpretation to CIAB. ASv6.20 did not, but one of its outputs omitted most of that material; losing content cannot count as solving attribution.
 - Some Katie interpretations remain uncertain. The direct smile antecedent is a plausible reading, not automatically an invented connection. Ticket availability and whether the opening is a greeting or a presentation heading remain unresolved. These judgments do not affect the stopping decision.
 
-[All complete notes, exact outputs and individual judgments](./results.md) are available together. No subject was edited.
+All complete notes, exact outputs and individual judgments (`./results.md`) are available together. No subject was edited.
 
 ## What we learned
 
@@ -54,11 +56,13 @@ Do not rerun this comparison or reword these same warnings automatically. A diff
 
 - 24 successful independent Sol-low calls; no retries, tool calls or shared conversation threads.
 - All 24 outputs were reviewed against complete notes under opaque prompt/trial IDs. Judgments were saved before revealing identities. The reviewer knew prior prompts and results, so this is limited identity hiding, not independent review.
-- Exact prompt/input/raw-output checks and review completeness passed. The verifier checked thread/workdir reuse against 1,001 earlier recorded calls. Its scope is documented in [verification.json](./verification.json).
+- Exact prompt/input/raw-output checks and review completeness passed. The verifier checked thread/workdir reuse against 1,001 earlier recorded calls. Its scope is documented in `./verification.json`.
 - Host I/O pressure delayed the first admission; calls started after it fell below the fixed limit. Calls remained sequential. No new paid resource or credential change.
 - Recorded usage: 53,244 input tokens, including 2,176 cached; 15,525 output tokens, including 8,999 reasoning tokens. Subcounts are included, not additional.
 - No final-validation note was used. The original validation plan and canonical prompt registry are unchanged.
 
 The proposal/configs were committed before generation at `bd0fb4089a09d908c4516ace1b29718d9c333c39`. The verifier reports generation as partial because the optional third trial was not run; the bounded comparison itself is finished by its stopping rule.
 
-[Machine-readable decision](./assessment.json) · [Review](./review.json) · [Runtime](./runtime.json) · [Verifier](./verify.py) · [Independent audit](./independent-audit.json)
+Machine-readable decision (`./assessment.json`) · Review (`./review.json`) · Runtime (`./runtime.json`) · [Verifier](./verify.py) · Independent audit (`./independent-audit.json`)
+
+See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-subject-prompt-goal-v1`.

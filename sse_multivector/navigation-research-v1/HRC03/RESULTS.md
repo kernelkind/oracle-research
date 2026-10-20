@@ -1,5 +1,7 @@
 # HRC03 — Transfer exists, but parent choice is wording-sensitive
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 HierarCaps recognized many relationships outside food. However, changing how a category was described could change where the model placed it. These results do not support using its angle score as a dependable standalone parent selector yet.
 
 ## What was tested
@@ -107,8 +109,10 @@ The justified next decision is to keep the HierarCaps angle unvalidated as a sta
 
 ## Artifacts and verification
 
-[Plan](../HRC03-PLAN.md) · [Pre-score review](../HRC03-PRESCORE-REVIEW.md) · [Frozen inputs](fixture.json) · [Every case in readable form](CASES.md) · [All analysis](analysis.json) · [All 32,400 scores](scores.json) · [Embeddings](embeddings.json) · [Execution](EXECUTION.md) · [Verification](verification.json).
+[Plan](../HRC03-PLAN.md) · [Pre-score review](../HRC03-PRESCORE-REVIEW.md) · [Frozen inputs](fixture.json) · [Every case in readable form](CASES.md) · All analysis (`analysis.json`) · All 32,400 scores (`scores.json`) · Embeddings (`embeddings.json`) · [Execution](EXECUTION.md) · Verification (`verification.json`).
 
 Eight new preparation/scoring tests and nine unchanged mask tests pass. Independent verification rebuilt all 180 input records, recomputed all 32,400 scores and 120 matched checks, and reproduced all 181 embeddings bit-for-bit through the full CLIP model. No truncation: the longest input used 16 of 77 allowed tokens.
 
 The main runner took 10.189 seconds including loading/hashing/scoring; embedding inference itself took 1.543 seconds. Peak process memory was about 724 MiB, and independent verification about 757 MiB. Both model invocations used offline CPU scopes bounded to 6 GiB RAM, no swap, and two CPUs. No training or paid compute; earlier artifacts were preserved.
+
+**Selected data:** Compact pair-score results, inputs and parameters for `HRC03` are selected for release as `numerical/pair-scores-9c5f98ada943ce6b` in the [publication catalog](../../../docs/experiments/publications.csv). These compact exports use a different format. Other cited artifacts remain separate originals.

@@ -1,5 +1,7 @@
 # Source phrases and category paths
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 SPC01 can construct some meaningful category refinements together with their
 supporting notes. It does not produce a usable hierarchy on its own. Many
 choices are disconnected, some distinctions are merely reporting language,
@@ -238,10 +240,10 @@ or word-lookup tweak, or invalidate every possible semantic hierarchy.
   488 description rows from 81 notes, covering every endpoint occurrence plus
   diagnostic controls. Export coverage is not a claim of exhaustive semantic
   annotation. All 945 original input records remain in the raw artifact.
-- [Raw construction](./SPC01/construction/result.json),
-  [all inputs](./SPC01/construction/inputs.json),
-  [native parses](./SPC01/native/parses.json), and
-  [verification record](./SPC01/verification.json).
+- Raw construction (`./SPC01/construction/result.json`),
+  all inputs (`./SPC01/construction/inputs.json`),
+  native parses (`./SPC01/native/parses.json`), and
+  verification record (`./SPC01/verification.json`).
 
 All six construction files reproduce byte-for-byte from saved parses. All
 fourteen overlapping DSP01 native parse records are identical. Source, code

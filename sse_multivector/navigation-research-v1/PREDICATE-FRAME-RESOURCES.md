@@ -1,5 +1,7 @@
 # Shared activity meanings across grammatical forms
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 NounAtlas and VerbAtlas supply real noun/verb connections missing from SGC01's
 WordNet ancestry. They do not repair the saved source interpretations or provide
 a finished category hierarchy. Checking the released mappings against the actual
@@ -45,7 +47,7 @@ accuracy on informal notes nor useful hierarchy construction.[^2]
 
 ## Verified lookup results
 
-[frame-resource-check.json](./SGC01/frame-resource-check.json) preserves 43
+`./SGC01/frame-resource-check.json` preserves 43
 queries: 39 mapped senses and four absent ones. Each result retains the exact
 WordNet-offset → BabelNet-ID → frame-ID rows, the relevant argument-role rows,
 source URLs, repository revision and file hashes. These are static lookups,

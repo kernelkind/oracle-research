@@ -1,8 +1,10 @@
 # SPC02: source audit of the 79 word-only edges
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 ## Scope and interpretation
 
-This is a post-construction, source-aware semantic audit, not a new experiment or a gold taxonomy. It uses the final deterministic artifact, [final/result.json](final/result.json), and the unchanged [SPC01 inputs](../SPC01/construction/inputs.json) and [native parses](../SPC01/native/parses.json). No model was run, experimental input generated, or source artifact changed for this audit.
+This is a post-construction, source-aware semantic audit, not a new experiment or a gold taxonomy. It uses the final deterministic artifact, `final/result.json`, and the unchanged SPC01 inputs (`../SPC01/construction/inputs.json`) and native parses (`../SPC01/native/parses.json`). No model was run, experimental input generated, or source artifact changed for this audit.
 
 The audited universe is exactly: `words_lexical` edges whose parent is one of the 30 multiword SPC01 nodes with at least two distinct source notes, excluding original SPC01 direct edges and every edge also admitted by `structure_lexical`. There are 97 scoped new word edges, 18 shared with the structure condition, and 79 differences. The differences involve 18 parents, 72 unique children, 90 child occurrences, 70 distinct child source rows, and 41 notes. All child occurrences were examined against their saved descriptions, original mask fragments, and complete readable originals; parent evidence was also examined. The union of parent and child evidence is 127 rows from 49 notes. Repeated edges and overlapping masks are not independent semantic cases.
 

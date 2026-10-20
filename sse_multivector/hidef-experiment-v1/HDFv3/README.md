@@ -1,5 +1,7 @@
 # HDFv3 — finer resolutions on the original graph
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 The added range exposes useful groups that the old range missed, but it does not repair the hierarchy as a whole. The clean Satoshi/Satoshis pair now appears during clustering in every repeat, then disappears at the unchanged persistence step. Some useful new choices coexist with unrelated associations and levels that return the same notes. No algorithm or new viewer default is adopted. CREC-124.
 
 ## What changed
@@ -29,7 +31,7 @@ The primary run adds 675 multi-note memberships and loses 41 previous ones; 198 
 
 **More resolution does not ensure better organization.** The original mixed Satoshi group remains as 1047. New group 1532 pairs ⟦satoshi⟧ with ⟦Sorrento's Savory Stroll⟧ ⟦easy⟧. Within coffee, group 1605 pairs a cream-versus-half-and-half distinction with iced coffee served in ice; both are coffee-related, but a useful further refinement is not established. Groups 1028 → 1071 return the same six egg notes, and 996 → 1049 return the same three appliance/use notes.
 
-Thus the experiment identifies a real omission in candidate generation and shows a concrete candidate lost during persistence. It does **not** establish that lowering persistence is the right remedy or that useful parent–child relationships now emerge reliably. The frozen sample, positives, and concerns are recorded in [inspection.md](./inspection.md); numerical lineage and exact memberships are in [comparison.json](./comparison.json).
+Thus the experiment identifies a real omission in candidate generation and shows a concrete candidate lost during persistence. It does **not** establish that lowering persistence is the right remedy or that useful parent–child relationships now emerge reliably. The frozen sample, positives, and concerns are recorded in [inspection.md](./inspection.md); numerical lineage and exact memberships are in `./comparison.json`.
 
 ## Handoff
 
@@ -59,3 +61,9 @@ python3 sse_multivector/compare_hidef_resolution_extension.py --output /tmp/hdfv
 ```
 
 The output path must not already exist. Analyst review covers the preselected cases and four mechanically selected new primary groups, plus targeted follow-up examples—not all 873 displayed primary groups. User inspection and the broader hierarchy decision remain open.
+
+**Selected release data:** The [publication catalog](../../../docs/experiments/publications.csv) identifies the compact final-result export derived from the saved source:
+
+- `numerical/comparison-57fb1c0a8acd9334` — original `comparison.json`, bound by its recorded source SHA-256.
+
+The export uses the publication format; the original files referenced above remain outside this checkout. Downloads are still being prepared.

@@ -1,5 +1,7 @@
 # ASv6.17 versus ASv6.18: confirmation
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 The metadata improvement persisted, but ASv6.18 did not become a reliable overall replacement. Explicit source misattribution recurred, and both prompts sometimes lost the CEO context or commented on the unfinished text. Do not keep repeating these two notes to seek a passing run.
 
 ## What was tested
@@ -35,9 +37,11 @@ The next comparison should return to ASv6.13, the earlier broadly tested referen
 
 ## Evidence
 
-- [Complete source notes](./input.json), [all semantic judgments](./review.json), [runtime record](./runtime.json) and [verification](./verification.json).
-- Raw outputs: [ASv6.17 trial 4](./asv6.17-trial-4/output.json), [trial 5](./asv6.17-trial-5/output.json), [trial 6](./asv6.17-trial-6/output.json); [ASv6.18 trial 4](./asv6.18-trial-4/output.json), [trial 5](./asv6.18-trial-5/output.json), [trial 6](./asv6.18-trial-6/output.json).
+- Complete source notes (`./input.json`), all semantic judgments (`./review.json`), runtime record (`./runtime.json`) and verification (`./verification.json`).
+- Raw outputs: ASv6.17 trial 4 (`./asv6.17-trial-4/output.json`), trial 5 (`./asv6.17-trial-5/output.json`), trial 6 (`./asv6.17-trial-6/output.json`); ASv6.18 trial 4 (`./asv6.18-trial-4/output.json`), trial 5 (`./asv6.18-trial-5/output.json`), trial 6 (`./asv6.18-trial-6/output.json`).
 
 All 12 calls used unique fresh threads and working directories, one turn and no tools. Exact prompts, sources, outputs and raw hashes were verified, with no reuse across the 327 earlier calls checked. The unchanged production runner loaded every configuration. Verification checks provenance and review completeness, not the semantic judgments' truth.
 
 Usage: 28,296 input and 6,427 output tokens, including 2,636 reasoning tokens. Minimum observed available memory was 105.23 GiB; both memory and I/O PSI avg10 maxima were zero. Calls were sequential with host monitoring and the existing launcher limits. No new paid resource, credential change, model change or downstream work occurred. The canonical ASv6.8 registry, acceptance criteria and final inputs are unchanged.
+
+See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-subject-prompt-goal-v1`.

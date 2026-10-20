@@ -1,5 +1,7 @@
 # Does the harder example improve subject generation?
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 Not clearly. ASv6.22 recovered context in two additional CEO-related subjects, but both prompts still failed on the CEO note in two of three trials. Both had 14 of 18 fully accepted outputs. ASv6.22 is not promoted.
 
 Only the second worked example changed: tapestry restoration became a longer puppet-and-suitcase example with several references and a return to an earlier topic. Instructions and the pool example stayed identical. Both prompts ran on the same six original notes, three fresh calls per note, using Astra low.
@@ -96,7 +98,7 @@ One ASv6.21 CEO output also leaves whole-post rhetorical coverage unresolved. Al
 
 Each call used a distinct thread and working directory, the unchanged isolated wrapper and schema, no conversation history, and disabled tools/web search. Exact source, prompt, manifest and raw-output checks passed. Saved output strings were not edited.
 
-Three fresh independent reviewers saw complete notes and all outputs under opaque IDs. Their judgments were saved before prompt identities were revealed. The main reviewer read all subjects and reconciled disagreements. Two overly strict proposed judgments were withdrawn before identity reveal: mandatory block-number repetition and rejection of explicitly described infidelity insinuations. These corrections and remaining uncertainties are preserved in [review-reconciliation.json](./review-reconciliation.json).
+Three fresh independent reviewers saw complete notes and all outputs under opaque IDs. Their judgments were saved before prompt identities were revealed. The main reviewer read all subjects and reconciled disagreements. Two overly strict proposed judgments were withdrawn before identity reveal: mandatory block-number repetition and rejection of explicitly described infidelity insinuations. These corrections and remaining uncertainties are preserved in `./review-reconciliation.json`.
 
 Generation took about 100 seconds at up to 12 simultaneous calls. An initial launcher-path failure occurred before Python or inference started; it consumed no model calls. There were 36 model calls, no inference retries, and no remaining owned processes.
 
@@ -104,6 +106,8 @@ Available memory in the samples stayed above 103 GiB. However, the intended five
 
 The test used the existing subscription only. No paid API or rented compute was used. No final-validation data was opened.
 
-[Full original notes and every unedited output](./full-outputs.md) · [Review](./review.json) · [Decision](./assessment.json) · [Mechanical verification](./verification.json) · [Resources and per-prompt tokens](./resources.json)
+Full original notes and every unedited output (`./full-outputs.md`) · Review (`./review.json`) · Decision (`./assessment.json`) · Mechanical verification (`./verification.json`) · Resources and per-prompt tokens (`./resources.json`)
 
 This comparison is complete. The result does not justify promoting ASv6.22 or claiming that a complex example solves context handling. ASv6.8 remains frozen.
+
+See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-subject-prompt-goal-v1`.

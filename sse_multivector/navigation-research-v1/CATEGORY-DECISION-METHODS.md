@@ -1,5 +1,7 @@
 # Decisions from category scores
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 The next candidate should be one shared score cutoff, learned once from the
 existing development judgments and then frozen for a different-note,
 different-category test. A probability-calibration subsystem is not presently
@@ -37,7 +39,7 @@ note set inside another establishes a meaningful parent–child relationship.
 ## Existing scores: what a shared cutoff can do
 
 The calculation uses every expanded note maximum and every frozen full-note
-judgment in [TCC03](./TCC03/audit.json). There are 40 note/category pairs from
+judgment in TCC03 (`./TCC03/audit.json`). There are 40 note/category pairs from
 20 notes: 19 supported, 15 unsupported and six scope-unresolved pairs. These
 are correlated diagnostic observations, not independent population samples.
 
@@ -78,7 +80,7 @@ At the no-incorrect-admission end, Coffee loses N004, N038, N043, N045 and
 N052. At the all-supported-retained end, Morning greetings incorrectly includes
 N031, N035, N036, N038, N043 and N080. The complete states, exact scores,
 attaining rows and unresolved admissions are in
-[the retrospective calculation](./category-decision-tradeoffs.json).
+the retrospective calculation (`./category-decision-tradeoffs.json`).
 
 ### The actual tradeoff is not abstract
 
@@ -238,7 +240,7 @@ That does not make the note admission incorrect. It prevents interpreting it
 as demonstrated recognition of the cafe passage. The next test must separately
 report note membership, the actually admitted masks and genuinely supporting
 evidence. A human inspection must not silently replace the mask selected by the
-rule. Complete masks/originals remain in [TCC03 inputs](./TCC03/inputs.json).
+rule. Complete masks/originals remain in TCC03 inputs (`./TCC03/inputs.json`).
 
 The decision must be evaluated at the same aggregation level as its proposed
 use. Taking a maximum over additional descriptions can only increase the score,
@@ -317,7 +319,7 @@ inputs and judgments have not yet been selected or frozen.
 ## Reproduction and preservation
 
 Source hashes and all enumerated states are saved in
-[category-decision-tradeoffs.json](./category-decision-tradeoffs.json).
+`./category-decision-tradeoffs.json`.
 Reproduce them by reading `TCC03/audit.json`, using each category's
 `all.maxima`, checking its judgments against `TCC03/judgments.json`, then applying
 `score >= cutoff` at every distinct score plus 0 and 1. Keep unresolved admissions

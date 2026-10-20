@@ -1,5 +1,7 @@
 # Category membership and browsing paths
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 CPC01 connects the previously tested category classifier to the existing
 construction rules. It recovers some relevant notes, but both fixed score
 cutoffs remove all three clearly meaningful parent–child paths in the tested
@@ -46,7 +48,7 @@ candidate. There is no upward propagation of child memberships.
 ## Membership results
 
 Before the run, both reviewers read the complete source notes. The
-[frozen judgments](./CPC01-JUDGMENTS.json) cover six complete categories across
+frozen judgments (`./CPC01-JUDGMENTS.json`) cover six complete categories across
 all 100 notes. They contain 31 supported, 557 unsupported and 12 unresolved
 note/category pairs. Unresolved cases include unspecified egg species and
 the scope of Bread for some composite dishes; they are not counted as errors
@@ -59,7 +61,7 @@ user approvals.
 | Native | 31 | 0 | 162 | 3 |
 | Development | 27 | 4 | 8 | 2 |
 
-The [complete audit](./CPC01/audit.json) lists every error, retained assignment,
+The complete audit (`./CPC01/audit.json`) lists every error, retained assignment,
 unresolved admission, ordering inversion and resulting edge. Counts alone
 overstate grounded recognition: the native Bread assignment for N071 comes
 only from the description “Growing Nostr,” not from its actual tortilla
@@ -238,12 +240,12 @@ Newly matched description rows are:
 The Chicken matches use `chickens`; the preparation matches equate `make` and
 `making`. The latter only add evidence inside the same existing two notes.
 Chicken also gains plural occurrences inside already-matched rows 230, 439
-and 712. Thus there are [17 added occurrences](./CPC02/added-occurrences.json)
+and 712. Thus there are 17 added occurrences (`./CPC02/added-occurrences.json`)
 across 16 distinct source rows, not just the 14 added candidate/row memberships
 in the table. Nothing is removed. All changed masks and complete originals
 were independently inspected.
-The [audit](./CPC02/audit.json) retains each changed description and all six
-category judgments. [result.json](./CPC02/result.json) retains every raw and
+The audit (`./CPC02/audit.json`) retains each changed description and all six
+category judgments. `./CPC02/result.json` retains every raw and
 normalized token match, exact positions, membership difference and edge.
 
 N080 is recovered through row 59, “The author's chickens collectively lay one
@@ -316,7 +318,7 @@ The cached 186,545,922-parameter GLiClass checkpoint runs on one CPU process wit
 two Torch threads and batch size four. Inference takes 398.88 seconds; peak RSS
 is 5,197,376 KiB. No paid service, GPU, new download or parallel model process
 was used. Model/source revisions, native smoke check and package hashes are in
-[run/config.json](./CPC01/run/config.json).
+`./CPC01/run/config.json`.
 
 From the repository root, deterministic replay uses fresh output directories:
 
@@ -331,11 +333,11 @@ python3 sse_multivector/category_path_compatibility.py analyze \
   --cutoffs 0.5 0.9481359422711596 --output /tmp/cpc01-replay/analysis
 ```
 
-The [analysis result](./CPC01/analysis/result.json) preserves all twelve candidate
+The analysis result (`./CPC01/analysis/result.json`) preserves all twelve candidate
 memberships and relation outputs, including candidates without a certified
-meaning. [Raw scores](./CPC01/run/scores.json), [unchanged inputs](./CPC01/prepared/inputs.json),
-[candidate occurrences](./CPC01/prepared/candidates.json) and the
-[pre-score manifest](./CPC01/prescore-manifest.json) remain available separately.
+meaning. Raw scores (`./CPC01/run/scores.json`), unchanged inputs (`./CPC01/prepared/inputs.json`),
+candidate occurrences (`./CPC01/prepared/candidates.json`) and the
+pre-score manifest (`./CPC01/prescore-manifest.json`) remain available separately.
 
 CPC02's five new production-path tests also failed first for its absent module,
 then passed. The combined 47-test regression suite passes. The complete
@@ -351,9 +353,9 @@ cached word-form implementation; no model or network request is made.
 ```
 
 Use a fresh output directory. The environment has NLTK 3.9.2; system Python
-does not. The [pre-control manifest](./CPC02-precontrol-manifest.json) freezes
+does not. The pre-control manifest (`./CPC02-precontrol-manifest.json`) freezes
 the plan, judgments, source inputs, candidates, runner and stemmer source.
-[CPC02/config.json](./CPC02/config.json) records the copied code/package hashes.
+`./CPC02/config.json` records the copied code/package hashes.
 
 ## Sources
 

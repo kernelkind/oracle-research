@@ -1,5 +1,7 @@
 # Missing cross-note partners: results
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 The baseline left some masks without a multi-note segment even though suitable partners existed in the same frozen collection.
 
 Two fresh model assessments and my separate inspection agreed on **28 valid pairs**. They involve **44 previously unserved masks from 36 notes**. Ten were HDBSCAN noise; 34 belonged to one-note segments. These are 28 observed relationships, **not 28 distinct missing subjects**. A note may already have other masks in multi-note segments.
@@ -46,7 +48,8 @@ This audit examines masks lacking a baseline multi-note segment. It does not exa
 
 The existing reviewer displays only exact bracketed masks. No titles, scores, proposal methods, or assistant verdicts appear on screen. These are proposed two-mask groups, not a new HDBSCAN partition. The original baseline decisions remain untouched.
 
-Reopen your completed 11-pair review:
+The historical command to reopen the completed 11-pair review requires the
+original local review artifacts and previously built review executable:
 
 ```sh
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
@@ -56,7 +59,7 @@ R=sse_multivector/real-note-fine-segmentation-v1/omission-audit-v1/report/disagr
 
 For the 28 pairs unanimously accepted by the assistant assessments, change the last directory to `report/agreements`. The complete mixed 128-pair set is in `sample/review.json`. All support partial review and resume. Only your saved decisions populate the completed disputed-pair session; no assistant judgments have been copied into user answers.
 
-[All 128 pairs and their separate assessments](report/assessments.md) · [Counts and input hashes](report/summary.json) · [Protocol](../omission-audit-protocol.md) · [Sampling record](sample/sampling-manifest.json).
+[All 128 pairs and their separate assessments](report/assessments.md) · Counts and input hashes (`report/summary.json`) · [Protocol](../omission-audit-protocol.md) · Sampling record (`sample/sampling-manifest.json`).
 
 ## Integrity and resources
 
@@ -64,6 +67,6 @@ The completed user review binds to review set `RN1a389ae36016` and artifact SHA-
 
 No subjects, masks, vectors, original HDBSCAN results, or existing user decisions changed. All 20 model calls succeeded once with 20 distinct recorded threads and isolated workspaces, using the existing Astra-low subscription runner. Four calls proposed text partners; sixteen calls supplied two assessments for each sampled pair. Exact prompts, responses, and isolation receipts are saved under `text/` and `assessments/`.
 
-Nine same-note suggestions were mechanically excluded with reasons; one repeated-other-note suggestion was retained because it was still an eligible pair. Nothing was silently rewritten or retried. Full target coverage and the proposal-file hash were checked before sampling; see [admission checks](admission.json).
+Nine same-note suggestions were mechanically excluded with reasons; one repeated-other-note suggestion was retained because it was still an eligible pair. Nothing was silently rewritten or retried. Full target coverage and the proposal-file hash were checked before sampling; see admission checks (`admission.json`).
 
 Usage: 178,766 input tokens (3,840 cached) and 19,781 output tokens. The 75 guard samples showed at least 103.29 GiB available memory, zero sampled memory pressure, and at most 0.12% I/O pressure. No guard interruption, new encoding, rented compute, or new paid API resource was needed. The new records occupied about 8 MiB before report packaging.

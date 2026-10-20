@@ -1,5 +1,7 @@
 # ASv6.13: Astra low compared with Sol
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 Astra improved two of the three targeted context problems. It produced **13/18 fully accepted outputs**, compared with **8/18** for both Sol low and Sol medium. This supports a broader Astra test, not a permanent switch or a validated prompt.
 
 A fully accepted output has no subject marked error or unresolved and no missing meaning. Every source note and all 54 outputs appear below, including the unchanged Sol evidence.
@@ -57,11 +59,11 @@ All three Astra insurance outputs keep CIAB's survey separate from the later mod
 
 Three independent reviewers checked all 921 subjects in the 54 mixed outputs against complete notes, with model/effort/trial labels hidden. They saved judgments before identities were revealed. The main assistant separately read all 309 new subjects knowing they were Astra, then reconciled disagreements against the same settled standards. Broad, nested, overlapping and duplicate subjects and plausible implications remained allowed. Prior raw outputs and judgments were not edited.
 
-The [reconciliation](./review-reconciliation.json) preserves every disagreement and its resolution. Historical Sol totals remain unchanged. The earlier disputed insurance-context reading would lower medium to 7/18, without reversing this result.
+The reconciliation (`./review-reconciliation.json`) preserves every disagreement and its resolution. Historical Sol totals remain unchanged. The earlier disputed insurance-context reading would lower medium to 7/18, without reversing this result.
 
 **Next proposed step:** test unchanged ASv6.13 on Astra low across the fixed 28-note development set and the eight repeated difficult notes. That run has not started. ASv6.8 remains frozen, no permanent model migration is made, and final-validation inputs remain unused.
 
-[Exact unchanged prompt](../asv6.13/ASv6.13.md) · [Predeclared test](./proposal.json) · [Complete judgments](./review.json) · [Integrity checks](./verification.json) · [Independent verification](./independent-verification.json) · [Assessment](./assessment.json)
+[Exact unchanged prompt](../asv6.13/ASv6.13.md) · [Predeclared test](./proposal.json) · Complete judgments (`./review.json`) · Integrity checks (`./verification.json`) · Independent verification (`./independent-verification.json`) · Assessment (`./assessment.json`)
 
 ## Full notes and outputs
 
@@ -1453,3 +1455,5 @@ Fully accepted. Full-note coverage accepted.
 20. Bitcoin remains usable when every other financial rail can be cut.
 21. Enforcement is tightening.
 22. The post asks how many additional actors will conclude, as enforcement tightens, that Bitcoin is usable for settlement when other financial rails can be cut.
+
+See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-subject-prompt-goal-v1`.

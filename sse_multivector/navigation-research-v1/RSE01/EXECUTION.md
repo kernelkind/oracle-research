@@ -1,5 +1,7 @@
 # RSE01 execution
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 Run on local CPU, September 12, 2026. No training or paid resources.
 
 ## Source and input identity
@@ -10,7 +12,7 @@ Run on local CPU, September 12, 2026. No training or paid resources.
 - Fixture SHA256: `d3efece72ebf6f03e4c0b5fe9b1c588fbece361b00599b34389c242a699c2c35`.
 - Input-record SHA256: `886ea3f362d95c02077f2c7b7c7cd45370e29d86b7120f4de29c9d4a7d3ed277`, identical to HRC03.
 
-Package versions and every downloaded-file hash are in [config.json](config.json). The 1.42 GB weight download used one worker, a 2 GiB/no-swap scope, and no authentication token. No GPU or paid provider was used.
+Package versions and every downloaded-file hash are in `config.json`. The 1.42 GB weight download used one worker, a 2 GiB/no-swap scope, and no authentication token. No GPU or paid provider was used.
 
 ## Test-first check
 

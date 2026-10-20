@@ -1,5 +1,7 @@
 # Node-title prompt v14
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 The mental-state titles became concise and stayed on the subject. The user has since approved both broader titles and confirmed the remaining problem: the food title about phrases describes wording rather than its subject.
 
 Only **and concise** was added to v13's opening. The separate brevity sentence from the earlier unrun proposal was not used. The per-instance support requirement, model, masks, and runner were unchanged.
@@ -23,7 +25,7 @@ Only **and concise** was added to v13's opening. The separate brevity sentence f
 
 **Other groups:** Bitcoin and Brisket are unchanged. Communication principles/maxims retain the already-accepted advice meaning. Instructions and maxims are not banned words.
 
-The initial assistant assessment accepted nine outputs, questioned two, and rejected the phrases title. The user subsequently approved the two questioned titles in the focused review and confirmed the phrases problem in chat. The original calls and assistant comments remain unchanged. The [baseline review record for v15](../hdbv2-node-description-probe-v15/baseline-user-review.json) preserves these sources separately; it does not fabricate a TUI rejection or convert other assistant judgments into user approvals.
+The initial assistant assessment accepted nine outputs, questioned two, and rejected the phrases title. The user subsequently approved the two questioned titles in the focused review and confirmed the phrases problem in chat. The original calls and assistant comments remain unchanged. The baseline review record for v15 (`../hdbv2-node-description-probe-v15/baseline-user-review.json`) preserves these sources separately; it does not fabricate a TUI rejection or convert other assistant judgments into user approvals.
 
 ## Review
 
@@ -62,3 +64,5 @@ The cards show every exact member mask and separate assistant reasoning. The B c
 The broader-title questions are resolved by user approval. The [completed v15 test](../hdbv2-node-description-probe-v15/README.md) changes only the membership check from “it” to “its subject matter”, aiming to prevent categories of wording. Concision, per-instance support, masks, model and settings remain unchanged. V15 is a test candidate, not a freeze; prior prompts, outputs and frozen v1 remain unchanged.
 
 The [official GPT-5.6 guidance](https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6#prompt-migration-workflow) informed the small isolated edit and same-case retest, not the semantic verdicts.
+
+**Publication status:** `collection:tracked-hdbv2-node-description-probe-v14` remains in the [conversion review list](../../docs/experiments/publication-gaps.csv); a complete compact-data conversion has not been established.

@@ -1,6 +1,8 @@
 # Saved omission-pair assessments
 
-[All 128 pairs](../sample/review.json) · [All three valid](agreements/review.json) · [Some valid, not all](disagreements/review.json)
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../../docs/experiments/README.md#reading-the-research-records).
+
+All 128 pairs (`../sample/review.json`) · All three valid (`agreements/review.json`) · Some valid, not all (`disagreements/review.json`)
 
 V identifies a vector and its mask. S identifies a proposed two-mask segment, not a partition or a subject name. ⟦…⟧ encloses each exact selected fragment; separate fragments remain separate. Source text and byte ranges remain intact in the v3 review files.
 

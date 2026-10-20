@@ -1,5 +1,7 @@
 # Music100 and combined200
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 Both runs are finished. User review is pending. No labels were generated.
 
 | | Original food/drink 100 | Music 100 | Both collections, 200 |
@@ -27,7 +29,7 @@ Thus adding the second collection did not simply add new segments: it also chang
 
 The combined result contains 46 segments using only original-collection notes, 36 using only music-collection notes, and 42 using notes from both. A segment spanning both collections is not necessarily about both food and music: either collection can contain other subjects.
 
-Complete member-by-member comparisons are preserved in [food-vs-combined/comparison.json](food-vs-combined/comparison.json) and [music-vs-combined/comparison.json](music-vs-combined/comparison.json). The latter also verifies unchanged music vector bytes and source-mask evidence despite different display IDs.
+Complete member-by-member comparisons are preserved in `food-vs-combined/comparison.json` and `music-vs-combined/comparison.json`. The latter also verifies unchanged music vector bytes and source-mask evidence despite different display IDs.
 
 ## Separate assistant assessment
 
@@ -35,9 +37,9 @@ Fresh independent review covered all 53 music segments and all 45 combined segme
 
 Raw independent judgments are preserved separately:
 
-- [Music100](assistant-assessment-music100.json): 46 valid, 5 invalid, 2 uncertain.
-- [First 23 new combined segments](assistant-assessment-combined-new-a.json): 16 valid, 4 invalid, 3 uncertain.
-- [Other 22 new combined segments](assistant-assessment-combined-new-b.json): 12 valid, 7 invalid, 3 uncertain.
+- Music100 (`assistant-assessment-music100.json`): 46 valid, 5 invalid, 2 uncertain.
+- First 23 new combined segments (`assistant-assessment-combined-new-a.json`): 16 valid, 4 invalid, 3 uncertain.
+- Other 22 new combined segments (`assistant-assessment-combined-new-b.json`): 12 valid, 7 invalid, 3 uncertain.
 
 These are assistant opinions, not user decisions or measured precision. Some objections depend on how broad a shared subject may be. In particular, I would leave the beauty/cuteness pair (`Sc4dfbf87cb`) and the expectations-of-people pair (`Sd392951671`) open for user judgment rather than treat the independent invalid verdicts as established failures. Photographing one's father and `#dadlife` (`Se76a1ad176`) have a plausible direct family connection despite the independent uncertain verdict.
 
@@ -56,11 +58,14 @@ The original food inputs include earlier manual corrections; music generation wa
 
 All 100 music notes and all 1,080 generated subject/mask records remain preserved. Subject text and mask strings were not manually edited. Two non-verbatim masks were retried once each with the same frozen prompt/model; both attempts remain saved.
 
-Identical byte ranges within a note were encoded once while preserving all originating subject associations. One valid mask, `N090-S008` / `Mexico.` / `🇲🇽`, cannot select a complete token because the tokenizer combines the adjacent `💜🇲🇽`. The user approved leaving only that mask unencoded. Its subject, mask and source note remain intact in [encoding-admission-v2/disposition.json](encoding-admission-v2/disposition.json) and the complete reviewed input. This leaves 1,057 encodings representing 1,079 subject associations.
+Identical byte ranges within a note were encoded once while preserving all originating subject associations. One valid mask, `N090-S008` / `Mexico.` / `🇲🇽`, cannot select a complete token because the tokenizer combines the adjacent `💜🇲🇽`. The user approved leaving only that mask unencoded. Its subject, mask and source note remain intact in `encoding-admission-v2/disposition.json` and the complete reviewed input. This leaves 1,057 encodings representing 1,079 subject associations.
 
 The failed encoder attempt remains in `encoder-run/`. The successful attempt is in `encoder-run-v2/`: 66.48 seconds, peak 1,210,642,432 bytes of memory, no OOM, and maximum rolling two-second workload I/O pressure 0.0324%. No further model generation or new paid resources were used for encoding, clustering or comparison.
 
 ## Review
+
+These historical commands require the original local review artifacts and the
+previously built review executable.
 
 Start with music100. Then review the 45 new or changed combined segments. Exact duplicates are not shown twice. The three baseline groups lacking saved clicks are also omitted because the user's earlier chat explicitly assessed the displayed baseline as valid; that chat assessment is recorded separately, without filling missing clicks.
 
@@ -82,4 +87,4 @@ For the combined collection:
   "$M/review-handoff/combined/user-response.json"
 ```
 
-Partial review is fine. Arrow keys change segments or scroll masks; Ctrl-C saves and exits. All masks are shown with brackets and spaces, without generated labels. [Handoff manifest](review-handoff/manifest.json) records every included or omitted segment and its review location. Complete raw results remain available in both run directories.
+Partial review is fine. Arrow keys change segments or scroll masks; Ctrl-C saves and exits. All masks are shown with brackets and spaces, without generated labels. Handoff manifest (`review-handoff/manifest.json`) records every included or omitted segment and its review location. The complete raw-result references identify the original local run directories.

@@ -1,5 +1,7 @@
 # Grounded descriptions and phrase-model neighborhoods
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 PPR01 finds useful semantic evidence in existing subject descriptions, but does
 not establish an automatic membership or parent-construction rule. The base
 Sentence-BERT handles the rosemary/bread connection that literal adjacency lost.
@@ -28,7 +30,7 @@ through an unrelated mask is different from correctly matching its subject.
 Euclidean distance is primary, matching the training loss; cosine is a
 prespecified sensitivity control. Neither is an equivalence probability.
 
-The [audit](./PPR01/audit.json) contains all sixteen ten-note lists, fixed
+The audit (`./PPR01/audit.json`) contains all sixteen ten-note lists, fixed
 diagnostic scores, semantic judgments and full originals/masks for 90 inspected
 records from 50 notes. Unknown neighbors are not automatic negatives. Broader
 shared subjects are allowed; identical claims or actions are unnecessary.
@@ -208,7 +210,7 @@ peak memory are naturally separate measurements, not claimed identical.
 
 [PPR01/base](./PPR01/base/) and [PPR01/phrase](./PPR01/phrase/) retain all inputs,
 raw vectors, pairwise scores, package versions, native controls and model/code
-hashes. The [audit](./PPR01/audit.json) retains full source evidence and the
+hashes. The audit (`./PPR01/audit.json`) retains full source evidence and the
 judgments above. No full-corpus semantic accuracy is claimed.
 
 Reproduce from the repository root with an unused output directory, then repeat
@@ -234,3 +236,10 @@ and primary sources: [Wang et al., Phrase-BERT (2021)](https://aclanthology.org/
 and the [official model](https://huggingface.co/whaleloops/phrase-bert/tree/6f68f4dc2d28aadefa038c79023dc7dfd51f6495).
 Numerical results and semantic judgments here are local PPR01 observations, not
 the paper's benchmark results.
+
+**Selected data:** The [publication catalog](../../docs/experiments/publications.csv) lists compact neighborhood results, inputs and parameters selected for release for these saved runs:
+
+- `PPR01/base` — `numerical/pair-scores-1e64065272f7c57c`.
+- `PPR01/phrase` — `numerical/pair-scores-96f2867afe3bbffb`.
+
+These compact exports use a different format. Other cited artifacts remain separate originals.

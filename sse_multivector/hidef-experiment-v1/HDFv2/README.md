@@ -1,5 +1,7 @@
 # HDFv2 — graph connections with HiDeF unchanged
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 The source-note restriction did **not** produce a consistent improvement. It recovered the Satoshi connection that motivated the test, but did not isolate it from unrelated meanings. Some useful original groups became harder to recover. Keeping the same number of strongest edges produced different successes and losses, not a clear replacement.
 
 All nine runs are preserved. HDFv1 remains the default. No labels, masks, vectors, or memberships were manually changed. These are analyst findings pending user inspection, not approval of a hierarchy algorithm. CREC-124.
@@ -99,7 +101,7 @@ This comparison kept the HiDeF settings frozen to isolate the graph change. It i
 
 ## Verification and saved data
 
-[comparison.json](./comparison.json) records graph fragmentation, note coverage, group sizes, all preselected group correspondences, and repeat-seed intersections. It was produced by a read-only checker:
+`./comparison.json` records graph fragmentation, note coverage, group sizes, all preselected group correspondences, and repeat-seed intersections. It was produced by a read-only checker:
 
 ```bash
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
@@ -117,3 +119,9 @@ sse_multivector/run-hidef-experiment.sh 123 /tmp/hdfv2-new-repeat --graph-policy
 ```
 
 The launcher refuses an existing output directory. Add `--plan` to inspect configuration without running discovery. The new directory keeps a repeat separate; its configuration records the policy, seed, and code/dependency hashes.
+
+**Selected release data:** The [publication catalog](../../../docs/experiments/publications.csv) identifies the compact final-result export derived from the saved source:
+
+- `numerical/comparison-bbb238e60ef6c956` — original `comparison.json`, bound by its recorded source SHA-256.
+
+The export uses the publication format; the original files referenced above remain outside this checkout. Downloads are still being prepared.

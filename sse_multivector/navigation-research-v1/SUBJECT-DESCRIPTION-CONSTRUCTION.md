@@ -1,5 +1,7 @@
 # Construction from existing subject descriptions
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 CAP03 shows that the saved subject text contains useful semantic information,
 but turning it into unordered word sets does not produce a dependable hierarchy.
 It also identifies a separate construction limitation: some clear multiword
@@ -154,7 +156,7 @@ similarly not automatically connected to Food.
 
 ## Audit scope
 
-[The complete edge inventory and assessments](./CAP03/edge-audit.json) preserve
+The complete edge inventory and assessments (`./CAP03/edge-audit.json`) preserve
 all 359 links. For 308, the parent descriptor itself supplies no browsing subject
 beyond function words or generic reporting language. That is a descriptor
 inspection, not a semantic verdict on every child.
@@ -167,7 +169,7 @@ alternatives; that is not 22 new or complete successful browsing paths. Remainin
 links include unresolved scope, different word attachments, and wording-only
 narrowing. No overall accuracy or exhaustive category-coverage rate is reported.
 
-All originals and fragments are stored in [the result's input records](./CAP03/result.json).
+All originals and fragments are stored in the result's input records (`./CAP03/result.json`).
 The same file contains every candidate, membership, seed and relation for both
 runs. Audit annotations never alter those machine outputs. Root-only candidates
 and every parent-only member have not been exhaustively semantically certified.

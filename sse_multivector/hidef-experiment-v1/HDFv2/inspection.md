@@ -1,10 +1,12 @@
 # HDFv2 — additional inspection selected before the runs
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 This records the twelve additional groups and ten relationships frozen in [PLAN.md](./PLAN.md). The main [results](./README.md) cover the seven known anchors separately. These are analyst judgments, not user approvals or automatically scored failures.
 
 All IDs below use seed 123. **O** means HDFv1, **M** means HDFv2 `mutual_best_per_note`, and **C** means HDFv2 `strongest_edges_matched`. The number is the actual group ID in that run. Descriptions explain masks; they are not generated or stored titles.
 
-Correspondences are the two closest vector sets plus the closest note set, as recorded in [comparison.json](./comparison.json). One-note groups remain eligible so their disappearance from the TUI cannot be mistaken for improvement. A correspondence is only a place to inspect, not a judgment that two groups mean the same thing.
+Correspondences are the two closest vector sets plus the closest note set, as recorded in `./comparison.json`. One-note groups remain eligible so their disappearance from the TUI cannot be mistaken for improvement. A correspondence is only a place to inspect, not a judgment that two groups mean the same thing.
 
 ## Twelve groups
 
@@ -73,3 +75,9 @@ Expand 963, then 1014. Press Enter on a mask for the complete original note. No 
 The independent review read all masks for the semantically assessed counterparts and paths, checking complete source notes where their meaning was ambiguous. M917 was assessed only for its 100-to-100 note transition, not exhaustively judged semantically. The main reviewer separately inspected anchors, original notes, and the control's preservation and tomato groups; those positive examples and the main conclusion agree between reviewers.
 
 This is the primary-seed sample, not exhaustive semantic review of all nine hierarchies. Repeat-seed set intersections are saved but include isolated singletons: the strongest-edge control's high repeatability cannot be interpreted as proof of semantic quality. The useful examples coexist with lost coverage, weak associations, and unnecessary levels.
+
+**Selected release data:** The [publication catalog](../../../docs/experiments/publications.csv) identifies the compact final-result export derived from the saved source:
+
+- `numerical/comparison-bbb238e60ef6c956` — original `comparison.json`, bound by its recorded source SHA-256.
+
+The export uses the publication format; the original files referenced above remain outside this checkout. Downloads are still being prepared.

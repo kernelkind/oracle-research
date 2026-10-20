@@ -1,5 +1,7 @@
 # Mask evidence and category distinctions
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 ND02 removes three repeated choices from NP01. It does not solve the hierarchy.
 It preserves the original notes, all retained category memberships and masks,
 and the baseline browser. No subject, mask, embedding, or title was regenerated.
@@ -40,7 +42,7 @@ without a narrower subject. Empty intersections cause abstention, not rejection.
 
 The baseline has 55 nonempty intersections among 219 categories and 25 matching
 parent–child edges. The corresponding NP01 counts are recorded in
-[diagnostic.json](./ND02-NP01/diagnostic.json). These matches are candidates for
+`./ND02-NP01/diagnostic.json`. These matches are candidates for
 inspection, not accepted deletions.
 
 The hypothesis is too weak. Wine [1493] and both children [1470,1474] all reduce
@@ -176,7 +178,7 @@ estimate of user interests. No cutoff or hierarchy selection was run.
 | Root [1753,100 notes] | 0 |
 
 The complete ranking, probabilities, source hashes and code dependencies are in
-[category-utility-diagnostic.json](./category-utility-diagnostic.json).
+`./category-utility-diagnostic.json`.
 
 The broad-coffee result is encouraging but insufficient. Every new word found
 in only one mask inside a category **increases** this score. If that mask has
@@ -216,7 +218,7 @@ PYTHONPATH="$PWD/sse_multivector" python3 \
 ```
 
 The snapshot is not standalone: it imports `select_note_categories.py`. Its
-required hash and committed version are in [ND02-provenance.json](./ND02-provenance.json).
+required hash and committed version are in `./ND02-provenance.json`.
 The independent audit reproduced all six artifacts byte-for-byte for both runs
 through the actual CLI entry point, and exhaustively checked native note/mask
 compatibility with each projection. That compatibility is verified for these

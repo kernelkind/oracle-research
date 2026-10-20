@@ -1,8 +1,10 @@
 # TRUE11 — Native-answer hierarchy
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 Every connection below comes from a saved native Yes. No semantic corrections were made. Twelve redundant connections were removed without changing any paths or available notes. Multiple parents remain.
 
-This graph is acyclic, not semantically certified. Masks below belong directly to each category; available-note counts also include its children recursively. Full original notes and exact masks are preserved in [native-notes.json](./native-notes.json).
+This graph is acyclic, not semantically certified. Masks below belong directly to each category; available-note counts also include its children recursively. Full original notes and exact masks are preserved in `./native-notes.json`.
 
 ## Starting categories
 

@@ -1,5 +1,7 @@
 # Contextual source meanings: USM01
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 Unrestricted matching is not justified as the default source-concept assignment.
 It supplies some useful meanings, but often replaces a supported general meaning
 with an unsupported subtype or a different related subject. Original-word lookup
@@ -19,7 +21,7 @@ parts of speech, and the unrestricted sense inventory.
 The [pre-run plan](./USM01-PLAN.md) states the hypothesis and competing
 explanations. [Complete source results](./USM01/SOURCE-RESULTS.md) show every
 original note with its original mask, every encoded description, all 134
-highest-match comparisons, definitions and analysis. [Raw results](./USM01/run/scores.json)
+highest-match comparisons, definitions and analysis. Raw results (`./USM01/run/scores.json`)
 retain the top five sensekeys, exact cosines and candidate counts. These are
 word meanings, not automatically accepted note categories.
 
@@ -162,7 +164,7 @@ category selection and redundant note sets remain independent concerns.
   1,024 dimensions. CPU/eager attention, NumPy 2.3.4 float64 weighting/scores,
   shared file-order tie breaking, 24 selected layers and unused 25th weight are
   explicit adaptations, not a byte-identical published benchmark claim.
-- [Execution record](./USM01/execution.json), [configuration](./USM01/run/config.json),
-  [tokenization](./USM01/run/tokenization.json), saved target vectors and runner
+- Execution record (`./USM01/execution.json`), configuration (`./USM01/run/config.json`),
+  tokenization (`./USM01/run/tokenization.json`), saved target vectors and runner
   source preserve the experiment. Original GDC09, SGC01–03, masks and browser
   remain unchanged. No UI packaging.

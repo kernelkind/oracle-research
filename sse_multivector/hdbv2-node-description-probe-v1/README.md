@@ -1,5 +1,7 @@
 # Frozen title v1 on three HDBv2 nodes
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 Three new, isolated Sol low calls used the unchanged v1 prompt. No subjects, masks, embeddings, memberships, hierarchy, or previous results were changed. Each numbered input was one original vector's complete mask; its exact source fragments stayed together, quoted and separated by semicolons. The model received no original notes, subject descriptions, node IDs, proposed labels, or other calls' results.
 
 The nodes were selected before generation for different kinds of shared meaning. This is a small inspection, not a representative accuracy estimate. The assessments below are the assistant's, not user decisions.
@@ -62,4 +64,6 @@ Assessment: The art connection is sound, but “Keywords” describes the form o
 
 Calls ran concurrently. Reported tokens include runner/service context, not just the short visible prompt. All cache counters were zero. Subscription usage only; no paid API call, model download, local neural-model load, or rented compute.
 
-Exact input configurations and raw output/event/usage records are saved in each node's directory. [Source packets](source-packets.json) retain original notes and mask ranges for provenance; that file was not passed to the model. The [frozen prompt registry](../fine-region-title-prompt-versions.json) remains unchanged.
+Exact input configurations and raw output/event/usage records are saved in each node's directory. Source packets (`source-packets.json`) retain original notes and mask ranges for provenance; that file was not passed to the model. The [frozen prompt registry](../fine-region-title-prompt-versions.json) remains unchanged.
+
+**Publication status:** `collection:tracked-hdbv2-node-description-probe-v1` remains in the [conversion review list](../../docs/experiments/publication-gaps.csv); a complete compact-data conversion has not been established.

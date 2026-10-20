@@ -1,5 +1,7 @@
 # Initial mask results
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 Five of six masks accepted. M05 includes one additional meaning. This is the first three-note batch, not completed validation; no repeated calls or prompt edits have been made.
 
 All six calls used Astra low with fresh context. The complete source note and one unchanged ASv6.23 subject were supplied each time. The auxiliary context field was not supplied. Nothing below was hand-corrected.
@@ -82,4 +84,6 @@ Keep the prompt unchanged and add three notes that exercise different masking di
 
 Generation used 14,861 input tokens and 136 output tokens; 1,920 input tokens were cached. These are the six mask calls only, not review or orchestration usage. All six calls had distinct threads and working directories, with tools and web search disabled. Memory and I/O pressure stayed at zero in the recorded samples.
 
-[Raw review](./review.json) · [Mechanical and isolation checks](./verification.json) · [Execution record](./execution/results.json)
+Raw review (`./review.json`) · Mechanical and isolation checks (`./verification.json`) · Execution record (`./execution/results.json`)
+
+See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-mask-prompt-goal-v1`.

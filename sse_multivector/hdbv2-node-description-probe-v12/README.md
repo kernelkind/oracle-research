@@ -1,5 +1,7 @@
 # Node-title prompt v12
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 The stricter prompt avoided several unsupported restrictions, but did not reliably return subject titles. Art and wine became descriptions of the supplied text. This is not a reason to reject broad categories; the problem is what the title describes.
 
 Six previously used groups, two fresh Sol-low calls each. The exact approved draft is preserved in [prompt.txt](prompt.txt). V12 is a tested candidate; v1 remains frozen.
@@ -19,7 +21,7 @@ Art is still problematic: Photography and painting are not necessarily hashtags,
 
 The prompt says category but never explicitly specifies a subject category rather than a category of text. That is a plausible explanation for this pattern, not a proven causal diagnosis. This test does not justify abandoning the new per-instance support requirement or automatically revising it.
 
-Every exact input mask, both raw titles, historical v11 title, and per-group reasoning appear in [comparison.json](comparison.json). [source-packets.json](source-packets.json) preserves full notes and mask byte ranges for provenance; full notes were not passed to generation.
+Every exact input mask, both raw titles, historical v11 title, and per-group reasoning appear in `comparison.json`. `source-packets.json` preserves full notes and mask byte ranges for provenance; full notes were not passed to generation.
 
 All twelve results are available in the existing review tool:
 
@@ -29,6 +31,8 @@ All twelve results are available in the existing review tool:
 
 This is optional inspection, not a request to adjudicate twelve uncertain decisions. No user decisions were prefilled. The historical v11 title is context, not a fresh control. Each card shows the current trial, all its masks, and a separate assistant comment.
 
-[verification.json](verification.json) records twelve distinct threads/workspaces, one attempt per call, exact approved prompts, unchanged masks and previous versions, no tools, and usage. Total: 21,542 input tokens and 2,368 output tokens, including 2,233 reasoning tokens. Existing subscription only; no new API billing or rented compute.
+`verification.json` records twelve distinct threads/workspaces, one attempt per call, exact approved prompts, unchanged masks and previous versions, no tools, and usage. Total: 21,542 input tokens and 2,368 output tokens, including 2,233 reasoning tokens. Existing subscription only; no new API billing or rented compute.
 
 These are six reused development groups, not a holdout or an accuracy estimate. Two calls per group show repeatability on this sample, not general reliability. Historical output differences alone cannot establish causation.
+
+**Publication status:** `collection:tracked-hdbv2-node-description-probe-v12` remains in the [conversion review list](../../docs/experiments/publication-gaps.csv); a complete compact-data conversion has not been established.

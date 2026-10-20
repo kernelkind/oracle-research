@@ -1,5 +1,7 @@
 # V20 titles: Astra-low versus saved Sol-low
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 Astra-low produced 11 titles I judge usable and one I judge too narrow. The saved Sol-low run produced seven usable titles and five failures. This is an improvement on six reused groups, not an estimate of general accuracy or a reason to freeze the prompt/model.
 
 The user approved a follow-up with [six previously untitled groups](../hdbv2-node-description-probe-v20-astra-low-additional-v1/README.md), keeping v20 and Astra-low unchanged. Ten outputs were assistant-accepted; the user subsequently accepted “European Football” for the other group, resolving the objection to both capitalization variants. Review should focus on meaningful errors rather than pedantic wording objections. This initial comparison and its outputs remain unchanged; neither prompt nor model is frozen.
@@ -52,11 +54,11 @@ Dogs and wine remained usable. Tea shows a remaining instance-support problem. W
 
 [run-review-all.sh](./run-review-all.sh) shows all 24 outputs—12 new Astra titles and 12 saved Sol titles—in a separate session. No user decisions are prefilled.
 
-[comparison.json](./comparison.json) contains every title, judgment, reason, mask, usage count and raw-result path.
+`./comparison.json` contains every title, judgment, reason, mask, usage count and raw-result path.
 
 ## Reproducibility
 
-[run-plan.json](./run-plan.json) and all 12 configs were saved before generation. Only the model field changed from each corresponding Sol config: `gpt-5.6-sol` → `gpt-6-astra`. Reasoning effort stayed `low`; [prompt.txt](./prompt.txt) and [source-packets.json](./source-packets.json) are byte-identical to the [v20 baseline](../hdbv2-node-description-probe-v20/README.md).
+[run-plan.json](./run-plan.json) and all 12 configs were saved before generation. Only the model field changed from each corresponding Sol config: `gpt-5.6-sol` → `gpt-6-astra`. Reasoning effort stayed `low`; [prompt.txt](./prompt.txt) and `./source-packets.json` are byte-identical to the [v20 baseline](../hdbv2-node-description-probe-v20/README.md).
 
 One numbered instance represents one vector; its exact fragments are curly-quoted and separated by semicolons. Notes, vector IDs, expected answers, earlier titles and reviewer comments were not sent to the model. Full notes and byte spans remain in source-packets only for provenance.
 
@@ -64,6 +66,8 @@ Generation used the unchanged wrapper, pinned Codex 0.153.0 and authorized dedic
 
 New Astra usage: 26,674 input tokens, including 1,920 cached input tokens; 559 output tokens, including 463 reasoning tokens. Cached input did not mean a reused conversation; thread IDs and runtime workspaces were distinct. Existing subscription only; no purchases, rentals or new API billing. Credentials were not read or changed.
 
-[verification.json](./verification.json) records checks of inputs, isolation, raw outputs and the production review tool. All earlier artifacts and user review sessions are preserved.
+`./verification.json` records checks of inputs, isolation, raw outputs and the production review tool. All earlier artifacts and user review sessions are preserved.
 
 CREC-127 is the existing tracking card. Plane tools were unavailable, so its external status/comment could not be updated.
+
+**Publication status:** `collection:tracked-hdbv2-node-description-probe-v20-astra-low-v1` remains in the [conversion review list](../../docs/experiments/publication-gaps.csv); a complete compact-data conversion has not been established.

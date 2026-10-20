@@ -1,5 +1,7 @@
 # GDC09 navigation research
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 The original GDC09 tree, masks, vectors, labels, and browser remain unchanged.
 The production objective is a repeatable construction method. For HR02's
 diagnostic, the user approved a separate manually corrected placement view to
@@ -1481,13 +1483,13 @@ rule.
 
 **Coffee → Music at Coffee Shops is approved for evaluation.** The user explicitly
 approved this category relationship, superseding the earlier No in
-[TRUE06/U02](./TRUE06/user-review.json). The parent is `S9c440e7f47`; the child is
+TRUE06/U02 (`./TRUE06/user-review.json`). The parent is `S9c440e7f47`; the child is
 `S8ea08f1aff`, with these masks:
 
 - N004 · V035: ⟦Rave at a coffee shop⟧
 - N038 · V295: ⟦playing⟧ ⟦coffee shop⟧ ⟦music⟧
 
-The [saved TRUE output](./TRUE10/graph/scores.json) for
+The saved TRUE output (`./TRUE10/graph/scores.json`) for
 `premise: This text is about Music at Coffee Shops. hypothesis: This text is about Coffee.`
 is native No, with score `0.009861395630151667`. The fixed `> 0.142` rule also
 rejects it. Under the updated user judgment, both rules miss this relationship.
@@ -1500,7 +1502,7 @@ That evaluation approval did not change a hierarchy edge, category title, mask,
 or score. How to recover this missing relationship automatically remains open.
 
 Separately, the user approved all six notes in the
-[TRUE12 membership review](./TRUE12/membership-review.json): N004, N005, N017,
+TRUE12 membership review (`./TRUE12/membership-review.json`): N004, N005, N017,
 N024, N038, and N065. These are note-level membership decisions, not approvals of
 every individual mask or of other category relationships. The saved review
 session had state SHA-256
@@ -1526,7 +1528,7 @@ The inventory is now checked against the original source packets:
 - Two previously reviewed equivalent pairs are consolidated without losing masks.
 - This leaves 59 categories, with no title-based exclusions.
 
-[TRUE13](./TRUE13/categories.json) shows every category, including disconnected
+TRUE13 (`./TRUE13/categories.json`) shows every category, including disconnected
 ones under the root. It preserves the 3,306 existing relationship scores and
 checks only the 116 directions involving the restored category. Native TRUE
 answers determine links; no Coffee link is inserted manually. Cycles would stop
@@ -1561,7 +1563,7 @@ Category IDs identify the original groups. `--check` validates the saved view
 without opening the UI.
 
 [The plan](./TRUE13/plan.json) records inventory and preservation hashes;
-[the completion record](./TRUE13/completion.json) records graph and output hashes.
+the completion record (`./TRUE13/completion.json`) records graph and output hashes.
 The current handoff checks the full source inventory before generating inputs,
 accounting only for explicit consolidations. Missing titles/groups cause an
 error instead of filtering. TRUE10–12 remain frozen comparison evidence.
@@ -1571,7 +1573,7 @@ notes, and O shows 13 notes absent from all descendants. O excludes a whole note
 below the category, even if its masks differ. This action works for every
 category in the existing UI; it does not change memberships or saved masks.
 
-The launcher uses [categories-with-mask-ids.json](./TRUE13/categories-with-mask-ids.json),
+The launcher uses `./TRUE13/categories-with-mask-ids.json`,
 which adds original individual masks and IDs to the unchanged saved view.
 The IDs come from native matched instances and the saved TRUE12 membership
 results, not from guessing how combined highlights were formed. Their combined
@@ -1625,9 +1627,9 @@ Two results clarify the earlier missing-child problem:
   hashtag and flavour masks also fall below the cutoff; their existing
   memberships are preserved. Complete checks do not establish complete recall.
 
-[Analysis](./TRUE14/analysis.json), [all additions](./TRUE14/membership-changes.json),
-[verification](./TRUE14/verification.json), and the
-[packaging manifest](./TRUE14/packaging-manifest.json) preserve the evidence.
+Analysis (`./TRUE14/analysis.json`), all additions (`./TRUE14/membership-changes.json`),
+verification (`./TRUE14/verification.json`), and the
+packaging manifest (`./TRUE14/packaging-manifest.json`) preserve the evidence.
 The unchanged inference implementation still writes `experiment: TRUE12` in its
 config; TRUE14's plan, execution record, verification, and outputs identify the
 new experiment explicitly. Frozen inputs and score/configuration identity were
@@ -1646,7 +1648,7 @@ semantic repairs are authorized by that recommendation.
 
 ## Earlier focused Coffee and Tea review — TRUE12
 
-The [expanded view](./TRUE12/hierarchy/categories.json) packages the saved
+The expanded view (`./TRUE12/hierarchy/categories.json`) packages the saved
 TRUE12 membership additions: Coffee has 22 notes and Tea as a beverage has four.
 It shows only these two branches, with all three original Coffee children and
 their contents unchanged. It does not add the approved Music at Coffee Shops
@@ -1672,7 +1674,7 @@ category, including descendants; D displays direct notes only; h returns to the
 parent from the category menu. `--check` validates either view without opening
 the terminal UI.
 
-[The packaging manifest](./TRUE12/hierarchy/manifest.json) records the input and
+The packaging manifest (`./TRUE12/hierarchy/manifest.json`) records the input and
 output hashes. Packaging uses no inference and refuses to replace an existing
 output directory. This focused view remains available for comparison; use TRUE13
 above to inspect all categories without this branch filter.
@@ -2228,3 +2230,13 @@ in existing broad destinations, inspects all additions, and preserves uncertain
 scope and literal-matching misses. No browsing membership changed. MDH01/MDH02
 now test descriptions independent of the old groups; shared wording yields a
 few useful relationships but does not supply semantic parent construction.
+
+**Selected data:** The [publication catalog](../../docs/experiments/publications.csv) lists compact pair-score results, inputs and parameters selected for release for these saved runs:
+
+- `TRUE06/run` — `numerical/pair-scores-8a71cdad43ebfd62`.
+- `TRUE10/run` — `numerical/pair-scores-07918e7ce41db212`.
+- `TRUE12` — `numerical/pair-scores-d45d05c77df1a6c4`.
+- `TRUE13/run` — `numerical/pair-scores-44da093f83cc0377`.
+- `TRUE14/run` — `numerical/pair-scores-02cf49b8fce80a5b`.
+
+These compact exports use a different format. Other cited artifacts remain separate originals.

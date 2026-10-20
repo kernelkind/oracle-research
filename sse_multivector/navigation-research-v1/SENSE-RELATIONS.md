@@ -1,5 +1,7 @@
 # Task-trained relations and definition inputs
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 SRR01–SRR03 do not establish a usable parent-assignment rule. A model trained
 specifically on semantic relationships preserves the obvious Bread → Sourdough
 relation, but also produces clear false parents. Changing names into definitions
@@ -35,8 +37,8 @@ declared unavailable or generally unsuitable.[^4]
 
 ## SRR01: fixed descriptions, different learned task
 
-[Plan](./SRR01-PLAN.md), [all 908 scored pairs](./SRR01/scores.json),
-[configuration and hashes](./SRR01/config.json).
+[Plan](./SRR01-PLAN.md), all 908 scored pairs (`./SRR01/scores.json`),
+configuration and hashes (`./SRR01/config.json`).
 
 Inputs were frozen before scoring:
 
@@ -64,7 +66,7 @@ These judgments are grounded in the unchanged groups, not those words alone.
 The human-diet group concerns a recipe, meat eaters and criticism of carnivore
 diet discourse, not biological carnivores. The greeting masks greet readers;
 the Coffee group concerns coffee and coffee shops. Full masks, generated subjects
-and original notes remain in [GDR02's groups](./GDR02/groups.json); their prior
+and original notes remain in GDR02's groups (`./GDR02/groups.json`); their prior
 complete audits are in [GDR01](./CONTEXTUAL-GROUP-RELATIONS.md) and
 [GDR02](./EXISTING-SUBJECT-RELATIONS.md).
 
@@ -92,7 +94,7 @@ errors. Both antonym and both unrelated examples agree with their labels.
 ## SRR02: same model and groups, explicit definitions
 
 [Plan](./SRR02-PLAN.md), [frozen definitions](./SRR02/definitions.json),
-[all 56 comparisons including baseline scores](./SRR02/scores.json).
+all 56 comparisons including baseline scores (`./SRR02/scores.json`).
 
 This changes only the eight manual descriptions, preserving their intended
 scope and all ordered pairs. Definitions are diagnostic human inputs, not an
@@ -147,7 +149,7 @@ control remained. SRR03 mechanically concatenates each unchanged GDR01 descripti
 exception. HyperDef's joint term-and-definition representation motivates this
 control; concatenation into this different classifier does not reproduce that
 model.[^7] [Plan](./SRR03-PLAN.md), [exact inputs](./SRR03/definitions.json),
-[all 56 scored pairs](./SRR03/scores.json).
+all 56 scored pairs (`./SRR03/scores.json`).
 
 This does not rescue the classifier. It produces 25 directional predictions,
 including the following:
@@ -263,3 +265,12 @@ Runtime timing fields are observational and are not expected to be identical.
 [^5]: He et al. (2024), [Language Models as Hierarchy Encoders](https://arxiv.org/html/2401.11374v3), §§2–4, especially equation 6 and transfer/hard-negative evaluation; [released MPNet model](https://huggingface.co/Hierarchy-Transformers/HiT-MPNet-WordNetNoun). Research lead only, not an SRR result.
 [^6]: Hearst (2008), [UIs for Faceted Navigation: Recent Advances and Remaining Open Problems](https://people.ischool.berkeley.edu/~hearst/papers/hcir08.pdf), §§2, 7–8. Read for conjunction across facets and the unresolved large-subject-space problem, not as an algorithm that generates our categories.
 [^7]: Yin and Roth (2018), [Term Definitions Help Hypernymy Detection](https://aclanthology.org/S18-2025.pdf), §3. Its separate term/definition comparisons motivate an information control, not simple concatenation as a proven substitute.
+
+**Selected data:** The [publication catalog](../../docs/experiments/publications.csv) lists compact pair-score results, inputs and parameters selected for release for these saved runs:
+
+- `SRR01` — `numerical/pair-scores-40ce4abc5f6c4cfd`.
+- `GDR02` — `numerical/pair-scores-73a3d2de97c2627c`.
+- `SRR02` — `numerical/pair-scores-491376be0d396173`.
+- `SRR03` — `numerical/pair-scores-55e2f987d071484a`.
+
+These compact exports use a different format. Other cited artifacts remain separate originals.

@@ -1,5 +1,7 @@
 # Mask generation: low versus medium reasoning
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 **Medium improved some identifying-word selections in this small comparison. It did not solve mask scope or source order.**
 
 I ran 36 fresh calls: the same 12 fixed ASv6.8 subjects three times, using the unchanged current mask prompt and `gpt-5.6-sol`. The only changed generation setting was reasoning effort, from low to medium. The comparison uses the three existing low-effort runs.
@@ -74,7 +76,7 @@ The three new batches peaked at 16.8M, 16.7M, and 16.7M of service memory, with 
 
 Files:
 
-- [All masks with complete notes and analysis](./masks.md)
+- All masks with complete notes and analysis (`./masks.md`)
 - `assistant-review.json`: every low and medium judgment, including the unresolved ones.
 - `mechanical-checks.json`: source matching, order, and occurrence checks.
 - `verification.json`: configuration comparison, isolation, hashes, resources, and review smoke check.
@@ -84,3 +86,5 @@ Files:
 - `trial-1/run/`, `trial-2/run/`, and `trial-3/run/`: exact rendered prompts and raw outputs.
 
 The [official GPT-5.6 reasoning guidance](https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6#reasoning-effort) informed the single-setting comparison. It does not establish that medium is a fix; the observations above are the evidence for this task.
+
+See [conversion gaps](../../docs/experiments/publication-gaps.csv) for `collection:tracked-mask-prompt-medium-reasoning-v1`.

@@ -1,5 +1,7 @@
 # Mask generation: six additional notes
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 Astra low repeated its earlier advantage on three of these six notes. This supports continuing with it, but does not establish a final model choice.
 
 | Fixed subject | Sol low | Astra low |
@@ -12,7 +14,7 @@ One Astra T04 mask also names the spokesman, Dmitry Peskov. Whether that is unne
 
 Both models handled the other supplied subjects without an issue I could identify, including reference resolution in the Sora and giraffe notes. These are assistant judgments, not new user approvals.
 
-[Every mask with its full original note and analysis](./masks.md)
+Every mask with its full original note and analysis (`./masks.md`)
 
 ## What changed
 
@@ -30,7 +32,7 @@ OpenAI Docs informed the controlled comparison: the prompt and inputs stayed fix
 
 72 mask calls were attempted. Astra returned 36 masks; Sol returned 35 masks and one service-capacity error.
 
-Sol trial 3 stopped on its first subject, T05: “Selected model is at capacity. Please try a different model.” That call was not retried. Astra trial 3 then ran, followed by the eleven Sol calls that had not yet been attempted. The failed batch's original config, manifest and error remain intact; the continuation retains the remaining prompts unchanged. [Recorded deviation](./execution-deviation.json).
+Sol trial 3 stopped on its first subject, T05: “Selected model is at capacity. Please try a different model.” That call was not retried. Astra trial 3 then ran, followed by the eleven Sol calls that had not yet been attempted. The failed batch's original config, manifest and error remain intact; the continuation retains the remaining prompts unchanged. Recorded deviation (`./execution-deviation.json`).
 
 All 71 masks are valid arrays of exact source substrings in source order. This mechanical check does not imply semantic correctness.
 
@@ -50,7 +52,7 @@ The pinned CLI was 0.153.0. Calls were sequential, with a 2 GiB local memory cap
 | Astra low: 36 attempted | 36 | 90,906 | 1,715 |
 | Subject setup: 2 attempted | 2 | 4,135 | 714 |
 
-The failed Sol call reported no usage; its usage is unknown, not zero. Cached input is included in input counts. Reasoning output is included in output counts. Per-call tokens and elapsed times are in [verification.json](./verification.json); model tokenization and compute can differ despite the same `low` setting.
+The failed Sol call reported no usage; its usage is unknown, not zero. Cached input is included in input counts. Reasoning output is included in output counts. Per-call tokens and elapsed times are in `./verification.json`; model tokenization and compute can differ despite the same `low` setting.
 
 ## Review in the existing TUI
 
@@ -63,17 +65,19 @@ cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
   target/mask-prompt-astra-vs-sol-transfer-v1-review-session.json
 ```
 
-The command uses the existing binary and needs no Cargo build. You can stop at any point; no review is pre-approved. The full output set remains in [masks.md](./masks.md).
+The command uses the existing binary and needs no Cargo build. You can stop at any point; no review is pre-approved. The full output set remains in `./masks.md`.
 
 ## Evidence files
 
-- [selection.json](./selection.json): full notes, fixed subjects and their source outputs.
-- [scope-before-generation.json](./scope-before-generation.json): assistant scope notes frozen before mask generation and never sent to the models.
-- [assistant-review.json](./assistant-review.json): all new judgments and the explicit post-run T04 scope clarification.
-- [mechanical-checks.json](./mechanical-checks.json): every fragment, exact source occurrences and possible placements.
-- [verification.json](./verification.json): hashes, actual call settings, freshness, token usage and service completion records.
-- [review-preparation.json](./review-preparation.json): exact provenance of each TUI screen.
+- `./selection.json`: full notes, fixed subjects and their source outputs.
+- `./scope-before-generation.json`: assistant scope notes frozen before mask generation and never sent to the models.
+- `./assistant-review.json`: all new judgments and the explicit post-run T04 scope clarification.
+- `./mechanical-checks.json`: every fragment, exact source occurrences and possible placements.
+- `./verification.json`: hashes, actual call settings, freshness, token usage and service completion records.
+- `./review-preparation.json`: exact provenance of each TUI screen.
 - Each run directory retains its config, manifest and complete `results.jsonl`, including raw output, CLI events and errors. Successful batches also retain `output.json`.
-- [subject-setup/run/output.json](./subject-setup/run/output.json): all newly generated ASv6.8 subjects, including ones not selected for this comparison.
+- `./subject-setup/run/output.json`: all newly generated ASv6.8 subjects, including ones not selected for this comparison.
 
 Fifty-seven protected files were unchanged, including existing prompts, inputs and review histories. No production code, prompt registry, model default, user decision, SSE artifact or segment was changed. CREC-125 remains awaiting user review.
+
+See [conversion gaps](../../docs/experiments/publication-gaps.csv) for `collection:tracked-mask-prompt-astra-vs-sol-transfer-v1`.

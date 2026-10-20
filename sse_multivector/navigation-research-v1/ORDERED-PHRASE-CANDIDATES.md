@@ -1,5 +1,7 @@
 # Word order and adjacency in category candidates
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 CAP04 recovers useful categories omitted by CAP03 and removes one demonstrated
 false word attachment. It also shows why neither word order nor adjacency is a
 sufficient replacement for understanding a shared subject.
@@ -171,9 +173,9 @@ French-language extraction experiment.[^3]
 
 ## Evidence and verification
 
-[The complete result](./CAP04/result.json) contains every pattern, membership,
+The complete result (`./CAP04/result.json`) contains every pattern, membership,
 token position, saved subject, exact source mask and full original note.
-[The audit](./CAP04/audit.json) inventories all 362 adjacent patterns and records
+The audit (`./CAP04/audit.json`) inventories all 362 adjacent patterns and records
 full-source review of 29 adjacent patterns plus the three attachment/gap
 diagnostics: 154 distinct subject records from 47 notes. The remaining patterns
 are not certified; no overall precision, recall or full-hierarchy score is claimed.

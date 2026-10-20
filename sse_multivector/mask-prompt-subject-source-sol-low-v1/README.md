@@ -1,5 +1,7 @@
 # Subject-to-source mask test — Sol low
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 The mapping format did not reliably fix mask completeness and scope. It removed the extra state-backing detail from all three insurance masks, but all three understanding-life masks omitted “life.” The CEO-incident masks still selected extra background. No prompt or model default is changed.
 
 This is a completed development test, not a prompt freeze or an unseen holdout.
@@ -18,18 +20,18 @@ These are my assessments against the fixed subjects and existing decisions. Each
 
 | Observation | Original, fragment-only | Revised, mapping |
 | --- | --- | --- |
-| [M05](./masks.md#m05): “life” missing from the understanding-life mask | 1/3 | 3/3 |
-| [M07](./masks.md#m07): extra state-backing description in the insurance mask | 2/3 | 0/3 |
-| [M09](./masks.md#m09): “Bitcoin” missing | 1/3 | 0/3 |
-| [M09](./masks.md#m09): actual settlement-shift activity added to the value-under-restrictions subject | 1/3 | 1/3 |
-| [M11](./masks.md#m11): CEO incident left unidentified | 2/3 | 0/3 |
-| [M11](./masks.md#m11): whole quoted setup selected along with the incident | 1/3 | 3/3 |
+| M05 (`./masks.md#m05`): “life” missing from the understanding-life mask | 1/3 | 3/3 |
+| M07 (`./masks.md#m07`): extra state-backing description in the insurance mask | 2/3 | 0/3 |
+| M09 (`./masks.md#m09`): “Bitcoin” missing | 1/3 | 0/3 |
+| M09 (`./masks.md#m09`): actual settlement-shift activity added to the value-under-restrictions subject | 1/3 | 1/3 |
+| M11 (`./masks.md#m11`): CEO incident left unidentified | 2/3 | 0/3 |
+| M11 (`./masks.md#m11`): whole quoted setup selected along with the incident | 1/3 | 3/3 |
 
 M05 shows why a populated mapping is not proof of coverage. Its subject excerpt names “life,” but its source fragments select only `Meditation` and `the very understanding of it`. “Life” remains outside the mask. The two original trials that did select life returned their fragments out of source order; neither prompt produced a fully satisfactory M05 output in these runs.
 
 M11 shows the unresolved scope problem. Selecting the whole quote identifies the CEO incident, but also selects employee calls, anonymous chat, question timing, and the invitation to ask something hard. I judge that setup outside the thesis-change subject. This is my assessment, not a new user rejection.
 
-[M12](./masks.md#m12) remains variable. Revised trial 1 includes the full `CEO has all employee calls` assertion; trial 2 excludes it and matches the previously accepted scope. Trial 3 selects only `employee calls` alongside the gossip and rhetoric. The word employee supplies workplace context, while calls adds the medium of the incident. I leave that third trial borderline rather than count it as a definite failure.
+M12 (`./masks.md#m12`) remains variable. Revised trial 1 includes the full `CEO has all employee calls` assertion; trial 2 excludes it and matches the previously accepted scope. Trial 3 selects only `employee calls` alongside the gossip and rhetoric. The word employee supplies workplace context, while calls adds the medium of the incident. I leave that third trial borderline rather than count it as a definite failure.
 
 M01, M04, M06, M08, and M10 retain the previously accepted meaning with both prompts. M02 and M03 remain unresolved because earlier rejections had no recorded reason. No overall accuracy score is assigned.
 
@@ -41,7 +43,7 @@ The original had 35 JSON arrays and one response incorrectly claiming the post w
 
 The formats impose different order constraints: the original has one source-ordered array; the revised has source order within each entry, not across entries. This difference is intentional, so the order counts alone do not demonstrate better semantic selection.
 
-Eleven revised outputs permit more than one combined mask placement, compared with two original outputs. Repeated names and short fragments such as `he` cause this. The mapping identifies strings, not positions. [Every possible placement is shown](./masks.md); none was silently chosen or encoded with SSE. Per-entry ambiguity that leaves the combined mask unchanged is recorded separately in [the checks](./mechanical-checks.json).
+Eleven revised outputs permit more than one combined mask placement, compared with two original outputs. Repeated names and short fragments such as `he` cause this. The mapping identifies strings, not positions. Every possible placement is shown (`./masks.md`); none was silently chosen or encoded with SSE. Per-entry ambiguity that leaves the combined mask unchanged is recorded separately in the checks (`./mechanical-checks.json`).
 
 ## What this establishes
 
@@ -52,10 +54,10 @@ The result does not establish that explicit mappings cannot help. These are four
 ## Records and resources
 
 - [Approved prompt snapshot](./mask-prompt.md), from commit `cc949ec195a9f6a08992b442210f1391c3262aff`.
-- [Plan](./plan.json) and [unchanged notes and subjects](./selection.json).
-- [Full notes, inline masks, and mappings](./masks.md); [individual assistant assessments](./assistant-review.json).
-- Raw outputs: [trial 1](./trial-1/run/output.json), [trial 2](./trial-2/run/output.json), [trial 3](./trial-3/run/output.json). Each run also preserves rendered prompts, process arguments, thread IDs, events, usage, and hashes.
-- [Mechanical checks](./mechanical-checks.json) and [integrity/isolation verification](./verification.json).
+- [Plan](./plan.json) and unchanged notes and subjects (`./selection.json`).
+- Full notes, inline masks, and mappings (`./masks.md`); individual assistant assessments (`./assistant-review.json`).
+- Raw outputs: trial 1 (`./trial-1/run/output.json`), trial 2 (`./trial-2/run/output.json`), trial 3 (`./trial-3/run/output.json`). Each run also preserves rendered prompts, process arguments, thread IDs, events, usage, and hashes.
+- Mechanical checks (`./mechanical-checks.json`) and integrity/isolation verification (`./verification.json`).
 
 All 36 new thread IDs and workdirs were distinct and absent from 241 prior records checked. Wrapper records show fresh processes and empty workdirs, with conversation history, repository instructions, user configuration, tools, and web access excluded or disabled. No tool or error events were returned. Prompt/output hashes matched all 72 comparison records. These checks establish local harness isolation, not access to undisclosed service-level context.
 
@@ -70,3 +72,5 @@ Trials ran sequentially, each with a 2 GiB local memory cap, zero swap allowance
 | Median call time | 5.407 seconds | 6.907 seconds |
 
 Timing is observational, not a latency benchmark. Calls used the existing Codex subscription; no paid API, rented compute, or account switch was used. All 39 protected files were unchanged, including prompts, registries, the budget ledger, baseline results, and user review decisions. There were no retries, output repairs, SSE runs, or production-code changes.
+
+See [conversion gaps](../../docs/experiments/publication-gaps.csv) for `collection:tracked-mask-prompt-subject-source-sol-low-v1`.

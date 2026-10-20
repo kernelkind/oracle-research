@@ -1,5 +1,7 @@
 # Shared candidate construction
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 CAP02 generates several useful broader/narrower relationships that MDH02 could
 not propose. It also generates grammatical structure and joins different word
 meanings. The unfiltered result is not a browsable hierarchy and is not adopted.
@@ -178,10 +180,10 @@ similar.[^1]
 ## Evidence and reproduction
 
 - [Plan](./CAP02-PLAN.md): recorded before implementation and results.
-- [Candidates and relations](./CAP02-result.json): all proposals, support rows,
+- Candidates and relations (`./CAP02-result.json`): all proposals, support rows,
   source notes, unchanged baseline IDs, provenance and code hashes.
-- [Complete edge audit](./CAP02-edge-audit.json): every one of the 43 links.
-- [Source evidence](./CAP02-sources.json): all child masks and originals, plus
+- Complete edge audit (`./CAP02-edge-audit.json`): every one of the 43 links.
+- Source evidence (`./CAP02-sources.json`): all child masks and originals, plus
   complete memberships of fourteen potentially substantive parents; 350
   canonical masks in 79 notes. Other root-only candidates and complete
   grammatical-parent memberships are not certified.

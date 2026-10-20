@@ -1,5 +1,7 @@
 # Cross-note density: results
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 Your current judgments are **38 Valid, 3 Invalid**, including the later retraction of the garden/allotment rejection. The original saved review contains 37 Valid and 4 Invalid decisions and remains unchanged. Contextual re-examination is complete: you reaffirmed the V766, V439, and V841 grouping rejections after inspecting their full notes. The complete rerun produced more multi-note segments, but it did not resolve the six exact omitted pairs you approved. This review does not select it as a replacement for the baseline.
 
 All previous result and saved-review files are unchanged; chat revisions are recorded below. Checksums match for all 65 preserved files.
@@ -70,6 +72,9 @@ The change removes the opportunity for same-note neighbors alone to establish a 
 
 ## Review
 
+The historical review and hierarchy commands below require the original local
+artifacts and executables.
+
 This opens only the 41 new or changed multi-note segments, with exact bracketed mask fragments. The 23 unchanged segments remain in the complete trial result and are not presented again. Your earlier answers are not copied into this new session.
 
 ```sh
@@ -117,9 +122,9 @@ The control is the saved HDBv2 result in `../hdbscan-cross-note/response.json`. 
 
 The only request change is `candidate: hdbscan_cross_note` → `candidate: hdbscan_cross_note_edges`. Before building a new minimum spanning tree, HDBv3 excludes every connection whose two vectors come only from the same note. It then rebuilds the complete hierarchy and selected groups. It does not merely cut edges from the saved tree. If identical vectors have aliases from different notes, those aliases can still supply a genuine cross-note connection.
 
-The isolated new binary first reproduced the **complete HDBv2 result exactly**. HDBv3 then ran twice with identical complete responses. Canonicalization, all core distances, the complete mutual-reachability distance matrix, and configuration were exactly unchanged. The old result, vector map, notes, and request remained byte-identical. See [proof.json](../hdbv3-cross-note-edges-v1/proof.json).
+The isolated new binary first reproduced the **complete HDBv2 result exactly**. HDBv3 then ran twice with identical complete responses. Canonicalization, all core distances, the complete mutual-reachability distance matrix, and configuration were exactly unchanged. The old result, vector map, notes, and request remained byte-identical. See proof.json (`../hdbv3-cross-note-edges-v1/proof.json`).
 
-In the following examples, V IDs and N IDs retain their original meanings. Group IDs belong to a particular run: HDBv2 group 1004 and HDBv3 group 1004 are not presumed to contain the same vectors. [comparison.json](../hdbv3-cross-note-edges-v1/comparison.json) matches **every old group by vector membership**, and includes each tree's nested children, direct masks, complete vector and note sets, and the lowest-distance saved connections crossing each old group's boundary.
+In the following examples, V IDs and N IDs retain their original meanings. Group IDs belong to a particular run: HDBv2 group 1004 and HDBv3 group 1004 are not presumed to contain the same vectors. comparison.json (`../hdbv3-cross-note-edges-v1/comparison.json`) matches **every old group by vector membership**, and includes each tree's nested children, direct masks, complete vector and note sets, and the lowest-distance saved connections crossing each old group's boundary.
 
 ### 1. Eggs moved out of the coffee branch
 
@@ -216,7 +221,7 @@ python3 sse_multivector/run_cross_note_edges_experiment.py \
   target/hdbv3-fresh-replay
 ```
 
-The output directory must not exist; the runner refuses to overwrite results. Rebuilding the binary can change its checksum: record and explicitly supply the new checksum rather than silently changing the saved run. The saved [request](../hdbv3-cross-note-edges-v1/request.json), [response](../hdbv3-cross-note-edges-v1/response.json), [comparison](../hdbv3-cross-note-edges-v1/comparison.json) and [proof](../hdbv3-cross-note-edges-v1/proof.json) remain separate from HDBv2 and the music experiment. The original viewer command still opens HDBv2; it was not redirected to this variant.
+The output directory must not exist; the runner refuses to overwrite results. Rebuilding the binary can change its checksum: record and explicitly supply the new checksum rather than silently changing the saved run. The saved request (`../hdbv3-cross-note-edges-v1/request.json`), response (`../hdbv3-cross-note-edges-v1/response.json`), comparison (`../hdbv3-cross-note-edges-v1/comparison.json`) and proof (`../hdbv3-cross-note-edges-v1/proof.json`) remain separate from HDBv2 and the music experiment. The original viewer command still opens HDBv2; it was not redirected to this variant.
 
 ## Optional HDBv3 note-navigation comparison
 
@@ -233,7 +238,7 @@ unchanged. The [optional five-note M06 comparison](../../merge-rule-exploration-
 tests that viewing change. The launcher below still uses the default two-note
 minimum; counts in this section describe that unchanged default.
 
-All 916 unique vectors, 945 original IDs, 100 notes, exact masks and aliases remain available. Masks from removed groups belong directly to their nearest retained ancestor. The root remains the full-corpus container. As in the existing raw viewer, a parent mask is hidden if its note appears recursively in any child; this only affects display, not membership.
+The original local view retains all 916 unique vectors, 945 original IDs, 100 notes, exact masks and aliases. Masks from removed groups belong directly to their nearest retained ancestor. The root remains the full-corpus container. As in the existing raw viewer, a parent mask is hidden if its note appears recursively in any child; this only affects display, not membership.
 
 For the saved HDBv3 data, 915 merge nodes become 246 offered groups. Maximum depth is 54, compared with 71 in the 201-group condensed tree. There are no one-note group choices or parent-child transitions returning identical note sets. The largest child list happens to contain ten groups; ten is not an imposed limit.
 
@@ -251,9 +256,9 @@ The original command without the new flag still opens HDBv2, and `--selection` s
 
 ## Earlier manual selection of hierarchy levels
 
-This earlier proposal asked whether choosing which **existing groups** to show could produce useful navigation. The user rejected it as incoherent; it is retained for comparison, not adopted. It did not create new groups, move members, or generate titles. The raw tree's saved data remains unchanged; the selection is still available as a separate view in the same explorer.
+This earlier proposal asked whether choosing which **existing groups** to show could produce useful navigation. The user rejected it as incoherent; it is retained for comparison, not adopted. It did not create new groups, move members, or generate titles. The raw tree's saved data remains unchanged; inspecting the separate selection view in the same explorer requires the original local artifacts.
 
-I inspected all 130 groups and their masks. The separate assistant proposal is [hierarchy-selection-v1.json](hierarchy-selection-v1.json). It records a decision for every group, the retained ancestor relationships, exact point inventories, source checksums, and unresolved concerns. These are not user approvals.
+I inspected all 130 groups and their masks. The separate assistant proposal is `hierarchy-selection-v1.json`. It records a decision for every group, the retained ancestor relationships, exact point inventories, source checksums, and unresolved concerns. These are not user approvals.
 
 | | Raw tree | This proposal |
 |---|---:|---:|

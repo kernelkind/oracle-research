@@ -1,5 +1,7 @@
 # HDBv2 node descriptions: v2 versus v3
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 V3 produced more useful descriptions in this small comparison, especially for art. It retained the specific sea-salt connection and avoided the earlier Home restriction. It is not yet a proven replacement: v2 also stopped adding Home on this repeat, and some category wording remains interpretive.
 
 Both versions ran freshly on the same six complete HDBv2 nodes: the original three and three additional nodes selected from masks before generation. V3 adds only the approved requirement that the title's full meaning, including qualifying details, be supported by every instance. The [version registry](../fine-region-title-prompt-versions.json) retains v1 and v2 unchanged; v1 remains frozen.
@@ -17,7 +19,7 @@ These v2 results are new calls, not replacements for the [previous v2 results](.
 | Saf220f7de1 | `Veganism vs. Meat-Based Dietary Advice` | `Dietary advice on whether to eat vegan or meat-based diets` |
 | Sd6b13ec91f | `**Kindness Over Status**` | `**Kindness Over Social Status**` |
 
-Each section below shows every exact input mask. V identifiers identify vectors. Multiple bracketed fragments on one line are one mask; repeated masks remain separate because they were separate members of the saved node. Full original notes and byte ranges are in [source-packets.json](source-packets.json), for provenance only; the model saw only the numbered fragments.
+Each section below shows every exact input mask. V identifiers identify vectors. Multiple bracketed fragments on one line are one mask; repeated masks remain separate because they were separate members of the saved node. Full original notes and byte ranges are in `source-packets.json`, for provenance only; the model saw only the numbered fragments.
 
 ## S24afa84c49
 
@@ -108,9 +110,9 @@ Recommendation: keep v3 unchanged as the candidate for the next small test on ne
 
 ## Execution and preservation
 
-The [comparison plan](comparison-plan.json) and exact inputs were saved before running. All 12 calls used the same gpt-5.6-sol model, low effort, CLI executable and wrapper as before, with at most three concurrent calls. Each node/version has its exact config and unedited run manifest, output, and result log. No previous title, label suggestion, expected result, rationale or full source note was sent to a generation call.
+The comparison plan (`comparison-plan.json`) and exact inputs were saved before running. All 12 calls used the same gpt-5.6-sol model, low effort, CLI executable and wrapper as before, with at most three concurrent calls. Each node/version has its exact config and unedited run manifest, output, and result log. No previous title, label suggestion, expected result, rationale or full source note was sent to a generation call.
 
-[comparison.json](comparison.json) preserves measured outputs, prompt hashes, thread IDs, usage and assistant assessments. Each raw output was retained as returned, including Markdown emphasis. No retries or best-of selection were used. Earlier v1/v2 experiment files remain unchanged.
+`comparison.json` preserves measured outputs, prompt hashes, thread IDs, usage and assistant assessments. Each raw output was retained as returned, including Markdown emphasis. No retries or best-of selection were used. Earlier v1/v2 experiment files remain unchanged.
 
 An independent read-only audit verified all 24 masks and 49 source fragments, exact prompt rendering, 12 first-attempt successes in distinct fresh threads/workspaces, matching raw outputs, and no model tool calls.
 
@@ -122,3 +124,5 @@ An independent read-only audit verified all 24 masks and 49 source fragments, ex
 Cached input tokens are reported separately from thread identity; prefix caching is not evidence of conversation reuse. The wrapper uses fresh temporary workspaces and threads and disables tools and web. Service-level system context is not claimed absent. This used the existing Codex subscription, not new API billing or rented compute.
 
 This six-node purposive sample is not a representative accuracy estimate, and one result per version per node is not enough to isolate prompt effects from output variation. No automatically generated title was treated as the uniquely correct answer.
+
+**Publication status:** `collection:tracked-hdbv2-node-description-probe-v3` remains in the [conversion review list](../../docs/experiments/publication-gaps.csv); a complete compact-data conversion has not been established.

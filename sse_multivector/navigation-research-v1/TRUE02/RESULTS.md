@@ -1,5 +1,7 @@
 # TRUE02 — The fixed cutoff transferred well, but not perfectly
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 **The unchanged 0.142 cutoff answered 147/150 directional questions correctly.** It accepted all 45 valid relationships and rejected 102 of 105 invalid ones. All three mistakes put a bread variety under **Bread baking**, even though the variety's full subject also includes eating, taste, nutrition, storage, and other topics beyond baking.
 
 These are new manually constructed descriptions, not actual generated HDBSCAN labels. The complete input set and judgments were reviewed before scoring. No scores, labels, wording, weights, or cutoff were adjusted after seeing results.
@@ -74,7 +76,7 @@ Within each area's six categories, every valid relationship scored above every i
 | Politics | 0.292186 | 0.087392 |
 | Interpersonal relationships | 0.466535 | 0.036581 |
 
-Across all areas, 28 of the 4,725 valid-versus-invalid score comparisons have the invalid relationship higher. All 28 cross areas and involve one of the three bread errors; there are no ties. [Every such comparison](score-inversions.json).
+Across all areas, 28 of the 4,725 valid-versus-invalid score comparisons have the invalid relationship higher. All 28 cross areas and involve one of the three bread errors; there are no ties. Every such comparison (`score-inversions.json`).
 
 This matches the predeclared outcome in which ordering is clean within the sampled areas but not globally. It does **not** demonstrate stable domain-specific cutoffs: there is only one six-category collection per area, and error type, wording, and domain are confounded. No per-domain cutoffs were fitted.
 
@@ -107,8 +109,10 @@ After the pause for node-description work, the user approved resuming TRUE tests
 
 - [Every decision, exact descriptions, scores, and native errors](DECISIONS.md).
 - [All errors with explanations](ERRORS.md).
-- [Raw inputs](inputs.json), [raw outputs and token IDs](scores.jsonl), [raw analysis](analysis.json).
+- Raw inputs (`inputs.json`), raw outputs and token IDs (`scores.jsonl`), raw analysis (`analysis.json`).
 - [Frozen plan](../TRUE02-PLAN.md), [pre-score independent review](../TRUE02-BLIND-REVIEW.md).
-- [Execution and reproducibility](EXECUTION.md), [independent verification](verification.json).
+- [Execution and reproducibility](EXECUTION.md), independent verification (`verification.json`).
 
 TRUE01 and this run's frozen source snapshots remain unchanged. No hierarchy or cutoff adjustment was made in TRUE02. TRUE03 and TRUE04 have separate artifacts. The current runner shares the same inference implementation through a tested extraction; TRUE04 adds reporting for unlabeled rows without changing inference or inventing expected answers.
+
+**Selected data:** Compact pair-score results, inputs and parameters for `TRUE02` are selected for release as `numerical/pair-scores-e0df9005e4fdba93` in the [publication catalog](../../../docs/experiments/publications.csv). These compact exports use a different format. Other cited artifacts remain separate originals.

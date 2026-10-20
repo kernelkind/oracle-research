@@ -1,5 +1,7 @@
 # Broader concepts in category construction
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 SGC03 produced useful additional candidate paths from the unchanged source
 graphs. Food preservation now includes both chicken stock and beets. A broader
 food/process pattern can include those notes, food preparation and brisket
@@ -130,7 +132,7 @@ but a correct final note set must not hide them.
 
 These are waypoints on actual generated paths. The complete intermediate nodes,
 exact IDs, memberships and every note removed at each edge are retained in
-[audit.json](./SGC03/audit.json). Nothing was manually reparented.
+`./SGC03/audit.json`. Nothing was manually reparented.
 
 | Waypoint | Pattern ID | Notes |
 | --- | --- | --- |

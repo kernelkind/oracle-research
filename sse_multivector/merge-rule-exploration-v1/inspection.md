@@ -1,5 +1,7 @@
 # Merge rules: results to inspect
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 Start with **M06 and M07**. Keep **M01** beside them: it preserves useful relationships that both weaken. These are candidates for inspection, not a selected replacement for HDBv3.
 
 All runs contain the same 100 notes and 916 distinct vectors, representing 945 original masks. Only the merge rule changes. The merge experiments used no hierarchy titles and no memberships were moved by hand. The separate M06 note view below adds provisional titles for inspection, not for clustering.
@@ -44,7 +46,7 @@ narrowing without claiming that a different manual taxonomy is mandatory.
 They do not fix it or isolate its cause. Detached tags and narrower titles
 that would misdescribe the notes are identified in each group's analysis.
 
-[M06-titles.json](M06-titles.json) binds its 150 entries to the saved history,
+`M06-titles.json` binds its 150 entries to the saved history,
 vector map and source-note checksums. The production loader rejects missing,
 extra or mismatched entries. `--check` validates the complete package without
 opening a terminal. The earlier unlabeled viewers remain unchanged.
@@ -130,7 +132,7 @@ a loss of the note's preparation meaning.
 
 The UI reads the unchanged originals and masks. Its input checksums, qualifying
 mask IDs, all-alias membership counts, and exact raw/displayed group references
-are in [m06-comparison.json](../manual-coffee-hierarchy-v1/m06-comparison.json).
+are in `../manual-coffee-hierarchy-v1/m06-comparison.json`.
 `--check` validates every page without opening the terminal. The artifact tests
 independently reconstruct membership and the minimum-group result from M06.
 

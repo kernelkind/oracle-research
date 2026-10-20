@@ -70,10 +70,12 @@ The full original job index is preserved in the [local audit copy](#local-audit-
 file/dependency
 catalogs and earlier packaging tables are not additional Hugging Face downloads.
 Their meaningful conclusions remain in the maintained findings and gap records.
-The public index and its navigation links have been updated. Authored research
-documents still contain links to original generated files; repairing those
-[reader links and original-file replay dependencies](open-items.md#original-file-links-and-replay)
-remains open before publication.
+The public index and its navigation links have been updated. Research records
+now identify original artifact paths explicitly and name verified selected
+exports separately; see [reading the research records](README.md#reading-the-research-records).
+The reviewed links to removed generated files have been repaired.
+[Original-file replay dependencies and missing evidence](open-items.md#original-file-links-and-replay)
+remain open before publication.
 
 ### Generated-data history rewrite
 

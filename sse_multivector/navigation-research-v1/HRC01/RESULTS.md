@@ -1,5 +1,7 @@
 # HRC01 — HierarCaps on our masks
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 The small test is encouraging, but it does not establish a hierarchy-building solution.
 
 All six planned direction checks and all four planned cross-topic comparisons favored the expected relationship. These are selected, mostly easy examples—not a measured general accuracy rate. The bread checks reuse one trio, and every planned positive contains the broader subject's words inside the narrower mask.
@@ -352,7 +354,7 @@ N065. Exact model input: `Coffee shop Felt like changing their router/ap passwor
 
 ## Reproduction and checks
 
-- [Frozen selections and interpretation limits](fixture.json), [original notes and exact model inputs](inputs.json), [all 400 scores](scores.json), [all vectors](embeddings.json), [planned comparisons](checks.json), [checkpoint and runtime hashes](config.json), [executed runner](hierarcaps_mask_probe.py).
+- [Frozen selections and interpretation limits](fixture.json), original notes and exact model inputs (`inputs.json`), all 400 scores (`scores.json`), all vectors (`embeddings.json`), planned comparisons (`checks.json`), checkpoint and runtime hashes (`config.json`), [executed runner](hierarcaps_mask_probe.py).
 - Nine targeted tests passed after first failing because the runner did not exist. They exercise exact-mask inputs, original-artifact matching, UTF-8 ranges, source order, duplicate/unknown IDs, angle mathematics, undefined angles, and checkpoint completeness.
 - All 400 stored scores replay exactly from the saved vectors. All 20 inputs match the original masks and source ranges.
 - An independent verification loaded the full author-style CLIPModel from the same cached checkpoint. Its text features exactly matched all 21 saved vectors, including the empty-string origin. The author's literal Torch angle calculation matched all 380 defined pair scores within 0.000000463 radians; the remaining 20 self-pairs have undefined direction.
@@ -361,3 +363,5 @@ N065. Exact model input: `Coffee shop Felt like changing their router/ap passwor
 - CPU inference for 20 masks plus the origin took 0.19 seconds after loading. Initial download/loading took 79.94 seconds; the public checkpoint download was 1.71 GB because it also contains image weights. Only the text tower was used for the experiment.
 - The experiment and verification each ran within a 6 GiB RAM, no-swap, two-CPU-equivalent systemd scope. The legacy `peak_rss_kib` field is raw `ru_maxrss`, which can inherit a pre-exec high-water value here; it is not a reliable workload-isolated peak. Verification's current-process `VmHWM` was 697,476 KiB. No paid compute.
 - An independent reader inspected all 20 masks and all 400 scores. Its interpretation agreed with the limited positive finding and the caveats above.
+
+**Selected data:** Compact pair-score results, inputs and parameters for `HRC01` are selected for release as `numerical/pair-scores-0b911a2c344e9f10` in the [publication catalog](../../../docs/experiments/publications.csv). These compact exports use a different format. Other cited artifacts remain separate originals.

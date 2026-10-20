@@ -1,5 +1,7 @@
 # HRC02 — Harder HierarCaps evaluation
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 The results strengthen the case for HierarCaps as a broader–narrower signal. They do not establish a complete hierarchy-building method.
 
 We tested **51 unchanged masks from 27 notes**, using the same released model, exact-mask inputs, and score as HRC01. No training, added context, model tuning, new hierarchy, or browser changes.
@@ -912,7 +914,7 @@ N086. Exact model input: `coffee Roasting your own beans`
 
 ## Artifacts and verification
 
-[Plan](../HRC02-PLAN.md) · [Frozen judgments and comparisons](fixture.json) · [Complete case analysis](analysis.json) · [All 2,601 scores](scores.json) · [Vectors](embeddings.json) · [Exact inputs](inputs.json) · [Configuration and hashes](config.json) · [Verification](verification.json).
+[Plan](../HRC02-PLAN.md) · [Frozen judgments and comparisons](fixture.json) · Complete case analysis (`analysis.json`) · All 2,601 scores (`scores.json`) · Vectors (`embeddings.json`) · Exact inputs (`inputs.json`) · Configuration and hashes (`config.json`) · Verification (`verification.json`).
 
 The checkpoint, source artifacts, tokenizer, scoring implementation, two CPU threads, float32 precision, and batches of four match HRC01. Nine unchanged runner tests pass. All original masks and ranges verify; all 2,601 scores replay exactly.
 
@@ -921,3 +923,5 @@ An independent invocation using the full author-style CLIPModel reproduced all 5
 Encoding took 0.45 seconds; cached model loading took 0.37 seconds. The experiment and verification each ran inside the 6 GiB/no-swap/two-CPU-equivalent scope. Verification's current-process memory high-water mark was 721,012 KiB. The unchanged runner's ru_maxrss field is retained as raw legacy telemetry and is not treated as workload-isolated peak memory. No paid resources.
 
 A separate clean-context reader reviewed every fixed case and comparison after scoring and independently confirmed the counts, yogurt ordering problem, and limitations. All previous experiments and the browser remain unchanged.
+
+**Selected data:** Compact pair-score results, inputs and parameters for `HRC02` are selected for release as `numerical/pair-scores-cf76f60afaaf64ac` in the [publication catalog](../../../docs/experiments/publications.csv). These compact exports use a different format. Other cited artifacts remain separate originals.

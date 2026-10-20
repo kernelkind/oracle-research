@@ -1,5 +1,7 @@
 # Membership and navigation selection
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 These are separate experiments on the unchanged GDC09 corpus. Neither membership
 rule is adopted. NP01 is an inspectable navigation comparison, not a validated
 replacement. The original GDC09 browser remains the default.
@@ -46,7 +48,7 @@ NMR01's threshold falls to 0.2951 for the varied five-note equipment group.
 Its 88 proposals include 42 judged valid, 27 invalid, and 19 uncertain under
 the subject supported by the anchors. These are semantic judgments, not an
 independent benchmark. The complete per-mask audit is in
-[kitchen-audit.json](./NMR01/kitchen-audit.json).
+`./NMR01/kitchen-audit.json`.
 
 Valid examples include pressure canning, using a smoker, packing a lunch box,
 and using a plate rather than a bowl. These need not mention the original brands
@@ -95,7 +97,7 @@ coffee signal.
 Every mask from the queried note is excluded from its supporting examples.
 For groups with at least three notes, NMR02 recovers some original membership
 for 20/22 coffee/tea notes, 2/5 equipment notes, and 2/3 cooking-time notes.
-The misses are recorded in [whole-note-holdouts.json](./NMR02/whole-note-holdouts.json).
+The misses are recorded in `./NMR02/whole-note-holdouts.json`.
 
 This measures recovery of existing assignments, not semantic correctness of
 every original assignment. Discovery already used the full corpus. Two-note
@@ -105,7 +107,7 @@ their zero recoveries are an unavailable calibration case, not model failures.
 The numerical review and semantic audit include every proposed mask. Full notes,
 exact fragments, byte ranges, and vector IDs remain in each run's `review.json`;
 all outside scores and supporting examples remain in `results.json`. The
-[main semantic audit](./semantic-audit.json) covers the remaining groups and all
+main semantic audit (`./semantic-audit.json`) covers the remaining groups and all
 six NMR02 proposals. Uncertain sleep/fatigue cases are not silently counted as
 successes or failures.
 

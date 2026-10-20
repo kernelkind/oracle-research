@@ -1,8 +1,10 @@
 # Scope examples: no observed change
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 Two calls used the unchanged baseline instructions plus two synthetic examples. Both masks are identical to the baseline and the direct-instruction revision. No broader calls were run.
 
-The user resolved the reopened M05 judgment: “my would add unwanted meaning.” [The decision history](../m05-scope-review/correction.json) applies to every identical output. The examples have not demonstrated an improvement: one mask is accepted and one has a scope error.
+The user resolved the reopened M05 judgment: “my would add unwanted meaning.” The decision history (`../m05-scope-review/correction.json`) applies to every identical output. The examples have not demonstrated an improvement: one mask is accepted and one has a scope error.
 
 ## M05
 
@@ -27,3 +29,5 @@ Analysis: My Salvadorans captures the requested affinity and its addressees.
 Both calls returned exact fragments in source order, with unique placements and separate fresh threads/workdirs. No tool calls occurred. Usage: 5,074 input tokens and 24 output tokens; 1,920 cached input tokens are included in the input total.
 
 Raw outputs, settings, timing and resource records are in `probe/`. These two masks do not establish a general success rate or any SSE result.
+
+See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-mask-prompt-goal-v1`.

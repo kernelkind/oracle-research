@@ -1,5 +1,7 @@
 # Phrase structure and broader meanings
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 SPC02 recovers three justified Food preparation memberships, but does not
 establish a usable hierarchy. Preserving grammatical structure rejects some
 wrong connections and also misses legitimate cooking and preservation topics.
@@ -157,7 +159,7 @@ Its supplied description concerns being good for one's peace rather than
 other people's sake. There is no rice-wine meaning in this occurrence. N069
 also contains independent diet advice, so again the final note can belong to
 Food for a different reason. The complete original remains in
-[the unchanged input records](./SPC01/construction/inputs.json), row 405.
+the unchanged input records (`./SPC01/construction/inputs.json`), row 405.
 
 All 271 expressions in the largest cycle can reach each other. Food directly
 matches sources from 91 notes under some available dictionary meanings;
@@ -215,9 +217,9 @@ the pending method-selection step, not SPC02's observations or frozen records.
 ## Reproduction and verification
 
 - [Frozen plan and primary-source qualifications](./SPC02-PLAN.md).
-- [All final relations, word mappings, source occurrences and memberships](./SPC02/final/result.json).
-- [Exact dictionary definitions and paths](./SPC02/final/lexicon.json).
-- [Verification record](./SPC02/verification.json).
+- All final relations, word mappings, source occurrences and memberships (`./SPC02/final/result.json`).
+- Exact dictionary definitions and paths (`./SPC02/final/lexicon.json`).
+- Verification record (`./SPC02/verification.json`).
 - [Complete structural audit](./SPC02/STRUCTURE-MATCH-AUDIT.md) and [word-only contrast](./SPC02/WORD-MATCH-AUDIT.md).
 
 Seventy-two production-path tests pass, including eighteen new tests. The

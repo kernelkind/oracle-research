@@ -1,5 +1,7 @@
 # Explicit mask evidence and missing notes
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 NMR03 finds four notes outside the existing broad Coffee destination and two
 outside Bitcoin, using only subjects already written in their masks. It does not
 change the hierarchy. Literal matching remains a diagnostic, not an adopted
@@ -65,7 +67,7 @@ and 36 distinct notes overall. There are 40 added family–note memberships, not
 corpus run does not test multiword subject matching.
 
 The complete row IDs, source-note IDs and seed IDs are in
-[results.json](./NMR03/results.json). [review.json](./NMR03/review.json) preserves
+`./NMR03/results.json`. `./NMR03/review.json` preserves
 every matching original note, every exact fragment, byte ranges, generated
 subject and vector alias. Nothing is replaced with a summary.
 
@@ -208,7 +210,7 @@ python3 sse_multivector/navigation-research-v1/NMR03/source/literal_category_mem
   --output /tmp/nmr03-reproduction --run-id NMR03
 ```
 
-The three source snapshots are self-contained. [config.json](./NMR03/config.json)
+The three source snapshots are self-contained. `./NMR03/config.json`
 records every input and source hash. All six declared files reproduced
 byte-for-byte in a fresh temporary directory. An initial verification command
 also enumerated Python's incidental `__pycache__` and failed on that non-artifact;

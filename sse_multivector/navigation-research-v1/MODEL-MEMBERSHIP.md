@@ -1,5 +1,7 @@
 # Learned description membership
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 The entailment classifier recognizes several broad subjects that literal matching
 misses, but also confuses a statement about morning coffee with a greeting.
 A query/passage relevance model does not resolve the problem: for Coffee it ranks
@@ -79,8 +81,8 @@ unfavorable results. The fixture was fixed before inference.
 | V620 | N069 | ⟦Work out in zone 2 as much as you can.⟧ |
 
 These IDs identify existing masked inputs, not newly generated vectors.
-[All scores and complete original records](./NLI01/scores.json),
-[fixed fixture](./NLI01/fixture.json), [configuration](./NLI01/config.json).
+All scores and complete original records (`./NLI01/scores.json`),
+[fixed fixture](./NLI01/fixture.json), configuration (`./NLI01/config.json`).
 
 **Observed useful behavior:**
 
@@ -165,9 +167,9 @@ and exclude the nongreeting CF-AM at 0.612640. The problem therefore cannot be
 removed by adjusting only that cutoff. Six of seven relative checks are positive;
 again this is not a membership accuracy result.
 
-[All 21 scores and original/synthetic records](./NLI02/scores.json),
+All 21 scores and original/synthetic records (`./NLI02/scores.json`),
 [intervention fixture](./NLI02/fixture.json),
-[separate intervention evidence](./nli02-evidence.json).
+separate intervention evidence (`./nli02-evidence.json`).
 
 ## RER01 and RER02: query/passage relevance
 
@@ -233,8 +235,8 @@ receive strong support for their respective descriptions, and exact sourdough
 text matches Sourdough bread strongly. These do not cancel the counterexamples.
 All 129 outputs were inspected, rather than only the earlier relative checks.
 
-[RER01 complete results](./RER01/scores.json),
-[RER02 complete results](./RER02/scores.json),
+RER01 complete results (`./RER01/scores.json`),
+RER02 complete results (`./RER02/scores.json`),
 [frozen comparison hypothesis](./relevance-fixture.json).
 
 ## What this establishes
@@ -327,3 +329,12 @@ locally, not represented as independent semantic consensus.
 [^4]: T. Ma et al., [Issues with Entailment-based Zero-shot Text Classification](https://aclanthology.org/2021.acl-short.99.pdf), 2021. Main five pages read, including the negative robustness results; not all appendices.
 [^5]: M. Laurer, [DeBERTa-v3-base zero-shot v2.0 model card](https://huggingface.co/MoritzLaurer/deberta-v3-base-zeroshot-v2.0), training and usage sections, accessed September 2026. Actual model revision and files are pinned in the experiments.
 [^6]: BAAI, [BGE-reranker-v2-m3 model card](https://huggingface.co/BAAI/bge-reranker-v2-m3), author Reranker/Transformers sections, accessed September 2026. The automatically supplied SentenceTransformer embedding snippet at the top is not the reranker interface and was not used.
+
+**Selected data:** The [publication catalog](../../docs/experiments/publications.csv) lists compact pair-score results, inputs and parameters selected for release for these saved runs:
+
+- `NLI01` — `numerical/pair-scores-6f207d1e86716105`.
+- `NLI02` — `numerical/pair-scores-78e27bc87aa43295`.
+- `RER01` — `numerical/pair-scores-4cf4155e2c012eec`.
+- `RER02` — `numerical/pair-scores-93be7faca7762342`.
+
+These compact exports use a different format. Other cited artifacts remain separate originals.

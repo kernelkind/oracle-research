@@ -1,5 +1,7 @@
 # TRUE03 — Actual generated titles: useful containment, with three discrepancies
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 **At the unchanged 0.142 cutoff, 41 of 44 directional answers matched the expectations recorded before scoring.** The test used 22 pairs from 25 original HDBv2 groups, with their exact v20/Astra-low titles.
 
 | Decision rule | Expected Yes accepted | Expected No rejected | Correct directions |
@@ -83,8 +85,10 @@ The pre-score expectations remain unchanged. P16 (Meat Eating / Red meat) and P2
 
 ## Evidence
 
-- [Every scored direction](DECISIONS.md), [exact model inputs](inputs.json), [raw outputs](scores.jsonl), [numerical summary](analysis.json).
-- [Frozen plan](../TRUE03-PLAN.md), [input pairs and scope explanations](fixture.json), [unchanged source titles](titles.json).
-- [Execution and tests](EXECUTION.md), [independent verification](verification.json).
+- [Every scored direction](DECISIONS.md), exact model inputs (`inputs.json`), raw outputs (`scores.jsonl`), numerical summary (`analysis.json`).
+- [Frozen plan](../TRUE03-PLAN.md), [input pairs and scope explanations](fixture.json), unchanged source titles (`titles.json`).
+- [Execution and tests](EXECUTION.md), independent verification (`verification.json`).
 
 No title, mask, group membership or expectation was changed after scoring. No hierarchy, review UI, model retraining, new cutoff or paid resource was introduced.
+
+**Selected data:** Compact pair-score results, inputs and parameters for `TRUE03` are selected for release as `numerical/pair-scores-cc65be11ce8ebfa5` in the [publication catalog](../../../docs/experiments/publications.csv). These compact exports use a different format. Other cited artifacts remain separate originals.

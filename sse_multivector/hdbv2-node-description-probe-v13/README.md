@@ -1,5 +1,7 @@
 # Node-title prompt v13
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 Both art calls returned Art; both wine calls returned Wine. All twelve outputs are acceptable under assistant assessment on this six-group test. No title describes the inputs as keywords, hashtags, or mentions.
 
 V13 changes only the opening of v12 to request a category title for subject matter. The approved text is preserved in [prompt.txt](prompt.txt); the earlier two-sentence v13 proposal was not run. V13 is a candidate, not frozen.
@@ -15,7 +17,7 @@ V13 changes only the opening of v12 to request a category title for subject matt
 
 Art and Wine are broad for a reason: individual masks do not support a narrower category. That is consistent with the intended per-instance requirement, not a regression by itself. The other four groups retain useful context. Some wording remains redundant or lengthy, but I see no material membership error.
 
-Both v12 trials, both current trials, complete masks, and reasoning are in [comparison.json](comparison.json). Full original notes and exact mask byte ranges remain in [source-packets.json](source-packets.json), for provenance only; generation received the numbered masks, not the full notes.
+Both v12 trials, both current trials, complete masks, and reasoning are in `comparison.json`. Full original notes and exact mask byte ranges remain in `source-packets.json`, for provenance only; generation received the numbered masks, not the full notes.
 
 Optional inspection in the existing review tool:
 
@@ -30,3 +32,5 @@ Execution: twelve fresh isolated Sol-low calls, two per group, maximum three con
 Usage: 21,554 input tokens and 1,643 output tokens, including 1,523 reasoning tokens; zero cached input. Existing subscription only; no new API billing or paid compute.
 
 These are six reused development groups, not a holdout accuracy estimate. Historical v12 results are not fresh controls, so the comparison does not isolate causation. Two successful calls per group do not establish general reliability. The [new-group v13 test](../hdbv2-node-description-probe-v13-additional-v1/README.md) has since been run and reviewed. The user rejected both mental-state titles, clarifying verbosity for the first; the approved v14 retest adds only “and concise” to the opening. Prior v13 prompts and raw results remain unchanged.
+
+**Publication status:** `collection:tracked-hdbv2-node-description-probe-v13` remains in the [conversion review list](../../docs/experiments/publication-gaps.csv); a complete compact-data conversion has not been established.

@@ -1,8 +1,10 @@
 # Final mask validation
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../../docs/experiments/README.md#reading-the-research-records).
+
 The unchanged prompt passed semantic review on all 52 outputs: 40 fixed subjects from 20 reserved notes, plus two extra trials for six predesignated subjects. All six repeated subjects passed all three trials. The approved threshold was 50/52, with no repeated demonstrated error.
 
-[Prompt](../mask-prompt.md) · [Validation plan](./plan.json) · [Development results](../development-results.md) · [Execution verification](./verification.json)
+[Prompt](../mask-prompt.md) · [Validation plan](./plan.json) · [Development results](../development-results.md) · Execution verification (`./verification.json`)
 
 All 52 calls succeeded on their first attempt. Independent checks verified the frozen prompt and source inputs, unchanged subjects, fresh threads/workdirs, tool-free execution, exact returned text and all compatible positions. No resource guard stopped a call.
 
@@ -132,7 +134,7 @@ Subject: Ecosystem growth is one of the four KPI areas governing MegaETH's token
 
 Accepted. MegaETH, KPI incentive mechanism, token, four areas and ecosystem growth are retained without the three other areas or token-unlock conditions.
 
-The returned strings have 3 compatible placements; see [all positions](./batch-a/review.json).
+The returned strings have 3 compatible placements; see all positions (`./batch-a/review.json`).
 
 ## F02-S1-t2
 
@@ -148,7 +150,7 @@ Subject: Ecosystem growth is one of the four KPI areas governing MegaETH's token
 
 Accepted. MegaETH, token KPI mechanism, four areas and ecosystem growth remain. The joined four-key-areas phrase in trial3 still describes the same KPI grouping; no other area or reward condition is added.
 
-The returned strings have 3 compatible placements; see [all positions](./repeats/review.json).
+The returned strings have 3 compatible placements; see all positions (`./repeats/review.json`).
 
 ## F02-S1-t3
 
@@ -164,7 +166,7 @@ Subject: Ecosystem growth is one of the four KPI areas governing MegaETH's token
 
 Accepted. MegaETH, token KPI mechanism, four areas and ecosystem growth remain. The joined four-key-areas phrase in trial3 still describes the same KPI grouping; no other area or reward condition is added.
 
-The returned strings have 3 compatible placements; see [all positions](./repeats/review.json).
+The returned strings have 3 compatible placements; see all positions (`./repeats/review.json`).
 
 ## F02-S2-t1
 
@@ -190,7 +192,7 @@ Subject: Bread buns.
 
 Accepted. Bunz expresses bread buns in this complete source, whose bread hashtags disambiguate the ordinary word. The returned string is not a URL and includes no affinity. It also occurs inside the URL slug; that alternate occurrence selects the same word, not My or another meaning. This is recorded positional ambiguity, not a demonstrated scope-changing alternative or proof of which occurrence the model intended.
 
-The returned strings have 2 compatible placements; see [all positions](./batch-a/review.json). One alternative lies inside a URL, but the returned fragment is not itself a URL and no different scope is demonstrated.
+The returned strings have 2 compatible placements; see all positions (`./batch-a/review.json`). One alternative lies inside a URL, but the returned fragment is not itself a URL and no different scope is demonstrated.
 
 ## F03-S1-t2
 
@@ -202,7 +204,7 @@ Subject: Bread buns.
 
 Accepted. Bunz retains the bread-bun subject without affinity or homemade meaning, as in the first output. Both the ordinary-text and URL-slug matches remain recorded; neither selects additional words or proves an intended URL selection.
 
-The returned strings have 2 compatible placements; see [all positions](./repeats/review.json). One alternative lies inside a URL, but the returned fragment is not itself a URL and no different scope is demonstrated.
+The returned strings have 2 compatible placements; see all positions (`./repeats/review.json`). One alternative lies inside a URL, but the returned fragment is not itself a URL and no different scope is demonstrated.
 
 ## F03-S1-t3
 
@@ -214,7 +216,7 @@ Subject: Bread buns.
 
 Accepted. Bunz retains the bread-bun subject without affinity or homemade meaning, as in the first output. Both the ordinary-text and URL-slug matches remain recorded; neither selects additional words or proves an intended URL selection.
 
-The returned strings have 2 compatible placements; see [all positions](./repeats/review.json). One alternative lies inside a URL, but the returned fragment is not itself a URL and no different scope is demonstrated.
+The returned strings have 2 compatible placements; see all positions (`./repeats/review.json`). One alternative lies inside a URL, but the returned fragment is not itself a URL and no different scope is demonstrated.
 
 ## F03-S2-t1
 
@@ -668,7 +670,7 @@ Subject: NBA basketball.
 
 Accepted. NBA identifies the supplied basketball subject in this basketball post, without the trade claim. The abbreviation itself carries the sport identity; an additional Basketball token is not a required exact match.
 
-The returned strings have 2 compatible placements; see [all positions](./batch-d/review.json).
+The returned strings have 2 compatible placements; see all positions (`./batch-d/review.json`).
 
 ## F12-S1-t1
 
@@ -699,7 +701,7 @@ Subject: Opera will follow Google Chrome in eliminating all workarounds that all
 
 Accepted. Chrome identifies Google Chrome in the source; killing all uBlock Origin bypasses identifies the action Opera will follow. Opera and follow retain that relation without adding Microsoft Edge.
 
-The returned strings have 2 compatible placements; see [all positions](./batch-d/review.json). One alternative lies inside a URL, but the returned fragment is not itself a URL and no different scope is demonstrated.
+The returned strings have 2 compatible placements; see all positions (`./batch-d/review.json`). One alternative lies inside a URL, but the returned fragment is not itself a URL and no different scope is demonstrated.
 
 ## F13-S2-t1
 
@@ -863,3 +865,5 @@ Subject: Bijou calls for Leon from Resident Evil Requiem to come back.
 > https://media.misskeyusercontent.com/io/ea0a97cc-9dd0-4741-a0b3-81c9eee93700.jpg?sensitive=true
 
 Accepted. The game, Leon's requested return and named streamer preserve the call and attribution, without the separate fear expression.
+
+See [conversion gaps](../../../../docs/experiments/publication-gaps.csv) for `collection:tracked-mask-prompt-goal-v1`.

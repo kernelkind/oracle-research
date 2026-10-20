@@ -1,5 +1,7 @@
 # ASv6.23 — broader development comparison
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 ASv6.23 produced fully accepted subject lists for **27 of 28 notes**, compared with **25 of 28** for ASv6.13. The improvement is modest: one definite missing-context error was absent, and one uncertain wording was avoided. One uncertain interpretation remains.
 
 A fully accepted list has no identified error, unresolved judgment or missing meaning. This is assistant semantic review, not a measured population accuracy.
@@ -15,7 +17,7 @@ A fully accepted list has no identified error, unresolved judgment or missing me
 
 Both unchanged prompts ran once on each of the same 28 development notes, using Astra low: 56 fresh calls. Only ASv6.23's final subjects were scored; its context fields could not rescue incomplete subjects. All 552 subjects and all source notes were reviewed before prompt identities and context fields were revealed. Independent reviewers checked separate halves; disagreements and the main review's reconciliations are preserved.
 
-The [complete notes and outputs](./full-outputs.md) contain every subject and context field, unedited.
+The complete notes and outputs (`./full-outputs.md`) contain every subject and context field, unedited.
 
 ## The clear difference: hiring context
 
@@ -103,7 +105,7 @@ This does not add the reader role. This one uncertain wording accounts for the e
 
 ## Review corrections
 
-The initial judgments are preserved, not silently overwritten. The final [review](./review.json) explains each reconciliation.
+The initial judgments are preserved, not silently overwritten. The final review (`./review.json`) explains each reconciliation.
 
 - I initially flagged fee values for omitting block 923432. That was too strict: “a high-priority Bitcoin transaction fee level of 3” is a supported, independently understandable observation, not a universal rate. Broad and narrow subjects are allowed. This differs from earlier failures that omitted fee/mempool meaning itself or invented counts or units.
 - Visible requests such as “Connect on LinkedIn,” “Visit Us” and “Contact Us” communicate actions. They are not merely subjects saying that a URL or address exists. Minor meanings are allowed.
@@ -123,7 +125,7 @@ This comparison tests the changed prompt/output-format package, not an internal 
 
 ## Run record
 
-All 56 calls used separate ephemeral threads and temporary workspaces. Each had exactly one turn, one response and no tool events or retries. Input, prompt, schema and output hashes matched. The two schemas and both prompts were unchanged. The [technical verification](./technical-verification.json) preserves the checks.
+All 56 calls used separate ephemeral threads and temporary workspaces. Each had exactly one turn, one response and no tool events or retries. Input, prompt, schema and output hashes matched. The two schemas and both prompts were unchanged. The technical verification (`./technical-verification.json`) preserves the checks.
 
 | Reported tokens | ASv6.13 | ASv6.23 |
 |---|---:|---:|
@@ -137,3 +139,5 @@ ASv6.23 reported about **55% more output tokens**, including its context fields.
 Five sequential batches used at most 12 concurrent calls. Generation ran from 19:54:13 to 19:57:11 UTC, including the gap between batches. Maximum sampled interval was 5.00017 seconds, minimum available memory was 105.23 GiB, and sampled memory/I/O pressure was zero. All owned units were inactive afterward. Sampling does not observe sub-interval spikes; per-unit limits cannot bound descendants launched into separate scopes.
 
 Plan/config commit: `214764ea5acae42310949fb8649bd0a052eff058`. Goal generation-call total is now 588. No reserved final note was read, no new paid API/rental was used, and no personal notes document was edited. Existing final-data exposure remains a separate unresolved issue before final validation.
+
+See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-subject-prompt-goal-v1`.

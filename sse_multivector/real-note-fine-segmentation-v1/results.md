@@ -1,5 +1,7 @@
 # 100-note fine-segmentation results
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 The user reviewed the masks-only baseline and reported that the groupings all looked valid. This supports the pipeline's ability to form recognizable groups across real notes in this collection. The three HDBSCAN settings produce different groupings and leave different vectors ungrouped; this review does not select an overall winner.
 
 [Open the review instructions](review-handoff/README.md). [See the full notes and inline masks behind three observations](evidence.md).
@@ -76,9 +78,9 @@ Stop configuration exploration here: the comparisons expose a coverage/granulari
 
 ## Records
 
-- [Frozen input accounting](all-inputs-reviewed-checkpoint.json), [reviewed subjects and masks](reviewed-input.json), and [vector manifest](vectors/manifest.json).
-- [Baseline assessment](assistant-baseline-final.json), [leaf changes](assistant-leaf-changes.json), [leaf assessment calibration](assistant-baseline-additional-adjudications.json), and [density assessment](assistant-density-final.json).
-- [Ungrouped-vector inspection](unassigned-neighbor-inspection.json), [density membership changes](density-membership-comparison.json), and [review/run mapping](review-handoff/manifest.json).
+- Frozen input accounting (`all-inputs-reviewed-checkpoint.json`), reviewed subjects and masks (`reviewed-input.json`), and vector manifest (`vectors/manifest.json`).
+- Baseline assessment (`assistant-baseline-final.json`), leaf changes (`assistant-leaf-changes.json`), leaf assessment calibration (`assistant-baseline-additional-adjudications.json`), and density assessment (`assistant-density-final.json`).
+- Ungrouped-vector inspection (`unassigned-neighbor-inspection.json`), density membership changes (`density-membership-comparison.json`), and review/run mapping (`review-handoff/manifest.json`).
 - [Final interactive verification](handoff-smoke/interactive-check.md) and [integration regression evidence](integration-tests.md).
 
 Generation used 1,045 calls: 100 subject calls and 945 mask calls. Total recorded usage was 2,604,727 input tokens, including 1,526,784 cached tokens, and 133,208 output tokens, including 86,327 reasoning tokens. No calls needed retrying. SSE took 67.70 seconds on four local CPU cores and peaked at about 1.23 GiB of memory. No resource guard interruption or OOM occurred. No new paid service or rented compute was used.

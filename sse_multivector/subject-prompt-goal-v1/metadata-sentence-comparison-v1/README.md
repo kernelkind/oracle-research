@@ -1,5 +1,7 @@
 # ASv6.17 versus ASv6.18: content and presentation
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 ASv6.18 reduced unwanted metadata on three of the four targeted notes. The result is mixed: source attribution and commentary about missing text still need investigation. Neither prompt is ready to freeze, and the changed sentence is not yet retained as the next development baseline.
 
 ## What changed
@@ -47,18 +49,20 @@ The shorter content-versus-presentation sentence improved the targeted behavior 
 
 Across all 27 outputs per version, ASv6.17 had 8 clean outputs and 183/227 accepted subjects; ASv6.18 had 11 clean outputs and 174/210 accepted subjects. A clean output has no identified error or unresolved judgment and no identified missing meaning. These totals do not erase serious errors or establish a better overall prompt.
 
-Those are the original recorded review totals. The later [review correction](../semantic-review-audit-v2.json) accepts two ASv6.17 trial-2 subjects that reasonably express possibilities supported by the Riley Walz post. The adjusted ASv6.17 total is 185/227 accepted subjects. Its 8/27 clean outputs and this comparison's overall conclusion are unchanged; original reviews and verification outputs remain preserved.
+Those are the original recorded review totals. The later review correction (`../semantic-review-audit-v2.json`) accepts two ASv6.17 trial-2 subjects that reasonably express possibilities supported by the Riley Walz post. The adjusted ASv6.17 total is 185/227 accepted subjects. Its 8/27 clean outputs and this comparison's overall conclusion are unchanged; original reviews and verification outputs remain preserved.
 
 The predeclared metadata-improvement condition was met. The context tradeoff remains mixed: missing-text commentary occurred under both versions, but more often in ASv6.18, and attribution was worse or unresolved. This is not enough to infer a reliable causal regression or to retain the change automatically.
 
-The [subsequent confirmation](../metadata-confirmation-v1/README.md) completed three additional fresh outputs per prompt on D24 and D25. Metadata improvement persisted, but explicit wrong-source attribution recurred under ASv6.18. It was not promoted as an overall replacement. The [current goal status](../status.json) records the later full-development work; the original final-validation requirements remain mandatory.
+The [subsequent confirmation](../metadata-confirmation-v1/README.md) completed three additional fresh outputs per prompt on D24 and D25. Metadata improvement persisted, but explicit wrong-source attribution recurred under ASv6.18. It was not promoted as an overall replacement. The current goal status (`../status.json`) records the later full-development work; the original final-validation requirements remain mandatory.
 
 ## Evidence and execution
 
-- [Exact source notes](../asv6.18/input.json).
-- [Every subject judgment and whole-note coverage review](./review.json), preserving the generated wording and recording reviewer uncertainty separately.
-- Raw outputs: [ASv6.17 trial 1](./asv6.17-trial-1/output.json), [trial 2](./asv6.17-trial-2/output.json), [trial 3](./asv6.17-trial-3/output.json); [ASv6.18 trial 1](./asv6.18-trial-1/output.json), [trial 2](./asv6.18-trial-2/output.json), [trial 3](./asv6.18-trial-3/output.json).
-- [Verification](./verification.json): 54 unique fresh threads and working directories, one turn and no tools per call, exact prompts and raw hashes, all semantic reviews present, no reuse across the 273 earlier calls checked. This verifies provenance and review completeness, not the correctness of the judgments themselves.
-- [Runtime record](./runtime.json): sequential admission and host-pressure observations. Minimum observed available memory was 104.25 GiB; maximum memory PSI avg10 was 0.29 and I/O PSI avg10 was 5.32. Launcher limits do not bound separately scoped Codex children; host monitoring remained active.
+- Exact source notes (`../asv6.18/input.json`).
+- Every subject judgment and whole-note coverage review (`./review.json`), preserving the generated wording and recording reviewer uncertainty separately.
+- Raw outputs: ASv6.17 trial 1 (`./asv6.17-trial-1/output.json`), trial 2 (`./asv6.17-trial-2/output.json`), trial 3 (`./asv6.17-trial-3/output.json`); ASv6.18 trial 1 (`./asv6.18-trial-1/output.json`), trial 2 (`./asv6.18-trial-2/output.json`), trial 3 (`./asv6.18-trial-3/output.json`).
+- Verification (`./verification.json`): 54 unique fresh threads and working directories, one turn and no tools per call, exact prompts and raw hashes, all semantic reviews present, no reuse across the 273 earlier calls checked. This verifies provenance and review completeness, not the correctness of the judgments themselves.
+- Runtime record (`./runtime.json`): sequential admission and host-pressure observations. Minimum observed available memory was 104.25 GiB; maximum memory PSI avg10 was 0.29 and I/O PSI avg10 was 5.32. Launcher limits do not bound separately scoped Codex children; host monitoring remained active.
 
 Usage: 123,438 input tokens and 17,006 output tokens, including 7,561 reasoning tokens; 1,920 input tokens were cached. No new paid API or rental resources were used. The canonical ASv6.8 registry, validation plan and unseen final inputs remain unchanged.
+
+See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-subject-prompt-goal-v1`.

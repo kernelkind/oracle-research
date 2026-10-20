@@ -1,5 +1,7 @@
 # HDBv2 node descriptions: v1 versus v2
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 V2 removed the user-confirmed `Keywords` error in the art node. It also added an unsupported `Home` restriction to the coffee node. This small test does not establish v2 as a reliable replacement; v1 remains frozen.
 
 Only the question changed: `semantic similarity among these instances` became `subject matter shared by these instances`. The same complete three HDBv2 nodes, instance ordering, source fragments, formatting, Sol low model and wrapper were retained. Each node received one fresh isolated call. No prior titles, source notes, or review judgments were supplied.
@@ -49,10 +51,12 @@ Analysis: V2 drops Keywords and names subject matter. The user-confirmed input-f
 
 ## Reproducibility
 
-- [Frozen source packets and complete original notes](../hdbv2-node-description-probe-v1/source-packets.json) retain all 14 vector memberships and 26 exact source fragments. No source inputs or v1 files were changed.
-- [Comparison plan](comparison-plan.json) was saved before generation. [Measured comparison](comparison.json) records exact titles, usage, thread IDs and hashes.
+- Frozen source packets and complete original notes (`../hdbv2-node-description-probe-v1/source-packets.json`) retain all 14 vector memberships and 26 exact source fragments. No source inputs or v1 files were changed.
+- Comparison plan (`comparison-plan.json`) was saved before generation. Measured comparison (`comparison.json`) records exact titles, usage, thread IDs and hashes.
 - Each node directory contains the exact `config.json` prompt and the wrapper's original `run/manifest.json`, `run/results.jsonl`, `run/output.json`, and `run/model-instructions.md`.
 - All three v2 runs succeeded on their first attempts with distinct fresh threads. No retry or output selection occurred. The wrapper disables tools/web and runs from an empty temporary workspace with explicit minimal model instructions; unavoidable service-level context is not claimed absent.
 - V2 used 5,346 input tokens and 452 output tokens, including 418 reasoning tokens. No additional API billing or rented compute was used.
 
 One output per prompt per node cannot distinguish a prompt effect from sampling variation. The art wording improved in this run; the coffee restriction and unresolved consumption scope prevent declaring the prompt solved. The user has confirmed the original Keywords error and v2's unsupported Home restriction. The consumption scope concern remains an assistant judgment, not a confirmed failure.
+
+**Publication status:** `collection:tracked-hdbv2-node-description-probe-v2` remains in the [conversion review list](../../docs/experiments/publication-gaps.csv); a complete compact-data conversion has not been established.

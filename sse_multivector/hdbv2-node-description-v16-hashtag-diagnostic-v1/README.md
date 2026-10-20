@@ -1,5 +1,7 @@
 # V16 hashtag diagnostic
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 Restoring the original hashtag markers produced “Dogs” in all three calls. Without them, one call produced “Dogs” and two produced string-based titles.
 
 ## Inputs and complete results
@@ -37,10 +39,12 @@ No permanent mask or title-input change follows automatically. V16 remains unfro
 
 ## Saved evidence
 
-[run-plan.json](./run-plan.json) was saved before the six calls. [source-packet.json](./source-packet.json) preserves both full original notes and masks. [results.json](./results.json) records every output, assessment, usage and integrity checks. Each condition's `trial-{1,2,3}/` preserves its exact config, raw output and execution record.
+[run-plan.json](./run-plan.json) was saved before the six calls. `./source-packet.json` preserves both full original notes and masks. `./results.json` records every output, assessment, usage and integrity checks. Each condition's `trial-{1,2,3}/` preserves its exact config, raw output and execution record.
 
 An independent audit confirmed exact inputs, source-byte adjacency, settings, hashes, fresh threads/workspaces and all six outputs. Its assessment agrees with the conclusion above. The invoking executor used `max_workers=3`; per-call records alone lack the timestamps needed to independently reconstruct peak concurrency.
 
-The two [earlier v16 dog results](../hdbv2-node-description-probe-v16/comparison.json) are preserved separately, not counted as fresh trials here. The [v16 run record](../hdbv2-node-description-probe-v16/README.md) retains the user's accepted titles and original assessments.
+The two earlier v16 dog results (`../hdbv2-node-description-probe-v16/comparison.json`) are preserved separately, not counted as fresh trials here. The [v16 run record](../hdbv2-node-description-probe-v16/README.md) retains the user's accepted titles and original assessments.
 
 The [official GPT-5.6 guidance](https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6#prompt-migration-workflow) informed changing one input feature while keeping the prompt and execution settings fixed. It does not establish the semantic interpretation or generalizability of this result.
+
+**Publication status:** `collection:tracked-hdbv2-node-description-v16-hashtag-diagnostic-v1` remains in the [conversion review list](../../docs/experiments/publication-gaps.csv); a complete compact-data conversion has not been established.

@@ -1,5 +1,7 @@
 # V16 node-title test
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 Three of the four previously failed groups now have usable titles in both trials. The dog group still receives a title about strings. The user accepted the only uncertain title, “Temporal deceleration.” No focused review questions remain. V16 remains unfrozen.
 
 ## Results
@@ -35,7 +37,7 @@ cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
 
 `run-review-problems.sh` shows both dog responses. `run-review-all.sh` shows all 18 responses. Each has a separate session. B shows the exact saved v15 answer. No decisions were prefilled; the focused session now contains the user's actual approval.
 
-I read every mask and response. Before user review, an independent semantic review agreed on both dog failures and the uncertain time title, but also questioned “Casual conversation about one’s day.” I accept that title because it describes the communication about someone's day, rather than merely classifying English expressions. The initial disagreement is preserved in [assessment-audit.json](./assessment-audit.json), not concealed as unanimous agreement. The subsequent user approval is recorded above without rewriting those earlier assessments.
+I read every mask and response. Before user review, an independent semantic review agreed on both dog failures and the uncertain time title, but also questioned “Casual conversation about one’s day.” I accept that title because it describes the communication about someone's day, rather than merely classifying English expressions. The initial disagreement is preserved in `./assessment-audit.json`, not concealed as unanimous agreement. The subsequent user approval is recorded above without rewriting those earlier assessments.
 
 ## What changed
 
@@ -58,7 +60,7 @@ Independent provenance checks passed for exact prompts, all masks and byte spans
 
 This is a same-case development retest against historical v15 outputs, not a concurrent v15 comparison or an unseen-data test. Two trials give limited repetition evidence; they do not establish causality, general reliability or justify freezing v16.
 
-[run-plan.json](./run-plan.json) was saved before generation. [comparison.json](./comparison.json) preserves every response, complete masks, historical baseline and main assessment. [source-packets.json](./source-packets.json) retains full notes and byte spans for provenance only. Each `trial-{1,2}/<group>/run/` retains the raw call, output, usage and hashes. [verification.json](./verification.json) records integrity and packaging checks.
+[run-plan.json](./run-plan.json) was saved before generation. `./comparison.json` preserves every response, complete masks, historical baseline and main assessment. `./source-packets.json` retains full notes and byte spans for provenance only. Each `trial-{1,2}/<group>/run/` retains the raw call, output, usage and hashes. `./verification.json` records integrity and packaging checks.
 
 The [official GPT-5.6 guidance](https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6#prompt-migration-workflow) informed the targeted edit and controlled retest, not the semantic judgments.
 
@@ -67,3 +69,5 @@ The [complete v15 artifact](../hdbv2-node-titles-v15/README.md) remains unchange
 The user then approved a [hashtag-input diagnostic](../hdbv2-node-description-v16-hashtag-diagnostic-v1/README.md) on the dog group, keeping v16 and Sol-low fixed. Three fresh original-input calls produced one “Dogs” and two string-based titles; restoring the original `#` markers produced “Dogs” three times. This supports omitted hashtag context as a contributor for this group, not a general fix or a reason to overwrite the earlier failures. Canonical masks, prior outputs, prompt and freeze state remain unchanged. Any permanent input change or broader test remains a separate decision.
 
 The user rejected both hashtag-specific preprocessing and the unrun v17 proposal to remove the per-instance check. The subsequently authorized [v18 test](../hdbv2-node-description-probe-v18/README.md) keeps that check and every mask unchanged, adding only that the quoted text comes from social-media posts. After 24 initial quota failures, all 24 fresh comparison calls succeeded. Both versions returned Dogs twice; v18 introduced two unsupported tea-and-urination titles, and both versions produced Visual Art where the strict criterion supports only Art. The added sentence has no demonstrated benefit in this comparison. Previous results and failures remain preserved; neither prompt is frozen.
+
+**Publication status:** `collection:tracked-hdbv2-node-description-probe-v16` remains in the [conversion review list](../../docs/experiments/publication-gaps.csv); a complete compact-data conversion has not been established.

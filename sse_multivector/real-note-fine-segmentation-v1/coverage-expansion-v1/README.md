@@ -1,5 +1,7 @@
 # HDBv2 coverage follow-up
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 ## What happened
 
 Adding related notes repaired the gianduja placement. It did not cleanly repair all three rejected placements. Adding the same number of other-subject notes left all three original segments unchanged.
@@ -12,7 +14,7 @@ Adding related notes repaired the gianduja placement. It did not cleanly repair 
 
 Both user reviews are complete. The related addition has **20 valid, 2 invalid, 2 uncertain** segments; the other-subject addition has **13 valid, 6 invalid, 0 uncertain**. All 43 decisions are confirmed. These counts cover only new or changed segments, not all segments in either run. Assistant assessments remain saved separately. No segment titles were generated.
 
-The [full source notes with inline masks](target-evidence.md) show each original target and its closest different-note mask before and after the related addition. [Exact scores](target-comparison.json) retain the ten closest different-note vectors for every target in all three runs. The complete segments, not just nearest neighbors, are in the review tool below.
+The [full source notes with inline masks](target-evidence.md) show each original target and its closest different-note mask before and after the related addition. Exact scores (`target-comparison.json`) retain the ten closest different-note vectors for every target in all three runs. The complete segments, not just nearest neighbors, are in the review tool below.
 
 ## What changed and what stayed fixed
 
@@ -82,7 +84,7 @@ Preserving the subject is not the same as preserving every detail. V492 omits V4
 
 Only V491, ⟦fall⟧ ⟦definitely here⟧, becomes ungrouped. V492 and V493 from that same note remain with V728/V729 in `S577ad54ac5`. Both the fall meaning and the original connection to the frosty-garden note survive. This is a lost vector membership, not a lost connection between those notes.
 
-Evidence: the original [complete review](../hdbscan-cross-note/review/review.json), the [related-addition complete review](arm-a-hdbv2/review/review.json), and the [other-subject complete review](arm-b-hdbv2/review/review.json) preserve every source note and mask range. The comparison JSON files above record the placements. This inspection used saved results only; nothing was regenerated or regrouped.
+Evidence: the original complete review (`../hdbscan-cross-note/review/review.json`), the related-addition complete review (`arm-a-hdbv2/review/review.json`), and the other-subject complete review (`arm-b-hdbv2/review/review.json`) preserve every source note and mask range. The comparison JSON files above record the placements. This inspection used saved results only; nothing was regenerated or regrouped.
 
 ## Review
 
@@ -138,6 +140,9 @@ Review set: `RN0a50c8a3dcab`. All decisions match the session and original revie
 The local session and response files for both reviews remain untracked and unmodified by this documentation update.
 
 ### Commands to revisit the completed reviews
+
+These historical commands require the original local review artifacts and the
+previously built review executable.
 
 Related addition — 24 segments:
 

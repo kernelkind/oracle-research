@@ -1,5 +1,7 @@
 # ASv6.13 versus ASv6.19: repeated results
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 Neither prompt is ready to freeze. ASv6.19 did better overall on these repeated notes, but the comparison does not establish a reliable overall improvement.
 
 | Evidence | ASv6.13 | ASv6.19 |
@@ -31,7 +33,7 @@ We used the eight fixed difficult notes plus every note whose clean result diffe
 | D27 — Cartoon-ban investigation | 2 | 3 |
 | D28 — Tether / Hormuz Safe | 2 | 2 |
 
-D-numbers identify the frozen development notes. [Every trial's result and flagged subject](./assessment.json) is recorded separately from the [complete subject-by-subject reviews](./review.json).
+D-numbers identify the frozen development notes. Every trial's result and flagged subject (`./assessment.json`) is recorded separately from the complete subject-by-subject reviews (`./review.json`).
 
 ### Gains that held, weakened, or disappeared
 
@@ -98,11 +100,13 @@ Calls were admitted one at a time under the existing host-pressure limits. I/O p
 
 Each output file contains every original note and every generated subject, without editing:
 
-- [ASv6.13, trial 2](./asv6.13-trial2/output.json)
-- [ASv6.19, trial 2](./asv6.19-trial2/output.json)
-- [ASv6.13, trial 3](./asv6.13-trial3/output.json)
-- [ASv6.19, trial 3](./asv6.19-trial3/output.json)
+- ASv6.13, trial 2 (`./asv6.13-trial2/output.json`)
+- ASv6.19, trial 2 (`./asv6.19-trial2/output.json`)
+- ASv6.13, trial 3 (`./asv6.13-trial3/output.json`)
+- ASv6.19, trial 3 (`./asv6.19-trial3/output.json`)
 - [First paired test, including full sources and both outputs](../contract-comparison-v1/README.md)
 - [Predeclared confirmation proposal](./proposal.json)
-- [Reviews](./review.json), [pre-reveal judgments](./blind-review.json), and [identity mapping](./blind-review-key.json)
-- [Verification results](./verification.json) and [resource/execution observations](./runtime.json)
+- Reviews (`./review.json`), pre-reveal judgments (`./blind-review.json`), and identity mapping (`./blind-review-key.json`)
+- Verification results (`./verification.json`) and resource/execution observations (`./runtime.json`)
+
+See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-subject-prompt-goal-v1`.

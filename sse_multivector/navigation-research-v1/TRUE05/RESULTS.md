@@ -1,5 +1,7 @@
 # TRUE05 — Do the current titles clarify the old ambiguous relationships?
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 Six of seven selected pairs now have clear category meanings for this comparison. **TRUE still missed the one valid containment tested: Foods featuring meat or seafood → Steak.** It rejected all twelve directions.
 
 The first finding concerns title clarity; the second concerns TRUE's answers. Neither is a constructed hierarchy or a general accuracy estimate. These are seven reused cases, not a holdout. Some old cards already had user decisions; this is not a claim that all six clear cases were previously undecidable to the user.
@@ -218,12 +220,14 @@ Previous uncertainty: The parent explicitly limits itself to savory dishes. Sea 
 
 ## What changed, and what did not
 
-The title strings are the existing generated v21 titles, not newly written for this test. In particular, the old Food Ingredients group is now Foods featuring meat or seafood; this clarifies the actual group but changes the question compared with the old broad wording. Old user answers and TRUE04 scores remain intact. [comparison.json](./comparison.json) retains both versions of every tested direction without assigning the current answers to the old titles.
+The title strings are the existing generated v21 titles, not newly written for this test. In particular, the old Food Ingredients group is now Foods featuring meat or seafood; this clarifies the actual group but changes the question compared with the old broad wording. Old user answers and TRUE04 scores remain intact. `./comparison.json` retains both versions of every tested direction without assigning the current answers to the old titles.
 
 Six current pairs were judged clear before inference. A fresh independent reviewer saw only current titles and masks, not prior decisions or model scores, and agreed on all twelve tested directions. The main reviewer had seen historical work, so this is not claimed as a wholly blinded new benchmark. U052 remained uncertain after reconciliation and was excluded before inference.
 
-The [plan](./plan.json), [frozen judgments and masks](./semantic-review.json), [exact model inputs](./run/inputs.json), [raw outputs](./run/scores.jsonl), [configuration](./run/config.json), [resource record](./resources.json), and [verification](./verification.json) preserve the experiment. The unchanged renderer's inherited holdout wording in run/DECISIONS.md must not be interpreted as a holdout design here.
+The [plan](./plan.json), frozen judgments and masks (`./semantic-review.json`), exact model inputs (`./run/inputs.json`), raw outputs (`./run/scores.jsonl`), configuration (`./run/config.json`), resource record (`./resources.json`), and verification (`./verification.json`) preserve the experiment. The unchanged renderer's inherited holdout wording in run/DECISIONS.md must not be interpreted as a holdout design here.
 
 Offline cached TRUE ran once, CPU float32, four threads, batch size four, with the same weights, generation settings, input template and 0.142 cutoff as TRUE04. Model work took about 78 seconds including checkpoint verification/loading and 17 seconds for the inference/report interval. Peak process RSS was about 43.7GiB. No downloads, training, paid API calls or rentals occurred. The scope was memory-limited and exited successfully.
 
 No title prompt was changed or frozen, no title was manually corrected, and no hierarchy was constructed. The category-label evidence is encouraging in these selected cases; dependable containment decisions remain unestablished.
+
+**Selected data:** Compact pair-score results, inputs and parameters for `TRUE05/run` are selected for release as `numerical/pair-scores-57a416d20d022ca3` in the [publication catalog](../../../docs/experiments/publications.csv). These compact exports use a different format. Other cited artifacts remain separate originals.

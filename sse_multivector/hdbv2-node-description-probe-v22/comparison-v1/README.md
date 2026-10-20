@@ -1,5 +1,7 @@
 # V21 versus v22: explicit social-media context
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 Adding the known source setting did not produce a clear Coffeechain correction in this small test. V22 returned **Coffee shop chains twice** and **Coffee chains once**. The last title is ambiguous, not an established fix. Both controls retained their subjects.
 
 V22 contains only one change from v21: the opening sentence “Each instance contains text from a social-media post.” All other prompt wording and all masks are unchanged. Both versions ran three times on every group: **18 fresh Astra-low calls**. Earlier responses were not substituted for new baseline calls.
@@ -81,6 +83,8 @@ cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector
 - Generation usage: **41,334 input tokens** (11,904 cached), **1,183 output tokens** (990 reasoning), **42,517 input plus output tokens**. Cached and reasoning counts are subsets; main-agent work and the independent audit are excluded.
 - No API billing, purchases, rentals or account switch. No saved title replacement, prompt freeze or TRUE run. CREC-127 is the tracking card; Plane tools were unavailable.
 
-[Exact baseline inputs](./inputs-v21.json), [exact candidate inputs](./inputs-v22.json), [all outputs and usage](./comparison.json), [run plan](./run-plan.json), [verification](./verification.json).
+Exact baseline inputs (`./inputs-v21.json`), exact candidate inputs (`./inputs-v22.json`), all outputs and usage (`./comparison.json`), [run plan](./run-plan.json), verification (`./verification.json`).
 
 The [official evaluation guidance](https://developers.openai.com/api/docs/guides/evaluation-best-practices#what-are-evals) informs scoped comparisons and calibration to human judgment, not the semantic verdicts.
+
+**Publication status:** `collection:tracked-hdbv2-node-description-probe-v22` remains in the [conversion review list](../../../docs/experiments/publication-gaps.csv); a complete compact-data conversion has not been established.

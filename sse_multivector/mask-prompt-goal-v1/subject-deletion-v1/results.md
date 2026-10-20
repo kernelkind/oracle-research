@@ -1,5 +1,7 @@
 # Subject-conditioned removal: first six notes
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 All 14 masks were accepted: twelve subjects from six notes, with two additional M05 trials. The unchanged baseline had eleven accepted masks and three M05 scope errors on these same inputs. This candidate corrected that observed error without a new observed error in this small set.
 
 The change replaces ambiguous minimization wording with removal judged against the fixed supplied subject. These results do not establish why the change worked, corpus-wide reliability, SSE quality, or segmentation quality.
@@ -8,7 +10,7 @@ The remaining development calls are recorded in [completed development](./develo
 
 Generation usage for these 14 calls: 34,599 input tokens and 1,557 output tokens. Cached input (7,680) is included in input; reasoning (1,255) is included in output.
 
-Full source notes follow. Each highlight shows the returned fragments at the first source-order-compatible placement. [All placement alternatives](./mechanical-checks.json) and [execution verification](./verification.json) are saved separately; this display does not claim SSE equivalence across placements.
+Full source notes follow. Each highlight shows the returned fragments at the first source-order-compatible placement. All placement alternatives (`./mechanical-checks.json`) and execution verification (`./verification.json`) are saved separately; this display does not claim SSE equivalence across placements.
 
 ## M01-t1
 
@@ -213,3 +215,5 @@ Subject: The library app has a button at the end of each chapter that takes read
 >
 
 Accepted. Retains the library app, chapter-end button, Primal and the full Nostr onboarding experience. The complete post supplies the ordinary reader reference; this does not introduce a new missing-reference standard.
+
+See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-mask-prompt-goal-v1`.

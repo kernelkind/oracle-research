@@ -1,5 +1,7 @@
 # Explaining the Coffeechain masks
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 All three fresh Astra-low responses recognize hashtag notation but still interpret **coffeechain as a commercial coffee-shop chain**. The mistaken interpretation persists when the task asks for an explanation rather than a category title.
 
 ## Exact input
@@ -66,6 +68,8 @@ The intended next discussion concerns the name’s interpretation, not teaching 
 - Generation usage: 6,510 input tokens (5,760 cached), 311 output tokens (46 reasoning); **6,821 input plus output tokens**. Cached and reasoning counts are subsets. Main-agent work and the independent audit are not included.
 - No new API billing, rental, account switch or purchase. CREC-127 remains the tracking card; Plane tools were unavailable.
 
-[Run plan](./run-plan.json), [all raw responses and usage](./responses.json), [analysis](./analysis.json), [integrity checks](./verification.json), [previous title diagnostic](../hdbv21-format-sentence-v1/README.md).
+[Run plan](./run-plan.json), all raw responses and usage (`./responses.json`), analysis (`./analysis.json`), integrity checks (`./verification.json`), [previous title diagnostic](../hdbv21-format-sentence-v1/README.md).
 
 The [official evaluation guidance](https://developers.openai.com/api/docs/guides/evaluation-best-practices#what-are-evals) informed the scoped test and preserved evidence, not its semantic conclusions.
+
+**Publication status:** `collection:tracked-hdbv21-interpretation-v1` remains in the [conversion review list](../../docs/experiments/publication-gaps.csv); a complete compact-data conversion has not been established.

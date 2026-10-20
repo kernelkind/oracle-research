@@ -1,5 +1,7 @@
 # Making the CEO references explicit
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 The original passage lost the CEO reference in all three outputs. The edited passage retained it for all four tested meanings in all three outputs.
 
 ## What changed
@@ -68,7 +70,7 @@ The wording below is copied unchanged from the recorded outputs. “Context miss
 
 ### Original, trial 1
 
-[Complete input](./inputs/original.json) · [Raw output](./original-1/run/output.json)
+Complete input (`./inputs/original.json`) · Raw output (`./original-1/run/output.json`)
 
 1. A CEO holding calls for all employees.
 2. A CEO answering employee questions at the end of all-employee calls.
@@ -94,7 +96,7 @@ The wording below is copied unchanged from the recorded outputs. “Context miss
 
 ### Original, trial 2
 
-[Complete input](./inputs/original.json) · [Raw output](./original-2/run/output.json)
+Complete input (`./inputs/original.json`) · Raw output (`./original-2/run/output.json`)
 
 1. A CEO holds calls for all employees.
 2. A CEO takes employee questions at the end of all-employee calls.
@@ -123,7 +125,7 @@ The wording below is copied unchanged from the recorded outputs. “Context miss
 
 ### Original, trial 3
 
-[Complete input](./inputs/original.json) · [Raw output](./original-3/run/output.json)
+Complete input (`./inputs/original.json`) · Raw output (`./original-3/run/output.json`)
 
 1. A CEO holding calls for all employees.
 2. A CEO answering questions at the end of calls for all employees.
@@ -149,7 +151,7 @@ The wording below is copied unchanged from the recorded outputs. “Context miss
 
 ### Edited, trial 1
 
-[Complete input](./inputs/explicit.json) · [Raw output](./explicit-1/run/output.json)
+Complete input (`./inputs/explicit.json`) · Raw output (`./explicit-1/run/output.json`)
 
 1. A CEO holds calls for all employees.
 2. A CEO takes questions at the end of calls for all employees.
@@ -172,7 +174,7 @@ The wording below is copied unchanged from the recorded outputs. “Context miss
 
 ### Edited, trial 2
 
-[Complete input](./inputs/explicit.json) · [Raw output](./explicit-2/run/output.json)
+Complete input (`./inputs/explicit.json`) · Raw output (`./explicit-2/run/output.json`)
 
 1. A CEO holds calls for all employees.
 2. A CEO answers questions at the end of all-employee calls.
@@ -195,7 +197,7 @@ The wording below is copied unchanged from the recorded outputs. “Context miss
 
 ### Edited, trial 3
 
-[Complete input](./inputs/explicit.json) · [Raw output](./explicit-3/run/output.json)
+Complete input (`./inputs/explicit.json`) · Raw output (`./explicit-3/run/output.json`)
 
 1. A CEO holds calls for all employees.
 2. A CEO answers employee questions at the end of all-employee calls.
@@ -225,6 +227,8 @@ Six calls completed in 29.217 seconds from first admission to observed completio
 
 Minimum sampled available memory was 106.77 GiB; sampled memory and I/O pressure stayed zero. Polling targeted five seconds, with a maximum observed gap of 8.606 seconds during admission/status collection. No new paid API or rental was used; no cost in subscription credits was measured.
 
-[Predeclared plan](./proposal.json) · [Main review](./review.json) · [Independent review](./independent-review.json) · [Assessment](./assessment.json) · [Artifact checks](./verification.json) · [Runtime](./runtime.json)
+[Predeclared plan](./proposal.json) · Main review (`./review.json`) · Independent review (`./independent-review.json`) · Assessment (`./assessment.json`) · Artifact checks (`./verification.json`) · Runtime (`./runtime.json`)
 
 Method reference: [OpenAI evaluation guidance](https://developers.openai.com/api/docs/guides/evaluation-best-practices#single-turn-model-interactions), distinguishing input/instruction behavior from output correctness. The findings above come from this experiment, not from the guidance.
+
+See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-subject-prompt-goal-v1`.

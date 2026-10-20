@@ -88,6 +88,24 @@ remain historical evidence; raw source posts are not deprecated by that rule.
   remaining before publication. [Publication gaps](publication-gaps.csv) retain
   the individual outstanding conversion and collection-review items.
 
+## Reading the research records
+
+Research READMEs and findings retain the investigation's measurements,
+interpretations and recorded judgments. Unlinked data file references identify
+original saved artifacts outside this checkout. Historical inspection and replay
+commands may require those originals.
+
+Where a record has selected release data, it names the bundle's `publication`
+ID in the [publication catalog](publications.csv). Search that exact ID in the
+[file list](publication-files.csv) for its exported filenames and checksums.
+The catalog records the source and export format; a selected bundle can cover
+part of a study without recreating its original working directory.
+
+These exports are still local. [Hosting and download preparation](downloads.md#before-downloads-become-available)
+remains open. Some older collections still need
+[conversion review](publication-gaps.csv); their maintained findings remain
+readable here while that work is pending.
+
 ## Release layout
 
 The agreed [public Git layout](downloads.md#public-git-contents) keeps code and
@@ -136,11 +154,12 @@ Downloads, portable training/L1 recomputation and replay of historical
 collections remain unfinished.
 Fresh model answers need not match saved answers.
 
-Authored findings still link to original generated files, and some saved-result
-tests and replay scripts require those files. They remain available locally;
-[reader-link and replay work](open-items.md#original-file-links-and-replay)
-is required before claiming the documentation and workflows work from a clean
-public checkout.
+Research records now distinguish original file references from selected result
+exports, as explained [above](#reading-the-research-records). The reviewed links
+to removed generated files have been repaired. Some saved-result tests and
+replay scripts still require original artifacts; their
+[clean-checkout replay plan](open-items.md#original-file-links-and-replay)
+remains open. Missing reports and unfinished conversions are recorded there too.
 
 Generation commits, later audit/export commits and the publication commit serve
 different purposes. Their original IDs remain in the evidence. The

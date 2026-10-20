@@ -1,10 +1,12 @@
 # TRUE10 — Complete category connections
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 This is the uncorrected graph after the two reviewed equivalence consolidations. It is not an acyclic hierarchy: two cycles remain. All 88 accepted connections are shown; no redundant links have been removed.
 
 A child listed here was accepted by score > 0.142. That is not a guarantee of semantic correctness. “Own notes” come from this category’s masks; “including descendants” also follows every accepted connection, including incorrect ones.
 
-Full original notes, exact masks and byte ranges: [notes.json](./derived/notes.json). Raw decisions and origins: [scores.json](./graph/scores.json).
+Full original notes, exact masks and byte ranges: `./derived/notes.json`. Raw decisions and origins: `./graph/scores.json`.
 
 ## Consuming large amounts of food or drink in a short time — S004153390e
 
@@ -1068,3 +1070,5 @@ Source masks:
 - V362: ⟦bagels⟧ ⟦sea salt flakes⟧
 - V538: ⟦Mushroom Risotto with Shrimp⟧ ⟦Sea Salt⟧
 - V360: ⟦bagels⟧ ⟦sesame⟧ ⟦sea salt flakes⟧ ⟦plain⟧
+
+**Selected data:** Compact pair-score results, inputs and parameters for `TRUE10/run` are selected for release as `numerical/pair-scores-07918e7ce41db212` in the [publication catalog](../../../docs/experiments/publications.csv). The compact export uses a different format. The graph and note-membership JSON files above are separate originals and are not included in the TRUE10/run score export.

@@ -1,8 +1,10 @@
 # USM01 source results
 
-Every original note and frozen mask appears below. The description is the text actually encoded; only its lexical word occurrences were scored. These are not SSE masks or generated navigation labels. Trailing line whitespace is omitted in this Markdown display; exact source text remains in [inputs.json](./run/inputs.json).
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
 
-`Row/index` identifies a word in one description. Saved = saved lemma and part of speech. Surface = original-word morphology across parts of speech. Unrestricted = entire sense inventory. Numbers are cosine similarities, not confidence probabilities. A dash means no eligible candidate. Each cell shows the highest match; [scores.json](./run/scores.json) preserves all five matches, exact scores and candidate counts.
+Every original note and frozen mask appears below. The description is the text actually encoded; only its lexical word occurrences were scored. These are not SSE masks or generated navigation labels. Trailing line whitespace is omitted in this Markdown display; exact source text remains in `./run/inputs.json`.
+
+`Row/index` identifies a word in one description. Saved = saved lemma and part of speech. Surface = original-word morphology across parts of speech. Unrestricted = entire sense inventory. Numbers are cosine similarities, not confidence probabilities. A dash means no eligible candidate. Each cell shows the highest match; `./run/scores.json` preserves all five matches, exact scores and candidate counts.
 
 ## Row 88 · N094 · V854
 

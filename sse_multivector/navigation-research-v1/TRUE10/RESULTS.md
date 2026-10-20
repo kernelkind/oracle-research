@@ -1,5 +1,7 @@
 # TRUE10 — Building the graph with TRUE
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 TRUE creates useful parent–child connections, but the unchanged 0.142 rule does **not** produce a usable hierarchy as-is. Two incorrect reverse connections create cycles and give narrower categories their supposed parents’ entire contents. Other valid destinations still miss relevant categories and notes.
 
 No titles, masks or non-equivalence connections were repaired. No new UI was built.
@@ -80,10 +82,12 @@ These are assistant judgments about repeated categories, not independent test ex
 ## Records
 
 - [Complete connections, category IDs and source masks](./GRAPH.md)
-- [Original notes, masks and recursive note memberships](./derived/notes.json)
-- [Every ordered decision and its source](./graph/scores.json)
-- [Raw graph](./graph/graph.json) and [graph after the two reviewed consolidations](./derived/graph.json)
-- [Initial independent review](./semantic-review.json), [all direct/path/note comparisons](./derived/semantic-comparison.json), and [additional review](./additional-semantic-review.json)
-- [Analysis and counts](./analysis.json), [frozen run plan](./plan.json), and [final integrity verification](./final-verification.json)
+- Original notes, masks and recursive note memberships (`./derived/notes.json`)
+- Every ordered decision and its source (`./graph/scores.json`)
+- Raw graph (`./graph/graph.json`) and graph after the two reviewed consolidations (`./derived/graph.json`)
+- Initial independent review (`./semantic-review.json`), all direct/path/note comparisons (`./derived/semantic-comparison.json`), and additional review (`./additional-semantic-review.json`)
+- Analysis and counts (`./analysis.json`), [frozen run plan](./plan.json), and final integrity verification (`./final-verification.json`)
 
 The local, offline CPU model run took 71.4 minutes including loading and peaked at 44.2 GiB RSS. It used one process, four threads, a 60 GiB memory cap and no swap allowance. No new paid resource or API call was used. Earlier experiment measurements are preserved.
+
+**Selected data:** Compact pair-score results, inputs and parameters for `TRUE10/run` are selected for release as `numerical/pair-scores-07918e7ce41db212` in the [publication catalog](../../../docs/experiments/publications.csv). These compact exports use a different format. Other cited artifacts remain separate originals.

@@ -1,5 +1,7 @@
 # TRUE03 execution and verification
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 Run locally on September 14, 2026. No training, paid compute, API call, model download or GPU. Previous raw experiment artifacts are preserved.
 
 ## Identity and environment
@@ -39,7 +41,7 @@ A separate read-only agent reconstructed every input from the frozen title file 
 
 It then replayed the saved 44 × 32,128 first-token logits using NumPy, independently verified tokenization/native decoding/EOS, all recorded score diagnostics, cutoff decisions, aggregate counts, score orderings and completion hashes. Maximum numerical discrepancy was **8.88e-16**; maximum input length was **30 tokens**, without truncation. No second neural-model load or weight rehash was used; verification peak RSS was approximately 140 MiB.
 
-[Verification record](verification.json), [raw runtime measurements and output hashes](completion.json).
+Verification record (`verification.json`), raw runtime measurements and output hashes (`completion.json`).
 
 ## Exact inference command
 
@@ -50,3 +52,5 @@ awk '/MemAvailable/ { if ($2 < 70 * 1024 * 1024) { print "Insufficient available
 ```
 
 Plane tools were unavailable, so no external card status or comment was changed.
+
+**Selected data:** Compact pair-score results, inputs and parameters for `TRUE03` are selected for release as `numerical/pair-scores-cc65be11ce8ebfa5` in the [publication catalog](../../../docs/experiments/publications.csv). These compact exports use a different format. Other cited artifacts remain separate originals.

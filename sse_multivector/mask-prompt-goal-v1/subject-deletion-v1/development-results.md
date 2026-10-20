@@ -1,12 +1,14 @@
 # Subject-conditioned removal: completed development
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 All 36 outputs were accepted across 12 notes and 24 fixed subjects. Each of the six predesignated repeated subjects passed all three trials. This meets the 35/36 development threshold and repeatability rule. [Separate final validation](./final/results.md) subsequently passed at 52/52 with the same prompt.
 
 The prompt, Astra-low settings and ASv6.23 subjects stayed unchanged. The earlier baseline had three scope errors among the first 14 corresponding outputs; this candidate corrected those without an observed new error on those inputs. The additional notes test broader coverage, not a controlled baseline comparison.
 
 Generation usage for all 36 calls: 90,754 input tokens and 3,777 output tokens. Cached input (17,792) is included in input; reasoning (2,947) is included in output.
 
-[First 14 masks, with complete notes](./results.md) · [Ten repeat judgments](./remaining-repeats/review.json) · [New notes A](./new-notes-a/review.json) · [New notes B](./new-notes-b/review.json)
+[First 14 masks, with complete notes](./results.md) · Ten repeat judgments (`./remaining-repeats/review.json`) · New notes A (`./new-notes-a/review.json`) · New notes B (`./new-notes-b/review.json`)
 
 The remaining 22 outputs follow. Each highlight uses the first source-order-compatible placement. Exact strings and all compatible placements are in the linked reviews. Multiple possible placements are reported, not silently treated as a unique SSE input. These judgments do not establish SSE or segmentation quality.
 
@@ -417,3 +419,5 @@ Subject: An olive tree on the Acropolis.
 > https://media.vive.im/media_attachments/files/115/341/401/464/847/432/original/1b06e02bd9b3ea7c.jpg
 
 Accepted. The caption's olive tree and Acropolis location are retained, without credit text or image URLs.
+
+See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-mask-prompt-goal-v1`.

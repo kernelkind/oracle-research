@@ -1,5 +1,7 @@
 # Hierarchy Construction from SSE Vectors
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../experiments/README.md#reading-the-research-records).
+
 ## Scope and conclusion
 
 This review keeps SSE, the source notes, and their existing masked-subject vectors fixed. It examines alternative ways to organize those vectors into a browsable hierarchy of notes. It does not select a replacement encoder, generate category labels, or declare a hierarchy algorithm validated. Sources and repository evidence were checked on 2026-09-10.
@@ -197,7 +199,7 @@ No candidate has been run or selected by this review.
 [^1]: Repository design, [Atomic-Subject Content Hierarchy](../design/atomic-vector-subject-hierarchy.md), especially Status, Goal, Separation of Concerns, and hierarchy membership requirements. Snapshot inspected 2026-09-10.
 [^2]: Repository experiment, [Cross-note density and HDBv3 results](../../../sse_multivector/real-note-fine-segmentation-v1/cross-note-density-v1/README.md), especially contextual re-examination, HDBv3, and optional note-navigation comparison. Snapshot inspected 2026-09-10.
 [^3]: Repository experiment, [Merge-rule exploration M01–M09](../../../sse_multivector/merge-rule-exploration-v1/README.md), individual results and comparison table. Snapshot inspected 2026-09-10.
-[^4]: Repository comparison, [Merge rules: results to inspect](../../../sse_multivector/merge-rule-exploration-v1/inspection.md), Manual coffee example and Coffee preparation compared with M06; [underlying comparison artifact](../../../sse_multivector/manual-coffee-hierarchy-v1/m06-comparison.json). Snapshot inspected 2026-09-10.
+[^4]: Repository comparison, [Merge rules: results to inspect](../../../sse_multivector/merge-rule-exploration-v1/inspection.md), Manual coffee example and Coffee preparation compared with M06; underlying comparison artifact (`../../../sse_multivector/manual-coffee-hierarchy-v1/m06-comparison.json`). Snapshot inspected 2026-09-10.
 [^5]: Repository source audit, [Within-child structure after M09](../../../sse_multivector/merge-rule-exploration-v1/within-child-structure.md), including primary-paper links and pinned implementation comparisons. Snapshot inspected 2026-09-10.
 [^6]: Martin Rosvall and Carl T. Bergstrom (2011), [Multilevel Compression of Random Walks on Networks Reveals Hierarchical Organization in Large Integrated Systems](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0018209), PLOS ONE 6(4), e18209. Hierarchical map equation and real-network results; [full manuscript](https://arxiv.org/html/1010.0431).
 [^7]: Daniel Edler, Ludvig Bohlin and Martin Rosvall (2017), [Mapping Higher-Order Network Flows in Memory and Multilayer Networks with Infomap](https://arxiv.org/html/1706.04792), §§4.3–4.5 and Algorithms 5–6.

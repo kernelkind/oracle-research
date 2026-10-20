@@ -1,5 +1,7 @@
 # Original-word lookup with grammatical evidence
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 USM02 retains the useful tomato, beet and simmer recoveries without letting bread
 become breadcrumb coating or beef become complaining. It also excludes useful
 decaffeination, canning and homemade meanings. Use this fixed condition for the
@@ -15,7 +17,7 @@ thirteen notes, not fifteen independent notes.
 
 The [pre-run plan](./USM02-PLAN.md) specifies the alternatives and decision.
 [All original notes, inline masks and 134 comparisons](./USM02/SOURCE-RESULTS.md)
-are preserved separately. [Raw results](./USM02/run/scores.json) contain exact
+are preserved separately. Raw results (`./USM02/run/scores.json`) contain exact
 candidate sets and the five highest eligible scores.
 
 ## Results and costs
@@ -104,8 +106,8 @@ Inventory loading and scoring took 38.746 seconds. Recorded `ru_maxrss` was
 so it is not an isolated measurement of this scoring run. Historical values
 remain intact; current runners use the process's own `VmHWM`. One CPU process,
 BLAS limited to one thread, no model encoding or paid resources.
-[Run configuration](./USM02/run/config.json) preserves hashes and executed source.
-[Verification](./USM02/verification.json) also records a guard limitation:
+Run configuration (`./USM02/run/config.json`) preserves hashes and executed source.
+Verification (`./USM02/verification.json`) also records a guard limitation:
 non-target token edits are not rejected by the source validator. The actual
 saved tokenization was independently checked unchanged; this run uses cached
 target vectors rather than re-encoding that metadata.

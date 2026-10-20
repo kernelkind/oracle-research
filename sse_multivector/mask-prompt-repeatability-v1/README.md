@@ -1,5 +1,7 @@
 # Repeated comparison of the two mask prompts
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 The latest clarification did not produce a repeatable improvement. Both prompts still alternate between omitting identifying text and selecting additional meaning.
 
 I ran the previous and current prompts two more times each on the same 12 fixed ASv6.8 subjects and four notes: **48 fresh calls**. Including the original runs, each subject has three outputs per prompt.
@@ -44,7 +46,7 @@ No new user review is necessary to establish that conclusion. New judgments are 
 
 ## Evidence
 
-- [All masks with full original notes inline](./masks.md): all six outputs per subject, grouping only identical fragment arrays.
+- All masks with full original notes inline (`./masks.md`): all six outputs per subject, grouping only identical fragment arrays.
 - `selection.json`: unchanged subjects and complete original notes.
 - `review-evidence.json`: snapshots of the two existing user reviews; no fabricated comments or new approvals.
 - `assistant-review.json`: independent judgment for each output, including unresolved scope.
@@ -65,3 +67,5 @@ The new calls used **109,544 input tokens and 4,220 output tokens**, including 2
 The runner, both original prompts/results/reviews, and frozen subject/mask registries retained their pre-run hashes. Production code and the user's notes documents were not edited.
 
 The controlled setup follows the [GPT-5.6 guidance on preserving other variables during comparison](https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6#prompt-migration-workflow). No new prompt-engineering claim is inferred from these three trials.
+
+See [conversion gaps](../../docs/experiments/publication-gaps.csv) for `collection:tracked-mask-prompt-repeatability-v1`.

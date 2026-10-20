@@ -1,5 +1,7 @@
 # Hierarchies from explicit mask descriptions
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 MDH02 produces one ordinary broad-to-narrow relationship, Bread → Sourdough
 bread, and two audience-related refinements, GM → GM Nostr and Nostr → GM Nostr.
 It does not produce a useful complete hierarchy. Literal matching also admits
@@ -151,8 +153,8 @@ because an evaluator can invent a broader name afterward.
 
 The following descriptions are audit shorthand for exact feature sets, not
 generated or approved category labels. The complete matching originals and masks
-are in [MDH02/review.json](./MDH02/review.json); stable descriptor IDs, all rows
-and note memberships are in [MDH02/descriptions.json](./MDH02/descriptions.json).
+are in `./MDH02/review.json`; stable descriptor IDs, all rows
+and note memberships are in `./MDH02/descriptions.json`.
 
 | Features | Notes | Evidence and qualification |
 | --- | ---: | --- |

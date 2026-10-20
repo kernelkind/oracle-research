@@ -1,5 +1,7 @@
 # Per-item context: ASv6.13 versus ASv6.23
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 The new format improved the final subjects in this small comparison. This is a result on two known development notes, not general validation.
 
 We kept the original notes and Astra low unchanged. Each prompt ran three times per note in a fresh isolated call. ASv6.23 added a generated `context` field before each final `subject`. Reviewers judged the subjects alone before seeing those context fields.
@@ -13,7 +15,7 @@ We kept the original notes and Astra low unchanged. Each prompt ran three times 
 
 All 282 subjects were reviewed. Broad, overlapping and duplicate subjects remained allowed. Two independent reviewers and the main reviewer agreed on the eight context errors after clarifying the existing standard, while prompt identities were still hidden.
 
-[Read both original notes and every generated subject and context field](./full-outputs.md).
+Read both original notes and every generated subject and context field (`./full-outputs.md`).
 
 ## CEO note
 
@@ -92,11 +94,13 @@ Keep ASv6.23 unchanged for proposed broader confirmation. These two notes do not
 ## Record
 
 - [Predeclared comparison](./proposal.json)
-- [Final review and reconciliation](./review.json), [independent review A](./reviewer-a.json), [independent review B](./reviewer-b.json)
-- [Integrity and resource verification](./verification.json)
+- Final review and reconciliation (`./review.json`), independent review A (`./reviewer-a.json`), independent review B (`./reviewer-b.json`)
+- Integrity and resource verification (`./verification.json`)
 
 All 12 calls had distinct threads and working directories, one turn each, and no tool use. Exact prompts, source text, schemas and raw outputs passed verification. The comparison used the existing Codex wrapper's new optional schema support; it did not use a two-call generation pipeline. The wrapper requests schema-constrained output through [Codex's documented interface](https://developers.openai.com/codex/noninteractive#create-structured-outputs-with-a-schema).
 
 The calls completed in 41.4 seconds. Resource sampling continued throughout, with a maximum interval of 5.0001 seconds. Available memory stayed above 105.58 GiB; sampled memory and I/O pressure averages remained zero. All owned units finished. Per-unit limits do not cover descendants that start independent units, and samples cannot rule out changes between observations.
 
 The runner passed 60 regression/consumer tests; the resource driver passed nine tests. Both changes were tested with expected failures before implementation. No reserved final data was used, and the earlier final-note exposure remains outside this experiment.
+
+See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-subject-prompt-goal-v1`.

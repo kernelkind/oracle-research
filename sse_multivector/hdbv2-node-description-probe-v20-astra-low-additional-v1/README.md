@@ -1,5 +1,7 @@
 # V20 Astra-low: six previously untitled groups
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 No title objections remain in this six-group sample: ten outputs were assistant-accepted, and the user explicitly accepted “European Football” for the remaining group, covering its two capitalization variants. The original assistant assessments remain preserved separately. These are review outcomes, not a population accuracy estimate.
 
 ## Exact outputs
@@ -13,7 +15,7 @@ No title objections remain in this six-group sample: ten outputs were assistant-
 | Sd621a11e19 | Gianduja Availability | Gianduja Availability |
 | Sd7a87d7a3c | European Football | European football |
 
-No title, mask, or group was edited. [titles.json](./titles.json) includes every output, all masks, the original pre-review assistant assessment and raw-result path. The chat approval below resolves the football objection; no TUI clicks were invented.
+No title, mask, or group was edited. `./titles.json` includes every output, all masks, the original pre-review assistant assessment and raw-result path. The chat approval below resolves the football objection; no TUI clicks were invented.
 
 ## Football title: approved in chat
 
@@ -53,7 +55,7 @@ The focused review can revisit both approved football outputs, with every mask a
 
 All 61 accepted original HDBv2 groups already had saved v15 titles. To avoid calling those unseen, this test used six complete, previously untitled groups from the saved [coverage-expansion experiments](../real-note-fine-segmentation-v1/coverage-expansion-v1/README.md). All six have saved valid user grouping decisions and contain at least two distinct notes.
 
-[run-plan.json](./run-plan.json), [source-packets.json](./source-packets.json) and all configs were saved before generation. Selection covered varied subjects and input structures before any new outputs were inspected. It did not prescribe exact expected titles or alter existing HDBv2 memberships.
+[run-plan.json](./run-plan.json), `./source-packets.json` and all configs were saved before generation. Selection covered varied subjects and input structures before any new outputs were inspected. It did not prescribe exact expected titles or alter existing HDBv2 memberships.
 
 An independent audit compared the six groups against 157 packets from 17 prior source-packet files and 343 rendered prompts from 309 configs, including old flattened inputs and the hashtag diagnostic. No complete member-set or raw-fragment-group match was found; none of the 26 exact note/range instances appeared in those prior source packets. This is novelty relative to saved title tests, not a newly sampled corpus or wholly unseen source notes. The broader corpus and upstream generation had already been studied.
 
@@ -66,6 +68,8 @@ Full notes and byte ranges are provenance only. Generation received only numbere
 - First call alone, then waves of at most three. Every call had a fresh process, thread and temporary empty workspace. Tools/web, repo rules, skills and user configuration were disabled. No expected titles, examples or reviewer feedback entered generation.
 - Twelve successful first attempts; no retries or best-of selection.
 - Usage: 26,976 input tokens including 1,920 cached; 295 output tokens including 201 reasoning tokens. Prefix caching did not reuse conversations.
-- [verification.json](./verification.json) records independent input/output/hash/isolation checks and production review-tool smoke tests.
+- `./verification.json` records independent input/output/hash/isolation checks and production review-tool smoke tests.
 
 Raw artifacts and user review sessions are unchanged. This report and the follow-up summary in the [first Astra report](../hdbv2-node-description-probe-v20-astra-low-v1/README.md) record the later chat approval separately from the original assessments. CREC-127 remains the existing card; Plane tools were unavailable, so its external status/comment could not be updated.
+
+**Publication status:** `collection:tracked-hdbv2-node-description-probe-v20-astra-low-additional-v1` remains in the [conversion review list](../../docs/experiments/publication-gaps.csv); a complete compact-data conversion has not been established.

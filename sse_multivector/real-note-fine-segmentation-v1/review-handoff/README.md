@@ -1,8 +1,11 @@
 # Review the segments
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
+
 Each screen presents all masks in one segment together. Only segments containing at least two distinct notes are shown. Each `V...` identifies one vector's mask; its fragments appear as `⟦first fragment⟧ ⟦second fragment⟧`, separated by spaces. There is no surrounding note text, note carousel, generated subject title, or assistant verdict.
 
-Start here:
+This historical command requires the original local review artifacts and the
+previously built review executable:
 
 ```sh
 cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
@@ -13,7 +16,7 @@ E=sse_multivector/real-note-fine-segmentation-v1
   "$E/review-handoff/baseline/user-response.json"
 ```
 
-This uses the already-built executable; Cargo and direnv are not required. Run the same command to resume. The baseline shows 43 segments. The other 209 contain masks from just one note and are hidden from navigation, not removed from the stored experiment. Existing decisions and comments remain saved, including any for hidden segments. You do not need to review every segment.
+With those local files, the same command resumes the review without invoking Cargo or direnv. The baseline shows 43 segments. The other 209 contain masks from just one note and are hidden from navigation, not removed from the stored experiment. Existing decisions and comments remain saved, including any for hidden segments. You do not need to review every segment.
 
 - Left / Right: previous / next segment.
 - Up / Down or Ctrl-D / Ctrl-U: scroll the segment's masks.
@@ -36,8 +39,8 @@ For either alternative, replace **all three** occurrences of `baseline` in the c
 
 All masks left ungrouped are also preserved, with complete original notes and inline highlights:
 
-- [Baseline ungrouped masks](../hdbscan-baseline/review/unassigned.txt)
-- [Leaf ungrouped masks](../hdbscan-leaf/review/unassigned.txt)
-- [Density ungrouped masks](../hdbscan-density/review/unassigned.txt)
+- Baseline ungrouped masks (`../hdbscan-baseline/review/unassigned.txt`)
+- Leaf ungrouped masks (`../hdbscan-leaf/review/unassigned.txt`)
+- Density ungrouped masks (`../hdbscan-density/review/unassigned.txt`)
 
 The full, unfiltered segment lists are `../hdbscan-baseline/review/review.json`, `../hdbscan-leaf/review/review.json`, and `../hdbscan-density/review/review.json`, relative to this directory. My assessments are separate files in the experiment directory; they are not loaded by this tool.

@@ -1,5 +1,7 @@
 # Hierarchy-build scalability
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../experiments/README.md#reading-the-research-records).
+
 Updated October 10, 2026. This records scalability decisions and evidence.
 Implementation and spending require their own task authorization. Release
 requirements, corpus scope, compute locations and budget remain in
@@ -165,10 +167,10 @@ production scalability remain unvalidated.
 
 Evidence: [historical token estimate](../../sse_multivector/TOKEN-USAGE-ESTIMATE-1M-NOTES.md),
 [SSE worker](../../sse_multivector/worker.py),
-[original SSE receipt](../../sse_multivector/real-note-fine-segmentation-v1/encoder-run/resource-summary.json),
-[music SSE receipt](../../sse_multivector/real-note-fine-segmentation-v1/music-generation-v1/encoder-run-v2/resource-summary.json),
+original SSE receipt (`../../sse_multivector/real-note-fine-segmentation-v1/encoder-run/resource-summary.json`),
+music SSE receipt (`../../sse_multivector/real-note-fine-segmentation-v1/music-generation-v1/encoder-run-v2/resource-summary.json`),
 [title-input preparation](../../sse_multivector/prepare_category_title_inputs.py),
-[TRUE CPU timing](../../sse_multivector/navigation-research-v1/TRUE04/completion.json),
+TRUE CPU timing (`../../sse_multivector/navigation-research-v1/TRUE04/completion.json`),
 and [coffee/tea membership workload](../../sse_multivector/navigation-research-v1/TRUE14/plan.json).
 
 ## Bounded performance test — draft, execution not approved
@@ -198,9 +200,9 @@ calculation created only for the test. Compare against the existing saved
 baseline without modifying the working pipeline. Local preparation and
 execution still require approval; no paid resources are needed for this step.
 
-Sources: [food/drink result](../../sse_multivector/real-note-fine-segmentation-v1/hdbscan-cross-note/response.json),
-[music result](../../sse_multivector/real-note-fine-segmentation-v1/music-generation-v1/HDBv2-music100/response.json),
-and [combined result](../../sse_multivector/real-note-fine-segmentation-v1/music-generation-v1/HDBv2-combined200/response.json).
+Sources: food/drink result (`../../sse_multivector/real-note-fine-segmentation-v1/hdbscan-cross-note/response.json`),
+music result (`../../sse_multivector/real-note-fine-segmentation-v1/music-generation-v1/HDBv2-music100/response.json`),
+and combined result (`../../sse_multivector/real-note-fine-segmentation-v1/music-generation-v1/HDBv2-combined200/response.json`).
 
 ### 2. Measure complete runtime and memory at increasing sizes
 
@@ -284,14 +286,14 @@ existing semantic qualifications, not independent semantic accuracy or reliabili
 on future corpora. The baseline is the generation agent's v68 build, not the earlier
 fourteen-node Bootstrap-v14 / Compare-v19 menu reviewed in this scaling fork.
 
-Evidence stays under the retained selective-construction worktree:
+The original replay evidence was recorded under the selective-construction worktree:
 `oracle-mvp-canonical-selective-construction-v2/target/canonical-shortlist-eight-replay-v1/`.
-[Native evaluation](../../../oracle-mvp-canonical-selective-construction-v2/target/canonical-shortlist-eight-replay-v1/evaluation-native.json),
-[placement checks](../../../oracle-mvp-canonical-selective-construction-v2/target/canonical-shortlist-eight-replay-v1/placement-checks.json),
-[native usage](../../../oracle-mvp-canonical-selective-construction-v2/target/canonical-shortlist-eight-replay-v1/usage-native.json)
+Native evaluation (`../../../oracle-mvp-canonical-selective-construction-v2/target/canonical-shortlist-eight-replay-v1/evaluation-native.json`),
+placement checks (`../../../oracle-mvp-canonical-selective-construction-v2/target/canonical-shortlist-eight-replay-v1/placement-checks.json`),
+native usage (`../../../oracle-mvp-canonical-selective-construction-v2/target/canonical-shortlist-eight-replay-v1/usage-native.json`)
 and `completed-replay.json` preserve the exact trial paths and receipts.
-The selective-construction worktree must remain while these artifacts, the review
-UI and their frozen absolute references are needed.
+Reopening that historical review requires its original local artifacts and
+frozen absolute references.
 
 For the later handoff: use a fresh comparison-policy definition with
 `schema_version: 1`, `limit: 8` and the existing saved `subject_probe`. Keep current

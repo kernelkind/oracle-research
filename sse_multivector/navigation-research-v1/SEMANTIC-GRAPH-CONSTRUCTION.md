@@ -1,5 +1,7 @@
 # Contextual semantic graphs and category construction
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 SGC01 produces a useful food-preparation grouping and explicit paths into
 bread and steak preparation. It does not establish a better complete hierarchy.
 The shared preparation group already had the same three notes before lexical
@@ -118,8 +120,8 @@ source content, such as the fireworks or caffeine contrast.
 The following are analytical readings of saved patterns, not generated or
 adopted UI titles. Complete machine paths through the shared preparation
 pattern, including dictionary intermediates and every source witness, are in
-[shared-preparation-paths.json](./SGC01/shared-preparation-paths.json).
-[inspected-paths.json](./SGC01/inspected-paths.json) preserves five additional
+`./SGC01/shared-preparation-paths.json`.
+`./SGC01/inspected-paths.json` preserves five additional
 paths through the food/material patterns.
 
 The generalized pattern `Ge4a69898bcb685754923` contains
@@ -258,7 +260,7 @@ input does not establish improved complete coverage or meaningful category
 selection. Better end-of-sequence allowance is not the next intervention.
 Another parser is not justified solely because this one made mistakes.
 
-A [static dictionary check](./SGC01/lexical-boundary-check.json) makes the next decision more specific. It uses
+A static dictionary check (`./SGC01/lexical-boundary-check.json`) makes the next decision more specific. It uses
 source-appropriate senses and their recorded relationships, without running
 another model or altering any graph:
 
@@ -285,7 +287,7 @@ unproven dependencies. No replacement model or frame hierarchy is adopted.
 
 ## Reproduction and preservation
 
-[verification.json](./SGC01/verification.json) records the exact input checks,
+`./SGC01/verification.json` records the exact input checks,
 baseline hashes, structural checks, output lengths and semantic replay hashes.
 The native run and initial construction snapshots remain unchanged. A later
 one-line validation fix rejects a supplied null dictionary entry rather than

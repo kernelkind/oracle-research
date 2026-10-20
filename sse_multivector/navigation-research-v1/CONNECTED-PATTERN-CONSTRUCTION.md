@@ -1,5 +1,7 @@
 # Connected patterns and category paths
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
+
 SGC02 finds useful shared meanings after removing the requirement that source
 relationships have identical labels and directions. It does not establish a
 better browsing hierarchy. Two new food-activity groups have genuine source
@@ -95,7 +97,7 @@ representation change.
 
 The following readings describe selected saved patterns for this analysis.
 They are not generated labels or a newly adopted menu. Every intervening
-dictionary step is preserved in [audit.json](./SGC02/audit.json).
+dictionary step is preserved in `./SGC02/audit.json`.
 
 ```text
 Food: N022 N076 N085 N089 N100
@@ -263,11 +265,11 @@ model, ontology mapping or navigation hierarchy is adopted by SGC02.
 
 ## Reproduction and evidence
 
-- [Frozen plan](./SGC02-PLAN.md), [configuration](./SGC02/construction/config.json),
-  [complete results](./SGC02/construction/result.json),
-  [exact-counterpart comparison](./SGC02/construction/comparison.json), and
+- [Frozen plan](./SGC02-PLAN.md), configuration (`./SGC02/construction/config.json`),
+  complete results (`./SGC02/construction/result.json`),
+  exact-counterpart comparison (`./SGC02/construction/comparison.json`), and
   [recurring inventory](./SGC02/construction/INVENTORY.md).
-- [Audit data](./SGC02/audit.json) contains every representative's native
+- Audit data (`./SGC02/audit.json`) contains every representative's native
   witnesses, gained/lost sets, exact-control comparisons, and all steps along
   the five inspected paths. [Verification script](./SGC02/verify.py) checks the
   frozen hashes, replays the saved production code and recreates that artifact.

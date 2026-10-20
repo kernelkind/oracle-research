@@ -1,5 +1,7 @@
 # ASv6.23 repeatability check
 
+**Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../../docs/experiments/README.md#reading-the-research-records).
+
 ASv6.23 passes the fixed development gates. The next step is the approved final test, with no prompt change.
 
 | Evidence | Fully accepted subject lists | Accepted subjects |
@@ -20,14 +22,16 @@ Two more items use the same wording for credit availability and operational effi
 
 The earlier snow interpretation also remains unresolved. It is unchanged by this repeat test.
 
-The independent reviewer additionally questioned whether an author's expectation of an “editor or owner” could yield separate subjects for the two roles. The final review accepts these under the existing permission for separate supported interpretations. Neither output claims that either person actually was Jewish. The disagreement is preserved in [the review](./review.json).
+The independent reviewer additionally questioned whether an author's expectation of an “editor or owner” could yield separate subjects for the two roles. The final review accepts these under the existing permission for separate supported interpretations. Neither output claims that either person actually was Jewish. The disagreement is preserved in the review (`./review.json`).
 
 ## What was checked
 
 All 186 new subjects and whole-note coverage were reviewed against complete source notes. Auxiliary `context` fields were hidden during semantic review and never used to rescue an incomplete subject. Raw subjects were not edited.
 
-All 12 calls used Astra low, the exact ASv6.23 prompt and schema, fresh isolated contexts, and no tools. All succeeded on their first attempt. No experiment units remain active. Minimum sampled available memory was 105.29 GiB; memory pressure stayed zero. Four calls logged nonfatal shell-snapshot startup diagnostics. [Technical verification](./technical-verification.json).
+All 12 calls used Astra low, the exact ASv6.23 prompt and schema, fresh isolated contexts, and no tools. All succeeded on their first attempt. No experiment units remain active. Minimum sampled available memory was 105.29 GiB; memory pressure stayed zero. Four calls logged nonfatal shell-snapshot startup diagnostics. Technical verification (`./technical-verification.json`).
 
 This is an operational development pass, not evidence that arbitrary corpus extraction is solved. The reserved final test has not yet run.
 
-[Full source notes and outputs](./full-outputs.md) · [Decisions](./review.json) · [Counts and gate assessment](./assessment.json)
+Full source notes and outputs (`./full-outputs.md`) · Decisions (`./review.json`) · Counts and gate assessment (`./assessment.json`)
+
+See [conversion gaps](../../../../docs/experiments/publication-gaps.csv) for `collection:tracked-subject-prompt-goal-v1`.
