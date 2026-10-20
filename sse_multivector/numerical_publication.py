@@ -636,7 +636,7 @@ def _pair_scores(sources, directory, metadata):
                     or {'generated_text', 'generated_token_ids', 'predicted'} <= row.keys()):
                 raise ValueError('unsupported numerical pair-score schema')
             count += 1
-            yield dict(type='pair_score', **_public(_choose(row, {'vector', 'description',
+            result = dict(type='pair_score', **_public(_choose(row, {'vector', 'description',
                 'premise', 'hypothesis', 'source', 'logits', 'score', 'token_count',
                 'a', 'b', 'angle_radians', 'angle_degrees', 'cosine', 'a_id', 'b_id',
                 'query', 'passage', 'condition', 'child', 'parent', 'expected_implication',
@@ -645,7 +645,19 @@ def _pair_scores(sources, directory, metadata):
                 'generated_text', 'generated_token_ids', 'eos_terminated', 'predicted',
                 'entailment_score', 'logit_0_first_token', 'logit_1_first_token',
                 'probability_0_first_token', 'first_token_binary_score', 'first_token_binary_label',
-                'label_prefix_probability_mass', 'argmax_token_id', 'threshold_predicted'})))
+                'label_prefix_probability_mass', 'argmax_token_id', 'threshold_predicted',
+                'row', 'note', 'group', 'candidate', 'measurement', 'child_candidate',
+                'parent_candidate', 'baseline_score', 'source_pair', 'source_index',
+                'category_id', 'category_title'})))
+            if 'masks' in row:
+                if not isinstance(row['masks'], list) or any(
+                        not isinstance(mask, dict) for mask in row['masks']):
+                    raise ValueError('numerical category memberships must be mask records')
+                result['masks'] = [_public(_choose(mask, _ALIASES | {'judgment', 'ordinal',
+                    'reviewed_note_index', 'reviewed_subject', 'reviewed_subject_id',
+                    'reviewed_subject_index', 'worker_subject_id', 'token_count', 'note_text_sha256'}))
+                    for mask in row['masks']]
+            yield result
         metadata['outcome'] = dict(pairs=count)
         for name in ('checks', 'summary', 'analysis'):
             path = directory/(name+'.json')

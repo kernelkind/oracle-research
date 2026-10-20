@@ -207,6 +207,28 @@ class NumericalPublicationTests(unittest.TestCase):
         self.assertNotIn('token_ids', result)
         self.assertNotIn('Repeated rendered request', (Path(output)/'results.jsonl').read_text())
 
+    def test_pair_scores_keep_group_candidates_and_category_membership_links(self):
+        from sse_multivector.numerical_publication import export_results
+        self.write('groups/config.json', dict(model_id='test/model'))
+        group = dict(premise='Child meaning', hypothesis='Parent meaning', score=.8,
+            row=3, note='n1', group=7, candidate=2, measurement='parent containment',
+            child_group=7, parent_group=9, child_candidate=2, parent_candidate=1,
+            baseline_score=.6, source_pair=14)
+        self.write('groups/scores.json', [group])
+        output = export_results(self.root/'groups', family='pair-scores')['output']
+        self.assertEqual(self.records(output), [dict(type='pair_score', **group)])
+
+        self.write('native/config.json', dict(model_id='true/model'))
+        category = dict(id='case-1', category_id='C01', category_title='Coffee',
+            masks=[dict(vector_id='v1', note_id='n1', fragments=['coffee'],
+                        byte_spans=[[0, 6]], judgment='kept')],
+            premise='Coffee masks', generated_text='1',
+            generated_token_ids=[209, 1], eos_terminated=True, predicted=True)
+        source = dict(category, masks=[dict(category['masks'][0], selected_token_ids=[777777])])
+        (self.root/'native/scores.jsonl').write_text(json.dumps(source)+'\n')
+        output = export_results(self.root/'native', family='pair-scores')['output']
+        self.assertEqual(self.records(output), [dict(type='pair_score', **category)])
+
     def test_affinity_neighborhoods_are_final_results_without_all_pairs_or_vectors(self):
         from sse_multivector.numerical_publication import export_results
         self.write('affinity/config.json', dict(run_id='PPR01', condition='base', model_id='test/model'))
