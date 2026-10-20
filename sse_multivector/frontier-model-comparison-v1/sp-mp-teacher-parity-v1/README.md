@@ -132,3 +132,12 @@ the second scorer; N080/N096 await the background subject retry.
 Pending: packet-B scoring and consistency check on the 24-slot overlap, the
 N080/N096 retry outcome (a 3600-second attempt is running), and the final
 parity-rule verdict.
+
+## Publication files
+
+Selected evidence retains the interim summary, later successful subject-answer receipts, saved masks, scores and blinded review membership. The interim summary counts eight subject answers; native receipts retain ten. No final parity verdict is recorded.
+
+`historical-studies/frontier-sp-mp-teacher-parity-v1` appears in the
+[catalog](../../../docs/experiments/publications.csv) and [file list](../../../docs/experiments/publication-files.csv).
+These files are prepared locally for Hugging Face Datasets; downloads are not
+available yet. Recorded pre-ASv6.100 derivatives remain deprecated historical evidence.

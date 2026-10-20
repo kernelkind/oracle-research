@@ -97,3 +97,12 @@ cannot mount over it. The batches completed when launched from a plain
 namespace via `systemd-run --user`, with the same runner and the same
 credential-service routing. The preserved failure receipts remain in the
 run directories.
+
+## Publication files
+
+Selected saved answers, used inputs, parameters and final cost/usage measurements preserve the recorded attempts and outcomes.
+
+`historical-studies/frontier-mpv3.43-cost-probe-v1` appears in the
+[catalog](../../../docs/experiments/publications.csv) and [file list](../../../docs/experiments/publication-files.csv).
+These files are prepared locally for Hugging Face Datasets; downloads are not
+available yet. Recorded pre-ASv6.100 derivatives remain deprecated historical evidence.

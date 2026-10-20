@@ -1,4 +1,5 @@
 """Publish selected historical final evidence from explicitly hash-bound sources."""
+from contextlib import contextmanager
 import importlib
 import json
 from pathlib import Path, PurePosixPath
@@ -13,7 +14,10 @@ _PROFILES = {'atomic': 'atomic_study_publication',
              'subject-goal': 'subject_goal_publication',
              'mask-goal': 'mask_goal_publication',
              'standalone-prompt': 'standalone_prompt_publication',
-             'prominence': 'prominence_study_publication'}
+             'prominence': 'prominence_study_publication',
+             'title-audit': 'title_audit_publication',
+             'segmentation-study': 'segmentation_study_publication',
+             'frontier-study': 'frontier_study_publication'}
 
 
 def _canonical(value):
@@ -65,6 +69,40 @@ class Sources:
 
     def read(self, path):
         return _json(self.raw(path))
+
+    @contextmanager
+    def stream(self, path):
+        """Read a declared large source incrementally and verify its full bytes."""
+        from . import numerical_publication
+
+        path = _path(path)
+        if path not in self.bindings:
+            raise ValueError('source is not selected with a SHA-256: ' + path)
+        source = self.root / path
+        if not source.is_file():
+            raise ValueError('missing saved study source: ' + path)
+        code = Path(numerical_publication.__file__)
+        code_stamp = _stamp(code)
+        digest = _sha(code.read_bytes())
+        label = 'sse_multivector/numerical_publication.py'
+        exporters = self._reader.metadata.setdefault('exporter_sources', {})
+        if exporters.get(label, digest) != digest:
+            raise ValueError('publication code changed during export')
+        exporters[label] = digest
+        before = _stamp(source)
+        with source.open('rb') as stream:
+            reader = numerical_publication._Reader(stream)
+            yield reader
+            while reader.read(65536):
+                pass
+        if before != _stamp(source):
+            raise ValueError('saved study source changed during export')
+        if reader.digest.hexdigest() != self.bindings[path]:
+            raise ValueError('selected source hash mismatch: ' + path)
+        if code_stamp != _stamp(code):
+            raise ValueError('publication code changed during export')
+        self._reader.stamps[source] = before
+        self.hashes[path] = reader.digest.hexdigest()
 
     def check(self):
         self._reader.check()

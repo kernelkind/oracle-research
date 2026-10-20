@@ -2257,6 +2257,18 @@ They bind 21 early/standalone entries and three manual prominence studies from
 22 collections. Saved partial outcomes, user review history and reused baselines
 remain explicit; [commands and checks](../docs/experiments/reproduce.md#early-prompt-and-manual-prominence-study-checks)
 describe these formats. Existing native prominence exports are not duplicated.
+Three further selections use that same offline command:
+[fine-region titles](experiment_specs/title-audit-publication-v1.json),
+[real-note segmentation](experiment_specs/segmentation-study-publication-v1.json)
+and [frontier comparisons](experiment_specs/frontier-study-publication-v1.json).
+They bind 16 bundles from four collections. Title outputs preserve generated and
+actually reviewed wording separately. Segmentation outputs keep final memberships,
+complete hierarchy outputs for two tested runs, curated inputs and methods while
+excluding working vectors/distances. Frontier outputs preserve completed/partial
+answers, failures, measurements, review bindings and reused-answer references;
+interim teacher results remain interim. See the
+[title/segmentation checks](../docs/experiments/reproduce.md#fine-region-title-and-real-note-segmentation-checks)
+and [frontier checks](../docs/experiments/reproduce.md#frontier-comparison-checks).
 Remaining historical conversions and public download verification remain
 unfinished. The signed export below retains its existing
 behavior.

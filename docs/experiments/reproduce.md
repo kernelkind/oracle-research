@@ -445,7 +445,7 @@ experiment/source identities. [Publication files](publication-files.csv) records
 every path, byte count and SHA-256 beneath `target/publication-exports/`.
 These paths describe local staging, not an available download.
 
-With the `ORACLE_ROOT` setup above, verify all 9,770 selected files:
+With the `ORACLE_ROOT` setup above, verify all 9,850 selected files:
 
 ```bash
 cd "$ORACLE_ROOT/target/publication-exports"
@@ -580,7 +580,7 @@ its machine-specific deployment commands are not a ready-to-run public recipe.
 
 ## Other experiments and moved files
 
-The [study index](experiments.csv) contains 2,671 selected entries: standalone
+The [study index](experiments.csv) contains 2,675 selected entries: standalone
 prompt preparations, official hierarchy runs, training runs, historical collections
 and the four located historical subject-prompt studies.
 It records saved plan identities and prompt/model settings.
@@ -757,8 +757,8 @@ were preserved, and nothing was uploaded.
 
 ### Historical backfill checks
 
-The current local selection contains **3,135 output/input directories and 9,770
-files**, totaling **1,139,101,781 bytes**. Every listed file was independently
+The current local selection contains **3,151 output/input directories and 9,850
+files**, totaling **1,158,517,363 bytes**. Every listed file was independently
 rehashed. Structured payload bindings were checked against their export manifests;
 the five original ASv6.100 Markdown documents match their recorded source hashes.
 Exact prepared-input copies were also checked against their frozen source hashes.
@@ -791,6 +791,130 @@ remain unresolved. No fresh inference, training or semantic grading occurred.
 This checks the selected supported formats. [Remaining historical exports](publication-gaps.csv)
 remain outside this size/completeness claim. Privacy review and a clean reader
 test against the eventual hosted selection are still pending.
+
+### Fine-region title and real-note segmentation checks
+
+These three local bundles retain final evidence from two title collections and
+nine real-note segmentations. Their maintained selections name exact original
+files and SHA-256 hashes:
+
+| Selection under `sse_multivector/experiment_specs/` | Study ID |
+| --- | --- |
+| `title-audit-publication-v1.json` | `fine-region-hierarchy-title-candidates-v1` |
+| `title-audit-publication-v1.json` | `fine-region-title-cutoff-audit-v1` |
+| `segmentation-study-publication-v1.json` | `real-note-fine-segmentation-v1` |
+
+A publisher with the original saved layout can prepare the same data without
+model calls. This example uses a sibling directory for those originals:
+
+```bash
+cd "$ORACLE_ROOT"
+python sse_multivector/experiment.py export-evaluation-results \
+  ../oracle-mvp-original \
+  --kind prompt-study \
+  --spec sse_multivector/experiment_specs/title-audit-publication-v1.json \
+  --study fine-region-title-cutoff-audit-v1 \
+  --output target/title-cutoff-results
+```
+
+For another selection, substitute its specification and exact study ID from the
+table. The source argument identifies the complete original repository layout;
+a clean checkout or compact download alone does not contain it. Each bundle has
+`experiment.json`, `inputs.jsonl`, `answers.jsonl`, `judgments.jsonl` and
+`results.jsonl`. Unchanged refreshes preserve their bytes and modification times.
+
+The title bundles retain all **50 raw answers and 49 recorded user decisions**.
+H000019 remains unreviewed. Generated wording and the wording actually reviewed
+are separate fields: ten cutoff labels still differ after ignoring letter case
+and outer bold markers.
+The inputs preserve both original post/mask context and the exact supplied
+fragment or descendant-title order. Frozen prompt templates reconstruct every
+request; model settings and isolation controls remain recorded. The historical
+prompt-registry hash differs from the located registry; that mismatch is explicit,
+and its selected template reproduces all frozen requests.
+
+The segmentation bundle retains **nine final selections, complete hierarchy
+outputs for two tested runs, and 248 distinct curated posts** across five datasets.
+Dataset-specific vector identities and token/index mappings remain, while
+duplicated subject and mask fields reference the curated input records. No
+embedding values or working distance arrays are published. Its empty
+`answers.jsonl` is intentional: these curated inputs are not additional model
+answers. Frozen generation packages, encoder identities, numerical parameters
+and input normalization remain recorded.
+
+The **132 structured user decisions** are the original saved states, alongside
+215 baseline packets without a recorded decision. They are not a latest aggregate
+verdict: the [cross-note findings](../../sse_multivector/real-note-fine-segmentation-v1/cross-note-density-v1/README.md)
+separately record the later garden/allotment retraction. Music-review status and
+the authorized encoding omission remain explicit. ASv6.23-derived subjects and
+masks remain deprecated historical evidence; raw posts are not deprecated.
+
+The three exports total **15 files, 15,222,404 bytes**, or **3,006,062 bytes** with
+gzip level 6. Actual-file exports and independent source/payload comparisons
+pass under a 512 MiB worker address-space limit. Original sources remain
+unchanged. Nothing has been uploaded; publication privacy review remains open.
+
+### Frontier comparison checks
+
+The [frontier selection](../../sse_multivector/experiment_specs/frontier-study-publication-v1.json)
+names 13 entries from one historical collection: compatibility tests, subject
+comparisons, recorded completion variants, a mask-cost study and the interim
+teacher comparison. With the same original source layout used above:
+
+```bash
+cd "$ORACLE_ROOT"
+python sse_multivector/experiment.py export-evaluation-results \
+  ../oracle-mvp-original \
+  --kind prompt-study \
+  --spec sse_multivector/experiment_specs/frontier-study-publication-v1.json \
+  --study frontier-asv6.23-diagnostic-v2 \
+  --output target/frontier-as23-results
+```
+
+Other study IDs are exact keys in the selection's `studies` object. This command
+performs no model calls.
+
+The **65 files total 4,193,178 bytes**, or **627,081 bytes** with gzip level 6.
+They retain **233 completed raw answers**, three partial strings from failed
+attempts, 73 recorded failed attempts and 17 outcomes absent from their individual
+frozen runs. Later continuations remain separate; an absent result in an initial
+run does not imply the collection never obtained that answer. Transport completion,
+format validation, failure details, usage, settings and nullable token limits are
+preserved separately.
+
+Sixty Muse mask answers and 22 Astra baselines link their already-selected
+publications with exact answer hashes. The N031 answer reused by the later
+high-reasoning comparison remains linked to the earlier variant. These references
+are not additional answers or trials. Full source posts and the shortened text
+actually supplied in two ASv6.23 cases remain distinct.
+
+All **437 review cells** preserve their comments and exact source-answer/display
+bindings, or explicit finding/outcome text. The **258 blinded-packet membership
+rows** preserve case/arm mappings and rubrics; overlapping slots are intentional.
+These counts are not user judgments. The original score-A file contains 129
+recorded scores. The teacher summary remains interim: its aggregate counts eight
+subject answers while native receipts retain ten, including later retries; it
+records no final parity verdict.
+
+All **172 relevant regressions** pass, including the focused offline checks:
+
+```bash
+cd "$ORACLE_ROOT"
+PYTHONPATH=.:sse_multivector python -m unittest \
+  sse_multivector.test_historical_study_streams \
+  sse_multivector.test_title_audit_publication \
+  sse_multivector.test_segmentation_study_publication \
+  sse_multivector.test_frontier_study_publication \
+  sse_multivector.test_historical_study_cli
+```
+
+All 16 title/segmentation/frontier original-file exports also pass under a
+512 MiB worker address-space limit. Their 366 selected sources retain their
+SHA-256 hashes, bytes, modes and modification times; all 9,770 previously selected
+files are unchanged. The [file list](publication-files.csv) and
+[checksums](publication.sha256) cover the exact local selection. ASv6.23/ASv6.48
+derivatives remain deprecated historical evidence. No inference or uploads
+occurred; final publication privacy review remains open.
 
 ### Early prompt and manual prominence study checks
 

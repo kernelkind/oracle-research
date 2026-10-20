@@ -162,12 +162,12 @@ sibling still needs an export. This resolves those collection-level gaps; it
 does not resolve the separate placement review of the 196 ambiguous Git files.
 
 The 33 HDB title/description groups, 11 SSE representation studies, six
-subject/mask collections and 22 early/standalone prompt collections are now
-selected as described below. The remaining **five groups need final-evidence exports**:
+subject/mask collections, 22 early/standalone prompt collections and four
+segmentation/title/frontier collections are now selected as described below.
+The remaining **one group needs a final-evidence export**:
 
 | Collections | Groups | Evidence to retain |
 | --- | ---: | --- |
-| Real-note, hierarchy-title and frontier studies | 4 | Final segment selections, title answers and judgments, model comparisons and recorded reviews |
 | Archived baselines | 1 | Four CREC119 answer/segment files and two geometry diagnostics; the TEv4.1 answers are already covered by selected inputs |
 
 The current-baseline omission found in this review is now resolved. The six
@@ -189,21 +189,54 @@ tree and review evidence. Neither measurement is a completed export-size estimat
 Exclude intermediate embeddings, clustering distance arrays and duplicate answer
 views. Numerical measurements that are themselves a study's result still belong.
 
-A saved hash reference does not publish the referenced content: the selected
-fine-region hierarchy records a title-review hash, but omits the 31 judgments.
-The later frontier result files were located in the original main checkout;
-their absence from the publication checkout does not mean they were lost.
-Teacher-parity results remain interim. A missing aggregate file also does not
+A saved hash reference does not publish the referenced content. The earlier
+fine-region numerical bundle retained only a title-review hash; the separate
+title bundles now retain all 50 answers and 49 recorded judgments. The later
+frontier result files were located in the original main checkout and are now
+included with their source bindings. Teacher-parity results remain interim.
+A missing aggregate file also does not
 erase successful individual responses in a partial run. Preserve actual user
 decisions separately from agent assessments.
 
 The review itself made no additional exports or changes to original records.
 The five ASv6.100 documents, 33 title/description study groups, 11 SSE
-representation studies, six subject/mask collections and 22 early/standalone
-prompt collections were selected afterward; the
+representation studies, six subject/mask collections, 22 early/standalone
+prompt collections and four segmentation/title/frontier collections were selected afterward; the
 [measured totals](downloads.md#measured-local-exports) include them. The
 remaining-items table names concrete export requirements rather than treating
 every old directory as an unexamined missing dataset.
+
+### Selected segmentation, title and frontier evidence
+
+The four collections now link **16 bundles, 80 files and 19,415,582 bytes
+(18.52 MiB)**, or **3,633,143 bytes (3.46 MiB)** with gzip level 6.
+
+The two fine-region title bundles retain 50 exact answers and 49 recorded user
+decisions. H000019 stays unreviewed. Generated wording, reviewed wording and the
+exact supplied input order remain separate. The real-note bundle retains nine
+final segmentations, complete hierarchy outputs for two tested runs, 248 curated
+posts, fixed parameters and review evidence. Repeated mask/context fields use
+validated input references; working embeddings and distance arrays are excluded.
+Its 132 structured user rows are the original states, with 215 unrecorded baseline
+outcomes. The later garden/allotment retraction remains in separately bound
+authored findings; it does not overwrite those frozen response files.
+
+The 13 frontier entries retain 233 completed raw answers, three failed partial
+answers, 73 failed attempts, final measurements and source-bound review evidence.
+Sixty Muse answers and 22 Astra baselines reference already-selected exact bodies.
+The 437 review cells and 258 blinded-packet membership rows are not user-judgment
+counts. The teacher comparison stays interim: its original summary counts eight
+subject answers while native receipts retain ten, and no final parity verdict
+is recorded.
+
+All **172 relevant tests** pass. All 16 real-file exports pass under a 512 MiB
+worker address-space limit. The 366 selected sources (302,177,599 bytes) retain
+their original hashes, bytes, modes and modification times; all 9,770 previously
+selected files remain unchanged. No models ran and nothing was uploaded. See
+the [title/segmentation checks](reproduce.md#fine-region-title-and-real-note-segmentation-checks)
+and [frontier checks](reproduce.md#frontier-comparison-checks).
+Known old-AS derivatives remain deprecated historical evidence, and unknown
+lineage remains unknown. Final publication privacy review remains open.
 
 ### Selected early prompt and prominence evidence
 
@@ -447,7 +480,7 @@ before packaging. Known credential containers were excluded from discovery;
 that is not a completed privacy review of the evidence.
 
 The [publication plan](downloads.md#measured-local-exports) now measures the
-selected local exports: **1.06 GiB**, plus **6.78 GiB** for all 17 evaluated
+selected local exports: **1.08 GiB**, plus **6.78 GiB** for all 17 evaluated
 adapters. [Publications](publications.csv), [exact files](publication-files.csv)
 and [checksums](publication.sha256) record this selection. The 534.71 GiB source
 inventory and old bundle tables do not define the public download size or layout.

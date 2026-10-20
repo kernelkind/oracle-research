@@ -212,3 +212,14 @@ asking:
 - `run/manifest.json` records the isolated execution settings.
 - `run/output.json` and `run/results.jsonl` preserve the responses and per-call evidence.
 - An independent audit confirmed that all 19 calls succeeded on their first attempt, used fresh sterile processes, and had web and tools disabled.
+
+## Publication files
+
+Selected inputs, saved answers, recorded decisions and parameters:
+`historical-studies/fine-region-hierarchy-title-candidates-v1` in the
+[catalog](../../docs/experiments/publications.csv) and
+[file list](../../docs/experiments/publication-files.csv). The 19th answer remains
+unreviewed. The earlier cutoff study is selected separately as
+`historical-studies/fine-region-title-cutoff-audit-v1`; generated titles and the
+wording actually reviewed remain separate. These files are prepared locally for
+Hugging Face Datasets; downloads are not available yet.

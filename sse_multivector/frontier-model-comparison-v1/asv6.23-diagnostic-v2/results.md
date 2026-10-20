@@ -73,3 +73,12 @@ Do not tune the old prompt around this diagnostic or infer a corpus-wide accurac
 - `glm/results.jsonl`: initial H06 failure; `glm-remaining/H*/results.jsonl`: the other eleven once-only attempts.
 - `summary.json`: verified request counts and per-model statistics.
 - `billing.json`: individual OpenRouter generation charges and cumulative-key reconciliation. Generation records, not catalog estimates, determine actual spend.
+
+## Publication files
+
+Selected saved answers, failed attempts, exact inputs, settings and reviews cover the initial and retry records together. Reused Astra answers remain references to their existing publication.
+
+`historical-studies/frontier-asv6.23-diagnostic-v2` appears in the
+[catalog](../../../docs/experiments/publications.csv) and [file list](../../../docs/experiments/publication-files.csv).
+These files are prepared locally for Hugging Face Datasets; downloads are not
+available yet. Recorded pre-ASv6.100 derivatives remain deprecated historical evidence.

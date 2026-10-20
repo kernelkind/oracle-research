@@ -153,3 +153,16 @@ E=sse_multivector/real-note-fine-segmentation-v1
 ```
 
 The same command restores partial progress. `review-handoff/README.md` explains how to inspect the alternatives without repeating identical groups. `package_handoff.py` records the mechanical packaging operation and refuses to overwrite an existing handoff. Each `hdbscan-*/replay-proof.json` records the exact request, configuration, executable identity and invocation arguments. The frozen vector artifact never needs regeneration to compare these saved results.
+
+## Publication files
+
+Selected final segments, complete hierarchy outputs for two tested runs, used
+posts, curated masks, parameters and saved reviews:
+`historical-studies/real-note-fine-segmentation-v1`
+in the [catalog](../../docs/experiments/publications.csv) and
+[file list](../../docs/experiments/publication-files.csv). The original structured
+review states remain unchanged; the later garden/allotment retraction is recorded
+separately in the [cross-note findings](cross-note-density-v1/README.md).
+ASv6.23-derived subjects and masks remain deprecated historical evidence.
+These files are prepared locally for Hugging Face Datasets; downloads are not
+available yet. Original working vectors and distance arrays are excluded.

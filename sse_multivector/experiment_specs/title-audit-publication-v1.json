@@ -1,0 +1,1016 @@
+{
+  "schema_version": 1,
+  "studies": {
+    "fine-region-hierarchy-title-candidates-v1": {
+      "dependencies": [
+        {
+          "experiment_id": "fine-region-title-cutoff-audit-v1",
+          "role": "Saved fine titles and group decisions reused as inputs; not new title samples"
+        },
+        {
+          "publication": "numerical/fine-region-00d974f22ed8935f",
+          "role": "Saved numerical partition supplies source memberships; no embeddings republished"
+        },
+        {
+          "publication": "numerical/fine-region-baa0fabaac64ba5c",
+          "role": "Saved numerical hierarchy supplies merge memberships"
+        }
+      ],
+      "fine_outputs": [
+        {
+          "path": "sse_multivector/fine-region-title-cutoff-audit-v1/run/output.json",
+          "projection_hash_field": "fine_title_run_output_sha256",
+          "sha256": "dd9bac1fc3e713688645f5513ad2a449c8bf846ef20b6ea9f89c107fb9ce777a"
+        },
+        {
+          "path": "sse_multivector/fine-region-title-cutoff-audit-v1/run-p40/output.json",
+          "projection_hash_field": "fine_title_p40_output_sha256",
+          "sha256": "ee48494544cde278c115727bc2c451ea5baab51b0b0b5498d0715c4f412e59be"
+        },
+        {
+          "path": "sse_multivector/fine-region-title-cutoff-audit-v1/run-p30/output.json",
+          "projection_hash_field": "fine_title_p30_output_sha256",
+          "sha256": "89e3a676f0f255c6c68ba276a08b6a230cc4117cced2c37fac25f117cc4fa555"
+        }
+      ],
+      "fine_reviews": {
+        "path": "sse_multivector/fine-region-title-cutoff-audit-v1/review-decisions.json",
+        "sha256": "510ad52fc26b525ce87f298737538555c0cd6188970e1b630bd46bef0cb534b2"
+      },
+      "hierarchy": {
+        "path": "sse_multivector/fine-region-hierarchy-result-v2/analysis.json",
+        "sha256": "1371b94a47675652e85f54a294a78f6f34fbc508727236b596f2f9be37a48643"
+      },
+      "historical_registry_revision": "b1aa5cefd292f88b0853f40d9b95e28d78f43cb8",
+      "kind": "higher",
+      "partition": {
+        "path": "sse_multivector/fine-region-partition-result-v1/analysis.json",
+        "sha256": "e7296fdad9b69fedd37cf28bbbbb07ade54a399c49c5aa2a9f4f5944d1e6b26e"
+      },
+      "profile": "title-audit",
+      "projection": {
+        "path": "sse_multivector/fine-region-hierarchy-title-candidates-v1/projection.json",
+        "sha256": "73b0c983d81e392ccd389154f1c467b117760d89cc8b7cec9722d6ca6c4aaeef"
+      },
+      "prompt_version": "v1",
+      "registry": {
+        "path": "sse_multivector/fine-region-title-prompt-versions.json",
+        "sha256": "0c59094e2f344663b5fef3da1e44a01f36fcbd0f2f0493b9d135315cf6a828fe"
+      },
+      "reviews": {
+        "path": "sse_multivector/fine-region-hierarchy-title-candidates-v1/review-decisions.json",
+        "sha256": "28fe9c3ebed018e5fea9a41b081253b965a946f8c70fab9c9464cbc04090f405"
+      },
+      "runs": [
+        {
+          "configuration": {
+            "path": "sse_multivector/fine-region-hierarchy-title-candidates-v1/config.json",
+            "sha256": "f7cc19897d63e7cd75a7a3010ca5010847bde5ed9a468aeacea947d18623f152"
+          },
+          "fragment_mode": "fine_titles",
+          "manifest": {
+            "path": "sse_multivector/fine-region-hierarchy-title-candidates-v1/run/manifest.json",
+            "sha256": "717f5dfc2b53062d59dd90904daa2bae49dcec60184bb7b0cce61dc1c4045519"
+          },
+          "model_instructions": {
+            "path": "sse_multivector/fine-region-hierarchy-title-candidates-v1/run/model-instructions.md",
+            "sha256": "3d366e0253ede507e29be8ce00a9bd46ba2ebe7c01024bad45305bc0207fcfb1"
+          },
+          "output": {
+            "path": "sse_multivector/fine-region-hierarchy-title-candidates-v1/run/output.json",
+            "sha256": "dcd7a0bf07d87aa70f717b5375e456d26a071181b1c40299b17bbb0413175afe"
+          },
+          "receipt": {
+            "path": "sse_multivector/fine-region-hierarchy-title-candidates-v1/run/results.jsonl",
+            "sha256": "67ed4f0bd172831c6e0f18e1ddcebff340c6a41a02f6824000d49c3729202c36"
+          }
+        }
+      ]
+    },
+    "fine-region-title-cutoff-audit-v1": {
+      "dependencies": [
+        {
+          "publication": "numerical/fine-region-00d974f22ed8935f",
+          "role": "Saved numerical partition supplies source memberships; no embeddings republished"
+        }
+      ],
+      "groups": [
+        {
+          "members": [
+            1,
+            102,
+            103,
+            104
+          ],
+          "prompt_id": "S001",
+          "source_regions": [
+            {
+              "percentile": 10,
+              "region_index": 1
+            },
+            {
+              "percentile": 20,
+              "region_index": 1
+            },
+            {
+              "percentile": 30,
+              "region_index": 1
+            },
+            {
+              "percentile": 40,
+              "region_index": 1
+            },
+            {
+              "percentile": 50,
+              "region_index": 1
+            }
+          ]
+        },
+        {
+          "members": [
+            3,
+            4,
+            23,
+            99,
+            101
+          ],
+          "prompt_id": "S002",
+          "source_regions": [
+            {
+              "percentile": 10,
+              "region_index": 2
+            },
+            {
+              "percentile": 20,
+              "region_index": 2
+            },
+            {
+              "percentile": 30,
+              "region_index": 2
+            },
+            {
+              "percentile": 40,
+              "region_index": 2
+            },
+            {
+              "percentile": 50,
+              "region_index": 2
+            }
+          ]
+        },
+        {
+          "members": [
+            5,
+            116
+          ],
+          "prompt_id": "S003",
+          "source_regions": [
+            {
+              "percentile": 40,
+              "region_index": 3
+            },
+            {
+              "percentile": 50,
+              "region_index": 3
+            },
+            {
+              "percentile": 60,
+              "region_index": 3
+            },
+            {
+              "percentile": 70,
+              "region_index": 3
+            },
+            {
+              "percentile": 80,
+              "region_index": 3
+            }
+          ]
+        },
+        {
+          "members": [
+            7,
+            8,
+            9,
+            105,
+            106,
+            107
+          ],
+          "prompt_id": "S004",
+          "source_regions": [
+            {
+              "percentile": 10,
+              "region_index": 5
+            },
+            {
+              "percentile": 20,
+              "region_index": 5
+            },
+            {
+              "percentile": 30,
+              "region_index": 5
+            },
+            {
+              "percentile": 40,
+              "region_index": 5
+            },
+            {
+              "percentile": 50,
+              "region_index": 5
+            },
+            {
+              "percentile": 60,
+              "region_index": 5
+            },
+            {
+              "percentile": 70,
+              "region_index": 5
+            },
+            {
+              "percentile": 80,
+              "region_index": 5
+            }
+          ]
+        },
+        {
+          "members": [
+            10,
+            28
+          ],
+          "prompt_id": "S005",
+          "source_regions": [
+            {
+              "percentile": 40,
+              "region_index": 6
+            },
+            {
+              "percentile": 50,
+              "region_index": 6
+            },
+            {
+              "percentile": 60,
+              "region_index": 6
+            },
+            {
+              "percentile": 70,
+              "region_index": 6
+            },
+            {
+              "percentile": 80,
+              "region_index": 6
+            },
+            {
+              "percentile": 90,
+              "region_index": 6
+            }
+          ]
+        },
+        {
+          "members": [
+            29,
+            30,
+            31,
+            50
+          ],
+          "prompt_id": "S007",
+          "source_regions": [
+            {
+              "percentile": 10,
+              "region_index": 13
+            },
+            {
+              "percentile": 20,
+              "region_index": 15
+            },
+            {
+              "percentile": 30,
+              "region_index": 15
+            },
+            {
+              "percentile": 40,
+              "region_index": 16
+            },
+            {
+              "percentile": 50,
+              "region_index": 16
+            },
+            {
+              "percentile": 60,
+              "region_index": 17
+            },
+            {
+              "percentile": 70,
+              "region_index": 17
+            },
+            {
+              "percentile": 80,
+              "region_index": 17
+            }
+          ]
+        },
+        {
+          "members": [
+            35,
+            51,
+            60
+          ],
+          "prompt_id": "S008",
+          "source_regions": [
+            {
+              "percentile": 20,
+              "region_index": 18
+            },
+            {
+              "percentile": 30,
+              "region_index": 18
+            },
+            {
+              "percentile": 40,
+              "region_index": 19
+            },
+            {
+              "percentile": 50,
+              "region_index": 19
+            },
+            {
+              "percentile": 60,
+              "region_index": 20
+            },
+            {
+              "percentile": 70,
+              "region_index": 20
+            },
+            {
+              "percentile": 80,
+              "region_index": 20
+            },
+            {
+              "percentile": 90,
+              "region_index": 21
+            }
+          ]
+        },
+        {
+          "members": [
+            62,
+            186
+          ],
+          "prompt_id": "S009",
+          "source_regions": [
+            {
+              "percentile": 10,
+              "region_index": 27
+            },
+            {
+              "percentile": 20,
+              "region_index": 30
+            },
+            {
+              "percentile": 30,
+              "region_index": 30
+            },
+            {
+              "percentile": 40,
+              "region_index": 32
+            },
+            {
+              "percentile": 50,
+              "region_index": 32
+            },
+            {
+              "percentile": 60,
+              "region_index": 33
+            },
+            {
+              "percentile": 70,
+              "region_index": 33
+            }
+          ]
+        },
+        {
+          "members": [
+            76,
+            95,
+            96,
+            97
+          ],
+          "prompt_id": "S011",
+          "source_regions": [
+            {
+              "percentile": 40,
+              "region_index": 45
+            },
+            {
+              "percentile": 50,
+              "region_index": 45
+            },
+            {
+              "percentile": 60,
+              "region_index": 46
+            },
+            {
+              "percentile": 70,
+              "region_index": 46
+            }
+          ]
+        },
+        {
+          "members": [
+            94,
+            119
+          ],
+          "prompt_id": "S013",
+          "source_regions": [
+            {
+              "percentile": 10,
+              "region_index": 46
+            },
+            {
+              "percentile": 20,
+              "region_index": 51
+            },
+            {
+              "percentile": 30,
+              "region_index": 52
+            },
+            {
+              "percentile": 40,
+              "region_index": 57
+            },
+            {
+              "percentile": 50,
+              "region_index": 58
+            },
+            {
+              "percentile": 60,
+              "region_index": 59
+            }
+          ]
+        },
+        {
+          "members": [
+            100,
+            114
+          ],
+          "prompt_id": "S014",
+          "source_regions": [
+            {
+              "percentile": 10,
+              "region_index": 47
+            },
+            {
+              "percentile": 20,
+              "region_index": 52
+            },
+            {
+              "percentile": 30,
+              "region_index": 54
+            },
+            {
+              "percentile": 40,
+              "region_index": 59
+            },
+            {
+              "percentile": 50,
+              "region_index": 60
+            }
+          ]
+        },
+        {
+          "members": [
+            109,
+            123
+          ],
+          "prompt_id": "S015",
+          "source_regions": [
+            {
+              "percentile": 10,
+              "region_index": 49
+            },
+            {
+              "percentile": 20,
+              "region_index": 54
+            },
+            {
+              "percentile": 30,
+              "region_index": 56
+            },
+            {
+              "percentile": 40,
+              "region_index": 61
+            },
+            {
+              "percentile": 50,
+              "region_index": 62
+            },
+            {
+              "percentile": 60,
+              "region_index": 64
+            },
+            {
+              "percentile": 70,
+              "region_index": 65
+            },
+            {
+              "percentile": 80,
+              "region_index": 70
+            }
+          ]
+        },
+        {
+          "members": [
+            118,
+            127,
+            133,
+            136
+          ],
+          "prompt_id": "S016",
+          "source_regions": [
+            {
+              "percentile": 40,
+              "region_index": 67
+            },
+            {
+              "percentile": 50,
+              "region_index": 68
+            },
+            {
+              "percentile": 60,
+              "region_index": 71
+            },
+            {
+              "percentile": 70,
+              "region_index": 72
+            }
+          ]
+        },
+        {
+          "members": [
+            174,
+            175,
+            192,
+            193
+          ],
+          "prompt_id": "S017",
+          "source_regions": [
+            {
+              "percentile": 10,
+              "region_index": 68
+            },
+            {
+              "percentile": 20,
+              "region_index": 77
+            },
+            {
+              "percentile": 30,
+              "region_index": 81
+            },
+            {
+              "percentile": 40,
+              "region_index": 94
+            },
+            {
+              "percentile": 50,
+              "region_index": 98
+            }
+          ]
+        },
+        {
+          "members": [
+            23,
+            99,
+            101
+          ],
+          "prompt_id": "S018",
+          "source_regions": [
+            {
+              "percentile": 60,
+              "region_index": 13
+            },
+            {
+              "percentile": 70,
+              "region_index": 13
+            }
+          ]
+        },
+        {
+          "members": [
+            23,
+            99
+          ],
+          "prompt_id": "S019",
+          "source_regions": [
+            {
+              "percentile": 80,
+              "region_index": 13
+            }
+          ]
+        },
+        {
+          "members": [
+            118,
+            127
+          ],
+          "prompt_id": "S020",
+          "source_regions": [
+            {
+              "percentile": 80,
+              "region_index": 77
+            },
+            {
+              "percentile": 90,
+              "region_index": 84
+            }
+          ]
+        },
+        {
+          "members": [
+            13,
+            152
+          ],
+          "prompt_id": "S006",
+          "source_regions": [
+            {
+              "percentile": 30,
+              "region_index": 8
+            },
+            {
+              "percentile": 40,
+              "region_index": 8
+            }
+          ]
+        },
+        {
+          "members": [
+            63,
+            170
+          ],
+          "prompt_id": "S010",
+          "source_regions": [
+            {
+              "percentile": 10,
+              "region_index": 28
+            },
+            {
+              "percentile": 20,
+              "region_index": 31
+            },
+            {
+              "percentile": 30,
+              "region_index": 31
+            },
+            {
+              "percentile": 40,
+              "region_index": 33
+            }
+          ]
+        },
+        {
+          "members": [
+            78,
+            92
+          ],
+          "prompt_id": "S012",
+          "source_regions": [
+            {
+              "percentile": 10,
+              "region_index": 38
+            },
+            {
+              "percentile": 20,
+              "region_index": 43
+            },
+            {
+              "percentile": 30,
+              "region_index": 44
+            },
+            {
+              "percentile": 40,
+              "region_index": 47
+            }
+          ]
+        },
+        {
+          "members": [
+            5,
+            113,
+            116
+          ],
+          "prompt_id": "P30-R003",
+          "source_regions": [
+            {
+              "percentile": 20,
+              "region_index": 3
+            },
+            {
+              "percentile": 30,
+              "region_index": 3
+            }
+          ]
+        },
+        {
+          "members": [
+            10,
+            28,
+            43,
+            44,
+            45,
+            46,
+            48
+          ],
+          "prompt_id": "P30-R006",
+          "source_regions": [
+            {
+              "percentile": 10,
+              "region_index": 6
+            },
+            {
+              "percentile": 20,
+              "region_index": 6
+            },
+            {
+              "percentile": 30,
+              "region_index": 6
+            }
+          ]
+        },
+        {
+          "members": [
+            11,
+            12,
+            14,
+            15,
+            90,
+            91
+          ],
+          "prompt_id": "P30-R007",
+          "source_regions": [
+            {
+              "percentile": 20,
+              "region_index": 7
+            },
+            {
+              "percentile": 30,
+              "region_index": 7
+            }
+          ]
+        },
+        {
+          "members": [
+            42,
+            159
+          ],
+          "prompt_id": "P30-R022",
+          "source_regions": [
+            {
+              "percentile": 10,
+              "region_index": 20
+            },
+            {
+              "percentile": 20,
+              "region_index": 22
+            },
+            {
+              "percentile": 30,
+              "region_index": 22
+            }
+          ]
+        },
+        {
+          "members": [
+            71,
+            86,
+            87
+          ],
+          "prompt_id": "P30-R039",
+          "source_regions": [
+            {
+              "percentile": 20,
+              "region_index": 38
+            },
+            {
+              "percentile": 30,
+              "region_index": 39
+            }
+          ]
+        },
+        {
+          "members": [
+            75,
+            76,
+            95,
+            96,
+            97
+          ],
+          "prompt_id": "P30-R042",
+          "source_regions": [
+            {
+              "percentile": 20,
+              "region_index": 41
+            },
+            {
+              "percentile": 30,
+              "region_index": 42
+            }
+          ]
+        },
+        {
+          "members": [
+            88,
+            122
+          ],
+          "prompt_id": "P30-R049",
+          "source_regions": [
+            {
+              "percentile": 10,
+              "region_index": 43
+            },
+            {
+              "percentile": 20,
+              "region_index": 48
+            },
+            {
+              "percentile": 30,
+              "region_index": 49
+            }
+          ]
+        },
+        {
+          "members": [
+            108,
+            115
+          ],
+          "prompt_id": "P30-R055",
+          "source_regions": [
+            {
+              "percentile": 10,
+              "region_index": 48
+            },
+            {
+              "percentile": 20,
+              "region_index": 53
+            },
+            {
+              "percentile": 30,
+              "region_index": 55
+            }
+          ]
+        },
+        {
+          "members": [
+            111,
+            112,
+            128
+          ],
+          "prompt_id": "P30-R058",
+          "source_regions": [
+            {
+              "percentile": 10,
+              "region_index": 50
+            },
+            {
+              "percentile": 20,
+              "region_index": 56
+            },
+            {
+              "percentile": 30,
+              "region_index": 58
+            }
+          ]
+        },
+        {
+          "members": [
+            117,
+            118,
+            127,
+            133,
+            136
+          ],
+          "prompt_id": "P30-R059",
+          "source_regions": [
+            {
+              "percentile": 20,
+              "region_index": 57
+            },
+            {
+              "percentile": 30,
+              "region_index": 59
+            }
+          ]
+        },
+        {
+          "members": [
+            120,
+            121,
+            132,
+            134,
+            135
+          ],
+          "prompt_id": "P30-R060",
+          "source_regions": [
+            {
+              "percentile": 10,
+              "region_index": 52
+            },
+            {
+              "percentile": 20,
+              "region_index": 58
+            },
+            {
+              "percentile": 30,
+              "region_index": 60
+            }
+          ]
+        }
+      ],
+      "kind": "cutoff",
+      "partition": {
+        "path": "sse_multivector/fine-region-partition-result-v1/analysis.json",
+        "sha256": "e7296fdad9b69fedd37cf28bbbbb07ade54a399c49c5aa2a9f4f5944d1e6b26e"
+      },
+      "profile": "title-audit",
+      "prompt_version": "v1",
+      "registry": {
+        "path": "sse_multivector/fine-region-title-prompt-versions.json",
+        "sha256": "0c59094e2f344663b5fef3da1e44a01f36fcbd0f2f0493b9d135315cf6a828fe"
+      },
+      "reviews": {
+        "path": "sse_multivector/fine-region-title-cutoff-audit-v1/review-decisions.json",
+        "sha256": "510ad52fc26b525ce87f298737538555c0cd6188970e1b630bd46bef0cb534b2"
+      },
+      "runs": [
+        {
+          "configuration": {
+            "path": "sse_multivector/fine-region-title-cutoff-audit-v1/config.json",
+            "sha256": "c93e9ce35f1fc97903d2c3e9e0ef960023a2bd35d66a6f49c0b1331248aacda1"
+          },
+          "fragment_mode": "saved_display_normalization",
+          "manifest": {
+            "path": "sse_multivector/fine-region-title-cutoff-audit-v1/run/manifest.json",
+            "sha256": "9c790318aaedba9e6f191a76d83e6a0f2e45fa062a9246c7d4f10d41999251fd"
+          },
+          "model_instructions": {
+            "path": "sse_multivector/fine-region-title-cutoff-audit-v1/run/model-instructions.md",
+            "sha256": "3d366e0253ede507e29be8ce00a9bd46ba2ebe7c01024bad45305bc0207fcfb1"
+          },
+          "output": {
+            "path": "sse_multivector/fine-region-title-cutoff-audit-v1/run/output.json",
+            "sha256": "dd9bac1fc3e713688645f5513ad2a449c8bf846ef20b6ea9f89c107fb9ce777a"
+          },
+          "receipt": {
+            "path": "sse_multivector/fine-region-title-cutoff-audit-v1/run/results.jsonl",
+            "sha256": "9ec89dbb50d3e4eecb1302cd63d97c16384d033ac33dbe1bcea98981bb7f8660"
+          }
+        },
+        {
+          "configuration": {
+            "path": "sse_multivector/fine-region-title-cutoff-audit-v1/p40-config.json",
+            "sha256": "dcf947cbcc8b9524930be2c9ab18a598cbc69f4443f6bc3988b5db42b9e5d434"
+          },
+          "fragment_mode": "exact_source",
+          "manifest": {
+            "path": "sse_multivector/fine-region-title-cutoff-audit-v1/run-p40/manifest.json",
+            "sha256": "da1952253ca375abbc81006a1e157bca458cdde194c7429a418f7ab24342046d"
+          },
+          "model_instructions": {
+            "path": "sse_multivector/fine-region-title-cutoff-audit-v1/run-p40/model-instructions.md",
+            "sha256": "3d366e0253ede507e29be8ce00a9bd46ba2ebe7c01024bad45305bc0207fcfb1"
+          },
+          "output": {
+            "path": "sse_multivector/fine-region-title-cutoff-audit-v1/run-p40/output.json",
+            "sha256": "ee48494544cde278c115727bc2c451ea5baab51b0b0b5498d0715c4f412e59be"
+          },
+          "percentile": 40,
+          "receipt": {
+            "path": "sse_multivector/fine-region-title-cutoff-audit-v1/run-p40/results.jsonl",
+            "sha256": "144aa364c78e65723de5921fae641bcbb7f14e853e818abe111c60d05c592d60"
+          }
+        },
+        {
+          "configuration": {
+            "path": "sse_multivector/fine-region-title-cutoff-audit-v1/p30-config.json",
+            "sha256": "e8b712d172c94f79022cbe90ff6c71a383322020e1219ab77f2a632cc3b30e09"
+          },
+          "fragment_mode": "exact_source",
+          "manifest": {
+            "path": "sse_multivector/fine-region-title-cutoff-audit-v1/run-p30/manifest.json",
+            "sha256": "eaef6ff7fea05a5dd0b43dc726601187de63372df6e40bcc01d5543646d14b46"
+          },
+          "model_instructions": {
+            "path": "sse_multivector/fine-region-title-cutoff-audit-v1/run-p30/model-instructions.md",
+            "sha256": "3d366e0253ede507e29be8ce00a9bd46ba2ebe7c01024bad45305bc0207fcfb1"
+          },
+          "output": {
+            "path": "sse_multivector/fine-region-title-cutoff-audit-v1/run-p30/output.json",
+            "sha256": "89e3a676f0f255c6c68ba276a08b6a230cc4117cced2c37fac25f117cc4fa555"
+          },
+          "percentile": 30,
+          "receipt": {
+            "path": "sse_multivector/fine-region-title-cutoff-audit-v1/run-p30/results.jsonl",
+            "sha256": "9788647602b61946449aef9baa89600a0ffb4b49c7b9c7ba20dd158e831fc0a6"
+          }
+        }
+      ]
+    }
+  }
+}

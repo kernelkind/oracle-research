@@ -11,7 +11,7 @@ is complete; privacy and identity review remains open.
 | --- | --- |
 | GitHub | Code and its history, tests, prompts and their provenance, authored findings, useful documentation, the selected-study index and commit mapping; download size unmeasured |
 | Hugging Face Models | All 17 evaluated adapters, with configurations and pinned base-model references: **6.78 GiB** |
-| Hugging Face Datasets | Posts actually used, prepared training data, final unsigned hierarchies, standalone prompt answers, evaluation results, final numerical results and each experiment's parameters: **1.06 GiB currently staged**, with legacy review items remaining |
+| Hugging Face Datasets | Posts actually used, prepared training data, final unsigned hierarchies, standalone prompt answers, evaluation results, final numerical results and each experiment's parameters: **1.08 GiB currently staged**, with legacy review items remaining |
 
 The GitHub index will link each experiment to its inputs and results at exact
 Hugging Face revisions, with checksums. Readers should be able to download the
@@ -60,8 +60,8 @@ evidence to original blobs, commits and paths. `experiments.csv` now retains the
 2,595 initially selected rows from the reviewed index, preserving their study
 identities, settings and order, plus 33 later-selected title/description
 collections, 11 SSE representation collections, six subject/mask collections,
-22 early/standalone prompt collections and four later-located historical prompt
-studies. Six ASv6.100 rows additionally link
+22 early/standalone prompt collections, four segmentation/title/frontier
+collections and four later-located historical prompt studies. Six ASv6.100 rows additionally link
 the shared evaluation documents in their publication notes.
 `publications.csv` also indexes the selected
 numerical and other
@@ -165,21 +165,22 @@ download or Hugging Face revision has been created.
 | Historical subject-prompt studies: posts, answers, assessments and measurements | Four studies, 78 calls and 10 distinct posts | 0.36 MiB |
 | Additional historical subject/mask evidence: inputs, answers, assessments, corrections and parameters | Six collections, 123 study/review entries and 1,965 saved responses | 13.46 MiB |
 | Early/standalone prompt and manual prominence evidence | 22 collections, 24 entries and 514 saved final answers | 2.33 MiB |
-| Historical title/description studies: inputs, answers, recorded reviews, final selections and parameters | 33 collections, 506 saved answers and 24 failed attempts | 2.59 MiB |
+| Historical title/description studies: inputs, answers, recorded reviews, final selections and parameters | 35 collections, 556 saved answers and 24 failed attempts | 2.86 MiB |
+| Frontier model comparisons: answers, inputs, parameters, reviews and measurements | 13 entries, 233 completed answers and three saved partial answers | 4.00 MiB |
 | SSE representation studies: final comparisons, fixed inputs and encoder settings | 11 collections, 381 encoded row identities | 0.84 MiB |
 | ASv6.100 evaluation documents | Final quality summary and four frozen agent rubrics, shared by three trials | 0.09 MiB |
 | Fine-tune, grading and effort evaluations | 67 final/last reports, including 20 validation stages | 665.12 MiB |
-| Historical numerical results | 73 | 78.85 MiB |
+| Historical numerical results, including nine real-note segmentations | 74 bundles | 93.10 MiB |
 | Performance measurements | 9 | 0.02 MiB |
 | Unsigned hierarchies, selections and parameters | 37 official runs plus 203 saved branch outputs | 5.35 MiB |
 | Used posts, prepared training inputs and adapter hash records | 10,571 posts, four prepared files, split/settings records and 17 adapter bindings | 67.87 MiB |
-| **Selected non-model files** | **9,770 files** | **1,086.33 MiB (1.06 GiB)** |
+| **Selected non-model files** | **9,850 files** | **1,104.85 MiB (1.08 GiB)** |
 | **All 17 evaluated adapters, weights and configurations** | **34 original files, hashed without copying weights** | **6.78 GiB** |
 
-The exact selected non-model total is **1,139,101,781 bytes**. Together with
-the adapter weights/configurations it is **8,419,189,550 bytes (7.84 GiB)**.
+The exact selected non-model total is **1,158,517,363 bytes**. Together with
+the adapter weights/configurations it is **8,438,605,132 bytes (7.86 GiB)**.
 Code and cleaned Git history are additional. Measured gzip level-6 compression
-of each non-model file totals **161,073,282 bytes (153.61 MiB)**; no compressed
+of each non-model file totals **164,706,425 bytes (157.08 MiB)**; no compressed
 downloads were created and the staged files remain in their original export
 formats.
 
@@ -203,14 +204,24 @@ Original user-review states and later rereviews remain distinct; embedded copies
 are references. Existing native prominence outputs are not duplicated. See the
 [early prompt and prominence checks](reproduce.md#early-prompt-and-manual-prominence-study-checks).
 
+The four segmentation, fine-region title and frontier collections add **80 files,
+19,415,582 bytes (18.52 MiB)**, or **3,633,143 bytes (3.46 MiB)** with gzip level 6.
+They retain nine segmentations, 50 title answers and 233 frontier answers, plus
+three saved failed partial answers. Original structured reviews, later authored
+corrections and interim comparison outcomes remain distinct. Reused baseline
+answers link their existing publications. See the
+[title/segmentation checks](reproduce.md#fine-region-title-and-real-note-segmentation-checks)
+and [frontier checks](reproduce.md#frontier-comparison-checks).
+
 These are measured selected outputs, not an exhaustive all-history size claim.
 [Remaining items](publication-gaps.csv) identify 33 unsupported result files,
 one result missing its configuration, and final evidence identified by the
 [109-group historical review](open-items.md#historical-collection-review).
 That review resolved 32 groups needing no separate result export. Another 33
-title/description groups, 11 SSE representation groups, six subject/mask groups
-and 22 early/standalone prompt groups are now selected; five historical groups
-still need final evidence exports. Their unconverted source
+title/description groups, 11 SSE representation groups, six subject/mask groups,
+22 early/standalone prompt groups and four segmentation/title/frontier groups
+are now selected; one archived-baseline group still needs a final evidence export.
+Its unconverted source
 containers are outside these totals.
 All 27,032 native jobs have been classified: 2,547 standalone trials are retained; warmups,
 internal execution jobs, manual construction intermediates and input-only

@@ -34,3 +34,12 @@ High is a promising workaround on this sample, not a demonstrated upstream fix o
 New customer spend: $0.0374322, recorded as 4 cents in the ledger. The previously settled N031 charge is not counted again. No requests remain active.
 
 Next: compare these saved hierarchies with the saved Astra ASv6.48 outputs named in `../cases.json`. No additional inference is required. Do not substitute Muse low for the requested Astra comparison.
+
+## Publication files
+
+Selected final answers, assessments, measurements, inputs and settings retain N031 as a reference to its saved answer in the earlier variant study.
+
+`historical-studies/frontier-asv6.48-muse-high-ten-note-v1` appears in the
+[catalog](../../../../docs/experiments/publications.csv) and [file list](../../../../docs/experiments/publication-files.csv).
+These files are prepared locally for Hugging Face Datasets; downloads are not
+available yet. Recorded pre-ASv6.100 derivatives remain deprecated historical evidence.

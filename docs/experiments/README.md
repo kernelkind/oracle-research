@@ -49,9 +49,9 @@ remain historical evidence; raw source posts are not deprecated by that rule.
   ASv6.100's final quality summary and four frozen agent rubrics are selected as
   original Markdown; the [study record](../../sse_multivector/subject-prompt-goal-v1/asv6.100-generalization-v1/README.md#publication-files)
   identifies their paths alongside the six existing answer/review bundles.
-- [Experiments](experiments.csv): 2,671 entries linked to selected results:
+- [Experiments](experiments.csv): 2,675 entries linked to selected results:
   2,547 standalone prompt preparations, 37 official hierarchy runs, four training
-  runs, 79 historical collections and four later-located historical prompt
+  runs, 83 historical collections and four later-located historical prompt
   studies. These are different kinds of entries,
   not an additive count of independent experiments. Prompt IDs, model settings,
   case counts, provenance and plan/manifest identities are preserved. The
@@ -71,6 +71,11 @@ remain historical evidence; raw source posts are not deprecated by that rule.
   They preserve partial outcomes and reused baselines; the existing native
   prominence bundles stay separate. See the
   [early prompt and prominence checks](reproduce.md#early-prompt-and-manual-prominence-study-checks).
+  Four further collections retain nine real-note segmentations, two fine-region
+  title studies and 13 frontier comparison entries. They add 283 completed
+  answers and three saved partial answers, with reused baselines and original
+  review states kept distinct. See the [title/segmentation checks](reproduce.md#fine-region-title-and-real-note-segmentation-checks)
+  and [frontier checks](reproduce.md#frontier-comparison-checks).
   Eleven SSE representation studies also retain their final numerical comparisons
   and fixed inputs; these used manually supplied spans, without subject or mask
   prompt generation. See the [representation checks](reproduce.md#sse-representation-study-checks).
@@ -142,11 +147,11 @@ paths. Source, prompts, authored plans and findings, reusable specifications and
 fixtures stay tracked, along with 196 ambiguous files awaiting review. The
 generated-data rewrite is complete; privacy and identity review remains open.
 
-Hugging Face Models holds all 17 evaluated
-adapters (6.78 GiB). Hugging Face Datasets holds used posts, prepared training
+Hugging Face Models will host all 17 evaluated
+adapters (6.78 GiB). Hugging Face Datasets will host used posts, prepared training
 data, final unsigned hierarchies, standalone prompt answers, evaluation and
 numerical results, and each experiment's parameters. The selected local files
-currently measure 1.06 GiB; older-format review items remain explicit.
+currently measure 1.08 GiB; older-format review items remain explicit.
 
 The [publication plan](downloads.md) defines those contents. The new
 [publication file list](publication-files.csv) describes the exact local

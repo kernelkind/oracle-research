@@ -1,0 +1,610 @@
+{
+  "schema_version": 1,
+  "studies": {
+    "real-note-fine-segmentation-v1": {
+      "profile": "segmentation-study",
+      "datasets": [
+        {
+          "id": "original100",
+          "reviewed_input": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/vectors/reviewed-input.json",
+            "sha256": "9de47b1a66867e612aaf706da5002d4b04b4e9d8192e3782330a693dd1dea019"
+          },
+          "vector_map": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/vectors/vector-map.json",
+            "sha256": "8c2a3eebf84855cc676b3a5812aa53401ec9ddf66292139daa7a4ee17a574712"
+          },
+          "manifest": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/vectors/manifest.json",
+            "sha256": "ab5637ab4ae0a6b10198559e24e9941a9738c9fa33555bf7b37370146e45b148"
+          },
+          "encoder": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/vectors/encoder.json",
+            "sha256": "8d160d6d605d0a729dd7f8cc97c9f67dab35ba370f8b4919ba623e42fe12fcf5"
+          },
+          "subject_package": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/vectors/subject-package.json",
+            "sha256": "54f87aa49fbed73f401eba1bf7a5b792fec9d989d0371c35ee7dd96689534d01"
+          },
+          "mask_package": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/vectors/mask-package.json",
+            "sha256": "b16a4bb31c8fc6bcf824f625d298b00c65b6fe33a5fe007f99e760197e1a2d69"
+          },
+          "subject_package_origin": {
+            "path": "sse_multivector/subject-prompt-goal-v1/asv6.23/frozen.json",
+            "sha256": "54f87aa49fbed73f401eba1bf7a5b792fec9d989d0371c35ee7dd96689534d01"
+          },
+          "mask_package_origin": {
+            "path": "sse_multivector/mask-prompt-goal-v1/frozen.json",
+            "sha256": "b16a4bb31c8fc6bcf824f625d298b00c65b6fe33a5fe007f99e760197e1a2d69"
+          }
+        },
+        {
+          "id": "expansion-arm-a",
+          "reviewed_input": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/coverage-expansion-v1/arm-a-vectors/reviewed-input.json",
+            "sha256": "28bb1cecd7a17ac6e8be7559171ee9f4629e70d5d7d3ef567853d7fe7361cc8a"
+          },
+          "vector_map": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/coverage-expansion-v1/arm-a-vectors/vector-map.json",
+            "sha256": "c3424cc6c65050ce005507aa8711ccda0b7bdfc98ae824cec12b8570d0aaf607"
+          },
+          "manifest": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/coverage-expansion-v1/arm-a-vectors/manifest.json",
+            "sha256": "11ee89258bd2e6e18c079bc2c9036e8881bfcd40f4d677e9ccf8edf985e6bc06"
+          },
+          "encoder": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/coverage-expansion-v1/arm-a-vectors/encoder.json",
+            "sha256": "8d160d6d605d0a729dd7f8cc97c9f67dab35ba370f8b4919ba623e42fe12fcf5"
+          },
+          "subject_package": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/coverage-expansion-v1/arm-a-vectors/subject-package.json",
+            "sha256": "54f87aa49fbed73f401eba1bf7a5b792fec9d989d0371c35ee7dd96689534d01"
+          },
+          "mask_package": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/coverage-expansion-v1/arm-a-vectors/mask-package.json",
+            "sha256": "b16a4bb31c8fc6bcf824f625d298b00c65b6fe33a5fe007f99e760197e1a2d69"
+          },
+          "subject_package_origin": {
+            "path": "sse_multivector/subject-prompt-goal-v1/asv6.23/frozen.json",
+            "sha256": "54f87aa49fbed73f401eba1bf7a5b792fec9d989d0371c35ee7dd96689534d01"
+          },
+          "mask_package_origin": {
+            "path": "sse_multivector/mask-prompt-goal-v1/frozen.json",
+            "sha256": "b16a4bb31c8fc6bcf824f625d298b00c65b6fe33a5fe007f99e760197e1a2d69"
+          }
+        },
+        {
+          "id": "expansion-arm-b",
+          "reviewed_input": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/coverage-expansion-v1/arm-b-vectors/reviewed-input.json",
+            "sha256": "b969535d09b63b97ec70e29e771eedab41625b377fd2e93526429224ac2deafa"
+          },
+          "vector_map": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/coverage-expansion-v1/arm-b-vectors/vector-map.json",
+            "sha256": "8d04dca5df3245cf0c62f09a12563c96a1cea6120237526b88ee7c7dc381b85a"
+          },
+          "manifest": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/coverage-expansion-v1/arm-b-vectors/manifest.json",
+            "sha256": "1d97af6277021545866e23e304ca6d1fd84991ec611deef3df33bf4994f7f101"
+          },
+          "encoder": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/coverage-expansion-v1/arm-b-vectors/encoder.json",
+            "sha256": "8d160d6d605d0a729dd7f8cc97c9f67dab35ba370f8b4919ba623e42fe12fcf5"
+          },
+          "subject_package": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/coverage-expansion-v1/arm-b-vectors/subject-package.json",
+            "sha256": "54f87aa49fbed73f401eba1bf7a5b792fec9d989d0371c35ee7dd96689534d01"
+          },
+          "mask_package": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/coverage-expansion-v1/arm-b-vectors/mask-package.json",
+            "sha256": "b16a4bb31c8fc6bcf824f625d298b00c65b6fe33a5fe007f99e760197e1a2d69"
+          },
+          "subject_package_origin": {
+            "path": "sse_multivector/subject-prompt-goal-v1/asv6.23/frozen.json",
+            "sha256": "54f87aa49fbed73f401eba1bf7a5b792fec9d989d0371c35ee7dd96689534d01"
+          },
+          "mask_package_origin": {
+            "path": "sse_multivector/mask-prompt-goal-v1/frozen.json",
+            "sha256": "b16a4bb31c8fc6bcf824f625d298b00c65b6fe33a5fe007f99e760197e1a2d69"
+          }
+        },
+        {
+          "id": "music100",
+          "reviewed_input": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/music-generation-v1/vectors/reviewed-input.json",
+            "sha256": "194936022469cd958111df45abc2af45b4ced41efb3671a8c303d54995ea95c7"
+          },
+          "vector_map": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/music-generation-v1/vectors/vector-map.json",
+            "sha256": "fe94ba230c38fd4dd372c1b6d0efcbe8c90b73eee8f6536e99778af742d6ff31"
+          },
+          "manifest": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/music-generation-v1/vectors/manifest.json",
+            "sha256": "1ceead06e11eaf33c5d11cf4531e6ea60555f0423cc51421bb632497fb610e75"
+          },
+          "encoder": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/music-generation-v1/vectors/encoder.json",
+            "sha256": "8d160d6d605d0a729dd7f8cc97c9f67dab35ba370f8b4919ba623e42fe12fcf5"
+          },
+          "subject_package": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/music-generation-v1/vectors/subject-package.json",
+            "sha256": "54f87aa49fbed73f401eba1bf7a5b792fec9d989d0371c35ee7dd96689534d01"
+          },
+          "mask_package": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/music-generation-v1/vectors/mask-package.json",
+            "sha256": "b16a4bb31c8fc6bcf824f625d298b00c65b6fe33a5fe007f99e760197e1a2d69"
+          },
+          "subject_package_origin": {
+            "path": "sse_multivector/subject-prompt-goal-v1/asv6.23/frozen.json",
+            "sha256": "54f87aa49fbed73f401eba1bf7a5b792fec9d989d0371c35ee7dd96689534d01"
+          },
+          "mask_package_origin": {
+            "path": "sse_multivector/mask-prompt-goal-v1/frozen.json",
+            "sha256": "b16a4bb31c8fc6bcf824f625d298b00c65b6fe33a5fe007f99e760197e1a2d69"
+          }
+        },
+        {
+          "id": "combined200",
+          "reviewed_input": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/music-generation-v1/combined-vectors/reviewed-input.json",
+            "sha256": "3103a4b169d1a2fe922a92ec6b9ebf051185a391e472f267c5f48fb5d2eeb7d2"
+          },
+          "vector_map": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/music-generation-v1/combined-vectors/vector-map.json",
+            "sha256": "7d5d3e51b0b24353316da5aab436733584136b41423d4b5256555de54c62d817"
+          },
+          "manifest": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/music-generation-v1/combined-vectors/manifest.json",
+            "sha256": "27984b2f3bcacb02d9b4aa123af0ce986ae1c335bf9785f095a9778375d02b4d"
+          },
+          "encoder": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/music-generation-v1/combined-vectors/encoder.json",
+            "sha256": "8d160d6d605d0a729dd7f8cc97c9f67dab35ba370f8b4919ba623e42fe12fcf5"
+          },
+          "subject_package": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/music-generation-v1/combined-vectors/subject-package.json",
+            "sha256": "54f87aa49fbed73f401eba1bf7a5b792fec9d989d0371c35ee7dd96689534d01"
+          },
+          "mask_package": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/music-generation-v1/combined-vectors/mask-package.json",
+            "sha256": "b16a4bb31c8fc6bcf824f625d298b00c65b6fe33a5fe007f99e760197e1a2d69"
+          },
+          "subject_package_origin": {
+            "path": "sse_multivector/subject-prompt-goal-v1/asv6.23/frozen.json",
+            "sha256": "54f87aa49fbed73f401eba1bf7a5b792fec9d989d0371c35ee7dd96689534d01"
+          },
+          "mask_package_origin": {
+            "path": "sse_multivector/mask-prompt-goal-v1/frozen.json",
+            "sha256": "b16a4bb31c8fc6bcf824f625d298b00c65b6fe33a5fe007f99e760197e1a2d69"
+          }
+        }
+      ],
+      "runs": [
+        {
+          "id": "hdbscan-baseline",
+          "dataset": "original100",
+          "response": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/hdbscan-baseline/response.json",
+            "sha256": "038d3ccdef68e80ad2045275f6e1760f4079007172b8ea0031de31f41ae849bf"
+          },
+          "full_hierarchy": false,
+          "review": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/hdbscan-baseline/review/review.json",
+            "sha256": "f7a405d02ddb871a2d8d6f4da262192e09f99a34082ef0bbc39848b98215ae65"
+          }
+        },
+        {
+          "id": "hdbscan-density",
+          "dataset": "original100",
+          "response": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/hdbscan-density/response.json",
+            "sha256": "ef385f9c03deb679549d43b06608ba308fd7146814fb6a6fdf85db1eec8ef1f6"
+          },
+          "full_hierarchy": false,
+          "review": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/hdbscan-density/review/review.json",
+            "sha256": "5cba5103c3096c19434db1df8e7eea071f8e0e846d88def385055eee9ccbc64e"
+          }
+        },
+        {
+          "id": "hdbscan-leaf",
+          "dataset": "original100",
+          "response": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/hdbscan-leaf/response.json",
+            "sha256": "5abf6777f13a6356cf5f9260414d6e2a660cece9f05ca29549e0e3e2a5d17850"
+          },
+          "full_hierarchy": false,
+          "review": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/hdbscan-leaf/review/review.json",
+            "sha256": "ea924ab64852b1ab63e820aefd2c4625d1e17eb9c90c779916c0a4e5e58fe0ac"
+          }
+        },
+        {
+          "id": "hdbscan-cross-note",
+          "dataset": "original100",
+          "response": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/hdbscan-cross-note/response.json",
+            "sha256": "f2c9b762b2b11357686ea24cb2f6a686bf9b9a9f0a4e2e5f1660fd46646bcdaa"
+          },
+          "full_hierarchy": true,
+          "review": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/hdbscan-cross-note/review/review.json",
+            "sha256": "999e30fe987e2816bdb588f28cc8e7c6141a6d152344836d5ea4eebcda0121ae"
+          }
+        },
+        {
+          "id": "hdbv3-cross-note-edges-v1",
+          "dataset": "original100",
+          "response": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/hdbv3-cross-note-edges-v1/response.json",
+            "sha256": "41af26a63120b29f5294c4a66e83af0d0b0ba31a7a36cf4e0fde931a90eb94b3"
+          },
+          "full_hierarchy": true
+        },
+        {
+          "id": "expansion-arm-a",
+          "dataset": "expansion-arm-a",
+          "response": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/coverage-expansion-v1/arm-a-hdbv2/response.json",
+            "sha256": "a224b064f2bc47da16c62119587f41465a375f87c353689ad73aed9e7b081b2e"
+          },
+          "full_hierarchy": false,
+          "review": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/coverage-expansion-v1/arm-a-hdbv2/review/review.json",
+            "sha256": "033fcb66a79260e73b21c606f6dc79df11f78aeff5d6bb9092ad42a157888b71"
+          }
+        },
+        {
+          "id": "expansion-arm-b",
+          "dataset": "expansion-arm-b",
+          "response": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/coverage-expansion-v1/arm-b-hdbv2/response.json",
+            "sha256": "60d326bd7792c25341b6e62395025c7e2a24dada5b02a3e87335d167c73f90ac"
+          },
+          "full_hierarchy": false,
+          "review": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/coverage-expansion-v1/arm-b-hdbv2/review/review.json",
+            "sha256": "048823d1cb975e7cbfd03bc7771ab6fd527326b64cd38ad418bafbd1382879c0"
+          }
+        },
+        {
+          "id": "music100",
+          "dataset": "music100",
+          "response": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/music-generation-v1/HDBv2-music100/response.json",
+            "sha256": "63701f3dea69963bfcf8b9fb64a82a3fac706c80c171b8b9878cc8ccff273f64"
+          },
+          "full_hierarchy": false,
+          "review": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/music-generation-v1/HDBv2-music100/review/review.json",
+            "sha256": "091b0f60c0ae97579231bcf8c61142ed2495fc59b2c261b95ffd5369c441b09c"
+          }
+        },
+        {
+          "id": "combined200",
+          "dataset": "combined200",
+          "response": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/music-generation-v1/HDBv2-combined200/response.json",
+            "sha256": "3fa966444e6ce338e2b734bb8d1535ad3cbdfa437166445a386533c34052acfa"
+          },
+          "full_hierarchy": false,
+          "review": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/music-generation-v1/HDBv2-combined200/review/review.json",
+            "sha256": "cbca80704dfe650db3b033b536723af22152bb52255b37f883b14d33b73646ee"
+          }
+        }
+      ],
+      "review_packets": [
+        {
+          "source": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/review-handoff/baseline/review.json",
+            "sha256": "a8ef01fbb0bbfb7fe3aae5836b4f025f8e367ca4bd23fbd60be60d4f66bd660e"
+          },
+          "dataset": "original100",
+          "run": "hdbscan-baseline"
+        },
+        {
+          "source": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/cross-note-density-v1/review.json",
+            "sha256": "77bda6b0747cc0aec0dc4305b6f1ef6f2302ac3055173d6965a7f4736506dbea"
+          },
+          "dataset": "original100",
+          "run": "hdbscan-cross-note"
+        },
+        {
+          "source": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/omission-audit-v1/sample/review.json",
+            "sha256": "dbf150bff572a77d8a3f4197cdb033b745cfaf6bd154d620b3e78dd722be9030"
+          },
+          "dataset": "original100"
+        },
+        {
+          "source": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/omission-audit-v1/report/disagreements/review.json",
+            "sha256": "9790b8e1f1635c6d91432316dd967fb6ba8aa0cef8f69ec1aa055511b9f64db5"
+          },
+          "dataset": "original100"
+        },
+        {
+          "source": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/coverage-expansion-v1/arm-a-comparison/review.json",
+            "sha256": "8736814a4097fcca50dc2ad8088b3310d562773842e107af0f720c4a46b79ca1"
+          },
+          "dataset": "expansion-arm-a",
+          "run": "expansion-arm-a"
+        },
+        {
+          "source": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/coverage-expansion-v1/arm-b-comparison/review.json",
+            "sha256": "c4eb8a8764ad8c45e12a87a51b61671ec8373da53a3e2ba2655aba880c9933ce"
+          },
+          "dataset": "expansion-arm-b",
+          "run": "expansion-arm-b"
+        },
+        {
+          "source": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/music-generation-v1/review-handoff/combined/review.json",
+            "sha256": "9365fb2202d3d27d3294184868cd3de2150dfdedbf70b2fbd45d80dc75be6a3e"
+          },
+          "dataset": "combined200",
+          "run": "combined200"
+        }
+      ],
+      "records": [
+        {
+          "path": "sse_multivector/real-note-fine-segmentation-v1/density-membership-comparison.json",
+          "sha256": "4adb04da45c98cbd07b4ebe17a81fa24b2010b2b802633d7cda9cfb7dca8969e",
+          "role": "comparison"
+        },
+        {
+          "path": "sse_multivector/real-note-fine-segmentation-v1/leaf-membership-comparison.json",
+          "sha256": "c50c58eb0bbc080d99a02700b4edcaa926160b1cdb004e64b7c3e775953d8251",
+          "role": "comparison"
+        },
+        {
+          "path": "sse_multivector/real-note-fine-segmentation-v1/cross-note-density-v1/comparison.json",
+          "sha256": "aaed404c65a111750811894a9c74d3f620120daef535499ec7db5f58b7ebcd20",
+          "role": "comparison"
+        },
+        {
+          "path": "sse_multivector/real-note-fine-segmentation-v1/hdbv3-cross-note-edges-v1/comparison.json",
+          "sha256": "b868c18ecb78cab78535603b9f05b2f690f63c190ff6e7f8076e19af7dde5a7c",
+          "role": "comparison"
+        },
+        {
+          "path": "sse_multivector/real-note-fine-segmentation-v1/coverage-expansion-v1/arm-a-comparison/comparison.json",
+          "sha256": "9e93e34a6a17fc52fd0e2dc3f25e5ae05cd25e2bd03e06149940de213ec0b431",
+          "role": "comparison"
+        },
+        {
+          "path": "sse_multivector/real-note-fine-segmentation-v1/coverage-expansion-v1/arm-b-comparison/comparison.json",
+          "sha256": "2ff7f0a1af7efd93676d53f35a2cbb6dd2c8dfd7b45505ffc3f9784b9c34c0f3",
+          "role": "comparison"
+        },
+        {
+          "path": "sse_multivector/real-note-fine-segmentation-v1/music-generation-v1/food-vs-combined/comparison.json",
+          "sha256": "f5e5cd58689f20c76a82087602d9b23d067e4293a72624757686632695ecf36e",
+          "role": "comparison"
+        },
+        {
+          "path": "sse_multivector/real-note-fine-segmentation-v1/music-generation-v1/music-vs-combined/comparison.json",
+          "sha256": "6a6f7c77c0a9846e046a12a0d5f9163bd93ae77364caeced2f83d8b4bcbf5919",
+          "role": "comparison"
+        },
+        {
+          "path": "sse_multivector/real-note-fine-segmentation-v1/all-inputs-reviewed-checkpoint.json",
+          "sha256": "fb1e39f6a59a58aaa5e82c0d94e19bed0e1c29a36aa7e7b35bfe1b36a93087ba",
+          "role": "parameters"
+        },
+        {
+          "path": "sse_multivector/real-note-fine-segmentation-v1/coverage-expansion-v1/final-selection.json",
+          "sha256": "004de6787a6d92021c5de60d70a34f69de75ca3f2fd0ec92bdb92842e02331bb",
+          "role": "parameters"
+        },
+        {
+          "path": "sse_multivector/real-note-fine-segmentation-v1/omission-audit-v1/sample/sampling-manifest.json",
+          "sha256": "1f174e267ba1fc04a344a3f6de2688bb83b383e92aa1e883acdd2030b178bcd7",
+          "role": "parameters"
+        },
+        {
+          "path": "sse_multivector/real-note-fine-segmentation-v1/assistant-baseline-final.json",
+          "sha256": "c011f4f30f816bc86c7c2a0225443ec0d3bc4bb3a4f505b57f05a35c47a68ee8",
+          "role": "assistant_review",
+          "review": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/hdbscan-baseline/review/review.json",
+            "sha256": "f7a405d02ddb871a2d8d6f4da262192e09f99a34082ef0bbc39848b98215ae65"
+          },
+          "dataset": "original100",
+          "run": "hdbscan-baseline"
+        },
+        {
+          "path": "sse_multivector/real-note-fine-segmentation-v1/assistant-density-final.json",
+          "sha256": "b7fbbccf402a55bfcc857335ae065b5da74771de5b09c80157de1605eb27a6d2",
+          "role": "assistant_review",
+          "review": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/hdbscan-density/review/review.json",
+            "sha256": "5cba5103c3096c19434db1df8e7eea071f8e0e846d88def385055eee9ccbc64e"
+          },
+          "dataset": "original100",
+          "run": "hdbscan-density"
+        },
+        {
+          "path": "sse_multivector/real-note-fine-segmentation-v1/assistant-leaf-changes.json",
+          "sha256": "49dfcfedb88201eaf0c1077bd52304414ac7fc82392c4726056aa0bea42f77ea",
+          "role": "assistant_review"
+        },
+        {
+          "path": "sse_multivector/real-note-fine-segmentation-v1/cross-note-density-v1/assistant-assessment.json",
+          "sha256": "5703a889c077667dee983318c4069fe2411af64d5633784a6cd8aa3c1d809366",
+          "role": "assistant_review",
+          "review": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/cross-note-density-v1/review.json",
+            "sha256": "77bda6b0747cc0aec0dc4305b6f1ef6f2302ac3055173d6965a7f4736506dbea"
+          },
+          "dataset": "original100",
+          "run": "hdbscan-cross-note"
+        },
+        {
+          "path": "sse_multivector/real-note-fine-segmentation-v1/coverage-expansion-v1/assistant-arm-a-assessment.json",
+          "sha256": "4b6d0b5c5c93b7adbd567fefecba3d03ab932899a3d4a58caa453130883dc4cb",
+          "role": "assistant_review",
+          "review": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/coverage-expansion-v1/arm-a-comparison/review.json",
+            "sha256": "8736814a4097fcca50dc2ad8088b3310d562773842e107af0f720c4a46b79ca1"
+          },
+          "dataset": "expansion-arm-a",
+          "run": "expansion-arm-a"
+        },
+        {
+          "path": "sse_multivector/real-note-fine-segmentation-v1/coverage-expansion-v1/assistant-arm-b-assessment.json",
+          "sha256": "a58eb3f5f60006d56f7be56569a12b2aa3e595f75849844e7c2d3f41efd83290",
+          "role": "assistant_review",
+          "review": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/coverage-expansion-v1/arm-b-comparison/review.json",
+            "sha256": "c4eb8a8764ad8c45e12a87a51b61671ec8373da53a3e2ba2655aba880c9933ce"
+          },
+          "dataset": "expansion-arm-b",
+          "run": "expansion-arm-b"
+        },
+        {
+          "path": "sse_multivector/real-note-fine-segmentation-v1/music-generation-v1/assistant-assessment-music100.json",
+          "sha256": "807f01defc67377cd0e7d4d91f813e009d3b56c8a0e69b599ff6db69166b0776",
+          "role": "assistant_review",
+          "review": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/music-generation-v1/HDBv2-music100/review/review.json",
+            "sha256": "091b0f60c0ae97579231bcf8c61142ed2495fc59b2c261b95ffd5369c441b09c"
+          },
+          "dataset": "music100",
+          "run": "music100"
+        },
+        {
+          "path": "sse_multivector/real-note-fine-segmentation-v1/music-generation-v1/assistant-assessment-combined-new-a.json",
+          "sha256": "ec2d1ecc88d9eb52f8a39cbe3e744253607eff34668e974c991783aabda30155",
+          "role": "assistant_review",
+          "review": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/music-generation-v1/HDBv2-combined200/review/review.json",
+            "sha256": "cbca80704dfe650db3b033b536723af22152bb52255b37f883b14d33b73646ee"
+          },
+          "dataset": "combined200",
+          "run": "combined200"
+        },
+        {
+          "path": "sse_multivector/real-note-fine-segmentation-v1/music-generation-v1/assistant-assessment-combined-new-b.json",
+          "sha256": "934e2089c9530e4fb8878b05e3bb658068181e205ef55058037857d25d1a7e63",
+          "role": "assistant_review",
+          "review": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/music-generation-v1/HDBv2-combined200/review/review.json",
+            "sha256": "cbca80704dfe650db3b033b536723af22152bb52255b37f883b14d33b73646ee"
+          },
+          "dataset": "combined200",
+          "run": "combined200"
+        },
+        {
+          "path": "sse_multivector/real-note-fine-segmentation-v1/cross-note-density-v1/hierarchy-selection-v1.json",
+          "sha256": "9e968953ac4a9f2c7e80b3b5df8300069c00d864f57b936324bda3ec226dbeee",
+          "role": "assistant_proposal"
+        },
+        {
+          "path": "sse_multivector/real-note-fine-segmentation-v1/omission-audit-v1/report/summary.json",
+          "sha256": "9aedeb2fe74a76da314859d2eaeeb2e4d9d9a2c34d3c2e2e0d8734bcc2a6a0cc",
+          "role": "assessment_summary",
+          "review": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/omission-audit-v1/sample/review.json",
+            "sha256": "dbf150bff572a77d8a3f4197cdb033b745cfaf6bd154d620b3e78dd722be9030"
+          },
+          "dataset": "original100"
+        }
+      ],
+      "user_reviews": [
+        {
+          "source": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/review-handoff/baseline/user-response.json",
+            "sha256": "a9b966f2af76f222358bb57145b8f2f53a8312ab7cea70c05ea650c8ff006a47"
+          },
+          "review": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/review-handoff/baseline/review.json",
+            "sha256": "a8ef01fbb0bbfb7fe3aae5836b4f025f8e367ca4bd23fbd60be60d4f66bd660e"
+          },
+          "dataset": "original100",
+          "run": "hdbscan-baseline"
+        },
+        {
+          "source": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/cross-note-density-v1/user-response.json",
+            "sha256": "cc21a5e9b5963b59e1c5035c84a8362534d02c89efbc61c5e9084b659546e9ee"
+          },
+          "review": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/cross-note-density-v1/review.json",
+            "sha256": "77bda6b0747cc0aec0dc4305b6f1ef6f2302ac3055173d6965a7f4736506dbea"
+          },
+          "dataset": "original100",
+          "run": "hdbscan-cross-note"
+        },
+        {
+          "source": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/omission-audit-v1/report/disagreements/user-response.json",
+            "sha256": "bf4767d4c19928d1a16121110d8dfa06af3f5f8dce5fd19387d92c30c85d0372"
+          },
+          "review": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/omission-audit-v1/report/disagreements/review.json",
+            "sha256": "9790b8e1f1635c6d91432316dd967fb6ba8aa0cef8f69ec1aa055511b9f64db5"
+          },
+          "dataset": "original100"
+        },
+        {
+          "source": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/coverage-expansion-v1/arm-a-user-response.json",
+            "sha256": "81e81837c5b667ed1a071aeaa7dfd2c52a005437875d26cc5cbf7d62ebe54ef1"
+          },
+          "review": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/coverage-expansion-v1/arm-a-comparison/review.json",
+            "sha256": "8736814a4097fcca50dc2ad8088b3310d562773842e107af0f720c4a46b79ca1"
+          },
+          "dataset": "expansion-arm-a",
+          "run": "expansion-arm-a"
+        },
+        {
+          "source": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/coverage-expansion-v1/arm-b-user-response.json",
+            "sha256": "0d9cf5e6ffbf6677aaff9ecf800d0df2d34e58283bb402d38f24ed47e1814e40"
+          },
+          "review": {
+            "path": "sse_multivector/real-note-fine-segmentation-v1/coverage-expansion-v1/arm-b-comparison/review.json",
+            "sha256": "c4eb8a8764ad8c45e12a87a51b61671ec8373da53a3e2ba2655aba880c9933ce"
+          },
+          "dataset": "expansion-arm-b",
+          "run": "expansion-arm-b"
+        }
+      ],
+      "validation_sources": [
+        {
+          "path": "sse_multivector/real-note-fine-segmentation-v1/reviewed-input.json",
+          "sha256": "9de47b1a66867e612aaf706da5002d4b04b4e9d8192e3782330a693dd1dea019"
+        },
+        {
+          "path": "sse_multivector/real-note-fine-segmentation-v1/coverage-expansion-v1/masks-reviewed/reviewed-input.json",
+          "sha256": "f0340c9c9331b455d6419267b200f499619d197f47e0abebe615c4a7aa2549c1"
+        }
+      ],
+      "authored_context": [
+        {
+          "path": "sse_multivector/real-note-fine-segmentation-v1/README.md",
+          "sha256": "bce184bcb28e33cf406ebe484d6f4b842a3c08fd51838079f80f278ff5d56ae2"
+        },
+        {
+          "path": "sse_multivector/real-note-fine-segmentation-v1/results.md",
+          "sha256": "c9780858ce56788167ef70e07bb1626522d77197d09d1c7df3a553ee22764dc9"
+        },
+        {
+          "path": "sse_multivector/real-note-fine-segmentation-v1/cross-note-density-v1/README.md",
+          "sha256": "6d0157d163e33c250dd3af18579a2329f8a6bae5185f8f0eb9171fbf2f04dcc5"
+        },
+        {
+          "path": "sse_multivector/real-note-fine-segmentation-v1/music-generation-v1/results.md",
+          "sha256": "df3fab4ca0ff22dae1d8608f5c92a9166a55775bbb04f39bdcbdac03c7e57898"
+        }
+      ]
+    }
+  }
+}
