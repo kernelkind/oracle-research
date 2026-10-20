@@ -562,7 +562,12 @@ Before publication:
   authentication. A clean Debian 13 VM with 8 GiB RAM and four CPU cores passed
   runtime installation, both Rust builds, public encoder downloads and hashes,
   12-post subject-request preparation and seven offline direct-authentication
-  tests. Live login, encoder inference and complete generation remain untested.
+  tests. Live device login, renewal and remote revocation also passed: renewal
+  succeeded before revocation and failed afterward with
+  `401 refresh_token_invalidated`; the VM credential file was removed. No model
+  requests ran. Immediate invalidation of an already-issued access token was not
+  tested, and the runner has no logout command. Encoder inference and complete
+  generation remain untested.
   HR39 and used-posts restoration passed there, but the existing viewer exporter
   requires internal `state.json`; it cannot yet browse the compact publication
   files. These checks do not replace a hosted reader test.

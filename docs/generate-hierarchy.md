@@ -20,8 +20,12 @@ a 48 GiB disk, using clean Git clones without host caches or credentials.
 Dependency installation, both Rust builds, public encoder downloads and hash
 checks, and subject-request preparation for 12 real posts passed. Seven offline
 direct-authentication tests passed with simulated providers. Live provider login,
-encoder inference and a complete hierarchy run remain unvalidated. The final
-public repository URLs and runner submodule setup remain pending.
+renewal and remote revocation also passed: renewal succeeded before revocation,
+then failed with `401 refresh_token_invalidated`; the VM credential file was
+removed. This made no model requests and did not test immediate invalidation of
+an already-issued access token. Encoder inference and a complete hierarchy run
+remain unvalidated. The final public repository URLs and runner submodule setup
+remain pending.
 
 ## 1. Install the runtime
 
@@ -85,11 +89,17 @@ The login command prints the instructions for completing subscription login.
 For a headless machine or VM, choose device-code login and complete it in your
 browser. The browser-callback method requires the browser to reach the login
 process's local callback port.
+Complete device approval while the login command is still running. It stops
+waiting after 15 minutes; if it has exited, restart login and use its new code.
 Credentials are saved outside the repository at
 `$XDG_CONFIG_HOME/experiment-runner/auth.json`, or
 `~/.config/experiment-runner/auth.json` when `XDG_CONFIG_HOME` is unset.
 `EXPERIMENT_RUNNER_AUTH_FILE` can select another file outside the repository.
 Do not put credentials in the example JSON files.
+
+The runner does not yet provide a logout command. The VM check above exercised
+OpenAI's remote revocation endpoint directly; deleting a local credential file
+alone does not revoke the credential at OpenAI.
 
 On Anvil, leave `EXPERIMENT_RUNNER_AUTH` unset to continue using the selected
 `agent-account` account and the existing credential service. Direct mode is an
