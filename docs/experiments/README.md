@@ -1,9 +1,10 @@
 # Experiments and release files
 
-This index connects the research to the inputs and saved results proposed for
-the GitHub release. It includes unsuccessful trials and superseded approaches.
-The inventory is local: download links will be added when the reviewed archives
-are published.
+This index connects the research to its inputs and saved results, including
+unsuccessful trials and superseded approaches. Code and history will be published
+on GitHub; reusable models and datasets will be hosted on Hugging Face. The
+[publication proposal](downloads.md) lists what to include, why and its size.
+Exact contents remain under review; download links are not available yet.
 
 Start with the [37 official hierarchy runs](hierarchy.md). The index also covers
 four training runs, 17 adapter checkpoints, individual prompt jobs and older
@@ -20,7 +21,7 @@ have been located and checked against their recorded SHA-256 hashes.
 | Use or study the subject fine-tunes | [Training process and evaluation](../planning/fine-tuning-pilot-process.md) | [Adapter weights and training state](models.csv) |
 | Study subject, mask, title, comparison and prominence trials | [Experiment workflow](../../sse_multivector/model-runner.md) | [Individual saved experiments and historical collections](experiments.csv) |
 | Find an input or result file | [Collection sizes](collections.csv) | [Exact file list](files/README.md) |
-| Choose downloads for a particular task | [Planned downloads](downloads.md) | [Bundles](bundles.csv) and [task requirements](download-targets.csv) |
+| Review what to publish or find a reader's requirements | [Publication proposal](downloads.md) | [Candidate bundles](bundles.csv) and [task requirements](download-targets.csv) |
 
 The generation guide describes the current implementation. Historical trials
 may require earlier code and prompt versions. A higher prompt version number is
@@ -66,7 +67,7 @@ remain historical evidence; raw source posts are not deprecated by that rule.
 - [Models](models.csv): adapter weights, configurations and the separate
   optimizer/training state needed to resume training. Using an adapter requires
   its pinned base model; it does not require optimizer state.
-- [Files](files/README.md): one row per selected local file, its size, source location,
+- [Files](files/README.md): one row per candidate local file, its size, source location,
   proposed archive member path and any measured hash or existing Git blob ID.
   This is an explicit list, not permission to archive entire directories.
 - [Historical files](historical-files.csv): additional artifact blobs found in
@@ -82,10 +83,11 @@ remain historical evidence; raw source posts are not deprecated by that rule.
 
 ## Release layout
 
-Code, maintained prompts, specifications and these inventories belong in Git.
-Corpora, saved responses, generated results and trained weights belong in
-downloadable release attachments. Existing tracked experiment data has not
-been removed or migrated by creating this list.
+Code, maintained prompts, specifications and these inventories belong in GitHub
+repositories with their research histories preserved. Selected adapters belong
+on Hugging Face Models; selected corpora and reusable experiment evidence belong
+on Hugging Face Datasets. Existing tracked experiment data has not been removed
+or migrated by creating this list.
 
 Equal measured input hashes share one proposed `datasets/` member. Other
 evidence keeps its original relative layout under `evidence/`. Identical tracked
@@ -93,14 +95,14 @@ Git blobs may also share a member; consumers retain their own source references.
 Content that has not been hashed is not assumed identical because its name or
 size matches another file.
 
-The [download plan](downloads.md) defines small result downloads, nine separate
-corpora, individual adapters and training states, and groups for the full
-experiment evidence. [Bundle assignments](bundle-collections.csv) cover all
-collections. Selected-file counts and known shared downloads are recorded;
-complete input and producer dependencies still need staged verification.
-Final attachment names, download URLs and archive checksums will be added when
-the files are assembled. Large bundles may require several attachments; see
-the [archive layout and size limits](downloads.md#file-selection-and-archive-layout).
+The [publication proposal](downloads.md) recommends used posts, saved inputs and
+results, evaluation evidence and four comparison adapters. It distinguishes
+optional intermediate weights, operational files proposed to stay offline and
+unresolved clustering evidence. [Bundle assignments](bundle-collections.csv)
+still describe the broad candidate inventory; they have not been narrowed to
+that proposal. Complete input and producer dependencies need staged verification.
+Published versions, download URLs and checksums will be added for the files
+actually selected; see the [layout status](downloads.md#file-selection-and-archive-layout).
 
 Preserve the original frozen plans, answers and receipts. Some contain absolute
 paths from the research environment. Release preparation supplies portable

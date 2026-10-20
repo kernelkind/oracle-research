@@ -164,19 +164,25 @@ Review the actual selected contents for credentials and personal information
 before packaging. Known credential containers were excluded from discovery;
 that is not a completed privacy review of the evidence.
 
-The [download plan](downloads.md) assigns all existing collections to groups
-and selects separate small results, corpora, adapters and training states.
-Its known shared-download requirements are not a complete native-experiment
-dependency list: finish source and original-producer selection from frozen
-plans and receipts, then verify the staged packages. The consolidated dependency
-index retains example consumers and cannot establish that complete list alone.
+The [publication proposal](downloads.md) records the agreed GitHub/Hugging Face
+hosting division and recommends contents with their measured sizes. Exact
+selection remains open, including optional intermediate adapters and the large
+clustering files. The existing bundle tables still describe the broad inventory;
+they do not select every listed file for publication.
 
-Verify package contents and checksums, then add download links. The listed
-globally deduplicated archive members total about
-534 GiB before compression; this includes intermediate evidence and files not
-yet checked for identical contents. It is not a download-size estimate. Readers
-should be able to obtain the collections they need without downloading all
-research artifacts.
+Finish source and original-producer selection from frozen plans and receipts,
+retaining required exceptions to proposed omissions, then verify the staged
+packages. Known shared-download requirements are incomplete, and the
+consolidated dependency index retains only example consumers. Check unused
+candidate posts embedded in larger frozen inputs before selecting whole files.
+The nine official subject corpora have passed this used-ID check; other frozen
+inputs require their own selection review.
+
+The size audit measured **534.71 GiB** of candidate source files before
+compression. That is neither the approved publication size nor a fully
+deduplicated total. Verify the final contents and checksums before adding exact
+Hugging Face versions and download links. Readers should be able to obtain
+the experiments they need without downloading all research artifacts.
 
 The [reproduction guide](reproduce.md) now provides concrete commands and records
 their validation limits. Before calling the release reproducible end to end:
