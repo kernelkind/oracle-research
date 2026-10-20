@@ -12,7 +12,7 @@ is complete; privacy and identity review remains open.
 | --- | --- |
 | GitHub | Code and its history, tests, prompts and their provenance, authored findings, useful documentation, the selected-study index and commit mapping; download size unmeasured |
 | Hugging Face Models | All 17 evaluated adapters, with configurations and pinned base-model references: **6.78 GiB** |
-| Hugging Face Datasets | Posts actually used, prepared training data, final unsigned hierarchies, standalone prompt answers, evaluation results, final numerical results and parameters: **839.26 MiB (0.82 GiB) prepared locally**, with repeated content stored once |
+| Hugging Face Datasets | Posts actually used, prepared training data, selected starting subjects, final unsigned hierarchies, standalone prompt answers, evaluation results, final numerical results and parameters: **844.02 MiB (0.82 GiB) prepared locally**, with repeated content stored once |
 
 The GitHub index will link each experiment to its inputs and results at exact
 Hugging Face revisions, with checksums. Readers should be able to download the
@@ -133,6 +133,9 @@ tried and its outcome, including failed, interrupted and superseded work.
 - **Inputs:** original posts actually used, exact selections and splits, prepared
   training data and any task-specific test inputs needed to interpret a result.
   Do not republish unused Nostr collections.
+  HR36 also includes its saved starting subject trees, needed to repeat hierarchy
+  construction from the same inputs. Preserve their local numbering, wording,
+  contexts and order; bind them to exact post text rather than copying posts.
 - **Parameters:** small records of actual settings, input selections,
   code/prompt/model versions and outcomes. Reference shared content rather than
   embedding expanded requests or complete working plans in every record.
@@ -142,7 +145,8 @@ tried and its outcome, including failed, interrupted and superseded work.
 - **Standalone prompt experiments:** final per-case answers for each tested
   variant/trial, failures and recorded reviews. A prompt answer is a final result
   when the experiment tests that prompt; answers used internally while building
-  a hierarchy are construction intermediates.
+  a hierarchy are construction intermediates. Saved subjects explicitly selected
+  as reproduction inputs belong with the inputs rather than standalone results.
 - **Evaluations:** evaluated model answers, judgments, per-note measurements and
   final comparisons. Distinguish mechanical checks, agent assessments and actual
   user decisions. Keep independently repeated trials distinct from reused answers.
@@ -154,17 +158,18 @@ tried and its outcome, including failed, interrupted and superseded work.
   measurements, and outcomes.
 
 Keep caches, expanded requests, transport and scheduling logs, grading snapshots,
-internal construction responses, optimizer state and upstream model copies
-outside the publication by default. Preserve their originals locally. Complete
-original-run verification does not determine which files belong in the public
-results. Missing historical evidence and incomplete runs must remain explicit.
+internal construction responses (apart from selected reproduction inputs),
+optimizer state and upstream model copies outside the publication by default.
+Preserve their originals locally. Complete original-run verification does not
+determine which files belong in the public results. Missing historical evidence
+and incomplete runs must remain explicit.
 Preparations proven never executed are excluded. An all-unrun saved report alone
 is insufficient proof: packaging requires bound execution evidence, rechecked
 against originals, and refuses unclassified or changed evidence.
 
 ## Measured local exports
 
-[Publications](publications.csv) identifies 2,988 output/input bundles and one
+[Publications](publications.csv) identifies 2,989 output/input bundles and one
 shared-content catalog row. [Publication files](publication-files.csv) and
 [checksums](publication.sha256) describe the **physical upload files** under
 `target/publication-dataset/`. The original exports remain unchanged under
@@ -194,22 +199,24 @@ The category sizes below exclude content charged once to the shared row.
 | Performance measurements | 13 bundles | 0.12 MiB |
 | Unsigned hierarchies, selections and parameters | 37 official runs, 203 saved branch outputs and 10 further historical hierarchies | 7.23 MiB |
 | Used posts, prepared training inputs, manual reference fixtures and adapter hash records | 10,571 shared posts, four prepared files, two reference fixtures, split/settings records and 17 adapter bindings | 67.89 MiB |
+| HR36 starting subjects | 1,000 ordered posts; 25,258 local entries, including 5,378 top-level subjects | 4.76 MiB |
 | Shared content and dataset manifest | 256 shared files plus `dataset.json` | 66.65 MiB |
-| **Physical dataset files** | **9,684 files** | **839.26 MiB (0.82 GiB)** |
+| **Physical dataset files** | **9,686 files** | **844.02 MiB (0.82 GiB)** |
 | **All 17 evaluated adapters, weights and configurations** | **34 original files, hashed without copying weights** | **6.78 GiB** |
 
-The exact physical dataset total is **880,030,429 bytes**, including the
-**3,441,869-byte** dataset manifest. Together with the unchanged adapter files,
-it is **8,160,118,198 bytes (7.60 GiB)**. Code and cleaned Git history are additional.
-Measured per-file gzip level-6 compression totals **161,706,630 bytes
-(154.22 MiB)**; no compressed downloads were created.
+The exact physical dataset total is **885,017,950 bytes**, including the
+**3,442,482-byte** dataset manifest. Together with the unchanged adapter files,
+it is **8,165,105,719 bytes (7.60 GiB)**. Code and cleaned Git history are additional.
+Measured per-file gzip level-6 compression totals **162,439,616 bytes
+(154.91 MiB)**; no compressed downloads were created.
 
-The package includes 9,427 original compact-export paths, 256 shared files and
+The package includes 9,429 original compact-export paths, 256 shared files and
 the manifest. It excludes 196 proven unexecuted preparations: 588 source-export
 files totaling 38,541,051 bytes. Three ambiguous snapshots remain included.
-The included original compact files total 1,139,578,836 bytes before sharing;
-their gzip measurement is 163,807,547 bytes. Sharing therefore reduces raw size
-much more than compressed size.
+The included original compact files total 1,144,565,744 bytes before sharing.
+HR36's two starting-input files were added after the original export checkpoint;
+all previously included payloads and metadata remain byte-exact. Sharing reduces
+raw size much more than compressed size.
 
 ### Original export checkpoints
 
@@ -521,10 +528,14 @@ The [fine-tune comparison](reproduce.md#inspect-the-fine-tune-comparison) also
 uses its restored two-file compact bundle. All seven saved rows match the
 published per-note scores, without original research directories or models.
 
-The HR36 extraction/construction examples still require one original corpus,
-41.37 MiB, listed in [reproduction.sha256](reproduction.sha256). That remaining
-original-file example does not prescribe the public download layout or require
-publishing the original corpus unchanged.
+The [HR36 examples](reproduce.md#try-asv6100-on-a-recorded-post) use its compact
+ordered selection and the shared posts. Construction additionally uses
+`inputs/hr36-subjects`: about 4.76 MiB preserving the full local subject trees
+and exact-post hashes. This replaces the earlier 41.37 MiB original-corpus
+dependency. Transport logs, receipts and other extraction-run internals remain
+in the preserved local originals. Both preparation examples passed locally:
+all 5,378 Bootstrap inputs match the earlier full-corpus preparation. No new
+model answers, encoding or clustering ran.
 
 ## File selection and archive layout
 

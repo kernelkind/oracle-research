@@ -2311,6 +2311,24 @@ directories for `show` or `review`. See the
 [publisher and reader commands](../docs/experiments/reproduce.md#check-the-converted-local-selection).
 The signed export below retains its existing behavior.
 
+`export-hierarchy-inputs CORPUS --note-ids IDS --output OUT` publishes selected
+starting subject trees as `hierarchy-inputs-publication-v1`. It preserves the
+ordered selection, all local subject numbers/wording/contexts and the recorded
+AS prompt version. Each row binds its original post by the SHA-256 of its exact
+UTF-8 text; posts, receipts and local paths are omitted. Full local trees are
+required because Bootstrap-v133 receives the tree under each selected root.
+The shared publication writer binds payload hashes and refuses unrelated output.
+
+`prepare-corpus --posts POSTS --note-ids IDS --output FILE` selects posts from
+JSONL (`note_id`/`text`) or a native notes document into a fresh native corpus.
+With `--subjects BUNDLE`, it verifies a restored starting-subject bundle and
+joins the saved trees to exact matching posts. Duplicate/missing selected IDs,
+different text, changed payloads and existing outputs are refused. Both commands
+stream source records and spool selected values to disk, retaining IDs and
+offsets in RAM. Neither performs inference. The
+[HR36 examples](../docs/experiments/reproduce.md#try-asv6100-on-a-recorded-post)
+use these commands before ordinary subject or hierarchy preparation.
+
 ### Review viewer export
 
 Inspect saved results with the existing `export-canonical-viewer` command only

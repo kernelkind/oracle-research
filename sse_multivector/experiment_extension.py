@@ -579,6 +579,15 @@ def score_review(args):
 
 
 def add_commands(commands):
+    p = commands.add_parser('export-hierarchy-inputs', help='publish selected starting subject trees without posts or receipts; no inference')
+    p.add_argument('corpus', type=Path)
+    p.add_argument('--note-ids', type=Path, required=True)
+    p.add_argument('--output', type=Path, required=True)
+    p = commands.add_parser('prepare-corpus', help='select shared posts and optionally join saved starting subjects; no inference')
+    p.add_argument('--posts', type=Path, required=True)
+    p.add_argument('--note-ids', type=Path, required=True)
+    p.add_argument('--subjects', type=Path, help='restored starting-subject publication directory')
+    p.add_argument('--output', type=Path, required=True)
     commands.choices["review"].add_argument("--from-experiment", type=Path, action="append",
         help="import current attributed reviews of exact saved prompts, inputs and outputs; repeat for sources")
     for action in commands.choices["review"]._actions:
@@ -888,6 +897,13 @@ def add_commands(commands):
 
 
 def handle_command(args):
+    if args.command in ('export-hierarchy-inputs', 'prepare-corpus'):
+        from .published_corpus import export_inputs, prepare_corpus
+        result = (export_inputs(args.corpus, args.note_ids, args.output)
+                  if args.command == 'export-hierarchy-inputs'
+                  else prepare_corpus(args.posts, args.note_ids, args.output, args.subjects))
+        print(json.dumps(result, indent=2))
+        return 0
     if args.command == 'prepare-publication-dataset':
         from .publication_dataset import prepare
         print(json.dumps(prepare(args.source, args.output, args.selection), indent=2))

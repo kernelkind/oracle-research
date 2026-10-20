@@ -27,7 +27,7 @@ have been located and checked against their recorded SHA-256 hashes.
 | Generate a hierarchy from posts | [Generation guide](../generate-hierarchy.md) | [Official hierarchy runs](hierarchy.csv) |
 | Browse a published hierarchy | [HR39 browsing instructions](reproduce.md#browse-hr39-without-running-models) | [Selected compact files](publication-files.csv) |
 | Inspect the fine-tune comparison | [Saved scores from the compact bundle](reproduce.md#inspect-the-fine-tune-comparison) | [Selected evaluation files](publication-files.csv) |
-| Inspect or repeat recorded experiments | [Reproduction guide](reproduce.md) | [Original HR36 corpus checksum](reproduction.sha256) |
+| Inspect or repeat recorded experiments | [Reproduction guide](reproduce.md) | [Dataset file checksums](publication.sha256) |
 | Understand the recorded hierarchy experiments | [Run overview](hierarchy.md) and [detailed findings](../recommendation-engine/hierarchy-runs.md) | [Run settings, source versions and corpus identities](hierarchy.csv) |
 | Use or study the subject fine-tunes | [Training process and evaluation](../planning/fine-tuning-pilot-process.md) | [Adapter checkpoints and base versions](models.csv) |
 | Study subject, mask, title, comparison and prominence trials | [Experiment workflow](../../sse_multivector/model-runner.md) | [Selected studies](experiments.csv) |
@@ -40,11 +40,11 @@ remain historical evidence; raw source posts are not deprecated by that rule.
 
 ## What the lists record
 
-- [Publications](publications.csv): 2,988 selected output/input bundles plus one
+- [Publications](publications.csv): 2,989 selected output/input bundles plus one
   shared-content row, with source identities, format, physical sizes and selection
   evidence. These bundles are not a count of independent trials.
 - [Publication files](publication-files.csv) and [checksums](publication.sha256):
-  all 9,684 physical upload files under `target/publication-dataset/`, including
+  all 9,686 physical upload files under `target/publication-dataset/`, including
   shared content and `dataset.json`. The manifest also binds the original compact
   export bytes recovered by restoration.
   The [conversion-gap list](publication-gaps.csv) is now empty. TRUE10's final
@@ -164,9 +164,10 @@ generated-data rewrite is complete; privacy and identity review remains open.
 
 Hugging Face Models will host all 17 evaluated
 adapters (6.78 GiB). Hugging Face Datasets will host used posts, prepared training
-data, final unsigned hierarchies, standalone prompt answers, evaluation and
-numerical results, and each experiment's parameters. The prepared shared dataset
-measures 839.26 MiB (0.82 GiB). The preserved source exports measured 1.10 GiB
+data, selected starting subjects, final unsigned hierarchies, standalone prompt
+answers, evaluation and numerical results, and each experiment's parameters.
+The prepared shared dataset measures 844.02 MiB (0.82 GiB). The preserved source
+exports measured 1.10 GiB
 before exclusions and sharing; that is not the upload size.
 
 The [publication plan](downloads.md) defines those contents. The new
@@ -190,8 +191,10 @@ The [reproduction guide](reproduce.md) covers browsing HR39, preparing ASv6.100
 on a recorded HR36 post, repeating HR36 construction with its saved subjects,
 and reading the fine-tune comparison. It also explains `verify` for checking
 saved prompt receipts after extraction using bundled location metadata.
-Those checks describe current tools and original file formats. The guide also
-documents the compact result exporters; published-download testing remains open.
+All four reader examples use compact published formats and selected inputs;
+HR36 construction includes the saved subject trees needed by Bootstrap. Native
+receipt verification remains separate. The guide also documents the compact
+result exporters; published-download testing remains open.
 Downloads, portable training/L1 recomputation and replay of historical
 collections remain unfinished.
 Fresh model answers need not match saved answers.

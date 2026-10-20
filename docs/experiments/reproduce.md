@@ -9,10 +9,8 @@ from the original results.
 [shared-dataset commands](#check-the-converted-local-selection) prepare, verify
 and restore the local upload files listed in [publication-files.csv](publication-files.csv).
 Restoration recovers original compact exports, not complete native experiment
-directories. HR39 browsing and the fine-tune comparison below use restored
-compact exports. Subject extraction and construction still use an original
-research corpus in an earlier layout. Public paths and hosted reader workflows
-remain untested.
+directories. All four examples below use restored compact exports and selected
+inputs. Public paths and hosted reader workflows remain untested.
 
 To generate and browse a new hierarchy from your own posts, use the
 [generation guide](../generate-hierarchy.md). Its complete 12-post workflow
@@ -37,28 +35,11 @@ export RELEASE_ROOT="$ORACLE_ROOT/target/reproduction/release"
 mkdir -p "$RELEASE_ROOT" target/reproduction/history
 ```
 
-For HR39 browsing and the fine-tune comparison, use the compact dataset files
-in their respective sections. No original native run directory is needed.
-
-The subject-extraction and construction examples still require one original
-HR36 corpus under `RELEASE_ROOT` at the path below. It is 41.37 MiB;
-[reproduction.sha256](reproduction.sha256) retains its measured checksum.
-Restoring the compact dataset does not supply this original file. Model
-downloads and build dependencies are additional.
-
-| Files | Purpose |
-| --- | --- |
-| `datasets/42d5ce5211a1a72b08d8df3d80cb5d5668383d2afd27fbee6df331f567e8baef.json` | HR36's 1,000 posts and ASv6.100 answers |
-
-If using those examples, verify the original corpus:
-
-```bash
-cd "$RELEASE_ROOT"
-sha256sum --check "$ORACLE_ROOT/docs/experiments/reproduction.sha256"
-```
-
-The browsing and fine-tune comparison workflows verify their compact inputs
-during restoration instead.
+The four examples restore their required files from `target/publication-dataset`,
+the prepared local collection or its eventual downloaded copy. Restoration
+verifies the file hashes. No original native run directory or full research
+corpus is needed for these examples. Model downloads and build dependencies are
+additional.
 
 ## Browse HR39 without running models
 
@@ -153,25 +134,29 @@ python -m pip install -e "$EXPERIMENT_RUNNER_ROOT"
 Keep this environment active. Authentication is not needed for `prepare` or
 `show`.
 
-The HR36 corpus includes original post text and saved subject answers. The
-`subjects` adapter sends only the post text to the prompt; it does not include
-the saved subjects as hints. This example uses the first recorded HR36 note.
+Restore HR36's ordered selection and the shared posts, then select its 1,000
+posts into a native corpus. This input contains only note IDs and exact post
+text, with no saved subject answers. The example prepares the first recorded
+HR36 note.
 
 Use an unused `target/hierarchy-example/posts.json` and a new experiment
-directory. The guard below stops the copy if that input path already exists:
+directory. `prepare-corpus` refuses an existing output file:
 
 ```bash
 cd "$ORACLE_ROOT"
-export HR36_CORPUS="$RELEASE_ROOT/datasets/42d5ce5211a1a72b08d8df3d80cb5d5668383d2afd27fbee6df331f567e8baef.json"
 export CASE_ID=e975bb986241e25414d5aaa81bd9464ed667fce43d81093fbd88e94c1b879d63
 (
   set -e
-  mkdir -p target/hierarchy-example
-  test ! -e target/hierarchy-example/posts.json || {
-    echo 'Input already exists: target/hierarchy-example/posts.json' >&2
-    exit 1
-  }
-  cp "$HR36_CORPUS" target/hierarchy-example/posts.json
+  python sse_multivector/experiment.py restore-publication-dataset \
+    target/publication-dataset --publication hierarchies/HR36 \
+    --output target/reproduction/AS-inputs/selection
+  python sse_multivector/experiment.py restore-publication-dataset \
+    target/publication-dataset --publication inputs/used-posts \
+    --output target/reproduction/AS-inputs/posts
+  python sse_multivector/experiment.py prepare-corpus \
+    --posts target/reproduction/AS-inputs/posts/posts.jsonl \
+    --note-ids target/reproduction/AS-inputs/selection/input-note-ids.txt \
+    --output target/hierarchy-example/posts.json
   python sse_multivector/experiment.py prepare target/reproduction/AS-one \
     --spec sse_multivector/examples/hierarchy-v5.3/subjects.spec.json \
     --history-root target/reproduction/history --only "$CASE_ID"
@@ -222,8 +207,11 @@ before preparation and use a new output directory.
 
 ## Repeat HR36 construction from its saved subjects
 
-This skips subject extraction and uses the exact 1,000 ASv6.100 answers originally
-supplied to HR36. It performs new definition writing and numerical construction.
+This skips subject extraction and uses the saved ASv6.100 subject trees for
+HR36's 1,000 posts. These include all 25,258 entries: Bootstrap uses each of the
+5,378 top-level subjects together with its full original local tree and post.
+The starting-subject bundle is about 4.76 MiB; post text is shared separately.
+The run performs new definition writing and numerical construction.
 It does not reuse HR36's saved definition answers, vectors or final hierarchy.
 
 Complete the [runtime, authentication and encoder setup](../generate-hierarchy.md)
@@ -238,15 +226,22 @@ from a run using newly extracted subjects:
 
 ```bash
 cd "$ORACLE_ROOT"
-export HR36_CORPUS="$RELEASE_ROOT/datasets/42d5ce5211a1a72b08d8df3d80cb5d5668383d2afd27fbee6df331f567e8baef.json"
 (
   set -e
-  mkdir -p target/hierarchy-example/subject-collection
-  test ! -e target/hierarchy-example/subject-collection/subjects.json || {
-    echo 'Input already exists: target/hierarchy-example/subject-collection/subjects.json' >&2
-    exit 1
-  }
-  cp "$HR36_CORPUS" target/hierarchy-example/subject-collection/subjects.json
+  python sse_multivector/experiment.py restore-publication-dataset \
+    target/publication-dataset --publication hierarchies/HR36 \
+    --output target/reproduction/HR36-inputs/selection
+  python sse_multivector/experiment.py restore-publication-dataset \
+    target/publication-dataset --publication inputs/used-posts \
+    --output target/reproduction/HR36-inputs/posts
+  python sse_multivector/experiment.py restore-publication-dataset \
+    target/publication-dataset --publication inputs/hr36-subjects \
+    --output target/reproduction/HR36-inputs/subjects
+  python sse_multivector/experiment.py prepare-corpus \
+    --posts target/reproduction/HR36-inputs/posts/posts.jsonl \
+    --note-ids target/reproduction/HR36-inputs/selection/input-note-ids.txt \
+    --subjects target/reproduction/HR36-inputs/subjects \
+    --output target/hierarchy-example/subject-collection/subjects.json
   nix --extra-experimental-features 'nix-command flakes' develop \
     --command cargo build --locked --release --jobs 1 \
     --bin fine-segmentation-candidate --bin sse-subject-navigation
@@ -311,7 +306,7 @@ python sse_multivector/experiment.py export-hierarchy-results \
 The default output is `target/reproduction/HR36/publication/`. For another
 destination, pass `--output target/reproduction/HR36-results`. The same command
 accepts an original saved hierarchy directory containing `state.json`; compact
-exports and the HR36 corpus alone do not include that state.
+exports and starting-subject inputs alone do not include that state.
 
 | File | What it preserves |
 | --- | --- |
@@ -483,9 +478,9 @@ and testing eventual downloads remain open.
 
 ### Check the converted local selection
 
-[Publications](publications.csv) records 2,988 output/input bundles plus one
+[Publications](publications.csv) records 2,989 output/input bundles plus one
 shared-content row. [Publication files](publication-files.csv) and
-[checksums](publication.sha256) describe 9,684 physical files beneath
+[checksums](publication.sha256) describe 9,686 physical files beneath
 `target/publication-dataset/`. Original compact exports stay unchanged in
 `target/publication-exports/`.
 
@@ -748,6 +743,18 @@ mappings apply only to `verify`; they do not make `show`, `collect`, `run` or
 unfinished.
 
 ## What has been tested
+
+The compact HR36 examples were checked on **2026-10-20** in an isolated source
+copy. The reader processes could not read the original research inputs or
+account credential files, and Python network access was blocked. Restoration,
+post selection, the one-case ASv6.100 preparation and full HR36 preparation all
+passed. All 1,000 post texts, 25,258 subject entries and their order match the
+original corpus. All 5,378 Bootstrap inputs match the earlier preparation from
+that full corpus; teacher prompt bytes and model settings also match. The 61
+empty subject trees remain present. These checks stop before inference, encoding
+or clustering; they do not replay HR36's final result. The Rust binary was copied
+from the earlier build. All 33 relevant corpus, publication and provenance tests
+pass, including a bounded-memory corpus-selection regression.
 
 The compact fine-tune comparison was checked on **2026-10-20**: restoration
 verified both files, and the documented display ran with original-file access

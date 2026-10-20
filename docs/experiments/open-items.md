@@ -524,7 +524,7 @@ before packaging. Known credential containers were excluded from discovery;
 that is not a completed privacy review of the evidence.
 
 The [publication plan](downloads.md#measured-local-exports) measures the prepared
-shared dataset: **839.26 MiB (0.82 GiB)**, plus the unchanged **6.78 GiB** for all
+shared dataset: **844.02 MiB (0.82 GiB)**, plus the unchanged **6.78 GiB** for all
 17 evaluated adapters. [Publications](publications.csv), [upload files](publication-files.csv)
 and [checksums](publication.sha256) describe the physical selection. The preserved
 1.10 GiB compact-export checkpoint and 534.71 GiB working-source inventory are
@@ -534,9 +534,13 @@ Packaging excludes 196 preparations proven never executed and retains three
 ambiguous snapshots. It stores repeated content once and verifies exact
 reconstruction of every included compact file. All 34 relevant tests pass;
 the complete local preparation and verification succeeded under a 512 MiB
-address-space limit. All 10,015 original export files remain unchanged.
+address-space limit. All 10,015 checkpoint export files remain unchanged;
+HR36's two starting-subject input files were added separately.
 The [reader commands](reproduce.md#check-the-converted-local-selection) restore
 compact exports, not native run directories. Hosted reader tests remain open.
+The HR36 examples now prepare directly from restored selected posts and saved
+subject trees. All 5,378 Bootstrap inputs match the earlier full-corpus
+preparation; fresh HR36 inference and numerical construction were not run.
 
 Before publication:
 
