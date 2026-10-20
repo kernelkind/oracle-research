@@ -12,10 +12,10 @@ Each choice lets the person direct their own discovery. The goal is to put that 
 
 ## Notedeck interface
 
-The walkthrough uses a Notedeck branch that adds a **Hierarchy** column. Choose a hierarchy available through your Nostr relays, follow progressively narrower topics, and view the posts linked to a topic.
+The walkthrough shows Notedeck's **Hierarchy** column. Choose a hierarchy available through your Nostr relays, follow progressively narrower topics, and view the posts linked to a topic.
 
-**Source code:** a branch on the project author's Notedeck fork. **Link pending publication.**
-<!-- Replace the pending source link with the public Notedeck fork's hierarchy UI branch URL before publication. -->
+**Source code:** Notedeck hierarchy interface — **link pending publication.**
+<!-- Add the public source-code URL for the Notedeck hierarchy interface before publication. -->
 
 The Notedeck interface reads hierarchy events from Nostr relays. The [generation guide](docs/generate-hierarchy.md) currently uses the terminal viewer included in this repository to browse generated output.
 
