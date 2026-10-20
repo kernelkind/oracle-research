@@ -371,7 +371,16 @@
         "real_git_regressions_passed": 6,
         "revision_and_automatic_workflow_regressions_passed": 30,
         "legacy_generation_history_suite": "3 passed; 1 pre-existing saved-manifest config_path mismatch also reproduced against original history",
-        "fresh_ordinary_clone": "pending"
+        "fresh_ordinary_clone": {
+          "status": "passed",
+          "code_commit": "3ecbc0d42fd064537613496c8c9fe2ec44634e26",
+          "revision_tests_passed": 6,
+          "legacy_automatic_workflow_test_passed": true,
+          "documented_source_read_example": "passed; exact original source bytes",
+          "replacement_refs": false,
+          "private_audit_files": false,
+          "saved_experiment_artifacts": false
+        }
       }
     },
     "local_git_object_storage_MiB": {

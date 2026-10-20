@@ -101,8 +101,10 @@ They read the bundled map without Git replacement refs; named/current refs pass
 through. An original commit is preferred when its raw object is available,
 otherwise its mapped commit is read. Raw `git show` commands still require the
 corresponding rewritten ID. See the [reader example](reproduce.md#which-code-is-being-repeated).
-Fresh ordinary-clone verification remains pending. Generated files removed from
-history remain unavailable in rewritten commits.
+At code commit `3ecbc0d4`, six revision tests and the legacy automatic-workflow
+test passed in a fresh ordinary clone without replacement refs, private audit
+files or saved research inputs. Generated files removed from history remain
+unavailable in rewritten commits.
 
 This rewrite removes generated data. Final privacy and identity review, and any
 separately approved cleanup it requires, remain before publication. Repeat checks

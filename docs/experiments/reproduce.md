@@ -462,8 +462,10 @@ PY
 ```
 
 This reads saved source only. It cannot recover generated artifacts removed
-from history or establish a complete historical environment. Fresh
-ordinary-clone verification of this lookup support remains pending.
+from history or establish a complete historical environment. At code commit
+`3ecbc0d4`, the six revision tests, the legacy automatic-workflow test and this
+example were checked in a fresh ordinary clone without replacement refs, private
+audit files or saved research inputs.
 
 ## Inspect the fine-tune comparison
 

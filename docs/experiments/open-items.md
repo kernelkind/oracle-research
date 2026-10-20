@@ -229,8 +229,10 @@ use `generation_history.source_at_revision` for full original IDs and unique
 7–40-character hexadecimal prefixes, without replacement refs. All 30 revision
 lookup and automatic-workflow regression tests pass. The separate
 generation-history suite retains one pre-existing saved-manifest `config_path`
-mismatch, also reproduced against original history. Fresh ordinary-clone
-verification remains pending.
+mismatch, also reproduced against original history. At code commit `3ecbc0d4`,
+all six revision tests and the legacy automatic-workflow test also passed in a
+fresh ordinary clone without replacement refs, private audit files or saved
+research inputs.
 Raw Git commands require a rewritten ID from the map. Some verifiers also read
 generated blobs intentionally removed from history; those checks still require
 the preserved original evidence.
