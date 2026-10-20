@@ -9,7 +9,7 @@ use serde_json::json;
 fn calibration_above_twenty_five_dollars_uses_the_shared_lifetime_budget() {
     let directory = tempfile::tempdir().unwrap();
     let path = directory.path().join("budget-ledger.json");
-    let source = Path::new(env!("CARGO_MANIFEST_DIR")).join("budget-ledger.json");
+    let source = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/budget-ledger.json");
     fs::write(&path, fs::read(source).unwrap()).unwrap();
     let before = read_budget_ledger(&path).unwrap();
 
@@ -50,13 +50,13 @@ fn calibration_above_twenty_five_dollars_uses_the_shared_lifetime_budget() {
 }
 
 #[test]
-fn checked_in_ledger_has_the_approved_thousand_dollar_cap_and_zero_reserve() {
+fn synthetic_ledger_fixture_has_thousand_dollar_cap_and_zero_reserve() {
     assert_eq!(
         oracle_mvp::budget::MVP_HARD_BUDGET,
         MicroUsd::from_dollars(1_000)
     );
-    let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("budget-ledger.json");
-    let ledger = read_budget_ledger(&path).expect("read the production ledger");
+    let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/budget-ledger.json");
+    let ledger = read_budget_ledger(&path).expect("read synthetic budget fixture");
     assert_eq!(ledger.lifetime_cap, MicroUsd::from_dollars(1_000));
     let document: serde_json::Value = serde_json::from_slice(&fs::read(path).unwrap()).unwrap();
     assert_eq!(document["reserved_remaining_work_cents"], json!(0));

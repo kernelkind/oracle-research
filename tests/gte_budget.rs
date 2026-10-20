@@ -35,14 +35,15 @@ use sha2::{Digest, Sha256};
 use tempfile::TempDir;
 
 #[test]
-fn checked_in_ledger_freezes_shared_cap_and_reconciled_spend() {
-    let ledger =
-        read_budget_ledger(&Path::new(env!("CARGO_MANIFEST_DIR")).join("budget-ledger.json"))
-            .expect("read checked-in budget ledger");
+fn synthetic_ledger_fixture_has_shared_cap_and_no_spend() {
+    let ledger = read_budget_ledger(
+        &Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/budget-ledger.json"),
+    )
+    .expect("read synthetic budget fixture");
 
     assert_eq!(ledger.lifetime_cap, MVP_LIFETIME_CAP);
-    assert_eq!(ledger.actual_spend, MicroUsd(39_090_000));
-    assert_eq!(ledger.calibration_actual_spend, MicroUsd(1_270_000));
+    assert_eq!(ledger.actual_spend, MicroUsd(0));
+    assert_eq!(ledger.calibration_actual_spend, MicroUsd(0));
     assert_eq!(ledger.calibration_outstanding_commitments, MicroUsd(0));
 }
 

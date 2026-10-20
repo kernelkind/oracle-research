@@ -1,0 +1,13 @@
+{
+  "schema_version": 3,
+  "scope": "Synthetic budget ledger for offline tests",
+  "currency": "USD",
+  "lifetime_cap_cents": 100000,
+  "actual_spend_cents": 0,
+  "outstanding_commitments_cents": 0,
+  "calibration_actual_spend_cents": 0,
+  "calibration_outstanding_commitments_cents": 0,
+  "reserved_remaining_work_cents": 0,
+  "reconciled_through_utc": "1970-01-01T00:00:00Z",
+  "entries": []
+}

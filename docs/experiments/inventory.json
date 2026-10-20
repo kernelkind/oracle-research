@@ -1554,5 +1554,23 @@
       }
     },
     "previous_preparation_peak_rss_kib": 108516
+  },
+  "privacy_history_rewrite": {
+    "state": "Verified locally; publication and review of other assets remain open",
+    "original_head": "93fb58afac34892347a138d82f0aeca7a2dea060",
+    "rewritten_head": "ca10707a96812de38236b3a3a5beedd46fb7e31d",
+    "scope": "Approved private account telemetry, raw ledger/billing records, identifying account/resource metadata, and associated subscription-derived estimates",
+    "original_commits": 3183,
+    "retained_commits": 3040,
+    "newly_empty_commits_removed": 143,
+    "meaningful_merges_retained": 397,
+    "every_original_public_tree_verified": true,
+    "retained_authors_committers_dates_preserved": true,
+    "bundled_commit_map": "docs/experiments/commit-map.txt",
+    "bundled_commit_map_sha256": "35500c8e566456a53bb38386aa2d4e3b841bc0187a3d0f73125fbf9e44d693e5",
+    "prior_commit_mapping_composed": true,
+    "private_originals_preserved": true,
+    "runner_history_rewritten": false,
+    "uploads": false
   }
 }

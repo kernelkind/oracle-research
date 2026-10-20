@@ -209,6 +209,14 @@ replay scripts still require original artifacts; their
 remains open. The four located ASv6.26–ASv6.28 reports and their selected compact
 results are now included; broader historical conversion gaps remain explicit.
 
+Reviewed personal account telemetry and billing records are excluded from this
+Git history. Reviewed identifying account and rental metadata has also been
+removed from research records and replaced with synthetic values in test fixtures. The
+commit mapping includes both history cleanups; revisions removed solely for
+private content resolve to the same public source state in their retained
+ancestor. The real spending ledger stays private; offline budget tests use
+`tests/fixtures/budget-ledger.json`.
+
 Generation commits, later audit/export commits and the publication commit serve
 different purposes. Their original IDs remain in the evidence. The
 [bundled Oracle commit mapping](commit-map.txt) supports historical source reads;

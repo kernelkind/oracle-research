@@ -89,7 +89,7 @@ class GitIgnoreTests(unittest.TestCase):
             "sse_multivector/future-experiment-v2/tests/fixtures/example.json",
             "sse_multivector/future-experiment-v2/tests/fixtures/example.jsonl",
             "docs/planning/release-decisions.md",
-            "budget-ledger.json",
+            "tests/fixtures/budget-ledger.json",
             "models/gte-multilingual-base-tokenizer.lock.json",
         ]
         self.assertEqual(self.ignored(paths), set())
@@ -100,6 +100,7 @@ class GitIgnoreTests(unittest.TestCase):
             "reference_map/.review.lock",
             "sse_multivector/__pycache__/pipeline.cpython-311.pyc",
             "sse_multivector/.model-request-history/entry.json",
+            "budget-ledger.json",
             ".budget-ledger.json.lock",
             "sse_multivector/frontier_runner/node_modules/example/index.js",
             "sse_multivector/geometric-hierarchy-v1/GDC01S/coordinate-snapshots.npz",

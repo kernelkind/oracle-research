@@ -1,5 +1,10 @@
 /target/
 
+# Private spending and account records stay outside publication history.
+/budget-ledger.json
+/sse_multivector/CODEX-ASTRA-SUBSCRIPTION-CONVERSION.md
+/gte/budget-reconciliation-2026-09-16/
+
 # Exhaustive publication discovery catalogs stay in the local audit copy.
 /docs/experiments/files/
 /docs/experiments/dependencies.csv
