@@ -40,8 +40,10 @@ tools total_tokens total_tokens_new_calls unique_threads unique_workdirs
 usage usage_caveat user_messages_per_call valid_responses waves'''.split()),
     'runtime': set('''includes maximum_io_psi maximum_memory_psi minimum_available_gib
 resource_samples seconds'''.split()),
-    'billing': set('''additional_paid_api_spend_cents ledger_actual_spend_cents
-ledger_cap_cents ledger_outstanding_commitments_cents ledger_reserved_cents lifetime_cap_cents'''.split()),
+    'billing': {'additional_paid_api_spend_cents'},
+    'accounting': {'route', 'additional_paid_api_spend'},
+    'source_binding': set('''path sha256 source_sha256 prompt_sha256 input_sha256
+output_sha256 manifest_sha256 note_id case_id trial version prompt_id label text'''.split()),
     'resources': set('''batch_timeout_seconds concurrency limit_caveat max_concurrency
 max_concurrent_calls memory_max_per_call_gib new_paid_api_or_rental no_new_paid_api_or_rental
 no_retries request_timeout_seconds swap_max_per_call'''.split())}
@@ -64,6 +66,13 @@ def _clean(value, key=None):
                     or (key in _CONTEXT and name not in _CONTEXT[key])
                     or (name == 'error' and key in {'execution', 'failed_call', 'failures'})):
                 continue
+            if key in {'billing', 'accounting'}:
+                valid = (isinstance(item, str) and item in {'subscription', 'api', 'paid_api', 'openrouter'}
+                         if name == 'route' else type(item) in (int, float) and item >= 0)
+                if not valid:
+                    raise ValueError(key + ' requires a scientific route or numeric experiment cost')
+            if key == 'source_binding' and item is not None and type(item) not in (str, int, float, bool):
+                raise ValueError('source binding values must be scalars')
             if name == 'eligible_notes' and (type(item) is not int or item < 0):
                 continue
             if key == 'execution':
@@ -88,7 +97,9 @@ def _clean(value, key=None):
             result[portable] = _clean(item, name)
         return result
     if isinstance(value, list):
-        return [_clean(item, key) for item in value]
+        # A source-reference list publishes scientific bindings, never the
+        # provider's account-linked response identifiers beside those bindings.
+        return [_clean(item, 'source_binding' if key == 'sources' else key) for item in value]
     if isinstance(value, str):
         def reference(match):
             text = match.group()

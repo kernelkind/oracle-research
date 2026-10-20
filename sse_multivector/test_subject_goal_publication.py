@@ -187,6 +187,49 @@ class SubjectGoalPublicationTests(unittest.TestCase):
         self.assertNotIn('SECRET', json.dumps(data))
         self.assertEqual(data['protected_sha256'], {'prompts/SPv1.md': 'a'*64})
 
+    def test_accounting_and_source_bindings_publish_only_experiment_evidence(self):
+        selection = self.fixture()
+        parameters = self.write('plan.json', {
+            'model': 'saved-model', 'prompt_version': 'ASv6.12',
+            'execution': {'calls': 3, 'usage': {'output_tokens': 5}},
+            'billing': {'additional_paid_api_spend_cents': 0,
+                        'ledger_actual_spend_cents': 1234,
+                        'ledger_outstanding_commitments_cents': 17,
+                        'ledger_reserved_cents': 7, 'ledger_cap_cents': 100000},
+            'accounting': {'route': 'subscription', 'additional_paid_api_spend': 0,
+                           'ledger_actual_spend_cents': 1234,
+                           'outstanding_commitments_cents': 17},
+            'sources': [{'note_id': 'post-1', 'path': 'run/results.jsonl',
+                         'label': 'N1', 'text': 'Tea and coffee.',
+                         'prompt_sha256': 'a'*64, 'trial': 1,
+                         'response_id': 'PRIVATE-PROVIDER-RESPONSE',
+                         'comparison_generation_id': 'PRIVATE-PROVIDER-GENERATION'}]})
+        selection['parameters'] = [parameters]
+        self.export(selection)
+        data = self.rows('results.jsonl')[0]['data']
+        self.assertEqual(data['billing'], {'additional_paid_api_spend_cents': 0})
+        self.assertEqual(data['accounting'], {'route': 'subscription',
+                                             'additional_paid_api_spend': 0})
+        self.assertEqual(data['sources'], [{'note_id': 'post-1', 'path': 'run/results.jsonl',
+                                           'label': 'N1', 'text': 'Tea and coffee.',
+                                           'prompt_sha256': 'a'*64, 'trial': 1}])
+        self.assertEqual(data['execution'], {'calls': 3, 'usage': {'output_tokens': 5}})
+        self.assertEqual(data['model'], 'saved-model')
+        self.assertNotIn('PRIVATE-PROVIDER', json.dumps(data))
+
+    def test_scientific_accounting_and_binding_values_cannot_hide_private_objects(self):
+        for data in ({'accounting': {'route': {'account': 'PRIVATE-ACCOUNT'}}},
+                     {'billing': {'additional_paid_api_spend_cents': {'balance': 1234}}},
+                     {'sources': [{'note_id': 'post-1', 'path': {'response_id': 'PRIVATE-ID'}}]}):
+            with self.subTest(data=data), tempfile.TemporaryDirectory() as temporary:
+                self.root = Path(temporary)
+                self.source = self.root / 'source'
+                self.output = self.root / 'publication'
+                parameters = self.write('plan.json', data)
+                with self.assertRaisesRegex(ValueError, 'accounting|billing|source binding'):
+                    self.export({'answers': [], 'inputs': [], 'parameters': [parameters],
+                                 'records': [], 'status': 'historical'})
+
     def test_execution_retains_recorded_repeat_method_and_anonymous_counts(self):
         selection = self.fixture()
         method = 'Intentional --repeat; distinct trials, no answer reuse; one user message and no tools.'

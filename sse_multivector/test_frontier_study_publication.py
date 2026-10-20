@@ -26,7 +26,9 @@ class FrontierStudyPublicationTests(unittest.TestCase):
             methods=dict(reasoning_requested='high', tools=[], retry_count=2),
             auth_file='/private/ACCOUNT_CANARY/auth.json'))
         selection = dict(profile='frontier-study', directory='study',
-                         records=[dict(**summary, role='measurement')])
+                         records=[dict(**summary, role='measurement', fields=[
+                             ['status'], ['semantic_quality_assessed'], ['successful_responses'],
+                             ['usage'], ['methods']])])
         self.save('selection.json', dict(schema_version=1, studies={'frontier-test': selection}))
 
     def export(self):
@@ -47,6 +49,137 @@ class FrontierStudyPublicationTests(unittest.TestCase):
         self.assertEqual(record['data']['methods'],
                          dict(reasoning_requested='high', tools=[], retry_count=2))
         self.assertNotIn('ACCOUNT_CANARY', ''.join(p.read_text() for p in output.iterdir()))
+
+    def test_parameter_projection_keeps_method_without_account_admission(self):
+        plan = self.save('study/retry-plan.json', dict(
+            model='saved-model', provider='openrouter', reasoning='low',
+            note_ids=['N1'], maximum_model_requests=2,
+            maximum_retry_attempts_per_note=2, max_output_tokens_per_request=8192,
+            key_usage_usd_before=12.5, previous_ledger_sha256='a'*64,
+            recorded_at_utc='1970-01-01T00:00:00Z', reserved_maximum_charge_cents=17,
+            evidence='PRIVATE-ADMISSION: global spending and an uncapped account key.',
+            private_account_snapshot=dict(actual_spend_cents=1234)))
+        self.select(parameters=[plan])
+        output = self.export()
+        data = self.rows(output, 'inputs.jsonl')[0]['data']
+        self.assertEqual(data, dict(model='saved-model', provider='openrouter', reasoning='low',
+            note_ids=['N1'], maximum_model_requests=2,
+            maximum_retry_attempts_per_note=2, max_output_tokens_per_request=8192))
+
+    def test_transport_error_retains_failure_code_without_account_policy(self):
+        policy = 'PRIVATE-ACCOUNT-POLICY'
+        error = '404: ' + json.dumps(dict(code=404,
+            message=policy, metadata=dict(ineligibility_reasons=[dict(reason=policy)])))
+        result = self.save('study/result.json', dict(error=error, stop_reason='error',
+            http_status=200, elapsed_ms=27, usage=dict(cost=0),
+            response_metadata=dict(id='PRIVATE-RESPONSE', model='saved-model')))
+        self.select(http_results=[result])
+        output = self.export()
+        data = self.rows(output, 'results.jsonl')[0]['data']
+        self.assertEqual(data['error'], {'code': 404})
+        self.assertEqual(data['http_status'], 200)
+        self.assertEqual(data['elapsed_ms'], 27)
+        self.assertEqual(data['usage'], {'cost': 0})
+        self.assertNotIn('PRIVATE-', ''.join(p.read_text() for p in output.iterdir()))
+
+    def test_selected_assessment_preserves_source_array_positions(self):
+        value = self.save('study/assessment.json', dict(status='complete',
+            findings=['The same stream failure recurred.', 'PRIVATE-ADMIN', None,
+                      'The prediction matched within 21 ms.'],
+            observations=dict(idle_gap_ms=300021, provider_reported_customer_charge_usd=0),
+            credential_route='PRIVATE-ACCOUNT-LAUNCHER',
+            comparison_generation_id='PRIVATE-GENERATION'))
+        fields = [['status'], ['findings', 0], ['findings', 2], ['findings', 3],
+                  ['observations']]
+        self.select(records=[dict(**value, role='assessment', fields=fields)])
+        output = self.export()
+        row = self.rows(output, 'judgments.jsonl')[0]
+        self.assertEqual(row['data']['findings'], [
+            'The same stream failure recurred.', None, None,
+            'The prediction matched within 21 ms.'])
+        self.assertEqual(row['source']['fields'], fields)
+        self.assertEqual(row['source']['sha256'], value['sha256'])
+        self.assertEqual(row['data']['observations'], {
+            'idle_gap_ms': 300021, 'provider_reported_customer_charge_usd': 0})
+        self.assertNotIn('PRIVATE-', ''.join(p.read_text() for p in output.iterdir()))
+
+    def test_freeform_assessment_requires_reviewed_field_selection(self):
+        value = self.save('study/assessment.json', dict(
+            findings=['A scientific result.', 'PRIVATE-ADMIN']))
+        self.select(records=[dict(**value, role='assessment')])
+        with self.assertRaisesRegex(ValueError, 'field selection'):
+            self.export()
+
+    def test_measurement_narrative_requires_reviewed_field_selection(self):
+        value = self.save('study/measurement.json', dict(usage=dict(cost=0),
+            findings=['A scientific result.', 'PRIVATE-ADMIN']))
+        self.select(records=[dict(**value, role='measurement')])
+        with self.assertRaisesRegex(ValueError, 'field selection'):
+            self.export()
+
+    def test_transport_diagnostics_are_closed_scientific_values(self):
+        value = self.save('study/result.json', dict(stop_reason='error',
+            raw_stop_reason='PRIVATE-DIAGNOSTIC', diagnostics=['PRIVATE-ACCOUNT-POLICY'],
+            timing=dict(max_event_gap_ms=300000, account_operation='PRIVATE-OPERATION'),
+            usage=dict(cost=0, input_tokens=3, key_usage_usd_before=12.5),
+            upstream_request=dict(model='saved-model', stream=True,
+                reasoning=dict(effort='high', summary='auto', account_operation='PRIVATE-OPERATION'),
+                format=dict(type='json_schema', strict=True, account_policy='PRIVATE-POLICY'),
+                key_usage_usd_before=12.5, credential_route='PRIVATE-ROUTE'),
+            response_metadata=dict(model='saved-model', http_status=429,
+                account_policy='PRIVATE-POLICY', error=dict(code=429, message='PRIVATE-ERROR'))))
+        self.select(http_results=[value])
+        output = self.export()
+        data = self.rows(output, 'results.jsonl')[0]['data']
+        self.assertNotIn('raw_stop_reason', data)
+        self.assertNotIn('diagnostics', data)
+        self.assertEqual(data['timing'], dict(max_event_gap_ms=300000))
+        self.assertEqual(data['usage'], dict(cost=0, input_tokens=3))
+        self.assertEqual(data['upstream_request'], dict(model='saved-model', stream=True,
+            reasoning=dict(effort='high', summary='auto'), format=dict(type='json_schema', strict=True)))
+        self.assertEqual(data['response_metadata'], dict(
+            model='saved-model', http_status=429, error={'code': 429}))
+        self.assertNotIn('PRIVATE-', ''.join(p.read_text() for p in output.iterdir()))
+
+    def test_cost_accounting_parameter_cannot_contain_administrative_objects(self):
+        value = self.save('study/plan.json', dict(model='saved-model',
+            cost_accounting=dict(key_usage_usd_before=12.5, private_balance=1234)))
+        self.select(parameters=[value])
+        with self.assertRaisesRegex(ValueError, 'cost_accounting|parameter'):
+            self.export()
+
+    def test_transport_usage_rejects_objects_in_numeric_measurements(self):
+        value = self.save('study/result.json', dict(stop_reason='error',
+            usage=dict(input_tokens=dict(account_balance=1234))))
+        self.select(http_results=[value])
+        with self.assertRaisesRegex(ValueError, 'usage'):
+            self.export()
+
+    def test_transport_failure_projection_preserves_scientific_error_measurements(self):
+        value = self.save('study/measurement.json', dict(
+            metrics=dict(error=0.03, relative=dict(error=0.02)),
+            results=[dict(model_result=dict(error='429: PRIVATE-POLICY',
+                stop_reason='error', diagnostics=['PRIVATE-ADMIN'],
+                timing=dict(max_event_gap_ms=27, account_operation='PRIVATE-OPERATION')))]))
+        self.select(records=[dict(**value, role='measurement', fields=[['metrics'], ['results']])])
+        output = self.export()
+        data = self.rows(output, 'results.jsonl')[0]['data']
+        self.assertEqual(data['metrics'], dict(error=0.03, relative=dict(error=0.02)))
+        self.assertEqual(data['results'][0]['model_result']['error'], {'code': 429})
+        self.assertEqual(data['results'][0]['model_result']['timing'], dict(max_event_gap_ms=27))
+        self.assertNotIn('PRIVATE-', ''.join(p.read_text() for p in output.iterdir()))
+
+    def test_field_selection_rejects_ambiguous_paths_and_administrative_roots(self):
+        for fields in ([], [[]], [['findings'], ['findings', 0]],
+                       [['status'], ['status']], [['findings', -1]],
+                       [['findings', True]], [['missing']], [['credential_route']]):
+            with self.subTest(fields=fields), tempfile.TemporaryDirectory() as temporary:
+                self.root = Path(temporary)
+                value = self.save('study/assessment.json', dict(status='complete',
+                    findings=['A scientific result.'], credential_route='PRIVATE-ADMIN'))
+                self.select(records=[dict(**value, role='assessment', fields=fields)])
+                with self.assertRaisesRegex(ValueError, 'field|path'):
+                    self.export()
 
     def select(self, **fields):
         self.save('selection.json', dict(schema_version=1, studies={'frontier-test':
@@ -111,7 +244,7 @@ class FrontierStudyPublicationTests(unittest.TestCase):
                 (['ASv6.101'],True,None),(['ASv6.48','ASv6.100'],True,True)):
             with self.subTest(versions=versions,unknown=unknown):
                 value=self.save('study/source.json',dict(status='saved'))
-                self.select(records=[dict(**value,role='measurement')],subject_versions=versions,
+                self.select(records=[dict(**value,role='measurement',fields=[['status']])],subject_versions=versions,
                             subject_lineage_unknown=unknown)
                 output=self.root/('lineage-'+str(len(versions))+str(unknown)+str(expected))
                 from sse_multivector.historical_study_publication import export_results
@@ -205,7 +338,8 @@ class FrontierStudyPublicationTests(unittest.TestCase):
             generation_id='GENERATION_CANARY',note_id='source-note',case_id='C1',
             provider_responses=[dict(id='PROVIDER_CANARY',provider='saved-provider',latency=0)],
             usage=dict(cost=0)))
-        self.select(records=[dict(**value,role='measurement')])
+        self.select(records=[dict(**value,role='measurement',fields=[
+            ['note_id'], ['case_id'], ['provider_responses'], ['usage']])])
         output=self.export()
         data=self.rows(output,'results.jsonl')[0]['data']
         self.assertEqual(data['note_id'],'source-note')

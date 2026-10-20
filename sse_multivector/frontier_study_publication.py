@@ -26,13 +26,79 @@ _RESULT = {'client', 'node_version', 'runner_version', 'pi_ai_version',
            'done_received', 'http_status', 'upstream_request', 'finish_reason',
            'response_status', 'usage', 'local_abort', 'stop_reason',
            'raw_stop_reason', 'response_model', 'provider_thinking_level',
-           'http_attempts', 'diagnostics', 'error', 'valid', 'validation_error',
+           'http_attempts', 'error', 'valid', 'validation_error',
            'usage_note', 'event_trace_dropped'}
 _RECEIPT = {'status', 'attempt', 'elapsed_seconds', 'exit_code', 'error',
             'model', 'provider', 'reasoning_effort', 'prompt_sha256',
             'request_sha256', 'response_schema_sha256', 'runner_sha256',
             'runner_version', 'wrapper_sha256', 'usage', 'reused_from',
             'retry_reason', 'execution'}
+_PARAMETERS = set('''arms astra_calls astra_output_path astra_sources_path automatic_retries
+candidates changes_from_muse_low checks concurrency concurrent_models cost_accounting experiment
+fresh_sends jobs limits mask_calls mask_cases mask_rubric max_output_tokens max_output_tokens_per_call
+max_output_tokens_per_request maximum_calls maximum_model_requests maximum_retry_attempts_per_note
+model model_calls models muse_low_directory note_count note_id note_ids note_label notes_path
+original_diagnostic output_schema_path output_schema_sha256 output_token_cap parity_rule
+preserved_failure_records prompt_path prompt_rendering prompt_sha256 prompt_status prompt_version
+provider reasoning reasoning_effort repeat_ids requests review review_policy scope seed sp_notes
+sp_prompt_status sp_prompt_version sp_rubric strata subject_count subjects_sha256 timeout_seconds
+timeout_seconds_per_call'''.split())
+_ASSESSMENT = set('''attempts automatic_retries change comparison conclusion conclusions
+controlled_inputs cost_usd elapsed_ms error error_gap_ms findings hypothesis limits max_event_gap_ms
+model_client model_requests next next_diagnostic_suggestion_not_executed next_not_executed
+next_test_recommendation note_id notes observations offline_verification only_client_request_change
+prompt_version purpose receipt reference research_result result result_path reused schema_errors
+schema_valid schema_version scope semantic_quality_assessed settings status still_unknown
+subject_count suggested_next_not_executed transport_complete valid_completion verification
+verified_upstream_request'''.split())
+_METHOD = set('''answer_characters comparison condition date_utc expected_error_at_ms findings
+hypothesis interpretation interpretation_rule last_observed_response_event_ms live_test note
+observation observed_event_type observed_last_event_ms only_request_change predicted_error_ms
+predicted_error_ms_if_same_idle_deadline_and_no_further_events prediction prior_measured_idle_gap_ms
+qualification question reasoning_updates recorded_at_utc source tolerance_ms unchanged'''.split())
+_MEASUREMENT = set('''accounting_note active_requests assessment astra_price_usd_per_million
+cached_input_tokens caller_token_cap calls cancelled candidates case_id collector_changes
+combined_completed_notes combined_diagnostic_charge_usd combined_successful_call_cost_usd comparison
+comparison_caveat comparison_note completed_at_utc completed_diagnostic_model_responses
+completed_note_ids conclusion concurrency concurrency_limit content_guardrail_invoked cost_comparisons
+cost_usd created_at current_review exact_inputs_and_schema_verified
+exact_inputs_and_schema_verified_for_completed_outputs experiment experiment_id
+failed_requests_without_reported_cost failed_uncompleted_note_ids failures findings finish_reason
+generation_time historical_astra_caveat historical_astra_reference_outputs http_attempts input_tokens
+invalid_outputs latency limitations mask mask_cases mask_totals matched_three_note_totals
+mechanical_validation methods metrics missing_notes model models native_finish_reason
+native_tokens_completion native_tokens_prompt native_tokens_reasoning new_astra_calls new_high_notes
+new_http_attempts new_mask_calls new_other_model_calls new_reasoning_effort new_reported_cost_usd
+new_requests new_retries new_successes next_step note_characters note_id note_label notes
+notes_retried observations older_failed_generation_charges original_experiment
+original_failed_requests_preserved output_tokens_including_reasoning per_1000_similar_notes_usd
+prompt_sha256 prompt_status prompt_version provider_fallbacks provider_name provider_responses
+providers purpose quality_conclusion reasoning reasoning_effort reasoning_requested reasoning_tokens
+repeat_ids reported_completed_cost_usd reported_cost_status reported_reasoning_tokens
+reported_total_completed_cost_usd request_attempts requested_new_notes requested_notes
+requests_byte_identical_across_candidates require_parameters results retained_max_notes retried_calls
+retries retry_attempts retry_charge_usd reused_results router_latency selected_prompt_sha256_by_job
+semantic_quality_assessed slowest_call_seconds sp sp_totals_mimo_high status streamed subject_count
+successful_notes successful_responses timeout_seconds tokens_completion tokens_prompt
+total_diagnostic_attempts_including_original_failures total_notes total_provider_reported_charge_usd
+total_provider_reported_cost_usd totals transport_failures unattempted_note_ids unknown_new_costs
+usage usage_data usage_upstream valid_completions valid_numbering_and_parents validation verification'''.split())
+_RECORD = {'assessment': _ASSESSMENT, 'method': _METHOD, 'measurement': _MEASUREMENT,
+           'scores': {'note', 'rubric_version', 'scorer', 'scores'}}
+_TIMING = set('''byte_count comment_count error_gap_ms error_ms event_count event_trace_dropped
+first_byte_ms first_event_ms headers_ms last_byte_ms last_event_ms last_non_error_event_ms
+max_byte_gap_ms max_event_gap_ms stream_end_ms'''.split())
+_USAGE = set('''cacheRead cacheWrite cached_tokens cached_input_tokens completion_tokens cost input
+input_tokens output output_tokens output_tokens_including_reasoning prompt_tokens reasoning
+reasoning_tokens total totalTokens total_tokens'''.split())
+_COST_DETAILS = set('''upstream_inference_completions_cost upstream_inference_cost
+upstream_inference_input_cost upstream_inference_output_cost upstream_inference_prompt_cost'''.split())
+_TOKEN_DETAILS = set('''accepted_prediction_tokens rejected_prediction_tokens audio_tokens
+image_tokens video_tokens reasoning_tokens cached_tokens cache_write_tokens'''.split())
+_STOP_REASONS = {'stop', 'length', 'max_tokens', 'max_output_tokens', 'tool_calls', 'tool_use',
+                 'end_turn', 'completed', 'incomplete', 'cancelled', 'error', 'content_filter', 'refusal'}
+_UPSTREAM = {'body_sha256', 'format', 'max_output_tokens', 'model', 'reasoning',
+             'schema_sha256', 'store', 'stream'}
 
 
 def _sha(raw):
@@ -53,20 +119,52 @@ def _binding(declaration):
     return {key: declaration[key] for key in ('path', 'sha256')}
 
 
-def _without_private(value, key=''):
+def _without_private(value, sources, key=''):
+    if key == 'model_result' and isinstance(value, dict):
+        return _result(value, sources)
+    if key in {'usage', 'usage_data', 'usage_upstream'}:
+        return _usage(value)
     if isinstance(value, dict):
-        return {name: _without_private(child, name) for name, child in value.items()
+        return {name: (_failure(child) if key == 'failures' and name == 'error'
+                       else _without_private(child, sources, name)) for name, child in value.items()
                 if name not in _PRIVATE and name != 'request_id'
                 and not (name == 'id' and key == 'provider_responses')}
     if isinstance(value, list):
-        return [_without_private(child, key) for child in value]
+        return [_without_private(child, sources, key) for child in value]
     return value
+
+
+def _failure(value):
+    """Keep a native failure code, never the provider's account diagnostics."""
+    if value is None or value is False or value == '':
+        return value
+    code = value.get('code') if isinstance(value, dict) else None
+    if isinstance(value, str):
+        match = re.match(r'([1-5][0-9]{2}):(?:\s|$)', value)
+        code = int(match[1]) if match else None
+    return {'code': code} if type(code) is int and 100 <= code < 600 else {'status': 'failed'}
+
+
+def _usage(value, fields=None):
+    if value is None or type(value) in (int, float):
+        return value
+    _require(isinstance(value, dict) and fields != set(),
+             'usage must contain numeric experiment measurements')
+    result = {}
+    for name, item in value.items():
+        if fields is None and name == 'cost_details':
+            result[name] = _usage(item, _COST_DETAILS)
+        elif fields is None and name.endswith('_tokens_details'):
+            result[name] = _usage(item, _TOKEN_DETAILS)
+        elif name in (_USAGE if fields is None else fields):
+            result[name] = _usage(item, _USAGE if name == 'cost' else set())
+    return result
 
 
 def _project(value, sources, *, key=''):
     """Preserve selected scientific objects; remove concrete transport fields."""
     # The shared projector preserves scientific execution/isolation controls.
-    return mask._project(_without_private(value), sources, key=key)
+    return mask._project(_without_private(value, sources, key), sources, key=key)
 
 
 def _factor(text):
@@ -77,10 +175,43 @@ def _factor(text):
 
 
 def _result(value, sources):
-    result = {key: _project(value[key], sources, key=key) for key in _RESULT if key in value}
+    result = {}
+    for key in _RESULT & value.keys():
+        item = value[key]
+        if key in {'raw_stop_reason', 'stop_reason', 'finish_reason'}:
+            if item is not None and item not in _STOP_REASONS:
+                continue
+        if key == 'timing':
+            item = {name: measured for name, measured in item.items() if name in _TIMING
+                    and (measured is None or type(measured) in (int, float))}
+        if key == 'upstream_request':
+            item = {name: child for name, child in item.items() if name in _UPSTREAM}
+            for name, child in item.items():
+                nested = {'reasoning': {'effort', 'summary'}, 'format': {'type', 'strict'}}.get(name)
+                if nested is not None and isinstance(child, dict):
+                    item[name] = {field: measured for field, measured in child.items() if field in nested}
+                    values = item[name].values()
+                else:
+                    values = [child]
+                _require(all(measured is None or type(measured) in (str, int, float, bool)
+                             for measured in values), 'upstream request summary must contain scalar controls')
+        if key == 'error':
+            item = _failure(item)
+        result[key] = _project(item, sources, key=key)
     if 'response_metadata' in value:
-        result['response_metadata'] = _project({key: child for key, child in value['response_metadata'].items()
-            if key not in {'id', 'request_id'}}, sources)
+        metadata = {}
+        for key, item in value['response_metadata'].items():
+            if key == 'error':
+                metadata[key] = _failure(item)
+            elif key == 'usage':
+                metadata[key] = _usage(item)
+            elif key == 'http_status':
+                _require(item is None or type(item) is int, 'HTTP status must be numeric')
+                metadata[key] = item
+            elif key in {'model', 'provider', 'service_tier'}:
+                _require(item is None or isinstance(item, str), 'returned model metadata must be scalar')
+                metadata[key] = item
+        result['response_metadata'] = _project(metadata, sources)
     return result
 
 
@@ -91,6 +222,45 @@ def _at(value, fields):
                  'selected source field is missing')
         value = value[field]
     return value
+
+
+def _record(value, declaration, sources):
+    """Publish reviewed source fields without shifting native array indices."""
+    role, fields = declaration['role'], declaration.get('fields')
+    _require(role in _RECORD and isinstance(value, dict), 'unsupported final record')
+    _require(fields is not None, 'final records require reviewed field selection')
+    origin = _binding(declaration)
+    _require(isinstance(fields, list) and fields, 'field selection must be nonempty')
+    paths = []
+    for path in fields:
+        _require(isinstance(path, list) and path
+                 and all((isinstance(key, str) and key) or type(key) is int and key >= 0
+                         for key in path), 'invalid selected field path')
+        _require(path[0] in _RECORD[role], 'selected field is not scientific record data')
+        _at(value, path)
+        current = tuple(path)
+        _require(not any(current[:len(old)] == old or old[:len(current)] == current
+                         for old in paths), 'selected field paths overlap or repeat')
+        paths.append(current)
+
+    def select(node, remaining):
+        if () in remaining:
+            return node
+        groups = {}
+        for path in remaining:
+            groups.setdefault(path[0], []).append(path[1:])
+        if isinstance(node, list):
+            result = [None] * len(node)
+            for index, children in groups.items():
+                result[index] = select(node[index], children)
+            return result
+        return {key: select(node[key], children) for key, children in groups.items()}
+
+    selected = select(value, paths)
+    if role == 'assessment' and 'error' in selected:
+        selected['error'] = _failure(selected['error'])
+    origin['fields'] = fields
+    return dict(type=role, source=origin, data=_project(selected, sources))
 
 
 def _view(subjects, style):
@@ -146,8 +316,13 @@ def prepare(sources, selection, metadata):
         return identity
 
     for declaration in selection.get('parameters', []):
+        value = sources.read(declaration['path'])
+        _require(isinstance(value, dict), 'study parameters must be an object')
+        _require('cost_accounting' not in value or isinstance(value['cost_accounting'], str),
+                 'cost_accounting parameter must be scientific interpretation text')
         inputs.append(dict(type='study_parameters', source=_binding(declaration),
-                           data=_project(sources.read(declaration['path']), sources)))
+                           data=_project({key: child for key, child in value.items()
+                                          if key in _PARAMETERS}, sources)))
     for declaration in selection.get('posts', []):
         notes = sources.read(declaration['path'])['notes']
         by_id = {note['id']: note for note in notes}
@@ -229,7 +404,8 @@ def prepare(sources, selection, metadata):
                 _require(row.get('final_output_sha256') == _sha(raw.encode()),
                          'receipt answer hash differs')
             origin = dict(**_binding(receipt_decl), line=line_number)
-            measured = {key: _project(row[key], sources, key=key) for key in _RECEIPT if key in row}
+            measured = {key: _project(_failure(row[key]) if key == 'error' else row[key],
+                                      sources, key=key) for key in _RECEIPT if key in row}
             if isinstance(row.get('model_result'), dict):
                 native = row['model_result']
                 measured['model_result'] = _result(native, sources)
@@ -396,8 +572,7 @@ def prepare(sources, selection, metadata):
 
     for declaration in selection.get('records', []):
         role = declaration['role']
-        row = dict(type=role, source=_binding(declaration),
-                   data=_project(sources.read(declaration['path']), sources))
+        row = _record(sources.read(declaration['path']), declaration, sources)
         (judgments if role in {'assessment', 'scores'} else results).append(row)
 
     reference_cache = {}

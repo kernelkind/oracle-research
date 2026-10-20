@@ -113,7 +113,21 @@
         {
           "path": "sse_multivector/frontier-model-comparison-v1/compatibility-probe-v2/summary.json",
           "sha256": "15867e2c1ec887456424d1d049dc14ee16cacce69d4f02fae498b2fffa0267dd",
-          "role": "measurement"
+          "role": "measurement",
+          "fields": [
+            [
+              "purpose"
+            ],
+            [
+              "total_provider_reported_cost_usd"
+            ],
+            [
+              "results"
+            ],
+            [
+              "conclusion"
+            ]
+          ]
         }
       ],
       "review_packets": [],
@@ -555,12 +569,124 @@
         {
           "path": "sse_multivector/frontier-model-comparison-v1/asv6.23-diagnostic-v2/summary.json",
           "sha256": "11e2dbd2fbaf3ce32c5a1a463f08f8414fffff93a6f6c8b40a36695d5abd965e",
-          "role": "measurement"
+          "role": "measurement",
+          "fields": [
+            [
+              "experiment_id"
+            ],
+            [
+              "completed_at_utc"
+            ],
+            [
+              "purpose"
+            ],
+            [
+              "prompt_version"
+            ],
+            [
+              "reasoning_requested"
+            ],
+            [
+              "notes"
+            ],
+            [
+              "historical_astra_reference_outputs"
+            ],
+            [
+              "new_astra_calls"
+            ],
+            [
+              "new_mask_calls"
+            ],
+            [
+              "request_attempts"
+            ],
+            [
+              "successful_responses"
+            ],
+            [
+              "retried_calls"
+            ],
+            [
+              "verification"
+            ],
+            [
+              "historical_astra_caveat"
+            ],
+            [
+              "models"
+            ],
+            [
+              "total_provider_reported_charge_usd"
+            ],
+            [
+              "quality_conclusion"
+            ],
+            [
+              "next_step"
+            ]
+          ]
         },
         {
           "path": "sse_multivector/frontier-model-comparison-v1/asv6.23-diagnostic-retry-v1/summary.json",
           "sha256": "17d7ebab941f6a0fce72d07d65f47759a114e2f06ea2b184aa7eded1b8dc3368",
-          "role": "measurement"
+          "role": "measurement",
+          "fields": [
+            [
+              "experiment_id"
+            ],
+            [
+              "original_experiment"
+            ],
+            [
+              "completed_at_utc"
+            ],
+            [
+              "model"
+            ],
+            [
+              "reasoning"
+            ],
+            [
+              "notes_retried"
+            ],
+            [
+              "new_requests"
+            ],
+            [
+              "successful_responses"
+            ],
+            [
+              "original_failed_requests_preserved"
+            ],
+            [
+              "new_astra_calls"
+            ],
+            [
+              "new_other_model_calls"
+            ],
+            [
+              "new_mask_calls"
+            ],
+            [
+              "retry_charge_usd"
+            ],
+            [
+              "combined_diagnostic_charge_usd"
+            ],
+            [
+              "completed_diagnostic_model_responses"
+            ],
+            [
+              "total_diagnostic_attempts_including_original_failures"
+            ],
+            [
+              "assessment"
+            ],
+            [
+              "current_review"
+            ]
+          ]
         }
       ],
       "review_packets": [
@@ -3586,12 +3712,55 @@
         {
           "path": "sse_multivector/frontier-model-comparison-v1/asv6.48-muse-v1/summary.json",
           "sha256": "7acb0118f18af44432869b37b0f1edbda4fbf64488fed2c1577e030bd0dc8bb5",
-          "role": "measurement"
+          "role": "measurement",
+          "fields": [
+            [
+              "prompt_version"
+            ],
+            [
+              "prompt_sha256"
+            ],
+            [
+              "calls"
+            ],
+            [
+              "exact_inputs_and_schema_verified"
+            ],
+            [
+              "valid_numbering_and_parents"
+            ],
+            [
+              "totals"
+            ],
+            [
+              "metrics"
+            ],
+            [
+              "findings"
+            ],
+            [
+              "limitations"
+            ]
+          ]
         },
         {
           "path": "sse_multivector/frontier-model-comparison-v1/asv6.48-muse-v1/assessment.json",
           "sha256": "e0ca804424b42c5ebcdb5f8851abf4213755083da7286d778314d57aef5caf91",
-          "role": "assessment"
+          "role": "assessment",
+          "fields": [
+            [
+              "schema_version"
+            ],
+            [
+              "status"
+            ],
+            [
+              "findings"
+            ],
+            [
+              "notes"
+            ]
+          ]
         }
       ],
       "review_packets": [
@@ -4435,87 +4604,634 @@
         {
           "path": "sse_multivector/frontier-model-comparison-v1/asv6.48-muse-xhigh-v1/summary.json",
           "sha256": "5263f6299e181134959554060fd063280522165a8a58053aaf5969f94900b558",
-          "role": "measurement"
+          "role": "measurement",
+          "fields": [
+            [
+              "calls"
+            ],
+            [
+              "completed_note_ids"
+            ],
+            [
+              "exact_inputs_and_schema_verified_for_completed_outputs"
+            ],
+            [
+              "failed_uncompleted_note_ids"
+            ],
+            [
+              "limitations"
+            ],
+            [
+              "matched_three_note_totals"
+            ],
+            [
+              "metrics"
+            ],
+            [
+              "prompt_sha256"
+            ],
+            [
+              "prompt_version"
+            ],
+            [
+              "status"
+            ],
+            [
+              "unattempted_note_ids"
+            ],
+            [
+              "findings",
+              0
+            ],
+            [
+              "findings",
+              1
+            ],
+            [
+              "findings",
+              2
+            ],
+            [
+              "findings",
+              3
+            ]
+          ]
         },
         {
           "path": "sse_multivector/frontier-model-comparison-v1/asv6.48-muse-xhigh-v1/assessment.json",
           "sha256": "e26c541795a43aabce25148fdc2e05e34101d946f15dd254f682f5213b1736fd",
-          "role": "assessment"
+          "role": "assessment",
+          "fields": [
+            [
+              "schema_version"
+            ],
+            [
+              "status"
+            ],
+            [
+              "notes"
+            ],
+            [
+              "findings",
+              0
+            ],
+            [
+              "findings",
+              1
+            ],
+            [
+              "findings",
+              2
+            ],
+            [
+              "findings",
+              3
+            ]
+          ]
         },
         {
           "path": "sse_multivector/frontier-model-comparison-v1/asv6.48-muse-xhigh-v1/diagnostic-retry-v2/assessment.json",
           "sha256": "1c091b75661ea3d46aa9da05dab0f980b932be73c140e2d9141cc9256d7434a5",
-          "role": "assessment"
+          "role": "assessment",
+          "fields": [
+            [
+              "attempts"
+            ],
+            [
+              "conclusion"
+            ],
+            [
+              "next_test_recommendation"
+            ],
+            [
+              "note_id"
+            ],
+            [
+              "observations"
+            ],
+            [
+              "only_client_request_change"
+            ],
+            [
+              "prompt_version"
+            ],
+            [
+              "receipt"
+            ],
+            [
+              "result"
+            ],
+            [
+              "verification"
+            ],
+            [
+              "verified_upstream_request"
+            ],
+            [
+              "limits",
+              0
+            ],
+            [
+              "limits",
+              1
+            ],
+            [
+              "limits",
+              2
+            ],
+            [
+              "limits",
+              3
+            ],
+            [
+              "limits",
+              4
+            ]
+          ]
         },
         {
           "path": "sse_multivector/frontier-model-comparison-v1/asv6.48-muse-xhigh-v1/high-uncapped-v1/assessment.json",
           "sha256": "3dcf6ab21829af8c2e3d07290eab54f77ecaed9147891d747efbe5729a886ce2",
-          "role": "assessment"
+          "role": "assessment",
+          "fields": [
+            [
+              "status"
+            ],
+            [
+              "verification"
+            ],
+            [
+              "next_not_executed"
+            ],
+            [
+              "findings",
+              0
+            ],
+            [
+              "findings",
+              1
+            ],
+            [
+              "findings",
+              3
+            ],
+            [
+              "findings",
+              4
+            ]
+          ]
         },
         {
           "path": "sse_multivector/frontier-model-comparison-v1/asv6.48-muse-xhigh-v1/high-uncapped-v1/prediction.json",
           "sha256": "a32ce734d7df4e2cbadae88e55aa4bdb75c635448cf3cb096062ad81e74efc03",
-          "role": "method"
+          "role": "method",
+          "fields": [
+            [
+              "comparison"
+            ],
+            [
+              "hypothesis"
+            ],
+            [
+              "interpretation"
+            ],
+            [
+              "only_request_change"
+            ],
+            [
+              "unchanged"
+            ]
+          ]
         },
         {
           "path": "sse_multivector/frontier-model-comparison-v1/asv6.48-muse-xhigh-v1/laptop-ban-repeat-v1/assessment.json",
           "sha256": "50bb7a3e8d6b9a278bec0e5aa158ea9a5f5114bb34e2052b92d3add8b346be68",
-          "role": "assessment"
+          "role": "assessment",
+          "fields": [
+            [
+              "status"
+            ],
+            [
+              "reference"
+            ],
+            [
+              "findings",
+              0
+            ],
+            [
+              "findings",
+              1
+            ],
+            [
+              "findings",
+              2
+            ],
+            [
+              "findings",
+              3
+            ],
+            [
+              "findings",
+              4
+            ]
+          ]
         },
         {
           "path": "sse_multivector/frontier-model-comparison-v1/asv6.48-muse-xhigh-v1/low-uncapped-v1/assessment.json",
           "sha256": "ab37daad73cc8d64b3db5fe68f69f7d99ae9be4d2d56b3eb582884299b1ac93a",
-          "role": "assessment"
+          "role": "assessment",
+          "fields": [
+            [
+              "comparison"
+            ],
+            [
+              "status"
+            ],
+            [
+              "verification"
+            ],
+            [
+              "next_not_executed"
+            ],
+            [
+              "findings",
+              0
+            ],
+            [
+              "findings",
+              1
+            ],
+            [
+              "findings",
+              3
+            ]
+          ]
         },
         {
           "path": "sse_multivector/frontier-model-comparison-v1/asv6.48-muse-xhigh-v1/low-uncapped-v1/prediction.json",
           "sha256": "9fe5c6d6c1264bb91f45d9bd81c4d2ba9ca46187f79a0e1d11f87083b2cff267",
-          "role": "method"
+          "role": "method",
+          "fields": [
+            [
+              "comparison"
+            ],
+            [
+              "hypothesis"
+            ],
+            [
+              "interpretation"
+            ],
+            [
+              "only_request_change"
+            ],
+            [
+              "unchanged"
+            ]
+          ]
         },
         {
           "path": "sse_multivector/frontier-model-comparison-v1/asv6.48-muse-xhigh-v1/no-schema-v1/assessment.json",
           "sha256": "ae1606f380b7d6295d7681027ad3959605e0aabab6207e7f41a89005adb06417",
-          "role": "assessment"
+          "role": "assessment",
+          "fields": [
+            [
+              "status"
+            ],
+            [
+              "hypothesis"
+            ],
+            [
+              "verification"
+            ],
+            [
+              "next_not_executed"
+            ],
+            [
+              "findings",
+              0
+            ],
+            [
+              "findings",
+              1
+            ],
+            [
+              "findings",
+              3
+            ],
+            [
+              "findings",
+              4
+            ]
+          ]
         },
         {
           "path": "sse_multivector/frontier-model-comparison-v1/asv6.48-muse-xhigh-v1/no-token-limit-v1/assessment.json",
           "sha256": "3e7403f1e0e476a302883e9ac5bf9f49c0901d26562b199e7ec383414a4a8c93",
-          "role": "assessment"
+          "role": "assessment",
+          "fields": [
+            [
+              "status"
+            ],
+            [
+              "verification"
+            ],
+            [
+              "suggested_next_not_executed"
+            ],
+            [
+              "findings",
+              0
+            ],
+            [
+              "findings",
+              1
+            ],
+            [
+              "findings",
+              2
+            ],
+            [
+              "limits",
+              0
+            ],
+            [
+              "limits",
+              1
+            ]
+          ]
         },
         {
           "path": "sse_multivector/frontier-model-comparison-v1/asv6.48-muse-xhigh-v1/no-token-limit-v1/prediction.json",
           "sha256": "8c729e20901b159f0e9db02b18bb7bf94a76e89d742ece61ebbf749330831f3a",
-          "role": "method"
+          "role": "method",
+          "fields": [
+            [
+              "observation"
+            ],
+            [
+              "predicted_error_ms"
+            ],
+            [
+              "prediction"
+            ],
+            [
+              "qualification"
+            ],
+            [
+              "recorded_at_utc"
+            ]
+          ]
         },
         {
           "path": "sse_multivector/frontier-model-comparison-v1/asv6.48-muse-xhigh-v1/pi-bypass-v1/assessment.json",
           "sha256": "ad7b26f2adacf8942d2581e7a8b5165c41e1907c684eaf1924db0d785aea339b",
-          "role": "assessment"
+          "role": "assessment",
+          "fields": [
+            [
+              "automatic_retries"
+            ],
+            [
+              "conclusions"
+            ],
+            [
+              "controlled_inputs"
+            ],
+            [
+              "model_client"
+            ],
+            [
+              "model_requests"
+            ],
+            [
+              "next_diagnostic_suggestion_not_executed"
+            ],
+            [
+              "note_id"
+            ],
+            [
+              "observations"
+            ],
+            [
+              "offline_verification"
+            ],
+            [
+              "prompt_version"
+            ],
+            [
+              "still_unknown"
+            ]
+          ]
         },
         {
           "path": "sse_multivector/frontier-model-comparison-v1/asv6.48-muse-xhigh-v1/pi-bypass-v1/prediction.json",
           "sha256": "c033ebb3b08cb12dc2164c28b329452ebdb1aa292d78aa908db7b30dc6b4c005",
-          "role": "method"
+          "role": "method",
+          "fields": [
+            [
+              "condition"
+            ],
+            [
+              "expected_error_at_ms"
+            ],
+            [
+              "last_observed_response_event_ms"
+            ],
+            [
+              "note"
+            ],
+            [
+              "prediction"
+            ],
+            [
+              "prior_measured_idle_gap_ms"
+            ],
+            [
+              "recorded_at_utc"
+            ],
+            [
+              "source"
+            ],
+            [
+              "tolerance_ms"
+            ]
+          ]
         },
         {
           "path": "sse_multivector/frontier-model-comparison-v1/asv6.48-muse-xhigh-v1/responses-endpoint-v1/assessment.json",
           "sha256": "ce53772cbc8c49fd4e7f842d55e93acde2d933d51c52eca3a824940f84240d69",
-          "role": "assessment"
+          "role": "assessment",
+          "fields": [
+            [
+              "status"
+            ],
+            [
+              "research_result"
+            ],
+            [
+              "verification"
+            ],
+            [
+              "findings",
+              0
+            ],
+            [
+              "findings",
+              1
+            ],
+            [
+              "findings",
+              2
+            ],
+            [
+              "findings",
+              3
+            ],
+            [
+              "findings",
+              5
+            ]
+          ]
         },
         {
           "path": "sse_multivector/frontier-model-comparison-v1/asv6.48-muse-xhigh-v1/responses-endpoint-v1/prediction.json",
           "sha256": "4cb213f308337c949c399ccdc6e90eb2e9380da838eebc9434f04407659a197e",
-          "role": "method"
+          "role": "method",
+          "fields": [
+            [
+              "answer_characters"
+            ],
+            [
+              "observed_event_type"
+            ],
+            [
+              "observed_last_event_ms"
+            ],
+            [
+              "predicted_error_ms_if_same_idle_deadline_and_no_further_events"
+            ],
+            [
+              "qualification"
+            ],
+            [
+              "reasoning_updates"
+            ],
+            [
+              "recorded_at_utc"
+            ]
+          ]
         },
         {
           "path": "sse_multivector/frontier-model-comparison-v1/asv6.48-muse-xhigh-v1/responses-endpoint-v1/research.json",
           "sha256": "63056f3854093ae73d8aa7b0be123c5afc404829b346c5d17a8ac82acdac2c8a",
-          "role": "method"
+          "role": "method",
+          "fields": [
+            [
+              "date_utc"
+            ],
+            [
+              "question"
+            ],
+            [
+              "interpretation_rule"
+            ],
+            [
+              "live_test"
+            ],
+            [
+              "findings",
+              0
+            ],
+            [
+              "findings",
+              1
+            ],
+            [
+              "findings",
+              3
+            ],
+            [
+              "findings",
+              4
+            ],
+            [
+              "findings",
+              5
+            ],
+            [
+              "findings",
+              6
+            ]
+          ]
         },
         {
           "path": "sse_multivector/frontier-model-comparison-v1/asv6.48-muse-xhigh-v1/diagnostic-retry-v1/activity-user-export.json",
           "sha256": "e95e4c561108df4d916df29fc855f03ac65cca757f391b1d8e59c13d1db2a856",
-          "role": "measurement"
+          "role": "measurement",
+          "fields": [
+            [
+              "accounting_note"
+            ],
+            [
+              "cancelled"
+            ],
+            [
+              "content_guardrail_invoked"
+            ],
+            [
+              "created_at"
+            ],
+            [
+              "finish_reason"
+            ],
+            [
+              "generation_time"
+            ],
+            [
+              "latency"
+            ],
+            [
+              "model"
+            ],
+            [
+              "native_finish_reason"
+            ],
+            [
+              "native_tokens_completion"
+            ],
+            [
+              "native_tokens_prompt"
+            ],
+            [
+              "native_tokens_reasoning"
+            ],
+            [
+              "provider_name"
+            ],
+            [
+              "provider_responses"
+            ],
+            [
+              "router_latency"
+            ],
+            [
+              "streamed"
+            ],
+            [
+              "tokens_completion"
+            ],
+            [
+              "tokens_prompt"
+            ],
+            [
+              "usage"
+            ],
+            [
+              "usage_data"
+            ],
+            [
+              "usage_upstream"
+            ]
+          ]
         }
       ],
       "review_packets": [
@@ -5449,7 +6165,63 @@
         {
           "path": "sse_multivector/frontier-model-comparison-v1/asv6.48-muse-xhigh-v1/medium-ten-note-v1/summary.json",
           "sha256": "172ce0abc95794d88889b374c23d23a58bd42bb7ac22ec1858354542c6ec5a59",
-          "role": "measurement"
+          "role": "measurement",
+          "fields": [
+            [
+              "prompt_version"
+            ],
+            [
+              "model"
+            ],
+            [
+              "reasoning"
+            ],
+            [
+              "successful_responses"
+            ],
+            [
+              "retries"
+            ],
+            [
+              "caller_token_cap"
+            ],
+            [
+              "concurrency_limit"
+            ],
+            [
+              "subject_count"
+            ],
+            [
+              "input_tokens"
+            ],
+            [
+              "cached_input_tokens"
+            ],
+            [
+              "output_tokens_including_reasoning"
+            ],
+            [
+              "reasoning_tokens"
+            ],
+            [
+              "cost_usd"
+            ],
+            [
+              "per_1000_similar_notes_usd"
+            ],
+            [
+              "slowest_call_seconds"
+            ],
+            [
+              "comparison"
+            ],
+            [
+              "assessment"
+            ],
+            [
+              "notes"
+            ]
+          ]
         }
       ],
       "review_packets": [
@@ -5661,52 +6433,477 @@
         {
           "path": "sse_multivector/frontier-model-comparison-v1/asv6.48-muse-xhigh-v1/high-ten-note-v1/summary.json",
           "sha256": "af946ca131917acaae540930f36a66e3d6ab4383607abe0f680b28109df6749d",
-          "role": "measurement"
+          "role": "measurement",
+          "fields": [
+            [
+              "total_notes"
+            ],
+            [
+              "new_requests"
+            ],
+            [
+              "reused_results"
+            ],
+            [
+              "valid_completions"
+            ],
+            [
+              "transport_failures"
+            ],
+            [
+              "invalid_outputs"
+            ],
+            [
+              "new_reported_cost_usd"
+            ],
+            [
+              "unknown_new_costs"
+            ],
+            [
+              "results"
+            ]
+          ]
         },
         {
           "path": "sse_multivector/frontier-model-comparison-v1/asv6.48-muse-xhigh-v1/high-ten-note-v1/N004/assessment.json",
           "sha256": "2a6140f232ecfdc36828f5b23c81c4b51288b36ce576af106b160e70fb46cc7d",
-          "role": "assessment"
+          "role": "assessment",
+          "fields": [
+            [
+              "note_id"
+            ],
+            [
+              "reused"
+            ],
+            [
+              "result_path"
+            ],
+            [
+              "transport_complete"
+            ],
+            [
+              "schema_valid"
+            ],
+            [
+              "valid_completion"
+            ],
+            [
+              "subject_count"
+            ],
+            [
+              "elapsed_ms"
+            ],
+            [
+              "cost_usd"
+            ],
+            [
+              "error"
+            ],
+            [
+              "max_event_gap_ms"
+            ],
+            [
+              "error_gap_ms"
+            ],
+            [
+              "schema_errors"
+            ],
+            [
+              "semantic_quality_assessed"
+            ]
+          ]
         },
         {
           "path": "sse_multivector/frontier-model-comparison-v1/asv6.48-muse-xhigh-v1/high-ten-note-v1/N029/assessment.json",
           "sha256": "746183ce4fa5e96d1441d1cd3ce4d2db25512f7885027d279ba90c3a44819a9b",
-          "role": "assessment"
+          "role": "assessment",
+          "fields": [
+            [
+              "note_id"
+            ],
+            [
+              "reused"
+            ],
+            [
+              "result_path"
+            ],
+            [
+              "transport_complete"
+            ],
+            [
+              "schema_valid"
+            ],
+            [
+              "valid_completion"
+            ],
+            [
+              "subject_count"
+            ],
+            [
+              "elapsed_ms"
+            ],
+            [
+              "cost_usd"
+            ],
+            [
+              "error"
+            ],
+            [
+              "max_event_gap_ms"
+            ],
+            [
+              "error_gap_ms"
+            ],
+            [
+              "schema_errors"
+            ],
+            [
+              "semantic_quality_assessed"
+            ]
+          ]
         },
         {
           "path": "sse_multivector/frontier-model-comparison-v1/asv6.48-muse-xhigh-v1/high-ten-note-v1/N038/assessment.json",
           "sha256": "e011fbe78e195fe0f0470462ac714434fbe2ad8554810c5e85d1805d244a8071",
-          "role": "assessment"
+          "role": "assessment",
+          "fields": [
+            [
+              "note_id"
+            ],
+            [
+              "reused"
+            ],
+            [
+              "result_path"
+            ],
+            [
+              "transport_complete"
+            ],
+            [
+              "schema_valid"
+            ],
+            [
+              "valid_completion"
+            ],
+            [
+              "subject_count"
+            ],
+            [
+              "elapsed_ms"
+            ],
+            [
+              "cost_usd"
+            ],
+            [
+              "error"
+            ],
+            [
+              "max_event_gap_ms"
+            ],
+            [
+              "error_gap_ms"
+            ],
+            [
+              "schema_errors"
+            ],
+            [
+              "semantic_quality_assessed"
+            ]
+          ]
         },
         {
           "path": "sse_multivector/frontier-model-comparison-v1/asv6.48-muse-xhigh-v1/high-ten-note-v1/N052/assessment.json",
           "sha256": "732f51fa808bd9da840a8bf771d099332bdabf5b1d077bf25b1ae1fbe84f68ed",
-          "role": "assessment"
+          "role": "assessment",
+          "fields": [
+            [
+              "note_id"
+            ],
+            [
+              "reused"
+            ],
+            [
+              "result_path"
+            ],
+            [
+              "transport_complete"
+            ],
+            [
+              "schema_valid"
+            ],
+            [
+              "valid_completion"
+            ],
+            [
+              "subject_count"
+            ],
+            [
+              "elapsed_ms"
+            ],
+            [
+              "cost_usd"
+            ],
+            [
+              "error"
+            ],
+            [
+              "max_event_gap_ms"
+            ],
+            [
+              "error_gap_ms"
+            ],
+            [
+              "schema_errors"
+            ],
+            [
+              "semantic_quality_assessed"
+            ]
+          ]
         },
         {
           "path": "sse_multivector/frontier-model-comparison-v1/asv6.48-muse-xhigh-v1/high-ten-note-v1/N061/assessment.json",
           "sha256": "eb7eeff222d7fafd3ff2f6bb7dfe8510baec7cb262399c2da623281dcb9ff508",
-          "role": "assessment"
+          "role": "assessment",
+          "fields": [
+            [
+              "note_id"
+            ],
+            [
+              "reused"
+            ],
+            [
+              "result_path"
+            ],
+            [
+              "transport_complete"
+            ],
+            [
+              "schema_valid"
+            ],
+            [
+              "valid_completion"
+            ],
+            [
+              "subject_count"
+            ],
+            [
+              "elapsed_ms"
+            ],
+            [
+              "cost_usd"
+            ],
+            [
+              "error"
+            ],
+            [
+              "max_event_gap_ms"
+            ],
+            [
+              "error_gap_ms"
+            ],
+            [
+              "schema_errors"
+            ],
+            [
+              "semantic_quality_assessed"
+            ]
+          ]
         },
         {
           "path": "sse_multivector/frontier-model-comparison-v1/asv6.48-muse-xhigh-v1/high-ten-note-v1/N065/assessment.json",
           "sha256": "177185a12865ec704470ad5f40db6db3b3f572294c7c1884d5c6d6be452a1a67",
-          "role": "assessment"
+          "role": "assessment",
+          "fields": [
+            [
+              "note_id"
+            ],
+            [
+              "reused"
+            ],
+            [
+              "result_path"
+            ],
+            [
+              "transport_complete"
+            ],
+            [
+              "schema_valid"
+            ],
+            [
+              "valid_completion"
+            ],
+            [
+              "subject_count"
+            ],
+            [
+              "elapsed_ms"
+            ],
+            [
+              "cost_usd"
+            ],
+            [
+              "error"
+            ],
+            [
+              "max_event_gap_ms"
+            ],
+            [
+              "error_gap_ms"
+            ],
+            [
+              "schema_errors"
+            ],
+            [
+              "semantic_quality_assessed"
+            ]
+          ]
         },
         {
           "path": "sse_multivector/frontier-model-comparison-v1/asv6.48-muse-xhigh-v1/high-ten-note-v1/N080/assessment.json",
           "sha256": "8ad998fa496dc750945e2da0b9655c807d4a5b61eca5fe8712848df1bd434513",
-          "role": "assessment"
+          "role": "assessment",
+          "fields": [
+            [
+              "note_id"
+            ],
+            [
+              "reused"
+            ],
+            [
+              "result_path"
+            ],
+            [
+              "transport_complete"
+            ],
+            [
+              "schema_valid"
+            ],
+            [
+              "valid_completion"
+            ],
+            [
+              "subject_count"
+            ],
+            [
+              "elapsed_ms"
+            ],
+            [
+              "cost_usd"
+            ],
+            [
+              "error"
+            ],
+            [
+              "max_event_gap_ms"
+            ],
+            [
+              "error_gap_ms"
+            ],
+            [
+              "schema_errors"
+            ],
+            [
+              "semantic_quality_assessed"
+            ]
+          ]
         },
         {
           "path": "sse_multivector/frontier-model-comparison-v1/asv6.48-muse-xhigh-v1/high-ten-note-v1/N094/assessment.json",
           "sha256": "c4ba6d2460191cfc5fdc9c89e1a8d0361ec567f5fe32226ed9084e4d016aab85",
-          "role": "assessment"
+          "role": "assessment",
+          "fields": [
+            [
+              "note_id"
+            ],
+            [
+              "reused"
+            ],
+            [
+              "result_path"
+            ],
+            [
+              "transport_complete"
+            ],
+            [
+              "schema_valid"
+            ],
+            [
+              "valid_completion"
+            ],
+            [
+              "subject_count"
+            ],
+            [
+              "elapsed_ms"
+            ],
+            [
+              "cost_usd"
+            ],
+            [
+              "error"
+            ],
+            [
+              "max_event_gap_ms"
+            ],
+            [
+              "error_gap_ms"
+            ],
+            [
+              "schema_errors"
+            ],
+            [
+              "semantic_quality_assessed"
+            ]
+          ]
         },
         {
           "path": "sse_multivector/frontier-model-comparison-v1/asv6.48-muse-xhigh-v1/high-ten-note-v1/N096/assessment.json",
           "sha256": "73b7315ab5de280016fc41d85567bc622d83d5ab12b3443ea268b6253dd62ad7",
-          "role": "assessment"
+          "role": "assessment",
+          "fields": [
+            [
+              "note_id"
+            ],
+            [
+              "reused"
+            ],
+            [
+              "result_path"
+            ],
+            [
+              "transport_complete"
+            ],
+            [
+              "schema_valid"
+            ],
+            [
+              "valid_completion"
+            ],
+            [
+              "subject_count"
+            ],
+            [
+              "elapsed_ms"
+            ],
+            [
+              "cost_usd"
+            ],
+            [
+              "error"
+            ],
+            [
+              "max_event_gap_ms"
+            ],
+            [
+              "error_gap_ms"
+            ],
+            [
+              "schema_errors"
+            ],
+            [
+              "semantic_quality_assessed"
+            ]
+          ]
         }
       ],
       "review_packets": [
@@ -6009,7 +7206,30 @@
         {
           "path": "sse_multivector/frontier-model-comparison-v1/asv6.48-deepseek-glm-ten-v1/summary.json",
           "sha256": "100b94001e7446d0773ad2e58c3ae23f45e9c793e85d043b05d2c0ba0699cf4e",
-          "role": "measurement"
+          "role": "measurement",
+          "fields": [
+            [
+              "prompt_version"
+            ],
+            [
+              "reasoning_effort"
+            ],
+            [
+              "caller_token_cap"
+            ],
+            [
+              "models"
+            ],
+            [
+              "comparison_note"
+            ],
+            [
+              "cost_comparisons"
+            ],
+            [
+              "assessment"
+            ]
+          ]
         }
       ],
       "review_packets": [
@@ -6508,7 +7728,39 @@
         {
           "path": "sse_multivector/frontier-model-comparison-v1/asv6.48-deepseek-glm-high-ten-v1/summary.json",
           "sha256": "fa4d2cb179a1b5893f0cd47705bbebc777211ffd8e81a09eb001b29953f167bf",
-          "role": "measurement"
+          "role": "measurement",
+          "fields": [
+            [
+              "prompt_version"
+            ],
+            [
+              "reasoning_effort"
+            ],
+            [
+              "caller_token_cap"
+            ],
+            [
+              "models"
+            ],
+            [
+              "cost_comparisons"
+            ],
+            [
+              "comparison_note"
+            ],
+            [
+              "astra_price_usd_per_million"
+            ],
+            [
+              "assessment"
+            ],
+            [
+              "reported_total_completed_cost_usd"
+            ],
+            [
+              "failed_requests_without_reported_cost"
+            ]
+          ]
         }
       ],
       "review_packets": [
@@ -7533,7 +8785,84 @@
         {
           "path": "sse_multivector/frontier-model-comparison-v1/asv6.48-glm-max-ten-v1/summary.json",
           "sha256": "8c1a7fae4b58e9952846c99c5deca70c36de16ae2dc8aeb7deb5cecdd1ddbfe4",
-          "role": "measurement"
+          "role": "measurement",
+          "fields": [
+            [
+              "prompt_version"
+            ],
+            [
+              "model"
+            ],
+            [
+              "reasoning_effort"
+            ],
+            [
+              "provider_fallbacks"
+            ],
+            [
+              "require_parameters"
+            ],
+            [
+              "caller_token_cap"
+            ],
+            [
+              "concurrency"
+            ],
+            [
+              "timeout_seconds"
+            ],
+            [
+              "requested_notes"
+            ],
+            [
+              "successful_notes"
+            ],
+            [
+              "http_attempts"
+            ],
+            [
+              "retry_attempts"
+            ],
+            [
+              "providers"
+            ],
+            [
+              "notes"
+            ],
+            [
+              "subject_count"
+            ],
+            [
+              "reported_completed_cost_usd"
+            ],
+            [
+              "reported_reasoning_tokens"
+            ],
+            [
+              "failures"
+            ],
+            [
+              "missing_notes"
+            ],
+            [
+              "mechanical_validation"
+            ],
+            [
+              "cost_comparisons"
+            ],
+            [
+              "comparison_caveat"
+            ],
+            [
+              "active_requests"
+            ],
+            [
+              "reported_cost_status"
+            ],
+            [
+              "assessment"
+            ]
+          ]
         }
       ],
       "review_packets": [
@@ -8397,7 +9726,72 @@
         {
           "path": "sse_multivector/frontier-model-comparison-v1/asv6.48-glm-completion-high-two-v1/summary.json",
           "sha256": "e5155d2d48cecec59933d00e4bb487b55fe1dd00168c13463c7a2d23d28d698b",
-          "role": "measurement"
+          "role": "measurement",
+          "fields": [
+            [
+              "prompt_version"
+            ],
+            [
+              "model"
+            ],
+            [
+              "requested_new_notes"
+            ],
+            [
+              "new_successes"
+            ],
+            [
+              "new_http_attempts"
+            ],
+            [
+              "new_retries"
+            ],
+            [
+              "new_reasoning_effort"
+            ],
+            [
+              "provider_fallbacks"
+            ],
+            [
+              "require_parameters"
+            ],
+            [
+              "caller_token_cap"
+            ],
+            [
+              "combined_completed_notes"
+            ],
+            [
+              "retained_max_notes"
+            ],
+            [
+              "new_high_notes"
+            ],
+            [
+              "active_requests"
+            ],
+            [
+              "new_reported_cost_usd"
+            ],
+            [
+              "combined_successful_call_cost_usd"
+            ],
+            [
+              "notes"
+            ],
+            [
+              "cost_comparisons"
+            ],
+            [
+              "validation"
+            ],
+            [
+              "observations"
+            ],
+            [
+              "next_step"
+            ]
+          ]
         }
       ],
       "review_packets": [
@@ -9315,7 +10709,42 @@
         {
           "path": "sse_multivector/frontier-model-comparison-v1/mpv3.43-cost-probe-v1/results.json",
           "sha256": "593192f8dab994bcbf1eb47209f46d7139c6f57a7aaa4df9ab191fc560986591",
-          "role": "measurement"
+          "role": "measurement",
+          "fields": [
+            [
+              "experiment"
+            ],
+            [
+              "prompt_version"
+            ],
+            [
+              "prompt_status"
+            ],
+            [
+              "prompt_sha256"
+            ],
+            [
+              "note_id"
+            ],
+            [
+              "note_label"
+            ],
+            [
+              "note_characters"
+            ],
+            [
+              "requests_byte_identical_across_candidates"
+            ],
+            [
+              "selected_prompt_sha256_by_job"
+            ],
+            [
+              "collector_changes"
+            ],
+            [
+              "candidates"
+            ]
+          ]
         }
       ],
       "review_packets": [],
@@ -9732,12 +11161,52 @@
         {
           "path": "sse_multivector/frontier-model-comparison-v1/sp-mp-teacher-parity-v1/results.json",
           "sha256": "6879c48a0a3b172ca5dbff6a53ccdab41bfc4574b6f6c16f6c0535a056cbb15c",
-          "role": "measurement"
+          "role": "measurement",
+          "fields": [
+            [
+              "experiment"
+            ],
+            [
+              "collector_changes"
+            ],
+            [
+              "mask"
+            ],
+            [
+              "sp"
+            ],
+            [
+              "mask_totals"
+            ],
+            [
+              "sp_totals_mimo_high"
+            ],
+            [
+              "mask_cases"
+            ],
+            [
+              "repeat_ids"
+            ]
+          ]
         },
         {
           "path": "sse_multivector/frontier-model-comparison-v1/sp-mp-teacher-parity-v1/score-a.json",
           "sha256": "5c5444aa107ff8987a2b70ffb8c7beedeb13f187025c47c9545ee72ca2f15ba8",
-          "role": "scores"
+          "role": "scores",
+          "fields": [
+            [
+              "scorer"
+            ],
+            [
+              "rubric_version"
+            ],
+            [
+              "note"
+            ],
+            [
+              "scores"
+            ]
+          ]
         }
       ],
       "review_packets": [],
