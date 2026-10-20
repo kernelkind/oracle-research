@@ -79,4 +79,4 @@ The earlier CLI 0.150.1 rejection remains preserved in `../mask-prompt-astra-low
 
 The runtime-only migration followed [OpenAI's model-parameter guidance](https://developers.openai.com/api/docs/guides/latest-model#gpt-6-astra-update-api-and-model-parameters); it supplied compatibility checks, not the semantic verdict.
 
-See [conversion gaps](../../docs/experiments/publication-gaps.csv) for `collection:tracked-mask-prompt-astra-vs-sol-low-v1`.
+Selected inputs, final answers, recorded reviews and parameters: `historical-studies/mask-prompt-astra-vs-sol-low-v1`. See the [publication catalog](../../docs/experiments/publications.csv) and [file checksums](../../docs/experiments/publication-files.csv).

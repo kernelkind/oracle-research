@@ -44,3 +44,5 @@ The raw files were copied byte-for-byte from `target/atomic-subject-mask-probe-v
 Generation used 26,840 input tokens and 591 output tokens over 62.6 seconds. It consumed existing Codex subscription allowance, not paid API calls. The generation process had a 2 GiB memory limit and no swap allowance.
 
 Mask correctness still awaits user review. Mechanical validity is not semantic correctness.
+
+Selected inputs, final answers, recorded reviews and parameters: `historical-studies/mask-prompt-probe-v1`. See the [publication catalog](../../docs/experiments/publications.csv) and [file checksums](../../docs/experiments/publication-files.csv).

@@ -11,7 +11,9 @@ from .prompt_study_publication import _Sources, _json, _sha, _stamp
 FORMAT = 'historical-study-publication-v1'
 _PROFILES = {'atomic': 'atomic_study_publication',
              'subject-goal': 'subject_goal_publication',
-             'mask-goal': 'mask_goal_publication'}
+             'mask-goal': 'mask_goal_publication',
+             'standalone-prompt': 'standalone_prompt_publication',
+             'prominence': 'prominence_study_publication'}
 
 
 def _canonical(value):

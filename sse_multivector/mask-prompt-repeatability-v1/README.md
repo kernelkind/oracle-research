@@ -68,4 +68,4 @@ The runner, both original prompts/results/reviews, and frozen subject/mask regis
 
 The controlled setup follows the [GPT-5.6 guidance on preserving other variables during comparison](https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6#prompt-migration-workflow). No new prompt-engineering claim is inferred from these three trials.
 
-See [conversion gaps](../../docs/experiments/publication-gaps.csv) for `collection:tracked-mask-prompt-repeatability-v1`.
+Selected inputs, final answers, recorded reviews and parameters: `historical-studies/mask-prompt-repeatability-v1`. See the [publication catalog](../../docs/experiments/publications.csv) and [file checksums](../../docs/experiments/publication-files.csv).

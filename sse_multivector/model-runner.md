@@ -2250,6 +2250,13 @@ three maintained selections bind 123 study/review entries and their source hashe
 see the [subject/mask commands and checks](../docs/experiments/reproduce.md#historical-subject-and-mask-study-checks).
 This path preserves scientific methods and recorded judgments while excluding
 concrete credentials and private execution identifiers. It performs no inference.
+The same command also accepts the
+[early/standalone selection](experiment_specs/standalone-prompt-publication-v1.json)
+and [manual prominence selection](experiment_specs/prominence-study-publication-v1.json).
+They bind 21 early/standalone entries and three manual prominence studies from
+22 collections. Saved partial outcomes, user review history and reused baselines
+remain explicit; [commands and checks](../docs/experiments/reproduce.md#early-prompt-and-manual-prominence-study-checks)
+describe these formats. Existing native prominence exports are not duplicated.
 Remaining historical conversions and public download verification remain
 unfinished. The signed export below retains its existing
 behavior.

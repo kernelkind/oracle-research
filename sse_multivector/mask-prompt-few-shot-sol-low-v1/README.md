@@ -73,4 +73,4 @@ Reported usage:
 
 Timing is observational, not a controlled latency benchmark. The calls used the existing Codex subscription; no paid API, rented resources, or account switch was used. Prompts, registries, budget ledger, saved baseline results, and user review decisions were not modified. There were no retries or output repairs.
 
-See [conversion gaps](../../docs/experiments/publication-gaps.csv) for `collection:tracked-mask-prompt-few-shot-sol-low-v1`.
+Selected inputs, final answers, recorded reviews and parameters: `historical-studies/mask-prompt-few-shot-sol-low-v1`. See the [publication catalog](../../docs/experiments/publications.csv) and [file checksums](../../docs/experiments/publication-files.csv).

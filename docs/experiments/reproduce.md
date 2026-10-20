@@ -445,7 +445,7 @@ experiment/source identities. [Publication files](publication-files.csv) records
 every path, byte count and SHA-256 beneath `target/publication-exports/`.
 These paths describe local staging, not an available download.
 
-With the `ORACLE_ROOT` setup above, verify all 9,650 selected files:
+With the `ORACLE_ROOT` setup above, verify all 9,770 selected files:
 
 ```bash
 cd "$ORACLE_ROOT/target/publication-exports"
@@ -580,7 +580,7 @@ its machine-specific deployment commands are not a ready-to-run public recipe.
 
 ## Other experiments and moved files
 
-The [study index](experiments.csv) contains 2,649 selected entries: standalone
+The [study index](experiments.csv) contains 2,671 selected entries: standalone
 prompt preparations, official hierarchy runs, training runs, historical collections
 and the four located historical subject-prompt studies.
 It records saved plan identities and prompt/model settings.
@@ -757,8 +757,8 @@ were preserved, and nothing was uploaded.
 
 ### Historical backfill checks
 
-The current local selection contains **3,111 output/input directories and 9,650
-files**, totaling **1,136,661,707 bytes**. Every listed file was independently
+The current local selection contains **3,135 output/input directories and 9,770
+files**, totaling **1,139,101,781 bytes**. Every listed file was independently
 rehashed. Structured payload bindings were checked against their export manifests;
 the five original ASv6.100 Markdown documents match their recorded source hashes.
 Exact prepared-input copies were also checked against their frozen source hashes.
@@ -791,6 +791,82 @@ remain unresolved. No fresh inference, training or semantic grading occurred.
 This checks the selected supported formats. [Remaining historical exports](publication-gaps.csv)
 remain outside this size/completeness claim. Privacy review and a clean reader
 test against the eventual hosted selection are still pending.
+
+### Early prompt and manual prominence study checks
+
+The 22 additional collections contain early TP/MP development batches, standalone
+mask studies and three manual prominence studies. The selections retain their
+514 saved final answers, used inputs, scientific settings, recorded assessments
+and user reviews. Prominence scores remain paired with their exact raw answers,
+source posts and masks. The 93 already-selected native prominence bundles retain
+their existing files and links.
+
+| Selection | Entries | Example study ID |
+| --- | ---: | --- |
+| [Early and standalone prompt studies](../../sse_multivector/experiment_specs/standalone-prompt-publication-v1.json) | 21 | `mask-prompt-astra-ten-note-v1` |
+| [Manual prominence studies](../../sse_multivector/experiment_specs/prominence-study-publication-v1.json) | 3 | `prominence-prompt-goal-v1/ppv10-ranking-v1` |
+
+A publisher with the exact original files can export a selected study using the
+same offline command. This example places those originals in a sibling directory
+named `oracle-mvp-original`:
+
+```bash
+cd "$ORACLE_ROOT"
+python sse_multivector/experiment.py export-evaluation-results \
+  ../oracle-mvp-original \
+  --kind prompt-study \
+  --spec sse_multivector/experiment_specs/standalone-prompt-publication-v1.json \
+  --study mask-prompt-astra-ten-note-v1 \
+  --output target/early-mask-results
+```
+
+For a prominence study, use its selection file and exact study ID from the table.
+The source argument names the original repository root. A clean checkout or
+compact download alone does not contain that complete saved layout. The five
+output files use the same names as the [subject/mask exports](#historical-subject-and-mask-study-checks).
+Their source and payload hashes identify the exact evidence; no model runs.
+
+Reused comparison baselines remain references to their original studies. Setup
+subject-generation outputs validate the used inputs without becoming additional
+standalone results. The transfer study retains one recorded failure alongside
+71 saved answers. `tpv3.82-redundancy-iteration-1` retains two receipt-only answers
+and three unknown outcomes among its five configured cases. Missing canonical
+post IDs stay missing; native case IDs and exact text identify those inputs.
+
+Original review states and later rereviews remain distinct; identical embedded
+snapshots reference those states. Undecided items acquire no decision, and
+assistant applications of user feedback remain separate from the user's own
+decisions. The probe-v3 M05 review displayed fragments in a different order:
+that display transformation and the original raw answer are both preserved.
+Recorded subject provenance determines deprecation; unknown lineage stays unknown.
+All 12 standalone mask studies derive from ASv6.8 and remain deprecated historical
+evidence. The nine early TP/MP studies have unknown AS lineage. Raw posts are not
+deprecated by this rule.
+
+The prominence exports retain frozen score expectations, comparisons and agent
+assessments. Missing execution/reuse fields remain unknown. One historical mask
+helper has moved; its pinned earlier bytes are located in retained Git history.
+The export checks the saved masks and requests without claiming to have rerun
+that historical helper.
+
+All 113 relevant historical-study, prompt/title, evaluation and publication-workflow
+tests pass. The focused new regressions can be run without model calls:
+
+```bash
+cd "$ORACLE_ROOT"
+PYTHONPATH=.:sse_multivector python -m unittest \
+  sse_multivector.test_standalone_prompt_publication \
+  sse_multivector.test_prominence_study_publication \
+  sse_multivector.test_historical_study_publication \
+  sse_multivector.test_historical_study_cli
+```
+
+All 24 original-file exports pass under a 512 MiB worker address-space limit.
+Their 120 files total 2,440,074 bytes (370,563 bytes with gzip level 6). Every
+payload/source binding matches, and all 302 selected source files retain their
+bytes, hashes, modes and modification times. A regression verifies identical
+output bytes and native missing-case order across separate Python processes.
+This verifies selected evidence, not semantic quality or publication privacy.
 
 ### Historical subject and mask study checks
 

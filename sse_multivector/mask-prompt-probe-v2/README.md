@@ -36,3 +36,5 @@ These are assistant observations, not automatic approvals. A single run does not
 All twelve arrays contain exact source fragments with one valid non-overlapping placement in source order. M02's first fragment, `Zhang Lu`, occurs twice on its own; the order of all three fragments uniquely places it at the earlier occurrence. Mechanical validity is not semantic correctness.
 
 Generation consumed 26,840 input tokens (1,920 cached) and 831 output tokens, including 402 reasoning tokens. The service ran for 71.113 seconds with a 2 GiB memory cap and no swap allowance; systemd reported a 16.7M memory peak and 0B swap. This used existing Codex subscription allowance, not paid API calls. No SSE, segmentation, or subject generation was run.
+
+Selected inputs, final answers, recorded reviews and parameters: `historical-studies/mask-prompt-probe-v2`. See the [publication catalog](../../docs/experiments/publications.csv) and [file checksums](../../docs/experiments/publication-files.csv).

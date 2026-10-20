@@ -161,13 +161,12 @@ one is a proposal whose inputs duplicate its executed sibling. The executed
 sibling still needs an export. This resolves those collection-level gaps; it
 does not resolve the separate placement review of the 196 ambiguous Git files.
 
-The 33 HDB title/description groups, 11 SSE representation studies and six
-subject/mask collections are now selected as described below. The remaining
-**27 groups need final-evidence exports**:
+The 33 HDB title/description groups, 11 SSE representation studies, six
+subject/mask collections and 22 early/standalone prompt collections are now
+selected as described below. The remaining **five groups need final-evidence exports**:
 
 | Collections | Groups | Evidence to retain |
 | --- | ---: | --- |
-| Other standalone prompt studies | 22 | Early title/mask trials, mask comparisons and three manual prominence studies; retain partial results and distinguish reused answers |
 | Real-note, hierarchy-title and frontier studies | 4 | Final segment selections, title answers and judgments, model comparisons and recorded reviews |
 | Archived baselines | 1 | Four CREC119 answer/segment files and two geometry diagnostics; the TEv4.1 answers are already covered by selected inputs |
 
@@ -200,10 +199,41 @@ decisions separately from agent assessments.
 
 The review itself made no additional exports or changes to original records.
 The five ASv6.100 documents, 33 title/description study groups, 11 SSE
-representation studies and six subject/mask collections were selected afterward; the
+representation studies, six subject/mask collections and 22 early/standalone
+prompt collections were selected afterward; the
 [measured totals](downloads.md#measured-local-exports) include them. The
 remaining-items table names concrete export requirements rather than treating
 every old directory as an unexamined missing dataset.
+
+### Selected early prompt and prominence evidence
+
+The 22 collections now link 24 entries: **120 files, 2,440,074 bytes (2.33 MiB)**,
+or **370,563 bytes (0.35 MiB)** measured with gzip level 6. They retain 494 exact
+early/standalone prompt answers and 20 manual prominence answers with their final
+scores, original posts, masks, scientific parameters and recorded assessments.
+The 93 already-selected native prominence bundles remain unchanged.
+
+Seven source review states preserve 35 decided state rows (19 approved, 16
+rejected) and 31 undecided rows. They concern 34 distinct decided batch/items:
+one approval appears again in a later rereview. Three identical embedded
+snapshots reference the original states. The medium-reasoning user's rejection
+applies to trial 3; the assistant's application to trials 1 and 2 stays separate.
+The probe-v3 M05 display permutation does not change the raw answer's order.
+
+Reused baselines remain references. The transfer study's recorded failure is
+separate from its 71 final answers; the partial TP study retains two answers and
+three unknown outcomes among five configured cases. Setup source outputs validate
+used subjects without publishing complete preparation answers or unused subjects.
+All 12 standalone mask studies have proven ASv6.8 lineage and remain deprecated
+historical evidence. The nine early TP/MP studies retain unknown AS lineage;
+manual prominence provenance is recorded per case. Raw posts are not deprecated.
+
+All 113 relevant tests pass. All 24 real-file exports pass under a 512 MiB worker
+address-space limit, including stable missing-case order across fresh processes.
+All 302 selected sources (9,128,919 bytes) retain their hashes, bytes, modes and
+modification times; all 9,650 previously selected files are unchanged. No models
+ran and nothing was uploaded. The [commands and source checks](reproduce.md#early-prompt-and-manual-prominence-study-checks)
+describe the exact selection. Final publication privacy review remains open.
 
 ### Selected subject/mask evidence
 

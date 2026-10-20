@@ -1,0 +1,2598 @@
+{
+  "schema_version": 1,
+  "studies": {
+    "mask-prompt-astra-ten-note-v1": {
+      "profile": "standalone-prompt",
+      "status": "historical",
+      "family": "standalone mask prompt study",
+      "selection_basis": "Maintained README identifies a standalone prompt/model/effort/repeatability/recognition study. Actual final answers, recorded assessments and mechanical measurements remain unselected data.",
+      "answers": [
+        {
+          "path": "sse_multivector/mask-prompt-astra-ten-note-v1/masks-1/run/output.json",
+          "sha256": "627ed03905d2755db50076af68df1f2e296d9bf444f0292b7a1b2d5b85f3f73b",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-astra-ten-note-v1/masks-1/run/manifest.json",
+            "sha256": "e875fa75c65e193961316f140eecb12c79363502b3c4f22b3afb778fab58e2b3"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-astra-ten-note-v1/masks-1/config.json",
+            "sha256": "127bab3c61bee5866af42fc03e3d46ee4f5a6c9a3837e82d8d8db1988cece73a"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-astra-ten-note-v1/masks-1/run/results.jsonl",
+            "sha256": "0fbe96e1e720d175a20e3c1abce1ee94e2337d2329e727c48c9e6be0a5aecbcb"
+          }
+        },
+        {
+          "path": "sse_multivector/mask-prompt-astra-ten-note-v1/masks-2/run/output.json",
+          "sha256": "565ee0099462ca3f2d1019c2419a008ce185f0098a358fb69d15f94782d1c690",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-astra-ten-note-v1/masks-2/run/manifest.json",
+            "sha256": "9bad126b123d80540c3daf932230ee2b1424d24a7a0a5151921866a35eb95144"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-astra-ten-note-v1/masks-2/config.json",
+            "sha256": "0d31c87083bbf6223c5dcd7915a7b5be06b72ad0b9fdc3fb16ef8a6687e32efb"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-astra-ten-note-v1/masks-2/run/results.jsonl",
+            "sha256": "54984c436eed0618f8bf10a73d413e61059c35ce8548c11ff1bb5dfb8a9f8526"
+          }
+        }
+      ],
+      "inputs": [
+        {
+          "path": "sse_multivector/mask-prompt-astra-ten-note-v1/selection.json",
+          "sha256": "346fbbfc1a311b547af18e39e81ef5d71ad1adc6652c99a18131317f8bf7af8d"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-astra-ten-note-v1/fixed-subjects.json",
+          "sha256": "07695a731f4f4b1091a9b8576b89ebd49f1a0153a07af5c3f223dc12102252f1"
+        }
+      ],
+      "parameters": [
+        {
+          "path": "sse_multivector/mask-prompt-astra-ten-note-v1/plan.json",
+          "sha256": "75546def6b2a2a510fdcbbaf67675d351befc0ccdec8126ab2a95aa822868dc5"
+        }
+      ],
+      "records": [
+        {
+          "path": "sse_multivector/mask-prompt-astra-ten-note-v1/assistant-review.json",
+          "sha256": "4e2f9332baec88d6f1cae85440dba78955d68be8e13347520a056a824b73eed0",
+          "role": "assessment"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-astra-ten-note-v1/mechanical-checks.json",
+          "sha256": "e8ce38f30ad458674c32087a2aca6a884efca77253f2b82baa04875492900611",
+          "role": "mechanical"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-astra-ten-note-v1/review-basis-before-masks.json",
+          "sha256": "f0c7b3495d9d8ad7a5ae5bf08050abe697ddbe09887a74107ce98665171ade30",
+          "role": "assessment_basis"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-astra-ten-note-v1/review-preparation.json",
+          "sha256": "a1d29e6545e8aba80bd6a191340d9cdfedc8185d23617200557c39aa17e0a153",
+          "role": "review_preparation"
+        }
+      ],
+      "limitations": [
+        "Ten AS subject-generation calls are preparation; fixed-subjects inputs preserve60 subjects used in60 final mask calls. Retain final subject-validity concerns, but do not call setup outputs standalone studies."
+      ],
+      "recorded_call_counts": {
+        "final_attempted": 60,
+        "final_succeeded": 60,
+        "setup_attempted": 10,
+        "setup_succeeded": 10,
+        "final_answer_records": 60,
+        "final_raw_answer_utf8_bytes": 3021
+      },
+      "setup_outputs": [
+        {
+          "path": "sse_multivector/mask-prompt-astra-ten-note-v1/subjects-1/run/output.json",
+          "sha256": "1c0e5edf91f90801d6e24c714efed5a3b164e5eac59cb9ab379a31111d240cbf",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-astra-ten-note-v1/subjects-1/run/manifest.json",
+            "sha256": "ac5a81d596576d22bd14542ed9a48c0b3ed0b7927afef0ac41600807a6ccd293"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-astra-ten-note-v1/subjects-1/run/results.jsonl",
+            "sha256": "91d33fda21689dc9cd479447277f5c22de848cc2279ab4152d2e2c6c2420bb60"
+          },
+          "input": {
+            "path": "sse_multivector/mask-prompt-astra-ten-note-v1/subjects-1/input.json",
+            "sha256": "eb1be45a7b7fa22d5cf18e10d22f9c3886208152bc19ac4687bc6464aeca8820"
+          },
+          "role": "subject_setup_validation"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-astra-ten-note-v1/subjects-2/run/output.json",
+          "sha256": "2f643ceda5651ddb12fa24feb6ae9c34c491ecbf8a8da313332869b333a3d768",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-astra-ten-note-v1/subjects-2/run/manifest.json",
+            "sha256": "a050ce801d82867879e2bc5374037e3bf8a928ba65c10d25b9a49f02c7ba6c40"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-astra-ten-note-v1/subjects-2/run/results.jsonl",
+            "sha256": "bc55a975c342e83b5d0388724ad1ae36b6aeac036c1c49e88f3f83ca33e7d524"
+          },
+          "input": {
+            "path": "sse_multivector/mask-prompt-astra-ten-note-v1/subjects-2/input.json",
+            "sha256": "d9f299ed5e3877fee1fa5432c3042e4da876fd1983133f74d9a003e808d24890"
+          },
+          "role": "subject_setup_validation"
+        }
+      ],
+      "validation_sources": [
+        {
+          "path": "sse_multivector/mask-prompt-astra-ten-note-v1/mask-prompt.md",
+          "sha256": "564c860a3be5f8eb6e90c404184ef467f24004276dbb535f637ba0a8ded7ff9e"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-astra-ten-note-v1/subject-prompts.json",
+          "sha256": "ecc363137a3be57dca8de07d1223114c82cd559b07f5f0abb4285994c13c0ea5"
+        }
+      ],
+      "expected_final_answers": 60,
+      "review_sessions": [
+        {
+          "path": "target/mask-prompt-astra-ten-note-v1-review-session.json",
+          "sha256": "d00b99aabe328c22d53b25157e95b038c38adc40ea45c3b5cdd3253fb14a830b",
+          "batch": {
+            "path": "sse_multivector/mask-prompt-astra-ten-note-v1/review-sample.json",
+            "sha256": "e747902ce65fa50277655670c04f87c7b521832243acac1eab31f638d9b5d3a2"
+          },
+          "role": "user_review",
+          "answer_sources": [
+            "sse_multivector/mask-prompt-astra-ten-note-v1/masks-1/run/output.json",
+            "sse_multivector/mask-prompt-astra-ten-note-v1/masks-2/run/output.json"
+          ],
+          "preparation": {
+            "path": "sse_multivector/mask-prompt-astra-ten-note-v1/review-preparation.json",
+            "sha256": "a1d29e6545e8aba80bd6a191340d9cdfedc8185d23617200557c39aa17e0a153"
+          }
+        }
+      ],
+      "subject_provenance": {
+        "status": "known",
+        "versions": [
+          "ASv6.8"
+        ],
+        "version_sources": [
+          {
+            "path": "sse_multivector/mask-prompt-astra-ten-note-v1/subjects-1/run/manifest.json",
+            "sha256": "ac5a81d596576d22bd14542ed9a48c0b3ed0b7927afef0ac41600807a6ccd293",
+            "field": [
+              "subject",
+              "prompt_version"
+            ]
+          },
+          {
+            "path": "sse_multivector/mask-prompt-astra-ten-note-v1/subjects-2/run/manifest.json",
+            "sha256": "a050ce801d82867879e2bc5374037e3bf8a928ba65c10d25b9a49f02c7ba6c40",
+            "field": [
+              "subject",
+              "prompt_version"
+            ]
+          }
+        ],
+        "used_inputs": [
+          {
+            "path": "sse_multivector/mask-prompt-astra-ten-note-v1/selection.json",
+            "sha256": "346fbbfc1a311b547af18e39e81ef5d71ad1adc6652c99a18131317f8bf7af8d"
+          },
+          {
+            "path": "sse_multivector/mask-prompt-astra-ten-note-v1/fixed-subjects.json",
+            "sha256": "07695a731f4f4b1091a9b8576b89ebd49f1a0153a07af5c3f223dc12102252f1"
+          }
+        ],
+        "basis": "Native AS prompt-version fields plus exact original note identity, complete post text and selected subject wording/index. Recognition cases also explicitly identify unchanged ASv6.8 subjects in their frozen plan."
+      }
+    },
+    "mask-prompt-astra-vs-sol-low-v1": {
+      "profile": "standalone-prompt",
+      "status": "historical",
+      "family": "standalone mask prompt study",
+      "selection_basis": "Maintained README identifies a standalone prompt/model/effort/repeatability/recognition study. Actual final answers, recorded assessments and mechanical measurements remain unselected data.",
+      "answers": [
+        {
+          "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/astra-trial-1/run/output.json",
+          "sha256": "7f997705da707657b1a5eb60d0a32e88fff4b78fe67d258792248d064fdf8a60",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/astra-trial-1/run/manifest.json",
+            "sha256": "0373b4c7b4654f20f1213383cef1eaab15104e7c8cdb75359772eca6f07da807"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/astra-trial-1/config.json",
+            "sha256": "49529e10fdab8569785e99ab84dc7b865e367b2a49926234fa1e30bd2cc4f345"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/astra-trial-1/run/results.jsonl",
+            "sha256": "5c90045af3c3cd2a6c1e4f8fde11e4a5a6fd29845a920ea40fcd17da76940ca8"
+          }
+        },
+        {
+          "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/astra-trial-2/run/output.json",
+          "sha256": "edbbc89120199f534b232d6eb58228a3ac683a1be9f81dc4d3fdfeb4a501780a",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/astra-trial-2/run/manifest.json",
+            "sha256": "681ff53f66042f7edaf0165925b1583e266aef28b99ea5e76859e77e91d00ab8"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/astra-trial-2/config.json",
+            "sha256": "49529e10fdab8569785e99ab84dc7b865e367b2a49926234fa1e30bd2cc4f345"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/astra-trial-2/run/results.jsonl",
+            "sha256": "3cb9e2be92b16269a8893019e86c8fc9d8abd25a410121fa72e7dd22896da956"
+          }
+        },
+        {
+          "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/astra-trial-3/run/output.json",
+          "sha256": "5d3ed70b3e37c9df9ec65f09b87c918886e08afb2be13468cac26ceb25836ed3",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/astra-trial-3/run/manifest.json",
+            "sha256": "362127ed503c8f3abdb612f4bb9c8b52a4b2f32e6081d4039bc1310dea645f0e"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/astra-trial-3/config.json",
+            "sha256": "49529e10fdab8569785e99ab84dc7b865e367b2a49926234fa1e30bd2cc4f345"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/astra-trial-3/run/results.jsonl",
+            "sha256": "2c929297471a52aa1518fcc31b43f6006c258079cb474b1168d134a587ff5f72"
+          }
+        },
+        {
+          "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-1/run/output.json",
+          "sha256": "4006b36e309c42c6155ad38cd1779d2f87eb6216ec5a7a95fb67c59cda18bf5b",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-1/run/manifest.json",
+            "sha256": "bcdce1301936a848091c81568b19cfec7e691e513c969000fcb113213cdce609"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-1/config.json",
+            "sha256": "9eafebb664bdc4e151675f490f433cbfb94abe9a3f41b98d2683a26b0d67bbf4"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-1/run/results.jsonl",
+            "sha256": "30583ef8841cabdff4f8f0db37ab6eb845f778560808ca6d70f3ad57a2e57155"
+          }
+        },
+        {
+          "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-2/run/output.json",
+          "sha256": "7d668997f90c9b79cf0f2ca24f427fed211939985f7b46025d0c387c7d5346e5",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-2/run/manifest.json",
+            "sha256": "dff815e52a937b13f90a46a8f7a79e97d9c5cb64a45b3b093a453f2a90e41608"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-2/config.json",
+            "sha256": "9eafebb664bdc4e151675f490f433cbfb94abe9a3f41b98d2683a26b0d67bbf4"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-2/run/results.jsonl",
+            "sha256": "e693f912f88043ba340122d16289d5a0a4d5e9b32b347d4b5901ef241478d352"
+          }
+        },
+        {
+          "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-3/run/output.json",
+          "sha256": "529b3e8cfeb6aabc856e6e1473dc1cfd10b07c2ba17ba3b5b261cfbdc6a93073",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-3/run/manifest.json",
+            "sha256": "7983a06e9619d77ec46ef607442e55a625462f83b691f8e77c4382d8961141fe"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-3/config.json",
+            "sha256": "9eafebb664bdc4e151675f490f433cbfb94abe9a3f41b98d2683a26b0d67bbf4"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-3/run/results.jsonl",
+            "sha256": "84f2fa6f083b44a7934db3c3a1dc37ea9ce2e136903ad56230d0864b1ab246ca"
+          }
+        }
+      ],
+      "inputs": [
+        {
+          "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/selection.json",
+          "sha256": "3ec4f6602d6ba97ba738cf82f1e76378c6fec352b97e4b9625c26fb8a3ca0513"
+        }
+      ],
+      "parameters": [
+        {
+          "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/plan.json",
+          "sha256": "40d63bb15d46ec0dbcd34d4bea3442045affd6d795d381e8cb677ab8e71e2a17"
+        }
+      ],
+      "records": [
+        {
+          "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/assistant-review.json",
+          "sha256": "bb7e92701cab1b55fb3ace83fc120e5d2819a39c0ee280821990b4ef73ce4ba7",
+          "role": "assessment"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/mechanical-checks.json",
+          "sha256": "7866d1b5d16dac1390736978a344e32e11742d9b74e008c0294dd6a8ed0d2128",
+          "role": "mechanical"
+        }
+      ],
+      "limitations": [],
+      "recorded_call_counts": {
+        "final_attempted": 72,
+        "final_succeeded": 72,
+        "final_answer_records": 72,
+        "final_raw_answer_utf8_bytes": 8812
+      },
+      "baseline_references": [
+        {
+          "path": "target/atomic-subject-asv6.7-vs-asv6.8-attribution-v1/asv6.8-trial-1/output.json",
+          "sha256": "ba56b27cf102d9a19a995b8930dae41381d6eebadee2acbf0f9ba65ca191e9fc",
+          "manifest": {
+            "path": "target/atomic-subject-asv6.7-vs-asv6.8-attribution-v1/asv6.8-trial-1/manifest.json",
+            "sha256": "0b2a53d4548f88eefd2eed4dd3520764da9ecb2dfaaef996962f6f42b08b7951"
+          },
+          "role": "reused_subject_source"
+        }
+      ],
+      "expected_final_answers": 72,
+      "validation_sources": [
+        {
+          "path": "target/atomic-subject-mask-probe-v3/review-session.json",
+          "sha256": "b7f169beedb6f732936e8e913ab42813eed6e1ec79f6ce9844a37fceb9c86499"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-probe-v3/mask-review.json",
+          "sha256": "f3b0f5b6468d0c8e28d2d20494d8a308cc60422ac182bf52cdafdb36a5bf05cd"
+        },
+        {
+          "path": "target/atomic-subject-mask-probe-v4/review-session.json",
+          "sha256": "00abefe98138dbaf4a07824e453fd92c79580164789788d6f580fade8571f7d2"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-probe-v4/mask-review.json",
+          "sha256": "4dcde2a63570e9b3084ed1756fd15476dcdcccc13b92036eb051ca4462f21707"
+        }
+      ],
+      "subject_provenance": {
+        "status": "known",
+        "versions": [
+          "ASv6.8"
+        ],
+        "version_sources": [
+          {
+            "path": "target/atomic-subject-asv6.7-vs-asv6.8-attribution-v1/asv6.8-trial-1/manifest.json",
+            "sha256": "0b2a53d4548f88eefd2eed4dd3520764da9ecb2dfaaef996962f6f42b08b7951",
+            "field": [
+              "subject",
+              "prompt_version"
+            ]
+          }
+        ],
+        "used_inputs": [
+          {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/selection.json",
+            "sha256": "3ec4f6602d6ba97ba738cf82f1e76378c6fec352b97e4b9625c26fb8a3ca0513"
+          }
+        ],
+        "basis": "Native AS prompt-version fields plus exact original note identity, complete post text and selected subject wording/index. Recognition cases also explicitly identify unchanged ASv6.8 subjects in their frozen plan."
+      }
+    },
+    "mask-prompt-astra-vs-sol-transfer-v1": {
+      "profile": "standalone-prompt",
+      "status": "completed_with_recorded_failure",
+      "family": "standalone mask prompt study",
+      "selection_basis": "Maintained README identifies a standalone prompt/model/effort/repeatability/recognition study. Actual final answers, recorded assessments and mechanical measurements remain unselected data.",
+      "answers": [
+        {
+          "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/astra-trial-1/run/output.json",
+          "sha256": "85a37e99781474af9d5e09b5d7fe372223656581c0effe81f8394f3f07a5f103",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/astra-trial-1/run/manifest.json",
+            "sha256": "25708acda7c4a21c6c86e994aa1370c286631bad4b8476232e73e8a00a5dbf9e"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/astra-trial-1/config.json",
+            "sha256": "134c5f5c0d2caf09667bfc2341b8ccf1ad8d50b601343941dae73e3352c8c67f"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/astra-trial-1/run/results.jsonl",
+            "sha256": "9a7b27e4b6ef227f31572d5a077b5f96adcc5a6c147eb218f3f58719e1a78139"
+          }
+        },
+        {
+          "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/astra-trial-2/run/output.json",
+          "sha256": "39e128f7e8b3a630320a74f62e8d5a07bec7a6b5773aeb5004e07c57eba20abd",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/astra-trial-2/run/manifest.json",
+            "sha256": "28029f7b75293d0ce725b7035ff524a977530345f385da692e2b7308e6099ad6"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/astra-trial-2/config.json",
+            "sha256": "f53caee96f42646b003cbf76690497799b4a9b2fea619060df72dfab4b7934d3"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/astra-trial-2/run/results.jsonl",
+            "sha256": "a1c3719fcd813e21caf9e2b14fd40932249f5dd4251bb75e62dc0ea73930124d"
+          }
+        },
+        {
+          "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/astra-trial-3/run/output.json",
+          "sha256": "ea0d5af0fb2c9df30f53ab1ec1accb6d8e68335d69f90d3fa2cd8afa044fbae5",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/astra-trial-3/run/manifest.json",
+            "sha256": "eb58a08eb11024399a7fd64455cff6546d7bf68c87b72f204e3d02e3462d6ce2"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/astra-trial-3/config.json",
+            "sha256": "063dd515f8a3b8a24c386c0e765c084d0833fc24b1ff22f1a4bd53f3a000602b"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/astra-trial-3/run/results.jsonl",
+            "sha256": "c9ff09cc131f2734612614f1ab87b389dba71f935090fc2e0749b9ae04989ca6"
+          }
+        },
+        {
+          "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/sol-trial-1/run/output.json",
+          "sha256": "93862f015f91f8fadac06fc4a05e7e5d1fbb2d0d3a7fc8e689b91ea46af39364",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/sol-trial-1/run/manifest.json",
+            "sha256": "c10daeffce83e22cb6e9cc2280f6180abfbffb0034135077d82d5a2625a26700"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/sol-trial-1/config.json",
+            "sha256": "d38ed4ebac8511d8c143c90457ffc79695a2dde514db89e4c5090112880e24dd"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/sol-trial-1/run/results.jsonl",
+            "sha256": "7857e8a5f6dc4d4282726d5e448edbfe0101592f1c4226d25bbe86e1ef434727"
+          }
+        },
+        {
+          "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/sol-trial-2/run/output.json",
+          "sha256": "cbc486bfa0e86acc97703b51e2a2581abbddf819464718068e9b5aba36267e61",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/sol-trial-2/run/manifest.json",
+            "sha256": "d091a875c2d2808675604abd2a2b6e4d8aeeefd50a9e54b8295d9d5699a226d2"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/sol-trial-2/config.json",
+            "sha256": "7bdf7783af84138855bf538bac9fe835ddf3ece6405fa47165dbd23fee21c8d1"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/sol-trial-2/run/results.jsonl",
+            "sha256": "66db215c1975252a36ac28f1ab32c3f29a7daddd0758f2a90cf47a343bda58a3"
+          }
+        },
+        {
+          "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/sol-trial-3-remainder/run/output.json",
+          "sha256": "271c4c7e8113b4b80e7859b058e051e3020ae9e7bba74527f6cf5ff42c80dfdb",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/sol-trial-3-remainder/run/manifest.json",
+            "sha256": "cbb699a6d489931856737545ff37845a50015ad2a58702914d925e255f2dfe83"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/sol-trial-3-remainder/config.json",
+            "sha256": "8a525d6ed4e398a40a114811f3fb7f7ef1346923271b2c520d994f63d4205fde"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/sol-trial-3-remainder/run/results.jsonl",
+            "sha256": "d1d69ebf34bda43e0e5699200b4db1acd461c8162b9db22596b462035f0e0454"
+          }
+        }
+      ],
+      "inputs": [
+        {
+          "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/selection.json",
+          "sha256": "21faa28dbc0f40d8fbf3ba5a14721e03f2d3d4f8c6e212fee33210852432b3d9"
+        }
+      ],
+      "parameters": [
+        {
+          "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/plan.json",
+          "sha256": "10fba1af0ad8da26c4a197ea3d10d7ccd5841e1b5c532e0c0bb536e11eea516c"
+        }
+      ],
+      "records": [
+        {
+          "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/assistant-review.json",
+          "sha256": "ed92ca58d1beee465f00e78c1979550a37b408dddb43d0e0e5eec96d21256bef",
+          "role": "assessment"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/mechanical-checks.json",
+          "sha256": "0775fe619f30e146de2d720670e0d8723682b61c93165626e14a254c3f415eff",
+          "role": "mechanical"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/scope-before-generation.json",
+          "sha256": "c47e2a70459ad129a62e9aeee0b024b62aefaa4cf2b942bb4a8d6661e4f548e4",
+          "role": "assessment_basis"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/execution-deviation.json",
+          "sha256": "a782afe25b31ea13e648edd5dd172f1c293bc65e77b6704844a34bd90cb220b4",
+          "role": "execution_deviation"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/review-preparation.json",
+          "sha256": "12340daf3c76a1d5cbe79fb867b2562516a0b6a331462e33c85545a578e1224c",
+          "role": "review_preparation"
+        }
+      ],
+      "limitations": [
+        "71 masks plus typed no-answer T05 outcome. Eleven-call remainder completes Sol trial3; not a new trial. Two subject setup calls are input preparation. Exclude provider diagnostics."
+      ],
+      "recorded_call_counts": {
+        "final_attempted": 72,
+        "final_succeeded": 71,
+        "final_failed": 1,
+        "setup_attempted": 2,
+        "setup_succeeded": 2,
+        "final_answer_records": 71,
+        "final_raw_answer_utf8_bytes": 4729
+      },
+      "setup_outputs": [
+        {
+          "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/subject-setup/run/output.json",
+          "sha256": "6aeb5c6def0ab837ba8c0e51e095257898dcc43ff41ce746dc9e7c840f7d6822",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/subject-setup/run/manifest.json",
+            "sha256": "1b28215d0561e16f9d0961b8bab8e92e8f81f0b084beb251323c9b3f52144dd8"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/subject-setup/run/results.jsonl",
+            "sha256": "4d53db26ba2c1722612fd1b77d39952fd13b9bdd872c969141a37713837722d3"
+          },
+          "input": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/subject-setup/input.json",
+            "sha256": "7a4752dd93e04711f098d7fc9bfeec94faaad4967639618a52917912434b104e"
+          },
+          "role": "subject_setup_validation"
+        }
+      ],
+      "baseline_references": [
+        {
+          "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/source-asv6.8-output.json",
+          "sha256": "caea76081b8c19acc21685fe01a4623e8f4b566a44d7ebebd64e92d5a830de29",
+          "role": "reused_subject_source",
+          "source": {
+            "path": "target/atomic-subject-asv6.7-vs-asv6.8-attribution-v1/asv6.8-trial-1/output.json",
+            "sha256": "ba56b27cf102d9a19a995b8930dae41381d6eebadee2acbf0f9ba65ca191e9fc"
+          }
+        }
+      ],
+      "failed_attempt": {
+        "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/sol-trial-3/run/results.jsonl",
+        "sha256": "e17f658fc9994eb2fa4b98fd36a5fe321281a9b73bbc2837080689c195a8160c",
+        "manifest": {
+          "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/sol-trial-3/run/manifest.json",
+          "sha256": "aa067b15fb5c66e62f4a8c60aacd8074e0358c3d27349b2dccbb3427f72af77b"
+        },
+        "configuration": {
+          "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/sol-trial-3/config.json",
+          "sha256": "dfccaab23d599acb5616fcbfbe77d3c21ebf25e50bcb34c699e3450361cee345"
+        },
+        "case_id": "T05",
+        "task": "mask"
+      },
+      "validation_sources": [
+        {
+          "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/mask-prompt.md",
+          "sha256": "564c860a3be5f8eb6e90c404184ef467f24004276dbb535f637ba0a8ded7ff9e"
+        }
+      ],
+      "expected_final_answers": 71,
+      "subject_provenance": {
+        "status": "known",
+        "versions": [
+          "ASv6.8"
+        ],
+        "version_sources": [
+          {
+            "path": "target/atomic-subject-asv6.7-vs-asv6.8-attribution-v1/asv6.8-trial-1/manifest.json",
+            "sha256": "0b2a53d4548f88eefd2eed4dd3520764da9ecb2dfaaef996962f6f42b08b7951",
+            "field": [
+              "subject",
+              "prompt_version"
+            ]
+          },
+          {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/subject-setup/run/manifest.json",
+            "sha256": "1b28215d0561e16f9d0961b8bab8e92e8f81f0b084beb251323c9b3f52144dd8",
+            "field": [
+              "subject",
+              "prompt_version"
+            ]
+          }
+        ],
+        "used_inputs": [
+          {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-transfer-v1/selection.json",
+            "sha256": "21faa28dbc0f40d8fbf3ba5a14721e03f2d3d4f8c6e212fee33210852432b3d9"
+          }
+        ],
+        "basis": "Native AS prompt-version fields plus exact original note identity, complete post text and selected subject wording/index. Recognition cases also explicitly identify unchanged ASv6.8 subjects in their frozen plan."
+      }
+    },
+    "mask-prompt-few-shot-sol-low-v1": {
+      "profile": "standalone-prompt",
+      "status": "historical",
+      "family": "standalone mask prompt study",
+      "selection_basis": "Maintained README identifies a standalone prompt/model/effort/repeatability/recognition study. Actual final answers, recorded assessments and mechanical measurements remain unselected data.",
+      "answers": [
+        {
+          "path": "sse_multivector/mask-prompt-few-shot-sol-low-v1/trial-1/run/output.json",
+          "sha256": "7d93022d73bddaeb6269868c5749657d63dc6f6eb7897c2b7239cb5b1c207a96",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-few-shot-sol-low-v1/trial-1/run/manifest.json",
+            "sha256": "b7f7beb57fedf9097cfb91b63a36a11745d5b800702f27007e6dca6d7ef428bd"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-few-shot-sol-low-v1/trial-1/config.json",
+            "sha256": "505bb58244e412a6102146e2fce991d1903e804030f42964d434fefb69afc13d"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-few-shot-sol-low-v1/trial-1/run/results.jsonl",
+            "sha256": "850f309893f85e3ac9934c05d56ac4c5c7fcbb10b859bd366bd3e8a5a0b2030b"
+          }
+        },
+        {
+          "path": "sse_multivector/mask-prompt-few-shot-sol-low-v1/trial-2/run/output.json",
+          "sha256": "d11a102288cb8b96cd47f30a7fd8a447ab721b5cbf35c8e4379d1307e703b466",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-few-shot-sol-low-v1/trial-2/run/manifest.json",
+            "sha256": "8cb0011509e432483a26b08ced59b7bf616ffd6d4210e7505143b5d31b9fe850"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-few-shot-sol-low-v1/trial-2/config.json",
+            "sha256": "505bb58244e412a6102146e2fce991d1903e804030f42964d434fefb69afc13d"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-few-shot-sol-low-v1/trial-2/run/results.jsonl",
+            "sha256": "97564a22674cb2848ca575d69ecbb95c2e35a9d5dd25c243ba953bb81b31cba1"
+          }
+        },
+        {
+          "path": "sse_multivector/mask-prompt-few-shot-sol-low-v1/trial-3/run/output.json",
+          "sha256": "388820c4162f9870e166aa3dbc9aa9d666c173f02efff2256b9448043592f579",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-few-shot-sol-low-v1/trial-3/run/manifest.json",
+            "sha256": "00464c6f3bc85886e07d74c6ee0fde7dd800414d576631e63975e39c3b05f279"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-few-shot-sol-low-v1/trial-3/config.json",
+            "sha256": "505bb58244e412a6102146e2fce991d1903e804030f42964d434fefb69afc13d"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-few-shot-sol-low-v1/trial-3/run/results.jsonl",
+            "sha256": "419de3f5abd63dd1fd5ceddad536f6e9e1ac86f4c67dacd978fe08c6baf44a89"
+          }
+        }
+      ],
+      "inputs": [
+        {
+          "path": "sse_multivector/mask-prompt-few-shot-sol-low-v1/selection.json",
+          "sha256": "3ec4f6602d6ba97ba738cf82f1e76378c6fec352b97e4b9625c26fb8a3ca0513"
+        }
+      ],
+      "parameters": [
+        {
+          "path": "sse_multivector/mask-prompt-few-shot-sol-low-v1/plan.json",
+          "sha256": "4b23ac2ab208d64d18be1ed27cd5d035863920445b4e6e69b297e28ed6425f45"
+        }
+      ],
+      "records": [
+        {
+          "path": "sse_multivector/mask-prompt-few-shot-sol-low-v1/assistant-review.json",
+          "sha256": "0387be0e995ba08ed8150aa80258f27b917b1f9b3e09a074df4148f2e21e8db7",
+          "role": "assessment"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-few-shot-sol-low-v1/mechanical-checks.json",
+          "sha256": "764cc5145fb1a2762436cb6e16b5a5c796f58b1df4d1a1d65be5c7796965824a",
+          "role": "mechanical"
+        }
+      ],
+      "limitations": [
+        "Comparisons reuse36 fragment-only baseline calls owned by astra-vs-sol-low-v1; preserve exact references without new-call counts."
+      ],
+      "recorded_call_counts": {
+        "final_attempted": 36,
+        "final_succeeded": 36,
+        "final_answer_records": 36,
+        "final_raw_answer_utf8_bytes": 4798
+      },
+      "baseline_references": [
+        {
+          "path": "target/atomic-subject-asv6.7-vs-asv6.8-attribution-v1/asv6.8-trial-1/output.json",
+          "sha256": "ba56b27cf102d9a19a995b8930dae41381d6eebadee2acbf0f9ba65ca191e9fc",
+          "manifest": {
+            "path": "target/atomic-subject-asv6.7-vs-asv6.8-attribution-v1/asv6.8-trial-1/manifest.json",
+            "sha256": "0b2a53d4548f88eefd2eed4dd3520764da9ecb2dfaaef996962f6f42b08b7951"
+          },
+          "role": "reused_subject_source"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-1/run/output.json",
+          "sha256": "4006b36e309c42c6155ad38cd1779d2f87eb6216ec5a7a95fb67c59cda18bf5b",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-1/run/manifest.json",
+            "sha256": "bcdce1301936a848091c81568b19cfec7e691e513c969000fcb113213cdce609"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-1/config.json",
+            "sha256": "9eafebb664bdc4e151675f490f433cbfb94abe9a3f41b98d2683a26b0d67bbf4"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-1/run/results.jsonl",
+            "sha256": "30583ef8841cabdff4f8f0db37ab6eb845f778560808ca6d70f3ad57a2e57155"
+          },
+          "role": "reused_comparison_baseline",
+          "source_study": "mask-prompt-astra-vs-sol-low-v1"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-2/run/output.json",
+          "sha256": "7d668997f90c9b79cf0f2ca24f427fed211939985f7b46025d0c387c7d5346e5",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-2/run/manifest.json",
+            "sha256": "dff815e52a937b13f90a46a8f7a79e97d9c5cb64a45b3b093a453f2a90e41608"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-2/config.json",
+            "sha256": "9eafebb664bdc4e151675f490f433cbfb94abe9a3f41b98d2683a26b0d67bbf4"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-2/run/results.jsonl",
+            "sha256": "e693f912f88043ba340122d16289d5a0a4d5e9b32b347d4b5901ef241478d352"
+          },
+          "role": "reused_comparison_baseline",
+          "source_study": "mask-prompt-astra-vs-sol-low-v1"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-3/run/output.json",
+          "sha256": "529b3e8cfeb6aabc856e6e1473dc1cfd10b07c2ba17ba3b5b261cfbdc6a93073",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-3/run/manifest.json",
+            "sha256": "7983a06e9619d77ec46ef607442e55a625462f83b691f8e77c4382d8961141fe"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-3/config.json",
+            "sha256": "9eafebb664bdc4e151675f490f433cbfb94abe9a3f41b98d2683a26b0d67bbf4"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-3/run/results.jsonl",
+            "sha256": "84f2fa6f083b44a7934db3c3a1dc37ea9ce2e136903ad56230d0864b1ab246ca"
+          },
+          "role": "reused_comparison_baseline",
+          "source_study": "mask-prompt-astra-vs-sol-low-v1"
+        }
+      ],
+      "validation_sources": [
+        {
+          "path": "sse_multivector/mask-prompt-few-shot-sol-low-v1/mask-prompt.md",
+          "sha256": "7c56065ffa2827795b1f07f4cea7319a41e1494fe97b4883f9f47ecd24860ee0"
+        },
+        {
+          "path": "target/atomic-subject-mask-probe-v3/review-session.json",
+          "sha256": "b7f169beedb6f732936e8e913ab42813eed6e1ec79f6ce9844a37fceb9c86499"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-probe-v3/mask-review.json",
+          "sha256": "f3b0f5b6468d0c8e28d2d20494d8a308cc60422ac182bf52cdafdb36a5bf05cd"
+        },
+        {
+          "path": "target/atomic-subject-mask-probe-v4/review-session.json",
+          "sha256": "00abefe98138dbaf4a07824e453fd92c79580164789788d6f580fade8571f7d2"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-probe-v4/mask-review.json",
+          "sha256": "4dcde2a63570e9b3084ed1756fd15476dcdcccc13b92036eb051ca4462f21707"
+        }
+      ],
+      "expected_final_answers": 36,
+      "subject_provenance": {
+        "status": "known",
+        "versions": [
+          "ASv6.8"
+        ],
+        "version_sources": [
+          {
+            "path": "target/atomic-subject-asv6.7-vs-asv6.8-attribution-v1/asv6.8-trial-1/manifest.json",
+            "sha256": "0b2a53d4548f88eefd2eed4dd3520764da9ecb2dfaaef996962f6f42b08b7951",
+            "field": [
+              "subject",
+              "prompt_version"
+            ]
+          }
+        ],
+        "used_inputs": [
+          {
+            "path": "sse_multivector/mask-prompt-few-shot-sol-low-v1/selection.json",
+            "sha256": "3ec4f6602d6ba97ba738cf82f1e76378c6fec352b97e4b9625c26fb8a3ca0513"
+          }
+        ],
+        "basis": "Native AS prompt-version fields plus exact original note identity, complete post text and selected subject wording/index. Recognition cases also explicitly identify unchanged ASv6.8 subjects in their frozen plan."
+      }
+    },
+    "mask-prompt-medium-reasoning-v1": {
+      "profile": "standalone-prompt",
+      "status": "historical",
+      "family": "standalone mask prompt study",
+      "selection_basis": "Maintained README identifies a standalone prompt/model/effort/repeatability/recognition study. Actual final answers, recorded assessments and mechanical measurements remain unselected data.",
+      "answers": [
+        {
+          "path": "sse_multivector/mask-prompt-medium-reasoning-v1/trial-1/run/output.json",
+          "sha256": "11cf0ad37bfbd9d0e7ed818009de516f600acbf815fd1ab550930b27265ca8f2",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-medium-reasoning-v1/trial-1/run/manifest.json",
+            "sha256": "047879a6385983471bca705f78c5374784f32023eac18a5b1c8f6de6a3dcbf80"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-medium-reasoning-v1/trial-1/config.json",
+            "sha256": "aa981270baaf77047b75ecf8a234c496f1d894b8e425b204aee385a812d51c29"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-medium-reasoning-v1/trial-1/run/results.jsonl",
+            "sha256": "f70a2e390426a353468384e3f2a139d6f37728cf8f8952c0fe201881e125ca37"
+          }
+        },
+        {
+          "path": "sse_multivector/mask-prompt-medium-reasoning-v1/trial-2/run/output.json",
+          "sha256": "86c2e8907504a27c16947655c5bf28ebb032823cccd9876bceeb957c6312a909",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-medium-reasoning-v1/trial-2/run/manifest.json",
+            "sha256": "01045f328f83770e344287477dacd2eca4f34d3da9d860b3ea89384f22bdf53c"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-medium-reasoning-v1/trial-2/config.json",
+            "sha256": "aa981270baaf77047b75ecf8a234c496f1d894b8e425b204aee385a812d51c29"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-medium-reasoning-v1/trial-2/run/results.jsonl",
+            "sha256": "aaf70199e4f51f0f7e0e65097055bddb7365838102da60b791d2455984b87696"
+          }
+        },
+        {
+          "path": "sse_multivector/mask-prompt-medium-reasoning-v1/trial-3/run/output.json",
+          "sha256": "6eaba35474106a6b338a1db94cd984fc49e91717adf4c6fbc0bd7c244c4af710",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-medium-reasoning-v1/trial-3/run/manifest.json",
+            "sha256": "cbc090f4c57b23d7abafba9e866f3984deb08fc6f84db0cb71e4307961416ad1"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-medium-reasoning-v1/trial-3/config.json",
+            "sha256": "aa981270baaf77047b75ecf8a234c496f1d894b8e425b204aee385a812d51c29"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-medium-reasoning-v1/trial-3/run/results.jsonl",
+            "sha256": "4ba25235340056910198709502c71495f860e608cc15e744856ebce84cf968f3"
+          }
+        }
+      ],
+      "inputs": [
+        {
+          "path": "sse_multivector/mask-prompt-medium-reasoning-v1/selection.json",
+          "sha256": "3ec4f6602d6ba97ba738cf82f1e76378c6fec352b97e4b9625c26fb8a3ca0513"
+        }
+      ],
+      "parameters": [
+        {
+          "path": "sse_multivector/mask-prompt-medium-reasoning-v1/plan.json",
+          "sha256": "f2668fc6bbd5982f19e3e0291b6a35868548bbf5796d25f194ddfa7666ff6238"
+        }
+      ],
+      "records": [
+        {
+          "path": "sse_multivector/mask-prompt-medium-reasoning-v1/assistant-review.json",
+          "sha256": "580eb7bcda33776d87351fe277af347a2a6a6f81f91b28fece2f431cf6c3e118",
+          "role": "assessment"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-medium-reasoning-v1/mechanical-checks.json",
+          "sha256": "408b8d94422a606ac6e29a0cab9b2f6d6be5b4fc09e4971adfb2244e008fd935",
+          "role": "mechanical"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-medium-reasoning-v1/human-review.json",
+          "sha256": "e697705e93852e0cc2853997e9c9783682882e492731359b6bfe637ca436a569",
+          "role": "human_scope_record"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-medium-reasoning-v1/review-preparation.json",
+          "sha256": "f66244a3cfe23d8e1bda5a3da86f5347bf80e264844613e2212e2d5ffcd8c4b7",
+          "role": "review_preparation"
+        }
+      ],
+      "limitations": [
+        "The saved human rejection covers only one output; preserve separately attributed assistant scope interpretation/application."
+      ],
+      "recorded_call_counts": {
+        "final_attempted": 36,
+        "final_succeeded": 36,
+        "final_answer_records": 36,
+        "final_raw_answer_utf8_bytes": 4547
+      },
+      "baseline_references": [
+        {
+          "path": "target/atomic-subject-asv6.7-vs-asv6.8-attribution-v1/asv6.8-trial-1/output.json",
+          "sha256": "ba56b27cf102d9a19a995b8930dae41381d6eebadee2acbf0f9ba65ca191e9fc",
+          "manifest": {
+            "path": "target/atomic-subject-asv6.7-vs-asv6.8-attribution-v1/asv6.8-trial-1/manifest.json",
+            "sha256": "0b2a53d4548f88eefd2eed4dd3520764da9ecb2dfaaef996962f6f42b08b7951"
+          },
+          "role": "reused_subject_source"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-repeatability-v1/v4-trial-2/run/output.json",
+          "sha256": "46805a449d2be666140a992bc54fe3afd82bfaf7f0feb1e1d0ffa59b745a5e78",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-repeatability-v1/v4-trial-2/run/manifest.json",
+            "sha256": "13ad5b56a87276b01502b315d8c773a1b6362dcc8eed38614b518c100560bbbe"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-repeatability-v1/v4-trial-2/config.json",
+            "sha256": "8a88969f90fc077a7b65dc5988d3914993642807a6f1d9211195f3aca848bf09"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-repeatability-v1/v4-trial-2/run/results.jsonl",
+            "sha256": "9ca790742b19f4c17d7dfe6e945063b788c22034679149085b343761929be221"
+          },
+          "role": "reused_comparison_baseline",
+          "source_study": "mask-prompt-repeatability-v1"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-repeatability-v1/v4-trial-3/run/output.json",
+          "sha256": "5b0a23b0874aa183d69e58b0895cdd25cc1acba61bf903d58d434d85e62ca1df",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-repeatability-v1/v4-trial-3/run/manifest.json",
+            "sha256": "cbce7667076fa5bc5121cdcfd61dfbad48f24ce52ce982dd6771f80b8ace7bd6"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-repeatability-v1/v4-trial-3/config.json",
+            "sha256": "8a88969f90fc077a7b65dc5988d3914993642807a6f1d9211195f3aca848bf09"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-repeatability-v1/v4-trial-3/run/results.jsonl",
+            "sha256": "9e9624d8526dac2ca8422b0def552e27d10de9a2454ffcc765c03ff1b7614d18"
+          },
+          "role": "reused_comparison_baseline",
+          "source_study": "mask-prompt-repeatability-v1"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-probe-v4/run/output.json",
+          "sha256": "99668d486ecb8b64546f21d062870ed92353d420481120f442c74f0a65596b5d",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-probe-v4/run/manifest.json",
+            "sha256": "b327a8da44bcc4fd7b4222c393b80e4027ca9d6a276beb3d55e2766db9a80f2e"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-probe-v4/config.json",
+            "sha256": "8a88969f90fc077a7b65dc5988d3914993642807a6f1d9211195f3aca848bf09"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-probe-v4/run/results.jsonl",
+            "sha256": "7a7bb33212622c5920d1cb99936f2ff395448c9d84a34012a8599c5e0a4071ef"
+          },
+          "role": "reused_comparison_baseline",
+          "source_study": "mask-prompt-probe-v4"
+        }
+      ],
+      "expected_final_answers": 36,
+      "review_sessions": [
+        {
+          "path": "target/mask-prompt-medium-reasoning-v1-review-session.json",
+          "sha256": "cc5b23bc6a04abebe53ca317cee73c38684fd7d46e61b3bc1714adbcf2b77d4a",
+          "batch": {
+            "path": "sse_multivector/mask-prompt-medium-reasoning-v1/review-needed.json",
+            "sha256": "739b89dedc9e9615112bd3fc97aef514e33ed5d4a58abb6b53bd730cdc207d70"
+          },
+          "role": "user_review",
+          "answer_sources": [
+            "sse_multivector/mask-prompt-medium-reasoning-v1/trial-3/run/output.json"
+          ],
+          "preparation": {
+            "path": "sse_multivector/mask-prompt-medium-reasoning-v1/review-preparation.json",
+            "sha256": "f66244a3cfe23d8e1bda5a3da86f5347bf80e264844613e2212e2d5ffcd8c4b7"
+          }
+        }
+      ],
+      "review_snapshot_references": [
+        {
+          "source": {
+            "path": "sse_multivector/mask-prompt-medium-reasoning-v1/human-review.json",
+            "sha256": "e697705e93852e0cc2853997e9c9783682882e492731359b6bfe637ca436a569"
+          },
+          "field": [
+            "tui_session_snapshot"
+          ],
+          "session": {
+            "path": "target/mask-prompt-medium-reasoning-v1-review-session.json",
+            "sha256": "cc5b23bc6a04abebe53ca317cee73c38684fd7d46e61b3bc1714adbcf2b77d4a"
+          },
+          "batch": {
+            "path": "sse_multivector/mask-prompt-medium-reasoning-v1/review-needed.json",
+            "sha256": "739b89dedc9e9615112bd3fc97aef514e33ed5d4a58abb6b53bd730cdc207d70"
+          },
+          "emit_decisions": false
+        }
+      ],
+      "validation_sources": [
+        {
+          "path": "target/atomic-subject-mask-probe-v3/review-session.json",
+          "sha256": "b7f169beedb6f732936e8e913ab42813eed6e1ec79f6ce9844a37fceb9c86499"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-probe-v3/mask-review.json",
+          "sha256": "f3b0f5b6468d0c8e28d2d20494d8a308cc60422ac182bf52cdafdb36a5bf05cd"
+        },
+        {
+          "path": "target/atomic-subject-mask-probe-v4/review-session.json",
+          "sha256": "00abefe98138dbaf4a07824e453fd92c79580164789788d6f580fade8571f7d2"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-probe-v4/mask-review.json",
+          "sha256": "4dcde2a63570e9b3084ed1756fd15476dcdcccc13b92036eb051ca4462f21707"
+        }
+      ],
+      "subject_provenance": {
+        "status": "known",
+        "versions": [
+          "ASv6.8"
+        ],
+        "version_sources": [
+          {
+            "path": "target/atomic-subject-asv6.7-vs-asv6.8-attribution-v1/asv6.8-trial-1/manifest.json",
+            "sha256": "0b2a53d4548f88eefd2eed4dd3520764da9ecb2dfaaef996962f6f42b08b7951",
+            "field": [
+              "subject",
+              "prompt_version"
+            ]
+          }
+        ],
+        "used_inputs": [
+          {
+            "path": "sse_multivector/mask-prompt-medium-reasoning-v1/selection.json",
+            "sha256": "3ec4f6602d6ba97ba738cf82f1e76378c6fec352b97e4b9625c26fb8a3ca0513"
+          }
+        ],
+        "basis": "Native AS prompt-version fields plus exact original note identity, complete post text and selected subject wording/index. Recognition cases also explicitly identify unchanged ASv6.8 subjects in their frozen plan."
+      }
+    },
+    "mask-prompt-probe-v1": {
+      "profile": "standalone-prompt",
+      "status": "historical",
+      "family": "standalone mask prompt study",
+      "selection_basis": "Maintained README identifies a standalone prompt/model/effort/repeatability/recognition study. Actual final answers, recorded assessments and mechanical measurements remain unselected data.",
+      "answers": [
+        {
+          "path": "sse_multivector/mask-prompt-probe-v1/run/output.json",
+          "sha256": "6bebc4c64012393e8a1f8fad4a9f79b0f2ded189f213a8717ab0a7cc886a3070",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-probe-v1/run/manifest.json",
+            "sha256": "906cea01920c4a7cd4330492595cd1a17d2801847339a172911de3549eddfa83"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-probe-v1/config.json",
+            "sha256": "10ec5ddc526fb9b61397c538356f4eb72dbc9b124cc231f8c19a4d9a3ef38f6c"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-probe-v1/run/results.jsonl",
+            "sha256": "9ebd7029d123f2289a5df7b2e203d41ee4939bcc8d37102b5274712e1e4773ec"
+          }
+        }
+      ],
+      "inputs": [
+        {
+          "path": "sse_multivector/mask-prompt-probe-v1/selection.json",
+          "sha256": "3ec4f6602d6ba97ba738cf82f1e76378c6fec352b97e4b9625c26fb8a3ca0513"
+        }
+      ],
+      "parameters": [],
+      "records": [
+        {
+          "path": "sse_multivector/mask-prompt-probe-v1/assistant-review.json",
+          "sha256": "9ad08d9843ba32d2019ec07b12eb79174a22a890ee36201c0a27d4b5c6f41d7b",
+          "role": "assessment"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-probe-v1/mechanical-checks.json",
+          "sha256": "72844bbaabf0ca3f8acb2eabcb9b7771f02c9f4f15764800985c521f84090123",
+          "role": "mechanical"
+        }
+      ],
+      "limitations": [],
+      "recorded_call_counts": {
+        "final_attempted": 12,
+        "final_succeeded": 12,
+        "final_answer_records": 12,
+        "final_raw_answer_utf8_bytes": 1809
+      },
+      "baseline_references": [
+        {
+          "path": "target/atomic-subject-asv6.7-vs-asv6.8-attribution-v1/asv6.8-trial-1/output.json",
+          "sha256": "ba56b27cf102d9a19a995b8930dae41381d6eebadee2acbf0f9ba65ca191e9fc",
+          "manifest": {
+            "path": "target/atomic-subject-asv6.7-vs-asv6.8-attribution-v1/asv6.8-trial-1/manifest.json",
+            "sha256": "0b2a53d4548f88eefd2eed4dd3520764da9ecb2dfaaef996962f6f42b08b7951"
+          },
+          "role": "reused_subject_source"
+        }
+      ],
+      "validation_sources": [
+        {
+          "path": "sse_multivector/mask-prompt-probe-v1/mask-prompt.md",
+          "sha256": "35af013049117ce0cbadd8343b636b586d2e28817720d74a603b84145266b89f"
+        }
+      ],
+      "expected_final_answers": 12,
+      "review_sessions": [
+        {
+          "path": "target/atomic-subject-mask-probe-v1/review-session.json",
+          "sha256": "b347f5bb229889d214e8bd7f312806ab4457a0c613e0c779dd413611c337f675",
+          "batch": {
+            "path": "sse_multivector/mask-prompt-probe-v1/mask-review.json",
+            "sha256": "a430e4ced608c2ab85fd198bb902537733d889ed5da36df473583d719ae698ff"
+          },
+          "role": "user_review",
+          "answer_sources": [
+            "sse_multivector/mask-prompt-probe-v1/run/output.json"
+          ]
+        },
+        {
+          "path": "target/atomic-subject-mask-probe-v1/review-session-rereview-v1.json",
+          "sha256": "8f93651f01c4a1d9c9b0c4c8dff3b6ffbcccd085d54ba6d71508c355d313d968",
+          "batch": {
+            "path": "sse_multivector/mask-prompt-probe-v1/mask-review.json",
+            "sha256": "a430e4ced608c2ab85fd198bb902537733d889ed5da36df473583d719ae698ff"
+          },
+          "role": "user_review",
+          "answer_sources": [
+            "sse_multivector/mask-prompt-probe-v1/run/output.json"
+          ]
+        }
+      ],
+      "subject_provenance": {
+        "status": "known",
+        "versions": [
+          "ASv6.8"
+        ],
+        "version_sources": [
+          {
+            "path": "target/atomic-subject-asv6.7-vs-asv6.8-attribution-v1/asv6.8-trial-1/manifest.json",
+            "sha256": "0b2a53d4548f88eefd2eed4dd3520764da9ecb2dfaaef996962f6f42b08b7951",
+            "field": [
+              "subject",
+              "prompt_version"
+            ]
+          }
+        ],
+        "used_inputs": [
+          {
+            "path": "sse_multivector/mask-prompt-probe-v1/selection.json",
+            "sha256": "3ec4f6602d6ba97ba738cf82f1e76378c6fec352b97e4b9625c26fb8a3ca0513"
+          }
+        ],
+        "basis": "Native AS prompt-version fields plus exact original note identity, complete post text and selected subject wording/index. Recognition cases also explicitly identify unchanged ASv6.8 subjects in their frozen plan."
+      }
+    },
+    "mask-prompt-probe-v2": {
+      "profile": "standalone-prompt",
+      "status": "historical",
+      "family": "standalone mask prompt study",
+      "selection_basis": "Maintained README identifies a standalone prompt/model/effort/repeatability/recognition study. Actual final answers, recorded assessments and mechanical measurements remain unselected data.",
+      "answers": [
+        {
+          "path": "sse_multivector/mask-prompt-probe-v2/run/output.json",
+          "sha256": "70f3df1b901b157c42eddb9247ddd07ec5e2852aced994e0c2c84c84a63e10ad",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-probe-v2/run/manifest.json",
+            "sha256": "a1e50b8b4124382db6fd563caff488534452a4dfd8b2a98da82b4b6bf88d062a"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-probe-v2/config.json",
+            "sha256": "56677ffaa878132724bff3fd59a129f666759c5b0dd839d4cf52ded041fbdf67"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-probe-v2/run/results.jsonl",
+            "sha256": "e0513508b10b93226f44c6b61ab39844326bbe468506f63e089ce079ef49bfff"
+          }
+        }
+      ],
+      "inputs": [
+        {
+          "path": "sse_multivector/mask-prompt-probe-v2/selection.json",
+          "sha256": "3ec4f6602d6ba97ba738cf82f1e76378c6fec352b97e4b9625c26fb8a3ca0513"
+        }
+      ],
+      "parameters": [],
+      "records": [
+        {
+          "path": "sse_multivector/mask-prompt-probe-v2/assistant-review.json",
+          "sha256": "9a8c2c21885e2f8e8b995654ecc3446964e2a6260aee93f92570789d5f56c458",
+          "role": "assessment"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-probe-v2/mechanical-checks.json",
+          "sha256": "6e322d8626e4670890aa6f2a2daa02615c6d8698ce502e51da023cac6268a2e3",
+          "role": "mechanical"
+        }
+      ],
+      "limitations": [],
+      "recorded_call_counts": {
+        "final_attempted": 12,
+        "final_succeeded": 12,
+        "final_answer_records": 12,
+        "final_raw_answer_utf8_bytes": 1685
+      },
+      "baseline_references": [
+        {
+          "path": "target/atomic-subject-asv6.7-vs-asv6.8-attribution-v1/asv6.8-trial-1/output.json",
+          "sha256": "ba56b27cf102d9a19a995b8930dae41381d6eebadee2acbf0f9ba65ca191e9fc",
+          "manifest": {
+            "path": "target/atomic-subject-asv6.7-vs-asv6.8-attribution-v1/asv6.8-trial-1/manifest.json",
+            "sha256": "0b2a53d4548f88eefd2eed4dd3520764da9ecb2dfaaef996962f6f42b08b7951"
+          },
+          "role": "reused_subject_source"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-probe-v1/run/output.json",
+          "sha256": "6bebc4c64012393e8a1f8fad4a9f79b0f2ded189f213a8717ab0a7cc886a3070",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-probe-v1/run/manifest.json",
+            "sha256": "906cea01920c4a7cd4330492595cd1a17d2801847339a172911de3549eddfa83"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-probe-v1/config.json",
+            "sha256": "10ec5ddc526fb9b61397c538356f4eb72dbc9b124cc231f8c19a4d9a3ef38f6c"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-probe-v1/run/results.jsonl",
+            "sha256": "9ebd7029d123f2289a5df7b2e203d41ee4939bcc8d37102b5274712e1e4773ec"
+          },
+          "role": "reused_comparison_baseline",
+          "source_study": "mask-prompt-probe-v1"
+        }
+      ],
+      "validation_sources": [
+        {
+          "path": "sse_multivector/mask-prompt-probe-v2/mask-prompt.md",
+          "sha256": "fb6fa51783ca2820f5650e8ed4eccf73162bfc494ec18f6af0e41f009b12986e"
+        }
+      ],
+      "expected_final_answers": 12,
+      "review_sessions": [
+        {
+          "path": "target/atomic-subject-mask-probe-v2/review-session.json",
+          "sha256": "a507c95344c53fdb15e6bba5a55e0bf330ac100d4bd1a24a169254bc4e9ba621",
+          "batch": {
+            "path": "sse_multivector/mask-prompt-probe-v2/mask-review.json",
+            "sha256": "0c8402142978dbd3b429bb376ae9ecf8378b2ffb0f9b3ecf49e1abc486c74bc8"
+          },
+          "role": "user_review",
+          "answer_sources": [
+            "sse_multivector/mask-prompt-probe-v2/run/output.json"
+          ]
+        }
+      ],
+      "subject_provenance": {
+        "status": "known",
+        "versions": [
+          "ASv6.8"
+        ],
+        "version_sources": [
+          {
+            "path": "target/atomic-subject-asv6.7-vs-asv6.8-attribution-v1/asv6.8-trial-1/manifest.json",
+            "sha256": "0b2a53d4548f88eefd2eed4dd3520764da9ecb2dfaaef996962f6f42b08b7951",
+            "field": [
+              "subject",
+              "prompt_version"
+            ]
+          }
+        ],
+        "used_inputs": [
+          {
+            "path": "sse_multivector/mask-prompt-probe-v2/selection.json",
+            "sha256": "3ec4f6602d6ba97ba738cf82f1e76378c6fec352b97e4b9625c26fb8a3ca0513"
+          }
+        ],
+        "basis": "Native AS prompt-version fields plus exact original note identity, complete post text and selected subject wording/index. Recognition cases also explicitly identify unchanged ASv6.8 subjects in their frozen plan."
+      }
+    },
+    "mask-prompt-probe-v3": {
+      "profile": "standalone-prompt",
+      "status": "historical",
+      "family": "standalone mask prompt study",
+      "selection_basis": "Maintained README identifies a standalone prompt/model/effort/repeatability/recognition study. Actual final answers, recorded assessments and mechanical measurements remain unselected data.",
+      "answers": [
+        {
+          "path": "sse_multivector/mask-prompt-probe-v3/run/output.json",
+          "sha256": "727a076ccbbf4427498a37393f43f135a2b45ed55bfca49a5954d757dabb7dd9",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-probe-v3/run/manifest.json",
+            "sha256": "6bf1ef0af6140ac17218f553b68cf5eec5b02fdefd807e6f8c00d1026c646c83"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-probe-v3/config.json",
+            "sha256": "ce1212d33b67ef2b032d6a09092cd511944455020f0dc32248d40536015149ea"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-probe-v3/run/results.jsonl",
+            "sha256": "42f00361fb6f50af4076f2a88e20e6500ed837aa526944af974f1a9053a01950"
+          }
+        }
+      ],
+      "inputs": [
+        {
+          "path": "sse_multivector/mask-prompt-probe-v3/selection.json",
+          "sha256": "3ec4f6602d6ba97ba738cf82f1e76378c6fec352b97e4b9625c26fb8a3ca0513"
+        }
+      ],
+      "parameters": [],
+      "records": [
+        {
+          "path": "sse_multivector/mask-prompt-probe-v3/assistant-review.json",
+          "sha256": "31699b8f795b0b575fb63e2f03cfe6bf0d9d2d7c1476a7e187b64c1abe01b146",
+          "role": "assessment"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-probe-v3/mechanical-checks.json",
+          "sha256": "ad79960eaa1de34f07f41700e9f90b0f7e41ed3d0b1bfab1ec9a5547e82a49b0",
+          "role": "mechanical"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-probe-v3/review-preparation.json",
+          "sha256": "3a2f298e8cbe2676748f095c383ce74309ab0cd3f0b07b92e41e35a307a33c86",
+          "role": "review_preparation"
+        }
+      ],
+      "limitations": [],
+      "recorded_call_counts": {
+        "final_attempted": 12,
+        "final_succeeded": 12,
+        "final_answer_records": 12,
+        "final_raw_answer_utf8_bytes": 1416
+      },
+      "baseline_references": [
+        {
+          "path": "target/atomic-subject-asv6.7-vs-asv6.8-attribution-v1/asv6.8-trial-1/output.json",
+          "sha256": "ba56b27cf102d9a19a995b8930dae41381d6eebadee2acbf0f9ba65ca191e9fc",
+          "manifest": {
+            "path": "target/atomic-subject-asv6.7-vs-asv6.8-attribution-v1/asv6.8-trial-1/manifest.json",
+            "sha256": "0b2a53d4548f88eefd2eed4dd3520764da9ecb2dfaaef996962f6f42b08b7951"
+          },
+          "role": "reused_subject_source"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-probe-v2/run/output.json",
+          "sha256": "70f3df1b901b157c42eddb9247ddd07ec5e2852aced994e0c2c84c84a63e10ad",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-probe-v2/run/manifest.json",
+            "sha256": "a1e50b8b4124382db6fd563caff488534452a4dfd8b2a98da82b4b6bf88d062a"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-probe-v2/config.json",
+            "sha256": "56677ffaa878132724bff3fd59a129f666759c5b0dd839d4cf52ded041fbdf67"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-probe-v2/run/results.jsonl",
+            "sha256": "e0513508b10b93226f44c6b61ab39844326bbe468506f63e089ce079ef49bfff"
+          },
+          "role": "reused_comparison_baseline",
+          "source_study": "mask-prompt-probe-v2"
+        }
+      ],
+      "validation_sources": [
+        {
+          "path": "sse_multivector/mask-prompt-probe-v3/mask-prompt.md",
+          "sha256": "040b8d1807cde832fc836b4dcca361f734ed9637fc3fce91b1b46e8e00e92e97"
+        }
+      ],
+      "expected_final_answers": 12,
+      "review_sessions": [
+        {
+          "path": "target/atomic-subject-mask-probe-v3/review-session.json",
+          "sha256": "b7f169beedb6f732936e8e913ab42813eed6e1ec79f6ce9844a37fceb9c86499",
+          "batch": {
+            "path": "sse_multivector/mask-prompt-probe-v3/mask-review.json",
+            "sha256": "f3b0f5b6468d0c8e28d2d20494d8a308cc60422ac182bf52cdafdb36a5bf05cd"
+          },
+          "role": "user_review",
+          "answer_sources": [
+            "sse_multivector/mask-prompt-probe-v3/run/output.json"
+          ],
+          "preparation": {
+            "path": "sse_multivector/mask-prompt-probe-v3/review-preparation.json",
+            "sha256": "3a2f298e8cbe2676748f095c383ce74309ab0cd3f0b07b92e41e35a307a33c86"
+          }
+        }
+      ],
+      "subject_provenance": {
+        "status": "known",
+        "versions": [
+          "ASv6.8"
+        ],
+        "version_sources": [
+          {
+            "path": "target/atomic-subject-asv6.7-vs-asv6.8-attribution-v1/asv6.8-trial-1/manifest.json",
+            "sha256": "0b2a53d4548f88eefd2eed4dd3520764da9ecb2dfaaef996962f6f42b08b7951",
+            "field": [
+              "subject",
+              "prompt_version"
+            ]
+          }
+        ],
+        "used_inputs": [
+          {
+            "path": "sse_multivector/mask-prompt-probe-v3/selection.json",
+            "sha256": "3ec4f6602d6ba97ba738cf82f1e76378c6fec352b97e4b9625c26fb8a3ca0513"
+          }
+        ],
+        "basis": "Native AS prompt-version fields plus exact original note identity, complete post text and selected subject wording/index. Recognition cases also explicitly identify unchanged ASv6.8 subjects in their frozen plan."
+      }
+    },
+    "mask-prompt-probe-v4": {
+      "profile": "standalone-prompt",
+      "status": "historical",
+      "family": "standalone mask prompt study",
+      "selection_basis": "Maintained README identifies a standalone prompt/model/effort/repeatability/recognition study. Actual final answers, recorded assessments and mechanical measurements remain unselected data.",
+      "answers": [
+        {
+          "path": "sse_multivector/mask-prompt-probe-v4/run/output.json",
+          "sha256": "99668d486ecb8b64546f21d062870ed92353d420481120f442c74f0a65596b5d",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-probe-v4/run/manifest.json",
+            "sha256": "b327a8da44bcc4fd7b4222c393b80e4027ca9d6a276beb3d55e2766db9a80f2e"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-probe-v4/config.json",
+            "sha256": "8a88969f90fc077a7b65dc5988d3914993642807a6f1d9211195f3aca848bf09"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-probe-v4/run/results.jsonl",
+            "sha256": "7a7bb33212622c5920d1cb99936f2ff395448c9d84a34012a8599c5e0a4071ef"
+          }
+        }
+      ],
+      "inputs": [
+        {
+          "path": "sse_multivector/mask-prompt-probe-v4/selection.json",
+          "sha256": "3ec4f6602d6ba97ba738cf82f1e76378c6fec352b97e4b9625c26fb8a3ca0513"
+        }
+      ],
+      "parameters": [],
+      "records": [
+        {
+          "path": "sse_multivector/mask-prompt-probe-v4/assistant-review.json",
+          "sha256": "4100297c769d0806938287d6cb69a17be749b614a10abc6f45138165b4f43b74",
+          "role": "assessment"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-probe-v4/mechanical-checks.json",
+          "sha256": "307c869f1aadf3f2a8410f0cb982e6b20b3982d2b9470a1ac5a02a748b936087",
+          "role": "mechanical"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-probe-v4/review-preparation.json",
+          "sha256": "27576d7eb6c49a0e53528fb11f787149cffd485d77e457f95c0bcb29b82c4ba6",
+          "role": "review_preparation"
+        }
+      ],
+      "limitations": [],
+      "recorded_call_counts": {
+        "final_attempted": 12,
+        "final_succeeded": 12,
+        "final_answer_records": 12,
+        "final_raw_answer_utf8_bytes": 1390
+      },
+      "baseline_references": [
+        {
+          "path": "target/atomic-subject-asv6.7-vs-asv6.8-attribution-v1/asv6.8-trial-1/output.json",
+          "sha256": "ba56b27cf102d9a19a995b8930dae41381d6eebadee2acbf0f9ba65ca191e9fc",
+          "manifest": {
+            "path": "target/atomic-subject-asv6.7-vs-asv6.8-attribution-v1/asv6.8-trial-1/manifest.json",
+            "sha256": "0b2a53d4548f88eefd2eed4dd3520764da9ecb2dfaaef996962f6f42b08b7951"
+          },
+          "role": "reused_subject_source"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-probe-v3/run/output.json",
+          "sha256": "727a076ccbbf4427498a37393f43f135a2b45ed55bfca49a5954d757dabb7dd9",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-probe-v3/run/manifest.json",
+            "sha256": "6bf1ef0af6140ac17218f553b68cf5eec5b02fdefd807e6f8c00d1026c646c83"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-probe-v3/config.json",
+            "sha256": "ce1212d33b67ef2b032d6a09092cd511944455020f0dc32248d40536015149ea"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-probe-v3/run/results.jsonl",
+            "sha256": "42f00361fb6f50af4076f2a88e20e6500ed837aa526944af974f1a9053a01950"
+          },
+          "role": "reused_comparison_baseline",
+          "source_study": "mask-prompt-probe-v3"
+        }
+      ],
+      "validation_sources": [
+        {
+          "path": "sse_multivector/mask-prompt-probe-v4/mask-prompt.md",
+          "sha256": "564c860a3be5f8eb6e90c404184ef467f24004276dbb535f637ba0a8ded7ff9e"
+        }
+      ],
+      "expected_final_answers": 12,
+      "review_sessions": [
+        {
+          "path": "target/atomic-subject-mask-probe-v4/review-session.json",
+          "sha256": "00abefe98138dbaf4a07824e453fd92c79580164789788d6f580fade8571f7d2",
+          "batch": {
+            "path": "sse_multivector/mask-prompt-probe-v4/mask-review.json",
+            "sha256": "4dcde2a63570e9b3084ed1756fd15476dcdcccc13b92036eb051ca4462f21707"
+          },
+          "role": "user_review",
+          "answer_sources": [
+            "sse_multivector/mask-prompt-probe-v4/run/output.json"
+          ],
+          "preparation": {
+            "path": "sse_multivector/mask-prompt-probe-v4/review-preparation.json",
+            "sha256": "27576d7eb6c49a0e53528fb11f787149cffd485d77e457f95c0bcb29b82c4ba6"
+          }
+        }
+      ],
+      "subject_provenance": {
+        "status": "known",
+        "versions": [
+          "ASv6.8"
+        ],
+        "version_sources": [
+          {
+            "path": "target/atomic-subject-asv6.7-vs-asv6.8-attribution-v1/asv6.8-trial-1/manifest.json",
+            "sha256": "0b2a53d4548f88eefd2eed4dd3520764da9ecb2dfaaef996962f6f42b08b7951",
+            "field": [
+              "subject",
+              "prompt_version"
+            ]
+          }
+        ],
+        "used_inputs": [
+          {
+            "path": "sse_multivector/mask-prompt-probe-v4/selection.json",
+            "sha256": "3ec4f6602d6ba97ba738cf82f1e76378c6fec352b97e4b9625c26fb8a3ca0513"
+          }
+        ],
+        "basis": "Native AS prompt-version fields plus exact original note identity, complete post text and selected subject wording/index. Recognition cases also explicitly identify unchanged ASv6.8 subjects in their frozen plan."
+      }
+    },
+    "mask-prompt-recognition-sol-low-v1": {
+      "profile": "standalone-prompt",
+      "status": "historical",
+      "family": "standalone mask prompt study",
+      "selection_basis": "Maintained README identifies a standalone prompt/model/effort/repeatability/recognition study. Actual final answers, recorded assessments and mechanical measurements remain unselected data.",
+      "answers": [
+        {
+          "path": "sse_multivector/mask-prompt-recognition-sol-low-v1/trial-1/run/output.json",
+          "sha256": "4568f68de079be78237d87070a6e5158773ca8cb0c64878151850398183b5bca",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-recognition-sol-low-v1/trial-1/run/manifest.json",
+            "sha256": "b8b98a779714adfaf6ef29e5dafa2ea7cb8d5f2968cc90700f8befc5999ab14e"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-recognition-sol-low-v1/trial-1/config.json",
+            "sha256": "f9c424576df42dd65c7f27038495897b4d5c8691a7f9ea7fdcb9ab08dc2d7e8c"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-recognition-sol-low-v1/trial-1/run/results.jsonl",
+            "sha256": "8178cfaa5a5961f5ae8a56ee921f61e5b3f867ef06edb87abda7d7495e6620bc"
+          }
+        },
+        {
+          "path": "sse_multivector/mask-prompt-recognition-sol-low-v1/trial-2/run/output.json",
+          "sha256": "6c438b6d51e30fd3d597cb5c6d7751999789f4b0df8a16d256fa43643cde8f94",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-recognition-sol-low-v1/trial-2/run/manifest.json",
+            "sha256": "32ef079076b6b35573ec238f43ef7f0a98426316d6870e5fb0316999f140142b"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-recognition-sol-low-v1/trial-2/config.json",
+            "sha256": "c76e5269e1639bad15d70fa92abc6eac56841e08cc6bd25eda0e6b03884a880c"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-recognition-sol-low-v1/trial-2/run/results.jsonl",
+            "sha256": "d47664ee8e9b1810d1e42d1641b84a248865e548b26c7d8486544154f637533c"
+          }
+        },
+        {
+          "path": "sse_multivector/mask-prompt-recognition-sol-low-v1/trial-3/run/output.json",
+          "sha256": "3455b7c6230519a43434c90b8203a5e3c4dfa3936c1ebb7908e29a4f7b1d27c3",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-recognition-sol-low-v1/trial-3/run/manifest.json",
+            "sha256": "45e4a05dc76671808f7f36b02acd59cdba23103b573b9ea2f0993c2bc8d02b9d"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-recognition-sol-low-v1/trial-3/config.json",
+            "sha256": "9ce282adc65c6b8c5db6fdd4210bc3984e1e4594296766baf3bf0fba754f486f"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-recognition-sol-low-v1/trial-3/run/results.jsonl",
+            "sha256": "aac588a518c1dec35aa81874e4e1cc61307cc2c64105127d7486ee0690b009ec"
+          }
+        }
+      ],
+      "inputs": [
+        {
+          "path": "sse_multivector/mask-prompt-recognition-sol-low-v1/cases.json",
+          "sha256": "6376e22776d4c1755f1617636c8054b7d2e84108ddc63cf0cd9fb45d7a05383e"
+        }
+      ],
+      "parameters": [
+        {
+          "path": "sse_multivector/mask-prompt-recognition-sol-low-v1/plan.json",
+          "sha256": "cd38ba35f6e82305e8d0e623f7fbc54e96adb7752e8d0be2c2d438c2240bca7e"
+        }
+      ],
+      "records": [
+        {
+          "path": "sse_multivector/mask-prompt-recognition-sol-low-v1/assistant-review.json",
+          "sha256": "bfeeb2ff1548ef35ad11211810553b15be12833607cd48b0f37d880e04a0648e",
+          "role": "assessment"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-recognition-sol-low-v1/expected-judgments.json",
+          "sha256": "6f438ae83c2b326a3cc243cef241a04bc87020a45b909b09a7bfd2398bbc6ed4",
+          "role": "assessment_basis"
+        }
+      ],
+      "limitations": [],
+      "recorded_call_counts": {
+        "final_attempted": 18,
+        "final_succeeded": 18,
+        "final_answer_records": 18,
+        "final_raw_answer_utf8_bytes": 1463
+      },
+      "validation_sources": [
+        {
+          "path": "sse_multivector/mask-prompt-recognition-sol-low-v1/recognition-prompt.md",
+          "sha256": "e7aeefc3a3823f4af507efabaa11ae24bc917de53f1f04f399b60080279139ee"
+        }
+      ],
+      "expected_final_answers": 18,
+      "subject_provenance": {
+        "status": "known",
+        "versions": [
+          "ASv6.8"
+        ],
+        "version_sources": [
+          {
+            "path": "target/atomic-subject-asv6.7-vs-asv6.8-attribution-v1/asv6.8-trial-1/manifest.json",
+            "sha256": "0b2a53d4548f88eefd2eed4dd3520764da9ecb2dfaaef996962f6f42b08b7951",
+            "field": [
+              "subject",
+              "prompt_version"
+            ]
+          }
+        ],
+        "used_inputs": [
+          {
+            "path": "sse_multivector/mask-prompt-recognition-sol-low-v1/cases.json",
+            "sha256": "6376e22776d4c1755f1617636c8054b7d2e84108ddc63cf0cd9fb45d7a05383e"
+          }
+        ],
+        "basis": "Native AS prompt-version fields plus exact original note identity, complete post text and selected subject wording/index. Recognition cases also explicitly identify unchanged ASv6.8 subjects in their frozen plan."
+      },
+      "baseline_references": [
+        {
+          "path": "target/atomic-subject-asv6.7-vs-asv6.8-attribution-v1/asv6.8-trial-1/output.json",
+          "sha256": "ba56b27cf102d9a19a995b8930dae41381d6eebadee2acbf0f9ba65ca191e9fc",
+          "manifest": {
+            "path": "target/atomic-subject-asv6.7-vs-asv6.8-attribution-v1/asv6.8-trial-1/manifest.json",
+            "sha256": "0b2a53d4548f88eefd2eed4dd3520764da9ecb2dfaaef996962f6f42b08b7951"
+          },
+          "role": "reused_subject_source"
+        }
+      ]
+    },
+    "mask-prompt-repeatability-v1": {
+      "profile": "standalone-prompt",
+      "status": "historical",
+      "family": "standalone mask prompt study",
+      "selection_basis": "Maintained README identifies a standalone prompt/model/effort/repeatability/recognition study. Actual final answers, recorded assessments and mechanical measurements remain unselected data.",
+      "answers": [
+        {
+          "path": "sse_multivector/mask-prompt-repeatability-v1/v3-trial-2/run/output.json",
+          "sha256": "3ea17c5c6ed6ee5488d01d6c740dba30141e07d14f3d10d66886bb2cda49da3f",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-repeatability-v1/v3-trial-2/run/manifest.json",
+            "sha256": "ba78d3b037bd7b9dfe08110f63ff0444d0de240602dbf2585b8170c758870822"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-repeatability-v1/v3-trial-2/config.json",
+            "sha256": "ce1212d33b67ef2b032d6a09092cd511944455020f0dc32248d40536015149ea"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-repeatability-v1/v3-trial-2/run/results.jsonl",
+            "sha256": "635f2429684a07f5cda5b6dc70fb2b6ca6ef12a81d61d6a3a65e6857e8973289"
+          }
+        },
+        {
+          "path": "sse_multivector/mask-prompt-repeatability-v1/v3-trial-3/run/output.json",
+          "sha256": "c56863223f5f3ef7ffb153a580ff56096aa5ac854f4ce8acba87437f76bced86",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-repeatability-v1/v3-trial-3/run/manifest.json",
+            "sha256": "d2b139028727795aec83f8932e834b14fb15b897c0ad05dee8a26b40f70a0096"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-repeatability-v1/v3-trial-3/config.json",
+            "sha256": "ce1212d33b67ef2b032d6a09092cd511944455020f0dc32248d40536015149ea"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-repeatability-v1/v3-trial-3/run/results.jsonl",
+            "sha256": "22fcaf4f9aa0018c22512c1a7a6789e3c3d25764c975118729c89822218914ba"
+          }
+        },
+        {
+          "path": "sse_multivector/mask-prompt-repeatability-v1/v4-trial-2/run/output.json",
+          "sha256": "46805a449d2be666140a992bc54fe3afd82bfaf7f0feb1e1d0ffa59b745a5e78",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-repeatability-v1/v4-trial-2/run/manifest.json",
+            "sha256": "13ad5b56a87276b01502b315d8c773a1b6362dcc8eed38614b518c100560bbbe"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-repeatability-v1/v4-trial-2/config.json",
+            "sha256": "8a88969f90fc077a7b65dc5988d3914993642807a6f1d9211195f3aca848bf09"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-repeatability-v1/v4-trial-2/run/results.jsonl",
+            "sha256": "9ca790742b19f4c17d7dfe6e945063b788c22034679149085b343761929be221"
+          }
+        },
+        {
+          "path": "sse_multivector/mask-prompt-repeatability-v1/v4-trial-3/run/output.json",
+          "sha256": "5b0a23b0874aa183d69e58b0895cdd25cc1acba61bf903d58d434d85e62ca1df",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-repeatability-v1/v4-trial-3/run/manifest.json",
+            "sha256": "cbce7667076fa5bc5121cdcfd61dfbad48f24ce52ce982dd6771f80b8ace7bd6"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-repeatability-v1/v4-trial-3/config.json",
+            "sha256": "8a88969f90fc077a7b65dc5988d3914993642807a6f1d9211195f3aca848bf09"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-repeatability-v1/v4-trial-3/run/results.jsonl",
+            "sha256": "9e9624d8526dac2ca8422b0def552e27d10de9a2454ffcc765c03ff1b7614d18"
+          }
+        }
+      ],
+      "inputs": [
+        {
+          "path": "sse_multivector/mask-prompt-repeatability-v1/selection.json",
+          "sha256": "3ec4f6602d6ba97ba738cf82f1e76378c6fec352b97e4b9625c26fb8a3ca0513"
+        }
+      ],
+      "parameters": [
+        {
+          "path": "sse_multivector/mask-prompt-repeatability-v1/plan.json",
+          "sha256": "c5658d15521ccec49c9791354f9c186040bddb594b7c56f9d54ee63949da1976"
+        }
+      ],
+      "records": [
+        {
+          "path": "sse_multivector/mask-prompt-repeatability-v1/assistant-review.json",
+          "sha256": "a94c1a5096970cdd110222140d78c861e9778cf66fb4cfffc71c686e4e060519",
+          "role": "assessment"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-repeatability-v1/mechanical-checks.json",
+          "sha256": "3bc207729b1ee3c8c7c69e787e71c13295d25a57d3abc4b27b5f9ea51882eecf",
+          "role": "mechanical"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-repeatability-v1/review-evidence.json",
+          "sha256": "efb9158a32da1794975258335a33cc7b302f2e8a8cc6f7d729c54388d3a48898",
+          "role": "prior_user_review_snapshot"
+        }
+      ],
+      "limitations": [
+        "Comparison reports include24 prior first trials owned by probe-v3/v4 plus48 fresh calls here. Reference originals rather than count/duplicate them again."
+      ],
+      "recorded_call_counts": {
+        "final_attempted": 48,
+        "final_succeeded": 48,
+        "final_answer_records": 48,
+        "final_raw_answer_utf8_bytes": 6166
+      },
+      "baseline_references": [
+        {
+          "path": "target/atomic-subject-asv6.7-vs-asv6.8-attribution-v1/asv6.8-trial-1/output.json",
+          "sha256": "ba56b27cf102d9a19a995b8930dae41381d6eebadee2acbf0f9ba65ca191e9fc",
+          "manifest": {
+            "path": "target/atomic-subject-asv6.7-vs-asv6.8-attribution-v1/asv6.8-trial-1/manifest.json",
+            "sha256": "0b2a53d4548f88eefd2eed4dd3520764da9ecb2dfaaef996962f6f42b08b7951"
+          },
+          "role": "reused_subject_source"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-probe-v3/run/output.json",
+          "sha256": "727a076ccbbf4427498a37393f43f135a2b45ed55bfca49a5954d757dabb7dd9",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-probe-v3/run/manifest.json",
+            "sha256": "6bf1ef0af6140ac17218f553b68cf5eec5b02fdefd807e6f8c00d1026c646c83"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-probe-v3/config.json",
+            "sha256": "ce1212d33b67ef2b032d6a09092cd511944455020f0dc32248d40536015149ea"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-probe-v3/run/results.jsonl",
+            "sha256": "42f00361fb6f50af4076f2a88e20e6500ed837aa526944af974f1a9053a01950"
+          },
+          "role": "reused_comparison_baseline",
+          "source_study": "mask-prompt-probe-v3"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-probe-v4/run/output.json",
+          "sha256": "99668d486ecb8b64546f21d062870ed92353d420481120f442c74f0a65596b5d",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-probe-v4/run/manifest.json",
+            "sha256": "b327a8da44bcc4fd7b4222c393b80e4027ca9d6a276beb3d55e2766db9a80f2e"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-probe-v4/config.json",
+            "sha256": "8a88969f90fc077a7b65dc5988d3914993642807a6f1d9211195f3aca848bf09"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-probe-v4/run/results.jsonl",
+            "sha256": "7a7bb33212622c5920d1cb99936f2ff395448c9d84a34012a8599c5e0a4071ef"
+          },
+          "role": "reused_comparison_baseline",
+          "source_study": "mask-prompt-probe-v4"
+        }
+      ],
+      "expected_final_answers": 48,
+      "review_snapshot_references": [
+        {
+          "source": {
+            "path": "sse_multivector/mask-prompt-repeatability-v1/review-evidence.json",
+            "sha256": "efb9158a32da1794975258335a33cc7b302f2e8a8cc6f7d729c54388d3a48898"
+          },
+          "field": [
+            "v3"
+          ],
+          "session": {
+            "path": "target/atomic-subject-mask-probe-v3/review-session.json",
+            "sha256": "b7f169beedb6f732936e8e913ab42813eed6e1ec79f6ce9844a37fceb9c86499"
+          },
+          "batch": {
+            "path": "sse_multivector/mask-prompt-probe-v3/mask-review.json",
+            "sha256": "f3b0f5b6468d0c8e28d2d20494d8a308cc60422ac182bf52cdafdb36a5bf05cd"
+          },
+          "emit_decisions": false
+        },
+        {
+          "source": {
+            "path": "sse_multivector/mask-prompt-repeatability-v1/review-evidence.json",
+            "sha256": "efb9158a32da1794975258335a33cc7b302f2e8a8cc6f7d729c54388d3a48898"
+          },
+          "field": [
+            "v4"
+          ],
+          "session": {
+            "path": "target/atomic-subject-mask-probe-v4/review-session.json",
+            "sha256": "00abefe98138dbaf4a07824e453fd92c79580164789788d6f580fade8571f7d2"
+          },
+          "batch": {
+            "path": "sse_multivector/mask-prompt-probe-v4/mask-review.json",
+            "sha256": "4dcde2a63570e9b3084ed1756fd15476dcdcccc13b92036eb051ca4462f21707"
+          },
+          "emit_decisions": false
+        }
+      ],
+      "subject_provenance": {
+        "status": "known",
+        "versions": [
+          "ASv6.8"
+        ],
+        "version_sources": [
+          {
+            "path": "target/atomic-subject-asv6.7-vs-asv6.8-attribution-v1/asv6.8-trial-1/manifest.json",
+            "sha256": "0b2a53d4548f88eefd2eed4dd3520764da9ecb2dfaaef996962f6f42b08b7951",
+            "field": [
+              "subject",
+              "prompt_version"
+            ]
+          }
+        ],
+        "used_inputs": [
+          {
+            "path": "sse_multivector/mask-prompt-repeatability-v1/selection.json",
+            "sha256": "3ec4f6602d6ba97ba738cf82f1e76378c6fec352b97e4b9625c26fb8a3ca0513"
+          }
+        ],
+        "basis": "Native AS prompt-version fields plus exact original note identity, complete post text and selected subject wording/index. Recognition cases also explicitly identify unchanged ASv6.8 subjects in their frozen plan."
+      }
+    },
+    "mask-prompt-subject-source-sol-low-v1": {
+      "profile": "standalone-prompt",
+      "status": "historical",
+      "family": "standalone mask prompt study",
+      "selection_basis": "Maintained README identifies a standalone prompt/model/effort/repeatability/recognition study. Actual final answers, recorded assessments and mechanical measurements remain unselected data.",
+      "answers": [
+        {
+          "path": "sse_multivector/mask-prompt-subject-source-sol-low-v1/trial-1/run/output.json",
+          "sha256": "9d333a7cb6a801164fe7d55a05724ff06a4736bbf211400d6b5afed98651ff45",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-subject-source-sol-low-v1/trial-1/run/manifest.json",
+            "sha256": "5fadaebc12140ffd6626387d5534ceebbd2a6f4923aaf64e7f7de962d73e2d22"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-subject-source-sol-low-v1/trial-1/config.json",
+            "sha256": "8a84f427d9fbb2b1c34e430b4139f8084e0c4851c0c5de93c3b9786269c2df02"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-subject-source-sol-low-v1/trial-1/run/results.jsonl",
+            "sha256": "a56328f740f149af26204dfb981046b6156ecef04be92f1892adf5d43db0b579"
+          }
+        },
+        {
+          "path": "sse_multivector/mask-prompt-subject-source-sol-low-v1/trial-2/run/output.json",
+          "sha256": "45a04f7c74cf887a9eb25d9692d68dc1f472d4c9895a93ca07484e8ef633aa36",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-subject-source-sol-low-v1/trial-2/run/manifest.json",
+            "sha256": "78a0900fe7658e518211d269f9d6fa911b3ac8f9bd9bf942e0a364c31d1083a4"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-subject-source-sol-low-v1/trial-2/config.json",
+            "sha256": "8a84f427d9fbb2b1c34e430b4139f8084e0c4851c0c5de93c3b9786269c2df02"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-subject-source-sol-low-v1/trial-2/run/results.jsonl",
+            "sha256": "aafdb023c5cfff06f1c8bff0338c1b9b1861fca74ad662786a81cf82dac17dbf"
+          }
+        },
+        {
+          "path": "sse_multivector/mask-prompt-subject-source-sol-low-v1/trial-3/run/output.json",
+          "sha256": "a4e7889d5808bf47589a2886bc3c6380bd70a98138bf92a6f4843cf7a9b18e09",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-subject-source-sol-low-v1/trial-3/run/manifest.json",
+            "sha256": "42936341a613d43d7e15ffc4e601b90ca871e44c5d7cf25e30cb075ed291888f"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-subject-source-sol-low-v1/trial-3/config.json",
+            "sha256": "8a84f427d9fbb2b1c34e430b4139f8084e0c4851c0c5de93c3b9786269c2df02"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-subject-source-sol-low-v1/trial-3/run/results.jsonl",
+            "sha256": "14ca287d5a848f3ccf4845ba3ad01f10b91536bf1f7a25f5da677aff61cba160"
+          }
+        }
+      ],
+      "inputs": [
+        {
+          "path": "sse_multivector/mask-prompt-subject-source-sol-low-v1/selection.json",
+          "sha256": "3ec4f6602d6ba97ba738cf82f1e76378c6fec352b97e4b9625c26fb8a3ca0513"
+        }
+      ],
+      "parameters": [
+        {
+          "path": "sse_multivector/mask-prompt-subject-source-sol-low-v1/plan.json",
+          "sha256": "07f4d24d64df952c36fabc7be5093f5b41e105a9304f9ed2d7cc7301249a885d"
+        }
+      ],
+      "records": [
+        {
+          "path": "sse_multivector/mask-prompt-subject-source-sol-low-v1/assistant-review.json",
+          "sha256": "a0b040e933c14b6d46f36af30062aaa9f37b51fb1ba91a42205bbbd012d7117b",
+          "role": "assessment"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-subject-source-sol-low-v1/mechanical-checks.json",
+          "sha256": "e2272b93dd260c3e10f5646b28bdd5b0dd2751efb1abcc36f091e4380adb8a69",
+          "role": "mechanical"
+        }
+      ],
+      "limitations": [
+        "Comparisons reuse36 fragment-only baseline calls owned by astra-vs-sol-low-v1; preserve exact references without new-call counts."
+      ],
+      "recorded_call_counts": {
+        "final_attempted": 36,
+        "final_succeeded": 36,
+        "final_answer_records": 36,
+        "final_raw_answer_utf8_bytes": 14511
+      },
+      "baseline_references": [
+        {
+          "path": "target/atomic-subject-asv6.7-vs-asv6.8-attribution-v1/asv6.8-trial-1/output.json",
+          "sha256": "ba56b27cf102d9a19a995b8930dae41381d6eebadee2acbf0f9ba65ca191e9fc",
+          "manifest": {
+            "path": "target/atomic-subject-asv6.7-vs-asv6.8-attribution-v1/asv6.8-trial-1/manifest.json",
+            "sha256": "0b2a53d4548f88eefd2eed4dd3520764da9ecb2dfaaef996962f6f42b08b7951"
+          },
+          "role": "reused_subject_source"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-1/run/output.json",
+          "sha256": "4006b36e309c42c6155ad38cd1779d2f87eb6216ec5a7a95fb67c59cda18bf5b",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-1/run/manifest.json",
+            "sha256": "bcdce1301936a848091c81568b19cfec7e691e513c969000fcb113213cdce609"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-1/config.json",
+            "sha256": "9eafebb664bdc4e151675f490f433cbfb94abe9a3f41b98d2683a26b0d67bbf4"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-1/run/results.jsonl",
+            "sha256": "30583ef8841cabdff4f8f0db37ab6eb845f778560808ca6d70f3ad57a2e57155"
+          },
+          "role": "reused_comparison_baseline",
+          "source_study": "mask-prompt-astra-vs-sol-low-v1"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-2/run/output.json",
+          "sha256": "7d668997f90c9b79cf0f2ca24f427fed211939985f7b46025d0c387c7d5346e5",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-2/run/manifest.json",
+            "sha256": "dff815e52a937b13f90a46a8f7a79e97d9c5cb64a45b3b093a453f2a90e41608"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-2/config.json",
+            "sha256": "9eafebb664bdc4e151675f490f433cbfb94abe9a3f41b98d2683a26b0d67bbf4"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-2/run/results.jsonl",
+            "sha256": "e693f912f88043ba340122d16289d5a0a4d5e9b32b347d4b5901ef241478d352"
+          },
+          "role": "reused_comparison_baseline",
+          "source_study": "mask-prompt-astra-vs-sol-low-v1"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-3/run/output.json",
+          "sha256": "529b3e8cfeb6aabc856e6e1473dc1cfd10b07c2ba17ba3b5b261cfbdc6a93073",
+          "manifest": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-3/run/manifest.json",
+            "sha256": "7983a06e9619d77ec46ef607442e55a625462f83b691f8e77c4382d8961141fe"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-3/config.json",
+            "sha256": "9eafebb664bdc4e151675f490f433cbfb94abe9a3f41b98d2683a26b0d67bbf4"
+          },
+          "receipt": {
+            "path": "sse_multivector/mask-prompt-astra-vs-sol-low-v1/sol-trial-3/run/results.jsonl",
+            "sha256": "84f2fa6f083b44a7934db3c3a1dc37ea9ce2e136903ad56230d0864b1ab246ca"
+          },
+          "role": "reused_comparison_baseline",
+          "source_study": "mask-prompt-astra-vs-sol-low-v1"
+        }
+      ],
+      "validation_sources": [
+        {
+          "path": "sse_multivector/mask-prompt-subject-source-sol-low-v1/mask-prompt.md",
+          "sha256": "ad2652a7e5f404c7627588e38e04ae5f3944f3d532c48eeabf301a982d6033b8"
+        },
+        {
+          "path": "target/atomic-subject-mask-probe-v3/review-session.json",
+          "sha256": "b7f169beedb6f732936e8e913ab42813eed6e1ec79f6ce9844a37fceb9c86499"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-probe-v3/mask-review.json",
+          "sha256": "f3b0f5b6468d0c8e28d2d20494d8a308cc60422ac182bf52cdafdb36a5bf05cd"
+        },
+        {
+          "path": "target/atomic-subject-mask-probe-v4/review-session.json",
+          "sha256": "00abefe98138dbaf4a07824e453fd92c79580164789788d6f580fade8571f7d2"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-probe-v4/mask-review.json",
+          "sha256": "4dcde2a63570e9b3084ed1756fd15476dcdcccc13b92036eb051ca4462f21707"
+        }
+      ],
+      "expected_final_answers": 36,
+      "subject_provenance": {
+        "status": "known",
+        "versions": [
+          "ASv6.8"
+        ],
+        "version_sources": [
+          {
+            "path": "target/atomic-subject-asv6.7-vs-asv6.8-attribution-v1/asv6.8-trial-1/manifest.json",
+            "sha256": "0b2a53d4548f88eefd2eed4dd3520764da9ecb2dfaaef996962f6f42b08b7951",
+            "field": [
+              "subject",
+              "prompt_version"
+            ]
+          }
+        ],
+        "used_inputs": [
+          {
+            "path": "sse_multivector/mask-prompt-subject-source-sol-low-v1/selection.json",
+            "sha256": "3ec4f6602d6ba97ba738cf82f1e76378c6fec352b97e4b9625c26fb8a3ca0513"
+          }
+        ],
+        "basis": "Native AS prompt-version fields plus exact original note identity, complete post text and selected subject wording/index. Recognition cases also explicitly identify unchanged ASv6.8 subjects in their frozen plan."
+      }
+    },
+    "mpv3.4-low-regression-v1": {
+      "profile": "standalone-prompt",
+      "status": "historical",
+      "family": "early TP/MP development batches",
+      "selection_basis": "Concrete fixed-case TP/MP isolation/metadata/mask/regression batches have final saved answers but no selected source/answer binding. Retain as historical unassessed prompt-development evidence, not an invented semantic success claim.",
+      "answers": [
+        {
+          "path": "sse_multivector/mpv3.4-low-regression-v1/run/output.json",
+          "sha256": "9a0667f8cc9fdc8dd91279e3119a85aabeb76326ede4289cccf60cd5cc38ff0c",
+          "manifest": {
+            "path": "sse_multivector/mpv3.4-low-regression-v1/run/manifest.json",
+            "sha256": "6d1ff9aad2a9fd51e86e0818cb439244c2350f750ea73cc5221e7f8240bdfdcc"
+          },
+          "task": "mask",
+          "receipt": {
+            "path": "sse_multivector/mpv3.4-low-regression-v1/run/results.jsonl",
+            "sha256": "508b580eea5a7d79dac2ef69b2ff444155ba4eca51d1ac32a7c371102d40a4fc"
+          }
+        }
+      ],
+      "inputs": [],
+      "parameters": [],
+      "records": [],
+      "limitations": [
+        "No maintained authored report or final semantic assessment appears among indexed group files.",
+        "Canonical Nostr IDs absent: retain native prompt_id plus exact post text/hash; do not invent IDs.",
+        "Directory names do not prove a frozen prompt-version binding; exact templates are embedded in saved manifests/configs.",
+        "No canonical Nostr identity is inferred from a native prompt ID; exact supplied text and its hash are retained."
+      ],
+      "recorded_call_counts": {
+        "final_attempted": 17,
+        "final_succeeded": 17,
+        "final_answer_records": 17,
+        "final_raw_answer_utf8_bytes": 2308,
+        "configured_cases": 17
+      },
+      "expected_final_answers": 17,
+      "subject_provenance": {
+        "status": "unknown",
+        "versions": [],
+        "version_sources": [],
+        "used_inputs": [],
+        "basis": "Frozen early TP/MP manifests preserve exact instructions and supplied text but do not record a source AS version; no AS lineage inferred from TP/MP identifiers."
+      }
+    },
+    "mpv3.4-mask-iteration-1": {
+      "profile": "standalone-prompt",
+      "status": "historical",
+      "family": "early TP/MP development batches",
+      "selection_basis": "Concrete fixed-case TP/MP isolation/metadata/mask/regression batches have final saved answers but no selected source/answer binding. Retain as historical unassessed prompt-development evidence, not an invented semantic success claim.",
+      "answers": [
+        {
+          "path": "sse_multivector/mpv3.4-mask-iteration-1/run/output.json",
+          "sha256": "9dd80432956e46afe9432b7d4c52a09a1d98928d255e65547754811cf597749f",
+          "manifest": {
+            "path": "sse_multivector/mpv3.4-mask-iteration-1/run/manifest.json",
+            "sha256": "a400a9ca5beff0a516a92cbc11803122a2b12a25bc9c73174aab7ee8c7159066"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mpv3.4-mask-iteration-1/config.json",
+            "sha256": "d2c3478e8d992e83ecd6745745e4814633fe2fe4c59e4b007c83f8ccf16791ed"
+          },
+          "receipt": {
+            "path": "sse_multivector/mpv3.4-mask-iteration-1/run/results.jsonl",
+            "sha256": "27e4d127ac4101ac39992530b5b44037a6b5082277c647a415aa4b565785f5f9"
+          }
+        }
+      ],
+      "inputs": [],
+      "parameters": [],
+      "records": [],
+      "limitations": [
+        "No maintained authored report or final semantic assessment appears among indexed group files.",
+        "Canonical Nostr IDs absent: retain native prompt_id plus exact post text/hash; do not invent IDs.",
+        "Directory names do not prove a frozen prompt-version binding; exact templates are embedded in saved manifests/configs.",
+        "No canonical Nostr identity is inferred from a native prompt ID; exact supplied text and its hash are retained."
+      ],
+      "recorded_call_counts": {
+        "final_attempted": 6,
+        "final_succeeded": 6,
+        "final_answer_records": 6,
+        "final_raw_answer_utf8_bytes": 635,
+        "configured_cases": 6
+      },
+      "expected_final_answers": 6,
+      "subject_provenance": {
+        "status": "unknown",
+        "versions": [],
+        "version_sources": [],
+        "used_inputs": [],
+        "basis": "Frozen early TP/MP manifests preserve exact instructions and supplied text but do not record a source AS version; no AS lineage inferred from TP/MP identifiers."
+      }
+    },
+    "mpv3.4-xhigh-regression-v1": {
+      "profile": "standalone-prompt",
+      "status": "historical",
+      "family": "early TP/MP development batches",
+      "selection_basis": "Concrete fixed-case TP/MP isolation/metadata/mask/regression batches have final saved answers but no selected source/answer binding. Retain as historical unassessed prompt-development evidence, not an invented semantic success claim.",
+      "answers": [
+        {
+          "path": "sse_multivector/mpv3.4-xhigh-regression-v1/run/output.json",
+          "sha256": "da9f73a4c5ea72476ac1737bf79842cf2fb3621b41117bf23d7a23e9414d8288",
+          "manifest": {
+            "path": "sse_multivector/mpv3.4-xhigh-regression-v1/run/manifest.json",
+            "sha256": "106b95f96d7cb13aba572165feec1a45020f8d7e75f6b1ab43ef0fd5e7feaafb"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/mpv3.4-xhigh-regression-v1/config.json",
+            "sha256": "e8e2ccd099efd3aa5855db84e469900840a21124b8afbb219cbbe5ae0ea9834d"
+          },
+          "receipt": {
+            "path": "sse_multivector/mpv3.4-xhigh-regression-v1/run/results.jsonl",
+            "sha256": "0fc11059d98f9f84ded95b6b82cff6e9dff454c7246b745277db8337126f777b"
+          }
+        }
+      ],
+      "inputs": [],
+      "parameters": [],
+      "records": [],
+      "limitations": [
+        "No maintained authored report or final semantic assessment appears among indexed group files.",
+        "Canonical Nostr IDs absent: retain native prompt_id plus exact post text/hash; do not invent IDs.",
+        "Directory names do not prove a frozen prompt-version binding; exact templates are embedded in saved manifests/configs.",
+        "No canonical Nostr identity is inferred from a native prompt ID; exact supplied text and its hash are retained."
+      ],
+      "recorded_call_counts": {
+        "final_attempted": 17,
+        "final_succeeded": 17,
+        "final_answer_records": 17,
+        "final_raw_answer_utf8_bytes": 2424,
+        "configured_cases": 17
+      },
+      "expected_final_answers": 17,
+      "subject_provenance": {
+        "status": "unknown",
+        "versions": [],
+        "version_sources": [],
+        "used_inputs": [],
+        "basis": "Frozen early TP/MP manifests preserve exact instructions and supplied text but do not record a source AS version; no AS lineage inferred from TP/MP identifiers."
+      }
+    },
+    "tpv3.82-isolation-iteration-1": {
+      "profile": "standalone-prompt",
+      "status": "historical",
+      "family": "early TP/MP development batches",
+      "selection_basis": "Concrete fixed-case TP/MP isolation/metadata/mask/regression batches have final saved answers but no selected source/answer binding. Retain as historical unassessed prompt-development evidence, not an invented semantic success claim.",
+      "answers": [
+        {
+          "path": "sse_multivector/tpv3.82-isolation-iteration-1/run/output.json",
+          "sha256": "472f57b34401b21ee0bc10c174c905a244a9aaaa7a84f511d4d939c2c3cc74da",
+          "manifest": {
+            "path": "sse_multivector/tpv3.82-isolation-iteration-1/run/manifest.json",
+            "sha256": "467eb59d1d27e49beeb5fa4174730c6edd1eaa8a4dd57c389ca5ed8a8a6e9497"
+          },
+          "task": "takeaway",
+          "configuration": {
+            "path": "sse_multivector/tpv3.82-isolation-iteration-1/config.json",
+            "sha256": "42553ec3dbc59f9e4e2a1885ac62f570756689fb8ba928376198f02d08f42a95"
+          },
+          "receipt": {
+            "path": "sse_multivector/tpv3.82-isolation-iteration-1/run/results.jsonl",
+            "sha256": "27270a39e418eef303b86a40f347029f1ad740d56a3484fa867974faa3828712"
+          }
+        }
+      ],
+      "inputs": [],
+      "parameters": [],
+      "records": [],
+      "limitations": [
+        "No maintained authored report or final semantic assessment appears among indexed group files.",
+        "Canonical Nostr IDs absent: retain native prompt_id plus exact post text/hash; do not invent IDs.",
+        "Directory names do not prove a frozen prompt-version binding; exact templates are embedded in saved manifests/configs.",
+        "No canonical Nostr identity is inferred from a native prompt ID; exact supplied text and its hash are retained."
+      ],
+      "recorded_call_counts": {
+        "final_attempted": 5,
+        "final_succeeded": 5,
+        "final_answer_records": 5,
+        "final_raw_answer_utf8_bytes": 2096,
+        "configured_cases": 5
+      },
+      "expected_final_answers": 5,
+      "subject_provenance": {
+        "status": "unknown",
+        "versions": [],
+        "version_sources": [],
+        "used_inputs": [],
+        "basis": "Frozen early TP/MP manifests preserve exact instructions and supplied text but do not record a source AS version; no AS lineage inferred from TP/MP identifiers."
+      }
+    },
+    "tpv3.82-isolation-iteration-2": {
+      "profile": "standalone-prompt",
+      "status": "historical",
+      "family": "early TP/MP development batches",
+      "selection_basis": "Concrete fixed-case TP/MP isolation/metadata/mask/regression batches have final saved answers but no selected source/answer binding. Retain as historical unassessed prompt-development evidence, not an invented semantic success claim.",
+      "answers": [
+        {
+          "path": "sse_multivector/tpv3.82-isolation-iteration-2/run/output.json",
+          "sha256": "90063b853bafc2688d18ec3f76b123328708250800ab64479cd05a3bd478c0ca",
+          "manifest": {
+            "path": "sse_multivector/tpv3.82-isolation-iteration-2/run/manifest.json",
+            "sha256": "47e1cf2dec6d54f92c170cd111f0b3a2f5467e615d81707606262c557327dbb6"
+          },
+          "task": "takeaway",
+          "configuration": {
+            "path": "sse_multivector/tpv3.82-isolation-iteration-2/config.json",
+            "sha256": "5e9203c440b8323cf3708ad7ff556d2dd93bde73b565d4327cdad1408a0bc890"
+          },
+          "receipt": {
+            "path": "sse_multivector/tpv3.82-isolation-iteration-2/run/results.jsonl",
+            "sha256": "574c82b635c25eb1314beba261b70fbb1dcb567fd9acc17286da4f11f2e0fd45"
+          }
+        }
+      ],
+      "inputs": [],
+      "parameters": [],
+      "records": [],
+      "limitations": [
+        "No maintained authored report or final semantic assessment appears among indexed group files.",
+        "Canonical Nostr IDs absent: retain native prompt_id plus exact post text/hash; do not invent IDs.",
+        "Directory names do not prove a frozen prompt-version binding; exact templates are embedded in saved manifests/configs.",
+        "No canonical Nostr identity is inferred from a native prompt ID; exact supplied text and its hash are retained."
+      ],
+      "recorded_call_counts": {
+        "final_attempted": 5,
+        "final_succeeded": 5,
+        "final_answer_records": 5,
+        "final_raw_answer_utf8_bytes": 4163,
+        "configured_cases": 5
+      },
+      "expected_final_answers": 5,
+      "subject_provenance": {
+        "status": "unknown",
+        "versions": [],
+        "version_sources": [],
+        "used_inputs": [],
+        "basis": "Frozen early TP/MP manifests preserve exact instructions and supplied text but do not record a source AS version; no AS lineage inferred from TP/MP identifiers."
+      }
+    },
+    "tpv3.82-isolation-revision-probe-v1": {
+      "profile": "standalone-prompt",
+      "status": "historical",
+      "family": "early TP/MP development batches",
+      "selection_basis": "Concrete fixed-case TP/MP isolation/metadata/mask/regression batches have final saved answers but no selected source/answer binding. Retain as historical unassessed prompt-development evidence, not an invented semantic success claim.",
+      "answers": [
+        {
+          "path": "sse_multivector/tpv3.82-isolation-revision-probe-v1/run/output.json",
+          "sha256": "543b96d9610d06d1724dd5adf819a542ea5109759fa391e4ff40238120faf41f",
+          "manifest": {
+            "path": "sse_multivector/tpv3.82-isolation-revision-probe-v1/run/manifest.json",
+            "sha256": "43d751f9c7f8ca6ceb13e8d26b727490be076c0a8b203b8074fa899e0b088470"
+          },
+          "task": "takeaway",
+          "configuration": {
+            "path": "sse_multivector/tpv3.82-isolation-revision-probe-v1/config.json",
+            "sha256": "6291ff018eaa7dbe834b46ff158da4e46d9a0bfefcb1c6384795c7719d23a4f5"
+          },
+          "receipt": {
+            "path": "sse_multivector/tpv3.82-isolation-revision-probe-v1/run/results.jsonl",
+            "sha256": "d2f98556332bd418783809d24ceff346b78911b331bd2c404e2643381664bbde"
+          }
+        }
+      ],
+      "inputs": [],
+      "parameters": [],
+      "records": [],
+      "limitations": [
+        "No maintained authored report or final semantic assessment appears among indexed group files.",
+        "Canonical Nostr IDs absent: retain native prompt_id plus exact post text/hash; do not invent IDs.",
+        "Directory names do not prove a frozen prompt-version binding; exact templates are embedded in saved manifests/configs.",
+        "No canonical Nostr identity is inferred from a native prompt ID; exact supplied text and its hash are retained."
+      ],
+      "recorded_call_counts": {
+        "final_attempted": 4,
+        "final_succeeded": 4,
+        "final_answer_records": 4,
+        "final_raw_answer_utf8_bytes": 1960,
+        "configured_cases": 4
+      },
+      "expected_final_answers": 4,
+      "subject_provenance": {
+        "status": "unknown",
+        "versions": [],
+        "version_sources": [],
+        "used_inputs": [],
+        "basis": "Frozen early TP/MP manifests preserve exact instructions and supplied text but do not record a source AS version; no AS lineage inferred from TP/MP identifiers."
+      }
+    },
+    "tpv3.82-metadata-probe-v1": {
+      "profile": "standalone-prompt",
+      "status": "historical",
+      "family": "early TP/MP development batches",
+      "selection_basis": "Concrete fixed-case TP/MP isolation/metadata/mask/regression batches have final saved answers but no selected source/answer binding. Retain as historical unassessed prompt-development evidence, not an invented semantic success claim.",
+      "answers": [
+        {
+          "path": "sse_multivector/tpv3.82-metadata-probe-v1/run/output.json",
+          "sha256": "d05f366a6f2c8fc6fde98f5d2dd013038a116de4590008b48cc8480f20ab0897",
+          "manifest": {
+            "path": "sse_multivector/tpv3.82-metadata-probe-v1/run/manifest.json",
+            "sha256": "296b7f7578d889a733358476d5e7aa865898c64051d008711c5dd9456688f83b"
+          },
+          "task": "takeaway",
+          "configuration": {
+            "path": "sse_multivector/tpv3.82-metadata-probe-v1/config.json",
+            "sha256": "852cf52905c256bcd2b169a65a2a28447433e4e9ab4a760476375511b194de42"
+          },
+          "receipt": {
+            "path": "sse_multivector/tpv3.82-metadata-probe-v1/run/results.jsonl",
+            "sha256": "871adefb8581b90b4a9938af8037d144763e4678873cc7f4a531afdd7e836f22"
+          }
+        }
+      ],
+      "inputs": [],
+      "parameters": [],
+      "records": [],
+      "limitations": [
+        "No maintained authored report or final semantic assessment appears among indexed group files.",
+        "Canonical Nostr IDs absent: retain native prompt_id plus exact post text/hash; do not invent IDs.",
+        "Directory names do not prove a frozen prompt-version binding; exact templates are embedded in saved manifests/configs.",
+        "No canonical Nostr identity is inferred from a native prompt ID; exact supplied text and its hash are retained."
+      ],
+      "recorded_call_counts": {
+        "final_attempted": 6,
+        "final_succeeded": 6,
+        "final_answer_records": 6,
+        "final_raw_answer_utf8_bytes": 1530,
+        "configured_cases": 6
+      },
+      "expected_final_answers": 6,
+      "subject_provenance": {
+        "status": "unknown",
+        "versions": [],
+        "version_sources": [],
+        "used_inputs": [],
+        "basis": "Frozen early TP/MP manifests preserve exact instructions and supplied text but do not record a source AS version; no AS lineage inferred from TP/MP identifiers."
+      }
+    },
+    "tpv3.82-mpv3.3-mask-validation-v1": {
+      "profile": "standalone-prompt",
+      "status": "historical",
+      "family": "early TP/MP development batches",
+      "selection_basis": "Concrete fixed-case TP/MP isolation/metadata/mask/regression batches have final saved answers but no selected source/answer binding. Retain as historical unassessed prompt-development evidence, not an invented semantic success claim.",
+      "answers": [
+        {
+          "path": "sse_multivector/tpv3.82-mpv3.3-mask-validation-v1/run/output.json",
+          "sha256": "819f8c594f1ad3388381e06c46c8166e285eef440ef5c8fbfcba433a34627241",
+          "manifest": {
+            "path": "sse_multivector/tpv3.82-mpv3.3-mask-validation-v1/run/manifest.json",
+            "sha256": "36699ca938a7dd54c004949609b489a1e009f41d3ce00e444a256d467216f668"
+          },
+          "task": "mask",
+          "configuration": {
+            "path": "sse_multivector/tpv3.82-mpv3.3-mask-validation-v1/config.json",
+            "sha256": "58a9599be732bd816dee7284763687c34b6c5959568a8849e0e0a4464d73f79f"
+          },
+          "receipt": {
+            "path": "sse_multivector/tpv3.82-mpv3.3-mask-validation-v1/run/results.jsonl",
+            "sha256": "21dbe811d9d117b9b8f971016f173000a2bd277dde4d65f2c40a956f95b5e232"
+          }
+        }
+      ],
+      "inputs": [],
+      "parameters": [],
+      "records": [],
+      "limitations": [
+        "No maintained authored report or final semantic assessment appears among indexed group files.",
+        "Canonical Nostr IDs absent: retain native prompt_id plus exact post text/hash; do not invent IDs.",
+        "Directory names do not prove a frozen prompt-version binding; exact templates are embedded in saved manifests/configs.",
+        "No canonical Nostr identity is inferred from a native prompt ID; exact supplied text and its hash are retained."
+      ],
+      "recorded_call_counts": {
+        "final_attempted": 7,
+        "final_succeeded": 7,
+        "final_answer_records": 7,
+        "final_raw_answer_utf8_bytes": 688,
+        "configured_cases": 7
+      },
+      "expected_final_answers": 7,
+      "subject_provenance": {
+        "status": "unknown",
+        "versions": [],
+        "version_sources": [],
+        "used_inputs": [],
+        "basis": "Frozen early TP/MP manifests preserve exact instructions and supplied text but do not record a source AS version; no AS lineage inferred from TP/MP identifiers."
+      }
+    },
+    "tpv3.82-redundancy-iteration-1": {
+      "profile": "standalone-prompt",
+      "status": "partial_recorded",
+      "family": "early TP/MP development batches",
+      "selection_basis": "Concrete fixed-case TP/MP isolation/metadata/mask/regression batches have final saved answers but no selected source/answer binding. Retain as historical unassessed prompt-development evidence, not an invented semantic success claim.",
+      "answers": [],
+      "inputs": [],
+      "parameters": [],
+      "records": [],
+      "limitations": [
+        "No maintained authored report or final semantic assessment appears among indexed group files.",
+        "Canonical Nostr IDs absent: retain native prompt_id plus exact post text/hash; do not invent IDs.",
+        "Directory names do not prove a frozen prompt-version binding; exact templates are embedded in saved manifests/configs.",
+        "Partial:2 saved successful answers for5 configured cases; no aggregate output.json or known final status for3 remaining cases. Do not infer they failed or ran.",
+        "No canonical Nostr identity is inferred from a native prompt ID; exact supplied text and its hash are retained."
+      ],
+      "recorded_call_counts": {
+        "final_attempted": 2,
+        "final_succeeded": 2,
+        "final_answer_records": 2,
+        "final_raw_answer_utf8_bytes": 1406,
+        "configured_cases": 5
+      },
+      "receipt_only_answers": [
+        {
+          "path": "sse_multivector/tpv3.82-redundancy-iteration-1/run/results.jsonl",
+          "sha256": "048e28d543df1e2ee0b01b0a8bc37943c4d4e7e02f9ec7e233718e05aa208ae3",
+          "manifest": {
+            "path": "sse_multivector/tpv3.82-redundancy-iteration-1/run/manifest.json",
+            "sha256": "6ed2ddecafe40ea68a1123e06fa9acf9f6f67c1d04bd539fb0e7bd45f69498a5"
+          },
+          "configuration": {
+            "path": "sse_multivector/tpv3.82-redundancy-iteration-1/config.json",
+            "sha256": "4b3dbb6fc1309fe7c7693690dda5b967767b967da47629043643e7ea6ac34dc6"
+          },
+          "task": "takeaway"
+        }
+      ],
+      "expected_final_answers": 2,
+      "subject_provenance": {
+        "status": "unknown",
+        "versions": [],
+        "version_sources": [],
+        "used_inputs": [],
+        "basis": "Frozen early TP/MP manifests preserve exact instructions and supplied text but do not record a source AS version; no AS lineage inferred from TP/MP identifiers."
+      }
+    }
+  }
+}

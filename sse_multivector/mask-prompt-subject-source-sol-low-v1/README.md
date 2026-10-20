@@ -73,4 +73,4 @@ Trials ran sequentially, each with a 2 GiB local memory cap, zero swap allowance
 
 Timing is observational, not a latency benchmark. Calls used the existing Codex subscription; no paid API, rented compute, or account switch was used. All 39 protected files were unchanged, including prompts, registries, the budget ledger, baseline results, and user review decisions. There were no retries, output repairs, SSE runs, or production-code changes.
 
-See [conversion gaps](../../docs/experiments/publication-gaps.csv) for `collection:tracked-mask-prompt-subject-source-sol-low-v1`.
+Selected inputs, final answers, recorded reviews and parameters: `historical-studies/mask-prompt-subject-source-sol-low-v1`. See the [publication catalog](../../docs/experiments/publications.csv) and [file checksums](../../docs/experiments/publication-files.csv).

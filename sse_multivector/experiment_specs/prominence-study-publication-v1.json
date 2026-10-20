@@ -1,0 +1,299 @@
+{
+  "schema_version": 1,
+  "studies": {
+    "prominence-prompt-goal-v1/ppv10-mixed-notes-v1": {
+      "assessments": [
+        {
+          "format": "markdown",
+          "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-mixed-notes-v1/assessment.md",
+          "sha256": "403f1e958e6e3da8def96406bb132734c471afae796a32f39564c93eb13beb55"
+        }
+      ],
+      "configuration": {
+        "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-mixed-notes-v1/config.json",
+        "sha256": "706e517cf827b549c5676dc940b6e086e43174f5209be8751fb73026d1b6c590"
+      },
+      "inputs": {
+        "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-mixed-notes-v1/inputs.json",
+        "sha256": "ac93cb48fcdbd050b3ec331b8f37fc544d313abb8fff12d3b78fe991fd548a47"
+      },
+      "manifest": {
+        "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-mixed-notes-v1/run/manifest.json",
+        "sha256": "286dbb8ec322ad0b8f6cc7132e6b95f45ff1ab921930382030d7afd63ce2cdd3"
+      },
+      "origin_sources": [
+        {
+          "format": "assessment",
+          "path": "sse_multivector/mask-prompt-goal-v1/mpv3.26-transfer-v1/assessment.json",
+          "sha256": "952a3560c2d50a954f1b9926753f1ce94b20837e40218af4360192de5391816b"
+        },
+        {
+          "format": "corpus",
+          "path": "sse_multivector/real-note-fine-segmentation-v1/reviewed-input.json",
+          "sha256": "9de47b1a66867e612aaf706da5002d4b04b4e9d8192e3782330a693dd1dea019"
+        }
+      ],
+      "output": {
+        "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-mixed-notes-v1/run/output.json",
+        "sha256": "b1a5676a235cdcf704d232a98835437f244f240662c50c5463c42622ef96db84"
+      },
+      "pinned_inputs": {
+        "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-mixed-notes-v1/input-hashes.json",
+        "sha256": "58a21bfee90f582a73ed74ae39c2677b23ef9d813590e44214e58415f258b3ef"
+      },
+      "plan": {
+        "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-mixed-notes-v1/plan.json",
+        "sha256": "946f76bb93ca0591ea3f2c4254a3540ac008a12b073989f93bbf514ea9d798a6"
+      },
+      "profile": "prominence",
+      "prompt": {
+        "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-draft-v1/PPv10.md",
+        "sha256": "d40835fb0b104865727c0b0a2bde4074afb642991d9bddc424d5379ef4b038ea"
+      },
+      "receipt": {
+        "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-mixed-notes-v1/run/results.jsonl",
+        "sha256": "d5abe527ae108f8919d8a6f00441813f4925b245c75c954e541bdd4fdd47b571"
+      },
+      "result": {
+        "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-mixed-notes-v1/results.json",
+        "sha256": "6c32ea6b82221758767bc15e20e189bbc39c5550994cf8191b7350e45fcb13f8"
+      },
+      "subject_provenance_status": "mixed deprecated ASv6.48 and unknown",
+      "subject_versions": [
+        "ASv6.48"
+      ],
+      "validation_sources": [
+        {
+          "path": "sse_multivector/mask-prompt-goal-v1/mpv3.26-transfer-v1/assessment.json",
+          "sha256": "952a3560c2d50a954f1b9926753f1ce94b20837e40218af4360192de5391816b"
+        },
+        {
+          "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-draft-v1/PPv10.md",
+          "sha256": "d40835fb0b104865727c0b0a2bde4074afb642991d9bddc424d5379ef4b038ea"
+        },
+        {
+          "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-mixed-notes-v1/config.json",
+          "sha256": "706e517cf827b549c5676dc940b6e086e43174f5209be8751fb73026d1b6c590"
+        },
+        {
+          "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-mixed-notes-v1/inputs.json",
+          "sha256": "ac93cb48fcdbd050b3ec331b8f37fc544d313abb8fff12d3b78fe991fd548a47"
+        },
+        {
+          "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-mixed-notes-v1/plan.json",
+          "sha256": "946f76bb93ca0591ea3f2c4254a3540ac008a12b073989f93bbf514ea9d798a6"
+        },
+        {
+          "path": "sse_multivector/real-note-fine-segmentation-v1/reviewed-input.json",
+          "sha256": "9de47b1a66867e612aaf706da5002d4b04b4e9d8192e3782330a693dd1dea019"
+        }
+      ]
+    },
+    "prominence-prompt-goal-v1/ppv10-mpv3.43-muse13high-v1": {
+      "assessments": [],
+      "configuration": {
+        "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-mpv3.43-muse13high-v1/config.json",
+        "sha256": "d5449479d0cb723056823b0d99e04990464336823b23547cd13e5df228970882"
+      },
+      "historical_code_pins": {
+        "sse_multivector/mask_positions.py": "690bc72e9a372562b35b2604d57c168440c3675915b1a229447f6d8bebe3dc8e"
+      },
+      "historical_code_revisions": {
+        "sse_multivector/mask_positions.py": "0f3443ac3ef93e978888c1c32010a315cea45fd0"
+      },
+      "inputs": {
+        "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-mpv3.43-muse13high-v1/inputs.json",
+        "sha256": "59808bf4cf43b07d27791e43fd01e5d5d73bbc50ac69a3500eeb0bffb1cd0952"
+      },
+      "manifest": {
+        "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-mpv3.43-muse13high-v1/run/manifest.json",
+        "sha256": "9cd4db2e21051718cf39ab4e213d16b6a92ef8723b3d6966df2bde1fc0dc5123"
+      },
+      "mask_source": {
+        "cases": {
+          "path": "sse_multivector/mask-prompt-goal-v1/mpv3.43-probe-v1/cases.json",
+          "sha256": "1043f9ff16f728a1ce228f4e48ae44bdcf89b6c10146e34a275aaef68ed9c022"
+        },
+        "receipt": {
+          "path": "sse_multivector/mask-prompt-goal-v1/mpv3.43-probe-v1/run/results.jsonl",
+          "sha256": "c98e9b3cfc5c345b837d37b8284be1a76de3ad4f9dd422728f727f14f17a2571"
+        }
+      },
+      "origin_sources": [],
+      "output": {
+        "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-mpv3.43-muse13high-v1/run/output.json",
+        "sha256": "91bad6c14ab86a994243bbb8f70ca7b5869031a6430c36fef141d3cd7af7df5c"
+      },
+      "pinned_inputs": {
+        "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-mpv3.43-muse13high-v1/input-hashes.json",
+        "sha256": "4dfa2f959ebd733355ab10b75bbaaaa724eef80556db5c374009f880ac6afa64"
+      },
+      "plan": {
+        "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-mpv3.43-muse13high-v1/plan.json",
+        "sha256": "48a3d35e0d62608cd3bf4a421044e82a8d5869403700559cc5530e3953508886"
+      },
+      "profile": "prominence",
+      "prompt": {
+        "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-draft-v1/PPv10.md",
+        "sha256": "d40835fb0b104865727c0b0a2bde4074afb642991d9bddc424d5379ef4b038ea"
+      },
+      "receipt": {
+        "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-mpv3.43-muse13high-v1/run/results.jsonl",
+        "sha256": "72c5bb209088d596bb7a9ff969a36c3e7be3fa23d4d7d8005ced2e490a112f24"
+      },
+      "result": {
+        "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-mpv3.43-muse13high-v1/results.json",
+        "sha256": "cfc744667492eeed0aae373a7e5217bdddd60600e42bd1ce84d0187a881f43d6"
+      },
+      "subject_provenance_status": "deprecated ASv6.48",
+      "subject_versions": [
+        "ASv6.48"
+      ],
+      "validation_sources": [
+        {
+          "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-draft-v1/PPv10.md",
+          "sha256": "d40835fb0b104865727c0b0a2bde4074afb642991d9bddc424d5379ef4b038ea"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-goal-v1/mpv3.43-probe-v1/cases.json",
+          "sha256": "1043f9ff16f728a1ce228f4e48ae44bdcf89b6c10146e34a275aaef68ed9c022"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-goal-v1/mpv3.43-probe-v1/run/results.jsonl",
+          "sha256": "c98e9b3cfc5c345b837d37b8284be1a76de3ad4f9dd422728f727f14f17a2571"
+        },
+        {
+          "path": "sse_multivector/mask_positions.py",
+          "sha256": "c4f91990a804f47e628f1016b4e35650656b058836965dbb85fcfeb90c8f5faf"
+        },
+        {
+          "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-mpv3.43-muse13high-v1/plan.json",
+          "sha256": "48a3d35e0d62608cd3bf4a421044e82a8d5869403700559cc5530e3953508886"
+        },
+        {
+          "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-mpv3.43-muse13high-v1/inputs.json",
+          "sha256": "59808bf4cf43b07d27791e43fd01e5d5d73bbc50ac69a3500eeb0bffb1cd0952"
+        },
+        {
+          "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-mpv3.43-muse13high-v1/config.json",
+          "sha256": "d5449479d0cb723056823b0d99e04990464336823b23547cd13e5df228970882"
+        }
+      ]
+    },
+    "prominence-prompt-goal-v1/ppv10-ranking-v1": {
+      "assessments": [
+        {
+          "format": "json",
+          "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-ranking-v1/assessment.json",
+          "sha256": "42459db2d75a9b571c3dd6d3cbccaba3790071ce099b3031abe67af443c203d1"
+        }
+      ],
+      "configuration": {
+        "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-ranking-v1/config.json",
+        "sha256": "64d3bddf73b0fef445d6c03e9649b001dc0156d9a8184f25566c0484a235be67"
+      },
+      "inputs": {
+        "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-ranking-v1/inputs.json",
+        "sha256": "22987c236dd4b7ca58fc8715ee7734495fe0d119665d81130a3dabf206909b1e"
+      },
+      "manifest": {
+        "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-ranking-v1/run/manifest.json",
+        "sha256": "e0e3060743f3914b4f6bdd9f93097368aa8a19195b02160c04a81d89ee5b72e7"
+      },
+      "origin_sources": [
+        {
+          "format": "assessment",
+          "path": "sse_multivector/mask-prompt-goal-v1/mpv3.26-coffee-ban-hierarchy-v1/assessment.json",
+          "sha256": "d3535cdce9350453b54dd476a866b3ce3d5fcdead331158c139d71b1a30048e8"
+        },
+        {
+          "format": "assessment",
+          "path": "sse_multivector/mask-prompt-goal-v1/mpv3.26-complete-hierarchies-v1/assessment.json",
+          "sha256": "0d29cdfe53be2db466157b9eb6f9d62265b353851ea059c3f31edffd946284b8"
+        },
+        {
+          "format": "assessment",
+          "path": "sse_multivector/mask-prompt-goal-v1/mpv3.27-infant-hierarchy-v1/assessment.json",
+          "sha256": "6dd708858fb90a5fd9fd0f2312bb0a6734df2a36528bc6f80b173a193749ddad"
+        },
+        {
+          "format": "assessment",
+          "path": "sse_multivector/mask-prompt-goal-v1/mpv3.31-probe-v1/assessment.json",
+          "sha256": "43c3062921a771fcdea6fb279beade1181fb359877c08f623362af90711470da"
+        },
+        {
+          "format": "corpus",
+          "path": "sse_multivector/real-note-fine-segmentation-v1/reviewed-input.json",
+          "sha256": "9de47b1a66867e612aaf706da5002d4b04b4e9d8192e3782330a693dd1dea019"
+        }
+      ],
+      "output": {
+        "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-ranking-v1/run/output.json",
+        "sha256": "36f24d8d51683b5f0875d26f7eae84828d3243b729ed9d50cfc4a635ef53dc7f"
+      },
+      "pinned_inputs": {
+        "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-ranking-v1/input-hashes.json",
+        "sha256": "24f59fb7e452dff531f162db3d28b8f1f7caacbe5392ac0bece0d7377fa7891f"
+      },
+      "plan": {
+        "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-ranking-v1/plan.json",
+        "sha256": "cfa2a24667e7558ff62ad76b5776dc07d865a84cbb1984f45d0535caf9071fd4"
+      },
+      "profile": "prominence",
+      "prompt": {
+        "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-draft-v1/PPv10.md",
+        "sha256": "d40835fb0b104865727c0b0a2bde4074afb642991d9bddc424d5379ef4b038ea"
+      },
+      "receipt": {
+        "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-ranking-v1/run/results.jsonl",
+        "sha256": "c4a69260cc5efcbf3ba43d76d2d3e6f2da0688b6487fe7ee2aaffb279b76323d"
+      },
+      "result": {
+        "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-ranking-v1/results.json",
+        "sha256": "48fba541c8dd83c0b76726238851dcfae5fa4fc06d1d9398e10cdf24d34076a0"
+      },
+      "subject_provenance_status": "mixed deprecated ASv6.48 and unknown",
+      "subject_versions": [
+        "ASv6.48"
+      ],
+      "validation_sources": [
+        {
+          "path": "sse_multivector/mask-prompt-goal-v1/mpv3.26-coffee-ban-hierarchy-v1/assessment.json",
+          "sha256": "d3535cdce9350453b54dd476a866b3ce3d5fcdead331158c139d71b1a30048e8"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-goal-v1/mpv3.26-complete-hierarchies-v1/assessment.json",
+          "sha256": "0d29cdfe53be2db466157b9eb6f9d62265b353851ea059c3f31edffd946284b8"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-goal-v1/mpv3.27-infant-hierarchy-v1/assessment.json",
+          "sha256": "6dd708858fb90a5fd9fd0f2312bb0a6734df2a36528bc6f80b173a193749ddad"
+        },
+        {
+          "path": "sse_multivector/mask-prompt-goal-v1/mpv3.31-probe-v1/assessment.json",
+          "sha256": "43c3062921a771fcdea6fb279beade1181fb359877c08f623362af90711470da"
+        },
+        {
+          "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-draft-v1/PPv10.md",
+          "sha256": "d40835fb0b104865727c0b0a2bde4074afb642991d9bddc424d5379ef4b038ea"
+        },
+        {
+          "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-ranking-v1/config.json",
+          "sha256": "64d3bddf73b0fef445d6c03e9649b001dc0156d9a8184f25566c0484a235be67"
+        },
+        {
+          "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-ranking-v1/inputs.json",
+          "sha256": "22987c236dd4b7ca58fc8715ee7734495fe0d119665d81130a3dabf206909b1e"
+        },
+        {
+          "path": "sse_multivector/prominence-prompt-goal-v1/ppv10-ranking-v1/plan.json",
+          "sha256": "cfa2a24667e7558ff62ad76b5776dc07d865a84cbb1984f45d0535caf9071fd4"
+        },
+        {
+          "path": "sse_multivector/real-note-fine-segmentation-v1/reviewed-input.json",
+          "sha256": "9de47b1a66867e612aaf706da5002d4b04b4e9d8192e3782330a693dd1dea019"
+        }
+      ]
+    }
+  }
+}

@@ -50,3 +50,5 @@ ASv6.8, the mask registry, prior results, and prior user review files were not c
 - `mechanical-checks.json` and `review-preparation.json`: source matching, order validation, and the M05 display-only reorder.
 - `assistant-review.json`: independent analysis of all 12 outputs against v2.
 - `verification.json`: identity checks, isolation, usage, resource limits, and production-TUI smoke result.
+
+Selected inputs, final answers, recorded reviews and parameters: `historical-studies/mask-prompt-probe-v3`. See the [publication catalog](../../docs/experiments/publications.csv) and [file checksums](../../docs/experiments/publication-files.csv).

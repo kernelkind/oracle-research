@@ -41,4 +41,4 @@ ASv6.8, mask defaults, SSE, segmentation, production code, and all saved human d
 
 Raw input/output and event records are in `trial-{1,2,3}/run/`. `./assistant-review.json` contains the per-call semantic judgments; `./verification.json` contains the execution, isolation, resource, and integrity checks. `./cases.json` preserves exact note text and source occurrences.
 
-See [conversion gaps](../../docs/experiments/publication-gaps.csv) for `collection:tracked-mask-prompt-recognition-sol-low-v1`.
+Selected inputs, final answers, recorded reviews and parameters: `historical-studies/mask-prompt-recognition-sol-low-v1`. See the [publication catalog](../../docs/experiments/publications.csv) and [file checksums](../../docs/experiments/publication-files.csv).
