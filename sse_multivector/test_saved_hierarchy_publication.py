@@ -188,6 +188,85 @@ class SavedHierarchyPublicationTests(unittest.TestCase):
         self.assertEqual(metadata['scientific_role'], 'reference input')
         self.assertIsNone(metadata['counts']['notes'])
 
+    def test_cyclic_true_graph_is_retained_without_unsigned_dag_conversion(self):
+        selection = self.true_fixture()
+        self.export(selection)
+        self.assertEqual(self.rows('answers.jsonl'), [])
+        graphs = [row for row in self.rows('results.jsonl') if row['type'].endswith('true_graph')]
+        self.assertEqual(len(graphs), 2)
+        self.assertEqual(graphs[0]['data']['cycle_components'], [['A', 'B']])
+        self.assertEqual(graphs[0]['data']['roots'], [])
+        self.assertEqual(graphs[0]['data']['transitive_reduced_edges'], None)
+        self.assertEqual(graphs[0]['data']['raw_edges'][1]['score_origin']['reused'], True)
+        self.assertEqual(graphs[0]['data']['raw_edges'][0]['score_ref']['publication'], 'numerical/prior')
+        self.assertEqual(json.loads((self.output / 'experiment.json').read_text())['counts']['raw_directions'], 2)
+        data = ''.join(path.read_text() for path in self.output.iterdir())
+        self.assertNotIn('EXPANDED-REQUEST', data)
+        self.assertNotIn('PRIVATE-KEY', data)
+        self.assertNotIn('"token_ids"', data)
+
+    def true_fixture(self):
+        science = {'generated_text': '1', 'generated_token_ids': [0, 209, 1],
+            'eos_terminated': True, 'predicted': True, 'entailment_score': .7,
+            'threshold_predicted': True, 'logit_0_first_token': 0,
+            'logit_1_first_token': 1, 'probability_0_first_token': .2,
+            'first_token_binary_score': .8, 'first_token_binary_label': 1,
+            'label_prefix_probability_mass': .9, 'argmax_token_id': 209}
+        rows = [dict(science, id=a+'-'+b, a_id=a, b_id=b, a=a, b=b,
+            model_input='EXPANDED-REQUEST', token_ids=[100, 200],
+            score_origin={'source': 'prior/scores.jsonl', 'row_index': i,
+                          'row_id': a+'-'+b, 'reused': bool(i)})
+            for i, (a, b) in enumerate([('A', 'B'), ('B', 'A')])]
+        payload = self.write('published.jsonl', rows[0])
+        path = self.source / 'published.jsonl'
+        path.write_text(''.join(json.dumps({k: v for k, v in row.items()
+                                           if k not in ('score_origin', 'model_input', 'token_ids')})+'\n'
+                                for row in rows))
+        payload['sha256'] = hashlib.sha256(path.read_bytes()).hexdigest()
+        graph = {'threshold': .142, 'nodes': [{'group': 'A', 'title': 'A'}, {'group': 'B', 'title': 'B'}],
+                 'raw_edges': rows, 'roots': [], 'cycle_components': [['A', 'B']],
+                 'transitive_reduced_edges': None, 'stats': {'nodes': 2, 'raw_edges': 2,
+                     'cycle_components': 1, 'scored_ordered_pairs': 2}}
+        raw = self.write('raw-graph.json', graph)
+        derived = self.write('graph.json', graph)
+        score_table = self.write('scores.json', rows)
+        code = self.write('source.py', 'Frozen source bytes.')
+        canonical = self.write('canonical.json', {'titles': {'groups': graph['nodes'], 'status': 'saved'},
+            'scores': rows, 'consolidations': [], 'source_packets': {'packets': [
+                {'packet': 'A', 'instances': [{'note_id': 'post-a', 'text': 'éTea',
+                    'byte_spans': [[2, 5]], 'instance': 'V1', 'fragments': ['Tea']}]}]}})
+        memberships = self.write('notes.json', {'nodes': [{'group': 'A', 'own_note_ids': ['post-a']}],
+            'stats': {'nodes': 1, 'unique_note_count': 1}})
+        raw_completion = self.write('raw-completion.json', {
+            'scores_sha256': score_table['sha256'], 'graph_sha256': raw['sha256'],
+            'graph_code_sha256': code['sha256'], 'stats': graph['stats']})
+        final = self.write('completion.json', {'files': {binding['path']: binding['sha256']
+            for binding in (derived, memberships, canonical)}, 'raw_stats': graph['stats'],
+            'canonical_stats': graph['stats'], 'note_stats': {'nodes': 1, 'unique_note_count': 1}})
+        config = {'model_id': 'saved/TRUE', 'revision': 'saved-revision', 'threshold': .142,
+                  'seed': 0, 'api_key': 'PRIVATE-KEY'}
+        return {'profile': 'saved-hierarchy', 'kind': 'true-graph', 'hierarchy': raw,
+            'score_table': score_table, 'derived_graph': derived, 'canonical': canonical,
+            'memberships': memberships, 'raw_completion': raw_completion,
+            'derived_completion': final, 'configuration': self.write('config.json', config),
+            'plan': self.write('plan.json', config), 'graph_code': code,
+            'published_scores': [{'source': 'prior/scores.jsonl', 'publication': 'numerical/prior',
+                                  'payload': payload}]}
+
+    def test_true_score_and_completion_bindings_fail_before_writing(self):
+        for field, filename, mutate, message in [
+            ('raw_completion', 'raw-completion.json', lambda value: value.update(graph_sha256='0'*64),
+             'raw completion'),
+            ('score_table', 'scores.json', lambda value: value[0].update(entailment_score=.8),
+             'published scientific output')]:
+            selection = self.true_fixture()
+            value = json.loads((self.source / filename).read_text())
+            mutate(value)
+            selection[field] = self.write(filename, value)
+            with self.assertRaisesRegex(ValueError, message):
+                self.export(selection)
+            self.assertFalse(self.output.exists())
+
     def test_existing_project_cli_exports_selected_saved_hierarchy(self):
         selection = self.fixture()
         spec = self.root / 'selection.json'

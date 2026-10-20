@@ -42,7 +42,8 @@ remain historical evidence; raw source posts are not deprecated by that rule.
   branches are outputs, not a count of independent trials.
 - [Publication files](publication-files.csv) and [checksums](publication.sha256):
   every selected local payload and metadata file, including exact prepared inputs.
-  The [remaining item](publication-gaps.csv) is TRUE10's missing configuration.
+  The [conversion-gap list](publication-gaps.csv) is now empty. TRUE10's final
+  graph is selected with its existing run configuration and plan.
   The 33 formerly unsupported entries now have selected final evidence or an
   explicit intermediate/duplicate disposition.
   The [109-group review](open-items.md#historical-collection-review) resolved 32
@@ -80,7 +81,7 @@ remain historical evidence; raw source posts are not deprecated by that rule.
   The archived-baseline collection adds four bundles of final CREC answers,
   segments and geometry measurements. Assembled answers and reused work remain
   explicitly identified; see the [archived-baseline checks](reproduce.md#archived-baseline-checks).
-  The final conversion batch adds 28 bundles of saved hierarchies, partitions,
+  The hierarchy/navigation/performance batch adds 28 bundles of saved hierarchies, partitions,
   manual reference fixtures, navigation measurements and performance results.
   See the [shared export command and limits](reproduce.md#saved-hierarchy-navigation-and-performance-checks).
   Eleven SSE representation studies also retain their final numerical comparisons
@@ -134,8 +135,8 @@ The catalog records the source and export format; a selected bundle can cover
 part of a study without recreating its original working directory.
 
 These exports are still local. [Hosting and download preparation](downloads.md#before-downloads-become-available)
-remains open. [TRUE10's missing configuration](publication-gaps.csv) is the
-remaining conversion gap; its maintained findings remain readable here.
+remains open. [All reviewed conversion gaps](publication-gaps.csv) are closed;
+this does not resolve the separate reproduction and privacy limits.
 
 ## Release layout
 
@@ -157,7 +158,7 @@ Hugging Face Models will host all 17 evaluated
 adapters (6.78 GiB). Hugging Face Datasets will host used posts, prepared training
 data, final unsigned hierarchies, standalone prompt answers, evaluation and
 numerical results, and each experiment's parameters. The selected local files
-currently measure 1.09 GiB; missing evidence and reproduction limits remain explicit.
+currently measure 1.10 GiB; missing evidence and reproduction limits remain explicit.
 
 The [publication plan](downloads.md) defines those contents. The new
 [publication file list](publication-files.csv) describes the exact local

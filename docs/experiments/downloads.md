@@ -11,7 +11,7 @@ is complete; privacy and identity review remains open.
 | --- | --- |
 | GitHub | Code and its history, tests, prompts and their provenance, authored findings, useful documentation, the selected-study index and commit mapping; download size unmeasured |
 | Hugging Face Models | All 17 evaluated adapters, with configurations and pinned base-model references: **6.78 GiB** |
-| Hugging Face Datasets | Posts actually used, prepared training data, final unsigned hierarchies, standalone prompt answers, evaluation results, final numerical results and each experiment's parameters: **1.09 GiB currently staged**, with TRUE10's missing configuration unresolved |
+| Hugging Face Datasets | Posts actually used, prepared training data, final unsigned hierarchies, standalone prompt answers, evaluation results, final numerical results and each experiment's parameters: **1.10 GiB currently staged**, with all reviewed conversion gaps closed |
 
 The GitHub index will link each experiment to its inputs and results at exact
 Hugging Face revisions, with checksums. Readers should be able to download the
@@ -174,17 +174,17 @@ download or Hugging Face revision has been created.
 | SSE representation studies: final comparisons, fixed inputs and encoder settings | 11 collections, 381 encoded row identities | 0.84 MiB |
 | ASv6.100 evaluation documents | Final quality summary and four frozen agent rubrics, shared by three trials | 0.09 MiB |
 | Fine-tune, grading and effort evaluations | 67 final/last reports, including 20 validation stages | 665.12 MiB |
-| Historical numerical results, including segmentations, archived baselines, Infomap partitions and navigation studies | 90 bundles | 107.47 MiB |
+| Historical numerical results, including segmentations, archived baselines, Infomap partitions and navigation studies | 91 bundles | 109.79 MiB |
 | Performance measurements | 13 bundles | 0.12 MiB |
 | Unsigned hierarchies, selections and parameters | 37 official runs, 203 saved branch outputs and 10 further historical hierarchies | 7.23 MiB |
 | Used posts, prepared training inputs, manual reference fixtures and adapter hash records | 10,571 shared posts, four prepared files, two reference fixtures, split/settings records and 17 adapter bindings | 67.89 MiB |
-| **Selected non-model files** | **10,010 files** | **1,121.22 MiB (1.09 GiB)** |
+| **Selected non-model files** | **10,015 files** | **1,123.54 MiB (1.10 GiB)** |
 | **All 17 evaluated adapters, weights and configurations** | **34 original files, hashed without copying weights** | **6.78 GiB** |
 
-The exact selected non-model total is **1,175,687,686 bytes**. Together with
-the adapter weights/configurations it is **8,455,775,455 bytes (7.88 GiB)**.
+The exact selected non-model total is **1,178,119,887 bytes**. Together with
+the adapter weights/configurations it is **8,458,207,656 bytes (7.88 GiB)**.
 Code and cleaned Git history are additional. Measured gzip level-6 compression
-of each non-model file totals **168,003,715 bytes (160.22 MiB)**; no compressed
+of each non-model file totals **168,260,249 bytes (160.47 MiB)**; no compressed
 downloads were created and the staged files remain in their original export
 formats.
 
@@ -224,16 +224,21 @@ and their diagnostics. TEv4.1's existing answer inputs are referenced without
 duplication. Complete original archives remain outside these downloads. See the
 [archived-baseline checks](reproduce.md#archived-baseline-checks).
 
-The final conversion batch adds **28 bundles, 140 files and 10,973,854 bytes
+The hierarchy/navigation/performance batch adds **28 bundles, 140 files and 10,973,854 bytes
 (10.47 MiB)**, or **2,078,449 bytes (1.98 MiB)** with gzip level 6. These contain
 14 final hierarchies/partitions, two manual reference fixtures, eight navigation
 studies and four performance units covering seven reports and their summary.
 See the [shared command and reproduction limits](reproduce.md#saved-hierarchy-navigation-and-performance-checks).
 
+TRUE10 adds **five files, 2,432,201 bytes (2.32 MiB)**, or **256,534 bytes**
+with gzip level 6. Its raw and canonical graphs retain their unresolved cycles;
+direction scores reference six existing selected bundles. The export binds
+the saved run configuration and plan, without inventing a graph configuration.
+
 These are measured selected outputs, not an exhaustive all-history size claim.
 All 33 formerly unsupported entries are resolved by this selection or their
-recorded intermediate/duplicate dispositions. The
-[remaining item](publication-gaps.csv) is TRUE10's missing configuration. The
+recorded intermediate/duplicate dispositions. TRUE10 closes the last
+[conversion gap](publication-gaps.csv); the file now contains only its header. The
 [109-group historical review](open-items.md#historical-collection-review)
 resolved 32 groups needing no separate result export. The other 77 are now
 selected: 33 title/description groups, 11 SSE representation groups, six
@@ -464,8 +469,8 @@ Unsupported historical schemas fail explicitly.
 All these exports use staged, managed output directories and payload hashes.
 An unchanged refresh preserves bytes and modification times; unrelated files or
 another source's destination are refused. The [local historical selection](#measured-local-exports)
-has been backfilled. TRUE10's missing configuration and final download
-verification remain unresolved. These local exports have not published the collection.
+has been backfilled, including TRUE10. Final download verification remains
+unfinished. These local exports have not published the collection.
 
 ## Start small
 
@@ -486,7 +491,7 @@ for a study:
 | [experiments.csv](experiments.csv) | Selected studies with prompt/model settings, provenance and links to compact exports; rows are not an additive count of independent trials |
 | [publications.csv](publications.csv) | Selected output formats, source/trial identities, sizes and coverage qualifications |
 | [publication-files.csv](publication-files.csv) and [publication.sha256](publication.sha256) | Exact selected payload and metadata paths, sizes and checksums |
-| [publication-gaps.csv](publication-gaps.csv) | Remaining conversion gap: TRUE10's missing configuration |
+| [publication-gaps.csv](publication-gaps.csv) | Conversion-gap record; currently no open rows |
 | [models.csv](models.csv) | All 17 evaluated adapter checkpoints and their pinned base-model references |
 | [historical-files.csv](historical-files.csv) and [historical-uses.csv](historical-uses.csv) | Original artifact blobs and commit associations from the pre-rewrite audit |
 
@@ -514,14 +519,12 @@ stay at their original workspace paths.
 
 The public `experiments.csv` retains the selected rows' identities, settings and
 original order, with publication notes linking later-selected evidence.
-The remaining configuration gap is recorded in `publication-gaps.csv`;
-the retained findings and provenance
+The reviewed conversion gaps are closed; the retained findings and provenance
 tables preserve meaningful recovery and missing-evidence qualifications.
 
 ## Before downloads become available
 
-Resolve or explicitly retain TRUE10's missing-configuration limitation.
-Check that exported inputs,
+Retain the recorded reproduction limits. Check that exported inputs,
 parameters, result identities and status agree with the saved evidence, including
 reuse and incomplete runs. Review the selected data for sensitive information.
 Test reader instructions using only the proposed downloads and documented

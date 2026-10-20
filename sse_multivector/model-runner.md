@@ -2283,8 +2283,12 @@ Their 28 bundles preserve final hierarchies/partitions, manual reference inputs,
 navigation measurements and performance reports. Categorized hierarchy results
 use unsigned `kind`/`tags`/`content` records; Infomap retains its native numerical
 format. See the [shared example and replay limits](../docs/experiments/reproduce.md#saved-hierarchy-navigation-and-performance-checks).
-TRUE10's missing configuration, privacy review and hosted download verification
-remain unresolved. The signed export below retains its existing
+The [true-graph selection](experiment_specs/true-graph-publication-v1.json),
+study `navigation-TRUE10`, uses the same command and binds the saved run
+configuration and plan. It preserves both final graphs, unresolved cycles,
+memberships, assessments and references to existing score bodies.
+All reviewed conversion gaps are closed; privacy review, recorded replay limits
+and hosted download verification remain open. The signed export below retains its existing
 behavior.
 
 ### Review viewer export

@@ -1,2 +1,1 @@
 experiment_id,category,source,status,reason
-collection:tracked-navigation-research-v1,numerical,publication:sse_multivector/navigation-research-v1/TRUE10/graph,missing,Final score data exists but the exporter requires a source-local configuration that is absent

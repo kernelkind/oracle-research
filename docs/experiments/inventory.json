@@ -217,10 +217,10 @@
   "compact_exports": {
     "state": "Local selected compact exports; not uploaded or approved for publication",
     "artifact_root": "target/publication-exports",
-    "publications": 3183,
-    "files": 10010,
-    "bytes": 1175687686,
-    "gzip_bytes": 168003715,
+    "publications": 3184,
+    "files": 10015,
+    "bytes": 1178119887,
+    "gzip_bytes": 168260249,
     "gzip_method": "Measured gzip level 6 per staged file, in memory; no compressed downloads created",
     "categories": {
       "comparison": {
@@ -266,10 +266,10 @@
         "files": 22
       },
       "numerical": {
-        "bytes": 112695605,
-        "gzip_bytes": 21388241,
-        "bundles": 90,
-        "files": 304
+        "bytes": 115127806,
+        "gzip_bytes": 21644775,
+        "bundles": 91,
+        "files": 309
       },
       "performance": {
         "bytes": 123534,
@@ -320,11 +320,11 @@
         "bundles": 123
       }
     },
-    "gaps": 1,
+    "gaps": 0,
     "gap_status_counts": {
       "unsupported": 0,
       "legacy_export_needed": 0,
-      "missing": 1
+      "missing": 0
     },
     "native_status_counts": {
       "intermediate": 477,
@@ -335,10 +335,10 @@
     },
     "adapter_checkpoints": 17,
     "adapter_weight_and_config_bytes": 7280087769,
-    "combined_staged_and_model_bytes": 8455775455,
+    "combined_staged_and_model_bytes": 8458207656,
     "oracle_export_commit": "fcfd4cabcba7102aab81dcffec018c00b4498a55",
     "runner_export_commit": "34d7eb79dc714275145a983ffeb42ddcddc42561",
-    "export_commit_scope": "These commits identify the original selection before historical_study_backfill; the four added bundles bind their exporter source separately by SHA-256. The later original Markdown documents are bound directly by source hashes and file checksums. Each title-study export separately binds its publisher and input-validation code hashes. Representation exports separately bind their adapter source hash and preserve exact native scientific JSON values. Historical subject/mask exports separately bind all declared sources and exporter code by SHA-256. Earlier exports retain their original exporter versions; early/standalone and manual prominence exports separately bind all current exporter/helper sources by SHA-256. Later segmentation, fine-region title and frontier exports bind their exporter/helper sources separately by SHA-256. Archived-baseline exports also bind exporter/helper sources and audited archive/member/counterpart identities by SHA-256. Reviewed remaining profiles bind their selection, original sources and exporter/helper hashes independently.",
+    "export_commit_scope": "These commits identify the original selection before historical_study_backfill; the four added bundles bind their exporter source separately by SHA-256. The later original Markdown documents are bound directly by source hashes and file checksums. Each title-study export separately binds its publisher and input-validation code hashes. Representation exports separately bind their adapter source hash and preserve exact native scientific JSON values. Historical subject/mask exports separately bind all declared sources and exporter code by SHA-256. Earlier exports retain their original exporter versions; early/standalone and manual prominence exports separately bind all current exporter/helper sources by SHA-256. Later segmentation, fine-region title and frontier exports bind their exporter/helper sources separately by SHA-256. Archived-baseline exports also bind exporter/helper sources and audited archive/member/counterpart identities by SHA-256. Reviewed remaining profiles bind their selection, original sources and exporter/helper hashes independently. TRUE10 final graph data binds its original run/plan settings and existing score bodies explicitly.",
     "source_originals_preserved": true,
     "fresh_model_inference": false,
     "uploads": false,
@@ -1117,7 +1117,35 @@
         "Exact learning-benchmark training selection and frozen fitter version remain unlocated in checked sources.",
         "TRUE10 graph configuration remains missing; that separate gap stays open.",
         "Final publication privacy review and hosted reader tests remain open."
-      ]
+      ],
+      "limits_scope": "Limits recorded at that backfill checkpoint. The later true10_final_graph_backfill resolves the graph-local configuration requirement using original run/plan records."
+    },
+    "true10_final_graph_backfill": {
+      "publication": "historical-studies/navigation-TRUE10",
+      "files": 5,
+      "bytes": 2432201,
+      "gzip_bytes": 256534,
+      "counts": {
+        "canonical_cycles": 2,
+        "canonical_directions": 3306,
+        "canonical_edges": 88,
+        "canonical_nodes": 58,
+        "note_memberships": 58,
+        "raw_cycles": 4,
+        "raw_directions": 3540,
+        "raw_edges": 95,
+        "raw_nodes": 60,
+        "source_posts": 77
+      },
+      "selection_spec": "sse_multivector/experiment_specs/true-graph-publication-v1.json",
+      "tests_passed": 25,
+      "configuration": "Original TRUE10/run/config.json and plan.json; no graph-local configuration was written or reconstructed.",
+      "raw_cycles_preserved": true,
+      "reviewed_equivalence_cycles_preserved": true,
+      "original_sources_preserved": true,
+      "new_inference": false,
+      "uploads": false,
+      "remaining_limits": "Learning-benchmark input/fitter recovery, privacy and hosted-reader testing remain open."
     }
   },
   "discovery_scope": "Top-level discovery counts and follow-ups describe the original local audit; public_index and compact_exports describe the selected public evidence.",
@@ -1132,10 +1160,10 @@
       "native": 2547,
       "training run": 4
     },
-    "selection": "Original selected rows retain study identities, settings and order; 33 later-selected historical title collections and 11 SSE representation collections are appended from the original index, alongside four later-located historical subject-prompt studies. Representation rows identify manual spans/local SSE explicitly. Six ASv6.100 native rows also link shared final evaluation documents. Six original subject/mask collection rows are also appended with links to 123 additional study/review entries; previously selected studies and ASv6.100 evidence are not duplicated. Twenty-two original early/standalone prompt collection rows are also appended with links to 21 prompt entries and three manual prominence entries; existing native prominence studies remain unchanged. Four original segmentation, fine-region title and frontier collection rows are also appended with links to 16 additional evidence bundles; reused baselines remain references. The original archived-baselines collection row is also appended with links to four final-evidence bundles; TEv4.1 answers reuse existing selected content. Reviewed final hierarchies, partitions, navigation measurements, performance evidence and manual reference inputs are now linked; unsupported entries were resolved without publishing preparation states or duplicate copies.",
+    "selection": "Original selected rows retain study identities, settings and order; 33 later-selected historical title collections and 11 SSE representation collections are appended from the original index, alongside four later-located historical subject-prompt studies. Representation rows identify manual spans/local SSE explicitly. Six ASv6.100 native rows also link shared final evaluation documents. Six original subject/mask collection rows are also appended with links to 123 additional study/review entries; previously selected studies and ASv6.100 evidence are not duplicated. Twenty-two original early/standalone prompt collection rows are also appended with links to 21 prompt entries and three manual prominence entries; existing native prominence studies remain unchanged. Four original segmentation, fine-region title and frontier collection rows are also appended with links to 16 additional evidence bundles; reused baselines remain references. The original archived-baselines collection row is also appended with links to four final-evidence bundles; TEv4.1 answers reuse existing selected content. Reviewed final hierarchies, partitions, navigation measurements, performance evidence and manual reference inputs are now linked; unsupported entries were resolved without publishing preparation states or duplicate copies. TRUE10 final graphs and assessments use original run/plan bindings and verified existing-score references; no listed conversion gaps remain.",
     "original_index_rows": 27193,
     "omitted_internal_and_other_unselected_rows": 24518,
-    "remaining_reviews": "publication-gaps.csv",
+    "remaining_reviews": "open-items.md; publication-gaps.csv tracks conversion gaps only (none remain in the selected evidence)",
     "local_audit": {
       "root": "target/publication-audit/index-before-simplification-1f3d541c",
       "files": 1286,

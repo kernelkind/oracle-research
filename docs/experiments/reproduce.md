@@ -445,7 +445,7 @@ experiment/source identities. [Publication files](publication-files.csv) records
 every path, byte count and SHA-256 beneath `target/publication-exports/`.
 These paths describe local staging, not an available download.
 
-With the `ORACLE_ROOT` setup above, verify all 10,010 selected files:
+With the `ORACLE_ROOT` setup above, verify all 10,015 selected files:
 
 ```bash
 cd "$ORACLE_ROOT/target/publication-exports"
@@ -457,8 +457,8 @@ The command prints failures only and exits zero when every listed checksum
 matches. This checks file bytes; it does not assess scientific correctness or
 perform privacy review. The [measured selection](downloads.md#measured-local-exports)
 describes sizes, input splits and excluded intermediates. The
-[remaining-items table](publication-gaps.csv) identifies the required
-configuration not located for TRUE10/graph. All 33 formerly unsupported entries
+[conversion-gap table](publication-gaps.csv) now has no open rows. TRUE10's
+export uses its saved run configuration and plan. All 33 formerly unsupported entries
 now have selected evidence or an explicit intermediate/duplicate disposition. The
 [historical collection review](open-items.md#historical-collection-review)
 resolved its 109 groups through retained material or selected final evidence.
@@ -756,8 +756,8 @@ were preserved, and nothing was uploaded.
 
 ### Historical backfill checks
 
-The current local selection contains **3,183 output/input directories and 10,010
-files**, totaling **1,175,687,686 bytes**. Every listed file was independently
+The current local selection contains **3,184 output/input directories and 10,015
+files**, totaling **1,178,119,887 bytes**. Every listed file was independently
 rehashed. Structured payload bindings were checked against their export manifests;
 the five original ASv6.100 Markdown documents match their recorded source hashes.
 Exact prepared-input copies were also checked against their frozen source hashes.
@@ -787,9 +787,9 @@ checks (four GPU skips); four final production-CLI integration checks also
 passed. The two broader evaluation compatibility failures described above
 remain unresolved. No fresh inference, training or semantic grading occurred.
 
-This checks the selected supported formats. [Remaining historical exports](publication-gaps.csv)
-remain outside this size/completeness claim. Privacy review and a clean reader
-test against the eventual hosted selection are still pending.
+This checks the selected formats; it does not claim exhaustive all-history
+coverage. The [conversion-gap list](publication-gaps.csv) is now empty. Privacy
+review and a clean reader test against the eventual hosted selection remain pending.
 
 ### Saved hierarchy, navigation and performance checks
 
@@ -833,8 +833,20 @@ gzip level 6. All **219 relevant tests** pass. The exact admitted 180-case
 training selection and frozen fitter/runtime version remain unlocated for the
 learning benchmark; saved measurements do not establish full replay. Unknown
 AS provenance stays unknown. Original evidence remains unchanged; nothing was
-uploaded. TRUE10's missing configuration, final privacy review and hosted reader
-tests remain open.
+uploaded. Final privacy review and hosted reader tests remain open.
+
+For TRUE10, use the [true-graph selection](../../sse_multivector/experiment_specs/true-graph-publication-v1.json)
+and study ID `navigation-TRUE10` in the same command. The source root must also
+contain the six selected score bundles at the `target/publication-exports/`
+paths declared by the specification, so their referenced payloads can be verified.
+It binds the existing
+`TRUE10/run/config.json` and `TRUE10/plan.json`; assembly never wrote
+`TRUE10/graph/config.json`. The raw 60-node/95-edge graph and canonical
+58-node/88-edge graph retain their four and two cycles respectively, alongside
+58 note memberships, 77 source posts and two saved agent assessments. Its
+3,540 raw direction references use exact score bodies in six existing bundles;
+3,306 canonical directions are verified separately. All 25 focused/common/unsigned
+tests pass. This closes the conversion gap without claiming full reproduction.
 
 ### Archived baseline checks
 

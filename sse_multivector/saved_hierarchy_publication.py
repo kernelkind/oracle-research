@@ -11,7 +11,7 @@ from . import canonical_hierarchy_nostr as nostr
 _PRIVATE = {'api_key', 'api_token', 'access_token', 'refresh_token', 'password',
             'credentials', 'auth_file', 'codex_home', 'authorization', 'headers',
             'account', 'account_id', 'session_id', 'thread_id', 'argv', 'stderr',
-            'stdout', 'stdout_json', 'environment_variables'}
+            'stdout', 'stdout_json', 'environment_variables', 'tracking_card'}
 _LOCAL = re.compile(r'/(?:home|Users|tmp|mnt|private|run)/[^\s\"\x27<>\[\](){},;`]*')
 _CATEGORY = {'schema_version', 'hierarchy_id', 'source_sha256', 'root_node_id',
              'notes', 'nodes', 'note_masks', 'mask_instances'}
@@ -209,9 +209,139 @@ def _infomap(sources, selection, metadata, value):
     return [], [{'type': 'native_infomap_hierarchy', 'data': _clean(value, sources)}]
 
 
+def _true_graph(sources, selection, metadata, raw_graph):
+    """Keep native cyclic graphs and reference their already-published scores."""
+    import ijson
+    from ._runner_bootstrap import shared
+
+    science = {'a', 'b', 'generated_text', 'generated_token_ids', 'eos_terminated',
+               'predicted', 'entailment_score', 'threshold_predicted',
+               'logit_0_first_token', 'logit_1_first_token', 'probability_0_first_token',
+               'first_token_binary_score', 'first_token_binary_label',
+               'label_prefix_probability_mass', 'argmax_token_id'}
+    score_rows = []
+    with sources.stream(selection['score_table']['path']) as stream:
+        score_rows.extend(ijson.items(stream, 'item', use_float=True))
+    needed = {}
+    for row in score_rows:
+        origin = row['score_origin']
+        needed.setdefault(origin['source'], set()).add(origin['row_id'])
+    published, publications = {}, {}
+    for declaration in selection['published_scores']:
+        source = declaration['source']
+        _require(source not in publications, 'duplicate published score source')
+        publications[source] = declaration['publication']
+        found = {}
+        with sources.stream(declaration['payload']['path']) as stream:
+            for row in ijson.items(stream, '', multiple_values=True, use_float=True):
+                if row.get('id') in needed.get(source, set()):
+                    _require(row['id'] not in found, 'duplicate published score row')
+                    found[row['id']] = {key: row[key] for key in science if key in row}
+        _require(set(found) == needed.get(source, set()), 'published score reference is missing')
+        published[source] = found
+    _require(set(publications) == set(needed), 'unbound native score origin')
+
+    def score_reference(row):
+        origin = row['score_origin']
+        _require(set(origin) == {'source', 'row_index', 'row_id', 'reused'}
+                 and type(origin['reused']) is bool and type(origin['row_index']) is int
+                 and origin['row_index'] >= 0, 'invalid recorded score origin')
+        saved = published.get(origin['source'], {}).get(origin['row_id'])
+        _require(saved is not None and science <= row.keys()
+                 and saved == {key: row[key] for key in science},
+                 'native score differs from the published scientific output')
+        return {'id': row['id'], 'a_id': row['a_id'], 'b_id': row['b_id'],
+                'score_ref': {'publication': publications[origin['source']],
+                              'row_id': origin['row_id']}, 'score_origin': origin}
+
+    directions = [dict(type='direction_reference', **score_reference(row)) for row in score_rows]
+    _require(len({row['id'] for row in directions}) == len(directions), 'duplicate raw direction')
+    posts = {}
+
+    def project(value):
+        if isinstance(value, dict):
+            if 'score_origin' in value:
+                return score_reference(value)
+            if {'note_id', 'text', 'byte_spans'} <= value.keys():
+                text, note = value['text'], value['note_id']
+                _require(isinstance(text, str) and isinstance(note, str), 'invalid source mask input')
+                digest = _sha(text.encode())
+                _require(posts.get(note, digest) == digest, 'conflicting source post texts')
+                posts[note] = digest
+                _ranges(value['byte_spans'], text)
+                value = {key: item for key, item in value.items() if key != 'text'}
+                value['source_post_sha256'] = digest
+            return {key: project(item) for key, item in value.items()
+                    if key not in _PRIVATE and key not in {'model_input', 'token_ids', 'batch_seconds'}}
+        if isinstance(value, list):
+            return [project(item) for item in value]
+        return _clean(value, sources)
+
+    config = sources.read(selection['configuration']['path'])
+    plan = sources.read(selection['plan']['path'])
+    graph = sources.read(selection['derived_graph']['path'])
+    completion = sources.read(selection['raw_completion']['path'])
+    final = sources.read(selection['derived_completion']['path'])
+    _require(completion['scores_sha256'] == selection['score_table']['sha256']
+             and completion['graph_sha256'] == selection['hierarchy']['sha256']
+             and completion['graph_code_sha256'] == selection['graph_code']['sha256']
+             and completion['stats'] == raw_graph['stats'], 'raw completion binding differs')
+    selected = {Path(declaration['path']).name: declaration['sha256'] for declaration in (
+        selection['derived_graph'], selection['memberships'], selection['canonical'],
+        *selection.get('derived_records', []))}
+    _require(all(final['files'].get(name) == digest for name, digest in selected.items()),
+             'derived completion binding differs')
+    _require(final['raw_stats'] == raw_graph['stats'] and final['canonical_stats'] == graph['stats'],
+             'final graph accounting differs')
+    _require(plan['threshold'] == config['threshold'] == raw_graph['threshold'] == graph['threshold']
+             and plan['model_id'] == config['model_id'] and plan['revision'] == config['revision'],
+             'plan/config graph settings differ')
+    projection = shared('json_projection')
+    helper = Path(projection.__file__)
+    metadata['exporter_sources']['experiment_runner/' + helper.name] = _sha(helper.read_bytes())
+    with sources.stream(selection['canonical']['path']) as stream:
+        canonical = projection.project(stream, {'titles', 'source_packets', 'consolidations'})
+    with sources.stream(selection['canonical']['path']) as stream:
+        canonical_count = sum(1 for row in ijson.items(stream, 'scores.item', use_float=True)
+                              if score_reference(row))
+    _require(canonical_count == graph['stats']['scored_ordered_pairs'], 'canonical direction count differs')
+    results = directions + [{'type': 'raw_true_graph', 'data': project(raw_graph)},
+                            {'type': 'canonical_true_graph', 'data': project(graph)}]
+    memberships = sources.read(selection['memberships']['path'])
+    _require(memberships['stats'] == final['note_stats'], 'final note membership accounting differs')
+    results.append({'type': 'canonical_note_memberships', 'data': project(memberships)})
+    inputs = [{'type': 'source_packets', 'data': project(canonical['source_packets'])}]
+    for consolidation in canonical['consolidations']:
+        # Original group/packet bodies are already retained by graphs/packet inputs.
+        inputs.append({'type': 'recorded_consolidation', 'data': project({
+            key: item for key, item in consolidation.items()
+            if key not in {'source_groups', 'source_packets'}})})
+    inputs.extend({'type': 'source_post_reference', 'note_id': note, 'sha256': digest}
+                  for note, digest in posts.items())
+    judgments = []
+    for declaration in selection.get('assessments', []):
+        judgments.append({'type': declaration['role'],
+            'actor': {'kind': 'agent', 'basis': 'Saved TRUE10 scientific assessment; not a user verdict.'},
+            'source': {key: declaration[key] for key in ('path', 'sha256')},
+            'data': project(sources.read(declaration['path']))})
+    for declaration in selection.get('derived_records', []):
+        results.append({'type': declaration['role'], 'data': project(sources.read(declaration['path']))})
+    metadata['parameters'].update(configuration=_clean(config, sources), plan=_clean(plan, sources),
+        raw_completion=completion, derived_completion=_clean(final, sources),
+        canonical_title_context=_clean({key: item for key, item in canonical['titles'].items()
+                                        if key != 'groups'}, sources))
+    metadata.update(representation='Native cyclic TRUE graphs; no unsigned DAG conversion or inferred repair.',
+        counts={'raw_nodes': len(raw_graph['nodes']), 'raw_edges': len(raw_graph['raw_edges']),
+                'raw_cycles': len(raw_graph['cycle_components']), 'raw_directions': len(directions),
+                'canonical_nodes': len(graph['nodes']), 'canonical_edges': len(graph['raw_edges']),
+                'canonical_cycles': len(graph['cycle_components']), 'canonical_directions': canonical_count,
+                'note_memberships': len(memberships['nodes']), 'source_posts': len(posts)})
+    return inputs, results, judgments
+
+
 def prepare(sources, selection, metadata):
     kind = selection.get('kind')
-    _require(kind in ('categories', 'infomap', 'reference'), 'unsupported saved hierarchy selection')
+    _require(kind in ('categories', 'infomap', 'reference', 'true-graph'), 'unsupported saved hierarchy selection')
     value = sources.read(selection['hierarchy']['path'])
     helper = Path(nostr.__file__)
     metadata['exporter_sources']['sse_multivector/' + helper.name] = _sha(helper.read_bytes())
@@ -229,7 +359,10 @@ def prepare(sources, selection, metadata):
                      'selected parameter field is missing')
             parameters = {field: parameters[field] for field in fields}
         metadata['parameters'][declaration['path']] = _clean(parameters, sources)
-    if kind == 'categories':
+    judgments = []
+    if kind == 'true-graph':
+        inputs, results, judgments = _true_graph(sources, selection, metadata, value)
+    elif kind == 'categories':
         inputs, results = _categories(sources, selection, metadata, value)
     elif kind == 'infomap':
         inputs, results = _infomap(sources, selection, metadata, value)
@@ -241,4 +374,4 @@ def prepare(sources, selection, metadata):
         metadata['representation'] = 'Exact authored reference fixture; not an automatic hierarchy result or new user decision.'
         inputs, results = [{'type': 'reference_fixture', 'data': value}], []
     return {'inputs.jsonl': iter(inputs), 'answers.jsonl': iter(()),
-            'judgments.jsonl': iter(()), 'results.jsonl': iter(results)}
+            'judgments.jsonl': iter(judgments), 'results.jsonl': iter(results)}

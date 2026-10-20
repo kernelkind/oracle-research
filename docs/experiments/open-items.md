@@ -146,8 +146,10 @@ Original plans and results were not modified.
   hosted downloads against their selected file hashes; having a saved file is
   not a completed reproduction test.
 
-[The remaining publication item](publication-gaps.csv) records TRUE10's missing
-configuration. The 33 formerly unsupported entries now have selected evidence
+[The conversion-gap record](publication-gaps.csv) now has no open rows.
+TRUE10's settings were already present in `run/config.json` and `plan.json`;
+assembly never wrote `graph/config.json`, so that unnecessary requirement was
+removed. The 33 formerly unsupported entries now have selected evidence
 or an explicit intermediate/duplicate disposition. The historical collection
 review below is resolved for its selected final evidence. Duplicate native jobs,
 warmups and reused answers must not be counted as independent trials.
@@ -167,7 +169,8 @@ subject/mask collections, 22 early/standalone prompt collections and four
 segmentation/title/frontier collections, plus one archived-baseline collection,
 now have selected final evidence: **77 groups** in total. No collection-level
 export gap remains from this review. The later conversion batch resolves the
-separate 33 unsupported entries; **TRUE10's missing configuration** remains open.
+separate 33 unsupported entries, and TRUE10's final export closes the last
+configuration-related gap without fabricating a file.
 
 The current-baseline omission found in this review is now resolved. The six
 selected **ASv6.100** native bundles retain 180 valid answers and their saved
@@ -208,7 +211,7 @@ every old directory as an unexamined missing dataset.
 
 ### Selected hierarchy, navigation and performance evidence
 
-The final conversion batch adds **28 bundles, 140 files and 10,973,854 bytes
+The hierarchy/navigation/performance batch adds **28 bundles, 140 files and 10,973,854 bytes
 (10.47 MiB)**, or **2,078,449 bytes (1.98 MiB)** with gzip level 6. It retains
 14 final hierarchy/partition outputs, two manual reference fixtures, eight
 navigation studies and four performance units. HR02 uses its final view;
@@ -221,6 +224,13 @@ training selection and frozen fitter/runtime version needed for full replay.
 Unknown provenance remains unknown, and reference fixtures are not generated
 trial outcomes. See the [shared export command and limits](reproduce.md#saved-hierarchy-navigation-and-performance-checks).
 Final privacy review and hosted reader tests remain open.
+
+TRUE10 additionally retains its raw graph (60 nodes, 95 edges, four cycles)
+and canonical graph (58 nodes, 88 edges, two cycles), memberships and two saved
+agent assessments. Its 3,540 direction scores reference existing selected bodies;
+the export does not repair cycles or turn assessments into user decisions.
+All 25 focused/common/unsigned tests pass. See the
+[selection and command](reproduce.md#saved-hierarchy-navigation-and-performance-checks).
 
 ### Selected archived baseline evidence
 
@@ -514,7 +524,7 @@ before packaging. Known credential containers were excluded from discovery;
 that is not a completed privacy review of the evidence.
 
 The [publication plan](downloads.md#measured-local-exports) now measures the
-selected local exports: **1.09 GiB**, plus **6.78 GiB** for all 17 evaluated
+selected local exports: **1.10 GiB**, plus **6.78 GiB** for all 17 evaluated
 adapters. [Publications](publications.csv), [exact files](publication-files.csv)
 and [checksums](publication.sha256) record this selection. The 534.71 GiB source
 inventory and old bundle tables do not define the public download size or layout.
@@ -526,7 +536,8 @@ Before publication:
   local files retain their original paths. The 196 ambiguous files
   remain tracked. Review them and resolve the remaining
   [original-file replay and evidence gaps](#original-file-links-and-replay).
-- Resolve or explicitly retain [TRUE10's missing configuration](publication-gaps.csv).
+- Preserve the recorded replay limits despite the
+  [closed conversion-gap list](publication-gaps.csv).
   The reviewed final evidence has been backfilled through the shared exporters;
   all 27,032 native jobs were classified in the local audit, and the public
   index retains the 2,547 selected standalone native studies.

@@ -1,0 +1,144 @@
+{
+  "schema_version": 1,
+  "studies": {
+    "navigation-TRUE10": {
+      "profile": "saved-hierarchy",
+      "kind": "true-graph",
+      "hierarchy": {
+        "path": "sse_multivector/navigation-research-v1/TRUE10/graph/graph.json",
+        "sha256": "0fde08cea03719845aa0a93b48ef3165e47459184d542ac35bc0712f94d32693"
+      },
+      "score_table": {
+        "path": "sse_multivector/navigation-research-v1/TRUE10/graph/scores.json",
+        "sha256": "b0f7a17253b3f5682368477add8a3424ed5df4eaadc651eb1a168a89365bb7a5"
+      },
+      "derived_graph": {
+        "path": "sse_multivector/navigation-research-v1/TRUE10/derived/graph.json",
+        "sha256": "74dfa42d8a2b072b1803722f9674069638f5a229043528d47a579631a8985731"
+      },
+      "canonical": {
+        "path": "sse_multivector/navigation-research-v1/TRUE10/derived/canonical.json",
+        "sha256": "2ab5b4c95631ff9fd3e309dc21f425dce568fa0809462a0414d3e3ba7d716aed"
+      },
+      "memberships": {
+        "path": "sse_multivector/navigation-research-v1/TRUE10/derived/notes.json",
+        "sha256": "49a2ba99049d9fa17c545e1e55849115b65f5570d459bf03a95e691ed358db08"
+      },
+      "raw_completion": {
+        "path": "sse_multivector/navigation-research-v1/TRUE10/graph/completion.json",
+        "sha256": "4a9a9bd860435c3c073d265ca55ae8e63221ea7baf0a7c00abbec26b4eb9c93a"
+      },
+      "derived_completion": {
+        "path": "sse_multivector/navigation-research-v1/TRUE10/derived/completion.json",
+        "sha256": "53a45e6fea85fc749d23fe9ffc3e11a4abafcef2f6991e4cc6aba0744c89fcdc"
+      },
+      "configuration": {
+        "path": "sse_multivector/navigation-research-v1/TRUE10/run/config.json",
+        "sha256": "a4cfd37bf012b237a3aa123218b50af6fcc3416cae931ed156fb1d01bc003149"
+      },
+      "plan": {
+        "path": "sse_multivector/navigation-research-v1/TRUE10/plan.json",
+        "sha256": "a13c06b96b3d922b0b667415c6e5e9d8ef5a9abebbc19817d57e8a091681a41b"
+      },
+      "graph_code": {
+        "path": "sse_multivector/navigation-research-v1/TRUE10/source/true_category_graph.py",
+        "sha256": "0591c6a7d3c2470901a0476e201ad2cd6e16406bb4707ba6dc00fb99c5dadfb3"
+      },
+      "parameters": [
+        {
+          "path": "sse_multivector/navigation-research-v1/TRUE10/analysis-plan.json",
+          "sha256": "2bf5935b700b04192410fbaaf9a879fbbf2ad5ace5f36dd5b6d85c987b4383f7"
+        },
+        {
+          "path": "sse_multivector/navigation-research-v1/TRUE10/analysis.json",
+          "sha256": "7354e4a339aa65e696c8b5e9149f63dac261046c9daeaddcf32fa43873a0a424"
+        }
+      ],
+      "assessments": [
+        {
+          "path": "sse_multivector/navigation-research-v1/TRUE10/semantic-review.json",
+          "sha256": "c20899ef415adfa4fe5525ffc3e23ceafe343ecf5458e3fc8aeb641ef09725ee",
+          "role": "semantic_assessment"
+        },
+        {
+          "path": "sse_multivector/navigation-research-v1/TRUE10/additional-semantic-review.json",
+          "sha256": "041944597b17faeff5e0913620e2df55360e36438e14146fc551b972f01c7db2",
+          "role": "additional_semantic_assessment"
+        }
+      ],
+      "derived_records": [
+        {
+          "path": "sse_multivector/navigation-research-v1/TRUE10/derived/semantic-comparison.json",
+          "sha256": "e7540ceba12396436a57fb0d5050b01278125134f9a00d5070c51ffa76685797",
+          "role": "independent_semantic_comparison"
+        },
+        {
+          "path": "sse_multivector/navigation-research-v1/TRUE10/derived/unreviewed-accepted.json",
+          "sha256": "ef0d6857e35c6f33b28bf529c34d77f3c2106ae294f29cc256b8138bb923c4fe",
+          "role": "unreviewed_accepted_directions"
+        },
+        {
+          "path": "sse_multivector/navigation-research-v1/TRUE10/derived/raw-notes.json",
+          "sha256": "7c857626605003a440ea8c08528f19c45b5bf799e7c86c86bdeb29f302d77427",
+          "role": "raw_note_memberships"
+        }
+      ],
+      "published_scores": [
+        {
+          "source": "sse_multivector/navigation-research-v1/TRUE04/scores.jsonl",
+          "publication": "numerical/pair-scores-7dd83c45e206d5c8",
+          "payload": {
+            "path": "target/publication-exports/numerical/pair-scores-7dd83c45e206d5c8/results.jsonl",
+            "sha256": "bffdcd2a85b63395ba6c56e32fc26a818131727d40ed38f01ee47e002fc0c14a"
+          }
+        },
+        {
+          "source": "sse_multivector/navigation-research-v1/TRUE05/run/scores.jsonl",
+          "publication": "numerical/pair-scores-57a416d20d022ca3",
+          "payload": {
+            "path": "target/publication-exports/numerical/pair-scores-57a416d20d022ca3/results.jsonl",
+            "sha256": "dae32e2a489130f6cc185449ba3ffd081cdc5e4a17856ab31b0bbac5bb6307c8"
+          }
+        },
+        {
+          "source": "sse_multivector/navigation-research-v1/TRUE06/run/scores.jsonl",
+          "publication": "numerical/pair-scores-8a71cdad43ebfd62",
+          "payload": {
+            "path": "target/publication-exports/numerical/pair-scores-8a71cdad43ebfd62/results.jsonl",
+            "sha256": "3f18d87bad866ea1cd7893e28e50f01a884ca9a8357a0f5c9ef02211ec6b0ca9"
+          }
+        },
+        {
+          "source": "sse_multivector/navigation-research-v1/TRUE07/run/scores.jsonl",
+          "publication": "numerical/pair-scores-d1116bc357976e0f",
+          "payload": {
+            "path": "target/publication-exports/numerical/pair-scores-d1116bc357976e0f/results.jsonl",
+            "sha256": "244095dde443a609bb53056f2b2c2353e1322a148d191154f35edd24251601e8"
+          }
+        },
+        {
+          "source": "sse_multivector/navigation-research-v1/TRUE09/run/scores.jsonl",
+          "publication": "numerical/pair-scores-5e07db0afb5b7b6e",
+          "payload": {
+            "path": "target/publication-exports/numerical/pair-scores-5e07db0afb5b7b6e/results.jsonl",
+            "sha256": "0499833b3f8577d19d6fd31fa98b839c929389f58e17b8da8111796c7eeaf95f"
+          }
+        },
+        {
+          "source": "sse_multivector/navigation-research-v1/TRUE10/run/scores.jsonl",
+          "publication": "numerical/pair-scores-07918e7ce41db212",
+          "payload": {
+            "path": "target/publication-exports/numerical/pair-scores-07918e7ce41db212/results.jsonl",
+            "sha256": "65b07763484dc3513e7a6478929bbdab0c22ad681aef5d833c999835f20fe0e0"
+          }
+        }
+      ],
+      "reused_inputs": {
+        "publication": "historical-studies/real-note-fine-segmentation-v1",
+        "payload": "inputs.jsonl",
+        "sha256": "50ea6df1077a517f62ff651f4c3023e08b6d113ea6c0b67a466a5d325cc22f0f",
+        "role": "Existing source post texts; TRUE10 source packet mask identities retained separately."
+      }
+    }
+  }
+}
