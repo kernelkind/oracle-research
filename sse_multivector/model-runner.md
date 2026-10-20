@@ -8235,6 +8235,13 @@ supported new-experiment entry points; use the workflow above. Their collectors
 remain for historical evidence. The frozen comparison launcher remains a
 separate frozen extraction adapter, not a general prompt-experiment interface.
 
+Historical source reads use `generation_history.source_at_revision` and the
+bundled [Oracle commit map](../docs/experiments/commit-map.txt). Full original
+IDs and unique 7–40-character hexadecimal prefixes resolve without replacement
+refs; original provenance IDs stay unchanged. Raw Git commands require mapped
+IDs. Removed generated artifacts still require the preserved original evidence;
+see the [reader example and verification status](../docs/experiments/reproduce.md#which-code-is-being-repeated).
+
 ### Offline verification and extension
 
 Run the CLI and engine regression tests without credentials or inference:

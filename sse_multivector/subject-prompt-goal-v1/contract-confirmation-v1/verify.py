@@ -4,7 +4,6 @@ from pathlib import Path
 import hashlib
 import json
 import shlex
-import subprocess
 import sys
 
 sys.dont_write_bytecode = True
@@ -30,7 +29,7 @@ def sha(data):
 plan = read(GOAL / 'plan.json')
 proposal = read(HERE / 'proposal.json')
 for name in ['input.json', 'proposal.json'] + [f'{v.lower()}-trial{t}-config.json' for t in [2, 3] for v in ['ASv6.13', 'ASv6.19']]:
-    original = subprocess.check_output(['git', 'show', '326cc1eb23439902ce4e7fe7aa907ac6dc24c637:sse_multivector/subject-prompt-goal-v1/contract-confirmation-v1/' + name], cwd=ROOT)
+    original = runner.source_at_revision(HERE / name, '326cc1eb23439902ce4e7fe7aa907ac6dc24c637')
     assert (HERE / name).read_bytes() == original
 comparison = {'calls': 48, 'source_sha256': sha((HERE / 'input.json').read_bytes())}
 assert comparison['source_sha256'] == proposal['source_input_sha256']
@@ -41,16 +40,16 @@ assert sha((GOAL / 'development-input.json').read_bytes()) == '99a51cab84e2a6890
 for version in ['ASv6.13', 'ASv6.19']:
     source = GOAL / version.lower() / (version + '.md')
     assert sha(source.read_bytes()) == proposal['prompt_sha256'][version]
-    original = subprocess.check_output(['git', 'show', '326cc1eb23439902ce4e7fe7aa907ac6dc24c637:sse_multivector/subject-prompt-goal-v1/' + version.lower() + '/' + version + '.md'], cwd=ROOT)
+    original = runner.source_at_revision(source, '326cc1eb23439902ce4e7fe7aa907ac6dc24c637')
     assert source.read_bytes() == original
 for directory in [GOAL / 'asv6.13/run'] + [GOAL / 'contract-comparison-v1' / version.lower() for version in ['ASv6.13', 'ASv6.19']]:
     for name in ['results.jsonl', 'output.json', 'manifest.json']:
         artifact = directory / name
-        original = subprocess.check_output(['git', 'show', '326cc1eb23439902ce4e7fe7aa907ac6dc24c637:' + str(artifact.relative_to(ROOT))], cwd=ROOT)
+        original = runner.source_at_revision(artifact, '326cc1eb23439902ce4e7fe7aa907ac6dc24c637')
         assert artifact.read_bytes() == original, str(artifact)
 assert sha(runner.source_bytes(ROOT / plan['unchanged']['runner'])) == plan['unchanged']['runner_sha256']
 for name in ['plan.json', 'selection.json', 'development-input.json', 'development-repeat-input.json', 'final-input.json', 'final-repeat-input.json']:
-    original = subprocess.check_output(['git', 'show', 'ace3fa2667494f314bcc280f54aaf4c34e242fdc:sse_multivector/subject-prompt-goal-v1/' + name], cwd=ROOT)
+    original = runner.source_at_revision(GOAL / name, 'ace3fa2667494f314bcc280f54aaf4c34e242fdc')
     assert (GOAL / name).read_bytes() == original, name
 registry = ROOT / 'sse_multivector/atomic-subject-prompt-versions.json'
 assert sha(registry.read_bytes()) == '357772ff8c7f673982af976bf43d13a6c4ec5031f6b06ec2361046b9c8e4b95f'

@@ -435,6 +435,36 @@ the original environment. A portable rerun at those exact commits has not been
 validated. Record both repository commits, configuration changes and input
 hashes when reporting a new run.
 
+The recorded Oracle IDs remain unchanged after the generated-data rewrite.
+The bundled [commit map](commit-map.txt) has an `old new` header followed by full
+original and rewritten IDs. Use the `new` column for raw Git commands; Git does
+not read this file automatically. The runner's history was not rewritten.
+
+Historical readers and verifiers use
+`generation_history.source_at_revision(path, revision)`. It accepts a full
+original ID or a unique 7–40-character hexadecimal prefix. It prefers the
+original commit when that object is available; otherwise it reads the mapped
+commit, without replacement refs or a working-file fallback. Named refs such as
+`HEAD` pass through. For example, read HR36's saved generator source:
+
+```bash
+cd "$ORACLE_ROOT"
+python3 - <<'PY'
+from pathlib import Path
+import sys
+from sse_multivector.generation_history import source_at_revision
+
+sys.stdout.buffer.write(source_at_revision(
+    Path("sse_multivector/hierarchy_generation.py"),
+    "12ab025bd1a3f7b0615e764c0823be56604f1dc7",
+))
+PY
+```
+
+This reads saved source only. It cannot recover generated artifacts removed
+from history or establish a complete historical environment. Fresh
+ordinary-clone verification of this lookup support remains pending.
+
 ## Inspect the fine-tune comparison
 
 The current comparison evaluates the roots of each post's subject hierarchy

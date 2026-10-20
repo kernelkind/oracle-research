@@ -3,7 +3,6 @@ import hashlib
 import importlib.util
 import json
 from pathlib import Path
-import subprocess
 import sys
 
 sys.dont_write_bytecode = True
@@ -21,7 +20,7 @@ check, read, sha = existing.check, existing.read, existing.sha
 FREEZE = '7b00220'
 
 def frozen(path):
-    return subprocess.check_output(['git', 'show', f'{FREEZE}:{path.relative_to(ROOT)}'], cwd=ROOT)
+    return runner.source_at_revision(path, FREEZE)
 
 def verify():
     proposal = read(HERE / 'proposal.json')

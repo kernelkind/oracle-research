@@ -9,7 +9,6 @@ import hashlib
 import json
 from pathlib import Path
 import shlex
-import subprocess
 import sys
 
 sys.dont_write_bytecode = True
@@ -40,9 +39,7 @@ def sha(data):
 
 
 def frozen_bytes(path):
-    return subprocess.check_output(
-        ['git', 'show', f'{FROZEN_COMMIT}:{path.relative_to(ROOT)}'], cwd=ROOT
-    )
+    return runner.source_at_revision(path, FROZEN_COMMIT)
 
 
 def verify_payload(result):

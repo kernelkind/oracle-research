@@ -3,7 +3,6 @@
 from pathlib import Path
 import hashlib
 import json
-import subprocess
 import sys
 
 sys.dont_write_bytecode = True
@@ -30,13 +29,13 @@ plan = read(GOAL / 'plan.json')
 proposal = read(HERE / 'proposal.json')
 metadata_proposal = read(GOAL / 'asv6.18/proposal.json')
 for name in ['input.json', 'proposal.json'] + [f'{v.lower()}-trial-{t}-config.json' for t in [4, 5, 6] for v in ['ASv6.17', 'ASv6.18']]:
-    original = subprocess.check_output(['git', 'show', 'a2ff62f:sse_multivector/subject-prompt-goal-v1/metadata-confirmation-v1/' + name], cwd=ROOT)
+    original = runner.source_at_revision(HERE / name, 'a2ff62f')
     assert (HERE / name).read_bytes() == original
 comparison = {'calls': 12, 'source_sha256': sha((HERE / 'input.json').read_bytes())}
 assert sha((GOAL / 'plan.json').read_bytes()) == '64c5e1a8b2897573f4e7f861173fc13a6a9734bda2a40d6d4fb42023d4a1f3fa'
 assert sha((GOAL / 'development-input.json').read_bytes()) == '99a51cab84e2a6890a14d90d78d2ffae805ca04220852910844cf1d3a84afc0a'
 for name in ['ASv6.18.md', 'subject-prompts.json', 'input.json', 'proposal.json']:
-    original = subprocess.check_output(['git', 'show', '54000ee:sse_multivector/subject-prompt-goal-v1/asv6.18/' + name], cwd=ROOT)
+    original = runner.source_at_revision(GOAL / 'asv6.18' / name, '54000ee')
     assert (GOAL / 'asv6.18' / name).read_bytes() == original
 p17 = (GOAL / 'asv6.17/ASv6.17.md').read_text()
 p18 = (GOAL / 'asv6.18/ASv6.18.md').read_text()
@@ -44,7 +43,7 @@ assert p17.count(metadata_proposal['change']['removed']) == 1
 assert p18 == p17.replace(metadata_proposal['change']['removed'], metadata_proposal['change']['restored'])
 assert sha(runner.source_bytes(ROOT / plan['unchanged']['runner'])) == plan['unchanged']['runner_sha256']
 for name in ['plan.json', 'selection.json', 'development-input.json', 'development-repeat-input.json', 'final-input.json', 'final-repeat-input.json']:
-    original = subprocess.check_output(['git', 'show', 'ace3fa2667494f314bcc280f54aaf4c34e242fdc:sse_multivector/subject-prompt-goal-v1/' + name], cwd=ROOT)
+    original = runner.source_at_revision(GOAL / name, 'ace3fa2667494f314bcc280f54aaf4c34e242fdc')
     assert (GOAL / name).read_bytes() == original, name
 registry = ROOT / 'sse_multivector/atomic-subject-prompt-versions.json'
 assert sha(registry.read_bytes()) == '357772ff8c7f673982af976bf43d13a6c4ec5031f6b06ec2361046b9c8e4b95f'

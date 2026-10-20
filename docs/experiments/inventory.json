@@ -340,7 +340,7 @@
     "history_cleanup_status_scope": "Snapshot at the index-simplification source_commit; see generated_data_history_rewrite for the later completed rewrite"
   },
   "generated_data_history_rewrite": {
-    "state": "Verified and installed locally; mapping publication and privacy/identity review remain open",
+    "state": "Verified and installed locally; commit mapping and source lookup included in source; remote publication and privacy/identity review remain open",
     "original_head": "4476b94b5ef74f4a2ee50dd6b867b783ad242ac5",
     "rewritten_head": "d2e3a88cca7acf52c657810198611762ff1b53e5",
     "scope": "Exact reviewed generated-artifact and exhaustive discovery-catalog paths only; code, prompts, authored findings and uncertain sources retained",
@@ -361,16 +361,24 @@
     "commit_mapping": {
       "git_metadata": ".git/filter-repo/commit-map",
       "audit_copy": "target/publication-audit/history-cleanup-4476b94b/commit-map.txt",
+      "bundled_source": "docs/experiments/commit-map.txt",
+      "included_in_source": true,
       "sha256": "68055b10efcff248a9cca8a002ae07b73574462d850e0995bdc44ccc7ae4d77e",
       "published": false,
       "original_provenance_ids_preserved": true,
-      "lookup_limits": "Full-ID replacement refs installed locally; normal clones do not fetch them; abbreviated legacy lookups and removed generated-blob reads remain unresolved"
+      "lookup_limits": "source_at_revision resolves full original IDs or unique 7-40-character hexadecimal prefixes with the bundled map, preferring available original objects; raw Git commands require mapped IDs and removed generated blobs remain unavailable",
+      "lookup_verification": {
+        "real_git_regressions_passed": 6,
+        "revision_and_automatic_workflow_regressions_passed": 30,
+        "legacy_generation_history_suite": "3 passed; 1 pre-existing saved-manifest config_path mismatch also reproduced against original history",
+        "fresh_ordinary_clone": "pending"
+      }
     },
     "local_git_object_storage_MiB": {
       "oracle": 24.5,
       "runner_unchanged_including_loose_objects": 8.37,
       "total": 32.87,
-      "scope": "Current local Git object storage, not compressed transfer or public download size"
+      "scope": "Measured at rewritten_head d2e3a88c before later documentation and lookup-support commits; local Git object storage, not compressed transfer or public download size"
     },
     "runner_history_rewritten": false,
     "original_files_altered": false,

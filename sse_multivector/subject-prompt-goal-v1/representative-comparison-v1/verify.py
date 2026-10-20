@@ -3,7 +3,6 @@
 from pathlib import Path
 import hashlib
 import json
-import subprocess
 import sys
 
 sys.dont_write_bytecode = True
@@ -32,7 +31,7 @@ assert sha((GOAL / 'plan.json').read_bytes()) == '64c5e1a8b2897573f4e7f861173fc1
 assert sha((GOAL / 'development-input.json').read_bytes()) == comparison['source_sha256']
 assert sha(runner.source_bytes(ROOT / plan['unchanged']['runner'])) == plan['unchanged']['runner_sha256']
 for name in ['plan.json', 'selection.json', 'development-input.json', 'development-repeat-input.json', 'final-input.json', 'final-repeat-input.json']:
-    original = subprocess.check_output(['git', 'show', 'ace3fa2667494f314bcc280f54aaf4c34e242fdc:sse_multivector/subject-prompt-goal-v1/' + name], cwd=ROOT)
+    original = runner.source_at_revision(GOAL / name, 'ace3fa2667494f314bcc280f54aaf4c34e242fdc')
     assert (GOAL / name).read_bytes() == original, name
 registry = ROOT / 'sse_multivector/atomic-subject-prompt-versions.json'
 assert sha(registry.read_bytes()) == '357772ff8c7f673982af976bf43d13a6c4ec5031f6b06ec2361046b9c8e4b95f'

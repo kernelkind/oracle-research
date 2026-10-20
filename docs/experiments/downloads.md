@@ -9,7 +9,7 @@ is complete; privacy and identity review remains open.
 
 | Where | What |
 | --- | --- |
-| GitHub | Code and its history, tests, prompts and their provenance, authored findings, useful documentation and the selected-study index: **32.87 MiB current local Git object storage** across both repositories; download size unmeasured |
+| GitHub | Code and its history, tests, prompts and their provenance, authored findings, useful documentation, the selected-study index and commit mapping; download size unmeasured |
 | Hugging Face Models | All 17 evaluated adapters, with configurations and pinned base-model references: **6.78 GiB** |
 | Hugging Face Datasets | Posts actually used, prepared training data, final unsigned hierarchies, standalone prompt answers, evaluation results, final numerical results and each experiment's parameters: **1.04 GiB currently staged**, with legacy review items remaining |
 
@@ -34,13 +34,14 @@ original Git history preserved in a private backup.
 
 | Contents | At the reviewed commits | After the generated-data rewrite |
 | --- | ---: | ---: |
-| Both Git object databases | About 504 MiB | 32.87 MiB current local storage |
+| Both Git object databases | About 504 MiB | 32.87 MiB local storage at rewrite checkpoint `d2e3a88c` |
 | Both repositories' tracked file contents | About 2.67 GiB | About 60 MiB planning estimate; unchanged by the rewrite |
-| `docs/experiments/` | 1,286 files, 192.89 MiB | 22 files, about 7.43 MiB |
+| `docs/experiments/` | 1,286 files, 192.89 MiB | 23 files, about 7.68 MiB, including the bundled commit map |
 
-Oracle's local Git objects measure **24.50 MiB**. The unchanged runner's objects
-measure **8.37 MiB**, including loose objects. Their **32.87 MiB** total measures
-local object storage, not a compressed transfer or public download.
+At the rewrite checkpoint, Oracle's local Git objects measured **24.50 MiB** and
+the unchanged runner's objects **8.37 MiB**, including loose objects. Their
+**32.87 MiB** total preceded later documentation and lookup-support commits.
+It measures local object storage, not a compressed transfer or public download.
 
 The ordinary untracking change covers **28,307 reviewed generated files**,
 totaling **2,608,765,945 bytes (2.43 GiB)**: requests/responses, execution state
@@ -89,13 +90,19 @@ and uncertain sources are retained.
 The runner's history was not rewritten. Original files were not altered.
 
 The original Git backup is local under
-`target/publication-audit/history-cleanup-4476b94b/original.git`. The old-to-new
-mapping is at `.git/filter-repo/commit-map`, with an identical audit copy at
+`target/publication-audit/history-cleanup-4476b94b/original.git`. The exact
+old-to-new mapping is bundled as [commit-map.txt](commit-map.txt), with identical
+copies at `.git/filter-repo/commit-map` and
 `target/publication-audit/history-cleanup-4476b94b/commit-map.txt`.
 Original generation, export and audit IDs remain unchanged in the research
-records. Publishing the mapping and a supported reader lookup remains open.
-Local Git replacement refs support full original IDs here; normal clones do
-not receive those refs, and abbreviated legacy lookups remain unresolved.
+records. Historical source readers use `generation_history.source_at_revision`
+to resolve full original IDs or unique 7–40-character hexadecimal prefixes.
+They read the bundled map without Git replacement refs; named/current refs pass
+through. An original commit is preferred when its raw object is available,
+otherwise its mapped commit is read. Raw `git show` commands still require the
+corresponding rewritten ID. See the [reader example](reproduce.md#which-code-is-being-repeated).
+Fresh ordinary-clone verification remains pending. Generated files removed from
+history remain unavailable in rewritten commits.
 
 This rewrite removes generated data. Final privacy and identity review, and any
 separately approved cleanup it requires, remain before publication. Repeat checks

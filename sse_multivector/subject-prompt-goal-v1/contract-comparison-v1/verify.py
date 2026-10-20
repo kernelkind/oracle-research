@@ -3,7 +3,6 @@
 from pathlib import Path
 import hashlib
 import json
-import subprocess
 import sys
 
 sys.dont_write_bytecode = True
@@ -29,13 +28,13 @@ def sha(data):
 plan = read(GOAL / 'plan.json')
 comparison = {'calls': 56, 'source_sha256': '99a51cab84e2a6890a14d90d78d2ffae805ca04220852910844cf1d3a84afc0a'}
 for rel in ['asv6.19/ASv6.19.md', 'asv6.19/subject-prompts.json', 'asv6.19/proposal.json', 'contract-comparison-v1/asv6.13-config.json', 'contract-comparison-v1/asv6.19-config.json']:
-    original = subprocess.check_output(['git', 'show', '2a9bc0c:sse_multivector/subject-prompt-goal-v1/' + rel], cwd=ROOT)
+    original = runner.source_at_revision(GOAL / rel, '2a9bc0c')
     assert (GOAL / rel).read_bytes() == original
 assert sha((GOAL / 'plan.json').read_bytes()) == '64c5e1a8b2897573f4e7f861173fc13a6a9734bda2a40d6d4fb42023d4a1f3fa'
 assert sha((GOAL / 'development-input.json').read_bytes()) == comparison['source_sha256']
 assert sha(runner.source_bytes(ROOT / plan['unchanged']['runner'])) == plan['unchanged']['runner_sha256']
 for name in ['plan.json', 'selection.json', 'development-input.json', 'development-repeat-input.json', 'final-input.json', 'final-repeat-input.json']:
-    original = subprocess.check_output(['git', 'show', 'ace3fa2667494f314bcc280f54aaf4c34e242fdc:sse_multivector/subject-prompt-goal-v1/' + name], cwd=ROOT)
+    original = runner.source_at_revision(GOAL / name, 'ace3fa2667494f314bcc280f54aaf4c34e242fdc')
     assert (GOAL / name).read_bytes() == original, name
 registry = ROOT / 'sse_multivector/atomic-subject-prompt-versions.json'
 assert sha(registry.read_bytes()) == '357772ff8c7f673982af976bf43d13a6c4ec5031f6b06ec2361046b9c8e4b95f'

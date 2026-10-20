@@ -94,8 +94,9 @@ The agreed [public Git layout](downloads.md#public-git-contents) keeps code and
 its history, tests, prompts and their provenance, authored findings, useful
 documentation and a selected-study index. After the
 [generated-data rewrite](downloads.md#generated-data-history-rewrite), local Git
-object storage totals 32.87 MiB across both repositories. Compressed download
-size has not been measured.
+object storage measured 32.87 MiB across both repositories at checkpoint
+`d2e3a88c`, before subsequent documentation and lookup-support commits.
+Compressed download size has not been measured.
 The selected-study index is now in place. The exhaustive workspace catalogs
 are preserved in the [local audit](downloads.md#local-audit-copy). The reviewed
 28,307 generated run files are now untracked and remain locally at the same
@@ -142,9 +143,10 @@ is required before claiming the documentation and workflows work from a clean
 public checkout.
 
 Generation commits, later audit/export commits and the publication commit serve
-different purposes. Their original IDs remain in the evidence. The old-to-new
-Oracle commit mapping is currently local and must be published for readers;
-[history lookup limits](open-items.md#preserve-the-source-history) remain explicit.
+different purposes. Their original IDs remain in the evidence. The
+[bundled Oracle commit mapping](commit-map.txt) supports historical source reads;
+the [reproduction guide](reproduce.md#which-code-is-being-repeated) explains its
+use and the remaining limits.
 
 ## Inventory method and limits
 

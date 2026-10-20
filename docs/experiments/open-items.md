@@ -222,14 +222,18 @@ original history is preserved locally; generated blobs removed by the rewrite
 are no longer available in the rewritten trees.
 
 The [generated-data rewrite](downloads.md#generated-data-history-rewrite) is
-verified. Its old-to-new commit mapping is currently local; publish it and
-provide a supported lookup before expecting readers to resolve original IDs.
-Local full-ID replacement refs preserve the pinned source read in
-[generation_history.py](../../sse_multivector/generation_history.py), but normal
-clones do not fetch those refs. Abbreviated lookups in legacy prompt verifiers
-and the [legacy automatic-workflow test](../../sse_multivector/test_distillation_review_automatic.py)
-remain unresolved. Some verifiers also read generated blobs intentionally
-removed from history; those checks require the preserved original evidence.
+verified. Its exact [commit mapping](commit-map.txt) is now bundled with the
+source. Historical source reads, legacy prompt verifiers and the
+[legacy automatic-workflow test](../../sse_multivector/test_distillation_review_automatic.py)
+use `generation_history.source_at_revision` for full original IDs and unique
+7–40-character hexadecimal prefixes, without replacement refs. All 30 revision
+lookup and automatic-workflow regression tests pass. The separate
+generation-history suite retains one pre-existing saved-manifest `config_path`
+mismatch, also reproduced against original history. Fresh ordinary-clone
+verification remains pending.
+Raw Git commands require a rewritten ID from the map. Some verifiers also read
+generated blobs intentionally removed from history; those checks still require
+the preserved original evidence.
 
 ## Assemble and test the release
 

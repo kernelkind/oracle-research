@@ -85,12 +85,50 @@ PROMINENCE_SCHEMA: dict[str, object] = {
 class RunnerError(Exception):
     """Invalid historical evidence."""
 
-@lru_cache(maxsize=1)
-def _retired_source() -> bytes:
-    payload = subprocess.check_output(
-        ["git", "show", LEGACY_REVISION + ":sse_multivector/codex_exec.py"],
+
+@lru_cache(maxsize=128)
+def _resolve_revision(repository: Path, revision: str) -> str:
+    if not re.fullmatch(r"[0-9a-fA-F]{7,40}", revision):
+        return revision
+    mapping = repository / "docs/experiments/commit-map.txt"
+    if not mapping.exists():
+        return revision
+    rows = mapping.read_text().splitlines()
+    if not rows or rows[0].split() != ["old", "new"]:
+        raise RunnerError("Invalid Git commit mapping header")
+    matches = []
+    for row in rows[1:]:
+        fields = row.split()
+        if len(fields) != 2 or any(not re.fullmatch(r"[0-9a-f]{40}", value) for value in fields):
+            raise RunnerError("Invalid Git commit mapping row")
+        if fields[0].startswith(revision.lower()):
+            matches.append(fields)
+    if len(matches) > 1:
+        raise RunnerError(f"Ambiguous original Git revision: {revision}")
+    if not matches:
+        return revision
+    original, rewritten = matches[0]
+    available = subprocess.run(
+        ["git", "--no-replace-objects", "cat-file", "-e", original + "^{commit}"],
+        cwd=repository, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+    )
+    return original if available.returncode == 0 else rewritten
+
+
+def source_at_revision(path: Path, revision: str) -> bytes:
+    """Read original Git bytes, resolving rewritten commits with the bundled map."""
+    path = Path(path)
+    relative = path.relative_to(REPOSITORY_ROOT) if path.is_absolute() else path
+    resolved = _resolve_revision(REPOSITORY_ROOT, revision)
+    return subprocess.check_output(
+        ["git", "--no-replace-objects", "show", resolved + ":" + relative.as_posix()],
         cwd=REPOSITORY_ROOT,
     )
+
+
+@lru_cache(maxsize=1)
+def _retired_source() -> bytes:
+    payload = source_at_revision(REPOSITORY_ROOT / "sse_multivector/codex_exec.py", LEGACY_REVISION)
     if hashlib.sha256(payload).hexdigest() != LEGACY_WRAPPER_SHA256:
         raise RunnerError("retired runner source hash mismatch")
     return payload

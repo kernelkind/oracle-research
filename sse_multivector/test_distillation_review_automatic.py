@@ -177,9 +177,10 @@ print(json.dumps(dict(package=experiment_runner.__file__, launcher=str(automatic
 
     def test_legacy_workflow_adopts_one_group_without_rewriting_prepared_batches(self):
         from sse_multivector import distillation_review_automatic as automatic
+        from sse_multivector.generation_history import source_at_revision
         _, _, coverage, _, _ = self.fixture('legacy-group')
-        old_source = subprocess.check_output(['git', 'show',
-            '808f8bfc:sse_multivector/distillation_review_automatic.py'], cwd=PROJECT, text=True)
+        old_source = source_at_revision(
+            PROJECT / 'sse_multivector/distillation_review_automatic.py', '808f8bfc').decode()
         legacy = types.ModuleType('sse_multivector.legacy_automatic')
         legacy.__package__ = 'sse_multivector'
         legacy.__file__ = automatic.__file__
