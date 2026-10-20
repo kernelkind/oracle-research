@@ -61,8 +61,8 @@ remain historical evidence; raw source posts are not deprecated by that rule.
   [parameter ledger](../recommendation-engine/hierarchy-parameters.csv) holds
   each run's exact ordered note selection. Sharing a corpus does not imply
   sharing a selection. [Shared corpora](corpora.csv) connect those identities to
-  the located input files; [code versions](code-versions.csv) record whether
-  the cited generation commits are available in the publication clones.
+  the located input files; [code versions](code-versions.csv) record the
+  pre-rewrite availability check for the original generation commit IDs.
 - [Input recovery findings](open-items.md#historical-input-recovery),
   [exact alternatives](dependency-alternatives.csv) and
   [reference resolutions](reference-resolutions.csv): recovered input identities,
@@ -77,9 +77,9 @@ remain historical evidence; raw source posts are not deprecated by that rule.
 - [Models](models.csv): adapter weights, configurations and the separate
   optimizer/training state needed to resume training. Using an adapter requires
   its pinned base model; it does not require optimizer state.
-- [Historical files](historical-files.csv): additional artifact blobs found in
-  Git history but absent from the current index. Each row identifies the exact
-  blob and its size. The reported path is one historical name, not a complete
+- [Historical files](historical-files.csv): artifact blobs identified in the
+  original Git-history audit but absent from its index. Each row identifies the
+  exact blob and its size. The reported path is one historical name, not a complete
   record of every location where that content appeared. [Historical changes](historical-uses.csv)
   connect those blobs to their original commits and paths.
 - [Source roots](source-roots.csv): names used to describe original artifact
@@ -92,14 +92,16 @@ remain historical evidence; raw source posts are not deprecated by that rule.
 
 The agreed [public Git layout](downloads.md#public-git-contents) keeps code and
 its history, tests, prompts and their provenance, authored findings, useful
-documentation and a selected-study index. Its estimated compressed history is
-20–30 MiB across both repositories, with about 60 MiB of tracked file contents.
+documentation and a selected-study index. After the
+[generated-data rewrite](downloads.md#generated-data-history-rewrite), local Git
+object storage totals 32.87 MiB across both repositories. Compressed download
+size has not been measured.
 The selected-study index is now in place. The exhaustive workspace catalogs
 are preserved in the [local audit](downloads.md#local-audit-copy). The reviewed
 28,307 generated run files are now untracked and remain locally at the same
 paths. Source, prompts, authored plans and findings, reusable specifications and
-fixtures stay tracked, along with 196 ambiguous files awaiting review. History
-cleanup stays last.
+fixtures stay tracked, along with 196 ambiguous files awaiting review. The
+generated-data rewrite is complete; privacy and identity review remains open.
 
 Hugging Face Models holds all 17 evaluated
 adapters (6.78 GiB). Hugging Face Datasets holds used posts, prepared training
@@ -113,7 +115,8 @@ selection. Hugging Face repository names, published revisions and download
 testing remain open. The [implemented export formats](downloads.md#automated-outputs)
 serve normal workflows and selected saved results. Unsupported historical
 schemas need an explicit adapter; local conversion does not establish coverage
-of the entire inventory. Original research files and history are preserved.
+of the entire inventory. Original research files and the original Git history
+are preserved locally.
 
 Preserve original frozen plans, answers and receipts locally. Their complete
 working directories are not required public downloads. The current native
@@ -139,8 +142,9 @@ is required before claiming the documentation and workflows work from a clean
 public checkout.
 
 Generation commits, later audit/export commits and the publication commit serve
-different purposes. Preserve their distinction when history cleanup changes
-commit IDs, and provide a mapping for references affected by that cleanup.
+different purposes. Their original IDs remain in the evidence. The old-to-new
+Oracle commit mapping is currently local and must be published for readers;
+[history lookup limits](open-items.md#preserve-the-source-history) remain explicit.
 
 ## Inventory method and limits
 

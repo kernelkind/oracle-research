@@ -92,9 +92,9 @@ older versions of these files under `research-main:sse_multivector/experiment_sp
 | `lg01-bcpv4-six-pairs-astra-low-v1.json` | Found in Git history. |
 | `asv6.100-hr01-post-template.txt` | Recovered by UTF-8 encoding the exact `plan.prompt.text` saved in the `asv6.100-context-draft/V1` experiment. |
 
-All five match their original recorded hashes. The three Git blobs and their
-commits are present in the publication clone. The two recovered files are saved
-under ignored `target/publication-inputs/`. [Exact alternatives](dependency-alternatives.csv)
+All five match their original recorded hashes. The pre-rewrite audit located
+the three Git blobs and their commits in the publication clone. The two recovered
+files are saved under ignored `target/publication-inputs/`. [Exact alternatives](dependency-alternatives.csv)
 records each source, hash and recovery procedure. No additional unresolved
 versions were found; the three state versions above remain unlocated.
 
@@ -205,17 +205,31 @@ established.
 
 ## Preserve the source history
 
-Of 41 recorded generation commits, 40 are present in the publication clones.
+The pre-rewrite audit located 40 of 41 original generation commits in the
+publication clones.
 HR34's Oracle construction commit,
 `bf7801bc1d92491b20eab8d075fb8d57b83d6b3e`, exists in the original repository
 but is absent from the publication clone. Preserve that history before release.
-[Code versions](code-versions.csv) records the check and affected run.
+[Code versions](code-versions.csv) preserves that check and affected run. Its
+availability columns describe the pre-rewrite snapshot; original commit IDs
+remain unchanged in the evidence.
 
-The inventory also identifies **294 artifact blobs present in Git history but
-absent from the current Git index**, with measured SHA-256 hashes and their
-original commit associations.
-Preserve these files before removing historical data from Git. No history has
-been rewritten by this inventory work.
+The original audit also identified **294 artifact blobs in Git history but
+absent from its index**, with measured SHA-256 hashes and original commit
+associations. [Historical files](historical-files.csv) and
+[historical uses](historical-uses.csv) retain those original identities. The
+original history is preserved locally; generated blobs removed by the rewrite
+are no longer available in the rewritten trees.
+
+The [generated-data rewrite](downloads.md#generated-data-history-rewrite) is
+verified. Its old-to-new commit mapping is currently local; publish it and
+provide a supported lookup before expecting readers to resolve original IDs.
+Local full-ID replacement refs preserve the pinned source read in
+[generation_history.py](../../sse_multivector/generation_history.py), but normal
+clones do not fetch those refs. Abbreviated lookups in legacy prompt verifiers
+and the [legacy automatic-workflow test](../../sse_multivector/test_distillation_review_automatic.py)
+remain unresolved. Some verifiers also read generated blobs intentionally
+removed from history; those checks require the preserved original evidence.
 
 ## Assemble and test the release
 
@@ -256,13 +270,12 @@ Before publication:
   validate portable training and adapter-inference instructions with the selected
   data and pinned upstream models.
 
-Finish history cleanup last and repeat publication checks against the final
-contents, updating affected checksums and commit references. Preserve the full
-commit sequence, timestamps and merges, including empty commits left by artifact
-removal, and keep an old-to-new commit mapping. History cleanup needs separate
-execution authorization. Preserve original
-working artifacts locally; complete native receipt packages are not a condition
-for publishing the compact final results.
+The generated-data rewrite is complete. Final privacy and identity review
+remains before publication; any further history cleanup needs its own approval.
+Repeat publication checks against the final contents, preserving original
+generation IDs and an old-to-new mapping across any further rewrite. Preserve
+original working artifacts locally; complete native receipt packages are not a
+condition for publishing the compact final results.
 
 ## Prepare verification metadata
 

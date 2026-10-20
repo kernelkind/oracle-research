@@ -4,12 +4,12 @@
 exporters cover the result families below. The supported historical selection
 has been converted locally and its exact files/checksums are indexed. Older
 formats, repository names and published download paths still need review.
-Nothing has been uploaded, and this plan does not authorize uploading,
-deleting original research or rewriting history.
+Nothing has been uploaded. The [generated-data history rewrite](#generated-data-history-rewrite)
+is complete; privacy and identity review remains open.
 
 | Where | What |
 | --- | --- |
-| GitHub | Code and its history, tests, prompts and their provenance, authored findings, useful documentation and the selected-study index: **20–30 MiB estimated compressed Git history** across both repositories |
+| GitHub | Code and its history, tests, prompts and their provenance, authored findings, useful documentation and the selected-study index: **32.87 MiB current local Git object storage** across both repositories; download size unmeasured |
 | Hugging Face Models | All 17 evaluated adapters, with configurations and pinned base-model references: **6.78 GiB** |
 | Hugging Face Datasets | Posts actually used, prepared training data, final unsigned hierarchies, standalone prompt answers, evaluation results, final numerical results and each experiment's parameters: **1.04 GiB currently staged**, with legacy review items remaining |
 
@@ -27,21 +27,20 @@ workspace stay outside public Git. Selected inputs and final evidence go to
 Hugging Face; preserve the complete original working files locally.
 
 The read-only review at Oracle commit `a45639d2` and runner commit `34d7eb7`
-measured the following proposed reduction. The selected-study index is now
-simplified, and the reviewed generated run files are untracked from the current
-tree. Those files remain locally at the same paths and remain in Git history.
+recorded the original sizes below. The selected-study index is now simplified,
+and the reviewed generated files are removed from the Oracle publication clone's
+commit trees. Original working files remain locally at the same paths, with the
+original Git history preserved in a private backup.
 
-| Contents | At the reviewed commits | Intended layout |
+| Contents | At the reviewed commits | After the generated-data rewrite |
 | --- | ---: | ---: |
-| Both Git object databases | About 504 MiB | Plan for 20–30 MiB of compressed history |
-| Both repositories' tracked file contents | About 2.67 GiB | About 60 MiB |
+| Both Git object databases | About 504 MiB | 32.87 MiB current local storage |
+| Both repositories' tracked file contents | About 2.67 GiB | About 60 MiB planning estimate; unchanged by the rewrite |
 | `docs/experiments/` | 1,286 files, 192.89 MiB | 22 files, about 7.43 MiB |
 
-The Git estimate packs retained historical file versions with their filenames
-and the original commit/tree metadata, discarding the resulting bytes. It also
-includes the runner's complete history and a filtered study index. That check
-measured 22.44 MiB; filtered trees and final cleanup change the exact size. It
-is a planning estimate, not a measured cleaned clone or public download size.
+Oracle's local Git objects measure **24.50 MiB**. The unchanged runner's objects
+measure **8.37 MiB**, including loose objects. Their **32.87 MiB** total measures
+local object storage, not a compressed transfer or public download.
 
 The ordinary untracking change covers **28,307 reviewed generated files**,
 totaling **2,608,765,945 bytes (2.43 GiB)**: requests/responses, execution state
@@ -75,10 +74,32 @@ documents still contain links to original generated files; repairing those
 [reader links and original-file replay dependencies](open-items.md#original-file-links-and-replay)
 remains open before publication.
 
-Preserve the full commit sequence, timestamps and merge relationships, including
-commits left empty after generated files are removed. Keep an old-to-new commit
-mapping and original generation IDs in experiment provenance. History cleanup
-remains the last step and needs separate execution authorization.
+### Generated-data history rewrite
+
+The verified Oracle rewrite maps original head
+`4476b94b5ef74f4a2ee50dd6b867b783ad242ac5` to
+`d2e3a88cca7acf52c657810198611762ff1b53e5`. It removes **29,580 exact paths**
+from historical trees: 28,307 reviewed generated-file paths, 1,264 exhaustive
+discovery-catalog paths and nine additional historical generated-file paths.
+All **3,148 commits**, including empty commits and **398 merges**, are retained
+one-to-one. Authors, committers, timestamps, messages and parent order are
+unchanged; every tree matches the exact path filter, and the rewritten head's
+tree is identical to the original head's tree. Code, prompts, authored findings
+and uncertain sources are retained.
+The runner's history was not rewritten. Original files were not altered.
+
+The original Git backup is local under
+`target/publication-audit/history-cleanup-4476b94b/original.git`. The old-to-new
+mapping is at `.git/filter-repo/commit-map`, with an identical audit copy at
+`target/publication-audit/history-cleanup-4476b94b/commit-map.txt`.
+Original generation, export and audit IDs remain unchanged in the research
+records. Publishing the mapping and a supported reader lookup remains open.
+Local Git replacement refs support full original IDs here; normal clones do
+not receive those refs, and abbreviated legacy lookups remain unresolved.
+
+This rewrite removes generated data. Final privacy and identity review, and any
+separately approved cleanup it requires, remain before publication. Repeat checks
+against the final contents and preserve mappings across any further rewrite.
 
 ## What belongs
 
@@ -371,7 +392,7 @@ for a study:
 | [publication-files.csv](publication-files.csv) and [publication.sha256](publication.sha256) | Exact selected payload and metadata paths, sizes and checksums |
 | [publication-gaps.csv](publication-gaps.csv) | Unsupported results, missing configuration and older collections still needing review |
 | [models.csv](models.csv) | All 17 evaluated adapter checkpoints and their pinned base-model references |
-| [historical-files.csv](historical-files.csv) and [historical-uses.csv](historical-uses.csv) | Artifact blobs in Git history and their original commit associations |
+| [historical-files.csv](historical-files.csv) and [historical-uses.csv](historical-uses.csv) | Original artifact blobs and commit associations from the pre-rewrite audit |
 
 These tables describe local selected exports. Final Hugging Face repository
 names, revision links, hosted file layout and compression choices remain open.
@@ -408,5 +429,6 @@ parameters, result identities and status agree with the saved evidence, includin
 reuse and incomplete runs. Review the selected data for sensitive information.
 Test reader instructions using only the proposed downloads and documented
 upstream dependencies, with the original storage unavailable. Preserve the
-original research throughout. History cleanup remains the final publication
-preparation step, followed by checks of the final contents and commit references.
+original research throughout. The generated-data rewrite is complete. Finish
+privacy and identity review before publication, then check the final contents,
+commit mappings and reader workflows.
