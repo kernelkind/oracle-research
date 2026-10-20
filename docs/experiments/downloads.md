@@ -517,11 +517,14 @@ reproduced six roots, 200 nodes and 2,693 represented posts, including interacti
 browsing. No native run files, model downloads or login are needed. Hosted
 download checks remain pending.
 
-The later HR36 extraction/construction and L1 comparison examples still require
-three original files, totaling 44.74 MiB, listed in
-[reproduction.sha256](reproduction.sha256). They demonstrate existing tools;
-they do not prescribe the public download layout or require publishing those
-original files unchanged.
+The [fine-tune comparison](reproduce.md#inspect-the-fine-tune-comparison) also
+uses its restored two-file compact bundle. All seven saved rows match the
+published per-note scores, without original research directories or models.
+
+The HR36 extraction/construction examples still require one original corpus,
+41.37 MiB, listed in [reproduction.sha256](reproduction.sha256). That remaining
+original-file example does not prescribe the public download layout or require
+publishing the original corpus unchanged.
 
 ## File selection and archive layout
 

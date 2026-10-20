@@ -9,11 +9,10 @@ from the original results.
 [shared-dataset commands](#check-the-converted-local-selection) prepare, verify
 and restore the local upload files listed in [publication-files.csv](publication-files.csv).
 Restoration recovers original compact exports, not complete native experiment
-directories. HR39 browsing below uses the restored hierarchy and used-posts
-collection; this path passed local export, validation and interactive checks.
-The later subject-extraction, construction and fine-tune examples still use
-original research files in an earlier layout. Public paths and hosted reader
-workflows remain untested.
+directories. HR39 browsing and the fine-tune comparison below use restored
+compact exports. Subject extraction and construction still use an original
+research corpus in an earlier layout. Public paths and hosted reader workflows
+remain untested.
 
 To generate and browse a new hierarchy from your own posts, use the
 [generation guide](../generate-hierarchy.md). Its complete 12-post workflow
@@ -38,28 +37,28 @@ export RELEASE_ROOT="$ORACLE_ROOT/target/reproduction/release"
 mkdir -p "$RELEASE_ROOT" target/reproduction/history
 ```
 
-For HR39 browsing, use the compact dataset files in the next section. No
-original native run directory is needed.
+For HR39 browsing and the fine-tune comparison, use the compact dataset files
+in their respective sections. No original native run directory is needed.
 
-The later subject-extraction, construction and fine-tune examples require three
-original files under `RELEASE_ROOT` at the paths below. They total 44.74 MiB;
-[reproduction.sha256](reproduction.sha256) retains their measured checksums.
-Restoring the compact dataset does not supply these original files. Model
+The subject-extraction and construction examples still require one original
+HR36 corpus under `RELEASE_ROOT` at the path below. It is 41.37 MiB;
+[reproduction.sha256](reproduction.sha256) retains its measured checksum.
+Restoring the compact dataset does not supply this original file. Model
 downloads and build dependencies are additional.
 
 | Files | Purpose |
 | --- | --- |
 | `datasets/42d5ce5211a1a72b08d8df3d80cb5d5668383d2afd27fbee6df331f567e8baef.json` | HR36's 1,000 posts and ASv6.100 answers |
-| `evidence/oracle-mvp-qwen-continuation-grading-v1/target/pilot-l1-results-v1/{analysis,verification}.json` | Saved fine-tune comparison |
 
-If using those later examples, verify the three original files:
+If using those examples, verify the original corpus:
 
 ```bash
 cd "$RELEASE_ROOT"
 sha256sum --check "$ORACLE_ROOT/docs/experiments/reproduction.sha256"
 ```
 
-The HR39 workflow below verifies its compact inputs during restoration instead.
+The browsing and fine-tune comparison workflows verify their compact inputs
+during restoration instead.
 
 ## Browse HR39 without running models
 
@@ -311,9 +310,8 @@ python sse_multivector/experiment.py export-hierarchy-results \
 
 The default output is `target/reproduction/HR36/publication/`. For another
 destination, pass `--output target/reproduction/HR36-results`. The same command
-accepts an original saved hierarchy directory containing `state.json`; the five
-viewer/corpus/comparison files used elsewhere in this guide do not include that
-state.
+accepts an original saved hierarchy directory containing `state.json`; compact
+exports and the HR36 corpus alone do not include that state.
 
 | File | What it preserves |
 | --- | --- |
@@ -622,19 +620,29 @@ The current comparison evaluates the roots of each post's subject hierarchy
 The [research record](../planning/fine-tuning-pilot-process.md#l1-only-test-results-october-15)
 defines correctness and both completeness measures.
 
-Read the saved table with Python's standard library; no model runtime is needed:
+Use the runner's Python environment from above to restore this two-file bundle
+from `target/publication-dataset`. Choose a new output directory. Restoration
+checks its file hashes; printing the saved table uses only Python's standard
+library. No model runtime or login is needed:
 
 ```bash
 cd "$ORACLE_ROOT"
-export L1_RESULTS="$RELEASE_ROOT/evidence/oracle-mvp-qwen-continuation-grading-v1/target/pilot-l1-results-v1"
+source target/hierarchy-env/bin/activate
+python sse_multivector/experiment.py restore-publication-dataset \
+  target/publication-dataset \
+  --publication evaluations/qwen-continuation-grading-v1-analysis-00a437b45662 \
+  --output target/reproduction/l1-comparison
+export L1_RESULTS="$ORACLE_ROOT/target/reproduction/l1-comparison"
 python3 - <<'PY'
 import json
 import os
 from pathlib import Path
 
-analysis = json.loads((Path(os.environ['L1_RESULTS']) / 'analysis.json').read_text())
+comparison = json.loads((Path(os.environ['L1_RESULTS']) / 'experiment.json').read_text())
+if comparison['format'] != 'evaluation-comparison-publication-v1':
+    raise SystemExit('Expected a published evaluation comparison.')
 print('Version                 Correctness  All roots  Required roots  Invalid')
-for name, result in analysis['results'].items():
+for name, result in comparison['models'].items():
     s = result['stats']
     print(f"{name:23} {s['correctness_percent']:10.2f}% "
           f"{s['all_root_completeness_percent']:9.2f}% "
@@ -643,16 +651,18 @@ for name, result in analysis['results'].items():
 PY
 ```
 
-This displays existing scores. `analysis.json` also retains per-note fractions
-and source hashes. `verification.json` records the original verification; reading
-it does not rerun that verification. The Qwen pass-2 test collection remains
+This displays the recorded totals in `experiment.json`, which also retains model
+versions, scoring definitions and source hashes. `results.jsonl` contains 1,400
+per-note records: 200 for each of the seven versions, including score fractions
+and invalid-output flags. Reading the table does not reapply semantic judgments
+or rerun the original verification. The Qwen pass-2 test collection remains
 sealed and is not part of this comparison.
 
 The [adapter inventory](models.csv) identifies all 17 checkpoints, their pinned
 base-model revisions and associated training manifests. Inference requires an
 adapter's weights/configuration and its matching base model. Resuming training
 also requires its optimizer/training state and the original prepared dataset.
-These larger files are separate from the five-file example above.
+These model files are separate from the compact comparison bundle.
 The [publication plan](downloads.md#corpora-and-fine-tunes) includes all 17
 evaluated adapters on Hugging Face, with prepared training data and settings.
 Optimizer state remains outside that plan; resuming an exact training state
@@ -710,7 +720,7 @@ python sse_multivector/experiment.py verify \
 ```
 
 The command finds the bundled `experiment-locations.json` automatically. These
-are additional evidence files beyond the five-file example above. The package
+are additional evidence files beyond the compact publications above. The package
 has been tested locally; publishing it is not part of the compact-output plan.
 The [native verification instructions](open-items.md#prepare-verification-metadata)
 describe how such complete local packages are prepared.
@@ -738,6 +748,14 @@ mappings apply only to `verify`; they do not make `show`, `collect`, `run` or
 unfinished.
 
 ## What has been tested
+
+The compact fine-tune comparison was checked on **2026-10-20**: restoration
+verified both files, and the documented display ran with original-file access
+and network connections blocked. All seven rows match the original recorded
+totals and the means of their 200 published per-note scores. This checks saved
+arithmetic, not the underlying semantic judgments. No model requests ran.
+
+The following checks used the earlier original-file examples and layout.
 
 Checked on **2026-10-19**, using Oracle code at `ddef7569` and runner code at
 `3b73550`, with Python 3.13.12 and tiktoken 0.14.0:

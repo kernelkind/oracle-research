@@ -580,7 +580,10 @@ Before publication:
   replace a hosted reader test.
 - Provide a maintained, tested command for L1 analysis from saved judgments and
   validate portable training and adapter-inference instructions with the selected
-  data and pinned upstream models.
+  data and pinned upstream models. The saved seven-version comparison now displays
+  from its restored compact bundle without original research directories; all
+  seven rows match the 200 published per-note scores per version. This does not
+  rebuild the underlying semantic judgments.
 
 The generated-data rewrite is complete. Final privacy and identity review
 remains before publication; any further history cleanup needs its own approval.

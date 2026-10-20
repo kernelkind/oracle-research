@@ -26,7 +26,8 @@ have been located and checked against their recorded SHA-256 hashes.
 | Find converted final results | [Measured selection](downloads.md#measured-local-exports) | [Exports](publications.csv), [files](publication-files.csv) and [remaining review items](publication-gaps.csv) |
 | Generate a hierarchy from posts | [Generation guide](../generate-hierarchy.md) | [Official hierarchy runs](hierarchy.csv) |
 | Browse a published hierarchy | [HR39 browsing instructions](reproduce.md#browse-hr39-without-running-models) | [Selected compact files](publication-files.csv) |
-| Inspect or repeat recorded experiments | [Reproduction guide](reproduce.md) | [Original inputs for later examples](reproduction.sha256) |
+| Inspect the fine-tune comparison | [Saved scores from the compact bundle](reproduce.md#inspect-the-fine-tune-comparison) | [Selected evaluation files](publication-files.csv) |
+| Inspect or repeat recorded experiments | [Reproduction guide](reproduce.md) | [Original HR36 corpus checksum](reproduction.sha256) |
 | Understand the recorded hierarchy experiments | [Run overview](hierarchy.md) and [detailed findings](../recommendation-engine/hierarchy-runs.md) | [Run settings, source versions and corpus identities](hierarchy.csv) |
 | Use or study the subject fine-tunes | [Training process and evaluation](../planning/fine-tuning-pilot-process.md) | [Adapter checkpoints and base versions](models.csv) |
 | Study subject, mask, title, comparison and prominence trials | [Experiment workflow](../../sse_multivector/model-runner.md) | [Selected studies](experiments.csv) |
