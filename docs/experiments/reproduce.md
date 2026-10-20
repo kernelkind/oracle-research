@@ -12,6 +12,10 @@ Restoration recovers original compact exports, not complete native experiment
 directories. The browsing and generation examples below still use local copies
 of original research files in an earlier layout; restoration alone does not
 supply those files. Public paths and hosted reader workflows remain untested.
+In the clean-VM check, HR39 and the used-posts collection restored successfully,
+but `export-canonical-viewer` required an internal `state.json` absent from the
+compact export. Browsing directly from the published `hierarchy.jsonl` and posts
+still needs a supported command.
 
 | What you want to do | Example | Model work |
 | --- | --- | --- |
@@ -65,7 +69,8 @@ Use Linux and the repository's Nix build environment. Build the viewer:
 
 ```bash
 cd "$ORACLE_ROOT"
-nix develop --command cargo build --locked --release --jobs 1 \
+nix --extra-experimental-features 'nix-command flakes' develop \
+  --command cargo build --locked --release --jobs 1 \
   --bin sse-subject-navigation
 export HR39_VIEWER="$RELEASE_ROOT/evidence/hierarchy-run-store/hr39-v53-auto-5000-note-v1/hr39-review-ui-v1"
 target/release/sse-subject-navigation \
@@ -204,7 +209,8 @@ export HR36_CORPUS="$RELEASE_ROOT/datasets/42d5ce5211a1a72b08d8df3d80cb5d5668383
     exit 1
   }
   cp "$HR36_CORPUS" target/hierarchy-example/subject-collection/subjects.json
-  nix develop --command cargo build --locked --release --jobs 1 \
+  nix --extra-experimental-features 'nix-command flakes' develop \
+    --command cargo build --locked --release --jobs 1 \
     --bin fine-segmentation-candidate --bin sse-subject-navigation
   python sse_multivector/experiment.py prepare-hierarchy target/reproduction/HR36 \
     --spec sse_multivector/examples/hierarchy-v5.3/hierarchy.spec.json \

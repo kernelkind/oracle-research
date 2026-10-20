@@ -15,9 +15,13 @@ the current numerical implementation includes quadratic distance matrices, and
 there is no established minimum-RAM specification for this workflow.
 
 The commands and configurations below are provided for publication preparation.
-A complete fresh-machine run with the public authentication route has not yet
-been validated. The final runner submodule URL and commit will be recorded after
-publication history cleanup.
+Setup was checked in a fresh Debian 13 VM with 8 GiB RAM, four CPU cores and
+a 48 GiB disk, using clean Git clones without host caches or credentials.
+Dependency installation, both Rust builds, public encoder downloads and hash
+checks, and subject-request preparation for 12 real posts passed. Seven offline
+direct-authentication tests passed with simulated providers. Live provider login,
+encoder inference and a complete hierarchy run remain unvalidated. The final
+public repository URLs and runner submodule setup remain pending.
 
 ## 1. Install the runtime
 
@@ -26,11 +30,12 @@ pinned Rust/C build environment. Python's `venv` and `pip`, `curl`, and
 `sha256sum` are also needed. The Torch, Transformers and Tokenizers versions below
 match the recorded CPU runtime; the guide does not require a GPU or a container.
 
-Place the matching `experiment-runner` source checkout either inside Oracle as
+Use `experiment-runner` at commit
+`fb9cfb4c49c9e1c61dfcca11772b46480e0b3209`, the revision used for the
+fresh-machine setup check. Place its source checkout either inside Oracle as
 `experiment-runner/` or alongside it as `../experiment-runner/`. An explicit
-`EXPERIMENT_RUNNER_ROOT` selects a different checkout. The publication submodule
-will eventually supply this pairing; installing an arbitrary latest runner is
-not a reproducibility guarantee.
+`EXPERIMENT_RUNNER_ROOT` selects a different checkout. The final publication
+submodule setup remains pending.
 
 From the directory containing your Oracle checkout, run this setup in Bash.
 Keep this shell open for the following steps:
@@ -54,7 +59,8 @@ python -m pip install transformers==4.57.1 tokenizers==0.22.2 \
   -e "$EXPERIMENT_RUNNER_ROOT"
 npm --prefix "$EXPERIMENT_RUNNER_ROOT/experiment_runner/frontier_runner" \
   ci --ignore-scripts --no-audit --no-fund
-nix develop --command cargo build --locked --release \
+nix --extra-experimental-features 'nix-command flakes' develop \
+  --command cargo build --locked --release --jobs 1 \
   --bin fine-segmentation-candidate --bin sse-subject-navigation
 python sse_multivector/experiment.py --help
 ```
@@ -76,6 +82,9 @@ export EXPERIMENT_RUNNER_AUTH=direct
 ```
 
 The login command prints the instructions for completing subscription login.
+For a headless machine or VM, choose device-code login and complete it in your
+browser. The browser-callback method requires the browser to reach the login
+process's local callback port.
 Credentials are saved outside the repository at
 `$XDG_CONFIG_HOME/experiment-runner/auth.json`, or
 `~/.config/experiment-runner/auth.json` when `XDG_CONFIG_HOME` is unset.
@@ -150,10 +159,8 @@ print('Tokenizer/configuration verified')
 PY
 ```
 
-This five-file download was checked against the recorded tree hash during
-publication preparation. No checkpoint download or encoder inference was
-performed in that check. Extra files, cache metadata or symlinks in this model
-directory change or invalidate its tree hash.
+Extra files, cache metadata or symlinks in this five-file model directory change
+or invalidate its tree hash.
 
 ## 4. Supply posts and review the configuration
 

@@ -559,8 +559,13 @@ Before publication:
   is authorized by generating this local list.
 - Update the [reproduction guide](reproduce.md) for those outputs and test it in
   a clean environment, including a complete hierarchy run with public
-  authentication. The compact dataset's local integrity/restore checks do not
-  replace the earlier original-file examples or a hosted reader test.
+  authentication. A clean Debian 13 VM with 8 GiB RAM and four CPU cores passed
+  runtime installation, both Rust builds, public encoder downloads and hashes,
+  12-post subject-request preparation and seven offline direct-authentication
+  tests. Live login, encoder inference and complete generation remain untested.
+  HR39 and used-posts restoration passed there, but the existing viewer exporter
+  requires internal `state.json`; it cannot yet browse the compact publication
+  files. These checks do not replace a hosted reader test.
 - Provide a maintained, tested command for L1 analysis from saved judgments and
   validate portable training and adapter-inference instructions with the selected
   data and pinned upstream models.
