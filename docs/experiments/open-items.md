@@ -172,13 +172,17 @@ The remaining **77 groups need final-evidence exports**:
 | Real-note, hierarchy-title and frontier studies | 4 | Final segment selections, title answers and judgments, model comparisons and recorded reviews |
 | Archived baselines | 1 | Four CREC119 answer/segment files and two geometry diagnostics; the TEv4.1 answers are already covered by selected inputs |
 
-The subject-goal group includes a current-baseline omission: the six selected
-**ASv6.100** native bundles retain 180 valid answers and their saved reviews,
-but not `quality-summary.md` or four frozen evaluation rubrics. Those five files
-total **91,107 bytes** and explain the per-input/per-trial measurements and the
-criterion IDs used by the reviews. The 119 unrun rows in the saved plans are not
-additional answers. Older AS results remain historical; unknown provenance or
-reviewer identity stays unknown.
+The current-baseline omission found in this review is now resolved. The six
+selected **ASv6.100** native bundles retain 180 valid answers and their saved
+reviews. `quality-summary.md` and four frozen evaluation rubrics are now selected
+verbatim under `evaluations/asv6.100-generalization-v1/`, totaling **91,107 bytes**
+(**34,369 bytes** with gzip level 6). They explain the per-input/per-trial
+measurements and the criterion IDs used by the reviews. All 60 summary/rubric
+case IDs match the selected answers; the 119 unrun plan rows are not additional
+answers. See the [study's file list](../../sse_multivector/subject-prompt-goal-v1/asv6.100-generalization-v1/README.md#publication-files).
+The broader subject-goal group still has historical evidence needing export.
+Older AS results remain historical; unknown provenance or reviewer identity
+stays unknown.
 
 Final evidence is often much smaller than its original container. The 506 HDB
 answer files total **94,310 bytes** before their comparisons and assessments.
@@ -196,9 +200,10 @@ Teacher-parity results remain interim. A missing aggregate file also does not
 erase successful individual responses in a partial run. Preserve actual user
 decisions separately from agent assessments.
 
-This was an evidence review. No additional data was exported, no original
-records were changed, and the measured selected totals remain unchanged. The
-remaining-items table now names concrete export requirements rather than treating
+The review itself made no additional exports or changes to original records.
+The five ASv6.100 documents were selected afterward; the
+[measured totals](downloads.md#measured-local-exports) include them. The
+remaining-items table names concrete export requirements rather than treating
 every old directory as an unexamined missing dataset.
 
 ## Current Oracle/runner compatibility

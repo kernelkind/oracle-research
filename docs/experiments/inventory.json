@@ -217,10 +217,10 @@
   "compact_exports": {
     "state": "Local selected compact exports; not uploaded or approved for publication",
     "artifact_root": "target/publication-exports",
-    "publications": 2943,
-    "files": 8832,
-    "bytes": 1118863911,
-    "gzip_bytes": 156803067,
+    "publications": 2944,
+    "files": 8837,
+    "bytes": 1118955018,
+    "gzip_bytes": 156837436,
     "gzip_method": "Measured gzip level 6 per staged file, in memory; no compressed downloads created",
     "categories": {
       "comparison": {
@@ -294,6 +294,12 @@
         "gzip_bytes": 1868301,
         "bundles": 20,
         "files": 40
+      },
+      "evaluation-documents": {
+        "bundles": 1,
+        "files": 5,
+        "bytes": 91107,
+        "gzip_bytes": 34369
       }
     },
     "gaps": 111,
@@ -311,10 +317,10 @@
     },
     "adapter_checkpoints": 17,
     "adapter_weight_and_config_bytes": 7280087769,
-    "combined_staged_and_model_bytes": 8398951680,
+    "combined_staged_and_model_bytes": 8399042787,
     "oracle_export_commit": "fcfd4cabcba7102aab81dcffec018c00b4498a55",
     "runner_export_commit": "34d7eb79dc714275145a983ffeb42ddcddc42561",
-    "export_commit_scope": "These commits identify the original selection before historical_study_backfill; the four added bundles bind their exporter source separately by SHA-256",
+    "export_commit_scope": "These commits identify the original selection before historical_study_backfill; the four added bundles bind their exporter source separately by SHA-256. The later original Markdown documents are bound directly by source hashes and file checksums.",
     "source_originals_preserved": true,
     "fresh_model_inference": false,
     "uploads": false,
@@ -341,6 +347,99 @@
       "source_originals_preserved": true,
       "fresh_model_inference": false,
       "uploads": false
+    },
+    "asv6_100_evaluation_documents": {
+      "publication": "evaluations/asv6.100-generalization-v1",
+      "format": "text/markdown",
+      "scope": "Five original Markdown documents selected verbatim; no conversion or new runtime/exporter",
+      "selection_base_commit": "51186d8f8ea83f1e29e4f50301d2de9093180c27",
+      "source_root": "research-main:sse_multivector/experiments/sp-autonomous-v1/asv6.100-generalization-v1/",
+      "files": 5,
+      "bytes": 91107,
+      "gzip_bytes": 34369,
+      "sources": [
+        {
+          "source": "research-main:sse_multivector/experiments/sp-autonomous-v1/asv6.100-generalization-v1/quality-summary.md",
+          "role": "final_per_input_per_trial_consistency_measurements",
+          "source_bytes": 11240,
+          "source_sha256": "1ff6c6343be011523a70c9fd70adda6f036cc3343b400ce1b3dc62394bbc052a",
+          "tracked_in_publication_git": false
+        },
+        {
+          "source": "research-main:sse_multivector/experiments/sp-autonomous-v1/asv6.100-generalization-v1/real-selection/rubric-a.md",
+          "role": "frozen_agent_rubric_definitions",
+          "source_bytes": 21571,
+          "source_sha256": "610288bbca1a6db9e36e184a548e6829f444280bb565e5d33ce49f27b2ee8005",
+          "tracked_in_publication_git": false
+        },
+        {
+          "source": "research-main:sse_multivector/experiments/sp-autonomous-v1/asv6.100-generalization-v1/real-selection/rubric-b.md",
+          "role": "frozen_agent_rubric_definitions",
+          "source_bytes": 22488,
+          "source_sha256": "f9845a4e5fdb18e38b9671c5800112135db7c189b639533f5f4f272b512a5468",
+          "tracked_in_publication_git": false
+        },
+        {
+          "source": "research-main:sse_multivector/experiments/sp-autonomous-v1/asv6.100-generalization-v1/prospective-audit/rubric.md",
+          "role": "frozen_agent_rubric_definitions",
+          "source_bytes": 14816,
+          "source_sha256": "d5f492cb978c2e4a48a0d1b24f6fd8e9dfa58c4b96ae5050c12fe252be95980f",
+          "tracked_in_publication_git": false
+        },
+        {
+          "source": "research-main:sse_multivector/experiments/sp-autonomous-v1/asv6.100-generalization-v1/authored-new/rubric.md",
+          "role": "frozen_agent_rubric_definitions",
+          "source_bytes": 20992,
+          "source_sha256": "c72956f484154380f2e1ec46b8360178d85a987396165f64dfdfb3697da918b2",
+          "tracked_in_publication_git": false
+        }
+      ],
+      "related_native_publications": [
+        {
+          "publication": "prompts/2fa2e366f924ea8df9ce9fcd53f56e885f173bcd67daa3e71795c63a5b0ec650",
+          "source": "research-main:sse_multivector/experiments/sp-autonomous-v1/asv6.100-generalization-v1/T1/experiment.json",
+          "source_sha256": "cb29ed889ff803c37e8d2734be48b360c36a93dd255693025c55ce445a332b5b",
+          "plan_sha256": "69e2e54d74e4a7180c466dd3f5dc37538e7c71ea467ca93e95f47199ed5c1706"
+        },
+        {
+          "publication": "prompts/413115aff4e1ec994db6c2335e6d4b5dbc7f6065fff2f4d2b9ecfca5b0f296d7",
+          "source": "research-main:sse_multivector/experiments/sp-autonomous-v1/asv6.100-generalization-v1/T2-concurrency8/experiment.json",
+          "source_sha256": "f4dcc627826782b1f6ed34683d89c14023442d11321a76edde7719aefe9019f9",
+          "plan_sha256": "1bb3e610b5f3d23cfffc6abd11ffd07561782d601b90b4739ed5ee0eec9b2d22"
+        },
+        {
+          "publication": "prompts/5b42a4828b77a942cb0939a5a3c50e060c613bf5f3b77e9ceea66dde9406e2a2",
+          "source": "research-main:sse_multivector/experiments/sp-autonomous-v1/asv6.100-generalization-v1/T3/experiment.json",
+          "source_sha256": "787bdeaff888c2ba712992074c94b90a88bb5c4a247f4a4bdad59607ad3eb89f",
+          "plan_sha256": "96fbd8703e2a4c9b80c1d8952ecd25499b178b924c5be695916f5c824d92f825"
+        },
+        {
+          "publication": "prompts/74899cd39dd6b040d10077b7a7597e2e521af210dd35ad4285bbda8dd462f35f",
+          "source": "research-main:sse_multivector/experiments/sp-autonomous-v1/asv6.100-generalization-v1/T3-concurrency8/experiment.json",
+          "source_sha256": "26f7bdd6b0b00a8f5808fbca83d2cb3fac6e847a770d7594f7bed34cf47f2a65",
+          "plan_sha256": "63a92f8ad565e6617fe0d25bf71cacd2dfada51a8da700d8ee02dea06d229fbc"
+        },
+        {
+          "publication": "prompts/dba75c50edf5bee7dfa857adddff54f6d21d7d84f0962d356270f02a23d2a210",
+          "source": "research-main:sse_multivector/experiments/sp-autonomous-v1/asv6.100-generalization-v1/T1-concurrency8/experiment.json",
+          "source_sha256": "79ff24636313175a818a6212997e455f38b0a42f4b42fb2c138dae79045738f9",
+          "plan_sha256": "0f372c8959b0d7c0892446bea7f98b1b66f342f467bd0082609993d25a7ed140"
+        },
+        {
+          "publication": "prompts/ff8770bd0a8f64e119c73a4a844c02bcc5e5035bee0febb0af01c0ce5ad410b4",
+          "source": "research-main:sse_multivector/experiments/sp-autonomous-v1/asv6.100-generalization-v1/T2/experiment.json",
+          "source_sha256": "6d4155d547f185d568295762914750aa491283f3669ebfafbbbaf9931f720916",
+          "plan_sha256": "a8a5b42c8ee3d961a55892da83bfa0bc2b058200aa9ec24ca1970ed492978f8a"
+        }
+      ],
+      "answers_already_selected": 180,
+      "distinct_inputs": 60,
+      "independent_trials": 3,
+      "unrun_plan_rows_are_not_additional_answers": 119,
+      "study_index_rows_added": 0,
+      "source_originals_preserved": true,
+      "fresh_model_inference": false,
+      "uploads": false
     }
   },
   "discovery_scope": "Top-level discovery counts and follow-ups describe the original local audit; public_index and compact_exports describe the selected public evidence.",
@@ -355,7 +454,7 @@
       "training run": 4,
       "historical prompt study": 4
     },
-    "selection": "Original rows with nonempty publication links; every selected column/value and row order preserved; four additionally selected historical prompt studies are indexed separately from the original inventory",
+    "selection": "Original rows with nonempty publication links retain study identities, settings and row order; four additionally selected historical prompt studies are indexed separately from the original inventory; six existing ASv6.100 rows additionally link shared final evaluation documents in publication_notes",
     "original_index_rows": 27193,
     "omitted_internal_and_other_unselected_rows": 24598,
     "remaining_reviews": "publication-gaps.csv",
@@ -558,6 +657,7 @@
     "new_exports": false,
     "uploads": false,
     "privacy_review": "Still pending for actual publication contents",
-    "remaining_items": "publication-gaps.csv"
+    "remaining_items": "publication-gaps.csv",
+    "status_scope": "Snapshot at baseline_commit, before ASv6.100 document selection; see compact_exports.asv6_100_evaluation_documents for its later resolution"
   }
 }

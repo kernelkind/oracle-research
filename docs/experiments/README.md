@@ -46,6 +46,9 @@ remain historical evidence; raw source posts are not deprecated by that rule.
   one missing configuration and identified historical evidence needing export.
   The [109-group review](open-items.md#historical-collection-review) resolved 32
   groups that need no separate result export and records what the others lack.
+  ASv6.100's final quality summary and four frozen agent rubrics are selected as
+  original Markdown; the [study record](../../sse_multivector/subject-prompt-goal-v1/asv6.100-generalization-v1/README.md#publication-files)
+  identifies their paths alongside the six existing answer/review bundles.
 - [Experiments](experiments.csv): 2,599 entries linked to selected results:
   2,547 standalone prompt preparations, 37 official hierarchy runs, four training
   runs, seven historical collections and four later-located historical prompt

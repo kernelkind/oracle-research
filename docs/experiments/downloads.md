@@ -58,7 +58,9 @@ checksums, hierarchy/corpus/model summaries and useful provenance/recovery
 tables. Retain `historical-files.csv` and `historical-uses.csv` because they bind
 evidence to original blobs, commits and paths. `experiments.csv` now retains the
 2,595 rows with selected-publication links from the reviewed index, preserving
-all their columns and values, plus four later-located historical prompt studies.
+their study identities, settings and order, plus four later-located historical
+prompt studies. Six ASv6.100 rows additionally link the shared evaluation
+documents in their publication notes.
 `publications.csv` also indexes the selected
 numerical and other
 results; `publication-gaps.csv` keeps outstanding evidence review explicit.
@@ -159,20 +161,27 @@ download or Hugging Face revision has been created.
 | --- | ---: | ---: |
 | Standalone prompt studies: inputs, final answers and reviews | 2,547 prepared trials | 249.46 MiB |
 | Historical subject-prompt studies: posts, answers, assessments and measurements | Four studies, 78 calls and 10 distinct posts | 0.36 MiB |
+| ASv6.100 evaluation documents | Final quality summary and four frozen agent rubrics, shared by three trials | 0.09 MiB |
 | Fine-tune, grading and effort evaluations | 67 final/last reports, including 20 validation stages | 665.12 MiB |
 | Historical numerical results | 73 | 78.85 MiB |
 | Performance measurements | 9 | 0.02 MiB |
 | Unsigned hierarchies, selections and parameters | 37 official runs plus 203 saved branch outputs | 5.35 MiB |
 | Used posts, prepared training inputs and adapter hash records | 10,571 posts, four prepared files, split/settings records and 17 adapter bindings | 67.87 MiB |
-| **Selected non-model files** | **8,832 files** | **1,067.03 MiB (1.04 GiB)** |
+| **Selected non-model files** | **8,837 files** | **1,067.12 MiB (1.04 GiB)** |
 | **All 17 evaluated adapters, weights and configurations** | **34 original files, hashed without copying weights** | **6.78 GiB** |
 
-The exact selected non-model total is **1,118,863,911 bytes**. Together with
-the adapter weights/configurations it is **8,398,951,680 bytes (7.82 GiB)**.
+The exact selected non-model total is **1,118,955,018 bytes**. Together with
+the adapter weights/configurations it is **8,399,042,787 bytes (7.82 GiB)**.
 Code and cleaned Git history are additional. Measured gzip level-6 compression
-of each non-model file totals **156,803,067 bytes (149.54 MiB)**; no compressed
+of each non-model file totals **156,837,436 bytes (149.57 MiB)**; no compressed
 downloads were created and the staged files remain in their original export
 formats.
+
+The five original evaluation documents retain their Markdown bytes and relative
+paths under `evaluations/asv6.100-generalization-v1/`. Their checksums are listed
+directly; they have no `experiment.json` wrapper. The six existing ASv6.100 native
+bundles retain the 180 answers and reviews, and their study-index notes link
+these shared documents. No additional trial or duplicated answer bundle is added.
 
 These are measured selected outputs, not an exhaustive all-history size claim.
 [Remaining items](publication-gaps.csv) identify 33 unsupported result files,
@@ -443,8 +452,9 @@ ignored `target/publication-audit/generated-untracking-bfbdc288/`, binding paths
 original Git blobs, byte counts and SHA-256 hashes. The generated files themselves
 stay at their original workspace paths.
 
-The public `experiments.csv` retains the selected rows in their original order
-with every column and value preserved. Outstanding older collection/result
+The public `experiments.csv` retains the selected rows' identities, settings and
+original order, with publication notes linking later-selected evidence.
+Outstanding older collection/result
 exports remain in `publication-gaps.csv`; the retained findings and provenance
 tables preserve meaningful recovery and missing-evidence qualifications.
 

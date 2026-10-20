@@ -1,4 +1,9 @@
 publication,path,bytes,sha256,records,gzip_bytes
+evaluations/asv6.100-generalization-v1,evaluations/asv6.100-generalization-v1/authored-new/rubric.md,20992,c72956f484154380f2e1ec46b8360178d85a987396165f64dfdfb3697da918b2,,7556
+evaluations/asv6.100-generalization-v1,evaluations/asv6.100-generalization-v1/prospective-audit/rubric.md,14816,d5f492cb978c2e4a48a0d1b24f6fd8e9dfa58c4b96ae5050c12fe252be95980f,,5616
+evaluations/asv6.100-generalization-v1,evaluations/asv6.100-generalization-v1/quality-summary.md,11240,1ff6c6343be011523a70c9fd70adda6f036cc3343b400ce1b3dc62394bbc052a,,4088
+evaluations/asv6.100-generalization-v1,evaluations/asv6.100-generalization-v1/real-selection/rubric-a.md,21571,610288bbca1a6db9e36e184a548e6829f444280bb565e5d33ce49f27b2ee8005,,8352
+evaluations/asv6.100-generalization-v1,evaluations/asv6.100-generalization-v1/real-selection/rubric-b.md,22488,f9845a4e5fdb18e38b9671c5800112135db7c189b639533f5f4f272b512a5468,,8757
 evaluations/effort-assessment-stage-10-high-source-assessment-6d49e2a96466,evaluations/effort-assessment-stage-10-high-source-assessment-6d49e2a96466/experiment.json,65250,36c98888b77caab82ae1b99eb7f4ba7fcbdfdf208e7987134cabc35ccbb7ac70,,6301
 evaluations/effort-assessment-stage-10-high-source-assessment-6d49e2a96466,evaluations/effort-assessment-stage-10-high-source-assessment-6d49e2a96466/judgments.jsonl,23979,faa9a3a64cdda3fe46ac3fcf30bc8f73ad928f1b171243987d2db74a3c4f20d3,13,7224
 evaluations/effort-assessment-stage-10-high-source-assessment-6d49e2a96466,evaluations/effort-assessment-stage-10-high-source-assessment-6d49e2a96466/results.jsonl,118694,875134c2c82afd434e6f09f18c32b7e9d3277d892ded21660499d9c2646e5cca,405,18708

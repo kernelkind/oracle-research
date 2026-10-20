@@ -352,6 +352,13 @@ output bindings are checked without running models. Authentication settings,
 rendered requests and transport logs are excluded, and original files remain
 unchanged. Known pre-ASv6.100 results are labeled as historical deprecated data.
 
+The ASv6.100 generalization assessment also has five original Markdown documents
+under `evaluations/asv6.100-generalization-v1/`: its final quality summary and
+four frozen agent rubrics. These are selected verbatim, without a conversion
+command or `experiment.json` wrapper. The [study record](../../sse_multivector/subject-prompt-goal-v1/asv6.100-generalization-v1/README.md#publication-files)
+lists their paths. Their original source hashes are the publication-file
+checksums; the six existing native bundles contain the answers and reviews.
+
 For fine-tune validation answers, final grading reports and final comparisons:
 
 ```bash
@@ -409,7 +416,7 @@ experiment/source identities. [Publication files](publication-files.csv) records
 every path, byte count and SHA-256 beneath `target/publication-exports/`.
 These paths describe local staging, not an available download.
 
-With the `ORACLE_ROOT` setup above, verify all 8,832 selected files:
+With the `ORACLE_ROOT` setup above, verify all 8,837 selected files:
 
 ```bash
 cd "$ORACLE_ROOT/target/publication-exports"
@@ -720,9 +727,10 @@ were preserved, and nothing was uploaded.
 
 ### Historical backfill checks
 
-The current local selection contains **2,943 output/input directories and 8,832
-files**, totaling **1,118,863,911 bytes**. Every listed file was independently
-rehashed, and every payload binding was checked against its export manifest.
+The current local selection contains **2,944 output/input directories and 8,837
+files**, totaling **1,118,955,018 bytes**. Every listed file was independently
+rehashed. Structured payload bindings were checked against their export manifests;
+the five original ASv6.100 Markdown documents match their recorded source hashes.
 Exact prepared-input copies were also checked against their frozen source hashes.
 The complete staged file tree
 matches the selected file list, excluding all private selection logs and

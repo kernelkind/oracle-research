@@ -251,3 +251,33 @@ input's three trials unambiguously meet every bounded scored criterion. Every
 answer has a latest current native review, every returned-edge count matches
 the parsed numbered output, and every per-input source/target denominator
 matches its frozen rubric. The complete denominators remain 1,614 and 384.
+
+## Publication files
+
+The final quality summary and all four frozen agent rubrics are selected for
+Hugging Face Datasets as original Markdown under
+`evaluations/asv6.100-generalization-v1/`. They total **91,107 bytes**; their
+contents and hashes match the original experiment files, including the
+preregistration hashes above. Nothing has been uploaded yet.
+
+| Path within that selection | Contents |
+| --- | --- |
+| `quality-summary.md` | Pooled, per-trial, per-topic and all 60 per-input results |
+| `real-selection/rubric-a.md` | Frozen source checks and refinement targets for the first 20 real posts |
+| `real-selection/rubric-b.md` | Frozen source checks and refinement targets for the other 20 real posts |
+| `prospective-audit/rubric.md` | Frozen checks for the eight prospective authored inputs P201–P208 |
+| `authored-new/rubric.md` | Frozen checks for the twelve new authored inputs H009–H020 |
+
+The [publication catalog](../../../docs/experiments/publications.csv),
+[exact files and hashes](../../../docs/experiments/publication-files.csv) and
+[checksums](../../../docs/experiments/publication.sha256) identify this selection.
+The six ASv6.100 entries in the [study index](../../../docs/experiments/experiments.csv)
+link these shared documents to the existing answer/review bundles. Those six
+bundles contain three trials and their disjoint continuations, not six independent
+trials. This document selection adds no model answers or new assessments; the
+rubrics remain bounded agent judgments rather than human gold.
+
+Rubric references to original study files retain their original wording. The
+complete input texts are already in the native bundles' `inputs.jsonl`. Match
+the rubric's case ID to `case_id` in `results.jsonl`, then use `input_sha256`
+to find its input record. The same case ID identifies its row in the summary.
