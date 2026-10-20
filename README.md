@@ -10,9 +10,7 @@ Each choice lets the person direct their own discovery. The goal is to put that 
 
 ## Walkthrough
 
-[Watch the walkthrough in Notedeck (19 seconds)](docs/media/hierarchy-walkthrough.mp4): choose a topic, narrow it down, and view its posts.
-
-The walkthrough shows Notedeck's **Hierarchy** column: follow progressively narrower topics and view their linked posts.
+[Watch the walkthrough in Notedeck (19 seconds)](docs/media/hierarchy-walkthrough.mp4): use the **Hierarchy** column to choose a topic, narrow it down, and view its posts.
 
 The interface uses a [toy hierarchy snapshot protocol](docs/recommendation-engine/design/hierarchy-serving-protocol-decisions.md) developed for this prototype. The format is intended for local or private testing, so please avoid publishing its experimental events to public Nostr relays.
 
@@ -39,16 +37,16 @@ The [generation guide](docs/generate-hierarchy.md) covers terminal browsing and 
 
 **Current implementation:** This is a research prototype. The documented generator, [HiGen V5.3](docs/recommendation-engine/hierarchy-generation-v5.md), uses external AI services for subject identification and definition writing; embedding and numerical construction run locally. Fully local hierarchy generation and million-note scalability have not yet been demonstrated.
 
-| What you want to do | Guide |
-| --- | --- |
-| Generate a hierarchy from your own posts | [Complete generation workflow](docs/generate-hierarchy.md) |
-| Browse an existing hierarchy without running models | [Browse HR39](docs/experiments/reproduce.md#browse-hr39-without-running-models) |
-| Export a hierarchy in the toy Nostr format | [Local signing and export](docs/generate-hierarchy.md#8-export-as-nostr-notes) |
-| Extract subjects locally with a trained model | [Use a subject-extraction adapter](docs/experiments/reproduce.md#use-a-subject-adapter) |
-| Inspect the fine-tuning measurements | [Read the saved comparison](docs/experiments/reproduce.md#inspect-the-fine-tune-comparison) |
-| Repeat the subject fine-tuning | [Training inputs and instructions](docs/experiments/reproduce.md#prepare-the-fine-tuning-inputs) |
+| What you want to do | Guide | Main requirements |
+| --- | --- | --- |
+| Generate a hierarchy from your own posts | [Complete generation workflow](docs/generate-hierarchy.md) | Linux, an external language-model account, and CPU resources for embedding and clustering |
+| Browse an existing hierarchy | [Browse HR39](docs/experiments/reproduce.md#browse-hr39-without-running-models) | Saved hierarchy and post files; no model inference |
+| Export a hierarchy in the toy Nostr format | [Local signing and export](docs/generate-hierarchy.md#8-export-as-nostr-notes) | Complete saved run, `nak` and a local signing-key file |
+| Extract subjects locally with a trained model | [Use a subject-extraction adapter](docs/experiments/reproduce.md#use-a-subject-adapter) | CUDA GPU, selected adapter and matching base-model weights |
+| Inspect the fine-tuning measurements | [Read the saved comparison](docs/experiments/reproduce.md#inspect-the-fine-tune-comparison) | Saved comparison files; no model inference |
+| Repeat the subject fine-tuning | [Training inputs and instructions](docs/experiments/reproduce.md#prepare-the-fine-tuning-inputs) | CUDA GPU, base-model weights and prepared training data |
 
-The generation guide passed a complete 12-post test in a fresh Linux VM, from setup to interactive terminal browsing. Training and adapter-use instructions describe the existing code; fresh GPU execution of those reader instructions remains untested. Model and data downloads are still being prepared.
+The linked guides cover setup, hardware requirements and validation limits. Model and data downloads are still being prepared.
 
 ## How it works
 
@@ -56,7 +54,7 @@ An AI language model identifies the subjects discussed in each Nostr post and wr
 
 The generator groups related subjects and uses a language model to define broader topics for the groups. It builds a few broad starting choices, then constructs the choices within each branch from the original subjects assigned to it. Posts stay linked to their subjects and can appear in multiple branches.
 
-Subject identification works within each post; hierarchy construction organizes those subjects across the corpus. The trained subject-extraction models address the first stage. They do not replace all language-model steps in the documented generation workflow.
+The fine-tuned models cover subject identification within individual posts.
 
 The generation workflow uses the separate `experiment-runner` to execute language-model requests and record their inputs and responses. The generation guide includes its setup.
 
