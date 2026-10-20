@@ -266,6 +266,15 @@ class HierarchyPublicationExecutionTests(unittest.TestCase):
         self.native.setUp()
         self.addCleanup(self.native.doCleanups)
 
+    def test_construction_prompt_jobs_are_marked_internal(self):
+        spec = self.native.configure(count=2)
+        self.native.cli('prepare-hierarchy', 'trial', '--spec', spec)
+        state = self.native.state()
+        for job in state['experiments']:
+            plan = json.loads((Path(job['experiment'])/'experiment.json').read_text())['plan']
+            self.assertEqual(plan.get('publication_role'), 'internal')
+            self.assertFalse((Path(job['experiment'])/'publication').exists())
+
     def test_prepare_records_selected_subject_and_code_versions_without_paths(self):
         import uuid
         spec = self.native.configure(count=2)

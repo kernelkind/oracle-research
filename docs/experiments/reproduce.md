@@ -8,7 +8,7 @@ from the original results.
 **Downloads are not available yet.** These instructions and the offline checks
 below use local copies of original research files in the earlier staging layout.
 The agreed [publication plan](downloads.md) uses smaller final outputs hosted on
-Hugging Face. The hierarchy exporter is documented below, but the download paths
+Hugging Face. The compact exporters are documented below, but the download paths
 and checksums still need adaptation and testing against the published exports.
 The original-file paths below are not promises of public download paths.
 
@@ -305,6 +305,81 @@ These three files are publication outputs; the browser above still uses its
 separate viewer files. Backfilling all historical hierarchies and testing the
 eventual public downloads remain unfinished.
 
+### Export other compact results
+
+These are publisher commands for selected saved experiments. The paths below
+illustrate each input type; use the corresponding original source from the
+experiment index. They perform no inference and leave that evidence intact.
+Download locations still need to be assigned.
+
+For a native prompt experiment containing `experiment.json` and `report.json`:
+
+```bash
+cd "$ORACLE_ROOT"
+python sse_multivector/experiment.py export-results \
+  target/prompt-study-v1 --output target/prompt-study-results
+```
+
+The three files are `experiment.json`, `inputs.jsonl` and `results.jsonl`.
+Inputs store exact template variables once per hash; results retain final
+answers, case outcomes, reuse and attributed reviews. The metadata binds the
+saved report and input order. This exports that report snapshot, including its
+recorded judgments; it does not merge newer sidecar edits or reverify receipts.
+Missing reports and known internal construction jobs are refused. New standalone
+preparation, execution and review refresh the same export automatically. Native
+hierarchy children, coordinator-created grading jobs and cache warmups are
+excluded from separate prompt exports; final evaluations retain their judgments.
+
+For fine-tune validation answers, final grading reports and final comparisons:
+
+```bash
+cd "$ORACLE_ROOT"
+python sse_multivector/experiment.py export-evaluation-results \
+  target/fine-tune-run --kind validation
+python sse_multivector/experiment.py export-evaluation-results \
+  target/grading/grades.json --kind grades
+python sse_multivector/experiment.py export-evaluation-results \
+  target/review-method/report.json --kind review
+python sse_multivector/experiment.py export-evaluation-results \
+  target/l1-comparison/analysis.json --kind comparison
+```
+
+`validation` accepts a training-run directory or one complete/partial saved
+validation stage. It scans baseline, legacy trained and checkpoint evaluation
+stages, excluding `test/`. Outputs live outside sealed stages under
+`publication/evaluations/`. Grading exports include the exact selected raw
+answers, scores/proofs and deduplicated supporting judgments; missing bindings
+remain explicit. These selections do not include sealed Qwen pass-two answers.
+L1, paired-grade and effort reports retain their distinct measurement schemas.
+Use `--output` to choose a separate destination.
+
+Numerical studies require a supported result profile:
+
+```bash
+cd "$ORACLE_ROOT"
+python sse_multivector/experiment.py export-numerical-results \
+  target/geometric-study --family geometric
+```
+
+The profiles are `geometric`, `fuzzy`, `hidef`, `merge-rule`, `comparison`,
+`performance`, `fine-region` and `pair-scores`. Use `fuzzy` for the native fuzzy
+memberships and final interpolation; a hard projection is a distinct result.
+Directory inputs default to their `publication/` directory; individual result
+files default to `publication/STEM/` alongside the source. An explicit profile
+is required when the old format is ambiguous. Unsupported schemas fail.
+
+Geometric/fuzzy, HiDeF, merge-rule and benchmark final writers also call this
+exporter automatically. Older Rust/diagnostic command implementations remain
+unchanged and need the offline command. The exports retain native results and
+canonical source mappings, omitting working coordinates and distance tables.
+Historical AS provenance must still be checked before any current-pipeline reuse.
+
+The [format reference](downloads.md#automated-outputs) explains the payloads and
+their limits. Managed exports refuse unrelated destinations, bind payload
+checksums and preserve unchanged file bytes/mtimes. Backfilling the full research
+inventory, checking the selected public contents and testing the eventual
+downloads remain open.
+
 ### Which code is being repeated?
 
 The examples above use publication code. They reproduce the inputs, prompt
@@ -505,3 +580,37 @@ the 42 construction checks that previously failed and a new regression that
 first reproduced the exact call error, then passed with the fix. The checks
 exercise production paths with local fixture runners and encoders; they make
 no paid model calls and do not rerun the archived experiments.
+
+### Other compact export checks
+
+Local fixture tests cover standalone prompt lifecycle/review exports, explicit
+historical snapshots, internal-job exclusion, partial validation and grading,
+selected-answer/judgment bindings, guest packaging, and supported numerical
+profiles. They also check source preservation, destination ownership, unchanged
+refreshes, bounded streaming and omission of private configuration and raw
+execution diagnostics. Scientific findings and attributed review comments remain
+part of the results; these checks do not replace review of the selected contents.
+
+The complete shared-runner suite ran 246 checks: 244 passed and two were skipped;
+its focused publication group also passed all 54 checks. The Oracle hierarchy,
+adapter, viewer/runtime and publication integration group passed all 190 distinct
+checks across the full run and a targeted eight-test rerun after removing the
+retired concurrency field from its fixture. The evaluation exporter passed
+12 checks plus three relevant native regressions. The numerical/final-writer
+group ran 75 checks: 71 passed and four requiring GPU hardware were skipped.
+The complete pinned HiDeF environment was not exercised; its final-writer hook
+and selected containment regressions were checked with local fixtures.
+
+Two broader evaluation-workflow failures also reproduce with unchanged Oracle
+code and the same runner: the native allowance/resume test receives an additional
+stopped-before-dispatch error, and the effort-analysis CLI fixture has a native
+concurrency mismatch. These are unresolved compatibility limits, not successful
+reproductions. No paid inference or official research experiment was run.
+
+Representative historical sources were exported locally with a 512 MiB process
+address-space limit. A 1,200-answer grading preview, including scores/proofs and
+38,017 distinct supporting judgments, totaled about 91.5 MiB with about 48 MiB
+peak resident memory. Numerical previews ranged from about 14 KiB for a small
+comparison to 7.81 MiB for native fuzzy memberships. These samples do not measure
+the final collection or establish conversion of the entire inventory. Originals
+were preserved, and nothing was uploaded.

@@ -53,7 +53,7 @@ class BoundedHierarchyBuildTests(unittest.TestCase):
             source=str(source), prompts=dict(discovery=dict(id="PCPv2", path="discovery.txt"),
             comparison=dict(id="BCPv5", path="comparison.txt")), runner=dict(
             runner_binary=str(self.runner), provider="openai-codex", model="gpt-6.1-sol",
-            reasoning_effort="low", concurrency=1, timeout_seconds=600),
+            reasoning_effort="low", timeout_seconds=600),
             max_model_calls=2000, max_passes=3, max_nominations_per_reference=9,
             work_budget=20000))
         self.directory = self.root / "build"
@@ -77,6 +77,8 @@ class BoundedHierarchyBuildTests(unittest.TestCase):
         self.assertEqual(report_build(self.directory), summary)
         child = json.loads((self.directory / "passes" / "01" / "discovery" / "experiment.json").read_text())["plan"]
         self.assertEqual(child["runner"]["output_schema"], DISCOVERY_SCHEMA)
+        self.assertEqual(child.get('publication_role'), 'internal')
+        self.assertFalse((self.directory/'passes/01/discovery/publication').exists())
 
     def test_zero_nomination_pass_finishes_without_preparing_empty_runner_batch(self):
         prepare_build(self.spec, self.directory)

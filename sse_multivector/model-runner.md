@@ -2222,8 +2222,18 @@ runner's JSON projection support, retaining graph/selection/settings and skippin
 construction working data. The runner package installs its `ijson` dependency;
 no separate global installation is needed. See the [publication plan](../docs/experiments/downloads.md#automated-outputs)
 and [generation guide](../docs/generate-hierarchy.md) for the reader workflow.
-Standalone prompt/evaluation and numerical result publication remain separate,
-unfinished work. The signed export below retains its existing behavior.
+Standalone prompt, evaluation and supported numerical results also have compact
+exports; see [export commands](../docs/experiments/reproduce.md#export-other-compact-results)
+and [formats](../docs/experiments/downloads.md#automated-outputs).
+New native standalone jobs refresh their results during preparation, execution
+and review. `publication_role=internal` excludes hierarchy construction children,
+coordinator-created grading jobs and cache warmups from separate prompt exports;
+final evaluations retain supporting judgments. Revisions inherit their source
+role. Unmarked historical plans require explicit selection. These exporters preserve final answers,
+assessments, measurements and parameters, without publishing construction
+requests or vector/distance working data. Historical conversion and public
+download verification remain unfinished. The signed export below retains its
+existing behavior.
 
 ### Review viewer export
 

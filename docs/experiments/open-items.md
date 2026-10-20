@@ -156,6 +156,14 @@ previously failed at this call. See the
 scope. These local fixtures do not establish successful reproduction of every
 archived experiment or validation with a live provider.
 
+Compact prompt, evaluation and numerical exports have additional local checks,
+documented in [the reproduction guide](reproduce.md#other-compact-export-checks).
+Two evaluation-workflow regression failures remain: the native attempt-allowance
+test receives an additional stopped-before-dispatch error, and the effort-analysis
+fixture disagrees with the runner's concurrency setting. Both reproduce using
+the unchanged Oracle code with the same runner. They remain unresolved; passing
+export checks do not establish that every evaluation workflow is compatible.
+
 ## Preserve the source history
 
 Of 41 recorded generation commits, 40 are present in the publication clones.
@@ -188,8 +196,10 @@ Before publication:
   using the same export path as automated construction. They retain unsigned
   hierarchy data, the exact input selection and small parameter/status records.
   Historical backfilling is not complete.
-- Define and implement per-case prompt/evaluation exports and final numerical
-  measurements, shared by normal automated runs and saved historical work.
+- Review and backfill the implemented prompt/evaluation and numerical exports.
+  Check each historical source against its explicit supported format. Native
+  prompt reports missing from disk and unsupported older schemas remain gaps;
+  do not substitute guessed outcomes or whole working directories.
 - Preserve experiment identity, exact selections, versions, reuse and recorded
   outcomes. Report missing evidence without changing original records.
 - Build exact exported file lists and checksums; link them from the GitHub index

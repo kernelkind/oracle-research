@@ -1,8 +1,8 @@
 # Publication contents and hosting
 
-**The hosting split and the following data categories are agreed.** Hierarchy
-exports are implemented; the other result formats, exact file selections,
-repository names and download paths still need implementation and review.
+**The hosting split and the following data categories are agreed.** Compact
+exporters cover the result families below. Historical conversion, exact file
+selections, repository names and download paths still need review.
 Nothing has been uploaded, and this plan does not authorize uploading,
 deleting original research or rewriting history.
 
@@ -129,6 +129,8 @@ dependencies. Portable training and adapter-use instructions still need testing.
 
 ## Automated outputs
 
+### Hierarchies
+
 `run-hierarchy` exports the saved hierarchy after completion or blockage and
 attempts the same export after failure or interruption, once submitted jobs have
 stopped. It writes these three files under the run's `publication/` directory:
@@ -185,9 +187,83 @@ used about 46 MiB peak resident memory under a 512 MiB address-space limit.
 This is one local export check, not a published download or a validation of
 million-note generation.
 
-Standalone prompt/evaluation exports and final numerical result exports remain
-unimplemented. Historical backfilling and final download verification remain
-unfinished; implementing the hierarchy exporter has not published the collection.
+### Prompt studies
+
+New standalone native experiments save compact results during preparation,
+execution and review. `export-results` uses the same implementation for an
+explicitly selected historical experiment:
+
+| File | Contents |
+| --- | --- |
+| `experiment.json` | Frozen trial identity, prompt/model/code bindings, settings, repeat/import provenance, case counts and payload checksums |
+| `inputs.jsonl` | Exact template-variable inputs, stored once per input hash |
+| `results.jsonl` | Case/input identities, final answer and status, reuse or mechanical origin, comparison and attributed reviews |
+
+Rendered requests, nested baseline reports, arbitrary evidence wrappers and
+transport details are excluded. User comments remain comments; agent assessments
+and user judgments keep their recorded roles. Equal answers do not establish
+reuse, and independent repeats retain different trial identities.
+
+New plans freeze `publication_role`. Normal standalone preparation selects
+`standalone`; hierarchy construction children, coordinator-created grading jobs
+and cache warmups use `internal` and are excluded from separate prompt
+publication. Final evaluation exports retain their supporting judgments.
+Revisions inherit their source role.
+Unmarked historical plans require explicit export or an explicit role when
+preparing a new revision; their frozen originals are not changed.
+
+Historical export streams the saved report and binds its hash and ordered input
+selection. It requires that report and does not reconstruct missing outcomes.
+Metadata explicitly records that later receipt/review-sidecar changes have not
+been incorporated and receipt validation has not been performed.
+
+### Evaluations
+
+Fine-tune evaluation writes compact raw answers and parsed per-note measurements
+outside its sealed stage directories, under `publication/evaluations/STAGE/`.
+Baseline and all evaluated validation checkpoints are eligible. Whole `test/`
+directories are excluded; reviewed grading selections supply the exact evaluated
+test answers separately, preserving the sealed Qwen pass-two exclusion.
+
+Final automatic grades and assembled grading-method reports retain selected
+raw model answers, per-answer scores/proofs and their supporting judgments:
+
+| File | Contents |
+| --- | --- |
+| `experiment.json` | Settings, selected-input/source bindings, status, limitations and payload checksums |
+| `answers.jsonl` | The selected evaluated answers with note/model/version identities |
+| `results.jsonl` | Final per-answer scores, checks, qualification and premise references |
+| `judgments.jsonl` | Referenced native judgment outputs and agent adjudications, with source hashes and actor distinctions |
+
+Judgment receipts are stored once and joined by hash; aliases retain their own
+case/input/output bindings. Missing or mismatched evidence stays explicit.
+Final L1, paired-grade and effort comparisons have dedicated projections.
+Partial runs export available evidence without changing frozen originals or
+claiming unfinished scores are complete. Expanded prompts, messages and repeated
+grading snapshots are excluded.
+
+### Numerical studies and performance
+
+`export-numerical-results` supports explicit geometric hierarchy, fuzzy,
+HiDeF, merge-rule, comparison, performance, fine-region and pair-score profiles.
+Each writes `experiment.json`, `inputs.jsonl` and `results.jsonl`. Parameters use
+known-setting allowlists; omitted unknown settings are counted without copying
+their values. Inputs retain canonical row/alias mappings to source notes and
+subjects where the original format supplies them.
+
+Results retain native groups, graphs, merge histories, fuzzy memberships/final
+interpolation, comparisons, assessments and measurements. Numerical graphs keep
+their native meanings and IDs. Coordinates, vectors and working distance tables
+are excluded. The geometric/fuzzy, HiDeF, merge-rule and benchmark final writers
+automatically invoke the same exporter. Saved Rust reports and older diagnostic
+profiles use explicit offline export; their original commands are unchanged.
+Unsupported historical schemas fail explicitly.
+
+All these exports use staged, managed output directories and payload hashes.
+An unchanged refresh preserves bytes and modification times; unrelated files or
+another source's destination are refused. Historical backfilling and final
+download verification remain unfinished. Implementing exporters has not
+published the collection.
 
 ## Start small
 
@@ -196,7 +272,7 @@ existing files: HR39 viewer data, HR36 saved subject inputs and the L1 compariso
 Those files total 46.55 MiB and are listed in [reproduction.sha256](reproduction.sha256).
 They demonstrate the current tools; they do not prescribe the new download
 layout or require publishing all five original files unchanged. Update the
-reader instructions and checksums once the exports are implemented.
+reader instructions and checksums once the public selections and paths are final.
 
 ## File selection and archive layout
 

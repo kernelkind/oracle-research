@@ -557,16 +557,18 @@ def main(argv=None):
     stage = time.monotonic()
     persistent = persistent_groups(cluster_graph, candidates, source_sets, config)
     persistence_seconds = time.monotonic() - stage
-    write_json(args.output / 'persistent-groups.json', {'groups': persistent,
+    persistent_record = {'groups': persistent,
         'lineage_matches_upstream_consensus': True,
-        'empty_group_policy': 'retain here as evidence; cannot form a containment category'})
+        'empty_group_policy': 'retain here as evidence; cannot form a containment category'}
+    write_json(args.output / 'persistent-groups.json', persistent_record)
     stage = time.monotonic()
     groups = strict_containment(persistent, source_sets)
     weaver_check = verify_weaver(groups)
     containment_seconds = time.monotonic() - stage
-    write_json(args.output / 'strict-dag.json', {'root': graph.vcount(), 'weaver': weaver_check,
+    dag_record = {'root': graph.vcount(), 'weaver': weaver_check,
         'edges': [{'parent': group['id'], 'child': child} for group in groups for child in group['children']],
-        'groups': groups})
+        'groups': groups}
+    write_json(args.output / 'strict-dag.json', dag_record)
     stage = time.monotonic()
     projection = note_projection(groups)
     write_json(args.output / 'note-projection.json', projection)
@@ -579,17 +581,26 @@ def main(argv=None):
                'multiple_parent_groups': sum(len(g['parents']) > 1 for g in groups),
                'unchanged_note_parent_edges': len(projection['unchanged_note_parent_edges']),
                'note_containment_blocked_pairs': len(projection['note_containment_without_vector_containment'])}
-    write_json(args.output / 'hierarchy.json', {
+    hierarchy_record = {
         'schema_version': 'containment-hierarchy-v1', 'run_id': args.run_id, 'method': METHOD,
         'sources': reference['sources'], 'canonical_unique_ids': reference['canonical_unique_ids'],
         'alias_groups': reference['alias_groups'], 'vector_count': graph.vcount(),
-        'root': graph.vcount(), 'groups': groups, 'summary': summary})
-    write_json(args.output / 'timings.json', {'discovery_seconds': discovery_seconds,
+        'root': graph.vcount(), 'groups': groups, 'summary': summary}
+    write_json(args.output / 'hierarchy.json', hierarchy_record)
+    timings_record = {'discovery_seconds': discovery_seconds,
         'persistence_seconds': persistence_seconds, 'containment_seconds': containment_seconds,
         'note_projection_seconds': projection_seconds, 'elapsed_seconds': time.monotonic() - started,
-        'peak_rss_kib': resource.getrusage(resource.RUSAGE_SELF).ru_maxrss})
+        'peak_rss_kib': resource.getrusage(resource.RUSAGE_SELF).ru_maxrss}
+    write_json(args.output / 'timings.json', timings_record)
     write_json(args.output / 'manifest.json', {
         'sha256': {path.name: sha256(path) for path in sorted(args.output.iterdir())}})
+    if __package__:
+        from .numerical_publication import export_results
+    else:
+        from numerical_publication import export_results
+    export_results(args.output, source_values={'configuration.json': configuration,
+        'hierarchy.json': hierarchy_record, 'strict-dag.json': dag_record,
+        'persistent-groups.json': persistent_record, 'timings.json': timings_record})
     print(json.dumps(summary, indent=2))
 
 

@@ -61,6 +61,17 @@ class GeometryArtifactTests(unittest.TestCase):
             result = json.loads((output/'hierarchy.json').read_text())
             self.assertEqual(result['snapshot_iterations'], [0, 1, 2])
             self.assertNotIn('snapshots', result)
+            publication = output/'publication'
+            metadata = json.loads((publication/'experiment.json').read_text())
+            self.assertEqual(metadata['family'], 'geometric')
+            published = (publication/'results.jsonl').read_text()
+            self.assertNotIn('final_coordinates', published)
+            self.assertNotIn('snapshots', published)
+            before = {p.name: (p.read_bytes(), p.stat().st_mtime_ns) for p in publication.iterdir()}
+            from numerical_publication import export_results
+            export_results(output)
+            self.assertEqual(before, {p.name: (p.read_bytes(), p.stat().st_mtime_ns)
+                                      for p in publication.iterdir()})
 
 
 if __name__ == '__main__':

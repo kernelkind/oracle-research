@@ -8,7 +8,7 @@ import tempfile
 from datetime import datetime, timezone
 from . import experiment_inputs as inputs
 from experiment_runner import extraction_pipeline as engine
-from experiment_runner.experiment import read, write, report, load, locked
+from experiment_runner.experiment import read, write, report, load, locked, save_report
 
 def relation_diagnostics(cases):
     """Compare five-way decisions and exact A/B reversals, without gold claims."""
@@ -383,7 +383,7 @@ def review(args):
                 )
                 if completed.returncode:
                     raise ValueError(f"review UI exited with {completed.returncode}")
-                write(directory / "report.json", report(directory))
+                save_report(directory, report(directory))
                 return
             print(
                 f"UI: {len(selected) if selected is not None else len(batch['items'])} cases; "
@@ -443,7 +443,7 @@ def review(args):
             )
             if completed.returncode:
                 raise ValueError(f"review UI exited with {completed.returncode}")
-            write(directory / "report.json", report(directory))
+            save_report(directory, report(directory))
             return
         if args.from_experiment:
             rows = _import_reviews(args.from_experiment, result)
@@ -462,7 +462,7 @@ def review(args):
                 output_sha256=inputs.digest(cases[identifier]["output"])) for identifier in selected]
         for row in rows:
             engine._append_json_line(directory / "reviews.jsonl", row)
-        write(directory / "report.json", report(directory, include_request_preview=False))
+        save_report(directory, report(directory, include_request_preview=False))
         print(f"Recorded {len(rows)} attributed reviews. Model calls made: 0")
 
 
@@ -613,6 +613,15 @@ def add_commands(commands):
     p.add_argument('directory', type=Path)
     p.add_argument('--output', type=Path,
                    help='publication directory; default DIRECTORY/publication; refreshes this experiment only')
+    p = commands.add_parser('export-evaluation-results', help='export final saved evaluation answers, grades or comparisons; no inference')
+    p.add_argument('source', type=Path)
+    p.add_argument('--kind', required=True, choices=('validation', 'grades', 'review', 'comparison'))
+    p.add_argument('--output', type=Path)
+    p = commands.add_parser('export-numerical-results', help='export supported final numerical groups, graphs or measurements; no inference')
+    p.add_argument('source', type=Path)
+    p.add_argument('--family', choices=('geometric', 'fuzzy', 'hidef', 'merge-rule',
+                                      'comparison', 'performance', 'fine-region', 'pair-scores'))
+    p.add_argument('--output', type=Path)
     p = commands.add_parser('summarize-experiments', help='summarize native saved usage across experiments; no inference')
     p.add_argument('--spec', type=Path, required=True)
     p.add_argument('--output', type=Path, required=True, help='fresh summary report; never overwrite')
@@ -865,6 +874,28 @@ def add_commands(commands):
 
 
 def handle_command(args):
+    if args.command == 'export-evaluation-results':
+        from .evaluation_publication import (
+            export_evaluation, export_evaluations, export_grades,
+            export_review_evaluation, export_comparison,
+        )
+        if args.kind == 'validation':
+            stage = ((args.source / 'results.json').is_file()
+                     or next(args.source.glob('note-*/subjects.json'), None) is not None)
+            result = (export_evaluation(args.source, args.output)
+                      if stage
+                      else export_evaluations(args.source, args.output))
+        else:
+            function = {'grades': export_grades, 'review': export_review_evaluation,
+                        'comparison': export_comparison}[args.kind]
+            result = function(args.source, args.output)
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+        return 0
+    if args.command == 'export-numerical-results':
+        from .numerical_publication import export_results
+        result = export_results(args.source, args.output, args.family)
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+        return 0
     if args.command == 'export-hierarchy-results':
         from .hierarchy_publication import export_results, saved_snapshot
         with saved_snapshot(args.directory):
@@ -994,6 +1025,9 @@ def handle_command(args):
                       else evaluation.report(args.evaluation))
             if args.output:
                 write(args.output, result)
+                if not args.unreviewed:
+                    from .evaluation_publication import export_review_evaluation
+                    export_review_evaluation(args.output)
             if args.unreviewed:
                 print(json.dumps(result, ensure_ascii=False, indent=2))
                 return

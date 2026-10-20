@@ -209,6 +209,7 @@ def _experiment(directory, state, role, spec, source, adapter):
                 state["history_root"],
             ]
         )
+        args.publication_role = 'internal'
         workflow.prepare(args, include_request_preview=False)
     plan, _, _ = workflow.load(destination)
     record = dict(

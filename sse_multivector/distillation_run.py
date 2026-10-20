@@ -29,7 +29,8 @@ def shared_code_files():
     import experiment_runner
     root = Path(experiment_runner.__file__).parent
     return {"experiment_runner/" + name: root / name for name in (
-        "__init__.py", "project.py", "compatibility.py", "extraction_pipeline.py", "mask_positions.py")}
+        "__init__.py", "project.py", "compatibility.py", "extraction_pipeline.py", "mask_positions.py",
+        "publication_files.py")}
 
 
 def sha256(path):
@@ -484,6 +485,32 @@ def generate_subject_batches(model, tokenizer, rows, config, directory):
 
 
 def evaluate(model, tokenizer, data, config, directory, *, split="evaluation"):
+    """Save validation publication results after completion or interruption."""
+    if split == 'test':
+        return _evaluate(model, tokenizer, data, config, directory, split=split)
+    from .evaluation_publication import export_evaluation
+    result, failure = None, None
+    try:
+        result = _evaluate(model, tokenizer, data, config, directory, split=split)
+        return result
+    except BaseException as error:
+        failure = error
+        raise
+    finally:
+        # Keep the original generation failure if publication also fails. A
+        # completed stage must produce its compact output before returning.
+        try:
+            export_evaluation(directory, results=result, config=config,
+                note_ids=[row['note_id'] for row in data.get(split, [])],
+                execution_status='complete' if failure is None else
+                    'stopped' if isinstance(failure, (KeyboardInterrupt, SystemExit)) else 'failed',
+                failure_type=type(failure).__name__ if failure is not None else None)
+        except Exception:
+            if failure is None:
+                raise
+
+
+def _evaluate(model, tokenizer, data, config, directory, *, split="evaluation"):
     """Persist each completed call, including malformed answers, without retries."""
     directory = Path(directory)
     if (directory / "complete.json").exists():
@@ -1982,6 +2009,12 @@ def run(config_path, output, through="report"):
             "semantic_review": "Pending; token overlap is teacher agreement, not semantic correctness.",
             "scoring": "Micro average over unique nonempty source-word selections per note; one-to-one matching.",
             "status": "complete"})
+        # The final overlap measurements now exist. Refresh the compact saved
+        # answers using the arrays already in memory; guest images need no ijson.
+        from .evaluation_publication import export_evaluation
+        for name, rows in (('baseline', baseline), ('trained', trained)):
+            export_evaluation(output / name, results=rows, config=config,
+                note_ids=[row['note_id'] for row in data['evaluation']], execution_status='complete')
         print("stage: complete", flush=True)
 
 

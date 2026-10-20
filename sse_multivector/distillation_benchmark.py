@@ -12,6 +12,7 @@ import os
 import platform
 import re
 import statistics
+import sys
 import time
 from pathlib import Path
 
@@ -338,6 +339,14 @@ def run(config_path, output, *, stage='all'):
         raise
     finally:
         publish()
+        from .numerical_publication import export_results
+        failure = sys.exception()
+        try:
+            export_results(output, family='performance', source_values={'report.json': report})
+        except Exception as publication_error:
+            if failure is None:
+                raise
+            failure.add_note('Numerical publication failed: '+type(publication_error).__name__)
     return report
 
 

@@ -156,7 +156,7 @@ def _prepare_groups(requests, directory, state, report, context):
         destination = directory / "experiments" / name
         arguments = ["prepare", str(destination), "--spec", str(spec), "--history-root",
             state.get("history_root") or str(directory), '--scheduling-group',
-            state.get('scheduling_group', DEFAULT_SCHEDULING_GROUP)]
+            state.get('scheduling_group', DEFAULT_SCHEDULING_GROUP), '--publication-role', 'internal']
         # A final decision must be fresh; ordinary missing checks may reuse exact receipts.
         if group["role"] != "required":
             arguments.append("--repeat")
@@ -284,6 +284,12 @@ def _schedule_retry(entry, error):
         next_retry_at=time.time() + delay, retry_error=str(error))
 
 
+def _publish(directory, state, *, execution_status=None):
+    from .evaluation_publication import export_grades
+    export_grades(state['report'], Path(directory) / 'publication',
+        execution_status=execution_status or state['status'])
+
+
 def run(directory, *, runner_upgrade_reason=None):
     """Submit all ready batches, advance dependencies, and require final grades."""
     from experiment_runner import experiment, project, scheduling
@@ -319,6 +325,7 @@ def run(directory, *, runner_upgrade_reason=None):
                 state["status"] = "prepared"
                 state.pop("error", None)
         if state["status"] in {"complete", "failed"}:
+            _publish(directory, state)
             return dict(status=state["status"], report=state["report"], experiments=state["experiments"],
                 **({"error": state["error"]} if state.get("error") else {}))
         if not frozen.get("initial_report") or state.get("initial_report") != frozen["initial_report"]:
@@ -337,7 +344,15 @@ def run(directory, *, runner_upgrade_reason=None):
             result = {key: result[key] for key in ("automatic_status", "sources")}
         collected = False
         experiment.write(directory / "state.json", state)
+        interruption = None
         try:
+            if (result['automatic_status'] != 'complete' and state['experiments']
+                    and all(entry['status'] == 'complete' for entry in state['experiments'])):
+                # An interruption can fall between draining the native jobs and
+                # saving their next collection. Reuse those answers immediately.
+                result = _collect(directory, state, context)
+                collected = True
+                _prepare_groups(result['automatic_requests'], directory, state, result, context)
             while True:
                 if result["automatic_status"] == "failed":
                     raise ValueError("automatic grading contains exhausted technical failures")
@@ -414,7 +429,7 @@ def run(directory, *, runner_upgrade_reason=None):
                     if result["automatic_status"] != "complete":
                         result = {key: result[key] for key in ("automatic_status", "sources")}
                 experiment.write(directory / "state.json", state)
-        except Exception as error:
+        except BaseException as error:
             traceback.print_exc(file=sys.stderr)
             # Stop new admissions before draining in-flight requests. A sibling's
             # unlimited provider retries must not keep a failed overall run alive.
@@ -434,7 +449,20 @@ def run(directory, *, runner_upgrade_reason=None):
                 native = experiment.report(Path(path), include_request_preview=False)
                 entry.update(status="paused" if native.get("scheduling", {}).get("state") == "paused"
                     else "complete" if process.returncode == 0 else "failed", returncode=process.returncode)
-            state.update(status="failed", error=str(error) or type(error).__name__)
+            if isinstance(error, Exception):
+                state.update(status="failed", error=str(error) or type(error).__name__)
+            else:
+                # The drained saved work remains explicitly resumable. Preserve
+                # interruption semantics after publishing its last partial scores.
+                interruption = error
+                state['status'] = 'prepared'
         experiment.write(directory / "state.json", state)
+        try:
+            _publish(directory, state, execution_status='stopped' if interruption is not None else None)
+        except Exception:
+            if interruption is None:
+                raise
+        if interruption is not None:
+            raise interruption
         return dict(status=state["status"], report=state["report"], experiments=state["experiments"],
             **({"error": state["error"]} if state.get("error") else {}))

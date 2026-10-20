@@ -367,6 +367,9 @@ def main():
                       chronology="Root must freeze xhigh before lower calls. Native receipt provenance is retained; "
                                  "ordering is not inferred from absent receipt timestamps.")
     write(args.output, result)
+    if not args.compact:
+        from sse_multivector.evaluation_publication import export_comparison
+        export_comparison(args.output, result=result, execution_status='complete')
     summary = result.get("summary", {})
     print(json.dumps(dict(output=str(args.output), bytes=args.output.stat().st_size,
         rows=len(result["rows"]), distinct_prompts=summary.get("distinct_prompts"),

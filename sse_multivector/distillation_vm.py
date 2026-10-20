@@ -27,6 +27,7 @@ IMAGE_URL = "https://cloud-images.ubuntu.com/noble/20260911/noble-server-cloudim
 IMAGE_SHA256 = "612b2c0cc1bc413a6cb8c38fd611794caf0f2b436c50013d8b3794db12ad7354"
 PACKAGE_FILES = (
     "distillation_run.py", "distillation_data.py", "extraction_pipeline.py", "mask_positions.py",
+    "evaluation_publication.py",
     "_runner_bootstrap.py",
     "test_distillation_run.py", "test_distillation_continuation.py", "test_distillation_data.py", "test_distillation_deploy.py", "distillation_deploy.py",
     "test_distillation_candidates.py", "distillation_vast.py", "test_distillation_vast.py",

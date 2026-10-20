@@ -22,6 +22,7 @@ from sse_multivector.distillation_run import (load_data, read_json, sha256, writ
 CODE_ROOT = Path(__file__).resolve().parents[1]
 CODE_FILES = (
     "sse_multivector/distillation_deploy.py", "sse_multivector/distillation_run.py",
+    "sse_multivector/evaluation_publication.py",
     "sse_multivector/distillation_cache.py",
     "sse_multivector/distillation_data.py", "sse_multivector/extraction_pipeline.py",
     "sse_multivector/_runner_bootstrap.py",

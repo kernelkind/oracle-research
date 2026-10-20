@@ -65,6 +65,30 @@ class DistillationBenchmarkTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'pointer_config'):
             distillation_benchmark.validate_config(config)
 
+    def test_model_failure_automatically_exports_saved_measurements_and_failure_type(self):
+        import json
+        from types import SimpleNamespace
+        from unittest.mock import MagicMock, patch
+        torch = MagicMock()
+        torch.cuda.get_device_properties.return_value = SimpleNamespace(total_memory=64*2**30)
+        torch.cuda.get_device_name.return_value = 'Fixture GPU'
+        modules = {'torch': torch, 'transformers': MagicMock(), 'peft': MagicMock(), 'ijson': None}
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            config = {**self.config(), 'architecture': 'causal_lm', 'method': 'lora'}
+            write_json(root/'config.json', config)
+            with (patch.dict('sys.modules', modules),
+                  patch.object(distillation_benchmark, 'available_memory', return_value=64*2**30),
+                  patch.object(distillation_benchmark.importlib.metadata, 'version', return_value='fixture'),
+                  patch.object(distillation_benchmark, 'subject_training_model',
+                               side_effect=ValueError('fixture model load failure'))):
+                with self.assertRaisesRegex(ValueError, 'fixture model load failure'):
+                    distillation_benchmark.run(root/'config.json', root/'benchmark')
+            metadata = json.loads((root/'benchmark/publication/experiment.json').read_text())
+            self.assertEqual(metadata['family'], 'performance')
+            self.assertEqual(metadata['status'], 'failed')
+            self.assertEqual(metadata['failure_type'], 'ValueError')
+
 
 @unittest.skipUnless(os.environ.get("RUN_BENCHMARK_GPU_TESTS") == "1", "explicit CUDA integration run")
 class BenchmarkGPUIntegrationTests(unittest.TestCase):

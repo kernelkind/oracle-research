@@ -362,6 +362,11 @@ def main():
     with args.output.open('x') as output:
         json.dump(result, output, indent=2, allow_nan=False)
         output.write('\n')
+    if __package__:
+        from .numerical_publication import export_results
+    else:
+        from numerical_publication import export_results
+    export_results(args.output, source_values={args.output.name: result})
     print(json.dumps(dict(summary, output=str(args.output), elapsed_seconds=result['elapsed_seconds']), indent=2))
 
 

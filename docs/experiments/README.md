@@ -5,10 +5,10 @@ unsuccessful trials and superseded approaches. Code and history will be publishe
 on GitHub; reusable models and datasets will be hosted on Hugging Face. The
 [publication plan](downloads.md) records the agreed contents and hosting split:
 all 17 evaluated adapters on Hugging Face Models, and used inputs, parameters
-and final experiment results on Hugging Face Datasets. The hierarchy exporter
-now writes unsigned results and a small parameter/status record; other result
-formats and exact file selections remain unfinished. Download links are not
-available yet.
+and final experiment results on Hugging Face Datasets. Compact exporters cover
+hierarchies, native prompt studies, validation answers, grading results and
+explicit numerical result families. Historical conversion, exact file selection
+and download links remain unfinished.
 
 Start with the [37 official hierarchy runs](hierarchy.md). The index also covers
 four training runs, 17 adapter checkpoints, individual prompt jobs and older
@@ -96,10 +96,12 @@ numerical results, and each experiment's parameters (roughly 0.5–1 GiB).
 The [publication plan](downloads.md) defines those contents. The index will link
 to exact published revisions and checksums. [Bundle assignments](bundle-collections.csv)
 and other inventory tables still describe the broader original artifacts; they
-have not been converted into the final export list. Dataset layout and the
-remaining result schemas are open. The [hierarchy export format](downloads.md#automated-outputs)
-is implemented for normal runs and [saved snapshots](reproduce.md#export-compact-hierarchy-results).
-Existing research files and history have not been changed.
+have not been converted into the final export list. Dataset layout remains
+open. The [implemented export formats](downloads.md#automated-outputs) serve
+normal workflows and explicitly selected saved results. Unsupported historical
+schemas need an explicit adapter; exporting one format does not establish
+coverage of the entire inventory. Original research files and history are
+preserved.
 
 Preserve original frozen plans, answers and receipts locally. Their complete
 working directories are not required public downloads. The current native
@@ -113,7 +115,7 @@ on a recorded HR36 post, repeating HR36 construction with its saved subjects,
 and reading the fine-tune comparison. It also explains `verify` for checking
 saved prompt receipts after extraction using bundled location metadata.
 Those checks describe current tools and original file formats. The guide also
-documents the compact hierarchy export; published-download testing remains open.
+documents the compact result exporters; published-download testing remains open.
 Downloads, portable training/L1 recomputation and replay of historical
 collections remain unfinished.
 Fresh model answers need not match saved answers.

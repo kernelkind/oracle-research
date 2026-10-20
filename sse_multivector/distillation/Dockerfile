@@ -34,6 +34,7 @@ COPY sse_multivector/distillation/requirements.lock sse_multivector/distillation
     sse_multivector/distillation/qwen-continuation-v1.vast.json \
     /work/sse_multivector/distillation/
 COPY sse_multivector/distillation_run.py sse_multivector/distillation_data.py \
+    sse_multivector/evaluation_publication.py \
     sse_multivector/extraction_pipeline.py sse_multivector/mask_positions.py \
     sse_multivector/_runner_bootstrap.py \
     sse_multivector/test_distillation_run.py sse_multivector/test_distillation_data.py \

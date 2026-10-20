@@ -136,4 +136,6 @@ def compare(coverage_directory, reference_path, output, *, verification_experime
         score_units="Values are fractions; aggregate changes are percentage points.",
         audit_diagnostics=automated.get("audit_diagnostics", []), **summaries, paired_answers=cohorts)
     experiment.write(output / "comparison.json", result)
+    from .evaluation_publication import export_comparison
+    export_comparison(output / 'comparison.json', result=result, execution_status='complete')
     return result

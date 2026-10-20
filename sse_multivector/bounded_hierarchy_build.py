@@ -202,6 +202,7 @@ def _prepare_child(directory, plan, phase, kind):
                      path=str(references)), runner=runner))
     args = workflow.parser().parse_args(["prepare", str(child), "--spec", str(specification),
                                         "--history-root", str(directory / "passes")])
+    args.publication_role = 'internal'
     workflow.prepare(args)
     return child
 

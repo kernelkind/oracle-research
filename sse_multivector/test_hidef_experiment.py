@@ -200,16 +200,20 @@ class CliTests(unittest.TestCase):
             output = root / 'out'
             expected = {'configuration.json', 'graph.net', 'raw-partitions.json', 'candidates.json',
                         'persistent-groups.json', 'strict-dag.json', 'note-projection.json',
-                        'hierarchy.json', 'timings.json', 'manifest.json'}
+                        'hierarchy.json', 'timings.json', 'manifest.json', 'publication'}
             self.assertEqual({p.name for p in output.iterdir()}, expected)
             hierarchy = json.loads((output / 'hierarchy.json').read_text())
             for key in ('sources', 'canonical_unique_ids', 'alias_groups'):
                 self.assertEqual(hierarchy[key], reference[key])
-            before = {p.name: p.read_bytes() for p in output.iterdir()}
+            published = json.loads((output/'publication/experiment.json').read_text())
+            self.assertEqual(published['family'], 'hidef')
+            before = {str(p.relative_to(output)): p.read_bytes()
+                      for p in output.rglob('*') if p.is_file()}
             repeated = subprocess.run(command, capture_output=True, text=True)
             self.assertNotEqual(repeated.returncode, 0)
             self.assertIn('output already exists', repeated.stderr)
-            self.assertEqual(before, {p.name: p.read_bytes() for p in output.iterdir()})
+            self.assertEqual(before, {str(p.relative_to(output)): p.read_bytes()
+                                     for p in output.rglob('*') if p.is_file()})
             command[-1] = str(root / 'repeat')
             repeated = subprocess.run(command, capture_output=True, text=True)
             self.assertEqual(repeated.returncode, 0, repeated.stderr)

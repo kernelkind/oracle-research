@@ -220,6 +220,14 @@ def main():
                    distinct_note_counts=dict(Counter(len(n['note_ids']) for n in result['nodes'])),
                    elapsed_seconds=elapsed, output=str(args.output))
     write_json(args.output/'summary.json', summary)
+    if __package__:
+        from .numerical_publication import export_results
+    else:
+        from numerical_publication import export_results
+    values = {'configuration.json': config_record, 'hierarchy.json': result, 'evidence.json': records}
+    if args.method == 'fmc':
+        values['native-fuzzy.json'] = encoded
+    export_results(args.output, source_values=values)
     print(json.dumps(summary, indent=2))
 
 

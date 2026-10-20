@@ -308,7 +308,8 @@ def prepare(selection_path, output, *, runner_binary=None, history_root=None, as
         if check == "relationship" and relationship_history_root is not None:
             history = relationship_history_root
         arguments = ["prepare", str(destination), "--spec", str(spec), "--history-root",
-                     str(Path(history).resolve() if history is not None else output)]
+                     str(Path(history).resolve() if history is not None else output),
+                     "--publication-role", "internal"]
         if group["prefix"] is not None:
             prefix_path = output / "prefixes" / (group["name"] + ".txt")
             prefix_path.parent.mkdir(exist_ok=True)
@@ -703,6 +704,31 @@ def _score(answer, checks, context, *, partial=False):
 
 def run(output, max_new_attempts=None, *, attempt_budget_path=None, runner_upgrade_reason=None,
         answer_ids=None):
+    """Execute and publish the final/partial native assembly without a full copy."""
+    result, failure = None, None
+    try:
+        result = _run(output, max_new_attempts, attempt_budget_path=attempt_budget_path,
+            runner_upgrade_reason=runner_upgrade_reason, answer_ids=answer_ids)
+        return result
+    except BaseException as error:
+        failure = error
+        raise
+    finally:
+        try:
+            from .evaluation_publication import export_review_evaluation
+            if result is None:
+                result = report(output)
+            export_review_evaluation(Path(output).resolve() / 'evaluation.json',
+                Path(output).resolve() / 'publication', result=result,
+                execution_status='complete' if failure is None else
+                    'stopped' if isinstance(failure, (KeyboardInterrupt, SystemExit)) else 'failed')
+        except Exception:
+            if failure is None:
+                raise
+
+
+def _run(output, max_new_attempts=None, *, attempt_budget_path=None, runner_upgrade_reason=None,
+         answer_ids=None):
     """Execute selected answers under one allowance; retain the full report."""
     from experiment_runner import experiment
     if max_new_attempts is not None and (type(max_new_attempts) is not int or max_new_attempts < 0):
