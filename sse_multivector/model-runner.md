@@ -2084,6 +2084,15 @@ config is a pinned worker template; generated jobs replace only its request
 and output paths. Use the worker's Python environment and local model artifacts
 when running the automatic constructor.
 
+New preparation also saves a persistent publication UUID, effective HDBSCAN
+settings, selected subject-prompt version IDs and Oracle/actual runner Git
+commits plus modified-source indicators. Exported `code.preparation` describes
+those preparation-time checkouts; `code.sources`, `code.upgrades` and
+`code.hdbscan_binary_sha256` preserve saved hashes and later upgrades separately.
+`exporter.sources` identifies the serialization code. A preparation commit with
+modified sources is not an assertion that the commit alone reproduces them.
+Missing historical provenance remains unknown rather than inferred at export.
+
 `run-hierarchy DIRECTORY` runs ordinary native teacher batches and SSE workers
 until completion or blockage. Preparation and `advance-hierarchy DIRECTORY
 --comment TEXT` make no model or encoder calls. The shared runner owns provider
@@ -2158,6 +2167,65 @@ invalid evidence and exhausted explicit allowances remain blocked.
 A reviewed `--runner-upgrade-reason TEXT` can record permitted constructor-code
 changes while preserving data, meanings and receipts. Finish active work before
 editing or rebinding its sources.
+
+### Hierarchy publication results
+
+After `run-hierarchy` completes or blocks, it exports final data to
+`DIRECTORY/publication/` while still holding the execution lock. Failure and
+interruption attempt the same export after submitted jobs stop. This retains a
+partial graph when construction has not finished. Internal child prompt jobs
+are not exported separately by this step.
+
+Use the same exporter against a stopped saved hierarchy, without construction
+or inference. From the Oracle checkout's parent directory:
+
+```bash
+cd oracle-mvp
+python3 sse_multivector/experiment.py export-hierarchy-results \
+  target/hierarchy-example/hierarchy
+```
+
+`--output DIRECTORY` chooses another destination. The exporter writes exactly
+`experiment.json`, `input-note-ids.txt` and `hierarchy.jsonl`. The ordered input
+selection includes notes not represented in the graph. The parameter record
+reports graph `status` separately from `execution_status` (`complete`, `blocked`,
+`stopped`, `failed`, or `not_recorded` for old snapshots without that evidence),
+retains recorded versions/settings and counts, and hashes the two payload files.
+It is replaced last so interrupted refreshes can be detected. Unchanged exports
+keep their bytes and modification times; a resumed saved state refreshes the
+same three-file export. Destinations containing unrelated files are refused.
+New `source_id` values use a persisted UUID independent of the local path. Older
+runs without a persisted ID use an opaque location hash; moving one requires a
+fresh publication destination. Concurrent writes to a publication destination
+are serialized without adding payload files.
+
+`input.deprecated` is `true` if any recorded subject-prompt version predates
+ASv6.100, `null` if provenance is insufficient, and `false` otherwise. This
+lineage flag does not approve later prompt versions or establish result quality.
+
+The JSONL contains only `kind`, `tags` and `content`: kind `8680` nodes followed
+by a kind `18680` root entry. Nodes retain their saved title and meaning; child
+tags contain a UUID without a signed event hash. Fixed-namespace UUIDs are scoped
+to the file. Direct post references use the outside-children rule, retaining
+shared posts across siblings. Empty graphs retain an empty root entry. No author
+key, event ID, signature or timestamp is created, and the records are not
+relay-ready signed events. Synthetic historical post IDs and nodes with more
+than 500 direct references are supported.
+
+Manual export honors an existing native execution lock and refuses an active
+run. Without that historical lock it checks for a coherent saved-state snapshot;
+it cannot exclude all external writers. It leaves saved state intact and does
+not scan the source corpus or original receipt history. It checks saved graph
+structure and selection references; export is not full source verification or
+semantic approval. Saved state is streamed and hashed once using the shared
+runner's JSON projection support, retaining graph/selection/settings and skipping
+construction working data. The runner package installs its `ijson` dependency;
+no separate global installation is needed. See the [publication plan](../docs/experiments/downloads.md#automated-outputs)
+and [generation guide](../docs/generate-hierarchy.md) for the reader workflow.
+Standalone prompt/evaluation and numerical result publication remain separate,
+unfinished work. The signed export below retains its existing behavior.
+
+### Review viewer export
 
 Inspect saved results with the existing `export-canonical-viewer` command only
 when requested. Exported headings show the topic and canonical node ID; the

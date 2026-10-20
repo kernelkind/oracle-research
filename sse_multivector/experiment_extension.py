@@ -609,6 +609,10 @@ def add_commands(commands):
                    help='reviewed replacement numerical executable; requires --runner-upgrade-reason')
     p.add_argument('--runner-upgrade-reason',
                    help='record an explicitly reviewed construction/adapter code fix; frozen data stays unchanged')
+    p = commands.add_parser('export-hierarchy-results', help='export final unsigned hierarchy, input selection and settings; no inference')
+    p.add_argument('directory', type=Path)
+    p.add_argument('--output', type=Path,
+                   help='publication directory; default DIRECTORY/publication; refreshes this experiment only')
     p = commands.add_parser('summarize-experiments', help='summarize native saved usage across experiments; no inference')
     p.add_argument('--spec', type=Path, required=True)
     p.add_argument('--output', type=Path, required=True, help='fresh summary report; never overwrite')
@@ -861,6 +865,12 @@ def add_commands(commands):
 
 
 def handle_command(args):
+    if args.command == 'export-hierarchy-results':
+        from .hierarchy_publication import export_results, saved_snapshot
+        with saved_snapshot(args.directory):
+            result = export_results(args.directory, args.output)
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+        return 0
     if args.command == 'catalogue-hierarchies':
         from .hierarchy_catalogue import catalogue
         print(json.dumps(catalogue(args.source, args.registry, args.output, saved_only=args.saved_only), indent=2))

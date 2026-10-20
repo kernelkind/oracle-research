@@ -19,6 +19,7 @@ import sys
 import tempfile
 import subprocess
 import time
+import uuid
 from datetime import datetime, timezone
 from threading import Event, Thread
 
@@ -372,6 +373,7 @@ def prepare(spec_path, directory, history_root=None):
         sources[str(path)] = trial._hash(path)
     state = dict(
         schema_version=3,
+        publication_id=str(uuid.uuid4()),
         generation_policy=policy,
         status="bootstrap",
         definition=str(spec_path),
@@ -399,6 +401,8 @@ def prepare(spec_path, directory, history_root=None):
         state['v5_options'] = deepcopy(options)
     if policy in HDBSCAN_POLICIES:
         from . import hierarchy_hdbscan
+        state['hdbscan_configuration'] = dict(
+            hierarchy_hdbscan.SECTION_CONFIGS.get(policy, hierarchy_hdbscan.CONFIG))
         state["hdbscan_binary"] = str(workflow.resolve(cfg["hdbscan_binary"], spec_path.parent))
         if teacher_specs["consolidation_spec"]["prompt"]["id"] != "Hierarchy-consolidated-grouped-v1":
             raise ValueError(f"{policy} requires Hierarchy-consolidated-grouped-v1")
@@ -407,6 +411,8 @@ def prepare(spec_path, directory, history_root=None):
         if policy in V5_POLICIES:
             path = Path(__file__).with_name("hierarchy_generation_v5.py").resolve()
             sources[str(path)] = trial._hash(path)
+    from .hierarchy_publication_provenance import capture
+    state["publication_provenance"] = capture(state, corpus)
     if policy in HDBSCAN_POLICIES and "bootstrap_hierarchy" in cfg:
         source_path = workflow.resolve(cfg["bootstrap_hierarchy"], spec_path.parent)
         source_state = workflow.read(source_path)
@@ -1677,11 +1683,13 @@ def run(
                  runner_upgrade_reason=runner_upgrade_reason,
                  observed_at_utc=datetime.now(timezone.utc).isoformat()),
         )
-        _resume_sources(directory, runner_upgrade_reason, hdbscan_binary)
         active, attempted, errors = {}, set(), []
         stop = Event()
-        result = _native_advance(directory, comment, stop)
+        result = None
+        failure = None
         try:
+            _resume_sources(directory, runner_upgrade_reason, hdbscan_binary)
+            result = _native_advance(directory, comment, stop)
             while True:
                 jobs = [("teacher", p) for p in result["experiments"]]
                 jobs.extend(("encoder", p) for p in result["encodings"])
@@ -1740,18 +1748,35 @@ def run(
                     ),
                     file=sys.stderr,
                 )
-        except BaseException:
+            result["execution_status"] = (
+                result["status"] if result["status"] == "complete" else "blocked"
+            )
+            result["errors"] = errors
+            workflow.write(directory / "run-summary.json", result)
+            return result
+        except BaseException as error:
+            failure = error
             stop.set()
             for future in active:
                 future.cancel()
-            _pause_experiments(workflow.read(directory / "state.json"))
+            try:
+                _pause_experiments(workflow.read(directory / "state.json"))
+            except Exception as pause_error:
+                error.add_note(f"Could not pause hierarchy jobs: {type(pause_error).__name__}")
             raise
         finally:
             for future, (kind, path, thread) in active.items():
                 thread.join()
-        result["execution_status"] = (
-            result["status"] if result["status"] == "complete" else "blocked"
-        )
-        result["errors"] = errors
-        workflow.write(directory / "run-summary.json", result)
-        return result
+            from .hierarchy_publication import export_results
+            execution_status = (
+                'stopped' if isinstance(failure, (KeyboardInterrupt, SystemExit)) else
+                'failed' if failure is not None else result['execution_status']
+            )
+            try:
+                export_results(directory, execution_status=execution_status,
+                               failure_type=type(failure).__name__ if failure else None)
+            except Exception as export_error:
+                if failure is None:
+                    raise
+                failure.add_note('Hierarchy publication export failed: '
+                                 + type(export_error).__name__)

@@ -8,8 +8,9 @@ from the original results.
 **Downloads are not available yet.** These instructions and the offline checks
 below use local copies of original research files in the earlier staging layout.
 The agreed [publication plan](downloads.md) uses smaller final outputs hosted on
-Hugging Face. The commands and checksums need adaptation and testing against
-those exports; the paths below are not promises of public download paths.
+Hugging Face. The hierarchy exporter is documented below, but the download paths
+and checksums still need adaptation and testing against the published exports.
+The original-file paths below are not promises of public download paths.
 
 | What you want to do | Example | Model work |
 | --- | --- | --- |
@@ -247,6 +248,63 @@ The historical HR36 result represented **683/1,000 notes** beneath its roots.
 Compare your run's coverage and inspect its choices; do not treat that count as
 a required exact outcome of fresh model responses.
 
+### Export compact hierarchy results
+
+New `run-hierarchy` executions write a `publication/` directory after completion
+or blockage and attempt the same export after failure or interruption, once
+submitted jobs have stopped. The saved graph can be partial; its execution
+status and graph status are recorded separately.
+
+To export the HR36 run above without inference or refresh it after a resume:
+
+```bash
+cd "$ORACLE_ROOT"
+python sse_multivector/experiment.py export-hierarchy-results \
+  target/reproduction/HR36
+```
+
+The default output is `target/reproduction/HR36/publication/`. For another
+destination, pass `--output target/reproduction/HR36-results`. The same command
+accepts an original saved hierarchy directory containing `state.json`; the five
+viewer/corpus/comparison files used elsewhere in this guide do not include that
+state.
+
+| File | What it preserves |
+| --- | --- |
+| `experiment.json` | Recorded versions/settings, input identity, graph and execution status, counts and payload checksums |
+| `input-note-ids.txt` | The full ordered input selection, including unrepresented notes |
+| `hierarchy.jsonl` | Unsigned hierarchy nodes with titles, definitions, ordered links and direct source-post references |
+
+No signing credentials, source-corpus scan or original receipt files are needed
+for this export. It streams the saved state once, hashes its bytes, retains graph
+and settings, and skips construction working data. The runner's editable install
+above includes the streaming parser dependency. Export validates graph/reference
+structure; it does not reverify the research's complete original inputs or
+semantic quality. Missing historical provenance stays unknown;
+an unrecorded execution outcome is `not_recorded` rather than inferred from the
+exporter's checkout or graph status. The [format description](downloads.md#automated-outputs)
+explains the unsigned records and outside-children post references.
+
+The command honors an existing native execution lock and refuses an active run.
+Older directories without that lock receive a coherent saved-state snapshot
+check; this does not exclude every possible external writer. Destinations with
+unrelated files are refused, and concurrent publication writes are serialized.
+It refreshes only this experiment's existing three-file export; an unchanged
+re-export retains bytes and modification times. `experiment.json` is replaced
+last and hashes the other two files so an interrupted refresh can be detected.
+Original state and research evidence are left intact.
+
+New runs retain a publication UUID across moves. Older runs without that saved
+identity use an opaque source-location hash; after moving such a source, choose
+a fresh publication destination. No original absolute path is included in that
+identity. Preparation-time commits and later code upgrades are distinguished in
+the metadata. The input's deprecation field records known pre-ASv6.100 lineage;
+unknown provenance remains `null`, and `false` is not semantic approval.
+
+These three files are publication outputs; the browser above still uses its
+separate viewer files. Backfilling all historical hierarchies and testing the
+eventual public downloads remain unfinished.
+
 ### Which code is being repeated?
 
 The examples above use publication code. They reproduce the inputs, prompt
@@ -426,3 +484,21 @@ the private locations file unavailable, and a 4 GiB address-space limit.
 This checks one local archive; it is not a download test of a published release.
 All 16 verification tests and 90 relevant shared-runner, update and receipt
 regression tests passed for this change.
+
+### Hierarchy publication checks
+
+A local HR39 export was checked against its saved 250.61 MiB state: 200 nodes,
+six roots, 2,693 represented notes and the full ordered selection of 5,000 input
+IDs. Its three output files total **804,511 bytes (about 786 KiB)**; post text
+remains separate. The streaming export used **47,380 KiB peak resident memory**
+and passed under a **512 MiB process address-space limit**. These measurements
+describe exporting this saved graph, not memory needed to generate it or proof
+of million-note scalability. Nothing was uploaded.
+
+A fresh isolated editable runner installation automatically installed its
+dependencies and passed `pip check`; six JSON-projection tests and 38 focused
+Oracle publication checks passed. The broader 165-check Oracle run had the same
+40 errors and two failures as the isolated 127-check unchanged baseline, with
+identical unsuccessful method IDs and no new failures. All 42 arise from the
+existing Oracle/runner compatibility issue that blocks V5 end-to-end validation;
+see [open items](open-items.md#current-oraclerunner-compatibility).

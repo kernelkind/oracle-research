@@ -146,6 +146,17 @@ Original plans and results were not modified.
 [Detailed issues](issues.csv) retain the individual findings. Duplicate native
 jobs, warmups and reused answers must not be counted as independent trials.
 
+## Current Oracle/runner compatibility
+
+V5 construction tests currently fail because Oracle calls
+`ReceiptFiles._stamp(path)` on the class, while the installed runner requires
+an instance for `_stamp(self, path)`. The same failures occur on the unchanged
+baseline; the compact hierarchy export did not introduce them. Resolve this
+compatibility issue before claiming a validated V5 end-to-end generation workflow.
+The export checks and local HR39
+preview in the [reproduction guide](reproduce.md#hierarchy-publication-checks)
+do not establish that the full construction suite passes.
+
 ## Preserve the source history
 
 Of 41 recorded generation commits, 40 are present in the publication clones.
@@ -174,9 +185,12 @@ the public download size or final layout.
 
 Before publication:
 
-- Define and implement unsigned hierarchy exports, small parameter/status
-  records, per-case prompt/evaluation outputs and final numerical measurements.
-  Use the same export path for normal automated runs and saved historical work.
+- Review and backfill the implemented [hierarchy exports](downloads.md#automated-outputs)
+  using the same export path as automated construction. They retain unsigned
+  hierarchy data, the exact input selection and small parameter/status records.
+  Historical backfilling is not complete.
+- Define and implement per-case prompt/evaluation exports and final numerical
+  measurements, shared by normal automated runs and saved historical work.
 - Preserve experiment identity, exact selections, versions, reuse and recorded
   outcomes. Report missing evidence without changing original records.
 - Build exact exported file lists and checksums; link them from the GitHub index

@@ -278,6 +278,27 @@ resolved. Previously saved valid results remain available for reuse. Do not
 rerun `prepare` into an existing output directory or delete receipts to force
 progress. Invalid answers and changed frozen sources require investigation.
 
+After construction completes or blocks, `run-hierarchy` writes
+`target/hierarchy-example/hierarchy/publication/`. It also attempts this export
+after failure or interruption, once submitted jobs have stopped. The directory
+contains `experiment.json` (settings and outcome), `input-note-ids.txt` (the full
+ordered selection) and `hierarchy.jsonl` (the final or last partial unsigned
+hierarchy, including definitions). No signing key is needed. The full selection
+can contain notes absent from the hierarchy.
+
+To export a saved run without resuming construction, or refresh its results:
+
+```bash
+cd "$ORACLE_ROOT"
+python sse_multivector/experiment.py export-hierarchy-results \
+  target/hierarchy-example/hierarchy
+```
+
+This makes no model calls and leaves the saved state unchanged. It honors the
+native execution lock; unchanged re-exports preserve the files' bytes and
+modification times. See the [publication format](experiments/downloads.md#automated-outputs)
+for the exported fields and historical provenance limits.
+
 ## 7. Export and browse
 
 Export the saved hierarchy and its matching original post text, then validate

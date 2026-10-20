@@ -1,6 +1,7 @@
-"""Export the toy hierarchy snapshot protocol as signed, offline JSONL events."""
+"""Serialize hierarchy snapshots as unsigned records or signed offline events."""
 import hashlib
 import json
+from graphlib import CycleError, TopologicalSorter
 import os
 from pathlib import Path
 import re
@@ -18,6 +19,107 @@ except ImportError:
 
 ENTRY_KIND = 18680
 NODE_KIND = 8680
+# Names are local node IDs within one hierarchy file, not global graph identity.
+UNSIGNED_NAMESPACE = uuid.uuid5(uuid.NAMESPACE_URL, 'urn:oracle-mvp:hierarchy:unsigned:v1')
+
+
+def unsigned_events(state):
+    """Yield unsigned snapshot records, preserving definitions and saved edges.
+
+    UUIDv5 uses the fixed ``urn:oracle-mvp:hierarchy:unsigned:v1`` URL namespace
+    and each saved local node ID. References are scoped to the resulting file.
+    They do not identify signed Nostr events. Source IDs may be any nonempty
+    strings, including IDs from historical synthetic experiments.
+
+    Only notes absent from every child subtree appear directly on a node.
+    Descendant membership sets are released after their final parent uses them;
+    a last consumer can reuse a child's set rather than copy a whole subtree.
+    Work follows graph edges and propagated membership references, never pairs
+    of corpus notes. Records are yielded individually after graph validation.
+    """
+    if not isinstance(state, dict):
+        raise ValueError('hierarchy state must be an object')
+    menu = state.get('menu', {})
+    if not isinstance(menu, dict):
+        raise ValueError('hierarchy menu must be an object')
+    rows = menu.get('nodes', state.get('nodes', []))
+    if not isinstance(rows, list):
+        raise ValueError('hierarchy nodes must be a list')
+    nodes = {}
+    for node in rows:
+        if not isinstance(node, dict):
+            raise ValueError('hierarchy nodes must be objects')
+        identifier = node.get('id')
+        if not isinstance(identifier, str) or not identifier.strip():
+            raise ValueError('node IDs must be nonempty strings')
+        if identifier in nodes:
+            raise ValueError('node IDs must be unique')
+        for field, description in [('subject', 'title'), ('meaning', 'meaning')]:
+            if not isinstance(node.get(field), str) or not node[field].strip():
+                raise ValueError(f'node {description} must be a nonempty string')
+        parents = node.get('parents')
+        if (not isinstance(parents, list)
+                or any(not isinstance(parent, str) or not parent.strip() for parent in parents)):
+            raise ValueError('node parents must be a list of nonempty IDs')
+        if len(parents) != len(set(parents)):
+            raise ValueError('node parent references must be unique')
+        entries, note_ids = node.get('entries', []), node.get('note_ids', [])
+        if (not isinstance(entries, list) or any(
+                not isinstance(entry, dict) or not isinstance(entry.get('note_id'), str)
+                or not entry['note_id'].strip() for entry in entries)
+                or not isinstance(note_ids, list) or any(
+                    not isinstance(note, str) or not note.strip() for note in note_ids)):
+            raise ValueError('node memberships must contain nonempty source note IDs')
+        nodes[identifier] = node
+    children = {identifier: [] for identifier in nodes}
+    for identifier, node in nodes.items():
+        for parent in node['parents']:
+            if parent not in nodes:
+                raise ValueError('node parent references an unknown node')
+            children[parent].append(identifier)
+    try:
+        order = list(TopologicalSorter({identifier: node['parents']
+                                       for identifier, node in nodes.items()}).static_order())
+    except CycleError as error:
+        raise ValueError('hierarchy graph contains a cycle') from error
+    shape = state.get('shape', {})
+    if not isinstance(shape, dict):
+        raise ValueError('hierarchy shape must be an object')
+    roots = [identifier for identifier, node in nodes.items() if not node['parents']]
+    saved_roots = shape.get('roots', roots)
+    if (not isinstance(saved_roots, list)
+            or any(not isinstance(root, str) for root in saved_roots)
+            or len(saved_roots) != len(set(saved_roots)) or set(saved_roots) != set(roots)):
+        raise ValueError('hierarchy roots differ from saved parents')
+    node_uuids = {identifier: str(uuid.uuid5(UNSIGNED_NAMESPACE, identifier))
+                  for identifier in nodes}
+    memberships = {}
+    remaining = {identifier: len(node['parents']) for identifier, node in nodes.items()}
+    for identifier in reversed(order):
+        node = nodes[identifier]
+        links = children[identifier]
+        reusable = [child for child in links if remaining[child] == 1]
+        largest = max(reusable, key=lambda child: len(memberships[child]), default=None)
+        below = memberships[largest] if largest is not None else set()
+        for child in links:
+            if child != largest:
+                below.update(memberships[child])
+        own = dict.fromkeys(entry['note_id'] for entry in node.get('entries', []))
+        own.update(dict.fromkeys(node.get('note_ids', [])))
+        direct = [note for note in own if note not in below]
+        below.update(own)
+        for child in links:
+            remaining[child] -= 1
+            if not remaining[child]:
+                del memberships[child]
+        if remaining[identifier]:
+            memberships[identifier] = below
+        tags = [['d', node_uuids[identifier]], ['title', node['subject']]]
+        tags.extend(['child', node_uuids[child]] for child in links)
+        tags.extend(['e', note] for note in direct)
+        yield dict(kind=NODE_KIND, tags=tags, content=node['meaning'])
+    yield dict(kind=ENTRY_KIND, tags=[['child', node_uuids[root]] for root in saved_roots],
+               content='')
 
 
 def _nak(binary, arguments, *, data, environment=None):

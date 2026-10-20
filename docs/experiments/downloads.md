@@ -1,8 +1,9 @@
 # Publication contents and hosting
 
-**The hosting split and the following data categories are agreed.** Exact export
-schemas, repository names and download paths still need implementation and
-review. Nothing has been uploaded, and this plan does not authorize uploading,
+**The hosting split and the following data categories are agreed.** Hierarchy
+exports are implemented; the other result formats, exact file selections,
+repository names and download paths still need implementation and review.
+Nothing has been uploaded, and this plan does not authorize uploading,
 deleting original research or rewriting history.
 
 | Where | What |
@@ -128,16 +129,65 @@ dependencies. Portable training and adapter-use instructions still need testing.
 
 ## Automated outputs
 
-The normal experiment workflow must produce these publication outputs. Historical
-runs should use the same export path against saved results, without rerunning
-inference or changing frozen evidence. The output formats and automatic export
-integration are not implemented yet.
+`run-hierarchy` exports the saved hierarchy after completion or blockage and
+attempts the same export after failure or interruption, once submitted jobs have
+stopped. It writes these three files under the run's `publication/` directory:
 
-The current hierarchy workflow writes its native working outputs; its separate
-Nostr exporter signs events. That signing exporter does not satisfy the agreed
-unsigned output requirement. Define and test the unsigned hierarchy serialization,
-small experiment records, prompt/evaluation outputs and numerical results before
-backfilling the collection. Preserve source identities and recorded outcomes.
+| File | Contents |
+| --- | --- |
+| `experiment.json` | Format/schema version, experiment identity, recorded input/code/prompt/model settings, graph and execution status, counts and SHA-256 hashes of the two payload files |
+| `input-note-ids.txt` | The exact ordered input selection, including notes absent from the resulting hierarchy |
+| `hierarchy.jsonl` | Final or last partial hierarchy, retaining titles, definitions, ordered roots/children and direct post references |
+
+The JSONL records contain only `kind`, `tags` and `content`: kind `8680` for
+nodes and a final kind `18680` entry for the roots. Node tags are `d` (UUID),
+`title`, `child` (UUID only) and `e` (source post ID); node `content` retains the
+saved meaning. UUIDs derive from a fixed namespace and local node ID and are
+scoped to that file. There are no event IDs, author keys, signatures or
+timestamps. These unsigned records are not relay-ready signed events.
+
+Post references use the existing outside-children rule: an ancestor omits a post
+present in any child subtree, while siblings can retain shared posts. An empty
+hierarchy still has an empty entry record. `experiment.json` reports represented
+notes separately from the full input count; completion does not imply coverage
+of every selected note or semantic approval.
+
+New preparation captures a persistent publication UUID, selected subject-prompt
+versions, effective clustering settings and Oracle/runner Git provenance.
+`code.preparation` describes preparation-time commits and modified-source flags;
+saved code hashes, upgrade hashes and the numerical executable hash identify
+the saved construction code and its changes. Separate exporter hashes identify
+the serialization code. Unavailable historical provenance remains unknown.
+
+`input.deprecated` is `true` when any known subject-prompt version predates
+ASv6.100, `null` when provenance is insufficient, and `false` otherwise. A false
+value does not establish approval of a later prompt or semantic quality. Graph
+`status` is separate from `execution_status`; exporting an old snapshot without
+execution evidence records `not_recorded` rather than guessing whether it
+completed, stopped or failed.
+
+Use the same `export-hierarchy-results` command to export a saved historical run
+or refresh a resumed run; see the [instructions](reproduce.md#export-compact-hierarchy-results).
+`source_id` uses the saved publication UUID for new runs. Legacy runs use an
+opaque source-location hash; moving one requires a fresh export destination.
+An unchanged re-export preserves file bytes and modification times. The exporter
+streams the saved state once while hashing its bytes, retaining graph, selection
+and settings while skipping construction working data. It does not change saved
+state, scan the source corpus or receipt history, call models, or export internal
+construction prompt jobs separately. The existing signed `export-canonical-nostr`
+command remains separate.
+
+A local HR39 preview exports its 200-node, six-root graph representing
+2,693 of 5,000 inputs as **804,511 bytes (about 786 KiB)**: 475,058 bytes of
+hierarchy, 325,000 bytes of input IDs and 4,453 bytes of metadata. Original post
+text belongs in the shared posts dataset. Exporting the 250.61 MiB saved state
+used about 46 MiB peak resident memory under a 512 MiB address-space limit.
+This is one local export check, not a published download or a validation of
+million-note generation.
+
+Standalone prompt/evaluation exports and final numerical result exports remain
+unimplemented. Historical backfilling and final download verification remain
+unfinished; implementing the hierarchy exporter has not published the collection.
 
 ## Start small
 

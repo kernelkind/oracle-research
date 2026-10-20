@@ -267,6 +267,8 @@ class V5ConstructionTests(unittest.TestCase):
         def advance(*_args):
             with lock:
                 done = len(completed) == len(names)
+            (directory/'state.json').write_text(json.dumps(dict(
+                status='complete' if done else 'constructing', nodes=[], note_ids=[])))
             return dict(status='complete' if done else 'constructing',
                         experiments=[] if done else names, encodings=[],
                         generation_policy='hierarchy-generation-v5',
@@ -321,6 +323,8 @@ class V5ConstructionTests(unittest.TestCase):
             complete = len(calls) == 2
             if complete:
                 release.set()
+            (directory/'state.json').write_text(json.dumps(dict(
+                status='complete' if complete else 'constructing', nodes=[], note_ids=[])))
             return dict(status='complete' if complete else 'constructing',
                         experiments=[] if complete else [str(directory/'first'), str(directory/'second')],
                         encodings=[], generation_policy='hierarchy-generation-v5',
