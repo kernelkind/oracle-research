@@ -2,8 +2,8 @@
 
 Code and history belong on GitHub; used inputs and final results belong on
 Hugging Face Datasets; all evaluated adapters belong on Hugging Face Models.
-The selected dataset is prepared locally. Nothing has been uploaded, and public
-repository names, revision links and download tests remain open.
+The selected dataset remains local. Public dataset links, revision pins and
+download tests remain open.
 
 | Where | What | Prepared size |
 | --- | --- | ---: |
@@ -104,10 +104,10 @@ The category sizes below exclude content charged once to the shared row.
 | **Physical dataset files** | **9,686 files** | **844.00 MiB (0.82 GiB)** |
 | **All 17 evaluated adapters, weights and configurations** | **34 original files, hashed without copying weights** | **6.78 GiB** |
 
-The exact physical dataset total is **885,002,003 bytes**, including the
+The exact physical dataset total is **884,995,321 bytes**, including the
 **3,442,482-byte** dataset manifest. Together with the unchanged adapter files,
-it is **8,165,089,772 bytes (7.60 GiB)**. Code and cleaned Git history are additional.
-Measured per-file gzip level-6 compression totals **162,436,389 bytes
+it is **8,165,083,090 bytes (7.60 GiB)**. Code and cleaned Git history are additional.
+Measured per-file gzip level-6 compression totals **162,435,708 bytes
 (154.91 MiB)**; no compressed downloads were created.
 
 The package restores 9,429 compact-export files and stores repeated content
@@ -374,7 +374,7 @@ The [inventory](inventory.json) pins the prepared manifest hash and category tot
 
 ## Availability
 
-The dataset and adapters are prepared locally. Public repository names, pinned
-Hugging Face revisions and hosted reader tests remain pending. See
+The dataset has not been uploaded. Public dataset links, pinned Hugging Face
+revisions and hosted reader tests remain pending. See
 [evidence limits](open-items.md) for the tested scope and unresolved historical
-bindings. Nothing has been uploaded.
+bindings.

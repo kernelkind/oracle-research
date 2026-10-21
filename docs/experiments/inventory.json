@@ -23,8 +23,8 @@
     "index_rows": 2488,
     "standalone_prompt_studies": 2351,
     "files": 9686,
-    "bytes": 885002003,
-    "gzip_bytes": 162436389,
+    "bytes": 884995321,
+    "gzip_bytes": 162435708,
     "categories": {
       "evaluation-documents": {
         "bundles": 1,
@@ -95,14 +95,14 @@
       "historical-prompt": {
         "bundles": 41,
         "files": 205,
-        "bytes": 6998667,
-        "gzip_bytes": 1086134
+        "bytes": 6998565,
+        "gzip_bytes": 1086086
       },
       "standalone-prompt": {
         "bundles": 2351,
         "files": 7053,
-        "bytes": 152134001,
-        "gzip_bytes": 35503950
+        "bytes": 152127421,
+        "gzip_bytes": 35503323
       },
       "historical-title": {
         "bundles": 35,
@@ -132,7 +132,7 @@
         "bundles": 1,
         "files": 257,
         "bytes": 69890657,
-        "gzip_bytes": 14801551
+        "gzip_bytes": 14801545
       }
     },
     "excluded_unexecuted_preparations": 196,
@@ -146,14 +146,14 @@
     "shared_files": 256,
     "shared_bytes": 66448175,
     "dataset_manifest_bytes": 3442482,
-    "restored_source_bytes": 1144549797,
-    "source_snapshot_sha256": "8dee95dcde8067120b31fe32f6b4f32b8f8a099fcaffd8f7b1c2d089bcb258fc",
+    "restored_source_bytes": 1144543115,
+    "source_snapshot_sha256": "db239c006b1a1c7d92a7e5248e737e36e928e01e36f75172b280822594244226",
     "generator_sources": {
       "sse_multivector/publication_dataset.py": "1a860b1f83fc2518b1812323869f3a16b11a0e8b45798b062d262ff1d14926bf",
       "experiment-runner/experiment_runner/publication_dataset.py": "63e89dba5e09149a24a430f39ea7987e6380a922a196ba422c16b4f13b339308"
     },
-    "dataset_manifest_sha256": "6e647b4efac070a06230067035b27f6a50db3421b686c3bd5ecabf4b7943f1f9",
-    "exporter_code_revision": "662c87ca6e8004cedfcb781a3f7df697339050c8",
+    "dataset_manifest_sha256": "e517707bced7fb2ab1e50224b9cd96d4596acca4fd9966a503db2fc33eeb87f0",
+    "exporter_code_revision": "6c44de9037e7b9d4753d7133f4e14d3cf3c61366",
     "starting_subject_inputs": {
       "publication": "inputs/hr36-subjects",
       "notes": 1000,
@@ -164,7 +164,8 @@
       "source_corpus_sha256": "42d5ce5211a1a72b08d8df3d80cb5d5668383d2afd27fbee6df331f567e8baef",
       "selection_sha256": "ba5dd87225232e022decaabecad7d0f0c48da5cc6f4a4832e9cd3af8f0ecffa9",
       "exporter_source_sha256": "742d8cc9710c574a9058538e2b842210149ce598452c5e83af9f19cbe427321f"
-    }
+    },
+    "runner_exporter_code_revision": "26bc051378b5db6ee4456b5bdaac9554ac1e6bf3"
   },
   "limitations": "open-items.md; hosted downloads and fresh GPU reader workflows remain unverified."
 }

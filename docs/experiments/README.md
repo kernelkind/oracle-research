@@ -57,7 +57,7 @@ check does not establish semantic quality.
 | [Models](models.csv) | All 17 adapters, matching configurations, pinned base revisions and training manifests |
 | [Input alternatives](dependency-alternatives.csv) and [reference resolutions](reference-resolutions.csv) | Exact historical input versions and unresolved replay constraints |
 | [Code versions](code-versions.csv) and [commit map](commit-map.txt) | Original producer identities and available source-revision mappings |
-| [Inventory](inventory.json) | Prepared dataset pin, counts and category sizes |
+| [Inventory](inventory.json) | Dataset and exporter code pins, counts and category sizes |
 
 Original revision IDs and hashes remain evidence. Source preserved at the
 pre-cleanup commit is a later retained copy unless verified as the actual
