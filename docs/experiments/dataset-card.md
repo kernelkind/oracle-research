@@ -19,13 +19,14 @@ contains the posts actually used, experiment parameters, generated hierarchies,
 prompt answers and evaluation evidence, including unsuccessful and superseded
 work.
 
-**Publication draft:** the dataset has not been uploaded. Its repository ID,
-published revision and public code URLs remain unset. Download commands below
-contain explicit placeholders and are not ready to run. Hosted downloads have
+**Publication draft:** the selected dataset repository is
+`KernelKind/oracle-research`. The dataset has not been uploaded; its published
+revision and public code URLs remain unset. The download command below still
+contains a revision placeholder and is not ready to run. Hosted downloads have
 not been tested.
 
 <!-- Publication: copy this file to the dataset repository's root README.md.
-     Replace the repository/revision placeholders and add public Oracle MVP,
+     Replace the revision placeholder and add public Oracle MVP,
      experiment-runner and reproduction-guide links before publication. -->
 
 ## Contents
@@ -84,14 +85,14 @@ source target/publication-env/bin/activate
 python -m pip install huggingface_hub==2.2.0 -e "$EXPERIMENT_RUNNER_ROOT"
 ```
 
-After publication, use the dataset ID and full Hugging Face commit ID listed
-here. Start with no existing `target/publication-dataset` directory;
+After publication, use the full Hugging Face commit ID listed here.
+Start with no existing `target/publication-dataset` directory;
 downloading another revision does not remove stale files. The command preserves
 the `publication-dataset/` folder beneath `target/`:
 
 ```bash
 cd "$ORACLE_ROOT"
-DATASET_REPO='REPLACE_WITH_DATASET_ID'
+DATASET_REPO='KernelKind/oracle-research'
 DATASET_REVISION='REPLACE_WITH_FULL_DATASET_COMMIT'
 hf download "$DATASET_REPO" --repo-type dataset \
   --revision "$DATASET_REVISION" \

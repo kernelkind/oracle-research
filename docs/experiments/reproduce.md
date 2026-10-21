@@ -6,7 +6,7 @@ current publication code and the recorded inputs; they keep new outputs separate
 from the original results.
 
 **Downloads are not available yet.** The [download instructions](#download-the-dataset)
-are prepared with repository/revision placeholders. The
+name the selected repository; its published revision is still a placeholder. The
 [dataset commands](#verify-and-restore-the-dataset) verify
 and restore the selected files listed in [dataset manifest](downloads.md#dataset-manifest).
 Restoration recovers original compact exports, not complete native experiment
@@ -66,10 +66,10 @@ dependencies are additional.
 
 ### Download the dataset
 
-**Publication pending:** the two values below must be replaced with the approved
-dataset ID and full Hugging Face commit ID once uploaded. They are placeholders,
-not working download links. The [dataset card](dataset-card.md) describes the
-selection and its limitations.
+**Publication pending:** the selected dataset repository is
+`KernelKind/oracle-research`. The full Hugging Face commit ID below remains a
+placeholder until upload; the command is not ready to run. The
+[dataset card](dataset-card.md) describes the selection and its limitations.
 
 Start with no existing `target/publication-dataset` directory when downloading
 a new snapshot. Hugging Face downloads do not remove files from older revisions.
@@ -78,7 +78,7 @@ when inspecting it.
 
 ```bash
 cd "$ORACLE_ROOT"
-DATASET_REPO='REPLACE_WITH_DATASET_ID'
+DATASET_REPO='KernelKind/oracle-research'
 DATASET_REVISION='REPLACE_WITH_FULL_DATASET_COMMIT'
 hf download "$DATASET_REPO" --repo-type dataset \
   --revision "$DATASET_REVISION" \

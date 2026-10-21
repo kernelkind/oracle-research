@@ -1,9 +1,10 @@
 # Evidence and reproduction limits
 
 The selected inputs, parameters and final results are prepared locally.
-[Contents and hosting](downloads.md) describe the selection; public repository
-names, pinned Hugging Face revisions, hosted reader tests and publication
-approval remain open. Complete original working files remain private.
+[Contents and hosting](downloads.md) describe the selection. The dataset
+repository name is `KernelKind/oracle-research`; public code repository names,
+pinned Hugging Face revisions, hosted reader tests and publication approval
+remain open. Complete original working files remain private.
 
 ## Input versions
 
@@ -154,6 +155,6 @@ Source verification follows the same shared-runner selection as generation;
 use the [generation Python environment](../../sse_multivector/model-runner.md#review-and-local-models).
 
 Hosted download tests and fresh GPU training/adapter-inference runs remain
-unverified. Public repository names, pinned dataset/model revisions and final
+unverified. Public code repository names, pinned dataset/model revisions and final
 publication approval remain open. The [reproduction guide](reproduce.md#what-has-been-tested)
 records the tested scope.

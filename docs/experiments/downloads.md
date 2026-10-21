@@ -2,12 +2,14 @@
 
 Code and history belong on GitHub; used inputs and final results belong on
 Hugging Face Datasets; all evaluated adapters belong on Hugging Face Models.
-The selected dataset remains local. Public dataset links, revision pins and
-download tests remain open.
+The selected dataset remains local; its planned Hugging Face repository is
+`KernelKind/oracle-research`. The published revision and download tests remain
+open.
 
 See the [draft dataset card](dataset-card.md) for the Hugging Face landing page
 and the [download instructions](reproduce.md#download-the-dataset) for the planned
-reader commands. Both mark the unset repository ID and revision explicitly.
+reader commands. Both identify the selected repository and mark its unpublished
+revision explicitly.
 
 | Where | What | Prepared size |
 | --- | --- | ---: |
@@ -384,7 +386,7 @@ verification. This is a directory layout, not an additional archive format.
 
 ## Availability
 
-The dataset has not been uploaded. Public dataset links, pinned Hugging Face
-revisions and hosted reader tests remain pending. See
+The dataset has not been uploaded to `KernelKind/oracle-research`. Its pinned
+Hugging Face revision and hosted reader tests remain pending. See
 [evidence limits](open-items.md) for the tested scope and unresolved historical
 bindings.
