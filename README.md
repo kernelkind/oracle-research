@@ -45,9 +45,9 @@ The [generation guide](docs/generate-hierarchy.md) covers terminal browsing and 
 | Inspect the fine-tuning measurements | [Read the saved comparison](docs/experiments/reproduce.md#inspect-the-fine-tune-comparison) | Saved comparison files; no model inference |
 | Repeat the subject fine-tuning | [Training inputs and instructions](docs/experiments/reproduce.md#prepare-the-fine-tuning-inputs) | CUDA GPU, base-model weights and prepared training data |
 
-The linked guides cover setup, hardware requirements and validation limits. The [subject adapters](https://huggingface.co/KernelKind/oracle-subject-adapters) are hosted separately; the [research dataset](https://huggingface.co/datasets/KernelKind/oracle-research) is being uploaded privately.
+The linked guides cover setup, hardware requirements and validation limits. The [subject adapters](https://huggingface.co/KernelKind/oracle-subject-adapters) are hosted separately; the [research dataset](https://huggingface.co/datasets/KernelKind/oracle-research) is available privately, with public access pending.
 
-Source publication is planned for [Oracle Research](https://github.com/kernelkind/oracle-research) and [Experiment Runner](https://github.com/kernelkind/experiment-runner). The guides include clone instructions for use after publication.
+Source code is available in [Oracle Research](https://github.com/kernelkind/oracle-research) and [Experiment Runner](https://github.com/kernelkind/experiment-runner). The guides include clone instructions.
 
 ## How it works
 
@@ -83,7 +83,7 @@ Two additional Qwen passes increased correctness to **97.5%**, while coverage fe
 
 The [experiment index](docs/experiments/README.md) connects the experiments to their inputs, prompts, settings and saved results, including unsuccessful trials and superseded approaches. The [reproduction guide](docs/experiments/reproduce.md) explains how to inspect and repeat recorded work, with its tested paths and remaining limitations.
 
-The [research dataset](https://huggingface.co/datasets/KernelKind/oracle-research) includes posts actually used in experiments, prepared training inputs, final hierarchies, prompt answers and evaluation results. Its private upload is in progress; public access remains pending. All **17 evaluated subject-model adapters** are hosted in the separate [subject-adapter repository](https://huggingface.co/KernelKind/oracle-subject-adapters).
+The [research dataset](https://huggingface.co/datasets/KernelKind/oracle-research) includes posts actually used in experiments, prepared training inputs, final hierarchies, prompt answers and evaluation results. It is available privately; public access remains pending. All **17 evaluated subject-model adapters** are hosted in the separate [subject-adapter repository](https://huggingface.co/KernelKind/oracle-subject-adapters).
 
 ## License
 

@@ -2,24 +2,23 @@
 
 Code and history belong on GitHub; used inputs and final results belong on
 Hugging Face Datasets; all evaluated adapters belong on Hugging Face Models.
-The planned code repositories are [Oracle Research](https://github.com/kernelkind/oracle-research)
-and [Experiment Runner](https://github.com/kernelkind/experiment-runner); code
-publication remains pending.
+The code repositories are [Oracle Research](https://github.com/kernelkind/oracle-research)
+and [Experiment Runner](https://github.com/kernelkind/experiment-runner).
 
-The selected dataset is being uploaded privately to
+The selected dataset is available privately at
 [KernelKind/oracle-research](https://huggingface.co/datasets/KernelKind/oracle-research).
-The complete revision and download tests remain open.
+Its complete payload revision is `439f98b3479559306fda369977a6e9978a7005b2`;
+public dataset release remains pending.
 
-See the [draft dataset card](dataset-card.md) for the Hugging Face landing page
-and the [download instructions](reproduce.md#download-the-dataset) for the planned
-reader commands. Both identify the selected repository and mark its unpublished
-revision explicitly.
+See the [dataset card](dataset-card.md) for the Hugging Face landing page
+and the [download instructions](reproduce.md#download-the-dataset) for commands
+pinned to that snapshot. Private downloads require an authorized Hugging Face account.
 
 | Where | What | Prepared size |
 | --- | --- | ---: |
 | GitHub | Code/history, tests, prompts, reusable specifications, authored findings, reader guides and experiment index | Download size unmeasured |
 | [Hugging Face Models](https://huggingface.co/KernelKind/oracle-subject-adapters) | All 17 evaluated adapters, configurations and pinned base-model references | 6.78 GiB |
-| [Hugging Face Datasets](https://huggingface.co/datasets/KernelKind/oracle-research) | Used posts, prepared training inputs, selected subjects, unsigned hierarchies, prompt answers, evaluations, numerical results and parameters; private upload in progress | 844.00 MiB (0.82 GiB) |
+| [Hugging Face Datasets](https://huggingface.co/datasets/KernelKind/oracle-research) | Used posts, prepared training inputs, selected subjects, unsigned hierarchies, prompt answers, evaluations, numerical results and parameters; available privately | 844.00 MiB (0.82 GiB) |
 
 ## Public Git contents
 
@@ -83,7 +82,8 @@ against originals, and refuses unclassified or changed evidence.
 
 [Publications](publications.csv) identifies 2,989 output/input bundles and one
 shared-content catalog row. The [dataset manifest](#dataset-manifest) describes the **physical upload files** under
-`target/publication-dataset/`. The original compact exports remain local. No public download or Hugging Face revision exists.
+`target/publication-dataset/`. The original compact exports remain local; the
+deduplicated dataset is uploaded privately at the pinned revision above.
 
 Repeated values are stored once in `shared/`. Numeric references such as
 `{"$ref":123}` identify shared records containing `id`, full `sha256` and `value`.
@@ -343,16 +343,18 @@ Unsupported historical schemas fail explicitly.
 
 All these exports use staged, managed output directories and payload hashes.
 An unchanged refresh preserves bytes and modification times; unrelated files or
-another source's destination are refused. The [selected outputs](#measured-local-exports) are prepared locally. Hosted
-download verification remains unfinished.
+another source's destination are refused. The [selected outputs](#measured-local-exports)
+are uploaded privately; remote content identities and sizes match every local
+payload file. Selected HR39/used-posts download checks passed.
 
 ## Start small
 
 The [HR39 browsing instructions](reproduce.md#browse-hr39-without-running-models)
 use the restored compact hierarchy and used-posts collection. Local checks
 reproduced six roots, 200 nodes and 2,693 represented posts, including interactive
-browsing. No native run files, model downloads or login are needed. Hosted
-download checks remain pending.
+browsing. Browsing the restored files needs no native run directories or model
+downloads. A fresh download of HR39 and the used-posts bundle passed native
+restoration, viewer export and viewer `--check`.
 
 The [fine-tune comparison](reproduce.md#inspect-the-fine-tune-comparison) also
 uses its restored two-file compact bundle. All seven saved rows match the
@@ -391,8 +393,11 @@ verification. This is a directory layout, not an additional archive format.
 
 ## Availability
 
-The private upload to
+The private dataset at
 [KernelKind/oracle-research](https://huggingface.co/datasets/KernelKind/oracle-research)
-is in progress. Its complete revision and hosted reader tests remain pending. See
+is complete. Remote Git/LFS content identities and sizes match all payload files.
+The selected six-file download (8,232,565 bytes) passed native HR39/post
+restoration, viewer export and viewer `--check`. Public dataset release remains
+pending. See
 [evidence limits](open-items.md) for the tested scope and unresolved historical
 bindings.

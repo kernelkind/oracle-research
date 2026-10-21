@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "state": "Prepared locally; not uploaded or approved for publication",
+  "state": "Dataset uploaded privately; source code published; public dataset release remains pending",
   "public_index": {
     "studies": 2488,
     "studies_by_kind": {
@@ -16,7 +16,10 @@
   "models": 17,
   "adapter_bytes": 7280087769,
   "publication_dataset": {
-    "state": "Prepared locally; not uploaded",
+    "state": "Uploaded privately; remote content identities and selected HR39/post reader checks passed",
+    "repository": "KernelKind/oracle-research",
+    "revision": "439f98b3479559306fda369977a6e9978a7005b2",
+    "visibility": "private",
     "format": "publication-dataset-v1",
     "included_publications": 2989,
     "storage_catalog_rows": 2990,
@@ -167,5 +170,5 @@
     },
     "runner_exporter_code_revision": "26bc051378b5db6ee4456b5bdaac9554ac1e6bf3"
   },
-  "limitations": "open-items.md; hosted downloads and fresh GPU reader workflows remain unverified."
+  "limitations": "open-items.md; public dataset release remains pending; fresh GPU reader workflows remain unverified."
 }

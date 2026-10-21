@@ -1,5 +1,5 @@
 ---
-pretty_name: Oracle MVP research data
+pretty_name: Oracle Research data
 viewer: false
 tags:
   - nostr
@@ -8,30 +8,27 @@ tags:
   - research
 ---
 
-# Oracle MVP research data
+# Oracle Research data
 
 Inputs and final results from research into content discovery on Nostr through
 a subject hierarchy. The hierarchy offers progressively narrower choices so
 people can direct their own discovery.
 
-This collection accompanies the Oracle MVP code and experiment index. It
+This collection accompanies the [Oracle Research code](https://github.com/kernelkind/oracle-research) and experiment index. It
 contains the posts actually used, experiment parameters, generated hierarchies,
 prompt answers and evaluation evidence, including unsuccessful and superseded
 work.
 
-**Publication draft:** the selected dataset repository is
-`KernelKind/oracle-research`. The dataset has not been uploaded; its published
-revision and public code URLs remain unset. The download command below still
-contains a revision placeholder and is not ready to run. Hosted downloads have
-not been tested.
-
-<!-- Publication: copy this file to the dataset repository's root README.md.
-     Replace the revision placeholder and add public Oracle MVP,
-     experiment-runner and reproduction-guide links before publication. -->
+**Private dataset:** the snapshot is uploaded to
+[KernelKind/oracle-research](https://huggingface.co/datasets/KernelKind/oracle-research).
+Access currently requires an authorized Hugging Face account; public dataset
+release remains pending. Every payload file's remote content identity and size
+matches the reviewed local snapshot. A selected six-file download passed native
+HR39/post restoration, viewer export and the viewer's `--check` validation.
 
 ## Contents
 
-The prepared payload is **844.00 MiB (884,995,321 bytes)** in **9,686 files**.
+The payload is **844.00 MiB (884,995,321 bytes)** in **9,686 files**.
 It contains 2,989 input/result bundles, with repeated content stored once.
 
 | Material | What it provides |
@@ -42,8 +39,8 @@ It contains 2,989 input/result bundles, with repeated content stored once.
 | Evaluations and numerical studies | Final judgments, scores, measurements, graphs and memberships, with available provenance |
 | Fine-tuning inputs | Prepared training data, split/settings records, reference fixtures and hash bindings for all 17 evaluated adapters |
 
-The code repository's `docs/experiments/experiments.csv` connects studies to
-bundle IDs. `docs/experiments/publications.csv` describes the bundles; the
+The code repository's [study index](https://github.com/kernelkind/oracle-research/blob/main/docs/experiments/experiments.csv) connects studies to
+bundle IDs. Its [bundle catalog](https://github.com/kernelkind/oracle-research/blob/main/docs/experiments/publications.csv) describes the bundles; the
 dataset's `publication-dataset/dataset.json` identifies their exact files,
 sizes and hashes. The 2,488 study-index entries overlap and are not a count of
 independent trials. Reused answers remain identified as reused.
@@ -54,38 +51,40 @@ with unknown execution status remain included and labeled accordingly.
 Full source corpora, intermediate vectors, transport logs, expanded requests,
 optimizer state and whole original run directories are outside this selection.
 Weights for all 17 evaluated adapters are in the separate
-[subject-adapter repository](https://huggingface.co/kernelkind/oracle-subject-adapters).
+[subject-adapter repository](https://huggingface.co/KernelKind/oracle-subject-adapters).
 Upstream base-model weights are additional downloads.
 
 ## Download and inspect
 
-Use Linux, Python 3.13 and matching Oracle MVP and `experiment-runner` source
-checkouts. The public source links will be added before publication. Local
-validation used Oracle commit `c5b3ccf27c9f77e89e3a33a1c62e5233b94c3b81` and
-runner commit `26bc051378b5db6ee4456b5bdaac9554ac1e6bf3`.
-
-From the directory containing the Oracle checkout, start a Bash shell and keep
-it open for the following commands. The runner can be inside the checkout as
-`experiment-runner/`, alongside it as `../experiment-runner/`, or selected by
-`EXPERIMENT_RUNNER_ROOT`. These tools use `publication-env`, separate from the
-generation guide's model environment:
+Use Linux, Git and Python 3.13. [Oracle Research](https://github.com/kernelkind/oracle-research)
+includes [Experiment Runner](https://github.com/kernelkind/experiment-runner) as
+a pinned submodule. Clone both with:
 
 ```bash
-cd oracle-mvp
+git clone --recurse-submodules https://github.com/kernelkind/oracle-research.git
+```
+
+Setup was checked at Oracle commit `20fc5b2b7dcd8b6131d417da1ffb563f69fe0226`
+with runner commit `26bc051378b5db6ee4456b5bdaac9554ac1e6bf3`.
+
+Start a Bash shell and keep it open for the following commands. An explicit
+`EXPERIMENT_RUNNER_ROOT` can select an existing runner checkout instead of the
+submodule. These tools use `publication-env`, separate from the generation
+guide's model environment:
+
+```bash
+cd oracle-research
 export ORACLE_ROOT="$PWD"
 if [ -z "${EXPERIMENT_RUNNER_ROOT:-}" ]; then
-  if [ -f experiment-runner/experiment_runner/__init__.py ]; then
-    export EXPERIMENT_RUNNER_ROOT="$ORACLE_ROOT/experiment-runner"
-  else
-    export EXPERIMENT_RUNNER_ROOT="$(realpath ../experiment-runner)"
-  fi
+  git submodule update --init --recursive -- experiment-runner
+  export EXPERIMENT_RUNNER_ROOT="$ORACLE_ROOT/experiment-runner"
 fi
 python3.13 -m venv target/publication-env
 source target/publication-env/bin/activate
 python -m pip install huggingface_hub==2.2.0 -e "$EXPERIMENT_RUNNER_ROOT"
 ```
 
-After publication, use the full Hugging Face commit ID listed here.
+Use the complete payload commit pinned below.
 Start with no existing `target/publication-dataset` directory;
 downloading another revision does not remove stale files. The command preserves
 the `publication-dataset/` folder beneath `target/`:
@@ -93,7 +92,7 @@ the `publication-dataset/` folder beneath `target/`:
 ```bash
 cd "$ORACLE_ROOT"
 DATASET_REPO='KernelKind/oracle-research'
-DATASET_REVISION='REPLACE_WITH_FULL_DATASET_COMMIT'
+DATASET_REVISION='439f98b3479559306fda369977a6e9978a7005b2'
 hf download "$DATASET_REPO" --repo-type dataset \
   --revision "$DATASET_REVISION" \
   --include 'publication-dataset/**' --local-dir target --max-workers 4
@@ -122,6 +121,11 @@ SHA256
 The SHA-256 above identifies `dataset.json`; it is separate from the Hugging
 Face commit ID used to download the repository.
 
+Hosted checks compared all uploaded dataset files using Git blob hashes or LFS
+SHA-256 values. The fresh download contained only `dataset.json`, HR39 and the
+used-posts bundle: six files totaling 8,232,565 bytes. Native restoration checked
+the original compact bytes, and viewer export plus `--check` passed.
+
 For a first result, restore the saved HR39 hierarchy into a new directory:
 
 ```bash
@@ -138,10 +142,11 @@ requires no signing key, relay or model inference. The experimental protocol
 is intended for local or private testing; please avoid sending these events
 to public Nostr relays.
 
-The Oracle reproduction guide at `docs/experiments/reproduce.md` explains how
+The [reproduction guide](https://github.com/kernelkind/oracle-research/blob/main/docs/experiments/reproduce.md) explains how
 to restore the corresponding posts, browse HR39 and inspect the fine-tuning
-comparison. It also covers model loading and selected reruns. Public guide
-link: pending publication.
+comparison. It also covers model loading and selected reruns. The
+[Notedeck hierarchy interface](https://github.com/kernelkind/notedeck/tree/hierarchies)
+provides the graphical browser shown in the project's walkthrough.
 
 ## Format and interpretation
 
@@ -162,7 +167,7 @@ Recorded observations, agent assessments and user judgments remain distinct.
 Generated answers and assessments are fallible; successful execution and valid
 hashes do not establish semantic quality. Some historical input versions remain
 missing, so not every original run can be reproduced exactly. The code
-repository's `docs/experiments/open-items.md` lists the known limits.
+repository's [evidence limits](https://github.com/kernelkind/oracle-research/blob/main/docs/experiments/open-items.md) list the known gaps.
 
 The source posts are public Nostr text, not anonymized text or a representative
 sample of the network. The collection supports inspection of the recorded
@@ -172,7 +177,7 @@ to a million notes.
 ## License and provenance
 
 Original project material uses **GPL-3.0-or-later**, as specified in the code
-repository's `LICENSE`. Third-party Nostr posts and other upstream material
+repository's [LICENSE](https://github.com/kernelkind/oracle-research/blob/main/LICENSE). Third-party Nostr posts and other upstream material
 retain their respective rights; this project does not grant a blanket GPL
 license over that content. Dataset-wide license metadata is therefore unset.
 Source hashes and note IDs are preserved for provenance.

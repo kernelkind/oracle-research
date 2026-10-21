@@ -5,15 +5,15 @@ recorded post before attempting a whole corpus. The examples below use the
 current publication code and the recorded inputs; they keep new outputs separate
 from the original results.
 
-**The [dataset](https://huggingface.co/datasets/KernelKind/oracle-research) is being
-uploaded privately.** The [download instructions](#download-the-dataset) will pin
-the complete revision after upload. The
+**The [dataset](https://huggingface.co/datasets/KernelKind/oracle-research) is
+available privately; public access remains pending.** The
+[download instructions](#download-the-dataset) pin its complete payload revision. The
 [dataset commands](#verify-and-restore-the-dataset) verify
 and restore the selected files listed in [dataset manifest](downloads.md#dataset-manifest).
 Restoration recovers original compact exports, not complete native experiment
 directories. Browsing, HR36 preparation and training-input checks
-use restored compact files. Hosted reader workflows and a fresh GPU training
-run have not been tested for this guide.
+use restored compact files. A selected HR39/post download passed native
+restoration and viewer checks; fresh GPU training remains untested.
 
 To generate and browse a new hierarchy from your own posts, use the
 [generation guide](../generate-hierarchy.md). Its complete 12-post workflow
@@ -33,17 +33,17 @@ passed in a fresh Linux VM; it does not require these historical files.
 Use Linux, Git, Python 3.13 and the
 [Oracle Research source](https://github.com/kernelkind/oracle-research), which includes
 [Experiment Runner](https://github.com/kernelkind/experiment-runner) as a pinned
-submodule. Code publication remains pending. Once published, clone both with:
+submodule. Clone both with:
 
 ```bash
 git clone --recurse-submodules https://github.com/kernelkind/oracle-research.git
 ```
 
-The prepared dataset's local checks used Oracle commit
-`c5b3ccf27c9f77e89e3a33a1c62e5233b94c3b81` and runner commit
-`26bc051378b5db6ee4456b5bdaac9554ac1e6bf3`. The dataset revision will be pinned
-after upload. No model or encoder is needed to download, verify or restore these
-records.
+Setup was checked at Oracle commit
+`20fc5b2b7dcd8b6131d417da1ffb563f69fe0226` and runner commit
+`26bc051378b5db6ee4456b5bdaac9554ac1e6bf3`. An explicit
+`EXPERIMENT_RUNNER_ROOT` can select an existing runner checkout instead of the
+submodule. No model or encoder is needed to download, verify or restore these records.
 
 From the directory containing the Oracle checkout, start a Bash shell and keep
 it open for the following steps. Install the runner's Python package and the
@@ -54,11 +54,8 @@ cd oracle-research
 export ORACLE_ROOT="$PWD"
 mkdir -p target/reproduction/history
 if [ -z "${EXPERIMENT_RUNNER_ROOT:-}" ]; then
-  if [ -f experiment-runner/experiment_runner/__init__.py ]; then
-    export EXPERIMENT_RUNNER_ROOT="$ORACLE_ROOT/experiment-runner"
-  else
-    export EXPERIMENT_RUNNER_ROOT="$(realpath ../experiment-runner)"
-  fi
+  git submodule update --init --recursive -- experiment-runner
+  export EXPERIMENT_RUNNER_ROOT="$ORACLE_ROOT/experiment-runner"
 fi
 python3.13 -m venv target/publication-env
 source target/publication-env/bin/activate
@@ -75,10 +72,10 @@ dependencies are additional.
 
 ### Download the dataset
 
-**Private upload in progress:** the dataset repository is
+**Private dataset:** the repository is
 [KernelKind/oracle-research](https://huggingface.co/datasets/KernelKind/oracle-research).
-The full Hugging Face commit ID below remains a
-placeholder until upload; the command is not ready to run. The
+The command pins the complete payload commit and requires an authorized
+Hugging Face account while the repository remains private. The
 [dataset card](dataset-card.md) describes the selection and its limitations.
 
 Start with no existing `target/publication-dataset` directory when downloading
@@ -89,13 +86,13 @@ when inspecting it.
 ```bash
 cd "$ORACLE_ROOT"
 DATASET_REPO='KernelKind/oracle-research'
-DATASET_REVISION='REPLACE_WITH_FULL_DATASET_COMMIT'
+DATASET_REVISION='439f98b3479559306fda369977a6e9978a7005b2'
 hf download "$DATASET_REPO" --repo-type dataset \
   --revision "$DATASET_REVISION" \
   --include 'publication-dataset/**' --local-dir target --max-workers 4
 ```
 
-The dataset repository will hold the checked payload under `publication-dataset/`
+The dataset repository holds the checked payload under `publication-dataset/`
 and its card outside that folder. This command keeps the payload at
 `target/publication-dataset`; Hugging Face's download metadata goes into
 `target/.cache/huggingface`, outside the checked tree. This follows the
@@ -189,11 +186,8 @@ install only the runner's Python package; Torch and encoder files are unnecessar
 ```bash
 cd "$ORACLE_ROOT"
 if [ -z "${EXPERIMENT_RUNNER_ROOT:-}" ]; then
-  if [ -f experiment-runner/experiment_runner/__init__.py ]; then
-    export EXPERIMENT_RUNNER_ROOT="$ORACLE_ROOT/experiment-runner"
-  else
-    export EXPERIMENT_RUNNER_ROOT="$(realpath ../experiment-runner)"
-  fi
+  git submodule update --init --recursive -- experiment-runner
+  export EXPERIMENT_RUNNER_ROOT="$ORACLE_ROOT/experiment-runner"
 fi
 python3.13 -m venv target/hierarchy-env
 source target/hierarchy-env/bin/activate
@@ -411,8 +405,8 @@ unknown provenance remains `null`, and `false` is not semantic approval.
 
 These three files are publication outputs; the browser above still uses its
 separate viewer files. The local backfill includes all 37 official outputs and
-203 supported historical branch outputs. Unsupported older formats and testing
-the eventual public downloads remain open.
+203 supported historical branch outputs. Unsupported older formats remain open;
+the private snapshot and selected download checks are recorded below.
 
 ### Verify and restore the dataset
 
@@ -854,8 +848,14 @@ revocation were checked there; offline export and browsing then worked without
 credentials. This validates a small reader workflow, not semantic quality,
 large-corpus scalability or reproduction of a historical model draw.
 
-Hosted download testing and fresh GPU training/adapter-inference runs remain
-unverified. Some historical entry points require original files outside the
+Hosted checks passed on **2026-10-21 UTC**. Every uploaded dataset file's remote
+Git blob hash or LFS SHA-256 and size matched the reviewed local snapshot. The
+fresh download contained only `dataset.json`, HR39 and used-posts: six files,
+8,232,565 bytes. Downloaded SHA-256 values and native restoration verified both
+bundles; `export-canonical-viewer` and viewer `--check` passed. Download metadata
+stayed outside the checked dataset tree.
+
+Fresh GPU training/adapter-inference runs remain unverified. Some historical entry points require original files outside the
 compact selection; see [replay limits](open-items.md#source-versions).
 
 The dataset checks verify file identities and restored bytes. They do not

@@ -1,11 +1,11 @@
 # Evidence and reproduction limits
 
-The selected inputs, parameters and final results are prepared locally.
+The selected inputs, parameters and final results are uploaded privately.
 [Contents and hosting](downloads.md) describe the selection. The dataset
 repository is [KernelKind/oracle-research](https://huggingface.co/datasets/KernelKind/oracle-research),
-whose private upload is in progress; code publication,
-pinned Hugging Face revisions, hosted reader tests and publication approval
-remain open. The planned code repositories are
+whose complete snapshot is pinned in the [inventory](inventory.json).
+Public dataset release, the pinned model-repository revision and fresh GPU
+reader tests remain open. The code repositories are
 [Oracle Research](https://github.com/kernelkind/oracle-research) and
 [Experiment Runner](https://github.com/kernelkind/experiment-runner).
 Complete original working files remain private.
@@ -158,7 +158,10 @@ including pause/resume and rejection of a substituted compatibility-shim hash.
 Source verification follows the same shared-runner selection as generation;
 use the [generation Python environment](../../sse_multivector/model-runner.md#review-and-local-models).
 
-Hosted download tests and fresh GPU training/adapter-inference runs remain
-unverified. Code publication, pinned dataset/model revisions and final
-publication approval remain open. The [reproduction guide](reproduce.md#what-has-been-tested)
+Every uploaded dataset file's remote Git/LFS content identity and size matches
+the reviewed local snapshot. A selected six-file HR39/used-posts download passed
+SHA-256 checks, native restoration, viewer export and viewer `--check`.
+
+Fresh GPU training/adapter-inference runs remain unverified. Public dataset
+release and the pinned model-repository revision remain open. The [reproduction guide](reproduce.md#what-has-been-tested)
 records the tested scope.
