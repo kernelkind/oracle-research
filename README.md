@@ -10,7 +10,9 @@ Each choice lets the person direct their own discovery. The goal is to put that 
 
 ## Walkthrough
 
-[Watch the walkthrough in Notedeck (19 seconds)](docs/media/hierarchy-walkthrough.mp4): use the **Hierarchy** column to choose a topic, narrow it down, and view its posts.
+https://github.com/user-attachments/assets/2f8cca89-d52e-4cf6-bd0a-55a24ddb7960
+
+Use the **Hierarchy** column to choose a topic, narrow it down, and view its posts.
 
 The interface uses a [toy hierarchy snapshot protocol](docs/design/nostr-hierarchy-snapshot.md) developed for this prototype. The format is intended for local or private testing, so please avoid publishing its experimental events to public Nostr relays.
 
