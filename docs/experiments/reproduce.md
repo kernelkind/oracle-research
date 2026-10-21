@@ -30,12 +30,20 @@ passed in a fresh Linux VM; it does not require these historical files.
 
 ## Obtain the inputs
 
-Use Linux, Python 3.13 and matching Oracle MVP and `experiment-runner` checkouts.
+Use Linux, Git, Python 3.13 and the
+[Oracle MVP source](https://github.com/kernelkind/oracle-mvp), which includes
+[Experiment Runner](https://github.com/kernelkind/experiment-runner) as a pinned
+submodule. Code publication remains pending. Once published, clone both with:
+
+```bash
+git clone --recurse-submodules https://github.com/kernelkind/oracle-mvp.git
+```
+
 The prepared dataset's local checks used Oracle commit
 `c5b3ccf27c9f77e89e3a33a1c62e5233b94c3b81` and runner commit
-`26bc051378b5db6ee4456b5bdaac9554ac1e6bf3`; public source URLs and final revision
-pins remain pending. No model or encoder is needed to download, verify or restore
-these records.
+`26bc051378b5db6ee4456b5bdaac9554ac1e6bf3`. The dataset revision will be pinned
+after upload. No model or encoder is needed to download, verify or restore these
+records.
 
 From the directory containing the Oracle checkout, start a Bash shell and keep
 it open for the following steps. Install the runner's Python package and the

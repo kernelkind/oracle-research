@@ -5,7 +5,10 @@ results, including failed trials and superseded approaches. Code and source
 history belong in Git. All 17 evaluated adapters are in the
 [model repository](https://huggingface.co/KernelKind/oracle-subject-adapters);
 the [research dataset](https://huggingface.co/datasets/KernelKind/oracle-research)
-is being uploaded privately. See [contents and formats](downloads.md).
+is being uploaded privately. Source publication is planned for
+[Oracle MVP](https://github.com/kernelkind/oracle-mvp) and
+[Experiment Runner](https://github.com/kernelkind/experiment-runner).
+See [contents and formats](downloads.md).
 
 ## Where to start
 

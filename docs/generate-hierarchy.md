@@ -22,12 +22,15 @@ public encoder downloads and hash checks, subject extraction, definition writing
 CPU encoding, clustering, unsigned publication export and interactive browsing.
 Offline export and browsing also passed after the VM login was revoked.
 This validates the small workflow; semantic quality and larger-corpus resource
-requirements remain separate questions. The Oracle and experiment-runner
-repository URLs remain pending publication.
+requirements remain separate questions.
+
+Source publication is planned for [Oracle MVP](https://github.com/kernelkind/oracle-mvp)
+and [Experiment Runner](https://github.com/kernelkind/experiment-runner). The clone
+instructions below apply after those repositories are published.
 
 ## 1. Install the runtime
 
-Use Linux with Python 3.13, Node.js 24 or later, and Nix for the repository's
+Use Linux with Git, Python 3.13, Node.js 24 or later, and Nix for the repository's
 pinned Rust/C build environment. Python's `venv` and `pip`, `curl`, and
 `sha256sum` are also needed. The Torch, Transformers and Tokenizers versions below
 match the recorded CPU runtime; the guide does not require a GPU or a container.
@@ -49,10 +52,12 @@ To use an existing runner checkout, set `EXPERIMENT_RUNNER_ROOT` to its path
 before running the setup; an explicit selection takes precedence over the
 submodule.
 
-From the directory containing your Oracle checkout, run this setup in Bash.
-Keep this shell open for the following steps:
+From the directory where you want to keep the checkout, run this setup in Bash.
+If you already have `oracle-mvp/`, skip the clone line. Keep this shell open for
+the following steps:
 
 ```bash
+git clone --recurse-submodules https://github.com/kernelkind/oracle-mvp.git
 cd oracle-mvp
 export ORACLE_ROOT="$PWD"
 if [ -z "${EXPERIMENT_RUNNER_ROOT:-}" ]; then

@@ -3,9 +3,12 @@
 The selected inputs, parameters and final results are prepared locally.
 [Contents and hosting](downloads.md) describe the selection. The dataset
 repository is [KernelKind/oracle-research](https://huggingface.co/datasets/KernelKind/oracle-research),
-whose private upload is in progress; public code repository names,
+whose private upload is in progress; code publication,
 pinned Hugging Face revisions, hosted reader tests and publication approval
-remain open. Complete original working files remain private.
+remain open. The planned code repositories are
+[Oracle MVP](https://github.com/kernelkind/oracle-mvp) and
+[Experiment Runner](https://github.com/kernelkind/experiment-runner).
+Complete original working files remain private.
 
 ## Input versions
 
@@ -156,6 +159,6 @@ Source verification follows the same shared-runner selection as generation;
 use the [generation Python environment](../../sse_multivector/model-runner.md#review-and-local-models).
 
 Hosted download tests and fresh GPU training/adapter-inference runs remain
-unverified. Public code repository names, pinned dataset/model revisions and final
+unverified. Code publication, pinned dataset/model revisions and final
 publication approval remain open. The [reproduction guide](reproduce.md#what-has-been-tested)
 records the tested scope.

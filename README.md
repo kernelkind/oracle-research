@@ -47,6 +47,8 @@ The [generation guide](docs/generate-hierarchy.md) covers terminal browsing and 
 
 The linked guides cover setup, hardware requirements and validation limits. The [subject adapters](https://huggingface.co/KernelKind/oracle-subject-adapters) are hosted separately; the [research dataset](https://huggingface.co/datasets/KernelKind/oracle-research) is being uploaded privately.
 
+Source publication is planned for [Oracle MVP](https://github.com/kernelkind/oracle-mvp) and [Experiment Runner](https://github.com/kernelkind/experiment-runner). The guides include clone instructions for use after publication.
+
 ## How it works
 
 An AI language model identifies the subjects discussed in each Nostr post and writes definitions for them. An AI embedding model represents each subject using vectors. The generator uses these vectors to estimate similarity between subjects across posts.
@@ -55,7 +57,7 @@ The generator groups related subjects and uses a language model to define broade
 
 The fine-tuned models cover subject identification within individual posts.
 
-The generation workflow uses the separate `experiment-runner` to execute language-model requests and record their inputs and responses. The generation guide includes its setup.
+The generation workflow uses the separate [Experiment Runner](https://github.com/kernelkind/experiment-runner) to execute language-model requests and record their inputs and responses. The generation guide includes its setup.
 
 ## Results
 
