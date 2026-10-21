@@ -18,7 +18,7 @@ All 17 evaluated adapters are in the
 [subject-adapter repository](https://huggingface.co/KernelKind/oracle-subject-adapters).
 Prepared training inputs and saved evaluation results are part of the
 [research dataset](https://huggingface.co/datasets/KernelKind/oracle-research),
-which is currently available privately; public dataset release remains pending.
+which is publicly available.
 
 ## L1-only test results (October 15)
 

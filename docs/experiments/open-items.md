@@ -1,10 +1,10 @@
 # Evidence and reproduction limits
 
-The selected inputs, parameters and final results are uploaded privately.
+The selected inputs, parameters and final results are publicly available.
 [Contents and hosting](downloads.md) describe the selection. The dataset
 repository is [KernelKind/oracle-research](https://huggingface.co/datasets/KernelKind/oracle-research),
 whose complete snapshot is pinned in the [inventory](inventory.json).
-Public dataset release and fresh GPU reader tests remain open. The
+Fresh GPU reader tests remain open. The
 [adapter download instructions](reproduce.md#use-a-subject-adapter) pin the
 published model-repository revision. The code repositories are
 [Oracle Research](https://github.com/kernelkind/oracle-research) and
@@ -163,6 +163,5 @@ Every uploaded dataset file's remote Git/LFS content identity and size matches
 the reviewed local snapshot. A selected six-file HR39/used-posts download passed
 SHA-256 checks, native restoration, viewer export and viewer `--check`.
 
-Fresh GPU training/adapter-inference runs remain unverified. Public dataset
-release remains pending. The [reproduction guide](reproduce.md#what-has-been-tested)
+Fresh GPU training/adapter-inference runs remain unverified. The [reproduction guide](reproduce.md#what-has-been-tested)
 records the tested scope.

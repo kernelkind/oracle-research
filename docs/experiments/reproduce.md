@@ -6,7 +6,7 @@ current publication code and the recorded inputs; they keep new outputs separate
 from the original results.
 
 **The [dataset](https://huggingface.co/datasets/KernelKind/oracle-research) is
-available privately; public access remains pending.** The
+publicly available without a Hugging Face account.** The
 [download instructions](#download-the-dataset) pin its complete payload revision. The
 [dataset commands](#verify-and-restore-the-dataset) verify
 and restore the selected files listed in [dataset manifest](downloads.md#dataset-manifest).
@@ -72,10 +72,9 @@ dependencies are additional.
 
 ### Download the dataset
 
-**Private dataset:** the repository is
+The public dataset repository is
 [KernelKind/oracle-research](https://huggingface.co/datasets/KernelKind/oracle-research).
-The command pins the complete payload commit and requires an authorized
-Hugging Face account while the repository remains private. The
+The command pins the complete payload commit; no Hugging Face login is required. The
 [dataset card](dataset-card.md) describes the selection and its limitations.
 
 Start with no existing `target/publication-dataset` directory when downloading
@@ -406,7 +405,7 @@ unknown provenance remains `null`, and `false` is not semantic approval.
 These three files are publication outputs; the browser above still uses its
 separate viewer files. The local backfill includes all 37 official outputs and
 203 supported historical branch outputs. Unsupported older formats remain open;
-the private snapshot and selected download checks are recorded below.
+the published snapshot and selected download checks are recorded below.
 
 ### Verify and restore the dataset
 

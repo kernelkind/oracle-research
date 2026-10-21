@@ -5,20 +5,19 @@ Hugging Face Datasets; all evaluated adapters belong on Hugging Face Models.
 The code repositories are [Oracle Research](https://github.com/kernelkind/oracle-research)
 and [Experiment Runner](https://github.com/kernelkind/experiment-runner).
 
-The selected dataset is available privately at
+The selected dataset is publicly available at
 [KernelKind/oracle-research](https://huggingface.co/datasets/KernelKind/oracle-research).
-Its complete payload revision is `439f98b3479559306fda369977a6e9978a7005b2`;
-public dataset release remains pending.
+Its complete payload revision is `439f98b3479559306fda369977a6e9978a7005b2`.
 
 See the [dataset card](dataset-card.md) for the Hugging Face landing page
 and the [download instructions](reproduce.md#download-the-dataset) for commands
-pinned to that snapshot. Private downloads require an authorized Hugging Face account.
+pinned to that snapshot. Dataset downloads require no Hugging Face account.
 
 | Where | What | Prepared size |
 | --- | --- | ---: |
 | GitHub | Code/history, tests, prompts, reusable specifications, authored findings, reader guides and experiment index | Download size unmeasured |
 | [Hugging Face Models](https://huggingface.co/KernelKind/oracle-subject-adapters) | All 17 evaluated adapters, configurations and pinned base-model references | 6.78 GiB |
-| [Hugging Face Datasets](https://huggingface.co/datasets/KernelKind/oracle-research) | Used posts, prepared training inputs, selected subjects, unsigned hierarchies, prompt answers, evaluations, numerical results and parameters; available privately | 844.00 MiB (0.82 GiB) |
+| [Hugging Face Datasets](https://huggingface.co/datasets/KernelKind/oracle-research) | Used posts, prepared training inputs, selected subjects, unsigned hierarchies, prompt answers, evaluations, numerical results and parameters | 844.00 MiB (0.82 GiB) |
 
 ## Public Git contents
 
@@ -83,7 +82,7 @@ against originals, and refuses unclassified or changed evidence.
 [Publications](publications.csv) identifies 2,989 output/input bundles and one
 shared-content catalog row. The [dataset manifest](#dataset-manifest) describes the **physical upload files** under
 `target/publication-dataset/`. The original compact exports remain local; the
-deduplicated dataset is uploaded privately at the pinned revision above.
+deduplicated dataset is publicly available at the pinned revision above.
 
 Repeated values are stored once in `shared/`. Numeric references such as
 `{"$ref":123}` identify shared records containing `id`, full `sha256` and `value`.
@@ -347,7 +346,7 @@ Unsupported historical schemas fail explicitly.
 All these exports use staged, managed output directories and payload hashes.
 An unchanged refresh preserves bytes and modification times; unrelated files or
 another source's destination are refused. The [selected outputs](#measured-local-exports)
-are uploaded privately; remote content identities and sizes match every local
+are publicly available; remote content identities and sizes match every local
 payload file. Selected HR39/used-posts download checks passed.
 
 ## Start small
@@ -396,11 +395,11 @@ verification. This is a directory layout, not an additional archive format.
 
 ## Availability
 
-The private dataset at
+The dataset at
 [KernelKind/oracle-research](https://huggingface.co/datasets/KernelKind/oracle-research)
 is complete. Remote Git/LFS content identities and sizes match all payload files.
 The selected six-file download (8,232,565 bytes) passed native HR39/post
-restoration, viewer export and viewer `--check`. Public dataset release remains
-pending. See
+restoration, viewer export and viewer `--check`. Public access to the card and
+pinned manifest was checked without authentication. See
 [evidence limits](open-items.md) for the tested scope and unresolved historical
 bindings.

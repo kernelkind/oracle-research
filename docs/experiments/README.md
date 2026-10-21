@@ -5,7 +5,7 @@ results, including failed trials and superseded approaches. Code and source
 history belong in Git. All 17 evaluated adapters are in the
 [model repository](https://huggingface.co/KernelKind/oracle-subject-adapters);
 the [research dataset](https://huggingface.co/datasets/KernelKind/oracle-research)
-is available privately; public dataset release remains pending. Source code is available in
+is publicly available. Source code is available in
 [Oracle Research](https://github.com/kernelkind/oracle-research) and
 [Experiment Runner](https://github.com/kernelkind/experiment-runner).
 See [contents and formats](downloads.md).
@@ -24,7 +24,7 @@ See [contents and formats](downloads.md).
 | Inspect content ordering experiments | [Prominence and sorting findings](content-ranking.md) |
 | Understand resource limits | [Scaling evidence](scalability.md) and [hierarchy performance](hierarchy/performance.md) |
 | Locate another recorded study | [Study index](experiments.csv) and [result-bundle catalog](publications.csv) |
-| Obtain and inspect the saved evidence | [Download instructions](reproduce.md#download-the-dataset) (private access), [dataset card](dataset-card.md) and [evidence limits](open-items.md) |
+| Obtain and inspect the saved evidence | [Download instructions](reproduce.md#download-the-dataset), [dataset card](dataset-card.md) and [evidence limits](open-items.md) |
 
 The generation guide describes the current implementation. Earlier trials may
 need their recorded code and prompts. A higher prompt number does not establish
@@ -72,7 +72,7 @@ producer. See [source lookup](reproduce.md#which-code-is-being-repeated) and its
 ## Availability and tested scope
 
 The [model repository](https://huggingface.co/KernelKind/oracle-subject-adapters)
-contains all 17 evaluated adapters (6.78 GiB). The private
+contains all 17 evaluated adapters (6.78 GiB). The public
 [dataset repository](https://huggingface.co/datasets/KernelKind/oracle-research)
 contains used inputs, parameters and final results: 844.00 MiB,
 with repeated content stored once. Full upstream models, optimizer
@@ -86,4 +86,4 @@ matches the reviewed snapshot. A fresh six-file HR39/used-posts download passed
 native restoration, viewer export and viewer `--check`. Fresh GPU reader runs
 remain unverified.
 [Evidence limits](open-items.md) identify missing input versions and scientific
-qualifications. Public dataset release remains pending.
+qualifications.
