@@ -14,7 +14,7 @@ and million-note scalability remain project goals. Start with a few dozen posts:
 the current numerical implementation includes quadratic distance matrices, and
 there is no established minimum-RAM specification for this workflow.
 
-These instructions passed an end-to-end test in a fresh Debian 13 VM with
+The generation workflow passed an end-to-end test in a fresh Debian 13 VM with
 8 GiB RAM, four CPU cores and a 48 GiB disk, using clean Git checkouts without
 host caches or credentials. Twelve real posts produced six root choices and
 13 hierarchy nodes representing all twelve posts. The test covered installation,
@@ -39,10 +39,15 @@ after changing Oracle revisions, rerun `git submodule update --init --recursive`
 to select the matching runner.
 
 The earlier complete VM test used runner commit
-`577aef3180f3cc969170ab6f7ac347070de798d4`. No new live model run is claimed for
-the updated dependency pin. To use an existing runner checkout, set
-`EXPERIMENT_RUNNER_ROOT` to its path before running the setup; an explicit
-selection takes precedence over the submodule.
+`577aef3180f3cc969170ab6f7ac347070de798d4`. The current submodule setup also
+passed a clean local recursive-clone check with a fresh Python environment:
+dependency installation, Oracle CLI loading, native Node worker identification
+and one-case offline experiment preparation. That check used no account login
+or model requests; it did not rerun hierarchy generation.
+
+To use an existing runner checkout, set `EXPERIMENT_RUNNER_ROOT` to its path
+before running the setup; an explicit selection takes precedence over the
+submodule.
 
 From the directory containing your Oracle checkout, run this setup in Bash.
 Keep this shell open for the following steps:
