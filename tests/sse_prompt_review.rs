@@ -506,7 +506,7 @@ fn use_pi_ai_generation_contract(run_directory: &Path) {
     });
     let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("sse_multivector");
     let workflow_sha256 = sha256(
-        &fs::read(root.join("extraction_pipeline.py")).expect("read extraction workflow"),
+        &fs::read(shared_extraction_path()).expect("read shared extraction workflow"),
     );
     if manifest["mode"] == "claim_generation" {
         manifest["wrapper_sha256"] = json!(sha256(
@@ -556,6 +556,24 @@ fn use_pi_ai_generation_contract(run_directory: &Path) {
         record["stdout_sha256"] = json!(sha256(record["stdout_json"].as_str().expect("stdout").as_bytes()));
     }
     write_json_lines(&results_path, &records);
+}
+
+fn shared_extraction_path() -> std::path::PathBuf {
+    let output = std::process::Command::new("python3")
+        .args([
+            "-B", "-c",
+            r#"import sys
+if not sys.flags.safe_path:
+    del sys.path[0]
+import json, runpy
+print(json.dumps(runpy.run_path(sys.argv[1])['implementation'].__file__))
+"#,
+        ])
+        .arg(Path::new(env!("CARGO_MANIFEST_DIR")).join("sse_multivector/extraction_pipeline.py"))
+        .output()
+        .expect("load production extraction entry point");
+    assert!(output.status.success(), "{}", String::from_utf8_lossy(&output.stderr));
+    serde_json::from_slice(&output.stdout).expect("shared extraction source path")
 }
 
 #[test]
@@ -670,6 +688,24 @@ fn pi_ai_reviews_reject_a_consistently_rebound_unknown_provider() {
 }
 
 #[test]
+fn pi_ai_python_workflow_review_ignores_unrelated_working_directory_packages() {
+    let temporary = tempfile::tempdir().expect("unrelated working directory");
+    let package = temporary.path().join("experiment_runner");
+    fs::create_dir(&package).expect("create unrelated package");
+    fs::write(package.join("__init__.py"), "raise RuntimeError('unrelated working-directory package')\n")
+        .expect("write unrelated package");
+    fs::write(temporary.path().join("json.py"), "raise RuntimeError('unrelated working-directory json module')\n")
+        .expect("write unrelated standard-library module");
+    let output = std::process::Command::new(std::env::current_exe().expect("current test executable"))
+        .args(["--exact", "pi_ai_python_workflow_artifacts_open_and_resume_in_rust_review", "--nocapture"])
+        .current_dir(temporary.path())
+        .output()
+        .expect("run production workflow and review outside the checkout");
+    assert!(output.status.success(), "{}\n{}",
+        String::from_utf8_lossy(&output.stdout), String::from_utf8_lossy(&output.stderr));
+}
+
+#[test]
 fn pi_ai_python_workflow_artifacts_open_and_resume_in_rust_review() {
     use std::os::unix::fs::PermissionsExt;
     use std::process::Command;
@@ -771,6 +807,9 @@ print(json.dumps({
             if let Some(limit) = limit {
                 command.args(["--max-new-jobs", limit]);
             }
+            if let Some(root) = std::env::var_os("EXPERIMENT_RUNNER_ROOT") {
+                command.env("EXPERIMENT_RUNNER_ROOT", root);
+            }
             let output = command.output().expect("invoke production Python workflow");
             assert!(output.status.success(), "{}", String::from_utf8_lossy(&output.stderr));
         };
@@ -792,6 +831,19 @@ print(json.dumps({
         assert_eq!(fs::read(&session_path).expect("saved review after generation resume"), saved_review);
         pause_generation_review(&run_directory, &session_path, claim)
             .expect("Rust resumes review after Python's cached generation resume");
+
+        let manifest_path = run_directory.join("manifest.json");
+        let mut manifest = read_json(&manifest_path);
+        manifest[if claim { "engine_sha256" } else { "wrapper_sha256" }] = json!(sha256(
+            &fs::read(Path::new(env!("CARGO_MANIFEST_DIR")).join("sse_multivector/extraction_pipeline.py"))
+                .expect("read compatibility shim"),
+        ));
+        write_json(&manifest_path, &manifest);
+        rebind_generation_manifest(&run_directory);
+        let error = pause_generation_review(&run_directory, &session_path, claim)
+            .expect_err("the shim hash cannot substitute for the shared implementation");
+        assert!(error.contains("manifest is incomplete"), "{error}");
+        assert_eq!(fs::read(&session_path).expect("existing review survives invalid provenance"), saved_review);
     }
 }
 

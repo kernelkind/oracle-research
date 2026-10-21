@@ -148,12 +148,10 @@ recorded-post preparation and HR36 preparation also passed using compact files.
 These check the documented workflows and saved arithmetic; they do not establish
 semantic quality, a fresh historical model draw or million-note scaling.
 
-Native subject/claim review has a separate, pre-existing integration failure.
-The Python-to-Rust review test rejects the subject generation manifest because
-Rust checks the local compatibility shim's hash instead of the shared runner's
-implementation hash. The failing test remains in `tests/sse_prompt_review.rs`;
-the cleanup did not change that validation. Its source-resolution repair remains
-open.
+Native subject/claim review passes the Python-to-Rust saved-artifact test,
+including pause/resume and rejection of a substituted compatibility-shim hash.
+Source verification follows the same shared-runner selection as generation;
+use the [generation Python environment](../../sse_multivector/model-runner.md#review-and-local-models).
 
 Hosted download tests and fresh GPU training/adapter-inference runs remain
 unverified. Public repository names, pinned dataset/model revisions and final

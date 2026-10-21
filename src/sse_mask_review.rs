@@ -4,6 +4,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::io::{self, BufRead, BufReader};
 use std::path::{Path, PathBuf};
+use std::process::Command;
 
 use crossterm::event::{Event, KeyCode, KeyEventKind, KeyModifiers};
 use ratatui::Frame;
@@ -1545,6 +1546,41 @@ fn load_verified_claim_review_run(run_directory: &Path) -> Result<VerifiedAtomic
     })
 }
 
+fn shared_extraction_sha256() -> Result<String> {
+    let bootstrap = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("sse_multivector/_runner_bootstrap.py");
+    // Use the generation loader so explicit checkouts and installed packages
+    // select the same implementation. This runs once per verified manifest,
+    // before the review loop, and imports no model backend.
+    let output = Command::new("python3")
+        .args([
+            "-B",
+            "-c",
+            r#"import sys
+if not sys.flags.safe_path:
+    del sys.path[0]
+import json, runpy
+from pathlib import Path
+sys.path.insert(0, str(Path(sys.argv[1]).resolve().parent))
+loader = runpy.run_path(sys.argv[1])
+print(json.dumps(str(Path(loader['shared']('extraction_pipeline').__file__).resolve())))
+"#,
+        ])
+        .arg(&bootstrap)
+        .output()
+        .map_err(|source| io_error("locate shared extraction implementation", &bootstrap, source))?;
+    if !output.status.success() {
+        return invalid(format!(
+            "could not load shared extraction implementation with python3; use the generation Python environment: {}",
+            String::from_utf8_lossy(&output.stderr).trim()
+        ));
+    }
+    let path: PathBuf = serde_json::from_slice(&output.stdout).map_err(|_| {
+        Error::ExperimentState("shared extraction loader returned an invalid source path".to_owned())
+    })?;
+    load_bytes_snapshot(&path).map(|(_, sha256)| sha256)
+}
+
 fn validate_atomic_subject_generation_manifest(
     manifest: &AtomicSubjectGenerationManifest,
 ) -> Result<()> {
@@ -1554,10 +1590,7 @@ fn validate_atomic_subject_generation_manifest(
     let wrapper_sha256 = if manifest.schema_version == 1 {
         LEGACY_SUBJECT_WRAPPER_SHA256.to_owned()
     } else {
-        let wrapper_path = Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join("sse_multivector")
-            .join("extraction_pipeline.py");
-        load_bytes_snapshot(&wrapper_path)?.1
+        shared_extraction_sha256()?
     };
     validate_generation_runner(
         manifest.schema_version,
@@ -1609,7 +1642,7 @@ fn validate_claim_generation_manifest(manifest: &ClaimGenerationManifest) -> Res
     } else {
         (
             load_bytes_snapshot(&root.join("claim_exec.py"))?.1,
-            load_bytes_snapshot(&root.join("extraction_pipeline.py"))?.1,
+            shared_extraction_sha256()?,
         )
     };
     validate_generation_runner(

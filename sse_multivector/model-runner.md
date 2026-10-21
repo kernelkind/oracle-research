@@ -128,6 +128,12 @@ Keep agent assessments, mechanical checks and actual user decisions separate.
 assessment bound to exact input/output hashes. Use `--role user` only for a
 real user decision. A UI comment does not imply approval or rejection.
 
+Native subject/claim review checks the shared extraction source recorded by
+Python. Use `python3` from the generation environment and the same
+`EXPERIMENT_RUNNER_ROOT` selection. The reviewer uses Oracle's existing runner
+loader to locate that implementation; legacy schema-1 records retain their
+frozen hash checks.
+
 Title/mask/prominence UIs are optional saved-evidence views. Failed, malformed,
 invalid-receipt and unrun results remain visible. Generic tasks use `show` and
 attributed CLI review. Input/output changes make earlier reviews stale; they
