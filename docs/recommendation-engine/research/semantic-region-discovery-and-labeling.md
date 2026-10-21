@@ -8,7 +8,8 @@ contain project requirements, recommend an architecture, select a method, or
 approve an experiment.
 
 Project requirements and the current direction are kept separately in
-[`../design/atomic-vector-subject-hierarchy.md`](../design/atomic-vector-subject-hierarchy.md)
+[the project goals](../../../README.md#goals) and
+[HiGen V5.3](../hierarchy-generation-v5.md)
 and
 [`fine-segmentation-vector-space-requirements.md`](fine-segmentation-vector-space-requirements.md).
 

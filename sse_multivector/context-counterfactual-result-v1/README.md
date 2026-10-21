@@ -90,13 +90,12 @@ Two diagnostic conclusions are sensitive to the three hand-written references. G
 The experiment tests SSE conditional on hand-supplied masks. It does not test automatic takeaway or mask generation, corpus-wide coverage, or the eventual subject hierarchy.
 
 Under the frozen contract, Stage 2 did not run because Stage 1 failed. This
-directory records that result; the current interpretation and work order are
-indexed in
-[`../../docs/notes/SSE-EXPERIMENTS.md`](../../docs/notes/SSE-EXPERIMENTS.md).
+directory records that result; related findings are collected in the
+[mask-fidelity evidence](../../docs/recommendation-engine/experiments/sse-multivector-isolation.md#mask-fidelity-evidence).
 
 ## Reproduction and audit
 
-The committed result directory contains the raw 81-by-768 `f32` matrix, worker receipt, complete analysis, readable table, and integrity manifest. Replay it with:
+The original result directory contained the raw 81-by-768 `f32` matrix, worker receipt, complete analysis, readable table and integrity manifest. Those generated files are outside this Git checkout. With the original artifacts, replay verification uses:
 
 ```text
 nix develop -c cargo run --release --bin sse-context-counterfactual -- verify \
@@ -104,4 +103,4 @@ nix develop -c cargo run --release --bin sse-context-counterfactual -- verify \
   sse_multivector/context-counterfactual-result-v1
 ```
 
-Inference ran locally with networking disabled and the immutable image ID `sha256:a6c9674dca720e1f094b7feeb1397b6e6b0a97e10f13e0a6555deebf4b70ddaa`. The command invoked that ID directly after `docker image inspect` returned the same ID. The worker receipt binds the request, checkpoint, model tree, worker source, output rows, and raw-vector hash. As with any local run, the committed files cannot independently prove which container runtime command the operator executed.
+Inference ran locally with networking disabled and the immutable image ID `sha256:a6c9674dca720e1f094b7feeb1397b6e6b0a97e10f13e0a6555deebf4b70ddaa`. The command invoked that ID directly after `docker image inspect` returned the same ID. The worker receipt binds the request, checkpoint, model tree, worker source, output rows, and raw-vector hash. As with any local run, saved files cannot independently prove which container runtime command the operator executed.

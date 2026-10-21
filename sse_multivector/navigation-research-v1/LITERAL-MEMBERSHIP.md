@@ -203,15 +203,16 @@ a better browsing hierarchy or justify tuning another geometric cutoff.
 From the repository root, with ordinary Python and a nonexistent output path:
 
 ```sh
-python3 sse_multivector/navigation-research-v1/NMR03/source/literal_category_membership.py \
+python3 sse_multivector/literal_category_membership.py \
   sse_multivector/geometric-hierarchy-v1/GDC09/categories.json \
   --hierarchy sse_multivector/geometric-hierarchy-v1/GDC09/hierarchy.json \
   --evidence sse_multivector/geometric-hierarchy-v1/GDC09/evidence.json \
   --output /tmp/nmr03-reproduction --run-id NMR03
 ```
 
-The three source snapshots are self-contained. `./NMR03/config.json`
-records every input and source hash. All six declared files reproduced
+The shared implementations are in `sse_multivector/`; the original source
+snapshots remain in Git history. `./NMR03/config.json` records every input and
+source hash. All six declared files reproduced
 byte-for-byte in a fresh temporary directory. An initial verification command
 also enumerated Python's incidental `__pycache__` and failed on that non-artifact;
 the corrected check compares the six declared artifacts, not interpreter caches.

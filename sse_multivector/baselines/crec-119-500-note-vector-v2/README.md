@@ -107,7 +107,7 @@ baseline.
 and 147 final segments as parsed assembled note results. Reuse of 492 notes and
 3,004 final jobs stays separate from eight new notes and 32 new final jobs.
 See the [catalog](../../../docs/experiments/publications.csv),
-[file list](../../../docs/experiments/publication-files.csv) and
+[dataset manifest](../../../docs/experiments/downloads.md#dataset-manifest) and
 [export commands and checks](../../../docs/experiments/reproduce.md#archived-baseline-checks).
 The files are prepared locally for Hugging Face Datasets; nothing is uploaded.
 AS lineage remains unknown. The full archive remains local and unchanged;

@@ -7,6 +7,12 @@ The production objective is a repeatable construction method. For HR02's
 diagnostic, the user approved a separate manually corrected placement view to
 evaluate the other stages; it is not a replacement for that production method.
 
+Byte-identical copies of shared source modules have been removed from individual
+run directories. The modules live in `sse_multivector/`; frozen plans and source
+hashes still identify the files used for each original run. The complete earlier
+layout is available at publication commit `55b5afcd`. Distinct historical
+implementations and source copies required by verification remain here.
+
 ## Required hierarchy-processing stages
 
 These are requirements for the formal construction process, not optional review

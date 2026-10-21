@@ -178,4 +178,4 @@ The checker detected state backing in all three trials and the added settlement 
 
 That is evidence of selective, incomplete recognition—not a reliable checker. The test does not explain why generation fails or establish results beyond these six reused masks. No generated mask was repaired, no prompt default changed, and no new user approval was recorded.
 
-Selected inputs, final answers, recorded reviews and parameters: `historical-studies/mask-prompt-recognition-sol-low-v1`. See the [publication catalog](../../docs/experiments/publications.csv) and [file checksums](../../docs/experiments/publication-files.csv).
+Selected inputs, final answers, recorded reviews and parameters: `historical-studies/mask-prompt-recognition-sol-low-v1`. See the [publication catalog](../../docs/experiments/publications.csv) and [dataset manifest](../../docs/experiments/downloads.md#dataset-manifest).

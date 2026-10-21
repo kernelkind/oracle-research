@@ -17,130 +17,14 @@ The continuation and local grading are complete. These root scores matter to
 current use and remain distinct from full-hierarchy quality; the analysis does
 not change the validation-based selection or approve production adoption.
 
-**Current direction, October 14:** the three-family subjects-only pilot has
-completed training, generation and semantic grading. Qwen3.8-27B is selected for
-two further complete passes from its saved final 1,000-note checkpoint on one
-96GB card, with a persistent Vast local volume for the model cache and work.
-Mount it at `/workspace` on the same physical host as the GPU. The $43 maximum,
-raised from $30 with launch approval, includes a $41.50 instance/transfer ceiling
-and $1.50 separate volume commitment,
-including detached storage time and failed attempts. Generate validation and
-sealed test answers at both new checkpoints, retrieve and verify all required
-artifacts, then end the rental before local grading and checkpoint selection. The
-[approved continuation and failure audit](../docs/planning/fine-tuning-pilot-process.md#approved-qwen-continuation-october-14)
-is the current operational plan. It preserves ASv6.100, the splits and numerical
-recipe. The production workflow now supports explicit parent-checkpoint
-continuation, both test collections and offline completeness verification.
-Recovery state saves every 16 optimizer updates (128 notes), retaining two
-verified checkpoints on the local volume outside the retrieved work directory.
-Intermediate saves are not copied over SSH. A new save verifies before the
-oldest is removed; worker/container continuation reuses the latest valid state.
-Permanent 2,000/3,000-note checkpoints and evaluation behavior are unchanged.
-The Qwen-only launch profile requires an explicit volume binding and a matching
-committed storage reservation. Fresh capacity, price and remaining retention
-are checked before GPU creation. The same rental verifies/downloads Qwen's
-pinned cache before any preparation; model subprocesses then run offline.
-Cold image startup remains watched on the same instance. The shared dependency
-is frozen. The matching inputs and image pass an interrupted-pass and
-container-replacement rehearsal with local recovery using tiny CPU models.
-Pinned-runtime/SSH rehearsal and the actual Qwen tokenizer check pass. Launch
-preparation is authorized, and the matching image is published privately with
-all 23 runtime source hashes verified and anonymous access denied. The user
-approved the $43 maximum and proceeding with launch. The profile selects one
-600W Server card, the same type used by the successful pilot, at up to
-$1.66/hour; all other admission checks remain fixed. Read-only image pulling and push-scope rejection checks pass. Fresh offer/volume verification and committed budget admission precede rental.
-The continuation uses a 150GB local model-cache volume. The worker began downloading Qwen's pinned files to the local volume with native watching and progressive copying active. Actual Qwen CUDA
-preparation follows the verified download. Training completion and new semantic
-grading are unconfirmed; the active experiment's source remains frozen.
-The dated setup directions below retain the earlier experiments' scope and
-evidence and do not require repeating Gemma checks or untuned baselines for Qwen.
-
-**October 2 subjects-only decision:** the larger pilot trains and evaluates
-subject discovery and hierarchy only. One teacher hierarchy per training note
-yields 1,000 examples and 125 updates per student, 25 per 200-note block. No
-mask labeling, training or generation belongs to this pilot. The combined
-preliminary experiment remains historical evidence; the eventual mask-based
-release task below has its separate scope. Two 96GB RTX PRO 6000 cards are
-approved for the combined rental up to $285; actual GPU fit and speed remain
-pending. Thinking stays off throughout
-preparation, training and evaluation, approved October 2.
-
-**Primary comparison approved October 5:** compare all three final 1,000-note
-adapters with their untuned baselines on the same 200 held-out test notes.
-Collect the 1,200 test responses during the main rental, sealed through local
-validation review and model selection. Keep all five 100-note validation stages
-to show learning progress; earlier checkpoints are retained diagnostics.
-Final-test collection and completeness checks are implemented locally; automatic
-reports exclude test answers and semantic scores. The full ASv6.100 workload is
-packaged and conditionally priced (October 5 section below); hardware checks
-remain pending; the combined rental is approved up to $285.
-
-**Release-plan tracking:** the preliminary 100-note experiment below is task
-**29 · Run preliminary 100-note fine-tuning experiment**, in progress. The larger
-model-selection pilot is **06 · Choose model through larger fine-tuning pilot**,
-whose three-family training and semantic scoring are complete; its Qwen
-continuation is recorded above. Its data is frozen.
-The planned pilot includes a comparison trained on
-1,000 notes, approved September 30. On October 1 the user requested three
-continuing student training runs, replacing separate fresh starts at each size,
-and approved validation checkpoints at 200, 400, 600, 800, and 1,000 training
-notes. The 1,000 train / 100 validation / 200 test split was approved October 4.
-Task 18's preliminary training setup
-is complete. The subjects-only worker and background copier are implemented
-and the three-family GPU run has completed. The new two-pass continuation
-has production-workflow support; image publication and budget admission remain
-pending.
-Task 29 needs 01 + 18, not the larger-pilot data
-in 05, and its findings inform 06 without becoming a new completion gate.
-Splitting the tracking does not change the experiments or spending approvals.
-
-**Separate preparation agreed October 1; confirmed October 3:** use existing
-notes for a small GPU preparation run while the larger pilot data is pending.
-Prepare the minimal hardware checks and rehearse the packaged workflow locally
-before booking. Training, checkpoint reload/merge, batched generation and
-restored training are the proposed checks, with thinking off throughout.
-Evidence applies only to tested input/output memory bounds; audit the actual
-pilot data's token lengths against those bounds when it is ready. Future answer
-completeness is not established by this preparation. The local preparation
-mode, frozen input package and VM rehearsal are ready. The user approved
-proceeding with the $5 preparation on October 3. The tested image is published
-and verified private. A refreshed compatible 600 W quote fits the approved
-$5: $1.4522/hour, or $4.41 for three planned hours including transfer allowances.
-The $7 request is withdrawn. Vast rejected the request with HTTP 400.
-The specific rejection explanation was not retained. The user approved revised
-selection filters and proceeding within $5. A better refreshed 96GB/600 W offer on the host costs $1.4656/hour, or $4.40 for three planned hours
-including transfers. A new frozen operation uses the unchanged tested image and package.
-All 125 available work files and six startup files were reverified. Qwen completed all checks; Gemma
-dense has only its first checkpoint, and MoE did not start. The local per-layer
-dimension fix is committed; its rebuilt VM passed all 56 tests. Reuse was
-approved, then cancelled by the deletion instruction before implementation.
-This attempt left the Gemma checks incomplete; the repaired run below completed
-them. The final resource cost was $1.620.
-**GPU preparation completed October 3:** Qwen's verified earlier checks are reused;
-Gemma dense and MoE both completed two updates, save/reload/merge, 20 brief subject
-responses, native maximum-output cache checks and restored training on the preparation run
-(96GB/600 W, $1.4153/hour including storage). All 210 work files and six startup files
-were retrieved and independently rehashed. The local response review ran at 21:04 UTC,
-full completeness review passed at 21:17:21 UTC. This rental lasted 65.5 minutes.
-The final preparation costs were $1.756 and $1.620 ($3.376 combined).
-
-Direct SSH copying was slow; the verified provider proxy route completed retrieval using
-the unchanged native transfer code. Small sealed responses and measurements were copied
-ahead of remaining checkpoints. Frozen remote code, inputs and operation contract stayed
-unchanged. The October 3 launcher update selects the provider proxy from the start
-for new distillation operations, honoring an explicit direct SSH setting when supplied.
-Both progressive and final transfers prioritize small sealed outputs, copying each
-completion marker after its files. Streams carry at most 64 MiB; the background
-copier rediscovers sealed files between streams so newly saved responses can
-precede an unfinished checkpoint. Partial files are retained and checked
-against the complete saved SHA256 before publication. New launches require a fresh
-package and image from the updated source; historical operations stay frozen. Future
-pilot data must fit the measured training and cache shapes. Rentals below $1.60/hour
-need no further approval for the authorized prep; straightforward failures are repaired
-promptly, otherwise available data is verified and the prep rental explicitly deleted.
-No automatic timeout or deletion.
-
-GPU checks passed for the measured cases below; actual pilot data must fit those bounds.
+The three-family subjects-only pilot and the two-pass Qwen continuation are
+complete. The [training process and results](../docs/planning/fine-tuning-pilot-process.md)
+record their actual execution, failures and comparisons. The frozen pilot used
+ASv6.100, 1,000 training notes, 100 validation notes and 200 held-out test notes;
+checkpoints at 200-note intervals show one continuing training pass. The primary
+comparison uses each model's untuned baseline and final 1,000-note adapter on
+the same 200 test notes. It trains no masks. Earlier combined subject/mask
+experiments below retain their separate scope.
 
 **September 25: start an informal subject-and-mask pilot.** The user approved
 using the data already on hand with the latest subject and mask prompts,
@@ -229,20 +113,11 @@ and open questions. Published model evidence belongs in
 [Model research](EXTRACTOR-FINETUNING-MODEL-RESEARCH.md); published data-volume
 evidence belongs in [Training-data research](SUBJECT-MASK-TRAINING-DATA-RESEARCH.md).
 
-This pilot selects the model we will fine-tune and release (the distilled
-model), not the teachers that write its training data. The separate
-[teacher-comparison pilot](../docs/planning/release-decisions.md#two-separate-model-pilots)
-has Muse Spark 1.3 Contributor as its leading, unselected candidate. Existing
-[teacher research](TOKEN-USAGE-ESTIMATE-1M-NOTES.md#lower-cost-annotation-models)
+This pilot concerns the distilled model rather than the teachers that supply
+its training labels. Separate [teacher-model research](TOKEN-USAGE-ESTIMATE-1M-NOTES.md#lower-cost-annotation-models)
 and the [12-note subject diagnostic](frontier-model-comparison-v1/asv6.23-diagnostic-v2/results.md)
-inform that choice; they do not establish mask or prominence quality.
-The [teacher-comparison pilot](../docs/planning/release-decisions.md#teacher-comparison-pilot-evaluation-plan)
-compares candidate subjects, masks, any agreed additional outputs and resulting
-hierarchies, as well as generation speed, cost and training-data feasibility.
-Its experimental procedure and treatment of unsuitable annotations remain open.
-This fine-tuning pilot informs the training-volume decision and schedule check;
-the teacher comparison does not determine how much training data the distilled
-model needs.
+record the earlier Muse comparison; those subject findings do not establish
+mask or prominence quality. The pilots answer different questions.
 
 Approved requirements:
 
@@ -260,41 +135,6 @@ Approved requirements:
   model outputs remain undecided.
 - Start automatic mask matching with an 80% token-overlap cutoff, alongside
   separate exact-match scores. Details are in [Evaluation and decisions](#evaluation-and-decisions).
-- The total oracle MVP spending ceiling is $1,000, replacing—not supplementing—
-  the old $500 ceiling. Existing spending and commitments still count.
-- Protect the larger fine-tune's budget with a provisional pilot spending
-  ceiling. See [Pilot budget](#pilot-budget--approved-approach); no amount or
-  percentage is approved yet.
-
-The staged experimental design below is only partly approved. The 1,000-note
-training comparison and checkpoints every 200 notes are included; validation/test
-counts, remaining training settings, hardware allocations, and individual spending
-authorizations remain open for that larger design. The first informal rental below
-started and was deleted on September 29 after the monitoring error recorded
-below. No baseline or training completed.
-
-The release plan's **18 · Prepare training code for the fine-tuning pilot** is
-complete for setup: local VM rehearsals cover each candidate family, training,
-interruption/resume, save/reload and SSH deployment. The image is published and
-verified. Final training-example formatting and output-quality evaluation remain
-in **06 · Choose model through larger fine-tuning pilot**, which needs the agreed
-output format, quality criteria and reviewed pilot data to complete release-model
-selection. Additional model outputs needed for sorting remain undecided.
-Preliminary candidate execution and subject/mask quality review belong to 29,
-not completion of 06. The informal
-experiment above is authorized to begin preparation without prominence. The user subsequently
-approved building and testing the automated workflow in a local VM before
-deploying it on rented hardware. The implementation uses Transformers Trainer
-and PEFT in a pinned PyTorch container. The user clarified that this must
-rehearse deployment as previously done on Vast, with no manual code editing
-on the rented server. Candidate training settings and Vast launch limits are
-now frozen locally. On September 29 the user authorized publication and one
-Vast rental, then approved up to $1.66/hour and 13 hours total within $25.
-For that completed informal run, GPU compatibility was checked during its rental.
-The larger pilot freezes prep and pilot stages together. Successful prep
-continues on the same rental with fresh pilot adapters; failed prep preserves
-verified evidence before deletion and local repair.
-
 ### Frozen informal settings
 
 The maintained configurations are [Qwen](distillation/qwen.json),
@@ -364,568 +204,18 @@ and the native turn ending; only the answer and turn ending receive loss.
 This handles Gemma's template, which inserts its empty thought channel into
 generation prompts but omits it when rendering saved answers.
 
-### Local VM workflow
+### Repeating the training workflow
 
-**September 25 validation:** local workflow tests cover
-real LoRA updates, exact weight equality after interruption/resume,
-save/reload, valid and malformed outputs, empty masks, and exclusion of teacher
-subjects from evaluation mask calls. Batching tests additionally cover left
-padding, multiple stop tokens, output limits, stable answer ordering, partial
-final batches and reuse after interruption. Earlier preparation also passed
-87 extraction tests and 10 planning-viewer tests, including the Firefox check.
-Candidate checks additionally exercise tiny versions of Qwen hybrid attention,
-Gemma dense and Gemma MoE: original text-weight loading, real adapter updates,
-gradient checkpointing and save/reload. The deployment rehearsal passed in a
-fresh VM and passed again for the updated image: package verification,
-two sequential runs, reconnect, completed-result reuse, failure retrieval and
-runtime-limit enforcement. The SSH target received its inputs exclusively
-through the production operator; it had no shared source or input volume.
-**September 28 integration:** distillation now uses `vast/runner.py`, imported
-from the successful September 27 grouping deployment (`bce43ef2`). The separate
-distillation provider controller and SSH operator are removed. The shared runner
-owns creation, key attachment, transfer, detached execution, result sealing,
-retrieval and verified destruction. `distillation_deploy.py` only freezes inputs
-and executes the candidate sequence; `distillation_vast.py` describes that work.
-The model recipes, prompts, data, batching and $25 total maximum are unchanged.
-The first published image reached Vast, but that rental ended before any
-baseline or training completed. The rebuilt image is now published and verified
-private; the approved 450 W replacement rental completed all three candidates'
-baseline attempts, training, matching reloads and trained evaluations. Results were
-retrieved and verified before explicit deletion. Semantic review remains outside
-the completed setup task.
-
-The failure audit reproduced empty successful destroy output, distinct live
-and offer bundle IDs, and missing/null transfer counters in the old controller.
-The shared implementation handles these cases, uses the exact selected quote
-without depending on a second search, and confirms deletion with two complete
-absent inventories. Billing estimates include elapsed rental and the full frozen
-transfer allowance; missing counters or invoices never establish a zero charge.
-
-Vast managed SSH replaces the image entrypoint. The launch uses the proven
-`ssh-keygen -A && service ssh start` hook, explicit key attachment and the current
-direct TCP 22 mapping. Local SSH ignores inherited configuration and is parsed
-before creation. The workload selects the absolute venv Python and explicitly
-sets PATH, the NVIDIA library path and Python import path. GPU packages resolve
-from the interpreter prefix. The VM models the managed entrypoint override and
-key attachment, then exercises the shared transfer/worker/retrieval code over
-real SSH. It cannot reproduce Vast's provider infrastructure or prove GPU execution.
-
-`target/distillation-pilot-v1/launch-preparation.json` records the current
-exported image, `package-v9` and validation evidence. The September 29 rebuild
-includes the manual-deletion policy and passed all 24 VM tests in
-`target/distillation-vm-clean-deployment/attempt-1790699869508347098`.
-It reused the VM disk and dependency cache with a new source snapshot. All
-three candidate preflight reports, tiny-model adapter weights and evaluation
-metrics match the previous rehearsal exactly. The VM is stopped. The rebuilt
-image is published and verified private as
-`docker.io/kernelkind/oracle-mvp@sha256:ec161e009f607fdeb6e714c525e1c8eae07a562cd4d205c2579ad9b65c72f0db`.
-Source hashes, filesystem layers and runtime configuration match the VM export;
-read-only rental credentials can pull the digest, and anonymous manifest access
-returns HTTP 401. Evidence is under
-`target/distillation-pilot-v1/launch-20260929-v2/publication/`.
-Historical image/package receipts
-are preserved; changed code requires a new image and package.
-The previous image was published and verified on September 29 as
-`docker.io/kernelkind/oracle-mvp@sha256:f6bafc128b7fed0eda387f56b34900bc794800cf9e38871b59a7c1679498f956`.
-The registry config digest, filesystem layers, runtime configuration and source
-hashes match the VM export. Read-only registry credentials successfully pulled
-this immutable reference using cached local layers; this does not measure a
-cold pull. VM containerd reports the manifest digest as its image ID, while
-local legacy Docker reports the config digest; the publication receipt records
-both. Full-size candidate execution was interrupted by the local monitoring
-error below, before baseline output or training completed. Evidence is under
-`target/distillation-pilot-v1/launch-20260929/`, including
-`publication/publication-receipt.json`.
-Validation passed 117 shared-controller tests, seven pinned-CLI checks and
-24 VM tests, including actual candidate preflights and real SSH training/retrieval.
-The tiny adapter weights and evaluation metrics match the earlier rehearsal.
-
-Run from the repository root:
-
-```sh
-cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
-python3 -m sse_multivector.distillation_vm \
-  --directory target/distillation-vm
-```
-
-The host needs QEMU, KVM access, `qemu-img`, `genisoimage`, SSH and SCP. It does
-not need a Docker daemon or root access. A checksum-pinned Ubuntu image runs
-Docker inside a VM with four virtual CPUs, 12 GiB RAM and a sparse 64 GiB disk.
-SSH binds only to loopback. The package contains an explicit source-file list;
-credentials and annotation artifacts are not copied into the build context. Each attempt gets
-a source snapshot, serial/build logs and a result directory. Use a new
-`--directory` for a clean-machine test; reusing it retains the stopped VM disk
-and Docker cache. The launcher collects results and stops the VM on exit.
-
-Verification now defaults to **cached** mode. It automatically reuses successful
-candidate, workflow and deployment stages when their source/test/dependency
-hashes match and every saved evidence file verifies. A controller-only edit
-reruns deployment checks while retaining model checks. Model, runtime or
-unclassified dependency changes invalidate the dependent checks. Optional
-preflight inputs are snapshotted and hashed; changed inputs rerun deployment.
-When the VM boots, reuse also requires the exact installed Docker `runtime`
-image ID, including system and Python dependencies.
-
-Use **`--full`** to force every check to run; Docker build caching remains active.
-Agents may choose either mode, but cannot override evidence validation. A new
-`--directory` still provides a clean-machine check. Legacy attempts without the
-new stage receipts cannot supply cached test evidence.
-
-Stages are sealed only after their commands and cleanup succeed. An export or
-collection failure can therefore reuse any intact, retrieved successful stages
-on the next invocation. Partial exports are removed; failed stages rerun.
-An unchanged complete attempt verifies locally and returns its existing result
-without booting QEMU.
-
-Each new attempt records executed/reused stages and timings in
-`verification.json`. Stage logs and hashed receipts live under
-`results/stages/{candidates,workflow,deployment}/`; `complete.json` identifies
-the workflow report and hashes the final archive and image metadata. These
-checks establish the local workflow; full-size CUDA fit still needs GPU prep.
-
-**October 6 verification:** 53 host checks and 109 VM checks passed, with five
-expected VM skips (four exercised in their separate volume phases, one requiring
-an optional tokenizer package). The cold full rehearsal took 14.5 minutes;
-an unchanged cached invocation took 2.24 seconds. With the local archive
-temporarily withheld and preserved, a real export retry reused all three stages
-and completed in 99.6 seconds. Both VM attempts stopped and their results verified.
-
-**October 6 cutover:** integrated into `main`. The matching verified attempt
-is copied to `target/distillation-vm-clean-deployment/`; the normal cached
-invocation verifies in 2.22 seconds and all 53 host regressions pass there.
-The Dockerfile now names its dependency-only `runtime` stage. Future
-launch images and packages must use this updated Dockerfile; earlier frozen
-inputs and private publication evidence remain intact.
-
-The container's CUDA/PyTorch base is pinned by digest, and Python dependencies
-are version/hash locked. The same container runs CPU validation locally and
-can later run on a GPU. Tests run with networking disabled, using a generated
-tiny model and synthetic subject/mask examples. They exercise the real dataset
-export, answer-only training, baseline generation, checkpointing, adapter
-save/reload and two-step evaluation. The interruption test kills training,
-resumes it and compares weights with an uninterrupted run. A successful VM run
-exports `results/container.tar.gz` for local import and registry publication; the VM
-disk, image, model weights, data and logs remain ignored under `target/`.
-
-`distillation_deploy prepare --through preflight` freezes a package that only
-checks tokenization and dependencies. For offline validation of real candidates,
-use their cached pinned tokenizer directories as the local model paths; no full
-weights are required. Pass that package to the VM with `--preflight-package`.
-It runs through the same uploaded-package SSH path, on the actual pilot data.
-
-The SSH target has no source checkout or shared input volume. The shared runner
-uploads and verifies frozen inputs, starts a detached command, seals terminal
-results, downloads them and verifies their hashes. Tests exercise two sequential
-training jobs, failure logs, worker timeout, stop, completed-worker reuse and
-actual candidate tokenizers on the pilot data. Provider lifecycle tests remain
-local simulations; real CLI serialization is tested with only the paid API call
-intercepted. No code edits or package installs belong on a rental.
-
-Prepare the frozen candidate package locally. Filenames become run names;
-the candidates execute sequentially in the order below:
-
-```sh
-cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
-python3 -m sse_multivector.distillation_deploy prepare \
-  --config sse_multivector/distillation/qwen.json \
-  --config sse_multivector/distillation/gemma-dense.json \
-  --config sse_multivector/distillation/gemma-moe.json \
-  --timeout-seconds 43200 \
-  --output target/distillation-pilot-v1/package-v9
-```
-
-The output must be new. The package contains data, mask prompts, configurations
-and optional local model files. Remote model IDs require immutable revisions.
-Input paths are relative to the frozen package; the worker resolves them after upload.
-
-After verifying publication, describe the workload with
-`python3 -m sse_multivector.distillation_vast --package ... --offer ... --image ... --output ...`.
-The offer file contains one selected, validated quote; the image must be a registry
-digest. Freeze that specification with `python3 vast/package.py --spec ... --root ... --ledger ...`.
-Run the copied `transport/control/vast_full_build.py` with `--root` and `--config`:
-`prepare` checks local SSH, image and budget and writes an approval plan;
-`run --approve HASH --watch` uses its committed reservation and supervises execution.
-Bind the verified registry digest before freezing the operation.
-
-`run --watch` repeatedly resumes the shared runner through execution and
-retrieval. **Command workloads never automatically delete the instance.**
-Successful and failed jobs retain the instance after retrieval. Startup failures
-retain it without starting training. Historical bounded packages request a stop
-and retrieval on expiry, controller errors or interruption. The current
-timeout-free preparation package keeps its job running in all three cases.
-The returned result reports that
-billing remains possible and manual stop is recommended.
-
-The explicit `stop` command stops the workload, retrieves available results and
-**deletes the instance**, confirming absence twice. This is the command operator
-action required to end the rental. A retained instance continues billing; stopping
-the worker does not stop rental charges or enforce the $25 ceiling. Budget
-admission, cost warnings and worker runtime limits remain in force.
-For the current timeout-free package, stop/delete additionally requires a
-completeness review and verified local data, or explicit user approval to stop
-incomplete work. Cost and elapsed-time thresholds call for review.
-
-The September 29 informal operation preserves its first session deadline across restarts and leaves
-15 minutes for retrieval and explicit deletion before the approved 13-hour
-ceiling. An operator must act within that allowance. Run supervision in a
-persistent local session; if the local process or host dies, an operator must
-resume it. That historical worker separately enforces its frozen runtime limit across all
-candidates and kills download/training subprocess groups on timeout or stop.
-The current timeout-free package has no such runtime limit.
-Application failures are retrieved without retrying training.
-
-`distillation_run.py CONFIG --output DIRECTORY` performs baseline → training →
-reload → evaluation → report. Invoke it as
-`python -m sse_multivector.distillation_run` inside the container. Passing
-`--through preflight` checks real tokenization without loading model weights;
-`--through baseline` or `--through train` stops there. Repeating the same command
-resumes. Config, input hashes, source hashes and library versions are frozen.
-Changed settings require a new output directory. Completed calls, including
-malformed responses, are preserved without automatic retries. Only fully
-written checkpoints with verified hashes are eligible for training resume.
-Mask answers are saved together in one atomic `masks-NNNN.json` file per batch,
-including every prompt and one measured generation duration for the batch.
-Resuming reuses the whole saved batch, including malformed and empty answers;
-the final incomplete group can contain fewer than four requests.
-
-Optional `evaluation_tasks: ["subjects"]` skips mask generation during evaluation.
-Legacy joint training uses the two-task dataset; the continuing subjects-only
-configuration below uses one teacher hierarchy per training note.
-Optional `subject_batching` enables memory-based grouping for one complete,
-unquantized model on one device. Its explicit integer fields are `budget_bytes`,
-`workspace_bytes`, `prefill_bytes_per_token` and `attention_matrix_count`. They
-freeze the memory ceiling, fixed scratch/headroom, per-token prefill allowance
-and attention-score buffer count. No numeric GPU defaults are inferred.
-The calculation counts actual resident tensors, full/sliding KV caches, Qwen
-recurrent/convolution state, cache updates, padded prefill and decode attention,
-and the full output allowance. Unsupported cache or generation settings fail
-before model calls. Tokenize once and seal `subject-batches.json` before
-generation. Save one `subjects-NNNN.json` receipt with all answers and measured
-batch duration before publishing separate `subjects.json` and
-`subjects-result.json` files per note. Parse each note before starting the next
-batch. Saved malformed/truncated answers remain failures. A saved receipt can
-finish interrupted publication; a started generation without a receipt blocks
-automatic retry. Batch estimates require GPU preparation evidence; CPU tests
-do not establish CUDA fit.
-
-October 2 verification passed 24 host checks and 39 tests in the pinned VM
-container. Tests exercised short/long inputs, full output reservations, missing
-responses, interrupted publication, CLI resume and frozen-policy rejection,
-small versions of all three architectures before/after adapter training, and
-shared SSH deployment with verified retrieval. All four retrieved dynamic
-baseline/trained stages reverified locally. The VM is stopped and its container
-export is retained under `target/distillation-vm-clean-deployment/`. Numeric
-96GB GPU allowances remained open; the continuing training implementation
-is described below.
-
-Subject and position-mask decoding accept bare JSON or one complete Markdown
-code fence labelled `json` (case-insensitive) or unlabelled. Existing field,
-duplicate-key, hierarchy, verdict and position validation still apply. Raw
-answers are retained. Parser changes do not rewrite a completed evaluation;
-apply the same decoder to both baseline and trained answers in a separate
-evaluation before comparing their scores.
-
-The legacy two-task JSON config requires explicit model/revision, prepared-data and mask-prompt
-paths; CPU/CUDA and none/NF4 quantization; seed, sequence and per-task output
-limits, subject limit, steps, checkpoint interval, training batch size,
-evaluation `mask_batch_size`, gradient
-accumulation, learning rate, subject sampling fraction, LoRA rank/alpha/targets,
-gradient checkpointing and CPU thread count. Remote models require a commit
-revision. The tiny test's values are test-fixture
-settings, not selected recipes for the three candidates. Sampling uses a seeded
-schedule with the configured subject probability and records realized counts.
-The candidate files specify the adapted projections. Overlength examples fail;
-the runner does not truncate training answers.
-
-For continuing subjects-only training, set `training_milestones` (the pilot uses
-`[200, 400, 600, 800, 1000]`), supply subjects-only data and `subject_batching`,
-and retain the shared model, precision and LoRA settings. Omit `mask_prompt`,
-`mask_batch_size`, `subject_fraction`, `max_steps` and `save_steps`;
-`max_new_tokens` contains only `subjects`. Physical `batch_size` times
-`gradient_accumulation_steps` must equal eight. Prepare this data through
-`distillation_data.py --tasks subjects`; no mask labels or prompt are needed.
-The worker freezes `training-plan.json`, shuffles within the configured blocks,
-and visits every note once. It normalizes each physical group against the
-entire update's teacher-token count, uses AdamW and a constant schedule, and
-records loss, gradient norm, supervised tokens, note IDs and CUDA allocated/
-reserved memory. Each `checkpoints/checkpoint-N` contains the unmerged FP32
-adapter, `training-state.pt`, tokenizer, counters/coverage and file seal. Verify
-required files, identities, counts and hashes before use. Release training,
-reload and verify the adapter on a fresh original base, merge that disposable
-copy, and save raw/parsed subjects under `evaluations/checkpoint-N`. Check
-response accounting before restoring the full training state, including random
-state after reconstruction. Keep every milestone checkpoint. `--through train`
-includes milestone evaluations and skips the aggregate report. The report
-contains response reliability and returned-subject counts; semantic scoring
-remains local and separate.
-
-October 2 continuing-worker verification passed **29 host checks and 48 VM
-tests** (3 architecture, 28 worker/data and 17 deployment/Vast/data tests).
-Scaled five-milestone jobs completed through the full CLI and shared SSH
-deployment/retrieval. The same CPU updates with and without intervening merged
-evaluation produced exactly equal adapters, Adam state, schedule and random
-state. Interrupted response publication resumed without regenerating baseline
-answers or changing training state; all five recovered adapter files matched
-the original hashes. Unequal-length teacher answers with physical groups of
-one and eight used the same 382 supervised tokens and loss within 1e-5;
-adapter tensors agreed within 1e-6 absolute / 1e-4 relative tolerance. Missing
-responses, even under a valid file seal, and wrong update counts blocked
-advancement. Both retrieved runs retained five checkpoints and twelve total
-baseline/checkpoint evaluation stages; all seals and expected raw/parsed
-responses reverified locally. All three tiny architectures retained frozen
-original weights, including MoE routers, and supported expert-adapter merge.
-The VM is stopped. Full-size BF16 GPU fit and throughput remain unverified.
-
-The command workload supports optional `progressive_copy` with positive integer
-`poll_seconds`, `bytes_per_second` and `timeout_seconds`. Distillation
-specifications freeze software defaults of 5 seconds, 8 MiB/s and 900 seconds;
-settings can supply other controls before freezing. These defaults are not GPU
-throughput measurements. `run --watch` starts one local copier, with separate
-locks and status under `progressive/`. It records failures and allows three
-automatic restarts; the fourth failure requires inspection. The worker seals
-root `manifest.json`/`training-plan.json` provenance before loading weights, and
-publishes named completion records for batch plans, started calls and receipts
-before the whole stage completes. Discovery includes those immutable subsets,
-prioritizing their files before their markers. The worker seals each raw/parsed subject
-response before the next generation batch; completed checkpoints already have
-atomic directory publication. Discovery reads completion records and file
-sizes, without repeatedly hashing large remote tensors. Exclude partial
-checkpoint directories. Transfer processes use remote nice 19 and idle disk
-priority, and stream at the frozen bandwidth limit. Both progressive and final
-retrieval prioritize sealed directories by total saved bytes, then path. Each
-directory's completion marker follows its files, including nested sealed
-directories; unsealed files use their individual sizes. This keeps small
-responses ahead of checkpoints without advertising incomplete local directories
-as complete. Each stream carries at most 64 MiB and 32 files. The watcher
-rediscovers seals after each completed stream,
-without sleeping while data remains, so newly published responses precede the
-rest of a large checkpoint. The configured polling interval applies when no
-new bytes or files were copied. New responses can be prioritized after the
-current stream rather than after the entire checkpoint; response backlog,
-connection setup, discovery, hashing and link speed still affect delay. A
-64 MiB payload at the default 8 MiB/s cap takes at least eight seconds; actual
-transfer time can be longer. This chunk size amortizes the costly proxy SSH
-setup observed during preparation. New distillation launch settings select
-the provider SSH proxy
-from the start, using the existing managed key and authentication loop;
-explicit direct SSH settings remain supported. No slow direct-route trial or
-hardcoded endpoint wrapper is needed under the new default.
-
-Receive partial bytes under `progressive/partial`, verify the complete file
-SHA256 and size, then atomically publish it under `result.next/work`. Separate
-receipts record successful verification and local modification time. Resumption
-uses received offsets and previously verified files; do not replace changed or
-corrupt evidence. A missing receipt after successful file publication is
-reconstructed after one integrity check. Copy failures are visible in
-`progressive/status.json` and ordinary status, without stopping training.
-Terminal retrieval stops new copy batches, seals the stopped remote tree,
-reuses already verified work files, retrieves missing files and preparation
-evidence, and verifies the complete final file set. The copier never removes
-remote originals or deletes the rental. Full checkpoint sizes and transfer
-charges must be included in the larger pilot's separately approved allowance.
-GPU preparation must measure the transfer effect on workload throughput.
-
-October 2 copying verification passed **129 controller regression tests, 27
-host distillation checks and 50 pinned-container VM tests** (3 architecture,
-29 worker/data and 18 deployment/Vast/data). Production reception resumed a
-truncated byte stream, rejected corrupt contents and recovered a missing
-verification receipt without repeated large-file hashing. The controller
-reported copier startup, status-write and process-exit failures without
-stopping training. Real SSH execution saved subject responses and a complete
-checkpoint locally while the worker was running. Final retrieval reused 174
-files (4,322,227 bytes), and all 246 terminal work files plus six preparation
-files reverified locally. Both students retained all five complete checkpoints,
-with all twelve evaluation stages and twenty-four raw/parsed responses verified.
-The copier and VM stopped, the container export passed, and the final source
-hashes match the VM snapshot. During repeated rehearsals, accumulated artifacts
-filled the local 64 GiB disk during export; expanding that reused disk to
-128 GiB preserved earlier evidence and allowed the export to finish. The fresh
-VM default remains 64 GiB. These checks do not establish full-size GPU impact.
-
-October 3 transfer automation passed **59 command-workload regressions and
-58 VM tests** (4 architecture, 30 worker/data and 24 deployment/Vast/data),
-with no VM skips. A new production-path test reproduced premature local
-completion-marker publication; ordering now publishes each marker after its
-verified files. Real SSH copied a 128 MiB checkpoint in bounded streams while
-retrieving a newly sealed response before checkpoint completion. Live training
-and terminal retrieval checks passed. Routing settings survive preparation;
-new distillation launch defaults select the provider proxy. The broader
-controller suite retains one source-comparison failure, also reproduced on
-committed HEAD, for earlier command-stopping changes to `remote_supervise`,
-`remote_stop` and `destroy_instance`; its 80 other checks passed. Artifacts are
-under `target/distillation-transfer-v1/`; `verification.json` records source
-hashes and copy receipts. The VM stopped and its image export completed;
-current source files match the VM snapshot. The archive SHA256 is
-`7b69803b70f0a5b19ea0535885482e218347bef37cc1c4ec38f5640e47926863`.
-This is an archive hash, not a published registry digest. No rented hardware
-was used.
-
-The automatic report separates malformed subject/mask outputs, valid empty
-masks and reference agreement. Token overlap uses whitespace-delimited source
-words (any selected part includes that word), with one-to-one matching and
-micro averaging over unique nonempty selections per note. Exact matching uses
-selected non-whitespace source characters. These mechanical measurements do
-not establish semantic correctness or approval. The current DSRv1 review design
-is described under [Semantic review](#semantic-review--approved-structure).
-
-The subjects-only worker checks baseline response accounting before training
-and checkpoint response accounting before advancing. Invalid/truncated model
-answers remain measured failures; missing raw/parsed responses or invalid
-checkpoint coverage block advancement even if a directory has a file seal.
-The legacy combined evaluation can omit mask calls after failed subjects, as
-seen in the preliminary run.
-[The walkthrough](../docs/planning/fine-tuning-pilot-process.md#2-generate-untuned-baselines--vast)
-records the larger pilot's response requirements. Semantic review of saved results runs
-from the local workspace after retrieval, outside the GPU rental. The proposed
-teacher reviewer is an evaluation method, not another fine-tune. The
-[approved review structure](#semantic-review--approved-structure) uses one
-prompt with separate correctness and coverage scores. The October 7 DSRv1
-design fixes the method and GPT-6.1 Sol / xhigh reviewer; the October 8
-qualification trial fails known semantic and cross-version checks.
-The shared offline preparation, report validation and scoring
-implementation is now available with a concrete preview.
-
-CPU VM validation cannot establish candidate quality, CUDA kernel compatibility,
-full-model memory requirements or speed. Those are checked during the actual
-pilot; there is no separate throwaway GPU training run. The first attempt
-reached Qwen weight loading, then the local monitoring error stopped it. No
-baseline or training result is available.
-
-### Vast launch configuration — first rental stopped
-
-[The launch configuration](distillation/vast-launch.json) freezes the search,
-create options and admission limits. It reuses the existing private Docker Hub
-repository `docker.io/kernelkind/oracle-mvp`, with tag `distillation-pilot-v1`.
-The eventual create command must use its published **registry digest**. The
-local image ID is not a registry digest; one does not exist before publication.
-The user lifted the publication hold on September 29. The launch-specific
-`approved-settings-450w.json` in `launch-20260929-v2/` overrides the hourly
-ceiling, total rental time and user-approved 450 W power requirement, with
-matching search filters. The tested image and maintained source configuration
-remain frozen; use this settings file for the replacement launch.
-
-- One on-demand RTX PRO 6000 WS, 450 W, 96 GB; at least 128 GiB host RAM,
-  eight effective CPU cores, 300 GB disk, direct SSH and NVIDIA driver 580.95.05.
-- Run Qwen, Gemma dense and Gemma MoE sequentially in the same container.
-  Downloads total approximately 170 GB before image/input transfers; keep the
-  pinned Hugging Face weights cached on the instance for baseline, training
-  and reload. Anonymous HEAD requests to one pinned weight shard per candidate
-  returned HTTP 200 on September 25; no Hugging Face token is required by this setup.
-- Maximum returned price **$1.66/hour including 300 GB storage**, for at most
-  **13 hours from instance creation**. The worker gets up to 12 hours for all
-  three runs including model downloads; setup and retrieval share the remaining
-  hour. The session deadline takes priority if setup consumes that allowance.
-- Transfer allowances: **200 GB inbound and 20 GB outbound**, each at no more
-  than $0.01/GB. These are decimal GB. Maximum planned charge is
-  `13 × $1.66 + 200 × $0.01 + 20 × $0.01 = $23.78`.
-- The approved $25 covers the entire experiment, including failures. Any retry
-  consumes its remaining allowance; it does not receive another $25. No retry,
-  longer rental, larger disk or higher rate is authorized by these files.
-
-A read-only September 25 search returned offer 44375763 at **$1.55/hour with
-300 GB storage**. This is a quote, not a reservation; refresh it before launch.
-The search's rate filter can be applied before storage is added, so validate
-its returned total with the production checker:
-
-```sh
-cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
-python3 -m sse_multivector.distillation_deploy check-offer \
-  --settings sse_multivector/distillation/vast-launch.json \
-  --offers target/distillation-pilot-v1/candidate-research/vast-offers.json \
-  --offer-id 44375763
-```
-
-The checker verifies hardware, driver, availability, duration, storage-inclusive
-price and the total allowance. It performs no paid action and does not establish
-ledger admission. Refresh offers using the configuration's `search_query` and
-`search_options`; refresh/check again immediately before accepting a rental.
-
-For the authorized deployment: publish the exact VM-exported image,
-select and validate an available quote, freeze the shared operation, and run
-`prepare`. Reconcile the budget ledger, add its matching `vast_run_reservation`
-(kind, plan SHA, operation evidence path, maximum charge 2500 cents, reserved
-status), and commit before accepting the paid commitment. Local preparation
-does not create a reservation. No replacement rental is authorized after a
-failed run without discussing the failure with the user.
-
-The shared runner uses the pinned Vast 1.4.1 CLI. The registry pull token enters
-`gte/vast_private_create.py` through stdin from the local terminal; the Vast API
-credential stays local. Creation is attempted at most once with `--cancel-unavail`;
-an ambiguous reply is recovered from saved identity/label evidence, never by
-renting a replacement. A live bundle ID need not equal the selected quote ID.
-Hardware validation and cleanup ownership are separate, so rejecting hardware
-does not prevent deleting the instance created by this operation.
-
-Successful and failed command jobs lead to verified result retrieval while
-retaining the instance. The explicit `stop` command performs deletion. The
-shared runner preserves sealed evidence across interrupted transfers and
-confirms requested deletion twice. Posted invoices are reconciled separately;
-early or missing invoices are not final charges. A failed host or unreachable
-provider can still prevent retrieval or explicit deletion. CPU rehearsal does
-not establish GPU compatibility, full-model memory use or completion within
-the allowance. The 13-hour limit requires operator deletion; it is not a runtime
-estimate or an automatic billing cutoff.
-
-The later final fine-tune (08) also prepares trained weights, necessary
-supporting files, usage instructions and evaluation results for publication.
-Verify that the intended release files load and generate masks and any agreed
-additional outputs; the pilot setup's internal save/reload check does not
-establish that release usability. Preparation can accompany development, with final verification on
-the actual release artifacts. Node 16 publishes these prepared outputs. File
-formats and publishing locations remain open, and publishing the training
-dataset is not required. See [publication preparation](../docs/planning/release-decisions.md#publication-preparation).
-
-## Task and training annotations
-
-The informal experiment trained both prompted tasks. The larger pilot now
-trains subjects only: complete original note → teacher subject hierarchy. The
-intended direct release task below remains a later experiment, outside the
-subjects-only pilot contract.
-
-```text
-complete original note → complete set of grouped source-text masks
-additional outputs for note sorting, if needed: undecided
-```
-
-The distilled model must discover subjects as well as locate their evidence. The
-input does not supply a subject list. Masks may contain separated fragments,
-overlap other masks, and vary in number. The production output need not include
-the intermediate English subject descriptions. Masks feed unchanged SSE.
-The node-sorting workstream determines the scoring method and whether it needs
-additional teacher/model outputs. Neither prominence nor mask-level scoring is
-prescribed here; existing prominence experiments retain their own frozen inputs.
-
-The user froze full ASv6.100 for the larger subject-only pilot on October 4,
-as recorded below. The eventual mask task requires its separately validated
-mask prompt; the superseded ASv6.23 / MPv3.5 commitment does not select that prompt.
-Freeze teacher model settings, output format and reviewed labels for each
-controlled comparison. Preserve the
-per-note subject hierarchies, raw annotations and review findings for diagnosis;
-do not silently mix outputs from different annotation policies.
-
-The note-sorting mechanism, any additional annotation/model outputs it needs,
-and their evaluation criteria still need to be settled. Report earlier mask-only
-results as mask-only evidence; they cannot establish the quality or cost of
-additional outputs. Starting full training-data generation requires both
-successful completion of the 500-note hierarchy validation and teacher
-selection in the [release plan](../docs/planning/release-decisions.md). The
-same teachers must write both the larger pilot training data and the full training
-data, per the user's direction of September 21, 2026. The September 25 informal
-experiment may reuse current saved annotations before that selection. Work that consumes no
-labels may use any data and need not wait for the teacher selection.
-
-The earlier training-data readiness target was **September 27, 2026**, including
-masks and prominence with training/evaluation separation. That earlier scope
-does not decide the current sorting-related output requirements. The checks and
-handling of unsuitable annotations remain open;
-a correction workflow is not assumed. Dataset size and the time required to
-produce suitable data also remain open. The target does not establish
-feasibility or change the pilot's proposed sizes.
-
-The subjects-only pilot assesses the generated subject hierarchy before model
-selection. It supplies no evidence about mask quality or the downstream
-mask/SSE hierarchy build. Release-plan task 11 still checks the final distilled
-model. This pilot does not replace scale measurements or establish full-build cost.
+The [reader guide](../docs/experiments/reproduce.md#run-subject-fine-tuning)
+describes training with published inputs and pinned upstream models. The
+[process record](../docs/planning/fine-tuning-pilot-process.md) contains the
+actual pilot/continuation stages and results. Original private-image deployment
+commands and expired rental-selection instructions are superseded by that path.
+The earlier combined subject/mask pilot below remains a separate experiment.
+The CPU objective check used unequal-length answers and physical groups of one
+and eight: both accumulated 382 supervised tokens, loss agreed within 1e-5,
+and adapter tensors within 1e-6 absolute / 1e-4 relative tolerance. This checks
+objective normalization, not full-model GPU fit or semantic quality.
 
 ## Models and required untuned baselines
 
@@ -1072,149 +362,13 @@ warns that small evaluation sets can exaggerate differences. The local grader
 also needs checks for biases such as rewarding verbosity, documented in
 [LLM-as-a-judge research](https://arxiv.org/html/2306.05685v4).
 
-### GPU preparation cases and checks — draft
+### Training recipe and checkpoint lifecycle
 
-**Two-GPU execution approved October 5:** keep each complete student on one
-**96GB RTX PRO 6000**. GPU 0 runs Gemma dense; GPU 1 runs Qwen, then Gemma MoE.
-All preparation results and baselines are verified before training. Matched prep
-cases and numeric settings are frozen. Private publication and up to $285 are
-approved for a compatible two-card 96GB/600 W RTX PRO 6000 Server rental within
-the $3.10/hour ceiling; actual GPU fit/throughput remains pending.
-Use the same pinned models and approved subject-only adapter recipe as the
-pilot. Prepare locally and rehearse production paths in the VM before booking.
-The worker now supports subjects-only preparation/training, expert adapters,
-memory-based subject batching and the save/merge/evaluate/restore lifecycle.
-The background copier is implemented locally. Preparation and the pilot use
-thinking off throughout.
-
-**Preparation cost priority approved October 3:** minimize total billed cost.
-Collect update, generation and save/reload/merge/restore timings during the same
-minimum cycle to project a pilot duration/cost range; separate cold setup from
-repeated work. Keep parser/recovery testing and automation rehearsal local.
-Compare qualifying 96GB offers by expected total charge, including startup,
-storage and transfers. After checks, finish verified retrieval and explicit
-deletion promptly when prep is separate. The current matched prep scope is
-frozen and the combined prep→pilot rental is approved up to $285.
-
-Use existing notes; preparation is not blocked by the future 1,000-note dataset.
-Historical N18 (long diary), N00 (soda bread) and N15 (short gianduja/store note)
-are candidate cases, not an approved three-note evaluation set. Tokenize the
-available cases and declare the maximum training sequence, rendered input and
-generation/cache shapes to test. Freeze source IDs, prompt versions, example
-IDs and profile identities locally. The final cases and shape-testing method
-remain open. When the pilot data arrives, audit its token lengths against the
-tested bounds locally; reconsider out-of-bounds configurations before booking.
-Keep reserved final test notes out of preparation. A few existing notes cannot
-prove that future trained subject hierarchies finish within an output limit.
-
-**Dynamic evaluation batching approved October 2:** prepare a per-GPU memory
-budget locally under the actual model placement. Before each generation batch,
-tokenize waiting notes and choose how many fit that budget. Account for resident BF16
-weights, per-note cache and recurrent state at maximum admitted prompt plus
-output length, padded prefill/decoding tensors, kernel temporary buffers and
-allocator headroom. Account for sliding-window caches and Qwen's recurrent
-layers rather than assuming every layer stores a full-context KV cache.
-Reserve for generation through the allowed output length, not just initial free
-memory. Each batch's count can change with its token lengths; choose the count
-before generating. The worker now implements the calculation with explicit
-frozen allowances; numeric GPU budgets remain open.
-Freeze the thinking-off batching policy per student and match baseline/checkpoints;
-preserve per-note outputs. The proposed small preparation checks execution and
-peak memory; brief timing is not a complete-answer throughput estimate. No
-standalone batch-size rental sweep is prescribed. Historical recipes retain
-serial subject generation unless the new `subject_batching` policy is supplied.
-
-**Proposed minimum GPU cycle, once per student; exact cases/counts remain open:**
-
-1. Verify model revision, kernels, dtypes and adapter targets. Perform one
-   eight-example adapter update with existing teacher subject hierarchies;
-   record finite loss/gradients, adapter changes, frozen base/router, expert
-   gradients and actual example/token accounting.
-2. Save and seal the full checkpoint. Unload training, reload a fresh BF16 base
-   with the saved adapter, and merge it. Record reload/merge time and peak memory.
-3. Run brief thinking-off batched generation; save raw/parsed responses, tokens,
-   timing and peak memory. Check every expected response immediately. Separately
-   exercise the maximum admitted generation/cache shape on the GPU if the brief
-   answers end early. That brief shape-check method must be implemented and
-   rehearsed locally before booking; a short answer alone cannot verify it.
-4. Discard evaluation, restore full training state and perform a further update,
-   exercising the declared training length with Adam state resident. Verify
-   restored counters, order, cursor and random state; retain verified checkpoints.
-
-The existing worker performs full subject-evaluation stages. The proposed brief
-generation, maximum-shape check and merge/generation peak measurements still
-need local implementation and rehearsal. Use the production training and
-save/merge/restore paths. Do not add complete baseline/checkpoint hierarchy
-comparisons, semantic review or tuning sweeps to this paid preparation.
-
-Keep parser, missing-response, partial-checkpoint, continuation-equivalence and
-interrupted-transfer checks local through production paths. The copier still
-transfers preparation files as they become complete. Observe responses, training
-and telemetry until verified retrieval and explicit deletion; automatic deletion
-stays off. Record allocated/reserved CUDA peaks, GPU utilization/power, host
-memory/disk, lifecycle timing, call accounting and verified files. A failure
-preserves evidence for retrieval; fix and rehearse locally before any new rental.
-Numeric memory budgets, caps, exact checks, implementation and spending remain open.
-
-### Execution and failure handling (draft)
-
-The [process walkthrough](../docs/planning/fine-tuning-pilot-process.md) maps
-where each stage runs. Subjects-only training, ordinary checkpoint evaluations
-and stage accounting are implemented. Ongoing response/checkpoint copying is
-implemented locally. Thinking stays off throughout the pilot. The legacy
-informal configuration still uses both tasks.
-
-- **Local preparation:** freeze note splits, teacher subject hierarchies, prompt
-  versions, model revisions, data order and approved recipe. Rehearse locally;
-  use paired GPU prep to cover the finalized longest training example and full
-  validation cache shapes. Freeze admitted lengths and thinking-off output limits before launch;
-  brief GPU preparation does not establish future answer completeness.
-- **GPU execution:** generate one thinking-off untuned validation baseline per
-  student using batched independent notes under the frozen policy. Use the same
-  policy for its trained checkpoints and preserve each note's answer separately.
-  Verify all three complete baselines before any pilot training. Initialize one
-  adapter and optimizer per student; learn each new 200-note block once. Shuffle
-  its 200 subject examples with a fixed seed and take consecutive groups of
-  eight total across all GPUs: 25 updates per block and 125 through 1,000 notes.
-  Save and verify every complete milestone checkpoint, unload training, load a
-  fresh pinned BF16 base with its saved adapter and merge this evaluation copy.
-  Generate subject hierarchies on the same validation notes, saving raw/parsed
-  answers and failures immediately. Discard evaluation and restore untouched
-  training state and exact next-example position before continuing. Validation
-  does not update training weights. Teacher targets contain no reasoning traces.
-- **Checks and live observation:** account for one subject response per expected
-  evaluation note as it arrives. Invalid model answers are measured failures;
-  missing work or parser/pipeline defects block advancement of affected work.
-  Observe actual baselines before training, training progress/GPU telemetry and
-  trained answers through verified retrieval and explicit deletion.
-- **Progressive retrieval — approved design:** one background copier transfers
-  each saved subject response and complete checkpoint while execution continues.
-  Verify local hashes and retain remote originals at least until verification;
-  limit bandwidth/disk activity to protect throughput. Before explicit deletion,
-  verify expected work and required local files. Preserve responses, failures,
-  adapters, configuration and telemetry. Automatic deletion stays off.
-- **Local scoring:** mechanically check output reliability; review subject and
-  hierarchy correctness/coverage after retrieval. Keep model failures, semantic
-  findings and missing reviewer verdicts distinct.
-- **Final test — approved October 5:** collect all three final 1,000-note
-  adapters and all three untuned baselines on the main rental, with thinking
-  off. Keep answers sealed through local validation review/model selection.
-  Then score all three paired comparisons; verify test collection completeness
-  before deletion. Earlier checkpoints remain learning-curve diagnostics.
-
-| What happened | Response |
-|---|---|
-| Invalid or truncated model answer under frozen settings | Preserve it, count the failure and continue independently evaluable notes. |
-| Missing work, defective parsing, wrong inputs or damaged files | Stop advancing affected work, preserve/retrieve evidence and mark the comparison incomplete. |
-| Interrupted execution or observation | Reconcile the existing worker before starting anything; reuse saved responses and resume only a verified checkpoint under original settings. |
-| Missing or invalid reviewer answer | Record an evaluation failure separately from candidate correctness/coverage. |
-
-Parser fixes can re-evaluate saved answers consistently; missing responses need
-actual generation. Changed settings require a separately identified matched
-comparison. Preserve originals and prepare fixes locally. A sealed
-`complete.json` verifies files, not completion of every required call. The
-subject-response and checkpoint accounting and background copying are
-implemented locally. Full-size GPU behavior still needs preparation evidence.
+The subjects-only pilot keeps model failures, semantic findings and missing
+reviewer verdicts separate. Invalid/truncated answers under frozen settings stay
+in their cohort; damaged inputs or missing work are technical failures rather
+than zero-quality answers. The [process record](../docs/planning/fine-tuning-pilot-process.md)
+records actual execution and recovery.
 
 With three students and five checkpoints each, thinking-off validation has
 18 versions (three bases and fifteen checkpoints). For N validation notes,
@@ -1222,8 +376,7 @@ With three students and five checkpoints each, thinking-off validation has
 approved six-version 200-note final test adds **1,200**, for **3,000 total**
 student responses and semantic reviews. Freeze generation/review lengths, stored adapters, transfer
 volumes and resource allocation before launch. Report over-limit reviewer
-inputs rather than truncating them. Test generation is assigned to the main
-rental; implementation/verification, runtime and spending remain open.
+inputs rather than truncating them. The completed pilot collected these responses during its main rental.
 
 **Complete-pass budget approved October 1, scoped to subjects October 2:** each frozen subject
 training example is used once, without replacement, in five new 200-note blocks.
@@ -1237,7 +390,8 @@ expert adapters use rank 2 / alpha 32, subsequently approved October 1, with
 original model and router weights frozen. Retain smaller final groups; no
 checkpoint resets the training state. These are a shared starting
 recipe, not established optima. Numerical defaults were subsequently approved
-below. Block membership, seed value and checkpoint selection remain open.
+below. The saved configuration binds block membership and seed; the learning curve
+does not isolate data size from accumulated training.
 The approved larger-pilot MoE route adds adapters to
 `experts.gate_up_proj` and `experts.down_proj` in all 30 layers at rank 2 / alpha 32,
 keeping existing attention/shared MLP adapters at rank 16 / alpha 32. This follows
@@ -1245,8 +399,7 @@ the [controlled MoE study's active-expert rank convention](https://thinkingmachi
 not a Gemma task-specific optimum. At the pinned model shapes it adds 59,473,920
 parameters, for 78,059,520 total. With the approved FP32 adapter/gradient/Adam
 state policy, static adapter training state is about 1.16 GiB, an increase of
-0.89 GiB. Lower rank does not remove full adapted expert-weight buffers; exact
-GPU fit, generation limits and numeric batching budgets remain unresolved.
+0.89 GiB. Lower rank does not remove full adapted expert-weight buffers; actual fit and speed require the measured preparation evidence below.
 The merged evaluation policy was approved October 2 below. The subjects-only
 worker targets both packed expert weights in every layer at the approved rank
 and alpha, preserving frozen original parameters and router. The legacy
@@ -1274,9 +427,7 @@ groups on its assigned 96GB RTX PRO 6000. Generation limits and numeric
 batching budgets are frozen in the candidate configurations; merged BF16
 checkpoint evaluation/resume was approved October 2. All preparation,
 training and evaluation use thinking off.
-Exact memory fit of the expanded MoE configuration must be checked during
-separate GPU preparation. The ordinary continuing training and merged
-checkpoint lifecycle and background copier are implemented locally.
+The measured MoE preparation and the saved checkpoint lifecycle are recorded below.
 
 **Checkpoint lifecycle approved October 2:** complete each 200-note block's
 final update, including any smaller final group, then save the full unmerged
@@ -1311,9 +462,8 @@ Separate GPU preparation must measure that overhead and merge peak memory, and
 verify continuation across the full transition. The subjects-only worker now
 retains every milestone checkpoint and restores its full unmerged state after
 evaluating a disposable merged copy. Legacy two-task configurations retain
-their unmerged endpoint evaluation and two rolling checkpoints. Additional
-recovery-checkpoint cadence remains open. Generation limits and numeric
-batching budgets are frozen; the combined rental is approved up to $285.
+their unmerged endpoint evaluation and two rolling checkpoints. Generation limits and numerical batching settings remain part of the frozen
+recipe; later continuation recovery has a separate recorded cadence.
 
 **Training loss approved October 1:** ordinary cross-entropy on teacher-answer
 and native turn-ending tokens, summed across the actual adapter update and
@@ -1341,8 +491,7 @@ milestone checkpoints, alongside untuned baselines, setup checks and any
 separately justified confirmation work. The 1,000-note comparison is included.
 Two 96GB RTX PRO 6000 cards run independent students concurrently: Gemma dense
 on one, Qwen then Gemma MoE on the other. Each later milestone continues its
-preceding checkpoint. The 100 validation / 200 final test counts and up to $285
-for the combined rental are approved.
+preceding checkpoint. The shared split has 100 validation and 200 final-test notes.
 
 ## Evaluation and decisions
 
@@ -1359,47 +508,12 @@ needs complete own-string preservation and every compatible placement. Optional
 derived headings need not match the teacher's tree. Model-output failures score
 zero; incomplete reviewer reports remain ungraded evaluation failures.
 
-[DSRv1](distillation-review-v1/README.md) drafts the prompt, report schema and
-qualification cases, including valid variants, deliberate errors and eight
-large training hierarchies selected from the 1,300 saved ASv6.100 generations.
-The union of the top five by entry count and canonical answer length includes
-the overall maxima of 145 entries and 35,966 answer bytes. Held-out labels
-contribute aggregate sizes only; stress inputs use training notes.
-Review runs after retrieval, outside the rental,
-and is evaluation only. If the selected reviewer cannot perform it reliably,
-rethink the approach. The subsequent authorized offline implementation adds
-source-bound preparation, complete report validation, scoring and qualification
-checks in the shared workflow. All 29 cases are prepared without inference;
-an authored Q17 fixture demonstrates missing-branch scoring. The user requested
-this preview before calls, then authorized qualification on October 8. Initial
-HTTP 400 request rejections produced no reports; a corrected provider schema
-retains application duplicate checks. Corrected requests produce complete large
-reports, but qualification fails known semantic and cross-version checks:
-Q04 penalizes a trusted unchanged example, and Q21/Q22 change unrelated judgments.
-Q23's stream ends with an unfinished, ungraded report near fifteen minutes;
-all 29 cases were attempted once, yielding 28 complete reports and one interrupted
-report. Seven of eight largest generations completed. Subsequent preparations
-use the user-directed concurrency 8 with existing backoff; the original trial
-retains its concurrency 1 receipts. See the [DSRv1 qualification evidence](distillation-review-v1/README.md#october-8-qualification-evidence).
-Bulk grading remains unqualified; process revisions, teacher auditing and test
-unsealing are not authorized by this trial.
-
-The user subsequently authorized the [DSRv2 draft and offline preview](distillation-review-v1/README.md#dsrv2-draft-and-offline-preview)
-before further calls. It explicitly treats ASv6.100's worked examples as
-authoritative, and Q20–Q22 reuse the original Q20 receipt's 66 groups / 44 required
-flags. These are provisional consistency inputs, not accepted pilot labels.
-Native receipt and exact task/post/teacher checks bind their source. The user
-then authorized real DSRv2 qualification with Sol / xhigh and concurrency 8.
-Q04 passes `8/8` correctness and `2/2` coverage, retaining both required meanings.
-The small set finishes with 17 passes, Q14's semantic regression (`6/10` instead
-of `8/10` correctness), and Q01's ungraded stream interruption. Both DSR versions
-fail qualification. The large trial at concurrency 8 completes four of eight
-unchanged hierarchies and both controlled variants; four large streams are
-interrupted and ungraded. Both variants fail consistency: the untouched Money
-transfers link and compatible headings change despite fixed groups / flags.
-All 29 distinct cases are attempted once across the preserved subsets, yielding
-24 complete reports and five ungraded interruptions, without retries. Adoption
-remains open; bulk grading and test unsealing are not authorized.
+The [reviewer investigation](distillation-review-v1/README.md) retains DSRv1/v2's
+failed qualification, their complete/partial reports, later decomposed checks
+and the final grading policy. Those failed approaches are research evidence;
+their old bulk-grading holds are not the completed pilot's current status.
+The [completed grading record](../docs/planning/fine-tuning-pilot-process.md#completed-test-grading-october-14)
+identifies the final evaluation outputs.
 
 ### Required pilot measurements
 
@@ -1507,57 +621,6 @@ Record actual batch shapes, stage timings, raw/parsed responses and peak allocat
 and reserved CUDA memory. Compare future data and planned batch/cache shapes
 against the measured cases before booking the main pilot.
 
-The production-path CLI test first failed on the missing preparation mode.
-The revised VM rehearsal passed 55 tests: tiny models exercise Qwen's linear/full
-cache and both Gemma sliding/full caches, adapter merge, training restoration,
-real pinned tokenizer preflights, managed SSH deployment and verified retrieval.
-The local controller/contract checks passed 65 tests, including refusal to
-stop/delete with missing or changed local data, watcher expiry/error/interrupt
-preservation, an actual worker without an inherited deadline, and recorded
-user approval for incomplete stops. No paid GPU evidence is claimed. The exact
-VM export is now published privately as
-`docker.io/kernelkind/oracle-mvp@sha256:04628fd9d099cc3deb1d999d0664d000fb4b4ce6ba0a6b9cddc38931fba6832b`.
-Filesystem layers, runtime configuration and source hashes match the VM;
-read-only rental credentials can pull it and an anonymous-token manifest request
-is rejected with HTTP 401. Publication evidence is in the proposal directory's
-`publication/publication-receipt.json`. Local test evidence:
-`target/distillation-vm-clean-deployment/attempt-1791046788404742039/`.
-
-Proposed rental controls are one 600 W / 96GB RTX PRO 6000 WS, 300 GB disk,
-and a three-hour cost-planning/review window. The approved maximum is $5.
-The refreshed selected quote is a compatible offer, at
-$1.4522/hour including storage. Three planned hours plus 200 GB inbound and
-10 GB outbound allowances cost $4.41. The earlier $7 request is withdrawn.
-The rejected operation is `operation-5usd/` under the proposal directory.
-No GPU checks ran, and the quote is now unavailable. The secret-safe helper
-retained HTTP 400 but discarded the provider explanation; the cause is unknown.
-The user rejected the 2.5-hour worker stop: the current package freezes
-`timeout_seconds: null` and `work_seconds: null`. No execution timeout, watcher
-expiry/error/interrupt or budget alert may kill the job. Observation must
-continue through verified retrieval and explicit deletion. Prep failures use
-the standing prep stopping approval below; preserve all available data.
-The latest October 3 offers did not meet
-the original very low transfer-fee filter. That filter was an unnecessarily
-strict proxy for total cost. The revised approved floors are 125 GiB host RAM
-and 450 Mbps download. The new $1.47/hour, $0.00261/GB inbound and $0.00391/GB
-outbound ceilings jointly total $4.9711 for three hours and 200/10 GB, within
-$5. The refreshed selected quote is a compatible offer, at
-$1.4656/hour and $4.40 for those planning quantities; it satisfies the original
-hardware floors too. `operation-5usd-r1/` is a separately frozen operation,
-using the unchanged native package and private registry digest. Never reuse the rejected attempt.
-
-The constraint review found that 600 W is a preference and 128 GiB host RAM is
-unmeasured headroom, not demonstrated minimum requirements. The existing 99.5%
-reliability, CPU-core, disk and network thresholds are conservative selection
-criteria. The rejected launch satisfied all those hardware filters; none was weakened.
-A current 600 W quote with about 126 GiB host RAM and 479 Mbps download costs
-about $4.81 for three planned hours including transfers. It is excluded by the
-128 GiB/500 Mbps floors and per-GB fee ceilings despite fitting the total budget.
-The user approved revising those cutoffs and proceeding. The subsequent better
-quote selected above has more host RAM, faster download and lower transfer fees.
-The image uses CUDA runtime 13.0.96 and NVRTC 13.0.88, corresponding to CUDA 13.0
-Update 2; retain its driver floor of 580.95.05 ([NVIDIA release notes](https://docs.nvidia.com/cuda/archive/13.0.2/cuda-toolkit-release-notes/index.html)).
-
 **October 3 preparation evidence and local repair:** Qwen completed both
 eight-example updates, checkpoint restore, merge, 20 brief saved responses and
 four maximum-output cache checks. The largest cache shape reached 7,328 tokens;
@@ -1620,63 +683,7 @@ operational recovery steps used unchanged frozen code. The subsequent local
 launcher update uses the provider proxy by default and prioritizes small
 sealed outputs between bounded checkpoint streams.
 
-**Prep stopping exception, approved October 3:** repair straightforward failures
-immediately. If recovery requires substantial work, preserve and verify all
-available data, then delete the rental promptly. This is standing user approval
-to stop incomplete prep work; completing all prep checks is not required. Do not
-hold paid hardware idle for substantial new development or renewed permission.
-Judge repair scope rather than imposing a fixed time cutoff.
-
-**Autonomous pilot recovery approved October 5:** diagnose and fix errors
-without requesting approval for the repair, including necessary code or recipe
-corrections. Preserve original frozen inputs and failure evidence, record every
-change and interruption, restore verified saved state, and rerun comparisons
-affected by changed conditions. The approved spending and complete-data
-requirements before stopping/deletion still apply.
-
-**Full pilot stopping rule:** retain the job and rental while
-necessary data is missing. Add missing work; if stopping is preferable, obtain
-explicit user approval first. Spending approvals still apply; request any
-needed extension early instead of treating a financial threshold as permission
-to terminate incomplete work. The previously asked approval containing a
-2.5-hour job stop is withdrawn. The user explicitly prohibited terminating a
-rental merely because spending exceeds the planning budget: report overruns
-directly in chat and retain incomplete work unless explicitly instructed to stop.
-Questions and approval requests must be asked directly in chat; do not use
-question tools.
-
-The shared operator refuses `stop` and direct deletion for this timeout-free
-workload without `launch/completion-review.json`. That review records a positive
-completeness finding, the checks performed, instance identity, and hashes of the
-operation contract and verified retrieval receipt. It must follow actual
-response/checkpoint/measurement accounting; exit status zero and file hashes
-alone cannot establish all required work. The operator rechecks the retrieved
-files before deletion. Missing or changed files block it.
-Only an explicit user-approved exception may use `--incomplete-stop-approval`,
-recording the actual approval reason locally and with the remote stop request.
-For a prep failure requiring substantial recovery, record the user's standing
-prep-only approval and the concrete repair assessment with this flag. This flag
-is not permission to invent an approval. Preserve original frozen inputs and
-defect evidence while adding any necessary repair work.
-
-## Compute estimates and spending constraints
-
-### Pilot budget — approved approach
-
-Reserve enough of the remaining budget to train the selected model on more
-data and evaluate it, with room for reruns. Set a provisional ceiling for the
-three-model pilot around that reserve. Reassess the proposed allocation using
-measured costs and whether further comparisons could change the model choice.
-Any spending still requires the approvals specified below.
-
-Distinguish reusable expenditure, such as training annotations and working
-infrastructure, from the additional compute spent comparing candidates. Count
-all paid expenditure against the lifetime ceiling, regardless of reuse.
-
-The pilot ceiling is a financial guardrail, not a spending target or evidence
-that the pilot is scientifically sufficient. Its amount and the final-training
-reserve remain open; one complete training pass is approved. No fixed pilot/rest
-ratio has been adopted.
+## Frozen pilot inputs and runtime findings
 
 **Subject prompt frozen October 4:** use full
 [ASv6.100](subject-prompt-goal-v1/asv6.100/ASv6.100.md), including every worked
@@ -2771,94 +1778,10 @@ Offer evidence is saved in `target/distillation-pilot-v1/cost-estimate-20261001/
 GPU telemetry is under the completed operation's `observations/progress-*.json`.
 These duration scenarios do not establish adequate training or a spending cap.
 
-### Runtime estimates — not measured
+## Informal pilot outcome
 
-The following September 15 estimates predate the current subject hierarchy and
-later prominence experiments. They are not measured runtimes for the release task.
-They assume 1,000 short training notes, three passes, compact mask-only outputs,
-and no CPU offloading. Use pilot measurements to replace these assumptions before
-allocating larger-run spending:
-
-| Model | Proposed GPU | Estimated training time |
-|---|---|---:|
-| Qwen3.8-27B, QLoRA | One A6000 48GB | 1–4 hours |
-| Gemma 4 31B, QLoRA | One A6000 48GB | 2–6 hours |
-| Gemma 4 26B-A4B, method open | Open | Not estimated |
-
-Allow an additional 1–3 hours per model for downloading, loading, checkpointing,
-and evaluation, excluding annotation work and troubleshooting. The earlier
-T5Gemma runtime estimate does not transfer to Gemma 4 26B-A4B. The
-[published hardware evidence](EXTRACTOR-FINETUNING-MODEL-RESEARCH.md#published-training-hardware-and-weight-storage)
-does not establish measured memory use for this particular workload.
-
-Read-only Vast offer searches on 2026-09-15 found A6000 48GB offers around
-$0.54–0.56/hour and H100 80GB offers around $2.19–2.59/hour, including 200GB
-storage and excluding transfers. The remaining calculations below use a rounded
-planning rate of $0.60/hour for an A6000. Availability and
-prices can change; no offer was reserved. See [Vast pricing](https://docs.vast.ai/guides/instances/pricing).
-
-### Larger-training cost scenarios — provisional
-
-Saved on 2026-09-15 for reference, not as approved dataset sizes or spending.
-Each cell estimates one training run with three passes through the data,
-using the model and GPU pairing above.
-
-| Training notes | Qwen3.8-27B | Gemma 4 31B | Gemma 4 26B-A4B |
-|---:|---:|---:|---:|
-| 10,000 | $6–24 | $12–36 | Not estimated |
-| 25,000 | $15–60 | $30–90 | Not estimated |
-| 50,000 | $30–120 | $60–180 | Not estimated |
-
-These are linear extrapolations from the unmeasured runtime ranges above:
-
-```text
-training cost = hours per 1,000 notes × (training notes / 1,000) × hourly rate
-```
-
-They assume similar note and mask lengths and unchanged training throughput.
-The ranges are not measured confidence intervals or guaranteed upper bounds.
-Three passes is a costing assumption, not a frozen training protocol. Setup,
-evaluation, transfers, troubleshooting, and annotation generation are additional.
-
-### Approved allocation
-
-The user approved one shared **$1,000 lifetime budget** and **$0 reserved for
-future work**. The subsequent approval permits up to **$25 total** for the
-informal pilot's GPU setup, baselines and initial fine-tunes. No commitment has
-yet been accepted or entered for that work; record it before renting. No amount
-is earmarked for the larger fine-tune.
-The previously proposed $500 fine-tuning reserve was not approved. Model and
-training-cost estimates above remain planning scenarios, not spending authority.
-Any paid annotation work shares the same lifetime budget.
-
-Use [budget-ledger.json](../budget-ledger.json) for current spending and
-outstanding commitments for this pilot. Hosting costs and reserves stay outside
-that ledger, as recorded in the [release decisions](../docs/planning/release-decisions.md#compute-hosting-and-budget).
-No per-run spending approval is implied by the training estimates or the
-unallocated budget.
-
-### Spending constraints
-
-The [repository budget rules](../AGENTS.md) govern every paid action. The $1,000
-ceiling covers the entire effort, including previous costs, failed runs,
-evaluation, storage, and transfers. It is not a per-model allowance or a target.
-There is no separate parameter-count, GPU-memory, or single-machine ceiling.
-
-The spending code and ledger enforce the approved $1,000 cap. The repository
-rules give standing approval for user-requested OpenRouter work roughly estimated
-at $1 or less, without a provider-side cap. Other paid runs need an explicitly
-approved maximum charge. Provider-enforced spending caps are not required;
-ledger accounting and the lifetime ceiling still apply.
-
-## Next step
-
-The informal dataset is prepared for one fine-tune per candidate on both
-existing prompted tasks. The deletion-policy change is included in the rebuilt
-image and frozen `package-v9`; all 24 local VM tests passed, including training
-and SSH deployment. The rebuilt private image is published and verified.
-The user approved proceeding and required continuous observation throughout the
-rental. After the 600 W availability watch, the user approved the 450 W
-workstation offer. All other frozen checks pass.
+All three candidates completed the informal combined subject/mask pilot in the
+frozen image and package.
 The recorded rental rate was $1.4167/hour including 300 GB storage.
 The new immutable operation is
 `target/distillation-pilot-v1/launch-20260929-v2/operation/`. All three candidates
@@ -2866,8 +1789,7 @@ completed in the frozen image and package. The worker exited with status zero
 on September 30 at **02:56:58 UTC**. Retrieval of **671 work files** was
 hash-verified at **03:08:17 UTC**, and local output verification passed at
 03:08:20 UTC. Rental time was about **9 hours 28 minutes**, below the approved
-13-hour limit; the 12-hour worker timeout did not fire. The local watcher was
-resumed after chat interruptions while the same remote attempt continued.
+13-hour limit; the 12-hour worker timeout did not fire.
 
 | Candidate | Baseline `f1_80` with fences accepted | Trained `f1_80` | Trained subject / mask failures | Training minutes |
 | --- | ---: | ---: | ---: | ---: |
@@ -2902,12 +1824,8 @@ the longest was about 6.7 minutes. Maximum sampled VRAM use was 96,581 MiB.
 
 The final resource cost was **$13.392**. Evidence is
 `observations/preliminary-charge-summary.json` and its native invoice snapshot.
-The earlier failed rental's final resource cost was $0.395, bringing the combined final cost to **$13.787**. The next steps are completing the
-Gemma baseline mask generation and semantic review before candidate selection.
-The old frozen launch retains its
-original code. Candidate recipes and Vast limits are unchanged. The prior
-publication and one rental were authorized within $25, at up to $1.66/hour for
-at most 13 hours.
+The earlier failed rental's final resource cost was $0.395, bringing the combined final cost to **$13.787**. Gemma baseline mask generation and semantic review were incomplete at this
+checkpoint, so this record does not establish a complete before/after comparison.
 The saved split inspection found no clear complete-note duplicates or close paraphrases across
 the 80/20 split; topical overlaps remain recorded and this is an informal test.
 Registry verification of the previous image completed before the first launch.
@@ -2932,8 +1850,8 @@ empty. No remote code edits or dependency installs occurred.
 The accidental cache is preserved in `operation/monitoring-failure/`; moving it
 out restored the original frozen transport hashes and file set. A local
 `python3 -B` import then passed the production manifest checks without creating
-cache files. All future inspection of frozen Python modules must disable
-bytecode writes before import. This verification is local and incurred no rental.
+cache files. This identifies a bytecode-writing hazard when inspecting frozen modules; the
+subsequent verification was local and incurred no rental.
 
 The preliminary resource charge was **$0.338**.
 The final resource cost was **$0.395**. The supervisor has exited.
@@ -2945,7 +1863,4 @@ expiry without SSH, hardware rejection, result retrieval and explicit deletion.
 The legacy GTE path retains its previous behavior. The failed frozen operation
 and published image are historical evidence and have not been modified.
 
-The failure was discussed with the user, who requested manual deletion and
-then approved proceeding with continuous observation. Reconcile the first
-rental's final bill when eligible. No baseline/training comparison or candidate selection can
-be made from this attempt.
+No baseline/training comparison or candidate selection can be made from that failed attempt.

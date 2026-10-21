@@ -268,9 +268,8 @@ preregistration hashes above. Nothing has been uploaded yet.
 | `prospective-audit/rubric.md` | Frozen checks for the eight prospective authored inputs P201–P208 |
 | `authored-new/rubric.md` | Frozen checks for the twelve new authored inputs H009–H020 |
 
-The [publication catalog](../../../docs/experiments/publications.csv),
-[exact files and hashes](../../../docs/experiments/publication-files.csv) and
-[checksums](../../../docs/experiments/publication.sha256) identify this selection.
+The [publication catalog](../../../docs/experiments/publications.csv) and
+[dataset manifest](../../../docs/experiments/downloads.md#dataset-manifest) identify this selection.
 The six ASv6.100 entries in the [study index](../../../docs/experiments/experiments.csv)
 link these shared documents to the existing answer/review bundles. Those six
 bundles contain three trials and their disjoint continuations, not six independent

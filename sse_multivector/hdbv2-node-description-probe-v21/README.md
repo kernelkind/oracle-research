@@ -148,4 +148,4 @@ This is evidence about description clarity and scope, not TRUE accuracy or hiera
 
 Existing tracking card: CREC-127. Plane tools were unavailable, so no external card update or status change is claimed.
 
-**Publication status:** `collection:tracked-hdbv2-node-description-probe-v21` is selected as `title-studies/hdbv2-node-description-probe-v21` in the [publication catalog](../../docs/experiments/publications.csv), with [exact files and hashes](../../docs/experiments/publication-files.csv). The local export preserves saved answers and recorded assessments; input AS lineage remains unverified. Nothing has been uploaded.
+**Publication status:** `collection:tracked-hdbv2-node-description-probe-v21` is selected as `title-studies/hdbv2-node-description-probe-v21` in the [publication catalog](../../docs/experiments/publications.csv), with [dataset manifest](../../docs/experiments/downloads.md#dataset-manifest). The local export preserves saved answers and recorded assessments; input AS lineage remains unverified. Nothing has been uploaded.

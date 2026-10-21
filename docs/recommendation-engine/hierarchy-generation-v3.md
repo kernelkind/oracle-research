@@ -8,8 +8,7 @@ remains pending. HR11–HR14 retain Pair-consolidation-v6; HR15 and HR16 used
 Pair-consolidation-v7. Experimental Pair-consolidation-v11 specifies the user's
 2–5-word title requirement; all fifteen screened answers meet that limit.
 Meaning and browsing-quality qualifications remain below. This record does not
-activate the prompt or authorize model calls. The user's personal outline,
-`docs/notes/MY-NOTES_10-12.md`, remains read-only. The preceding mechanisms are
+activate the prompt or authorize model calls. The preceding mechanisms are
 V2 and V1; earlier variants need no formal naming.
 
 ## V3.2: Bootstrap-v133 titles for SSE and browsing

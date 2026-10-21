@@ -4,7 +4,6 @@ Status: completed six-root experiment, stopped at the requested observation
 point; not an activated HiGen version.
 The user requested continuing the same process until six roots exist, then
 observing that result before settling complete-coverage or sixth-root rules.
-The protected `MY-NOTES_10-12.md` is read-only and remains unedited.
 
 ## HiGen V5 — approved recursive design and native implementation
 
@@ -19,7 +18,7 @@ adds global untracked entries sharing HDBSCAN groups with completed siblings'
 original members. The
 historical V5 decisions and this completed manual evidence remain unchanged.
 
-Implementation is authorized. V5 uses angular HDBSCAN with
+The subsequent V5 implementation used angular HDBSCAN with
 `min_cluster_size = 2`, `min_samples = 3` and excess-of-mass selection, retaining
 Bootstrap-v133 titles and explicit meanings. These are V5's recorded settings;
 they do not relabel historical V4 parameter experiments. Investigating a real

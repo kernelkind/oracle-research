@@ -1,24 +1,20 @@
 # Official hierarchy run records
 
-The user's comparison spreadsheet is
-[hierarchy-experiments.xlsx](../../target/hierarchy-experiments.xlsx), opened from
-the workspace with `vd oracle-mvp/target/hierarchy-experiments.xlsx`. Keep this
-exact workbook current after every official hierarchy experiment. Its
-`Experiments` tab contains run ID, status, input and output note counts, HiGen,
-Bootstrap prompt and pair/consolidation prompt. Review commands belong on its
-separate `Review commands` tab. The `HiGen versions` tab gives concise,
-self-contained descriptions of every version used in the run rows. Each row
-records its actual values.
+This record retains detailed run results, provenance, usage and original review
+commands for HR03–HR39. Each run's build, browsing menu and export share its ID.
+For the supported generation workflow and the largest completed run, see
+[HiGen V5.3](hierarchy-generation-v5.md) and
+[HR39](#hr39--automatically-sampled-5000-note-higen-v53).
 
-The [full parameter ledger](hierarchy-parameters.csv) supports internal
-bookkeeping, including execution settings and generation Git commits. Its model
-settings describe hierarchy construction; the corpus hash binds the saved
-subject outputs. `not used`, `not recorded` and `unspecified` are distinct values.
+The [parameter ledger](hierarchy-parameters.csv) records the experimental
+settings and source revisions. Its model settings describe hierarchy
+construction; the corpus hash binds the saved subject outputs. `not used`,
+`not recorded` and `unspecified` are distinct values.
 
-This Markdown file retains detailed run results, provenance, usage and review
-commands. **HR05** is the completed 24-note rerun with a review UI.
-**HR04** is the completed 12-note run; **HR03** is the completed 50-note baseline.
-Each run's raw build, browsing menu and export share its ID.
+Original local paths in these records identify retained research artifacts.
+See [publication availability](../experiments/README.md#reading-the-research-records)
+and the [reproduction guide](../experiments/reproduce.md) for the published
+inputs and results.
 
 ## HR11–HR14 — approved V3 round
 
@@ -1254,56 +1250,37 @@ saved 200-note corpus; neither reran subject extraction or vector encoding.
 | HR07 reviewed menu | `3d90dde150b2028e4f86b8a288ef2c8caa4f267e0a40e8e24e47dd400932a731` |
 | HR07 original UI export | `6cec4a3ef21287260aed1ad0625045528ae17355291c21f2b72a5fc14c8678cd` |
 
-## Registering future runs
-
-Register a run only when the human explicitly designates it as official.
-Completing a diagnostic, approving its execution or generating a browsing output
-does not make it official. Checkpoints and derived outputs remain attached to
-their run; they do not receive separate run IDs. The previous `H0001`–`H0701`
-diagnostic inventory is withdrawn, and those IDs must not be reused.
+## Source registry and catalogue
 
 The [catalogue source](../../sse_multivector/hierarchy-catalogue-source-v1.json)
 contains the explicit `official_runs` list. Each entry records `version_id`,
 `name`, `root`, `artifact_path` and `sha256`, with optional `related_outputs` for
 the run's other saved outputs. The
 [version registry](../../sse_multivector/hierarchy-versions.json) binds the ID to
-its preserved output and parameter evidence. The existing-run cutoff remains
-October 8, 2026 at midnight America/New_York (`2026-10-08T04:00:00Z`). Older bound
-inputs remain provenance.
+its preserved output and parameter evidence. The original catalogue selection
+used an October 8, 2026 midnight America/New_York cutoff
+(`2026-10-08T04:00:00Z`); older bound inputs remain provenance.
 
-Keep the parameter ledger, these run records and the explicit source list
-synchronized when registering an official run. Add only experimental settings
-to the CSV; outcomes, usage, costs and review instructions belong here.
-Before reporting a completed, stopped or failed official experiment, update the
-canonical `oracle-mvp/target/hierarchy-experiments.xlsx` with its actual status,
-parameters and saved output note coverage. Update its separate review-command
-tab, stating when a UI has not been prepared. Add a description to `HiGen
-versions` when a new generator version is used. Reopen the saved workbook and
-verify the row against native evidence. Updating an internal ledger or a task
-worktree's copy does not replace this required update to the user's workbook.
-Before a new run, record the full commits of Oracle
-and the shared runner, plus any uncommitted source changes, alongside their
-frozen code hashes. Generator source is accepted only when its bytes match a
-saved hash. An exact Git blob identifies file contents, not the run's overall
-commit.
+A Git blob identifies exact file contents, not the run's overall commit. Saved
+source hashes bind the generator used by a run. Original and shared-runner
+revisions, together with source hashes, distinguish code provenance from
+experimental settings.
 
-Regenerate the catalogue after updating the explicit official-run list, from a
-task worktree:
+To regenerate the catalogue from retained records, run from the repository root:
 
 ```bash
-/home/dev/src/notedeck_worktrees/algos/experiment-runner/bin/experiment-runner \
+../experiment-runner/bin/experiment-runner \
   --project-root "$PWD" catalogue-hierarchies \
   --source sse_multivector/hierarchy-catalogue-source-v1.json \
   --registry sse_multivector/hierarchy-versions.json \
-  --output /home/dev/src/notedeck_worktrees/algos/oracle-mvp/target/hierarchy-catalogue
+  --output target/hierarchy-catalogue \
+  --saved-only
 ```
 
 This offline command makes no model calls and preserves original experiments.
-Use `--saved-only` to regenerate from retained records. Generated pages, parameter
-evidence and output snapshots stay ignored under `target/`; preserve them with
-the original runs. The registry alone is not a backup. Experiment preparation,
-execution and resumption still use task worktrees and the shared launcher.
-The [HTML viewer](../../target/hierarchy-catalogue/index.html) also supports
+Generated pages, parameter evidence and output snapshots stay ignored under
+`target/`. It requires the retained artifacts named by the catalogue source;
+the registry alone is not a backup. The resulting HTML viewer supports
 side-by-side comparison of official runs.
 
 ## HR26 — 200-note HiGen V4.1

@@ -72,4 +72,4 @@ The intended next discussion concerns the name’s interpretation, not teaching 
 
 The [official evaluation guidance](https://developers.openai.com/api/docs/guides/evaluation-best-practices#what-are-evals) informed the scoped test and preserved evidence, not its semantic conclusions.
 
-**Publication status:** `collection:tracked-hdbv21-interpretation-v1` is selected as `title-studies/hdbv21-interpretation-v1` in the [publication catalog](../../docs/experiments/publications.csv), with [exact files and hashes](../../docs/experiments/publication-files.csv). The local export preserves saved answers and recorded assessments; input AS lineage remains unverified. Nothing has been uploaded.
+**Publication status:** `collection:tracked-hdbv21-interpretation-v1` is selected as `title-studies/hdbv21-interpretation-v1` in the [publication catalog](../../docs/experiments/publications.csv), with [dataset manifest](../../docs/experiments/downloads.md#dataset-manifest). The local export preserves saved answers and recorded assessments; input AS lineage remains unverified. Nothing has been uploaded.

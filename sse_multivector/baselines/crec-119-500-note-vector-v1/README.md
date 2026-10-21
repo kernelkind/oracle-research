@@ -106,7 +106,7 @@ baseline.
 `historical-studies/crec-119-500-note-vector-v1` retains 500 posts, 1,311 takeaways
 and 150 final segments. Answers are parsed assembled note results, not raw
 per-call response strings. See the [catalog](../../../docs/experiments/publications.csv),
-[file list](../../../docs/experiments/publication-files.csv) and
+[dataset manifest](../../../docs/experiments/downloads.md#dataset-manifest) and
 [export commands and checks](../../../docs/experiments/reproduce.md#archived-baseline-checks).
 The files are prepared locally for Hugging Face Datasets; nothing is uploaded.
 AS lineage remains unknown. The full archive remains local and unchanged;

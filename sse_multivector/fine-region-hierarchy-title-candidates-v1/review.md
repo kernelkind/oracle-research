@@ -218,7 +218,7 @@ asking:
 Selected inputs, saved answers, recorded decisions and parameters:
 `historical-studies/fine-region-hierarchy-title-candidates-v1` in the
 [catalog](../../docs/experiments/publications.csv) and
-[file list](../../docs/experiments/publication-files.csv). The 19th answer remains
+[dataset manifest](../../docs/experiments/downloads.md#dataset-manifest). The 19th answer remains
 unreviewed. The earlier cutoff study is selected separately as
 `historical-studies/fine-region-title-cutoff-audit-v1`; generated titles and the
 wording actually reviewed remain separate. These files are prepared locally for

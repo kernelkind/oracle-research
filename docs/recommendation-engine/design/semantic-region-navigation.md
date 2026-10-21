@@ -89,7 +89,7 @@ The public hierarchy must not require that private state.
 ## Backend Dependency
 
 The backend direction is documented in
-[`atomic-vector-subject-hierarchy.md`](atomic-vector-subject-hierarchy.md).
+[HiGen V5.3](../hierarchy-generation-v5.md).
 The vector-grouping experiment boundary is documented in
 [`../research/fine-segmentation-vector-space-requirements.md`](../research/fine-segmentation-vector-space-requirements.md).
 

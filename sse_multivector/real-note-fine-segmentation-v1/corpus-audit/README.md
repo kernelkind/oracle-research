@@ -101,8 +101,11 @@ retained explicit short preparation, ingredient, preference and experience
 statements. Images do not need to be viewed when the complete text itself gives
 the meaning; essential missing image context, not brevity, grounds exclusions.
 
-`docs/recommendation-engine/disk-io-pressure-control.md` was read before the
-audit. The only corpus-sized read was the bounded 21 MB tmpfs materialization;
+The host admission controller used a 20% I/O-pressure backoff threshold. A
+separate operational check at original implementation commit `aca6142` observed
+22.5% workload I/O pressure: admission paused, accepted writes drained, and
+admission resumed after about 12 seconds of low pressure. This corpus audit
+needed only the bounded 21 MB tmpfs read;
 there was no sustained storage workload or pressure interruption. Output files
 are small audit artifacts. No model calls, Cargo invocation, external writes,
 or commits were made by this audit task.

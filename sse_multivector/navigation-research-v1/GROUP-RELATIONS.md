@@ -188,7 +188,7 @@ No paid compute, remote inference, model training or neural model loading occurr
 The archived lexical records allow replay without NLTK or a download:
 
 ```sh
-python3 sse_multivector/navigation-research-v1/LGR01/mask_group_lexical_relations.py \
+python3 sse_multivector/mask_group_lexical_relations.py \
   --groups sse_multivector/navigation-research-v1/MDH02/descriptions.json \
   --evidence sse_multivector/geometric-hierarchy-v1/GDC09/evidence.json \
   --lexicon sse_multivector/navigation-research-v1/LGR01/lexicon.json \

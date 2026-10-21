@@ -49,4 +49,4 @@ New usage: 39,753 input tokens, including 3,840 cached; 8,039 output tokens, inc
 
 These are six previously used notes with three calls each and a saved, nonconcurrent baseline. The result does not establish broad reliability or isolate the effects of the two prompt edits. Detailed judgments remain separate from raw outputs in `./assistant-analysis.json`.
 
-Selected final answers, recorded assessments and parameters: `historical-studies/atomic-subject-asv6.10-test-v1`, `historical-studies/atomic-subject-asv6.8-vs-asv6.9-v1`. See the [publication catalog](../../docs/experiments/publications.csv) and [file checksums](../../docs/experiments/publication-files.csv).
+Selected final answers, recorded assessments and parameters: `historical-studies/atomic-subject-asv6.10-test-v1`, `historical-studies/atomic-subject-asv6.8-vs-asv6.9-v1`. See the [publication catalog](../../docs/experiments/publications.csv) and [dataset manifest](../../docs/experiments/downloads.md#dataset-manifest).

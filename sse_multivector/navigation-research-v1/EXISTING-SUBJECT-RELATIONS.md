@@ -182,7 +182,7 @@ OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 \
 TOKENIZERS_PARALLELISM=false HF_HUB_OFFLINE=1 \
 LD_LIBRARY_PATH=/nix/store/8lahnh9pn3lrrnhax5nk7ibvjcbjmnkm-gcc-15.2.0-lib/lib:/nix/store/b2swxfi8srrbsafvh9iyyhd26mz9giwf-zlib-1.3.2/lib \
 /tmp/oracle-nli-probe-venv/bin/python \
-  sse_multivector/navigation-research-v1/GDR02/seed_subject_relations.py \
+  sse_multivector/seed_subject_relations.py \
   --groups sse_multivector/navigation-research-v1/LGR01/groups.json \
   --evidence sse_multivector/geometric-hierarchy-v1/GDC09/evidence.json \
   --fixture sse_multivector/navigation-research-v1/GDR02/fixture.json \

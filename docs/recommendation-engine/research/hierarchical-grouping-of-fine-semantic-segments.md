@@ -6,12 +6,10 @@ This document records the CREC-122 research into geometric hierarchy methods,
 not a frozen algorithm decision or execution plan. The methods below remain
 candidates with explicit input assumptions.
 
-The [current design](../design/atomic-vector-subject-hierarchy.md) allows
-subjects and discovered groups at different breadths. It does not require a
-fixed finest layer before hierarchy investigation. The current work includes
-inspecting [HDBv2's existing groups and hierarchy](../../../sse_multivector/real-note-fine-segmentation-v1/cross-note-density-v1/README.md)
-for meaningful refinements. Neither HDBv2 nor a separate hierarchy algorithm
-has been selected as the final solution.
+The reviewed methods allow input subjects and groups at different breadths;
+they do not require a fixed finest layer. The HDBv2 hierarchy inspection
+was part of this earlier investigation. The implemented generation
+workflow is now documented separately in [HiGen V5.3](../hierarchy-generation-v5.md).
 
 ## Question
 
@@ -391,47 +389,6 @@ Optimization*](https://arxiv.org/abs/1206.2807).
 | CHAMELEON | relative connectivity and closeness | yes | needs a target or stopping choice | unstable for very small leaves |
 | HDBSCAN or density cluster tree | density-connected components | yes | persistence-based extraction | imposes unnecessary connectedness |
 | Markov Stability | diffusion retention at each scale | no | finds scales | partitions may cross |
-
-## Recommended Controlled Comparison
-
-No paper establishes that semantic-neighborhood graph structure corresponds
-to a human broad-to-narrow subject hierarchy. That remains the experiment.
-
-If comparing the fixed-input graph methods above, a controlled design is:
-
-1. Freeze one atomic-subject-vector mutual-`k`-NN graph and the demonstrated
-   input-segment memberships, explicitly resolving overlap or nesting before
-   graph contraction. These inputs are not declared the final finest layer.
-2. Run a nested degree-corrected SBM as the primary statistical candidate.
-3. Run hierarchical Infomap as the assortative flow-based comparison.
-4. Run Agglomerative Information Bottleneck over the same neighbor evidence as
-   the transparent diagnostic.
-5. Inspect inferred groups bottom-up using their raw supporting masks. Do not
-   generate titles before deciding whether the membership itself is coherent.
-6. After the initial comparison, rerun the promising method under nearby graph
-   neighbor counts, edge perturbations, and algorithm seeds to measure
-   stability.
-
-This is a candidate comparison, not the current execution order. Inspecting
-the existing HDBv2 hierarchy does not require replacing it with these methods
-or first declaring its groups to be fine leaves. A new comparison must freeze
-its actual inputs and receive separate authorization; this review authorizes
-no rerun or corpus expansion.
-
-The review criteria are:
-
-- every child in a proposed group is a valid narrower refinement of one
-  recognizable broader subject;
-- an unsupported collection may remain under a structural root rather than
-  receive a fabricated semantic parent;
-- higher nodes add a real distinction instead of reproducing the same child
-  or note set;
-- useful groups persist under small graph and inference perturbations;
-- different branches may have different depths and branching factors.
-
-The navigation constraint of showing only a small number of choices is a later
-tree-condensation problem. It should not determine the scientific topology
-during this comparison.
 
 ## Findings Versus Hypotheses
 

@@ -1,20 +1,19 @@
 # Distillation semantic review — process and evidence
 
-**Approved direction:** qualify a
-[focused coverage search and per-check reasoning settings](#eight-hour-review-direction-approved-october-11)
-for the full 1,800-output evaluation within eight hours of model generation.
-The payment-specific example versions are **withdrawn**; unchanged DCSv1 and
-DSLv10 remain the experimental baselines. The [fresh development trial](#fresh-development-after-example-withdrawal-october-11)
-uses different validation posts. The original sixty-answer selection is
-retained as development/regression and workload evidence; its exposure during
-prompt development prevents a claim of unseen-note accuracy. The user has now
-authorized the saved 200-note pilot test across all three families, comparing
-each final checkpoint with its untuned baseline: **1,200 answers**. Explicit
-`--split test` enables native preview and trial preparation while retaining
-validation as the default. The grading prompts, scoring and teacher-only
-requirement policy remain unchanged. This test uses isolated frozen inputs,
-persisted receipts, eligible prefix warming, shared 30-request admission and
-a 32 GiB zero-swap process boundary. No student inference is required.
+This study developed matching, support, relationship and coverage checks for
+subjects-only fine-tuning. The final automatic protocol uses DSMv3, DSSv2,
+DSLv10 and DCSv1; earlier whole-answer reviewers and withdrawn prompt variants
+remain below as measured failed or superseded approaches. The
+[training process](../../docs/planning/fine-tuning-pilot-process.md) links the
+completed pilot, continuation and L1-only comparisons.
+
+The original sixty-answer selection was exposed during prompt development.
+Its comparisons measure development/regression behavior, not unseen-note
+accuracy. The separate held-out pilot test was evaluated only after validation.
+The memory and recovery findings below describe completed execution stages;
+intermediate readiness estimates do not establish an eight-hour fresh-run bound.
+
+## Completed pilot grading
 
 **Completed October 14:** all 1,200 reserved-test answers have both finite
 grades, with zero manual reviews, pending judgments or agent adjudications.
@@ -33,59 +32,7 @@ handovers and provider waits; this does not establish the eight-hour fresh-run
 target. The protected workload reaches its 32 GiB boundary through cache reclamation with no
 recorded OOM events.
 
-The user also approved a [manual Qwen thinking-on screen on 20 validation
-notes](../../docs/planning/fine-tuning-pilot-process.md#approved-qwen-thinking-screen-october-14).
-After GX10 generation, a separate native import hands those answers to the
-unchanged grader and compares them with the same notes' saved thinking-off
-grades. This adds no generation automation and does not change the subsequent
-Qwen continuation selection.
-
-The approved **DCSv1** wording completes a
-[four-note positive-placement challenge](#dcsv1-four-note-positive-placement-challenge-october-11):
-38 searches generate in approximately 118 seconds, with **34 accepted complete
-outputs, two errors and two uncertainties**. Unchanged DSLv10 verification
-catches the invalid positive witness; a false negative remains. Native
-source-bound preparation and output validation are implemented, but DCSv1
-remains unqualified. The subsequently approved
-[conditional matching/path reuse](#conditional-matchingpath-reuse-october-11)
-settles four of these searches, including that false negative, during native
-offline preparation. [Receipt hashing reuse](#coverage-preparation-receipt-hashing-october-11)
-reduces the slowest four-note preparation from 13.25 to 7.61 seconds while
-preserving every reviewer input and evidence record. Current defaults and the final
-sixty-answer validation remain unchanged.
-
-The subsequent [twelve-case fresh repeat](#dcsv1-focused-negative-search-controls-october-11)
-passes all eleven unchanged assessed expectations; one pre-call negative label
-is corrected after independent reassessment. All twelve complete outputs are
-accepted, with seven saved DSLv10 witness responses reused and no new semantic
-error found. Generation takes approximately 72 seconds. These exposed controls
-establish repeat consistency, not broad qualification.
-
-The [four additional-note trial](#dcsv1-four-additional-notes-october-11)
-completes 24 new coverage searches: 22 complete outputs are accepted and two
-remain unresolved, including a search/verification disagreement over gas fees
-beneath Payments. Preflight catches and corrects external uncertain-edge
-omissions before their affected inputs run. DCSv1 and full runtime remain
-unqualified.
-
-The [focused payment diagnostic](#payment-type-disagreement-diagnostic-october-11)
-repeats the exact disputed pair: DCSv1 again selects Payments, while unchanged
-DSLv10 reverses its earlier rejection and accepts. Four surrounding controls
-pass complete-output audit. A trusted training Payments/price edge supplies
-the interpretation evidence for accepting the gas-fee pair; the earlier DSL
-category exclusion is too narrow. Fresh agreement itself establishes neither
-correctness nor repeat reliability.
-
-The subsequently authorized [trusted payment example trial](#trusted-payment-example-prompt-trial-october-11)
-adds the same short precedent to experimental DCSv2 and DSLv11. All six
-complete outputs pass independent audit, including the payment pair and
-positive/negative controls. Generation takes 49.47 seconds with one recovered
-provider retry. This focused pass does not establish broader accuracy or
-consistency; production defaults remain unchanged.
-The user subsequently withdraws these example-bearing versions: the unchanged
-baseline already passed the same six cases, so no benefit was demonstrated.
-The frozen trial is retained as regression evidence, not as the current prompt
-direction or an independent accuracy test.
+## Automatic grading protocol
 
 **Approved automatic grading protocol:** the 1,800-answer run must finish with
 both numeric grades for every selected answer and no manual review queue.
@@ -111,6 +58,9 @@ answers with both numeric grades and zero manual reviews. The eight-hour
 full-run target remains to be verified.
 This decision accepts residual reviewer error rather than requiring agreement
 between fresh calls.
+
+
+## Automatic grading implementation and measured recovery
 
 The first sixty-answer replay starts with fifty-six complete grades and four
 missing judgments. Provider termination followed by overload exhausts the
@@ -567,237 +517,6 @@ Earlier reviewer results remain intact as development evidence. Full-run
 generation has not been launched, and this arithmetic is not a measured
 eight-hour upper bound.
 
-**Current score-impact result:** the approved
-[offline comparison](#offline-grade-comparison-october-13) measures the effect
-of known reviewer errors using the saved sixty answers. Available random-answer
-scores change by a mean absolute **1.18 percentage points for correctness**
-and **0.19 for coverage**. One short answer changes by fifty correctness points;
-the original automated responses produce forty-seven complete grades, with
-thirteen blocked. The user accepts inevitable reviewer error: individual
-mistakes do not themselves prohibit scaling. Score distortion and handling of
-blocked judgments, rather than correction of every mistake, govern readiness.
-
-**Corrected grading reference:** the approved
-[source-bound exception review](#source-bound-grading-exceptions-october-13)
-corrects the blocked saved judgments without rerunning the sixty answers.
-There are **59 complete grades and one pending grade**. The Friday wording
-boundary remains unresolved. Original reviewer errors and
-agent intervention are reported separately from corrected student grades.
-
-**Earlier mixed-effort result:** the [sixty-answer completion](#sixty-answer-mixed-effort-completion-october-12)
-uses high matching, relationships and coverage with medium post support. Full
-source audits find fifteen errors among 2,159 resolved reviewer inputs (0.69%);
-131 interpretations remain unscored. These counts cover matching, support,
-actual-edge/self-guard checks and coverage searches, excluding separate witness
-verifiers. One separate positive-witness verifier is wrong. Added resolved
-matching pairs lose 0.637 percentage points versus historical xhigh; support has
-no net loss. These exposed agent assessments support the mixed-effort candidate
-without establishing unseen accuracy, a universal two-point loss bound or
-full-evaluation runtime.
-
-**Earlier development result:** xhigh generation finishes on
-[24 notes from the frozen sixty](#dslv10-twenty-four-note-regression-october-11),
-retaining the previous eight and adding sixteen structurally valid random
-answers. Three agents audit complete decisions and reasons during generation
-and independently confirm three support errors. Unresolved interpretations
-stay separate. Reviewer qualification and minimum reasoning effort remain open.
-
-**Earlier development result:** the completed
-[eight-note xhigh regression](#dslv10-eight-note-regression-october-11) with
-approved experimental [DSLv10](relationship-prompt-v10.md) remains unqualified.
-All three checks finish: 784 completed occurrences and 553 justified relationship
-skips. The original root and independent assessments record 380 accepted
-distinct full model records, one rejection and 15 uncertainties. These are
-396 output versions for 395 semantic inputs, including one recovered retry
-whose request also received another successful response. All 77 mechanical
-proofs pass. A subsequent independent source-first audit challenges the lone
-rejection: its home-work witness may change the meaning of `around town`, and
-the account's actor relationship remains disputed. That output is now unresolved,
-not an established error. The current assessment retains 380 accepts and
-16 uncertainties; the saved eight-note audit remains unchanged.
-Production remains DSLv2; reviewer qualification and lower-effort qualification
-remain pending.
-
-The subsequent [four-note high comparison](#four-note-high-versus-xhigh-comparison-october-11)
-is paused after three confirmed complete-output errors: one support decision
-and two matching explanations. Fresh xhigh confirmations correct all three.
-All 92 completed high relationship outputs pass full-output audit. High is not
-qualified; one answer remains pending, and software-runtime interpretation is
-newly uncertain. Prompts and mechanical rules remain unchanged.
-
-The preceding [four-note regression](#dslv10-four-note-regression-october-11)
-passes its 156 resolved complete model records following the
-[twelve-case timing diagnostic](#dslv10-timing-scope-diagnostic-october-11).
-Its three Nostr matching/support records remain uncertain and are carried
-unchanged into the expanded run. Both panels are development-exposed;
-they do not establish unseen accuracy. The authorized small
-unchanged-DSLv10 [outings diagnostic](#dslv10-outings-diagnostic-october-11)
-completes: all eight clear authored controls pass, the simple original remains
-sound false, and the rich original repeats true but remains disputed. No prompt
-change is justified by that disputed case alone.
-
-**Earlier development process:** revise one prompt using
-[12–16 distinct review cases](#case-level-prompt-development-approved-october-10),
-then run broader regression checks once that set passes. The earlier
-[four-note scope](#regression-scope-reduced-to-four-notes-october-11) is subsequently
-expanded to [eight](#dslv10-eight-note-regression-october-11) and then
-[24 notes at xhigh](#dslv10-twenty-four-note-regression-october-11).
-The agreed **50 random plus ten challenge answers** are now completed as exposed
-development/regression and workload evidence, as recorded above. The bounded
-[ten-note iteration](#iteration-scope-limited-to-ten-notes-october-10) is now
-finished generating with unchanged DSLv4 at Sol/xhigh and **concurrency 16**.
-Its raw native report is preserved before formal audit reviews. Definition and
-counterexample defects found in its explanations motivate the completed
-[DSLv5 development trial](#dslv5-definition-and-counterexample-draft-october-10).
-Its 14 fresh Sol/xhigh verdicts agree with the prepared targets; complete
-records receive **nine accepts, two rejects and three uncertainties** from both
-agent audits. The development set does not pass; qualification remains pending.
-The approved [DSLv6 scope revision](#dslv6-scope-draft-october-10) has completed
-its same-input 14-case Sol/xhigh trial. All Booleans retain the DSLv5 decisions;
-12 are resolved and two named-reference decisions remain uncertain. Complete
-records receive **ten accepts, one reject and three uncertainties** from both
-agent audits. The mothers/MILFs record still adds human-only parent scope;
-the development set does not pass. Adoption and qualification remain pending.
-The subsequent [controlled scope diagnostic](#dslv6-controlled-scope-diagnostic-october-10)
-completed eight authored human/animal comparisons and six exact saved controls
-with unchanged DSLv6. Both audits accept all 14 verdicts and complete records.
-This shows sound scope handling on those cases; it does not repair the original
-MILFs explanation or settle the named-reference/list uncertainties.
-The user approved the exact [DSLv7 wording](#dslv7-post-interpretation-draft-october-10)
-that supplies the original post for interpretation. Native preparation now
-supplies the bound post when the template requests it. The approved 14-case
-diagnostic completed on first attempts. Booleans agree with all twelve frozen
-pre-call targets; complete records receive **eleven accepts, one reject and two
-uncertainties** from both agent audits. The rejected explanation assigns
-unestablished facts to a fixed named work. A formerly resolved Keke Palmer case
-now has full-record uncertainty about carrying posted facts through a named
-reference. Target agreement does not establish correctness; the set does not
-pass. Qualification and adoption remain pending; production defaults to DSLv2.
-The user subsequently authorized the [DSLv8 reference-boundary revision and
-test](#dslv8-reference-boundary-diagnostic-october-10). Fourteen fresh Sol/xhigh
-calls retain all twelve frozen assessed targets; the two originally unscored
-cases remain unscored. Both complete-output audits give **twelve accepts, one
-rejected explanation and one uncertainty**. The rollover verdict now excludes
-the omitted posted action, but its counterexample only changes what is
-discussed. The MILF tag's lexical scope was unresolved in that review. This
-failed development gate led to the subsequent DSLv9 and DSLv10 work documented
-below; lower-effort qualification remains pending.
-
-**Earlier 24-case DSLv4 result:** **22/22 resolved Boolean expectations and complete
-evidence records** pass both agent audits in the
-[broader trial within the frozen 60](#dslv4-broader-trial-preparation-october-10).
-Two pre-call interpretation questions remain unresolved and outside correctness
-denominators. All 24 pairs are new to DSLv4 and come from the agreed evaluation;
-no notes were added. Twenty-four responses require 25 attempts because one
-temporary provider socket failure receives its allowed successful retry. There
-is no answer reuse or warmup, and no cached tokens are observed.
-
-The preceding
-[fresh xhigh consistency repeat](#dslv4-xhigh-consistency-repeat-october-10)
-agrees with **14/14** fixed expectations and supplies **14/14 complete evidence
-records**. LL03's fresh counterexample retains all three mockery targets;
-its earlier incomplete response and rejection remain preserved.
-
-In the preceding [paired diagnostic trial](#dslv4-paired-diagnostic-trial-october-10),
-DSLv3 and DSLv4 both agreed with 14/14 Boolean expectations, while DSLv4's
-complete records passed 13/14. Both fresh DSLv4 rounds retain the same Boolean
-decisions. Those repeats provide consistency evidence on development pairs.
-The broader trial adds different pairs from existing evaluation contexts, with
-agent assessments rather than independent human gold. These results do not
-establish unseen-note accuracy or a demonstrated correctness improvement.
-DSLv4 remains a diagnostic draft; production adoption and reviewer qualification
-remain pending. Lower-effort testing stays paused, and the original 60-answer
-study remains unchanged and bound to DSLv2.
-
-[DSLv2](relationship-prompt-v2.md) still rejects the repeated A21 pair in the
-approved [bounded trial](#dslv2-bounded-parent-child-trial-october-9). It agrees
-with **24/25 assessed expectations**; interpretation-sensitive A12 is reported
-separately. Fresh unchanged DSLv1 also rejects A21, agreeing on 3/4 comparisons.
-The clarification has not resolved this disagreement; reviewer qualification stays
-pending. All 30 calls complete on first attempts without caching or warmup.
-
-The approved [mechanical decisions for all three checks](#mechanical-decisions-for-all-three-checks-october-9)
-are implemented in source-bound preparation and the shared runner. Exact trusted
-subjects and actual ordered teacher links produce native zero-attempt results;
-remaining questions still use semantic calls. A21 adds a student parent absent
-from the teacher and has no complete child match; its expected true label remains an
-agent assessment, rather than a relationship certified by the teacher.
-The [complete validation workload preview](#complete-validation-workload-preview-october-9)
-now measures the mechanical savings and remaining distinct input questions offline.
-The [offline token and runtime estimate](#validation-review-token-and-runtime-estimate-october-9)
-projects about 15.34 hours for those questions at eight continuously occupied
-slots, using 59 selected fresh saved verdicts. It excludes coverage-placement
-comparisons and is not a complete-evaluation runtime estimate. The complete-answer
-trial has finished at xhigh after the approved mechanical changes: 43 answers
-have complete scores, 13 remain ungraded because reviewer decisions conflict,
-and four have invalid student outputs. All 1,735 comparison-panel decisions are
-verified and frozen; reviewer qualification remains pending. The lower-effort study is recorded in
-[reasoning-level comparison](#reasoning-level-comparison-approved-october-9).
-
-[DSSv2](support-prompt-v2.md) matches **20/20 existing support expectations and
-3/3 same-post controls** in the approved
-[bounded trial](#dssv2-bounded-support-trial-october-9). All 27 verdicts, including
-four fresh DSSv1 comparisons, pass attributed agent review of their decisions
-and reasons. Fresh DSSv1 also correctly rejects the original Nostr case after
-two earlier failures with identical request bodies, so this trial does not
-establish that DSSv2 caused an improvement. Qualification remains pending.
-
-Fresh confirmation result: **two of the four rejected decisions repeat; two
-change to the expected correct verdict**. All four previously accepted contrasts
-stay accepted. The [unchanged-input repeat](#fresh-confirmation-of-four-rejected-cases-october-9)
-completes eight fresh first attempts, with no answer reuse or warmup. The current
-prompts show repeated errors and inconsistent decisions; qualification stays
-pending. Agent expectations remain separate from independently adjudicated gold.
-
-Initial actual-output development result: **DSMv3 17/19 assessed verdicts, DSSv1 19/20
-and DSLv1 17/20** agree with the frozen agent expectations in the
-[bounded validation trial](#actual-output-trial-results). Matching A15 remains
-unscored. All 60 verdicts and two eligible warmups complete on first attempts,
-without answer reuse or mechanical failures. Matching caching produces hits;
-support caching produces none. Semantic disagreements remain, so this does
-not qualify the reviewers for bulk pilot grading.
-
-Authored training-control result: **DSMv3 6/6, DSSv1 6/6 and DSLv1 4/4**
-match expectations in both the [larger training trial](#larger-three-check-trial-october-9)
-and its [fresh repeat with eligible prefixes](#larger-three-check-repeat-with-eligible-prefixes-october-9).
-All 16 fresh reasons pass native agent review; every request completed on its
-first attempt, with no answer reuse. The two large matching prefixes produce
-cache hits; the eligible support prefix produces none. Short shared prefixes
-and singleton cases receive no explicit caching or warmup. The user accepted
-LC03, LC04 and LC07 expectations and delegated LC01, LC02, LC05 and LC06
-expectation review to the agent before authorizing these trials.
-The [initial warmed trial](#initial-warmed-three-check-trial-october-9) remains
-separate small-control evidence. These are repeated judgments on the same
-authored training controls; broader qualification and lower-effort comparison
-remain open.
-The completed [actual-output trial](#actual-validation-preparation-approved-october-9)
-tested all three checks at xhigh through source-bound preparation. Its selection
-and agent expectations were frozen before calls and remain unchanged.
-
-Status: **DSRv1 and DSRv2 qualification failed; DSMv1 passes 32/32 distinct controls and a fresh 16/16 confirmation repeat**, October 8, 2026.
-DSRv1 attempted all 29 cases: 28 complete reports and one interrupted report.
-DSRv2 produces 24 complete reports and five ungraded interruptions across its
-preserved subsets; it fails semantic and cross-version checks. Bulk pilot
-semantic review has not run. **DSMv2's latest actual-wording trial agrees with
-19/20 agent expectations**, with `Fakery`→`Inauthenticity` remaining disputed.
-Both cases in the preceding two-case trial agree. The full-set offline preview
-makes zero calls. **DSMv2 also passes eight authored action/property controls**;
-these explicit, small-catalog examples do not resolve R05 or qualify the reviewer.
-An identical-input fresh R05 repeat again returns T17; both saved calls make
-the disputed match with different explanations. Its expected null remains an
-agent assessment, and qualification remains pending.
-The [DSMv3 draft](#dsmv3-asv6100-wording-guidance-draft-october-9) adds one
-verbatim ASv6.100 paragraph to matching. Its wording is approved and its two
-initial development cases now pass below; broader qualification remains pending.
-The agreed process and selected reviewer are recorded
-in the [pilot process](../../docs/planning/fine-tuning-pilot-process.md#5-score-and-compare--locally-after-the-rental).
-This package preserves [DSRv1](prompt.md), drafts [DSRv2](prompt-v2.md), and
-specifies their [report schema](response-schema.json) and qualification cases.
-Offline source preparation, report validation, scoring
-and qualification checks are implemented in the shared experiment workflow.
-The whole-answer DSR prompts remain unqualified. The native per-check automatic
-workflow described above is implemented and prepared for the complete pilot
-validation population; bulk semantic grading has not run.
 
 ## Mechanical decisions for all three checks (October 9)
 
@@ -3518,7 +3237,7 @@ separate `baseline-v2` and `candidate-v3` arms and `actual`, `teacher-controls`
 and `large-controls` groups. Each group includes the native `terminal-show.json`
 and `reviewed-show.json`; plans preserve the exact approved template bytes.
 
-The recommended next step is a fresh paired confirmation on this fixed panel
+The subsequent paired confirmation used this fixed panel
 with GPT-6.1 Sol / xhigh before another prompt revision or lower-effort expansion.
 It would check the clarification at the highest approved reasoning level;
 the user subsequently authorized that confirmation, recorded below.
@@ -3619,7 +3338,7 @@ establish deployment accuracy. **DSLv3/xhigh has a clean bounded result; reliabl
 extrapolation and a lower-than-xhigh level remain unestablished.** This trial
 does not reopen the frozen lower-effort study or authorize new inference.
 
-The recommended next step is one fresh DSLv3/xhigh repeat on the same 14 pairs
+The subsequent fresh DSLv3/xhigh repeat used the same 14 pairs
 to check consistency before considering a separately authorized restart of the
 lower-reasoning comparison with the clarification. The user subsequently authorized
 that repeat, recorded below.
@@ -3970,7 +3689,6 @@ same 14 pairs add no independent source contexts; J298/Jbc/J540 still share one
 note. The initial evidence defect remains observed, and these agent assessments
 are not human-certified gold. Broader validation on new diverse pairs remains
 necessary before production adoption or restarting the lower-effort study.
-It is the recommended next step, not additional work authorized by this repeat.
 
 ## DSLv4 broader-trial preparation (October 10)
 
@@ -4126,14 +3844,12 @@ regression to ten notes from the agreed set, as recorded below.
 
 ## Iteration scope limited to ten notes (October 10)
 
-The user rejects the proposed immediate full-60 DSLv4 update as too large for
-development and initially limits iterations to **ten notes**. The later
-[case-level development approval](#case-level-prompt-development-approved-october-10)
-introduces a smaller prompt-development set. The next broader regression now
-uses [four notes](#regression-scope-reduced-to-four-notes-october-11). The
-original
-**50 random and ten challenge answers** are reserved for the **very final**
-whole-process test. Do not expand development through 20, 40 or 60 answers.
+This development stage was limited to **ten notes**, followed by
+[case-level development](#case-level-prompt-development-approved-october-10)
+and [four-note regressions](#regression-scope-reduced-to-four-notes-october-11).
+The original **50 random and ten challenge answers** were initially reserved
+for the final whole-process test, then exposed during later development as
+reported in the completed grading records.
 The original frozen selection, trusted ASv6.100, mechanical rules, existing
 prompt versions, Sol/xhigh baseline, concurrency 8 and cache eligibility policy
 remain intact. The minimum acceptable lower effort remains unestablished.
@@ -4976,14 +4692,10 @@ recorded below; lower-reasoning trials and the final sixty remain pending.
 
 ## Regression scope reduced to four notes (October 11)
 
-The user reduces the next complete-workflow regression from ten notes to
-**four distinct notes**, because the ten-note iteration took too long. Select
-from the existing ten-note pool within the agreed sample; exact selection and
-native preparation were pending at this scope decision. All three checks and their approved semantic
-rules stay in scope, using DSMv3, DSSv2 and experimental DSLv9 at Sol/xhigh.
-The completed ten-note results remain evidence, not the
-next run size. The original **50 random plus ten challenge answers** remain the
-very final validation. This scope correction performs no model calls.
+This stage reduced the complete-workflow regression from ten to **four
+distinct notes** because the ten-note iteration took too long. It retained
+matching, support and relationships with DSMv3, DSSv2 and experimental DSLv9 at
+Sol/xhigh. The exact selected cases and prepared request bounds follow below.
 
 ## Four-note native preparation (October 11)
 

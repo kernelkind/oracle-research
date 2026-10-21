@@ -84,30 +84,12 @@ compared exactly to their earlier counterparts; the PNG was visually inspected.
 
 The ignored output holds the source-bound replacement plan, actual new request/
 result, full analysis, and uniquely named `food-drink-s05-synthetic-no-ungrouped.svg`,
-`.png` and `.md`. Retain the task worktree for those artifacts and its frozen
-code paths. No official HR run, production policy, prompt or hierarchy UI was
+`.png` and `.md`.  No official HR run, production policy, prompt or hierarchy UI was
 changed. The original synthetic vector is referenced directly from its existing
 worker receipt rather than copied or recomputed.
 
-## Approved next replacement
+## Follow-up
 
-Use the original HR22 grouping to decide which original entries remain eligible
-throughout replacement. Keep originally grouped entries as separate inputs when
-a later run leaves them unassigned; exclude originally unassigned entries.
-Synthetic nodes retain their original entries' associations and remain eligible
-even when temporarily unassigned. Inclusion does not force group assignment.
-
-The next selected section is S10: 39 current entries in five groups, representing
-27 distinct notes. Consolidate each group separately, then consolidate those five
-generated definitions into one synthetic section with no parent. Four groups
-have exact saved native definitions; G04's seven-entry membership differs and
-requires a new definition. Reuse the four exact results, making two new teacher
-calls rather than sending all 39 entries directly to one consolidation.
-
-Replace S10's 39 inputs with its one synthetic node. Keep the six currently
-unassigned inputs, including Food and domestic animals: they derive from
-originally grouped entries. The next pool therefore contains 217 inputs
-(`255 - 39 + 1`), with the original 361 unassigned entries still excluded.
-The existing synthetic definition, original associations, HDBSCAN settings and
-epsilon rule stay unchanged. The [completed S10 replacement](food-drink-s10-synthetic-grouped-v1.md)
-records the two calls, exact reuse, retained inputs and new numerical result.
+The [completed S10 replacement](food-drink-s10-synthetic-grouped-v1.md) records
+the subsequent consolidation, exact saved-answer reuse, input selection and
+numerical result.

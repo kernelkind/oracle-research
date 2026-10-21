@@ -63,4 +63,4 @@ Both review views were opened with the existing production binary. The focused v
 
 Plane card CREC-127 could not be updated because no Plane tool was available in this session. No card status change is claimed.
 
-**Publication status:** `collection:tracked-hdbv2-node-titles-v20-astra-low` is selected as `title-studies/hdbv2-node-titles-v20-astra-low` in the [publication catalog](../../docs/experiments/publications.csv), with [exact files and hashes](../../docs/experiments/publication-files.csv). The local export preserves saved answers and recorded assessments; input AS lineage remains unverified. Nothing has been uploaded.
+**Publication status:** `collection:tracked-hdbv2-node-titles-v20-astra-low` is selected as `title-studies/hdbv2-node-titles-v20-astra-low` in the [publication catalog](../../docs/experiments/publications.csv), with [dataset manifest](../../docs/experiments/downloads.md#dataset-manifest). The local export preserves saved answers and recorded assessments; input AS lineage remains unverified. Nothing has been uploaded.

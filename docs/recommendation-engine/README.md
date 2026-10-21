@@ -1,147 +1,65 @@
-# Oracle MVP Content Discovery
+# Hierarchy implementation and research
 
-## Current Status
+For the project goals, walkthrough and results, start with the
+[project README](../../README.md). The [generation guide](../generate-hierarchy.md)
+covers the complete supported workflow.
 
-Oracle MVP v1 is frozen at the local `oracle-mvp-v1` Git tag. Its exact
-whole-note Oracle and private-personalizer experiment missed its approved
-quality criterion. Git preserves that implementation and its reports.
+## Current implementation
 
-The approved direction is now a separate, user-directed content-discovery
-system. It does not try to infer which subject a person wants next. It builds a
-public subject hierarchy, lets the person narrow through explicit choices, and
-then shows notes from the selected subject. Subjects and discovered groups may
-have different breadths; a uniformly fine layer is not a prerequisite for
-hierarchy investigation.
+- [HiGen V5.3](hierarchy-generation-v5.md): recursive hierarchy construction,
+  membership additions, stopping rules and native commands.
+- [Subject navigation](design/semantic-region-navigation.md): the intended
+  browsing behavior and the boundary between public hierarchies and local state.
+- [Toy snapshot protocol](design/hierarchy-serving-protocol-decisions.md):
+  experimental events for local or private Notedeck testing.
+- [Official hierarchy runs](hierarchy-runs.md): recorded inputs, outcomes,
+  source revisions and coverage, including failed and superseded runs.
+- [Hierarchy parameters and review commands](hierarchy-review-commands.md):
+  the settings used by each recorded run. Original local paths describe the
+  research environment; see the [reproduction guide](../experiments/reproduce.md)
+  for the published data workflow.
+- [Hierarchy advancement performance](hierarchy-advancement-performance.md):
+  measured changes to evidence reads, clustering and concurrency.
 
-The current [100-note real-data experiment](../../sse_multivector/real-note-fine-segmentation-v1/README.md)
-uses this preparation pipeline:
+The [experiment index](../experiments/README.md) connects the retained studies to
+their inputs and final results. Earlier algorithms and prompt versions are
+research evidence; they are not defaults for a new run.
 
-```text
-public note
-  -> ASv6.23 subjects
-  -> MPv3.5 source masks
-  -> reviewed subjects and masks
-  -> one SSE vector per mask
-```
+## Earlier hierarchy and representation experiments
 
-Both prompt packages are frozen for this experiment. ASv6.23 explicitly allows
-broad, narrow, nested, and overlapping subjects. The older takeaway/prominence
-orchestration remains implemented but is not this experiment's preparation
-path. The final grouping contract and algorithm, hierarchy algorithm, and
-production-scale extractor remain open.
+- [HiGen V3–V3.2](hierarchy-generation-v3.md) and
+  [V4–V4.4](hierarchy-generation-v4.md): construction rules and recorded trials
+  for the versions still needed to interpret saved runs.
+- [SSE multi-vector isolation and mask-fidelity evidence](experiments/sse-multivector-isolation.md):
+  supplied-mask controls, real-note comparisons and observed representation
+  failures. These experiments do not validate subject extraction or hierarchy
+  quality.
+- [Controlled fine-segmentation results](experiments/fine-segmentation/controlled-run-v1-results.md)
+  and [frozen protocols](experiments/fine-segmentation/README.md).
+- [Communicated-meaning extraction](experiments/sse-communicated-meaning-extraction.md),
+  [hard-partition pilot](experiments/sse-fine-region-partition-pilot.md) and
+  [complete segment review](experiments/sse-fine-region-complete-merge-review.md):
+  the earlier TEv4.1 representation and its limitations.
+- [HR09 investigation](hr09-investigation.md): case-level observations from an earlier
+  construction run.
 
-The current hierarchy investigation compares the saved
-[HDBv2/HDBv3 trees and an optional note-navigation view](../../sse_multivector/real-note-fine-segmentation-v1/cross-note-density-v1/README.md),
-without generated titles. The comparison derives choices from HDBv3's complete
-merge history, omits one-note groups, and collapses transitions returning the
-same notes. The original viewer and saved clustering results remain unchanged.
-Useful groupings do not automatically validate their parent placements; neither
-HDBv3 nor this simplification is selected as the final method.
-The [merge-rule inspection package](../../sse_multivector/merge-rule-exploration-v1/inspection.md)
-also includes an optional five-note display minimum for saved M06, alongside
-the unchanged default view. It changes available group choices, not clustering
-or note memberships; the minimum is still an experiment.
-The [provisionally titled M06 note view](../../sse_multivector/merge-rule-exploration-v1/inspection.md#m06-with-provisional-titles-and-original-notes)
-uses that unchanged 150-group projection in the existing original-note browser.
-It exposes titles, actual group IDs and optional analysis; it makes no new
-clustering or membership decisions. Repeated broad Food titles make limited
-semantic narrowing visible without forcing an alternative manual taxonomy.
-The separate [manual coffee example](../../sse_multivector/merge-rule-exploration-v1/inspection.md#manual-coffee-example)
-lets the user inspect a small proposed hierarchy constructed from original
-notes, not from an algorithm's nodes. The user accepted this example as a valid
-arrangement, not the uniquely correct one. The
-[Coffee preparation comparison](../../sse_multivector/merge-rule-exploration-v1/inspection.md#coffee-preparation-compared-with-m06)
-now shows its five original notes beside relevant saved M06 branches. M06
-preserves useful two-note preparation pairs, hidden by the five-note display
-minimum, but its smallest group covering the five notes contains 19 notes.
-The user clarified that a broad Coffee category can be sufficient: absence of
-the manual preparation subgroup is not, by itself, a hierarchy defect. Morning
-coffee has not been compared; no algorithm is approved by this judgment.
-The earlier [controlled-run results](experiments/fine-segmentation/controlled-run-v1-results.md)
-and their frozen protocols remain unchanged evidence, not a pending work order
-that must be repeated before this investigation.
+AS versions before ASv6.100 and their derived results are historical evidence,
+not current pipeline inputs or validation. Raw source posts are unaffected.
 
-The later [HiDeF comparison](../../sse_multivector/hidef-experiment-v1/README.md)
-uses the saved Infomap I03 graph and the same 100-note vectors. HDFv1 preserves
-communities found at multiple resolutions and connects them by exact vector
-containment. [HDFv2](../../sse_multivector/hidef-experiment-v1/HDFv2/README.md)
-compares that unchanged graph with two edge-removal policies while keeping
-HiDeF fixed. The runs and unnamed, nested review views are preserved separately;
-neither graph policy is adopted as a default or a final hierarchy method.
-[HDFv3](../../sse_multivector/hidef-experiment-v1/HDFv3/README.md) extends the
-original graph's resolution range while preserving all earlier raw partitions.
-It reveals useful additional candidates, including a clean Satoshi pair lost at
-the unchanged persistence step, but does not establish reliable semantic
-parent–child relationships. All previous run artifacts and viewer defaults remain.
+## Research background
 
-## Goal
+- [Fine-segmentation vector-space requirements](research/fine-segmentation-vector-space-requirements.md)
+- [Corpus-induced regions and labeling](research/semantic-region-discovery-and-labeling.md)
+- [Hierarchy methods for semantic groups](research/hierarchical-grouping-of-fine-semantic-segments.md)
+- [Hierarchy construction from SSE vectors](research/sse-vector-note-hierarchy-candidates.md)
+- [Direct note-to-mask extraction](research/direct-note-to-mask-extractor.md)
+- [Nostr semantic recommendation prior art](research/nostr-semantic-recommendation-prior-art.md)
+- [Existing Nostr recommendation systems](research/existing-nostr-recommendation-systems.md)
+- [General semantic recommendation systems](research/general-semantic-recommendation-systems.md)
+- [Leading content recommendation systems](research/leading-content-recommendation-systems.md)
+- [Nostr relay storage](research/nostr-relay-storage-research.md)
 
-Build a public, corpus-derived content-discovery hierarchy that helps a person
-reach content about a subject they explicitly choose, including niche subjects
-and notes from unknown authors.
-
-The hierarchy is a discovery tool, not a replacement for the separate local
-recommendation system. The v1-style recommender may still be useful later, but
-it must not control this hierarchy or infer the person's current subject from
-private behavior.
-
-## Hard Constraints
-
-- Shared computation may analyze only public Nostr data.
-- The public hierarchy must not depend on private ratings, inferred
-  preferences, or current intent.
-- Subjects must emerge from the corpus rather than a predefined ontology.
-- One note may contribute to several subjects at different breadths.
-- A hierarchy choice must narrow the content set relative to the complete path
-  above it; an independent label that can be interpreted many ways is not a
-  useful refinement.
-- No indispensable external provider may control which public content can be
-  discovered.
-- Production constraints are deferred until the scientific assumptions work,
-  but the repository-wide `$1,000` paid-compute ceiling remains binding and is
-  enforced by the spending code and ledger. No amount is currently earmarked
-  for a particular stage; existing spending and commitments still count.
-
-## Investigation Boundaries
-
-Keep source extraction, grouping, hierarchy placement, and navigation judgments
-separate. An algorithm may produce both groups and a candidate hierarchy, but
-coherent groups alone do not establish meaningful narrowing paths. A discovered
-group is not presumed to be a maximally narrow or terminal subject.
-
-Each experiment freezes its actual inputs and configuration. Preserve source
-masks, memberships, and prior judgments when comparing outcomes. Read-only
-inspection of candidate hierarchies may inform the next experiment; it does
-not freeze an algorithm. Tree versus overlapping parent paths, grouping versus
-separate hierarchy construction, and final labels remain open.
-
-Do not scale the corpus or build a later stage to conceal an unresolved earlier
-stage.
-
-## Document Map
-
-### Current sources
-
-- [`../notes/MY-NOTES.md`](../notes/MY-NOTES.md)
-- [`design/atomic-vector-subject-hierarchy.md`](design/atomic-vector-subject-hierarchy.md)
-- [`design/semantic-region-navigation.md`](design/semantic-region-navigation.md)
-- [`../notes/SSE-EXPERIMENTS.md`](../notes/SSE-EXPERIMENTS.md)
-- [`research/fine-segmentation-vector-space-requirements.md`](research/fine-segmentation-vector-space-requirements.md)
-- [`experiments/fine-segmentation/README.md`](experiments/fine-segmentation/README.md)
-- [`research/hierarchical-grouping-of-fine-semantic-segments.md`](research/hierarchical-grouping-of-fine-semantic-segments.md)
-
-### Supporting research
-
-- [`research/direct-note-to-mask-extractor.md`](research/direct-note-to-mask-extractor.md)
-- [`research/semantic-region-discovery-and-labeling.md`](research/semantic-region-discovery-and-labeling.md)
-- [`research/leading-content-recommendation-systems.md`](research/leading-content-recommendation-systems.md)
-- [`research/general-semantic-recommendation-systems.md`](research/general-semantic-recommendation-systems.md)
-- [`research/existing-nostr-recommendation-systems.md`](research/existing-nostr-recommendation-systems.md)
-- [`research/nostr-semantic-recommendation-prior-art.md`](research/nostr-semantic-recommendation-prior-art.md)
-- [`research/nostr-relay-storage-research.md`](research/nostr-relay-storage-research.md)
-- [`research/paid-hierarchy-relays.md`](research/paid-hierarchy-relays.md) — paid
-  relay findings and the provisional Cellar choice for hierarchy publication.
-
-### Operational guidance
-
-- [`disk-io-pressure-control.md`](disk-io-pressure-control.md)
+These literature surveys describe the evidence available when written. Their
+alternative methods and proposed comparisons are not the current generation
+workflow. Numerical epsilon and section-replacement studies are linked from the
+[HiGen V5 record](hierarchy-generation-v5.md) and the experiment index.

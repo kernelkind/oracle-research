@@ -7,7 +7,7 @@ from the original results.
 
 **Downloads are not available yet.** The
 [shared-dataset commands](#check-the-converted-local-selection) prepare, verify
-and restore the local upload files listed in [publication-files.csv](publication-files.csv).
+and restore the local upload files listed in [dataset manifest](downloads.md#dataset-manifest).
 Restoration recovers original compact exports, not complete native experiment
 directories. Browsing, HR36 preparation and training-input checks
 use restored compact files. Hosted reader workflows and a fresh GPU training
@@ -481,8 +481,8 @@ and testing eventual downloads remain open.
 ### Check the converted local selection
 
 [Publications](publications.csv) records 2,989 output/input bundles plus one
-shared-content row. [Publication files](publication-files.csv) and
-[checksums](publication.sha256) describe 9,686 physical files beneath
+shared-content row. [dataset manifest](downloads.md#dataset-manifest) and
+[dataset hashes](downloads.md#dataset-manifest) describe 9,686 physical files beneath
 `target/publication-dataset/`. Original compact exports stay unchanged in
 `target/publication-exports/`.
 
@@ -895,7 +895,7 @@ preparations, official hierarchy runs, training runs, historical collections
 and the four located historical subject-prompt studies.
 It records saved plan identities and prompt/model settings.
 [Publications](publications.csv) connects them to the exported results;
-[publication files](publication-files.csv) lists their exact files and hashes.
+[dataset manifest](downloads.md#dataset-manifest) lists their exact files and hashes.
 Structured exports record their versions and bindings in `experiment.json`;
 the original Markdown documents use direct source hashes.
 
@@ -977,58 +977,16 @@ and network connections blocked. All seven rows match the original recorded
 totals and the means of their 200 published per-note scores. This checks saved
 arithmetic, not the underlying semantic judgments. No model requests ran.
 
-The following checks used the earlier original-file examples and layout.
+The complete generation guide also passed in a fresh Debian 13 VM with
+8 GiB RAM and four CPU cores, from installation through unsigned export and
+interactive browsing of a 12-post hierarchy. Authentication renewal and later
+revocation were checked there; offline export and browsing then worked without
+credentials. This validates a small reader workflow, not semantic quality,
+large-corpus scalability or reproduction of a historical model draw.
 
-Checked on **2026-10-19**, using Oracle code at `ddef7569` and runner code at
-`3b73550`, with Python 3.13.12 and tiktoken 0.14.0:
-
-| Check | Result |
-| --- | --- |
-| Selected release files | All five staged member paths/sizes match the inventory; all five SHA-256 checks pass. |
-| Minimal Python setup | The documented editable install succeeds in a new virtual environment without Torch. |
-| ASv6.100 preparation and inspection | One unrun case, zero model attempts; its post, rendered prompt and model settings match the original HR36 case. |
-| Rust build | Both release binaries build with the repository's locked dependencies and Nix environment, one compilation job at a time. |
-| HR39 viewer | `--check` passes on the copied viewer files: 201 categories and 2,693 represented notes. |
-| HR36 preparation | V5.3 preparation succeeds with 5,378 original L1 subjects; construction has not started. |
-| L1 result display | All seven displayed rows match the saved per-note averages over 200 notes each. This does not reapply the original semantic judgments. |
-
-The Python preparation checks used copies under the planned release layout,
-with network connections and access to the original artifact locations blocked
-in the checking process. They ran under a 4 GiB process address-space limit.
-That limit describes these preparation checks, not the memory needed for
-inference, encoding or clustering. Existing tokenizer resources and Cargo
-dependency caches were available on the test machine.
-
-No fresh language-model inference, encoder execution, GPU training or new
-semantic grading was performed. Interactive browsing was not manually reviewed;
-the viewer check exercised its noninteractive validation path. Downloaded-archive
-testing, a complete run with public authentication, and exact historical-code
-replays remain pending.
-
-The relocation verifier in runner `edf9177` was additionally checked against a copied HR39
-`HR39-resumed-1/batch-00025/experiment`: all 11 bound sources and its one
-successful receipt passed, with the original artifact locations and network
-blocked and a 4 GiB address-space limit. Its frozen plan hash is
-`25afccd740b15b2b83fd45246a6d121685176896808b296e1336579fe03f336a`.
-This is one saved prompt experiment, not verification of all HR39 evidence.
-Runner fixtures also cover moved reused answers, altered/missing inputs and
-receipts, deduplicated input locations, failed/unrun cases, upgrade ledgers and
-preservation of every evidence file's bytes.
-
-The runner's Python suite passed (211 tests, two skips), as did all ten dedicated
-verification tests. The broader Oracle regression check is not green: all 24
-failing test methods also failed with the unchanged runner at `3b73550`. No
-newly failing Oracle test methods were observed in this comparison.
-
-Archive extraction was also tested locally with runner `62c06e0`: release preparation generated the
-bundled locations for this HR39 experiment, then a tar.gz archive was extracted
-into a different directory. All 15 evidence files and the generated metadata
-retained their checksums. The reader command passed without `--locations`, with
-the original artifact paths and network blocked, the staging directory moved,
-the private locations file unavailable, and a 4 GiB address-space limit.
-This checks one local archive; it is not a download test of a published release.
-All 16 verification tests and 90 relevant shared-runner, update and receipt
-regression tests passed for this change.
+Hosted download testing and fresh GPU training/adapter-inference runs remain
+unverified. Some historical entry points require original files outside the
+compact selection; see [replay limits](open-items.md#original-file-links-and-replay).
 
 ### Hierarchy publication checks
 
@@ -1040,17 +998,6 @@ and passed under a **512 MiB process address-space limit**. These measurements
 describe exporting this saved graph, not memory needed to generate it or proof
 of million-note scalability. Nothing was uploaded.
 
-A fresh isolated editable runner installation automatically installed its
-dependencies and passed `pip check`; six JSON-projection tests passed.
-
-After correcting the receipt-reader instance call used by numerical validation,
-all **177 relevant Oracle checks pass**: 127 V3/V5 construction checks, 38
-publication/viewer/runtime checks and 12 HDBSCAN adapter checks. This includes
-the 42 construction checks that previously failed and a new regression that
-first reproduced the exact call error, then passed with the fix. The checks
-exercise production paths with local fixture runners and encoders; they make
-no paid model calls and do not rerun the archived experiments.
-
 ### Other compact export checks
 
 Local fixture tests cover standalone prompt lifecycle/review exports, explicit
@@ -1060,22 +1007,6 @@ profiles. They also check source preservation, destination ownership, unchanged
 refreshes, bounded streaming and omission of private configuration and raw
 execution diagnostics. Scientific findings and attributed review comments remain
 part of the results; these checks do not replace review of the selected contents.
-
-The complete shared-runner suite ran 246 checks: 244 passed and two were skipped;
-its focused publication group also passed all 54 checks. The Oracle hierarchy,
-adapter, viewer/runtime and publication integration group passed all 190 distinct
-checks across the full run and a targeted eight-test rerun after removing the
-retired concurrency field from its fixture. The evaluation exporter passed
-12 checks plus three relevant native regressions. The numerical/final-writer
-group ran 75 checks: 71 passed and four requiring GPU hardware were skipped.
-The complete pinned HiDeF environment was not exercised; its final-writer hook
-and selected containment regressions were checked with local fixtures.
-
-Two broader evaluation-workflow failures also reproduce with unchanged Oracle
-code and the same runner: the native allowance/resume test receives an additional
-stopped-before-dispatch error, and the effort-analysis CLI fixture has a native
-concurrency mismatch. These are unresolved compatibility limits, not successful
-reproductions. No paid inference or official research experiment was run.
 
 Representative historical sources were exported locally with a 512 MiB process
 address-space limit. A 1,200-answer grading preview, including scores/proofs and
@@ -1087,26 +1018,9 @@ were preserved, and nothing was uploaded.
 
 ### Historical backfill checks
 
-Before dataset selection and sharing, the source-export checkpoint contained
-**3,184 output/input directories and 10,015 files**, totaling
-**1,178,119,887 bytes**. These are preserved original compact exports, not current
-upload sizes. Every checkpoint file was independently
-rehashed. Structured payload bindings were checked against their export manifests;
-the five original ASv6.100 Markdown documents match their recorded source hashes.
-Exact prepared-input copies were also checked against their frozen source hashes.
-The complete staged file tree
-matches the selected file list, excluding all private selection logs and
-superseded generated copies.
-
-All **27,032 native jobs** were classified in the source audit. The public
-source-export index selected 2,547 standalone preparations with distinct frozen
-plan identities. The current dataset excludes 196 proven unexecuted preparations
-from that selection and retains three ambiguous snapshots. The other source
-jobs are warmups, internal hierarchy/grading units, manual construction or
-resource-test intermediates, or input preparation. Simulated worker responses
-from the resource tests were excluded; their final measurements were retained.
-The historical hierarchy selection adds 203 saved final/last branch outputs to
-the 37 official runs without treating those branches as independent trials.
+The selected dataset excludes 196 preparations proven never executed and
+retains three execution-unknown snapshots. Internal jobs and 203 saved branch
+outputs are not counted as independent trials.
 
 All 67 selected evaluation sources passed their answer and judgment joins:
 zero missing selected answers, zero missing judgments and zero conflicting
@@ -1114,16 +1028,8 @@ judgment hashes. **1,966** older judgments have `receipt_only` bindings; this
 does not invent an absent separate output hash. Source-assessment actor fields
 remain `not_recorded` wherever the originals did not identify an actor.
 
-Conversion workers used a 512 MiB process address-space cap. Recorded prompt
-and evaluation peaks were about 163 MiB and 158 MiB respectively. Historical
-format regressions passed 20 evaluation/paired/native checks and 78 numerical
-checks (four GPU skips); four final production-CLI integration checks also
-passed. The two broader evaluation compatibility failures described above
-remain unresolved. No fresh inference, training or semantic grading occurred.
-
-This checks the selected formats; it does not claim exhaustive all-history
-coverage. The [conversion-gap list](publication-gaps.csv) is now empty. Privacy
-review and a clean reader test against the eventual hosted selection remain pending.
+This verifies the selected saved formats, not exhaustive all-history coverage.
+Hosted reader testing remains open.
 
 ### Saved hierarchy, navigation and performance checks
 
@@ -1292,7 +1198,7 @@ masks remain deprecated historical evidence; raw posts are not deprecated.
 The three exports total **15 files, 15,222,404 bytes**, or **3,006,062 bytes** with
 gzip level 6. Actual-file exports and independent source/payload comparisons
 pass under a 512 MiB worker address-space limit. Original sources remain
-unchanged. Nothing has been uploaded; publication privacy review remains open.
+unchanged. Nothing has been uploaded; release-content review remains open.
 
 ### Frontier comparison checks
 
@@ -1362,10 +1268,10 @@ PYTHONPATH=.:sse_multivector python -m unittest \
 All 16 title/segmentation/frontier original-file exports also pass under a
 512 MiB worker address-space limit. Their 366 selected sources retain their
 SHA-256 hashes, bytes, modes and modification times; all 9,770 previously selected
-files are unchanged. The [file list](publication-files.csv) and
-[checksums](publication.sha256) cover the exact local selection. ASv6.23/ASv6.48
+files are unchanged. The [dataset manifest](downloads.md#dataset-manifest) and
+[dataset hashes](downloads.md#dataset-manifest) cover the exact local selection. ASv6.23/ASv6.48
 derivatives remain deprecated historical evidence. No inference or uploads
-occurred; final publication privacy review remains open.
+occurred; final release-content review remains open.
 
 ### Early prompt and manual prominence study checks
 
@@ -1563,7 +1469,7 @@ All 33 real-file exports also pass with a 512 MiB address-space limit and about
 31 MiB maximum resident memory. The 2,262 input/receipt/source files read by
 these exports retain their bytes, modes and modification times. No new model
 answers, user decisions or semantic judgments were created. All output hashes
-and sizes are listed in [publication files](publication-files.csv).
+and sizes are listed in [dataset manifest](downloads.md#dataset-manifest).
 
 ### SSE representation study checks
 

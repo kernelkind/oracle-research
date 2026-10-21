@@ -1,129 +1,31 @@
 # Publication contents and hosting
 
-**The hosting split and the following data categories are agreed.** Compact
-exporters cover the result families below. The supported historical selection
-has been converted locally and prepared as a shared dataset with indexed upload
-files and checksums.
-Reproduction limits, repository names and published download paths still need review.
-Nothing has been uploaded. The [generated-data history rewrite](#generated-data-history-rewrite)
-is complete; privacy and identity review remains open.
+Code and history belong on GitHub; used inputs and final results belong on
+Hugging Face Datasets; all evaluated adapters belong on Hugging Face Models.
+The selected dataset is prepared locally. Nothing has been uploaded, and public
+repository names, revision links and download tests remain open.
 
-| Where | What |
-| --- | --- |
-| GitHub | Code and its history, tests, prompts and their provenance, authored findings, useful documentation, the selected-study index and commit mapping; download size unmeasured |
-| Hugging Face Models | All 17 evaluated adapters, with configurations and pinned base-model references: **6.78 GiB** |
-| Hugging Face Datasets | Posts actually used, prepared training data, selected starting subjects, final unsigned hierarchies, standalone prompt answers, evaluation results, final numerical results and parameters: **844.00 MiB (0.82 GiB) prepared locally**, with repeated content stored once |
-
-The GitHub index will link each experiment to its inputs and results at exact
-Hugging Face revisions, with checksums. Readers should be able to download the
-bundles they need with their referenced shared files. Model and dataset files will be hosted on
-Hugging Face; GitHub Release attachments are not the delivery plan.
+| Where | What | Prepared size |
+| --- | --- | ---: |
+| GitHub | Code/history, tests, prompts, reusable specifications, authored findings, reader guides and experiment index | Download size unmeasured |
+| Hugging Face Models | All 17 evaluated adapters, configurations and pinned base-model references | 6.78 GiB |
+| Hugging Face Datasets | Used posts, prepared training inputs, selected subjects, unsigned hierarchies, prompt answers, evaluations, numerical results and parameters | 844.00 MiB (0.82 GiB) |
 
 ## Public Git contents
 
-The agreed layout keeps source code, tests and fixtures, reusable specifications,
-versioned prompts, prompt revisions and assembly receipts, and authored research
-findings in Git. Generated run files and exhaustive lists of the original
-workspace stay outside public Git. Selected inputs and final evidence go to
-Hugging Face; preserve the complete original working files locally.
-
-The read-only review at Oracle commit `a45639d2` and runner commit `34d7eb7`
-recorded the original sizes below. The selected-study index is now simplified,
-and the reviewed generated files are removed from the Oracle publication clone's
-commit trees. Original working files remain locally at the same paths, with the
-original Git history preserved in a private backup.
-
-| Contents | At the reviewed commits | After the generated-data rewrite |
-| --- | ---: | ---: |
-| Both Git object databases | About 504 MiB | 32.87 MiB local storage at rewrite checkpoint `d2e3a88c` |
-| Both repositories' tracked file contents | About 2.67 GiB | About 60 MiB planning estimate; unchanged by the rewrite |
-| `docs/experiments/` | 1,286 files, 192.89 MiB | 23 files, about 7.68 MiB, including the bundled commit map |
-
-At the rewrite checkpoint, Oracle's local Git objects measured **24.50 MiB** and
-the unchanged runner's objects **8.37 MiB**, including loose objects. Their
-**32.87 MiB** total preceded later documentation and lookup-support commits.
-It measures local object storage, not a compressed transfer or public download.
-
-The ordinary untracking change covers **28,307 reviewed generated files**,
-totaling **2,608,765,945 bytes (2.43 GiB)**: requests/responses, execution state
-and logs, intermediate arrays, rendered displays and working archives. Source,
-prompts, authored plans and findings, manually supplied definitions/controls,
-fixtures, reusable usage specifications and frozen package contracts remain
-tracked. This includes the 17 navigation `RESULTS.md` files and pinned HiDeF
-runtime lock. All **196 ambiguous files** remain tracked
-pending review. Existing workspace files keep their paths and occupy the same
-local storage; a fresh checkout omits the untracked files.
-
-For the public index, retain the maintained guides, selected-result catalog,
-checksums, hierarchy/corpus/model summaries and useful provenance/recovery
-tables. Retain `historical-files.csv` and `historical-uses.csv` because they bind
-evidence to original blobs, commits and paths. `experiments.csv` now retains the
-2,595 initially selected rows from the reviewed index, preserving their study
-identities, settings and order, plus 33 later-selected title/description
-collections, 11 SSE representation collections, six subject/mask collections,
-22 early/standalone prompt collections, four segmentation/title/frontier
-collections, one archived-baseline collection and four later-located historical
-prompt studies. Six ASv6.100 rows additionally link
-the shared evaluation documents in their publication notes.
-The final hierarchy/navigation/performance batch adds eight collection rows:
-three restored from the original index and five identified by their saved
-sources and selection specifications. Existing study settings stay unchanged.
-The dataset selection removes 196 native preparations proven never executed
-from that index, leaving 2,488 entries. Three ambiguous snapshots remain
-included with unknown execution history. Original files are preserved.
-`publications.csv` also indexes the selected
-numerical and other
-results; `publication-gaps.csv` keeps outstanding evidence review explicit.
-
-The full original job index is preserved in the [local audit copy](#local-audit-copy).
-`files/**`, `dependencies.csv`,
-`inputs.csv`, `issues.csv`, `spec-inputs.csv`, `collections.csv`, `file-lists.csv`,
-`bundles.csv`, `bundle-files.csv`, `bundle-collections.csv` and
-`download-targets.csv` are also local audit material. These exhaustive
-file/dependency
-catalogs and earlier packaging tables are not additional Hugging Face downloads.
-Their meaningful conclusions remain in the maintained findings and gap records.
-The public index and its navigation links have been updated. Research records
-now identify original artifact paths explicitly and name verified selected
-exports separately; see [reading the research records](README.md#reading-the-research-records).
-The reviewed links to removed generated files have been repaired.
-[Original-file replay dependencies and missing evidence](open-items.md#original-file-links-and-replay)
-remain open before publication.
+Keep source code, tests and fixtures, reusable specifications, versioned prompts,
+prompt revision/assembly receipts, useful research findings and the selected
+experiment index in Git. Generated experiment data is supplied separately.
+Complete original working directories are not additional required downloads.
 
 ### Generated-data history rewrite
 
-The verified Oracle rewrite maps original head
-`4476b94b5ef74f4a2ee50dd6b867b783ad242ac5` to
-`d2e3a88cca7acf52c657810198611762ff1b53e5`. It removes **29,580 exact paths**
-from historical trees: 28,307 reviewed generated-file paths, 1,264 exhaustive
-discovery-catalog paths and nine additional historical generated-file paths.
-All **3,148 commits**, including empty commits and **398 merges**, are retained
-one-to-one. Authors, committers, timestamps, messages and parent order are
-unchanged; every tree matches the exact path filter, and the rewritten head's
-tree is identical to the original head's tree. Code, prompts, authored findings
-and uncertain sources are retained.
-The runner's history was not rewritten. Original files were not altered.
-
-The original Git backup is local under
-`target/publication-audit/history-cleanup-4476b94b/original.git`. The exact
-old-to-new mapping is bundled as [commit-map.txt](commit-map.txt), with identical
-copies at `.git/filter-repo/commit-map` and
-`target/publication-audit/history-cleanup-4476b94b/commit-map.txt`.
-Original generation, export and audit IDs remain unchanged in the research
-records. Historical source readers use `generation_history.source_at_revision`
-to resolve full original IDs or unique 7–40-character hexadecimal prefixes.
-They read the bundled map without Git replacement refs; named/current refs pass
-through. An original commit is preferred when its raw object is available,
-otherwise its mapped commit is read. Raw `git show` commands still require the
-corresponding rewritten ID. See the [reader example](reproduce.md#which-code-is-being-repeated).
-At code commit `3ecbc0d4`, six revision tests and the legacy automatic-workflow
-test passed in a fresh ordinary clone without replacement refs, private audit
-files or saved research inputs. Generated files removed from history remain
-unavailable in rewritten commits.
-
-This rewrite removes generated data. Final privacy and identity review, and any
-separately approved cleanup it requires, remain before publication. Repeat checks
-against the final contents and preserve mappings across any further rewrite.
+The publication history omits generated data and reviewed private material.
+Original revision IDs remain in scientific records. The bundled
+[commit map](commit-map.txt) resolves original source revisions to their public
+counterparts through `generation_history.source_at_revision`; raw Git commands
+need the mapped ID. See [historical source lookup](reproduce.md#which-code-is-being-repeated).
+Removed generated blobs still require original evidence rather than source lookup.
 
 ## What belongs
 
@@ -170,10 +72,8 @@ against originals, and refuses unclassified or changed evidence.
 ## Measured local exports
 
 [Publications](publications.csv) identifies 2,989 output/input bundles and one
-shared-content catalog row. [Publication files](publication-files.csv) and
-[checksums](publication.sha256) describe the **physical upload files** under
-`target/publication-dataset/`. The original exports remain unchanged under
-`target/publication-exports/`. No public download or Hugging Face revision exists.
+shared-content catalog row. The [dataset manifest](#dataset-manifest) describes the **physical upload files** under
+`target/publication-dataset/`. The original compact exports remain local. No public download or Hugging Face revision exists.
 
 Repeated values are stored once in `shared/`. Numeric references such as
 `{"$ref":123}` identify shared records containing `id`, full `sha256` and `value`.
@@ -210,100 +110,10 @@ it is **8,165,089,772 bytes (7.60 GiB)**. Code and cleaned Git history are addit
 Measured per-file gzip level-6 compression totals **162,436,389 bytes
 (154.91 MiB)**; no compressed downloads were created.
 
-The package includes 9,429 original compact-export paths, 256 shared files and
-the manifest. It excludes 196 proven unexecuted preparations: 588 source-export
-files totaling 38,541,051 bytes. Three ambiguous snapshots remain included.
-The included original compact files total 1,144,549,797 bytes before sharing.
-HR36's two starting-input files were added after the original export checkpoint;
-that addition preserved the earlier payloads. A later privacy review rebuilt
-76 affected exports while preserving original research evidence privately.
-Sharing reduces raw size much more than compressed size.
-
-### Original export checkpoints
-
-The preserved source-export checkpoint contains 10,015 files totaling
-1,178,119,887 bytes (1.10 GiB), or 168,260,249 bytes with gzip level 6.
-Those originals were not altered or deleted. The backfill measurements below
-describe original compact exports before dataset selection and sharing, not
-additional upload files or the current upload size.
-
-The five original evaluation documents retain their Markdown bytes and relative
-paths under `evaluations/asv6.100-generalization-v1/`. Their checksums are listed
-directly; they have no `experiment.json` wrapper. The six existing ASv6.100 native
-bundles retain the 180 answers and reviews, and their study-index notes link
-these shared documents. No additional trial or duplicated answer bundle is added.
-
-The six subject/mask collections add **615 files, 14,108,029 bytes**, or
-**2,899,439 bytes** measured with gzip level 6. They preserve exact saved answers
-and recorded methods, assessments, corrections and user decisions. Reused answers
-remain identifiable; the 1,965 responses are not a count of independent calls.
-The four previously selected studies and existing ASv6.100 evidence are not
-duplicated. See the [subject/mask checks](reproduce.md#historical-subject-and-mask-study-checks).
-
-The 22 early/standalone collections add **120 files, 2,440,074 bytes**, or
-**370,563 bytes** with gzip level 6. Their 24 entries retain 494 early/standalone
-answers and 20 manual prominence answers with exact scores and mask contexts.
-Original user-review states and later rereviews remain distinct; embedded copies
-are references. Existing native prominence outputs are not duplicated. See the
-[early prompt and prominence checks](reproduce.md#early-prompt-and-manual-prominence-study-checks).
-
-The four segmentation, fine-region title and frontier collections add **80 files,
-19,415,582 bytes (18.52 MiB)**, or **3,633,143 bytes (3.46 MiB)** with gzip level 6.
-They retain nine segmentations, 50 title answers and 233 frontier answers, plus
-three saved failed partial answers. Original structured reviews, later authored
-corrections and interim comparison outcomes remain distinct. Reused baseline
-answers link their existing publications. See the
-[title/segmentation checks](reproduce.md#fine-region-title-and-real-note-segmentation-checks)
-and [frontier checks](reproduce.md#frontier-comparison-checks).
-
-The four archived-baseline bundles add **20 files, 6,196,469 bytes (5.91 MiB)**,
-or **1,218,841 bytes (1.16 MiB)** with gzip level 6. They retain parsed assembled
-CREC answers and final segments, plus 36,112 unique pairwise cosine measurements
-and their diagnostics. TEv4.1's existing answer inputs are referenced without
-duplication. Complete original archives remain outside these downloads. See the
-[archived-baseline checks](reproduce.md#archived-baseline-checks).
-
-The hierarchy/navigation/performance batch adds **28 bundles, 140 files and 10,973,854 bytes
-(10.47 MiB)**, or **2,078,449 bytes (1.98 MiB)** with gzip level 6. These contain
-14 final hierarchies/partitions, two manual reference fixtures, eight navigation
-studies and four performance units covering seven reports and their summary.
-See the [shared command and reproduction limits](reproduce.md#saved-hierarchy-navigation-and-performance-checks).
-
-TRUE10 adds **five files, 2,432,201 bytes (2.32 MiB)**, or **256,534 bytes**
-with gzip level 6. Its raw and canonical graphs retain their unresolved cycles;
-direction scores reference six existing selected bundles. The export binds
-the saved run configuration and plan, without inventing a graph configuration.
-
-These are measured selected outputs, not an exhaustive all-history size claim.
-All 33 formerly unsupported entries are resolved by this selection or their
-recorded intermediate/duplicate dispositions. TRUE10 closes the last
-[conversion gap](publication-gaps.csv); the file now contains only its header. The
-[109-group historical review](open-items.md#historical-collection-review)
-resolved 32 groups needing no separate result export. The other 77 are now
-selected: 33 title/description groups, 11 SSE representation groups, six
-subject/mask groups, 22 early/standalone prompt groups, four
-segmentation/title/frontier groups and one archived-baseline group.
-All 27,032 native jobs were classified at the source-export checkpoint, which
-selected 2,547 standalone preparations. The dataset retains 2,351 after the
-196 verified exclusions; warmups,
-internal execution jobs, manual construction intermediates and input-only
-preparations are excluded. Independent repeats remain distinct, and reused
-answers retain their reuse records. The 203 saved hierarchy branches are not
-claimed to be independent trials.
-
-Every selected file was rehashed and every payload binding checked. All selected
-evaluation answers and supporting judgments were located. Older judgments bound
-only by receipt hashes are explicitly labeled `receipt_only`; missing actor
-attribution stays `not_recorded`. Privacy review and
-testing the reader workflow against this exact selection remain open.
-
-The original used-post file contains 10,571 IDs and measures 3.80 MiB as compact
-ID/text JSONL. The four historical prompt studies also include their 10 used
-posts in their own inputs; three are absent from that shared file. Some older
-unstructured records remain incompletely linked, so
-that count is not a claim of exhaustive coverage. The four prepared training
-files below add 63.74 MiB. Media and complete signed source-event envelopes are
-not included in these measurements.
+The package restores 9,429 compact-export files and stores repeated content
+once. It excludes 196 preparations proven never executed; three snapshots with
+unknown execution history remain included. These counts describe bundles and
+saved records, not independent trials.
 
 ## Corpora and fine-tunes
 
@@ -328,8 +138,8 @@ revision and a model card linking its training data, results and loading instruc
 
 Their weights total **7,280,022,320 bytes**; configurations add 65,449 bytes.
 [models.csv](models.csv) records all 17 exact checkpoint identities and base
-revisions. The selected `inputs/adapter-hashes/adapters.jsonl`, listed in
-[publication files](publication-files.csv), binds each weight/configuration pair
+revisions. The selected `inputs/adapter-hashes/adapters.jsonl`, bound by the
+[dataset manifest](#dataset-manifest), binds each weight/configuration pair
 to its hashes and sizes. Publication does not designate any checkpoint as
 production-approved.
 The [final L1 comparison](../planning/fine-tuning-pilot-process.md#l1-only-test-results-october-15)
@@ -546,53 +356,27 @@ model answers, encoding or clustering ran.
 
 ## File selection and archive layout
 
-Use the selected-result tables to identify the inputs and final evidence needed
-for a study:
-
-| Table | Current role |
+| Record | Purpose |
 | --- | --- |
-| [experiments.csv](experiments.csv) | Selected studies with prompt/model settings, provenance and links to compact exports; rows are not an additive count of independent trials |
-| [publications.csv](publications.csv) | Included bundle identities, physical sizes and coverage qualifications, plus one shared-content row |
-| [publication-files.csv](publication-files.csv) and [publication.sha256](publication.sha256) | Physical dataset upload paths, sizes and checksums, including shared content and `dataset.json` |
-| [publication-gaps.csv](publication-gaps.csv) | Conversion-gap record; currently no open rows |
-| [models.csv](models.csv) | All 17 evaluated adapter checkpoints and their pinned base-model references |
-| [historical-files.csv](historical-files.csv) and [historical-uses.csv](historical-uses.csv) | Original artifact blobs and commit associations from the pre-rewrite audit |
+| [experiments.csv](experiments.csv) | Selected studies, settings, provenance and associated publications |
+| [publications.csv](publications.csv) | Included bundle identities and coverage qualifications, plus shared-content row |
+| `dataset.json` in the dataset | Exact physical and restored paths, sizes and SHA-256 hashes |
+| [models.csv](models.csv) | All adapter identities and pinned base-model revisions |
+| [historical-files.csv](historical-files.csv) and [historical-uses.csv](historical-uses.csv) | Original artifact blob/commit associations |
 
-These tables describe the prepared local dataset. `dataset.json` also records
-the exact original compact files recoverable by restoration. Final Hugging Face repository
-names, revision links, hosted file layout and compression choices remain open.
+### Dataset manifest
 
-## Local audit copy
-
-The original discovery audit measured **534.71 GiB** of candidate source files
-and indexed 27,032 native jobs. Those working-storage totals and internal job
-counts do not describe the selected downloads or independent trials.
-
-For publication maintainers, the complete pre-simplification index is preserved
-under ignored `target/publication-audit/index-before-simplification-1f3d541c/`.
-Its `docs/experiments/` subtree contains all 1,286 original files, including the
-27,193-row job/collection index and exhaustive file/dependency tables.
-`manifest.jsonl` records each file's original Git blob, byte count and SHA-256;
-the copy was rehashed against that manifest. The recorded source commit is
-`1f3d541c`. This local audit copy is outside the public repository and download set.
-
-The generated-file untracking has separate before/after integrity records under
-ignored `target/publication-audit/generated-untracking-bfbdc288/`, binding paths,
-original Git blobs, byte counts and SHA-256 hashes. The generated files themselves
-stay at their original workspace paths.
-
-The public `experiments.csv` retains the selected rows' identities, settings and
-original order, with publication notes linking later-selected evidence.
-The reviewed conversion gaps are closed; the retained findings and provenance
-tables preserve meaningful recovery and missing-evidence qualifications.
+The dataset's `dataset.json` is the authoritative file manifest. It records
+physical paths, sizes and SHA-256 hashes, shared-content bindings and the exact
+compact-export bytes recoverable by restoration. Use the
+[dataset verification and restoration commands](reproduce.md#check-the-converted-local-selection)
+before opening restored results with consumers that expect their original JSON.
+The [inventory](inventory.json) pins the prepared manifest hash and category totals.
 
 ## Before downloads become available
 
-Retain the recorded reproduction limits. Check that exported inputs,
-parameters, result identities and status agree with the saved evidence, including
-reuse and incomplete runs. Review the selected data for sensitive information.
-Test reader instructions using only the proposed downloads and documented
-upstream dependencies, with the original storage unavailable. Preserve the
-original research throughout. The generated-data rewrite is complete. Finish
-privacy and identity review before publication, then check the final contents,
-commit mappings and reader workflows.
+Choose repository names and pin the exact Hugging Face revisions in the index.
+Review the final contents, preserve the recorded reproduction limits, and test
+the reader instructions using only those downloads and documented upstream
+dependencies. Local conversion and integrity checks do not authorize publication
+or establish semantic quality. Complete original working files remain private.

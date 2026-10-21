@@ -6,7 +6,7 @@
 
 This review keeps SSE, the source notes, and their existing masked-subject vectors fixed. It examines alternative ways to organize those vectors into a browsable hierarchy of notes. It does not select a replacement encoder, generate category labels, or declare a hierarchy algorithm validated. Sources and repository evidence were checked on 2026-09-10.
 
-The strongest immediate candidates are **hierarchical Infomap**, **nested stochastic block models**, and **recursive spectral partitioning**. They test different explanations for the current problems: insufficient use of collective connections, an inadequate whole-hierarchy objective, and early bottom-up commitments. Infomap and nested block models also permit revising assignments rather than preserving every initial merge.
+The candidates prioritized by this September 10 review were **hierarchical Infomap**, **nested stochastic block models**, and **recursive spectral partitioning**. They test different explanations for the current problems: insufficient use of collective connections, an inadequate whole-hierarchy objective, and early bottom-up commitments. Infomap and nested block models also permit revising assignments rather than preserving every initial merge.
 
 This is a ranking of experiments worth doing, not a demonstrated ranking of semantic quality. None of the reviewed sources establishes that its method produces consistently accurate, increasingly specific categories for mixed short notes represented by SSE. The literature supports continuing geometric investigation; it does not establish either its sufficiency or its impossibility.
 
@@ -16,7 +16,7 @@ The goal is a hierarchy in which choosing a child gives a more specific descript
 
 A note can contain several subjects. A category need not describe everything in the note; the note must actually support the meaning offered by that category and its path. Another subject in the same note does not make every category containing that note a valid parent of its other subjects.
 
-The current design permits broad, narrow, nested, and overlapping subjects. There is no requirement to discover a uniformly fine layer first. Nor must every geometric group become a visible category. Category naming, membership construction, and choosing which existing groups to display remain separate responsibilities, even if one algorithm contributes to several of them.[^1]
+The design reviewed here permits broad, narrow, nested, and overlapping subjects. There is no requirement to discover a uniformly fine layer first. Nor must every geometric group become a visible category. Category naming, membership construction, and choosing which existing groups to display remain separate responsibilities, even if one algorithm contributes to several of them.[^1]
 
 Two kinds of containment must be distinguished:
 
@@ -27,7 +27,7 @@ Mapping a vector tree back to note IDs can guarantee the first. It cannot guaran
 
 ## What the existing results actually establish
 
-The current comparison contains 100 notes, 916 distinct vectors, and 945 original mask records. HDBv2, HDBv3, and the later merge-rule experiments are different saved results, not interchangeable names for one algorithm.[^2][^3]
+The reviewed comparison contains 100 notes, 916 distinct vectors, and 945 original mask records. HDBv2, HDBv3, and the later merge-rule experiments are different saved results, not interchangeable names for one algorithm.[^2][^3]
 
 | Observation | Supported conclusion | Conclusion not established |
 | --- | --- | --- |
@@ -184,19 +184,9 @@ The accepted coffee arrangement provides one concrete positive example, not the 
 
 Broad notes may remain available at a broader visible category without being forced into an unsupported specific one. A computational tree whose leaves are vectors does not require displaying those leaves as maximally narrow semantic categories. Equal note sets, one-note choices, and presentation depth should remain separately inspectable rather than silently changing memberships.
 
-## Recommendation
-
-Prioritize **hierarchical Infomap**, with **nested stochastic block models** as the most distinct challenger and **recursive spectral partitioning** as a useful broad-first control. Retain HDBv3 and the strongest existing M01/M06/M07 memberships as comparisons, not as accepted ground truth. B++&C and HypHC remain credible later objective-based alternatives.
-
-The proposed first comparison should use the existing corpus and unchanged SSE vectors. Establish the graph contract before running it, keep the output memberships unaltered, and inspect both useful local groups and their parents. Do not begin by repairing labels or aggressively pruning the hierarchy: that would obscure which organization the algorithm actually produced.
-
-The central research question is now concrete: **can an algorithm using the wider pattern of SSE relationships—and, for the first two candidates, revisable assignments—produce more accurate parent placement than the saved irreversible merge histories?** A positive result would support this approach. A negative result would narrow the explanation only after graph construction, note projection, and known extraction/representation errors are accounted for.
-
-No candidate has been run or selected by this review.
-
 ## Sources
 
-[^1]: Repository design, [Atomic-Subject Content Hierarchy](../design/atomic-vector-subject-hierarchy.md), especially Status, Goal, Separation of Concerns, and hierarchy membership requirements. Snapshot inspected 2026-09-10.
+[^1]: Repository design, *Atomic-Subject Content Hierarchy*, especially Status, Goal, Separation of Concerns, and hierarchy membership requirements. Historical snapshot inspected 2026-09-10, preserved in Git history. The current implementation is [HiGen V5.3](../hierarchy-generation-v5.md).
 [^2]: Repository experiment, [Cross-note density and HDBv3 results](../../../sse_multivector/real-note-fine-segmentation-v1/cross-note-density-v1/README.md), especially contextual re-examination, HDBv3, and optional note-navigation comparison. Snapshot inspected 2026-09-10.
 [^3]: Repository experiment, [Merge-rule exploration M01–M09](../../../sse_multivector/merge-rule-exploration-v1/README.md), individual results and comparison table. Snapshot inspected 2026-09-10.
 [^4]: Repository comparison, [Merge rules: results to inspect](../../../sse_multivector/merge-rule-exploration-v1/inspection.md), Manual coffee example and Coffee preparation compared with M06; underlying comparison artifact (`../../../sse_multivector/manual-coffee-hierarchy-v1/m06-comparison.json`). Snapshot inspected 2026-09-10.

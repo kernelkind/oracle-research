@@ -112,4 +112,4 @@ The distinction between actual corpus inputs, task-specific judgments and human 
 
 No user notes document, existing prompt, production code, SSE artifact or segmentation result was changed. The only decision correction was the explicitly authorized N06-S06 rejection-to-approval change. CREC-125 remains In Review with four subject-generation questions open; neither the model nor mask prompt was frozen.
 
-Selected inputs, final answers, recorded reviews and parameters: `historical-studies/mask-prompt-astra-ten-note-v1`. See the [publication catalog](../../docs/experiments/publications.csv) and [file checksums](../../docs/experiments/publication-files.csv).
+Selected inputs, final answers, recorded reviews and parameters: `historical-studies/mask-prompt-astra-ten-note-v1`. See the [publication catalog](../../docs/experiments/publications.csv) and [dataset manifest](../../docs/experiments/downloads.md#dataset-manifest).

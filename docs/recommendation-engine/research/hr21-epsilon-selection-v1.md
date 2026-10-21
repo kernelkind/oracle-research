@@ -138,7 +138,7 @@ These controls explain why simply choosing the biggest gap, longest-lived
 branch, or most heavily supported branch is insufficient. They do not prove
 that every possible use of persistence or stability fails.
 
-## Evidence and next check
+## Retained evidence
 
 Frozen source paths and hashes, production-plan validation, complete split
 curves, all proposed cuts and memberships, trimming sensitivity, weighted
@@ -152,10 +152,11 @@ The full 0.94 reference SVG is retained at:
 
 `/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hr21-persistence-partitions-v1/target/hr21-root-partition-study-v1/hr21-epsilon-094-all-sections-v1.svg`.
 
-Before any adoption, review at least one larger tree's adaptive cut alongside
-the fixed-0.94 baseline. Inspect the concrete HR22 Dogs concern rather than
-assuming either numerical rule has established semantic correctness. The
-research worktree remains for these ignored calculations and review images.
+Subsequent numerical comparisons are recorded for
+[100 Food & Drink notes](food-drink-hundred-epsilon-v1.md),
+[50 Music notes](music-fifty-epsilon-v1.md) and
+[a mixed Food/Music sample](food-music-fifty-epsilon-v1.md).
+They preserve the distinction between a numerical cut and semantic review.
 
 ## Offline review command
 

@@ -38,7 +38,7 @@ worker, or inference setting is a new baseline.
 diagnostics. Its 194 answer inputs are already selected in
 `numerical/fine-region-00d974f22ed8935f/inputs.jsonl` and are not duplicated.
 See the [catalog](../../../docs/experiments/publications.csv),
-[file list](../../../docs/experiments/publication-files.csv) and
+[dataset manifest](../../../docs/experiments/downloads.md#dataset-manifest) and
 [export commands and checks](../../../docs/experiments/reproduce.md#archived-baseline-checks).
 The files are prepared locally for Hugging Face Datasets; nothing is uploaded.
 AS lineage remains unknown. The full archive remains local and unchanged;

@@ -65,4 +65,4 @@ The broader-title questions are resolved by user approval. The [completed v15 te
 
 The [official GPT-5.6 guidance](https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6#prompt-migration-workflow) informed the small isolated edit and same-case retest, not the semantic verdicts.
 
-**Publication status:** `collection:tracked-hdbv2-node-description-probe-v14` is selected as `title-studies/hdbv2-node-description-probe-v14` in the [publication catalog](../../docs/experiments/publications.csv), with [exact files and hashes](../../docs/experiments/publication-files.csv). The local export preserves saved answers and recorded assessments; input AS lineage remains unverified. Nothing has been uploaded.
+**Publication status:** `collection:tracked-hdbv2-node-description-probe-v14` is selected as `title-studies/hdbv2-node-description-probe-v14` in the [publication catalog](../../docs/experiments/publications.csv), with [dataset manifest](../../docs/experiments/downloads.md#dataset-manifest). The local export preserves saved answers and recorded assessments; input AS lineage remains unverified. Nothing has been uploaded.

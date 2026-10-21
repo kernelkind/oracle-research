@@ -2,9 +2,11 @@
 
 ## Status
 
-This note records research into replacing corpus-wide frontier-model takeaway
-and mask calls with one trained local extractor. It is a plausible scaling
-path, not an approved implementation or a measured Nostr result.
+This literature review considers a local extractor that directly predicts
+source-token masks. It is an alternative to the implemented subject-extraction
+fine-tuning, not its training plan or a measured Nostr result. See the
+[reproduction guide](../../experiments/reproduce.md#prepare-the-fine-tuning-inputs)
+for the implemented training workflow.
 
 ## Required Transformation
 
@@ -20,7 +22,7 @@ One mask is intended to represent one atomic subject. A mask may contain separat
 fragments, and masks from the same note may overlap. The extractor must also
 decide how many masks the note needs.
 
-SSE does not consume a natural-language takeaway. Takeaways are currently an
+SSE does not consume a natural-language takeaway. Earlier mask-generation experiments used takeaways as an
 intermediate aid for generating and auditing masks with general-purpose
 models. A specialist extractor does not need to generate them at inference.
 
@@ -71,34 +73,7 @@ direct source masks. It is not itself the desired replacement.
 Sources: [Sub-Sentence Encoder paper](https://aclanthology.org/2024.naacl-long.89.pdf)
 and [released SegmenT5-large model](https://huggingface.co/sihaochen/SegmenT5-large).
 
-## Possible Training Role
-
-The current general-model process could create supervision without becoming
-part of production, but only after its atomic-subject target is fixed and the
-generated records are reviewed:
-
-```text
-training-data creation
-  note -> TPv3.82 takeaway -> MPv3.4 mask -> reviewed atomic-subject record
-
-production inference
-  note -> trained mask extractor -> SSE vectors
-```
-
-The extractor's training target is only the final grouped mask set. Takeaways
-may remain in the preserved training artifacts for diagnosis, but are not an
-inference output.
-
-The currently selected prompt versions are preserved in:
-
-- `sse_multivector/takeaway-prompt-versions.json`;
-- `sse_multivector/mask-prompt-versions.json`; and
-- `sse_multivector/prominence-prompt-versions.json`.
-
-They are current implementation inputs, not a frozen training-data contract.
-Prompt repair remains open. PPv2 currently estimates vector-to-note
-prominence separately; whether a trained mask extractor should also predict
-that value has not been decided.
+## Distillation precedent
 
 Teacher-to-student proposition segmentation has also been demonstrated at
 larger scale. One study used 226,000 teacher-generated text/proposition pairs
@@ -107,17 +82,6 @@ study generated rewritten propositions rather than masks, so it supports the
 distillation strategy but not direct mask quality.
 
 Source: [Scalable and Domain-General Abstractive Proposition Segmentation](https://aclanthology.org/2024.findings-emnlp.517.pdf).
-
-## Training-Data Size Is Open
-
-Earlier estimates used proposition counts from communicated-meaning runs.
-Those counts do not establish how many reviewed atomic-subject masks this task
-requires. No training-set size is currently approved.
-
-If this scaling path is pursued, start with a bounded learning curve and
-measure held-out downstream SSE behavior before purchasing or generating a
-large corpus. Every paid stage remains subject to the repository-wide budget
-rules.
 
 ## Evaluation Requirements
 
@@ -144,7 +108,7 @@ the reviewed systems extract propositions rather than this project's atomic
 subjects. T5 marked-copy output is one plausible candidate, not a selected
 implementation.
 
-The current dependency is earlier: demonstrate the desired atomic-subject
-mask transformation and its downstream SSE behavior. Only then can extractor
-architecture, supervision volume, prominence prediction, and training cost be
-evaluated coherently.
+The published evidence does not establish a direct mask extractor for the
+project's subjects, its supervision requirements or its downstream hierarchy
+quality. Those remain separate questions from the completed subject-extraction
+fine-tuning.

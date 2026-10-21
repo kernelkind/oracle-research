@@ -138,6 +138,6 @@ parity-rule verdict.
 Selected evidence retains the interim summary, later successful subject-answer receipts, saved masks, scores and blinded review membership. The interim summary counts eight subject answers; native receipts retain ten. No final parity verdict is recorded.
 
 `historical-studies/frontier-sp-mp-teacher-parity-v1` appears in the
-[catalog](../../../docs/experiments/publications.csv) and [file list](../../../docs/experiments/publication-files.csv).
+[catalog](../../../docs/experiments/publications.csv) and [dataset manifest](../../../docs/experiments/downloads.md#dataset-manifest).
 These files are prepared locally for Hugging Face Datasets; downloads are not
 available yet. Recorded pre-ASv6.100 derivatives remain deprecated historical evidence.

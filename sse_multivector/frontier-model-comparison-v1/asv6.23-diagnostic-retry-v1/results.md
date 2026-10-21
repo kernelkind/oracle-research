@@ -15,6 +15,6 @@ The two requests cost $0.000156075. The complete diagnostic now has 36 generated
 Selected initial and retry evidence retains the saved answers, failed attempts, exact inputs, settings and recorded reviews. Full review posts and shortened text actually supplied to the model remain distinct.
 
 `historical-studies/frontier-asv6.23-diagnostic-v2` appears in the
-[catalog](../../../docs/experiments/publications.csv) and [file list](../../../docs/experiments/publication-files.csv).
+[catalog](../../../docs/experiments/publications.csv) and [dataset manifest](../../../docs/experiments/downloads.md#dataset-manifest).
 These files are prepared locally for Hugging Face Datasets; downloads are not
 available yet. Recorded pre-ASv6.100 derivatives remain deprecated historical evidence.

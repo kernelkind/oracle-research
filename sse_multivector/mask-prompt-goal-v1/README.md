@@ -133,4 +133,4 @@ The original MPv3.5 goal covered mask-prompt development only: no model comparis
 
 The task-specific evidence and review design follows [OpenAI evaluation guidance](https://developers.openai.com/api/docs/guides/evaluation-best-practices). The particular sample sizes and acceptance tolerance are our approved experimental choices, not numbers prescribed by that guidance.
 
-Selected final evidence: the 64 `historical-studies/mask-prompt-goal-v1/` entries in the [publication catalog](../../docs/experiments/publications.csv), with [file checksums](../../docs/experiments/publication-files.csv). Saved answers, assessments, local SSE results and later corrections remain distinct; the failed MPv3.26 attempt has no saved answers.
+Selected final evidence: the 64 `historical-studies/mask-prompt-goal-v1/` entries in the [publication catalog](../../docs/experiments/publications.csv), with [dataset manifest](../../docs/experiments/downloads.md#dataset-manifest). Saved answers, assessments, local SSE results and later corrections remain distinct; the failed MPv3.26 attempt has no saved answers.

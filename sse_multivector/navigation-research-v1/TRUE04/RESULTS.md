@@ -141,6 +141,6 @@ An independent audit verified every input, score and saved decision, replayed al
 - [Frozen plan](../TRUE04-PLAN.md), pre-score reference (`../true04-reference.json`), [reference-review history](../TRUE04-REFERENCE-REVIEW.md), fresh review of misses (`missed-reference-review.json`).
 - [Execution, tests and resource details](EXECUTION.md), independent verification (`verification.json`), completion hashes (`completion.json`).
 
-The 449 MiB raw-logit file remains locally preserved as `first-token-logits.npy`, excluded from Git by an exact path rule. Its hash is in the completion record. Inputs, outputs, source snapshots, reviews and summaries are retained in Git; prior experiments remain intact.
+The 449 MiB raw-logit file remains locally preserved as `first-token-logits.npy`, excluded from Git by an exact path rule. Its hash is in the completion record. Inputs, outputs, reviews and summaries remain with the original run; selected final results are identified below. Shared source lives in `sse_multivector/`, with the original run layout preserved in Git history.
 
 **Selected data:** Compact pair-score results, inputs and parameters for `TRUE04` are selected for release as `numerical/pair-scores-7dd83c45e206d5c8` in the [publication catalog](../../../docs/experiments/publications.csv). These compact exports use a different format. Other cited artifacts remain separate originals.

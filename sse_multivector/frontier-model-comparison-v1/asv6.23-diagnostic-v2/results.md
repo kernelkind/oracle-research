@@ -79,6 +79,6 @@ Do not tune the old prompt around this diagnostic or infer a corpus-wide accurac
 Selected saved answers, failed attempts, exact inputs, settings and reviews cover the initial and retry records together. Reused Astra answers remain references to their existing publication.
 
 `historical-studies/frontier-asv6.23-diagnostic-v2` appears in the
-[catalog](../../../docs/experiments/publications.csv) and [file list](../../../docs/experiments/publication-files.csv).
+[catalog](../../../docs/experiments/publications.csv) and [dataset manifest](../../../docs/experiments/downloads.md#dataset-manifest).
 These files are prepared locally for Hugging Face Datasets; downloads are not
 available yet. Recorded pre-ASv6.100 derivatives remain deprecated historical evidence.

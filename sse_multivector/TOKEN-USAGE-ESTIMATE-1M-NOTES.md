@@ -4,7 +4,7 @@
 
 Estimate saved September 14, 2026. Model: **Astra low** (`gpt-6-astra`, reasoning effort `low`). This records the estimate discussed in chat, using existing measurements; no new model calls were made.
 
-**Working estimate: approximately 30 billion tokens**, using the current subject, mask and node-title prompts through our existing isolated Codex runner. This is a rough planning estimate, not the minimum tokens these tasks inherently require.
+**Working estimate: approximately 30 billion tokens**, using the then-current subject, mask and node-title prompts through the historical isolated Codex runner. This is a rough planning estimate, not the minimum tokens these tasks inherently require.
 
 ## Estimate
 
@@ -66,7 +66,7 @@ These are the **total input and output counts reported by Codex**, not a local t
 
 The earlier phrase “runner input overhead” was too specific: we have **not separately measured the overhead amount or established exactly where it comes from**. Input accounting includes request formatting, such as message roles and boundaries, in addition to the supplied text. Our wrapper uses fresh contexts and excludes conversation history, AGENTS.md, tools and optional injected instructions; it retains the minimal instruction “Follow the user's instructions.” This does not establish the full service-side request contents. [OpenAI token-counting documentation](https://developers.openai.com/api/docs/guides/token-counting)
 
-Consequently, the 30-billion figure estimates the current execution path. It is not a verified minimum for a direct API implementation, and it does not establish how many tokens a different execution path would save.
+Consequently, the 30-billion figure estimates that historical execution path. It is not a verified minimum for a direct API implementation, and it does not establish how many tokens a different execution path would save.
 
 Output counts already include reasoning tokens. Cached input tokens are already included in input counts. Neither should be added again. No future cache-hit rate or monetary cost is assumed. [Output-token accounting](https://developers.openai.com/api/docs/guides/token-counting#understand-output-token-counts)
 
@@ -76,7 +76,7 @@ There is no additional allowance for future retries, semantic review, prompt-dev
 
 Research saved September 15, 2026. The question is whether another hosted model can generate subject and mask training labels at approximately Astra-low quality for less money. This is **teacher-model selection**, not selection of the smaller model we will fine-tune. The user accepted this shortlist as reasonable; no candidate has been tested on our task and no paid run is authorized by this record.
 
-The research screened the public Artificial Analysis and OpenRouter catalogs, including discounted tiers and provider-specific routes. Artificial Analysis supplies capability signals; **all prices below come from OpenRouter**. The current frozen prompts, ASv6.23 and MPv3.5, and the Astra-low baseline remain unchanged.
+The research screened the public Artificial Analysis and OpenRouter catalogs, including discounted tiers and provider-specific routes. Artificial Analysis supplies capability signals; **all prices below come from OpenRouter**. The comparison used the then-frozen ASv6.23 and MPv3.5 prompts and an Astra-low baseline; these pre-ASv6.100 derivatives are historical evidence.
 
 ### Ranked shortlist
 
@@ -97,7 +97,7 @@ For comparison, [Astra low](https://artificialanalysis.ai/models/gpt-6-astra-low
 
 The table reuses the measured subject-plus-mask totals above, scaled from 248 to 1,000 notes:
 
-- Input: **26.899234 million tokens**, including the current execution path's overhead.
+- Input: **26.899234 million tokens**, including the historical execution path's overhead.
 - Output: **1.532319 million tokens**, including reasoning once.
 - Cost: `26.899234 × input price + 1.532319 × output price`.
 
@@ -116,7 +116,7 @@ These scenarios charge **all input at the uncached rate**, exclude fees, and exc
 - **Qwen 3.8 Flash:** approximately **$4.76** at $0.15 / $0.47. A reasonable alternative family, but the AA result is for the related Flash-Next checkpoint rather than the exact hosted model. The official model card describes hosted Flash as based on Flash-Next, with additional production features. [Model relationship](https://huggingface.co/Qwen/Qwen3.8-Flash-Next), [OpenRouter](https://openrouter.ai/qwen/qwen3.8-flash).
 - **Gemini 3.8 Flash:** strong knowledge results, but approximately **$25.92**, or **$12.96 through batch**, at the same token volumes. [AA](https://artificialanalysis.ai/models/gemini-3-8-flash), [OpenRouter](https://openrouter.ai/google/gemini-3.8-flash).
 
-**Planned comparison, not yet run:** compare Muse Contributor, DeepSeek V4.1 Flash and GLM 5.3 Flash with a fresh subscription-backed Astra low baseline on the same inputs, initially keeping ASv6.23 and MPv3.5 unchanged for every model. The active English selection contains 676 unique notes from 555 authors (`frontier-model-comparison-v1/english-selection-v2/selection.json`). The [comparison adapter](frontier_runner/runner.mjs) calls the [general model runner](model-runner.md), which uses pi-ai for **both** Astra's subscription route and OpenRouter. It does not use normal OpenAI API billing, Codex CLI, or the full pi agent. A subscription compatibility call succeeded. The saved probe results (`frontier-model-comparison-v1/compatibility-probe-v1/results.json`) are not a comparison baseline. Final comparison settings and spending approval remain open.
+**Original comparison design:** compare Muse Contributor, DeepSeek V4.1 Flash and GLM 5.3 Flash with a fresh subscription-backed Astra low baseline on the same inputs, initially keeping ASv6.23 and MPv3.5 unchanged for every model. The active English selection contains 676 unique notes from 555 authors (`frontier-model-comparison-v1/english-selection-v2/selection.json`). The [comparison adapter](frontier_runner/runner.mjs) calls the [general model runner](model-runner.md), which uses pi-ai for **both** Astra's subscription route and OpenRouter. It does not use normal OpenAI API billing, Codex CLI, or the full pi agent. A subscription compatibility call succeeded. The saved probe results (`frontier-model-comparison-v1/compatibility-probe-v1/results.json`) are not a comparison baseline. This paragraph records the original selection design, not instructions to resume it.
 
 This comparison requires readable English text. The full frozen 1,000-note sample was manually audited: 931 met that requirement, including 84 known prompt-development notes that are excluded from this comparison. Removing obvious repeated bodies left 814 possible inputs. The main agent then read 604 additional corpus candidates for missing forms and retained 231. The reviewed originals and decisions (`frontier-model-comparison-v1/english-selection-v2/reviewed-pool.json`) preserve the complete text, classifications, and exclusions. Additional rejected candidates include wrong-form search hits and repeated templates, not just language failures. All 1,604 stored texts and authors were checked against the source database with zero mismatches. The provenance record (`frontier-model-comparison-v1/english-selection-v2/provenance.json`) describes both supplemental sources and their limitations.
 
@@ -136,23 +136,11 @@ Assess subject generation and mask generation separately, using the same fixed s
 
 ### Comparison runner
 
-[The comparison launcher](run-frontier-comparison.sh) accepts `preview` or `run`, with one JSON config supplied on stdin or in a file. Each invocation handles one note or one fixed subject, independently. It loads ASv6.23/MPv3.5 by verified hash and preserves the subject object schema (`context`, then `subject`) and bare-array mask output. It does not choose subjects for the mask comparison, run a batch, repair outputs, or retry failures. It delegates execution to the [general runner](run-model.sh); arbitrary prompts belong there, not in this frozen experiment adapter. The general runner replaces the deleted `codex_exec.py` tool. The earlier token measurements in this document remain historical Codex-runner measurements, not measurements of the new pi-ai runner.
-
-The dependency is pinned to pi-ai 0.85.1 in [package-lock.json](../../experiment-runner/experiment_runner/frontier_runner/package-lock.json). Install it once with Node 24's `npm ci --ignore-scripts --no-audit --no-fund` in the shared `experiment-runner/experiment_runner/frontier_runner` directory. The launcher uses Node 24+ if available, otherwise Nix's `nodejs_24`. DeepSeek V4.1 Flash is absent from that pi-ai catalog, so the runner explicitly supplies its exact model ID and metadata from OpenRouter's September 16 catalog; it does not substitute an older DeepSeek model.
-
-`preview` invokes the actual pi-ai serializers with fabricated authentication and a transport that records the request without sending it. It shows the decoded HTTP body, redacted headers, model/settings, and hashes. Pi-ai's default subscription instruction, “You are a helpful assistant,” is explicitly cleared. Astra requests also omit pi-ai's `text.verbosity: low` and `reasoning.summary: auto` defaults, while retaining `reasoning.effort: low`. Neither route receives AGENTS.md, agent instructions, tools, previous calls, or coverage annotations. The preview cannot establish server acceptance or hidden service-side instructions. Subject JSON-schema enforcement is requested on both routes; unsupported parameters must fail rather than trigger a format fallback.
-
-`run` additionally requires `--send`. Both providers use the local credential-service route documented in [the general runner](model-runner.md#execution-and-credentials); do not supply upstream keys or credential files. The [repository budget rules](../AGENTS.md) authorize user-requested OpenRouter work roughly estimated at $1 or less without another approval question or provider-side cap. Other paid work requires explicit spending approval, but not a provider-enforced cap; ledger accounting and the lifetime ceiling always apply. OpenRouter output-token caps are optional; pi-ai's subscription transport does not enforce such a cap. Timeouts are not monetary limits. OpenRouter reasoning settings are explicit, including a `provider-default` option; implementing this interface did not select the comparison settings.
-
-Results retain the exact request, raw answer, provider-returned model/provider/usage metadata when supplied, pi-ai usage, and local JSON/source-integrity checks. Those checks are not semantic evaluation. Pi-ai's `input` excludes `cacheRead`/`cacheWrite`, whereas `output` already includes reasoning. Its cost calculation is a catalog estimate, not an invoice or subscription charge. No model calls or credential reads were made during implementation: tests use intercepted HTTP requests and simulated streams, including a run in a network-isolated namespace.
-
-An offline preview of one selected note, with no credential access or model request:
-
-```bash
-cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
-printf '%s\n' '{"provider":"openai-codex","model":"gpt-6-astra","reasoning":"low","stage":"subjects","note_id":"E0002"}' \
-  | bash sse_multivector/run-frontier-comparison.sh preview
-```
+The frozen [comparison adapter](frontier_runner/runner.mjs) preserves this
+study's ASv6.23/MPv3.5 inputs. Its collectors retain historical evidence; new
+prompt experiments use the [shared experiment workflow](model-runner.md#prompt-experiments-one-supported-workflow).
+The token measurements above come from the historical Codex runner, not the
+pi-ai transport or the current hierarchy generator.
 
 ## Saved evidence
 

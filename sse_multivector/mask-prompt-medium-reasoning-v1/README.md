@@ -87,4 +87,4 @@ Files:
 
 The [official GPT-5.6 reasoning guidance](https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6#reasoning-effort) informed the single-setting comparison. It does not establish that medium is a fix; the observations above are the evidence for this task.
 
-Selected inputs, final answers, recorded reviews and parameters: `historical-studies/mask-prompt-medium-reasoning-v1`. See the [publication catalog](../../docs/experiments/publications.csv) and [file checksums](../../docs/experiments/publication-files.csv).
+Selected inputs, final answers, recorded reviews and parameters: `historical-studies/mask-prompt-medium-reasoning-v1`. See the [publication catalog](../../docs/experiments/publications.csv) and [dataset manifest](../../docs/experiments/downloads.md#dataset-manifest).

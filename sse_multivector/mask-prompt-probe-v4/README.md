@@ -53,4 +53,4 @@ ASv6.8, prior prompts/results/reviews, and prompt registries remain unchanged. N
 - `assistant-review.json`: independent per-item analysis against v3.
 - `verification.json`: execution identity, isolation, usage, resources, and terminal smoke checks.
 
-Selected inputs, final answers, recorded reviews and parameters: `historical-studies/mask-prompt-probe-v4`. See the [publication catalog](../../docs/experiments/publications.csv) and [file checksums](../../docs/experiments/publication-files.csv).
+Selected inputs, final answers, recorded reviews and parameters: `historical-studies/mask-prompt-probe-v4`. See the [publication catalog](../../docs/experiments/publications.csv) and [dataset manifest](../../docs/experiments/downloads.md#dataset-manifest).

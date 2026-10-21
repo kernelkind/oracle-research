@@ -76,4 +76,4 @@ Runtime (`./runtime.json`): 4m23.457s for ASv6.8 and 4m28.746s for ASv6.10. Host
 
 This is one paired generation per note, in two sequential blocks, from an existing frozen corpus—not a repeatability estimate, a random sample of all Nostr, or evidence that every prompt change caused its observed difference. No new default has been approved.
 
-Selected final answers, recorded assessments and parameters: `historical-studies/atomic-subject-asv6.8-vs-asv6.10-holdout-v1`. See the [publication catalog](../../docs/experiments/publications.csv) and [file checksums](../../docs/experiments/publication-files.csv).
+Selected final answers, recorded assessments and parameters: `historical-studies/atomic-subject-asv6.8-vs-asv6.10-holdout-v1`. See the [publication catalog](../../docs/experiments/publications.csv) and [dataset manifest](../../docs/experiments/downloads.md#dataset-manifest).

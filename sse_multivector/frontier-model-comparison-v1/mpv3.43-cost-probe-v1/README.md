@@ -103,6 +103,6 @@ run directories.
 Selected saved answers, used inputs, parameters and final cost/usage measurements preserve the recorded attempts and outcomes.
 
 `historical-studies/frontier-mpv3.43-cost-probe-v1` appears in the
-[catalog](../../../docs/experiments/publications.csv) and [file list](../../../docs/experiments/publication-files.csv).
+[catalog](../../../docs/experiments/publications.csv) and [dataset manifest](../../../docs/experiments/downloads.md#dataset-manifest).
 These files are prepared locally for Hugging Face Datasets; downloads are not
 available yet. Recorded pre-ASv6.100 derivatives remain deprecated historical evidence.

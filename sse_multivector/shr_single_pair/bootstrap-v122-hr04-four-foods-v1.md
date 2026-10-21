@@ -36,8 +36,7 @@ remain immutable.
 Before dispatch, the user clarified that another agent had removed the earlier
 20,000-attempt cap. This newly authorized four-case run omits that obsolete
 optional counter. The user subsequently explicitly required permanent removal.
-Main's AGENTS.md and current workflow records now supersede all old counter
-instructions. The active artifact path was retired to
+The active artifact path was retired to
 `target/hierarchy-selective-sprint-v1/attempt-budget.json.retired`, preserving
 its exact historical bytes and used count. Its SHA-256 is
 `d0199c9f595afd646f501be8f74689c8f616e857e926abf8e542b500a689847b`.

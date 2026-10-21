@@ -1,6 +1,6 @@
 # Bootstrap and Compare student preparation
 
-## Current authorized goal, October 10
+## Scope and saved-checkpoint findings
 
 Select one supported student checkpoint for **Bootstrap** and one for **Compare**,
 and verify their GB10 training paths before the prompts freeze. The user wants
@@ -14,8 +14,7 @@ matched pilot and broader evidence support recommending **Qwen3.8-27B starting
 weights for Bootstrap** and **pinned Kev-27B v2 for relation-only Compare**.
 Final frozen-task fine-tuning and evaluation await prompt freeze; no production
 pilot adapter or epoch is selected. Bootstrap's final
-target format, training volume and settings remain open. The owned worktree
-retains needed source-bound artifacts and native receipt paths.
+target format, training volume and settings remain open. Original source-bound artifacts and native receipts remain local.
 
 The user subsequently confirmed an HR05-aligned saved-checkpoint rerun using
 exactly **Bootstrap-v109 / Compare-v179**, with v109-produced meanings throughout
@@ -160,10 +159,7 @@ copied byte-for-byte from GB10. Report SHA-256 bindings in variant order are:
 `8b6c08c2f299bdbf6ea79109be49d2ea8351aab7e03ac27c675fe1b0c6e1845b`.
 Native artifacts remain under
 `target/bootstrap-compare-student-v1/hr05-matched-student-evaluation-v1/`.
-All owned GPU jobs, Bootstrap servers and the tunnel are closed. GB10 reports
-no compute applications after the final job. The paused serving container was
-left untouched. The worktree remains necessary for ignored artifacts and
-absolute native receipt paths. The reserved final 200 notes remain sealed.
+The reserved final 200 notes were excluded from this development evaluation.
 
 ### Historical B96/C48 pilot and evaluation
 
@@ -1472,16 +1468,10 @@ preserved. The shared runner's 68 tests pass; 156 project student/workflow tests
 pass with eight optional-dependency skips. The new local CLI test and collector
 test failed for the expected missing support before the adaptation.
 
-Read-only GB10 inspection found 118 GiB system memory available and no resident
-model worker.  This is a
-point-in-time resource observation, not a reservation or a new memory limit.
-
 ## Earlier SHR preparation evidence
 
 The user authorized three preparation tasks: GB10 feasibility checks, evaluation
-design, and an audit of the existing 1,300-note corpus. Work lives on
-`research/shr-student-prep-v1`, in `oracle-mvp-shr-student-prep-v1`.
-The user selected SHR-single-v79 for that provisional teacher pilot.
+design, and an audit of the existing 1,300-note corpus. The user selected SHR-single-v79 for that provisional teacher pilot.
 Earlier model comparisons and the first teacher pilot retain their v26 reference.
 A final student and accepted training corpus remain open; release-plan choices
 are unchanged. See
@@ -2181,7 +2171,7 @@ owned Anvil copy `gemma-training-paused-v1-report.json`. Its SHA-256 is
 Source at `e7d3dc5e` reproduces the recorded code hashes and configuration.
 All experiment workers stopped after the check; system availability returned to about 118 GiB.
 The service script and Compose file fingerprints match their pre-pause
-values. 
+values.
 
 ### Verified full Ettin-1B capacity with the service stopped
 
@@ -2900,7 +2890,7 @@ command needed corrected shell quoting before native review succeeded.
 
 All experiment workers stopped. GB10 reports no
 compute process and about 118 GiB system availability; its isolated checkout
-remains clean. 
+remains clean.
 Checkpoint commit `88e6082b` preserves the first three-model findings; this
 completed panel supersedes its pending status without changing earlier evidence.
 
@@ -3254,20 +3244,7 @@ extracted-header `CPATH`. Pin every model download to the configuration's
 revision. Record the resolved environment; the saved `requirements-resolved`
 artifact is evidence of this run, not a universal ARM/CUDA environment lock.
 
-Repository validation after the selected-source audit change: 17
-audit/data/benchmark tests passed; the CUDA test was skipped in the local CPU
-environment. The new boundary test first failed because the original auditor
-required the mixed source. It now passes with the mixed source, final-test
-prompts, combined labels and validation references absent, and rejects any
-attempt to open those paths. The revised production CLI also completed on the
-authenticated 1,100-post registry. The full shared
-experiment suite passed 115 tests with six optional-dependency skips after
-`tiktoken` was installed in an isolated check environment. The original
-missing-dependency failure is recorded separately from this passing run.
-A separate CUDA integration test uses a small native Qwen model through the
-same benchmark loader, NF4/LoRA optimization, checkpoint save/reload and batched
-five-way inference. It also checks logical versus packed parameter counting;
-enable it with `RUN_BENCHMARK_GPU_TESTS=1` on the GPU environment. It requires
-CUDA. All six benchmark tests passed with the GPU integration enabled. The
-existing serving process retained PID 3440281 and its `/health` endpoint
-returned HTTP 200 after the runs.
+The CUDA integration check exercises the native Qwen loader, NF4/LoRA
+optimization, checkpoint save/reload and batched five-way inference. It also
+checks logical versus packed parameter counts; enable it with
+`RUN_BENCHMARK_GPU_TESTS=1` on a CUDA environment.

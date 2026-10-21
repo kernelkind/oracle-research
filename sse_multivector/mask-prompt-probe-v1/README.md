@@ -45,4 +45,4 @@ Generation used 26,840 input tokens and 591 output tokens over 62.6 seconds. It 
 
 Mask correctness still awaits user review. Mechanical validity is not semantic correctness.
 
-Selected inputs, final answers, recorded reviews and parameters: `historical-studies/mask-prompt-probe-v1`. See the [publication catalog](../../docs/experiments/publications.csv) and [file checksums](../../docs/experiments/publication-files.csv).
+Selected inputs, final answers, recorded reviews and parameters: `historical-studies/mask-prompt-probe-v1`. See the [publication catalog](../../docs/experiments/publications.csv) and [dataset manifest](../../docs/experiments/downloads.md#dataset-manifest).

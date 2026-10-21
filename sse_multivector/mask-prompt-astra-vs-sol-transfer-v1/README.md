@@ -80,4 +80,4 @@ The command uses the existing binary and needs no Cargo build. You can stop at a
 
 Fifty-seven protected files were unchanged, including existing prompts, inputs and review histories. No production code, prompt registry, model default, user decision, SSE artifact or segment was changed. CREC-125 remains awaiting user review.
 
-Selected inputs, final answers, recorded reviews and parameters: `historical-studies/mask-prompt-astra-vs-sol-transfer-v1`. See the [publication catalog](../../docs/experiments/publications.csv) and [file checksums](../../docs/experiments/publication-files.csv).
+Selected inputs, final answers, recorded reviews and parameters: `historical-studies/mask-prompt-astra-vs-sol-transfer-v1`. See the [publication catalog](../../docs/experiments/publications.csv) and [dataset manifest](../../docs/experiments/downloads.md#dataset-manifest).

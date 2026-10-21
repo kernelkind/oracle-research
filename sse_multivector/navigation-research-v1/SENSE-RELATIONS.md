@@ -228,18 +228,18 @@ export OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=2 MKL_NUM_THREADS=2
 export TOKENIZERS_PARALLELISM=false HF_HUB_OFFLINE=1
 export LD_LIBRARY_PATH=/nix/store/8lahnh9pn3lrrnhax5nk7ibvjcbjmnkm-gcc-15.2.0-lib/lib:/nix/store/b2swxfi8srrbsafvh9iyyhd26mz9giwf-zlib-1.3.2/lib
 /tmp/oracle-nli-probe-venv/bin/python \
-  sse_multivector/navigation-research-v1/SRR01/sense_relation_probe.py \
+  sse_multivector/sense_relation_probe.py \
   --source sse_multivector/navigation-research-v1/SRR01/source.json \
   --manual sse_multivector/navigation-research-v1/SRR01/manual.json \
   --native sse_multivector/navigation-research-v1/SRR01/native.jsonl \
   --cache /tmp/oracle-sense-model-cache --output /tmp/srr01-replay-new
 /tmp/oracle-nli-probe-venv/bin/python \
-  sse_multivector/navigation-research-v1/SRR02/sense_definition_control.py \
+  sse_multivector/sense_definition_control.py \
   --source sse_multivector/navigation-research-v1/SRR02/source.json \
   --definitions sse_multivector/navigation-research-v1/SRR02/definitions.json \
   --cache /tmp/oracle-sense-model-cache --output /tmp/srr02-replay-new
 /tmp/oracle-nli-probe-venv/bin/python \
-  sse_multivector/navigation-research-v1/SRR03/sense_definition_control.py \
+  sse_multivector/sense_definition_control.py \
   --source sse_multivector/navigation-research-v1/SRR03/source.json \
   --definitions sse_multivector/navigation-research-v1/SRR03/definitions.json \
   --cache /tmp/oracle-sense-model-cache --output /tmp/srr03-replay-new

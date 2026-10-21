@@ -210,7 +210,7 @@ From the repository root, using a new output directory:
 
 ```sh
 PYTHONPATH="$PWD/sse_multivector" python3 \
-  sse_multivector/navigation-research-v1/ND02-NP01/runner.py \
+  sse_multivector/select_mask_distinctions.py \
   sse_multivector/navigation-research-v1/NP01/categories.json \
   --hierarchy sse_multivector/geometric-hierarchy-v1/GDC09/hierarchy.json \
   --evidence sse_multivector/geometric-hierarchy-v1/GDC09/evidence.json \

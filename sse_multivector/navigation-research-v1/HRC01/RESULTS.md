@@ -354,7 +354,7 @@ N065. Exact model input: `Coffee shop Felt like changing their router/ap passwor
 
 ## Reproduction and checks
 
-- [Frozen selections and interpretation limits](fixture.json), original notes and exact model inputs (`inputs.json`), all 400 scores (`scores.json`), all vectors (`embeddings.json`), planned comparisons (`checks.json`), checkpoint and runtime hashes (`config.json`), [executed runner](hierarcaps_mask_probe.py).
+- [Frozen selections and interpretation limits](fixture.json), original notes and exact model inputs (`inputs.json`), all 400 scores (`scores.json`), all vectors (`embeddings.json`), planned comparisons (`checks.json`), checkpoint and runtime hashes (`config.json`), [executed runner](../../hierarcaps_mask_probe.py).
 - Nine targeted tests passed after first failing because the runner did not exist. They exercise exact-mask inputs, original-artifact matching, UTF-8 ranges, source order, duplicate/unknown IDs, angle mathematics, undefined angles, and checkpoint completeness.
 - All 400 stored scores replay exactly from the saved vectors. All 20 inputs match the original masks and source ranges.
 - An independent verification loaded the full author-style CLIPModel from the same cached checkpoint. Its text features exactly matched all 21 saved vectors, including the empty-string origin. The author's literal Torch angle calculation matched all 380 defined pair scores within 0.000000463 radians; the remaining 20 self-pairs have undefined direction.

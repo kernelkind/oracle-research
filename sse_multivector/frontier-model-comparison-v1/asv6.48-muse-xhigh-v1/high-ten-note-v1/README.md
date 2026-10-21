@@ -40,6 +40,6 @@ Next: compare these saved hierarchies with the saved Astra ASv6.48 outputs named
 Selected final answers, assessments, measurements, inputs and settings retain N031 as a reference to its saved answer in the earlier variant study.
 
 `historical-studies/frontier-asv6.48-muse-high-ten-note-v1` appears in the
-[catalog](../../../../docs/experiments/publications.csv) and [file list](../../../../docs/experiments/publication-files.csv).
+[catalog](../../../../docs/experiments/publications.csv) and [dataset manifest](../../../../docs/experiments/downloads.md#dataset-manifest).
 These files are prepared locally for Hugging Face Datasets; downloads are not
 available yet. Recorded pre-ASv6.100 derivatives remain deprecated historical evidence.

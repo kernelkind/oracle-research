@@ -293,13 +293,13 @@ export TOKENIZERS_PARALLELISM=false
 export LD_LIBRARY_PATH=/nix/store/8lahnh9pn3lrrnhax5nk7ibvjcbjmnkm-gcc-15.2.0-lib/lib:/nix/store/b2swxfi8srrbsafvh9iyyhd26mz9giwf-zlib-1.3.2/lib
 
 /tmp/oracle-nli-probe-venv/bin/python \
-  sse_multivector/navigation-research-v1/NLI01/mask_description_nli.py \
+  sse_multivector/mask_description_nli.py \
   --evidence sse_multivector/geometric-hierarchy-v1/GDC09/evidence.json \
   --fixture sse_multivector/navigation-research-v1/NLI01/fixture.json \
   --output /tmp/nli01-reproduction --cache /tmp/oracle-nli-model-cache
 
 /tmp/oracle-nli-probe-venv/bin/python \
-  sse_multivector/navigation-research-v1/RER01/mask_description_relevance.py \
+  sse_multivector/mask_description_relevance.py \
   --input sse_multivector/navigation-research-v1/RER01/input.json \
   --fixture sse_multivector/navigation-research-v1/RER01/fixture.json \
   --output /tmp/rer01-reproduction --cache /tmp/oracle-nli-model-cache

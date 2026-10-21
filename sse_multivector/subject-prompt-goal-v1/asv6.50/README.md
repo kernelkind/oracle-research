@@ -479,9 +479,8 @@ token/cost counters without final provider usage; this does not establish that
 the interrupted upstream generations consumed no quota. Incremental cash
 remains zero on the subscription route, with no paid fallback.
 
-No automatic retries were sent. The [repository retry rule](../../../AGENTS.md)
-allows them only for provider failures, not unknown causes. Before explicit
-retry authorization, native `prepare` created three identical retry trials at
+No automatic retries were sent because these failures had unknown causes.
+Before retry authorization, native `prepare` created three identical retry trials at
 `sse_multivector/experiments/asv6.51-sol61-xhigh-sp-scope-regression-t1-retry-v1/`,
 `sse_multivector/experiments/asv6.51-sol61-xhigh-sp-scope-regression-t2-retry-v1/`
 and `sse_multivector/experiments/asv6.51-sol61-xhigh-sp-scope-regression-t3-retry-v1/`.

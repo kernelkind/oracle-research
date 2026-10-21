@@ -11,7 +11,7 @@ and evaluation await prompt freeze; no production
 pilot adapter or epoch is selected. Both prompts are still being developed.
 Earlier SHR results below inform candidate priorities but are not measurements
 of the new tasks. See
-[current preparation and evaluation roles](SHR-STUDENT-PREPARATION.md#current-authorized-goal-october-10).
+[current preparation and evaluation roles](SHR-STUDENT-PREPARATION.md#scope-and-saved-checkpoint-findings).
 
 The user has now confirmed re-evaluation with the completed HR05 build's exact
 **Bootstrap-v109 / Compare-v179** pair. All Compare meanings must have v109
@@ -174,7 +174,7 @@ reaches the shared 44/46 result in 49.65 phase minutes, while Qwen's measured
 fourth-epoch checkpoint takes 141.37 minutes. Qwen's intervening checkpoints
 were not measured. Equal predictions on this small panel are insufficient to
 exclude Kev; four-epoch duration alone misses its earlier convergence.
-See the [learning evidence](SHR-STUDENT-PREPARATION.md#current-authorized-goal-october-10).
+See the [learning evidence](SHR-STUDENT-PREPARATION.md#scope-and-saved-checkpoint-findings).
 
 A matched GB10 concurrency fit comparison is complete with existing reviewed
 Compare cases: one epoch each of Qwen27 and Ettin1B `input_json`, sequentially
@@ -188,7 +188,7 @@ between runs despite matching bindings and baseline decisions. All four
 checkpoints pass fresh-process hash/probe verification outside the measured
 fit times; owned benchmark workers have exited. The fitter and
 teacher targets are unchanged; both prompts remain in development. See the
-[benchmark bindings and status](SHR-STUDENT-PREPARATION.md#current-authorized-goal-october-10).
+[benchmark bindings and status](SHR-STUDENT-PREPARATION.md#scope-and-saved-checkpoint-findings).
 
 The human selected sequential GB10 student training for this investigation:
 one student fit at a time. The completed evidence now supports recommended

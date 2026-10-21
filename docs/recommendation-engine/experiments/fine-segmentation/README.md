@@ -21,9 +21,10 @@ identities and outputs. Unless a document says otherwise, singular candidate
 language and invocation counts in this suite are per instance. Shared fixture
 and encoding work happens once.
 
-Together, the two instances evaluate the six requirements that originated in
-[`../../../notes/MY-NOTES.md`](../../../notes/MY-NOTES.md). The protocols here
-are their operational definitions. Experiment 2 characterizes organization
+Together, the two instances evaluate the requirements for repeated-subject
+recovery, nearby-subject organization, lexical coincidence, unmasked context
+and stability under irrelevant changes. The protocols below are their frozen
+operational definitions. Experiment 2 characterizes organization
 under unequal support and singleton sparsity; it does not impose a categorical
 pass/fail rule for those conditions. Each experiment uses purpose-built
 synthetic notes and manually specified masks. The old 53-vector collection is
