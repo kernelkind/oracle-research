@@ -22,7 +22,8 @@ public encoder downloads and hash checks, subject extraction, definition writing
 CPU encoding, clustering, unsigned publication export and interactive browsing.
 Offline export and browsing also passed after the VM login was revoked.
 This validates the small workflow; semantic quality and larger-corpus resource
-requirements remain separate questions. The public repository URLs and runner submodule setup remain pending.
+requirements remain separate questions. The Oracle and experiment-runner
+repository URLs remain pending publication.
 
 ## 1. Install the runtime
 
@@ -31,13 +32,17 @@ pinned Rust/C build environment. Python's `venv` and `pip`, `curl`, and
 `sha256sum` are also needed. The Torch, Transformers and Tokenizers versions below
 match the recorded CPU runtime; the guide does not require a GPU or a container.
 
-Use `experiment-runner` at commit
-`577aef3180f3cc969170ab6f7ac347070de798d4`, the revision used for the
-complete VM test. It fixes incomplete request delivery on Python 3.13.5.
-Place its source checkout either inside Oracle as
-`experiment-runner/` or alongside it as `../experiment-runner/`. An explicit
-`EXPERIMENT_RUNNER_ROOT` selects a different checkout. The final publication
-submodule setup remains pending.
+Oracle includes `experiment-runner/` as a Git submodule, pinned to commit
+`26bc051378b5db6ee4456b5bdaac9554ac1e6bf3`. The setup below initializes that
+exact revision. Cloning Oracle with `--recurse-submodules` also initializes it;
+after changing Oracle revisions, rerun `git submodule update --init --recursive`
+to select the matching runner.
+
+The earlier complete VM test used runner commit
+`577aef3180f3cc969170ab6f7ac347070de798d4`. No new live model run is claimed for
+the updated dependency pin. To use an existing runner checkout, set
+`EXPERIMENT_RUNNER_ROOT` to its path before running the setup; an explicit
+selection takes precedence over the submodule.
 
 From the directory containing your Oracle checkout, run this setup in Bash.
 Keep this shell open for the following steps:
@@ -46,11 +51,8 @@ Keep this shell open for the following steps:
 cd oracle-mvp
 export ORACLE_ROOT="$PWD"
 if [ -z "${EXPERIMENT_RUNNER_ROOT:-}" ]; then
-  if [ -f experiment-runner/experiment_runner/__init__.py ]; then
-    export EXPERIMENT_RUNNER_ROOT="$ORACLE_ROOT/experiment-runner"
-  else
-    export EXPERIMENT_RUNNER_ROOT="$(realpath ../experiment-runner)"
-  fi
+  git submodule update --init --recursive -- experiment-runner
+  export EXPERIMENT_RUNNER_ROOT="$ORACLE_ROOT/experiment-runner"
 fi
 mkdir -p target/hierarchy-example/models target/hierarchy-example/history
 python3.13 -m venv target/hierarchy-env
