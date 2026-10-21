@@ -40,7 +40,29 @@
           "field": [
             "result"
           ],
-          "task": "subject"
+          "task": "subject",
+          "context": [
+            {
+              "field": [],
+              "fields": [
+                [
+                  "openrouter_requests_this_followup"
+                ],
+                [
+                  "paid_openai_api_used"
+                ],
+                [
+                  "probe_id"
+                ],
+                [
+                  "reasoning"
+                ],
+                [
+                  "source_text"
+                ]
+              ]
+            }
+          ]
         },
         {
           "path": "sse_multivector/frontier-model-comparison-v1/compatibility-probe-v1/muse-age-confirmed.json",

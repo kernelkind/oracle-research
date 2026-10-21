@@ -245,6 +245,8 @@ Rendered requests, nested baseline reports, arbitrary evidence wrappers and
 transport details are excluded. User comments remain comments; agent assessments
 and user judgments keep their recorded roles. Equal answers do not establish
 reuse, and independent repeats retain different trial identities.
+Leading agent-review attribution omits private executor-session UUIDs while
+preserving the reviewer label, assessment and source-report binding.
 
 New plans freeze `publication_role`. Normal standalone preparation selects
 `standalone`; hierarchy construction children, coordinator-created grading jobs
@@ -273,6 +275,8 @@ calls; recorded agent assessments remain distinct from user decisions. Original
 working directories, rendered requests, credentials and transport logs are
 excluded. This is an explicit historical export; current native experiments
 continue using their automatic three-file format above.
+Historical HTTP-result context can select reviewed fields from its bound source,
+keeping scientific controls without copying unrelated account administration.
 
 With `--spec SELECTION --study ID`, the same command exports the explicitly
 hash-bound atomic subject and subject/mask goal studies. The source argument is

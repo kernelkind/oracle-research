@@ -435,6 +435,63 @@ class FrontierStudyPublicationTests(unittest.TestCase):
         self.assertEqual(supplied['data']['message_context'][0]['content'],'Exact isolation control.')
         self.assertNotIn('ACCOUNT_CANARY',''.join(p.read_text() for p in output.iterdir()))
 
+    def test_reviewed_http_context_omits_account_maintenance_without_losing_results(self):
+        raw = ' {"compatible": true}\n'
+        scientific = dict(probe_id='saved-probe', reasoning='low',
+            source_text='Tea and coffee.', openrouter_requests_this_followup=0,
+            paid_openai_api_used=False)
+        binding = self.save('study/compatibility.json', dict(**scientific,
+            followup='Correct the local credential profile: PRIVATE-ACCOUNT-MAINTENANCE.',
+            result=dict(raw_text=raw, valid=True, stop_reason='stop',
+                        model='saved-model', usage=dict(cost=0))))
+        followup = 'Compare a larger nested response using the same scientific controls.'
+        other = self.save('study/other.json', dict(followup=followup,
+            result=dict(raw_text='{}', valid=True, stop_reason='stop')))
+        fields = [[key] for key in scientific]
+        self.select(http_results=[
+            dict(**binding, field=['result'], task='compatibility',
+                 context=[dict(field=[], fields=fields)]),
+            dict(**other, field=['result'], task='compatibility')])
+        output = self.export()
+        results = self.rows(output, 'results.jsonl')
+        self.assertEqual(results[0]['context'], [dict(field=[], data=scientific)])
+        self.assertEqual(results[0]['source']['sha256'], binding['sha256'])
+        self.assertEqual(results[0]['data'], dict(valid=True, stop_reason='stop',
+            model='saved-model', usage=dict(cost=0)))
+        self.assertEqual(self.rows(output, 'answers.jsonl')[0]['raw_response'], raw)
+        self.assertEqual(results[1]['context'][0]['data']['followup'], followup)
+        self.assertNotIn('PRIVATE-ACCOUNT-MAINTENANCE',
+                         ''.join(path.read_text() for path in output.iterdir()))
+
+    def test_reviewed_http_context_preserves_nested_source_positions(self):
+        binding = self.save('study/compatibility.json', dict(
+            purpose='Test nested JSON responses.', private_admin='PRIVATE-ADMIN',
+            results=[None, dict(label='saved-model', exit_code=0,
+                result=dict(raw_text='{}', valid=True, stop_reason='stop'))]))
+        self.select(http_results=[dict(**binding, field=['results', 1, 'result'],
+            context=[dict(field=[], fields=[['purpose']]),
+                     dict(field=['results', 1], fields=[['label'], ['exit_code']])])])
+        output = self.export()
+        result = self.rows(output, 'results.jsonl')[0]
+        self.assertEqual(result['context'], [
+            dict(field=[], data=dict(purpose='Test nested JSON responses.')),
+            dict(field=['results', 1], data=dict(label='saved-model', exit_code=0))])
+        self.assertEqual(result['source']['field'], ['results', 1, 'result'])
+        self.assertNotIn('PRIVATE-ADMIN',
+                         ''.join(path.read_text() for path in output.iterdir()))
+
+    def test_http_context_requires_reviewed_fields_at_a_source_ancestor(self):
+        for context in (None, [dict(field=['result'], fields=[['valid']])],
+                        [dict(field=['other'], fields=[['label']])],
+                        [dict(field=[])], [dict(field=[], fields=[['missing']])]):
+            with self.subTest(context=context), tempfile.TemporaryDirectory() as temporary:
+                self.root = Path(temporary)
+                binding = self.save('study/compatibility.json', dict(label='saved',
+                    result=dict(raw_text='{}', valid=True, stop_reason='stop')))
+                self.select(http_results=[dict(**binding, field=['result'], context=context)])
+                with self.assertRaisesRegex(ValueError, 'context|field'):
+                    self.export()
+
     def test_review_cells_are_comments_with_native_outcomes_unchanged(self):
         packet=self.save('study/review.json',dict(schema_version=1,title='Comparison',notes=[
             dict(id='N1',title='Source',text='Tea.',results=[dict(model='saved model',

@@ -242,19 +242,15 @@ def _at(value, fields):
     return value
 
 
-def _record(value, declaration, sources):
-    """Publish reviewed source fields without shifting native array indices."""
-    role, fields = declaration['role'], declaration.get('fields')
-    _require(role in _RECORD and isinstance(value, dict), 'unsupported final record')
-    _require(fields is not None, 'final records require reviewed field selection')
-    origin = _binding(declaration)
+def _selected_fields(value, fields):
+    """Select reviewed source fields without shifting native array indices."""
+    _require(isinstance(value, dict), 'selected source must be an object')
     _require(isinstance(fields, list) and fields, 'field selection must be nonempty')
     paths = []
     for path in fields:
         _require(isinstance(path, list) and path
                  and all((isinstance(key, str) and key) or type(key) is int and key >= 0
                          for key in path), 'invalid selected field path')
-        _require(path[0] in _RECORD[role], 'selected field is not scientific record data')
         _at(value, path)
         current = tuple(path)
         _require(not any(current[:len(old)] == old or old[:len(current)] == current
@@ -274,7 +270,18 @@ def _record(value, declaration, sources):
             return result
         return {key: select(node[key], children) for key, children in groups.items()}
 
-    selected = select(value, paths)
+    return select(value, paths)
+
+
+def _record(value, declaration, sources):
+    """Publish reviewed source fields without shifting native array indices."""
+    role, fields = declaration['role'], declaration.get('fields')
+    _require(role in _RECORD and isinstance(value, dict), 'unsupported final record')
+    _require(fields is not None, 'final records require reviewed field selection')
+    selected = _selected_fields(value, fields)
+    _require(all(path[0] in _RECORD[role] for path in fields),
+             'selected field is not scientific record data')
+    origin = _binding(declaration)
     if role == 'assessment' and 'error' in selected:
         selected['error'] = _failure(selected['error'])
     origin['fields'] = fields
@@ -541,9 +548,23 @@ def prepare(sources, selection, metadata):
     for declaration in selection.get('http_results', []):
         value = sources.read(declaration['path'])
         context = []
+        reviewed_context = 'context' in declaration
+        if reviewed_context:
+            _require(isinstance(declaration['context'], list),
+                     'HTTP context selection must be a list')
+            result_path = declaration.get('field', [])
+            for selected in declaration['context']:
+                _require(isinstance(selected, dict) and isinstance(selected.get('field'), list),
+                         'HTTP context source field must be a path')
+                context_path = selected['field']
+                _require(len(context_path) < len(result_path)
+                         and context_path == result_path[:len(context_path)],
+                         'HTTP context must select an ancestor of the result')
+                data = _selected_fields(_at(value, context_path), selected.get('fields'))
+                context.append(dict(field=context_path, data=_project(data, sources)))
         position = []
         for field in declaration.get('field', []):
-            if isinstance(value, dict):
+            if not reviewed_context and isinstance(value, dict):
                 other = {key: child for key, child in value.items() if key != field}
                 if other:
                     context.append(dict(field=list(position), data=_project(other, sources)))
