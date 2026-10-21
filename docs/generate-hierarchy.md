@@ -24,7 +24,7 @@ Offline export and browsing also passed after the VM login was revoked.
 This validates the small workflow; semantic quality and larger-corpus resource
 requirements remain separate questions.
 
-Source publication is planned for [Oracle MVP](https://github.com/kernelkind/oracle-mvp)
+Source publication is planned for [Oracle Research](https://github.com/kernelkind/oracle-research)
 and [Experiment Runner](https://github.com/kernelkind/experiment-runner). The clone
 instructions below apply after those repositories are published.
 
@@ -53,12 +53,12 @@ before running the setup; an explicit selection takes precedence over the
 submodule.
 
 From the directory where you want to keep the checkout, run this setup in Bash.
-If you already have `oracle-mvp/`, skip the clone line. Keep this shell open for
-the following steps:
+If you already have `oracle-research/`, skip the clone line. Keep this shell open
+for the following steps:
 
 ```bash
-git clone --recurse-submodules https://github.com/kernelkind/oracle-mvp.git
-cd oracle-mvp
+git clone --recurse-submodules https://github.com/kernelkind/oracle-research.git
+cd oracle-research
 export ORACLE_ROOT="$PWD"
 if [ -z "${EXPERIMENT_RUNNER_ROOT:-}" ]; then
   git submodule update --init --recursive -- experiment-runner

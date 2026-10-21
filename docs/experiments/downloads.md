@@ -2,7 +2,7 @@
 
 Code and history belong on GitHub; used inputs and final results belong on
 Hugging Face Datasets; all evaluated adapters belong on Hugging Face Models.
-The planned code repositories are [Oracle MVP](https://github.com/kernelkind/oracle-mvp)
+The planned code repositories are [Oracle Research](https://github.com/kernelkind/oracle-research)
 and [Experiment Runner](https://github.com/kernelkind/experiment-runner); code
 publication remains pending.
 

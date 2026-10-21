@@ -1,4 +1,4 @@
-# Oracle MVP
+# Oracle Research
 
 This project explores a way for people to discover the kinds of Nostr content they want to see.
 
@@ -47,7 +47,7 @@ The [generation guide](docs/generate-hierarchy.md) covers terminal browsing and 
 
 The linked guides cover setup, hardware requirements and validation limits. The [subject adapters](https://huggingface.co/KernelKind/oracle-subject-adapters) are hosted separately; the [research dataset](https://huggingface.co/datasets/KernelKind/oracle-research) is being uploaded privately.
 
-Source publication is planned for [Oracle MVP](https://github.com/kernelkind/oracle-mvp) and [Experiment Runner](https://github.com/kernelkind/experiment-runner). The guides include clone instructions for use after publication.
+Source publication is planned for [Oracle Research](https://github.com/kernelkind/oracle-research) and [Experiment Runner](https://github.com/kernelkind/experiment-runner). The guides include clone instructions for use after publication.
 
 ## How it works
 

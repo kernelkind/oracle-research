@@ -6,7 +6,7 @@ repository is [KernelKind/oracle-research](https://huggingface.co/datasets/Kerne
 whose private upload is in progress; code publication,
 pinned Hugging Face revisions, hosted reader tests and publication approval
 remain open. The planned code repositories are
-[Oracle MVP](https://github.com/kernelkind/oracle-mvp) and
+[Oracle Research](https://github.com/kernelkind/oracle-research) and
 [Experiment Runner](https://github.com/kernelkind/experiment-runner).
 Complete original working files remain private.
 

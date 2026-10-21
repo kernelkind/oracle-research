@@ -31,12 +31,12 @@ passed in a fresh Linux VM; it does not require these historical files.
 ## Obtain the inputs
 
 Use Linux, Git, Python 3.13 and the
-[Oracle MVP source](https://github.com/kernelkind/oracle-mvp), which includes
+[Oracle Research source](https://github.com/kernelkind/oracle-research), which includes
 [Experiment Runner](https://github.com/kernelkind/experiment-runner) as a pinned
 submodule. Code publication remains pending. Once published, clone both with:
 
 ```bash
-git clone --recurse-submodules https://github.com/kernelkind/oracle-mvp.git
+git clone --recurse-submodules https://github.com/kernelkind/oracle-research.git
 ```
 
 The prepared dataset's local checks used Oracle commit
@@ -50,7 +50,7 @@ it open for the following steps. Install the runner's Python package and the
 Hugging Face CLI:
 
 ```bash
-cd oracle-mvp
+cd oracle-research
 export ORACLE_ROOT="$PWD"
 mkdir -p target/reproduction/history
 if [ -z "${EXPERIMENT_RUNNER_ROOT:-}" ]; then
