@@ -5,7 +5,8 @@ recorded post before attempting a whole corpus. The examples below use the
 current publication code and the recorded inputs; they keep new outputs separate
 from the original results.
 
-**Downloads are not available yet.** The
+**Downloads are not available yet.** The [download instructions](#download-the-dataset)
+are prepared with repository/revision placeholders. The
 [dataset commands](#verify-and-restore-the-dataset) verify
 and restore the selected files listed in [dataset manifest](downloads.md#dataset-manifest).
 Restoration recovers original compact exports, not complete native experiment
@@ -28,30 +29,21 @@ passed in a fresh Linux VM; it does not require these historical files.
 
 ## Obtain the inputs
 
-From the directory containing the Oracle checkout, start a Bash shell:
+Use Linux, Python 3.13 and matching Oracle MVP and `experiment-runner` checkouts.
+The prepared dataset's local checks used Oracle commit
+`c5b3ccf27c9f77e89e3a33a1c62e5233b94c3b81` and runner commit
+`26bc051378b5db6ee4456b5bdaac9554ac1e6bf3`; public source URLs and final revision
+pins remain pending. No model or encoder is needed to download, verify or restore
+these records.
+
+From the directory containing the Oracle checkout, start a Bash shell and keep
+it open for the following steps. Install the runner's Python package and the
+Hugging Face CLI:
 
 ```bash
 cd oracle-mvp
 export ORACLE_ROOT="$PWD"
-export RELEASE_ROOT="$ORACLE_ROOT/target/reproduction/release"
-mkdir -p "$RELEASE_ROOT" target/reproduction/history
-```
-
-The reader examples restore their required files from `target/publication-dataset`,
-the prepared local collection or its eventual downloaded copy. Restoration
-verifies the file hashes. No original native run directory or full research
-corpus is needed for these examples. Training also requires upstream base-model
-weights. Model downloads and build dependencies are additional.
-
-## Browse HR39 without running models
-
-Use Linux, Python 3.13, the matching `experiment-runner` checkout and the
-repository's Nix build environment. Install the runner's Python package and
-build the viewer. No account login, language model or encoder checkpoint is
-needed:
-
-```bash
-cd "$ORACLE_ROOT"
+mkdir -p target/reproduction/history
 if [ -z "${EXPERIMENT_RUNNER_ROOT:-}" ]; then
   if [ -f experiment-runner/experiment_runner/__init__.py ]; then
     export EXPERIMENT_RUNNER_ROOT="$ORACLE_ROOT/experiment-runner"
@@ -59,9 +51,74 @@ if [ -z "${EXPERIMENT_RUNNER_ROOT:-}" ]; then
     export EXPERIMENT_RUNNER_ROOT="$(realpath ../experiment-runner)"
   fi
 fi
-python3.13 -m venv target/hierarchy-env
-source target/hierarchy-env/bin/activate
-python -m pip install -e "$EXPERIMENT_RUNNER_ROOT"
+python3.13 -m venv target/publication-env
+source target/publication-env/bin/activate
+python -m pip install huggingface_hub==2.2.0 -e "$EXPERIMENT_RUNNER_ROOT"
+```
+
+Use this separate environment for dataset tools; keep `hierarchy-env` for the
+model runtime in the generation guide.
+
+The examples restore their required files from `target/publication-dataset`.
+No original native run directory or full research corpus is needed. Training
+also requires upstream base-model weights. Model downloads and build
+dependencies are additional.
+
+### Download the dataset
+
+**Publication pending:** the two values below must be replaced with the approved
+dataset ID and full Hugging Face commit ID once uploaded. They are placeholders,
+not working download links. The [dataset card](dataset-card.md) describes the
+selection and its limitations.
+
+Start with no existing `target/publication-dataset` directory when downloading
+a new snapshot. Hugging Face downloads do not remove files from older revisions.
+The prepared local collection already occupies that path; skip the download
+when inspecting it.
+
+```bash
+cd "$ORACLE_ROOT"
+DATASET_REPO='REPLACE_WITH_DATASET_ID'
+DATASET_REVISION='REPLACE_WITH_FULL_DATASET_COMMIT'
+hf download "$DATASET_REPO" --repo-type dataset \
+  --revision "$DATASET_REVISION" \
+  --include 'publication-dataset/**' --local-dir target --max-workers 4
+```
+
+The dataset repository will hold the checked payload under `publication-dataset/`
+and its card outside that folder. This command keeps the payload at
+`target/publication-dataset`; Hugging Face's download metadata goes into
+`target/.cache/huggingface`, outside the checked tree. This follows the
+[Hugging Face download layout](https://huggingface.co/docs/huggingface_hub/guides/download#download-files-to-a-local-folder).
+Do not add cards, caches or restored outputs inside the dataset folder.
+
+Check that the downloaded manifest is the prepared snapshot described by this
+guide. This SHA-256 is separate from the Hugging Face repository commit ID:
+
+```bash
+cd "$ORACLE_ROOT"
+(
+  set -e
+  sha256sum --check <<'SHA256'
+e517707bced7fb2ab1e50224b9cd96d4596acca4fd9966a503db2fc33eeb87f0  target/publication-dataset/dataset.json
+SHA256
+  python sse_multivector/experiment.py verify-publication-dataset \
+    target/publication-dataset
+)
+```
+
+Verification checks physical files, shared values and the exact original compact
+bytes recoverable by restoration. It rejects extra files and symlinks. See
+[restoration](#verify-and-restore-the-dataset) for selecting a bundle.
+
+## Browse HR39 without running models
+
+After the Python setup above, use the repository's Nix build environment to
+build the viewer. No account login, language model or encoder checkpoint is
+needed:
+
+```bash
+cd "$ORACLE_ROOT"
 nix --extra-experimental-features 'nix-command flakes' develop \
   --command cargo build --locked --release --jobs 1 \
   --bin sse-subject-navigation
@@ -475,7 +532,7 @@ library. No model runtime or login is needed:
 
 ```bash
 cd "$ORACLE_ROOT"
-source target/hierarchy-env/bin/activate
+source target/publication-env/bin/activate
 python sse_multivector/experiment.py restore-publication-dataset \
   target/publication-dataset \
   --publication evaluations/qwen-continuation-grading-v1-analysis-00a437b45662 \
@@ -532,7 +589,7 @@ directories whose metadata is nested, as it is for these inputs.
 
 ```bash
 cd "$ORACLE_ROOT"
-source target/hierarchy-env/bin/activate
+source target/publication-env/bin/activate
 python sse_multivector/experiment.py restore-publication-dataset \
   target/publication-dataset --publication inputs/prepared-training \
   --output target/reproduction/subject-training

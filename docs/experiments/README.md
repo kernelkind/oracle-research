@@ -19,7 +19,7 @@ Hugging Face. Downloads are not available yet. See [contents and formats](downlo
 | Inspect content ordering experiments | [Prominence and sorting findings](content-ranking.md) |
 | Understand resource limits | [Scaling evidence](scalability.md) and [hierarchy performance](hierarchy/performance.md) |
 | Locate another recorded study | [Study index](experiments.csv) and [result-bundle catalog](publications.csv) |
-| Check what can be reproduced | [Reader instructions](reproduce.md) and [evidence limits](open-items.md) |
+| Obtain and inspect the saved evidence | [Download instructions](reproduce.md#download-the-dataset) (publication pending), [dataset card](dataset-card.md) and [evidence limits](open-items.md) |
 
 The generation guide describes the current implementation. Earlier trials may
 need their recorded code and prompts. A higher prompt number does not establish

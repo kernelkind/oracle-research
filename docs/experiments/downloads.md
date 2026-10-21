@@ -5,6 +5,10 @@ Hugging Face Datasets; all evaluated adapters belong on Hugging Face Models.
 The selected dataset remains local. Public dataset links, revision pins and
 download tests remain open.
 
+See the [draft dataset card](dataset-card.md) for the Hugging Face landing page
+and the [download instructions](reproduce.md#download-the-dataset) for the planned
+reader commands. Both mark the unset repository ID and revision explicitly.
+
 | Where | What | Prepared size |
 | --- | --- | ---: |
 | GitHub | Code/history, tests, prompts, reusable specifications, authored findings, reader guides and experiment index | Download size unmeasured |
@@ -371,6 +375,12 @@ compact-export bytes recoverable by restoration. Use the
 [dataset verification and restoration commands](reproduce.md#verify-and-restore-the-dataset)
 before opening restored results with consumers that expect their original JSON.
 The [inventory](inventory.json) pins the prepared manifest hash and category totals.
+
+For hosting, preserve the complete checked tree under the dataset repository's
+`publication-dataset/` directory, with the card at the repository root as
+`README.md`. Keep any hosting metadata outside the payload. The download guide
+preserves this layout locally, so card/cache files do not invalidate native
+verification. This is a directory layout, not an additional archive format.
 
 ## Availability
 
