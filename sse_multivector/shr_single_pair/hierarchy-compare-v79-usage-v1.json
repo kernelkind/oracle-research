@@ -1,7 +1,0 @@
-{
-  "schema_version": 1,
-  "groups": {
-    "v79_graph_gate": ["../../target/compare-v79-qualification-v1/graph-gate-v1"],
-    "v79_graph_gate_fresh_repeat": ["../../target/compare-v79-qualification-v1/graph-gate-repeat-v1"]
-  }
-}

@@ -110,4 +110,4 @@ Full original notes and every unedited output (`./full-outputs.md`) · Review (`
 
 This comparison is complete. The result does not justify promoting ASv6.22 or claiming that a complex example solves context handling. ASv6.8 remains frozen.
 
-See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-subject-prompt-goal-v1`.
+See conversion gaps (`03bd9e45:docs/experiments/publication-gaps.csv`) for `collection:tracked-subject-prompt-goal-v1`.

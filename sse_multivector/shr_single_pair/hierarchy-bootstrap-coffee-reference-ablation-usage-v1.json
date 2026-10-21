@@ -1,7 +1,0 @@
-{
-  "schema_version": 1,
-  "groups": {
-    "v109_first_draw": ["../../target/bootstrap-coffee-reference-ablation-v1/v109"],
-    "v111_first_draw": ["../../target/bootstrap-coffee-reference-ablation-v1/v111"]
-  }
-}

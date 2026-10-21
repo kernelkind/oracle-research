@@ -473,7 +473,7 @@ The user authorized three follow-up cases without changing any V8 prompt bytes:
   for the exact coffee input with only its two-node order reversed, and one
   unseen authored pair: "Brushes designed for washing bottles" versus "Basins
   designed for soaking bottles." No parent is supplied in either case.
-- Use the [native spec](pair-consolidation-owl-v8-generalization-v1.spec.json)
+- Use the [native spec] (`sse_multivector/shr_single_pair/pair-consolidation-owl-v8-generalization-v1.spec.json` at `03bd9e45`)
   with the same Sol medium, subscription and SSE settings. Start both ready
   native batches immediately; let the shared runner own scheduling and retries.
   No warmup, extra baseline request, paid fallback or hierarchy change is added.
@@ -686,7 +686,7 @@ and [prompt optimization example](https://developers.openai.com/cookbook/example
 Prepare the three exact V9 coffee-forward, reversed-coffee and bottle controls
 with only the prompt replaced. Prepare three new authored contrasts through the
 [native source](pair-consolidation-owl-v10-purpose-plan-source-v1.json) and
-[spec](pair-consolidation-owl-v10-purpose-plan-v1.spec.json): designed washing
+[spec] (`sse_multivector/shr_single_pair/pair-consolidation-owl-v10-purpose-plan-v1.spec.json` at `03bd9e45`): designed washing
 brushes, items explicitly used in past washing/soaking, and a washing activity
 versus a plan to perform it. Six cases in three independent native batches;
 launch all ready batches immediately on the same Sol medium subscription/SSE
@@ -885,7 +885,7 @@ including the coffee producer once, is **$0.168030**. Reuse is not a cache hit,
 independent draw or measured policy saving; catalogue estimates are not
 subscription billing.
 
-The worktree remains necessary for frozen source/code and receipt validation:
+Original source location:
 
 ```text
 /home/dev/src/notedeck_worktrees/algos/oracle-mvp-pair-consolidation-owl-v10-panel-v1
@@ -1006,7 +1006,7 @@ one unseen negative-action case against unchanged V11. Native `prepare --from
 --only 06-explicit-absence --repeat` preserves the first case's complete prompt,
 input and settings while bypassing answer reuse. The
 [authored transfer source](pair-consolidation-owl-v11-negative-transfer-source-v1.json)
-and [native spec](pair-consolidation-owl-v11-negative-transfer-v1.spec.json) provide
+and [native spec] (`sse_multivector/shr_single_pair/pair-consolidation-owl-v11-negative-transfer-v1.spec.json` at `03bd9e45`) provide
 bottles and jars that have never been washed using detergent. Pre-call conditions
 require Washing and Detergent to be formal, preserving actual-history scope and
 allowing washing without detergent. Expectations remain outside model input;
@@ -1142,9 +1142,9 @@ report ASv6.100 provenance. No deprecated extraction data was used.
 
 ### Frozen native test
 
-The [source reference](pair-consolidation-owl-v11-hr14-source-v1.json) points to
+The [source reference] (`sse_multivector/shr_single_pair/pair-consolidation-owl-v11-hr14-source-v1.json` at `03bd9e45`) points to
 the original native `trial/batch-00001/experiment`, pinning its manifest SHA256.
-The [spec](pair-consolidation-owl-v11-hr14-v1.spec.json) selects eight exact cases
+The [spec] (`sse_multivector/shr_single_pair/pair-consolidation-owl-v11-hr14-v1.spec.json` at `03bd9e45`) selects eight exact cases
 through the production generic prepared-experiment adapter. All eight are root
 pairs: their original inputs have no parent. No natural-language parent was
 silently omitted or converted to unvalidated logic.
@@ -1287,7 +1287,7 @@ selected model remains GPT-6.1 Sol medium.
 
 ### Method and unchanged controls
 
-The [V11 baseline spec](pair-consolidation-owl-v11-close-baseline-v1.spec.json)
+The [V11 baseline spec] (`sse_multivector/shr_single_pair/pair-consolidation-owl-v11-close-baseline-v1.spec.json` at `03bd9e45`)
 selects nine exact ASv6.100-derived HR14 root inputs using the existing native
 prepared-experiment adapter. The first V11 Tomato answer already retained
 Tomatoes. Coffee and Dezeen then reproduced unnecessary scope loss before V12
@@ -1295,8 +1295,8 @@ was drafted: Coffee removed water and Dezeen lost publication identity from
 both its translations and consolidation. These are the observed failing
 controls, not an invented claim that OWL V11 had failed Tomatoes.
 
-The [V12 source reference](pair-consolidation-owl-v12-close-source-v1.json) and
-[close-pair spec](pair-consolidation-owl-v12-close-v1.spec.json) freeze those
+The [V12 source reference] (`sse_multivector/shr_single_pair/pair-consolidation-owl-v12-close-source-v1.json` at `03bd9e45`) and
+[close-pair spec] (`sse_multivector/shr_single_pair/pair-consolidation-owl-v12-close-v1.spec.json` at `03bd9e45`) freeze those
 same inputs. Criteria inherited from the normal V7 screen require retaining
 named identities and defining conditions without excluding either complete
 meaning. Cooking's different method scopes and Bread's product/activity kinds
@@ -1304,10 +1304,10 @@ prevent treating identical titles as automatic equivalence. The reviewed
 Tomato interpretation is user evidence; the other assessments are agent checks,
 not independent human gold. No exact output heading was prescribed.
 
-The [regression source](pair-consolidation-owl-v12-regression-source-v1.json) and
-[spec](pair-consolidation-owl-v12-regression-v1.spec.json) preserve the prior
+The [regression source] (`sse_multivector/shr_single_pair/pair-consolidation-owl-v12-regression-source-v1.json` at `03bd9e45`) and
+[spec] (`sse_multivector/shr_single_pair/pair-consolidation-owl-v12-regression-v1.spec.json` at `03bd9e45`) preserve the prior
 completed-painting parent, never-painted wall/ceiling and coffee-equipment cases.
-The [HR14 control spec](pair-consolidation-owl-v12-hr14-controls-v1.spec.json)
+The [HR14 control spec] (`sse_multivector/shr_single_pair/pair-consolidation-owl-v12-hr14-controls-v1.spec.json` at `03bd9e45`)
 retains Beets/MrBeast and pressure canning/extractor fans. All three ready V12
 batches were submitted before waiting; the shared runner owns scheduling.
 
@@ -1460,13 +1460,13 @@ ordinary pair-consolidation prompt or hierarchy artifact changes.
 Three independent native batches were submitted immediately through the shared
 launcher, in one scheduling group:
 
-- [Close controls](pair-consolidation-owl-v13-close-v1.spec.json): the five exact
+- [Close controls] (`sse_multivector/shr_single_pair/pair-consolidation-owl-v13-close-v1.spec.json` at `03bd9e45`): the five exact
   HR14 Tomatoes, Coffee, Breakfast, Bitcoin and Dezeen pairs, with saved V12
   repeat answers as the baseline.
-- [HR14 controls](pair-consolidation-owl-v13-hr14-controls-v1.spec.json): the exact
+- [HR14 controls] (`sse_multivector/shr_single_pair/pair-consolidation-owl-v13-hr14-controls-v1.spec.json` at `03bd9e45`): the exact
   Beets/MrBeast and pressure-canning/extractor-fan pairs, with their V12 answers
   as the baseline.
-- [Prior controls](pair-consolidation-owl-v13-regression-v1.spec.json): completed
+- [Prior controls] (`sse_multivector/shr_single_pair/pair-consolidation-owl-v13-regression-v1.spec.json` at `03bd9e45`): completed
   painting with a supplied OWL parent, never-painted surfaces, and cups versus
   shelves with distinct purposes.
 
@@ -1544,8 +1544,7 @@ Source and ignored artifacts remain in:
 Its `target/pair-consolidation-owl-v13-{close,hr14-controls,regression,coffee-repeat,attribution-repeat}-v1`
 directories retain frozen native plans, receipts and attributed reviews. Separate
 ignored artifacts contain the baseline failures, structural checks, native usage
-source and native usage summary. The worktree remains because those saved
-experiments and source bindings require its paths. The earlier V12/V11 source
+source and native usage summary.  The earlier V12/V11 source
 worktrees remain referenced by the inherited input specifications.
 
 Verification: all 26 production prompt-assembly tests pass, the paired V13

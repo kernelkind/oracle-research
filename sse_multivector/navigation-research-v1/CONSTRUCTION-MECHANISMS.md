@@ -5,7 +5,7 @@ score cutoff or independent pair classifier. It demonstrated some useful
 local paths, but incomplete memberships and missing broader connections remain.
 See the [results](./SOURCE-PHRASE-PATHS.md). The review below records why that
 experiment was selected; it does not establish grammar as a complete semantic
-hierarchy. Its pre-run commitments remain in the [plan](./SPC01-PLAN.md).
+hierarchy. Its pre-run commitments remain in the [plan](SOURCE-PHRASE-PATHS.md#spc01-study-design).
 
 ## What the existing evidence changes
 
@@ -212,7 +212,7 @@ that transfer; no new implementation is selected from this paper alone.
 
 The [structural generalization experiment](./STRUCTURAL-GENERALIZATION.md)
 implements a bounded comparison informed by these sources. Its
-[plan](./SPC02-PLAN.md) records the additional Woods 1997 structural rule and
+[plan](STRUCTURAL-GENERALIZATION.md#spc02-study-design) records the additional Woods 1997 structural rule and
 Luu SIWN method/evaluation qualifications. Universal Dependencies connections
 are explicitly an approximation to conceptual relations, not a reproduction.
 

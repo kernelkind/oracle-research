@@ -161,7 +161,6 @@ You answered **No** to both **Food consumption → Having drunk coffee** and **C
 - The unchanged model was `google/t5_xxl_true_nli_mixture`, revision `aa6cfe1dd4257853bfdd772992045f41bfc14988`, local CPU float32, four threads, batch size four. Both generation and token scores are preserved.
 - The run took 64.43 seconds including checkpoint verification/loading; peak process RSS was 43.42 GiB. The scope had a 60 GiB memory ceiling and zero swap allowance. No download, paid API call, or rental was used.
 - `fixture.json` uses the old TRUE03 schema discriminator to reuse the unchanged validator; the experiment is TRUE06. The shared raw `run/DECISIONS.md` incorrectly calls this a holdout by template. This report supplies the correct description.
-- Existing tracking card: CREC-127. No Plane tools were available, so no external card update is claimed.
 
 Independent verification reproduced all input directions, native decisions, cutoff decisions, and summaries. Raw-logit replay matched all saved score fields; independent softmax differed by at most `2.22e-16`. All 75 canonical masks match their source byte spans. The 42 relevant regression tests passed before and after inference. See `verification.json`.
 

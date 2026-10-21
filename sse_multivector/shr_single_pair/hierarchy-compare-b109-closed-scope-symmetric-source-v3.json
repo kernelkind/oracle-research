@@ -1,7 +1,0 @@
-{
-  "prepared_experiment": {
-    "path": "../../target/compare-v179-b109-closed-scope-v3/raw",
-    "sha256": "f6cddbb08b8bdfa4c936586b7e5c2e238d2638fb610ffe21ee36493b5280ce3e"
-  },
-  "input_view": "symmetric_fixed_meanings"
-}

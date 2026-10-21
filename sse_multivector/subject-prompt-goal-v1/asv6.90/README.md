@@ -59,9 +59,9 @@ canonical metadata, reasoning trace or schema field is introduced.
 
 ## Provenance and checks
 
-The versioned [source edit](prompt-edits.json) pins the ASv6.81 source hash.
+The versioned source edit (`03bd9e45:sse_multivector/subject-prompt-goal-v1/asv6.90/prompt-edits.json`) pins the ASv6.81 source hash.
 Its native revision receipt records the exact changed strings and destination
-hash. The [template edit](edits.json) independently pins ASv6.81's
+hash. The template edit (`03bd9e45:sse_multivector/subject-prompt-goal-v1/asv6.90/edits.json`) independently pins ASv6.81's
 reusable POST template; native revision preserves its existing POST wrapper.
 Production ASv6.48, MP, model route, settings and frozen evaluation criteria
 remain unchanged. Root's minimal source-generation check first fails on ASv6.81

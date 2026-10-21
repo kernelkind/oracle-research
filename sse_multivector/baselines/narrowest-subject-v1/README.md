@@ -39,7 +39,7 @@ diagnostic.
 17,391 unique pairwise cosine measurements, analysis headers and subject
 diagnostics. See the [catalog](../../../docs/experiments/publications.csv),
 [dataset manifest](../../../docs/experiments/downloads.md#dataset-manifest) and
-[export commands and checks](../../../docs/experiments/reproduce.md#archived-baseline-checks).
+[export commands and checks](../../../docs/experiments/reproduce.md#verify-and-restore-the-dataset).
 The files are prepared locally for Hugging Face Datasets; nothing is uploaded.
 AS lineage remains unknown. The full archive remains local and unchanged;
 the inspection commands above require those originals.

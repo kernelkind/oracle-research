@@ -866,4 +866,4 @@ Subject: Bijou calls for Leon from Resident Evil Requiem to come back.
 
 Accepted. The game, Leon's requested return and named streamer preserve the call and attribution, without the separate fear expression.
 
-See [conversion gaps](../../../../docs/experiments/publication-gaps.csv) for `collection:tracked-mask-prompt-goal-v1`.
+See conversion gaps (`03bd9e45:docs/experiments/publication-gaps.csv`) for `collection:tracked-mask-prompt-goal-v1`.

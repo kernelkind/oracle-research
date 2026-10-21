@@ -231,4 +231,4 @@ Minimum sampled available memory was 106.77 GiB; sampled memory and I/O pressure
 
 Method reference: [OpenAI evaluation guidance](https://developers.openai.com/api/docs/guides/evaluation-best-practices#single-turn-model-interactions), distinguishing input/instruction behavior from output correctness. The findings above come from this experiment, not from the guidance.
 
-See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-subject-prompt-goal-v1`.
+See conversion gaps (`03bd9e45:docs/experiments/publication-gaps.csv`) for `collection:tracked-subject-prompt-goal-v1`.

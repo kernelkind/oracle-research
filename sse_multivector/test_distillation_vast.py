@@ -168,7 +168,7 @@ class WorkloadTests(unittest.TestCase):
             self.assertEqual(spec['limits']['maximum_charge_cents'], 4150)
 
     def test_one_gpu_download_workload_requires_volume_and_no_training(self):
-        from gte.full_build_package import write_manifest
+        from vast.full_build_package import write_manifest
         settings, offer = quote()
         settings['offer_equals']['num_gpus'] = offer['num_gpus'] = 1
         settings['worker_timeout_seconds'] = None

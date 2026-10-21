@@ -1,35 +1,27 @@
-# GDC09 navigation research
+# Mask-group construction and navigation
 
 **Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
 
-The original GDC09 tree, masks, vectors, labels, and browser remain unchanged.
-The production objective is a repeatable construction method. For HR02's
-diagnostic, the user approved a separate manually corrected placement view to
-evaluate the other stages; it is not a replacement for that production method.
+These studies investigate category membership, broader–narrower relationships
+and browsing choices using the saved GDC09 mask groups. HR02 also used a
+separately corrected placement view to distinguish placement errors from the
+other construction stages. That manually corrected view does not validate an
+automatic placement method.
 
-Byte-identical copies of shared source modules have been removed from individual
-run directories. The modules live in `sse_multivector/`; frozen plans and source
-hashes still identify the files used for each original run. The complete earlier
-layout is available at publication commit `55b5afcd`. Distinct historical
-implementations and source copies required by verification remain here.
-
-## Required hierarchy-processing stages
-
-These are requirements for the formal construction process, not optional review
-cleanups. They do not authorize a new run or change the frozen experiment data.
+## HRv1/HR02 construction method
 
 These stages describe the mask-group construction path used for HRv1/HR02.
 The separate **LG01 — subject hierarchy merging** investigation records its
 rules and implementation status in the same
-[decision register, HD08–21](../../docs/planning/release-decisions.md#sp-based-hierarchy-rules).
+[decision register, HD08–21](../../docs/experiments/hierarchy/design-decisions.md#sp-based-hierarchy-rules).
 Do not silently transfer the mask-set merge, generated merged-title or
 equal-post display-collapse rules below to SP subject nodes. In particular,
 HD11 requires both identical subject wording and identical nonempty masks
 within one post; it is implemented in the separate
-[LG01 technique](../subject-order-probe.md#smv2--exact-same-post-combination).
+[LG01 technique](../../docs/experiments/hierarchy/subject-order-probe.md#smv2--exact-same-post-combination).
 Earlier saved graphs remain unchanged.
 
-The approved [LG01 100-post run](../subject-order-probe.md#smv2-100--unchanged-rules-on-all-100-posts)
+The approved [LG01 100-post run](../../docs/experiments/hierarchy/subject-order-probe.md#smv2-100--unchanged-rules-on-all-100-posts)
 applies those same combination rules to all 100 saved posts before deciding
 whether another placement stage is needed. It is separate from the six-post
 run and does not add frontier judgments or alter the mask-group rules below.
@@ -79,7 +71,7 @@ inference or rewrite historical titles, scores or hierarchy artifacts. HR02
 now uses Astra low for its six merged titles, as explicitly approved; the
 earlier Luna-max naming results remain unchanged.
 
-The [reversible design-decision register](../../docs/planning/release-decisions.md#reversible-hierarchy-design-decisions)
+The [reversible design-decision register](../../docs/experiments/hierarchy/design-decisions.md#reversible-hierarchy-design-decisions)
 tracks the native-answer rule (HD01), provisional cycle merging (HD02), the
 candidate rule for preserving links despite conflicting answers (HD03),
 merged-node naming (HD04), and stable merged IDs derived from original member
@@ -204,7 +196,7 @@ inputs before TRUE's semantic merges. Only the two titles and the prompt went
 to the model; saved TRUE decisions and agent expectations stayed in review-only
 evidence. TRUE and NSPv1 were not run. The experiment and receipts are in
 `experiments/nspv2-hr02-four-pairs-v1/`; the reusable
-[spec](../experiment_specs/nspv2-hr02-four-pairs-astra-low.json) fixes the prompt,
+spec (`03bd9e45:sse_multivector/experiment_specs/nspv2-hr02-four-pairs-astra-low.json`) fixes the prompt,
 model and output contract. Agent assessments are saved through the runner,
 separately from user judgments. NSPv1 remains an untested, rejected draft kept
 as NSPv2's revision source, not a current candidate.
@@ -236,7 +228,7 @@ binary answers for the pre-recorded unresolved boundaries. This single draw
 does not establish repeatability, but the marker alone did not fix this result.
 
 The diagnostic and receipts are in `experiments/nspv2-hr02-hashtag-v1/`; the
-reusable [spec](../experiment_specs/nspv2-hr02-hashtag-astra-low.json) retains
+reusable spec (`03bd9e45:sse_multivector/experiment_specs/nspv2-hr02-hashtag-astra-low.json`) retains
 NSPv2. Original node IDs and an explicit title override bind the new inputs
 without rewriting the original titles, prompts or relationship outputs.
 The runner correctly reports `input_mismatch` against the saved additional-pair
@@ -275,7 +267,7 @@ Agent review accepted all six explanations. The saved native TRUE answers
 matched five expectations, missing Meat consumption containing Attitudes
 toward meat consumption. TRUE was review-only evidence, not a rerun or a
 fabricated experiment baseline. The reusable
-[spec](../experiment_specs/nspv3-hr02-diverse-pairs-astra-low.json) and retained
+spec (`03bd9e45:sse_multivector/experiment_specs/nspv3-hr02-diverse-pairs-astra-low.json`) and retained
 original node IDs make the inputs reproducible and the exact answers reusable.
 This is a selected six-direction check, not a general accuracy estimate or
 a test of how the decisions combine into a graph. No hierarchy was built.
@@ -361,7 +353,7 @@ no additional inference or graph construction is approved.
 
 **NSPv3 / Luna max — fresh-pair check, tested:** the user approved a small
 fresh sample after NSP-Luna-v1 failed to improve the earlier cases. The shared
-runner used [this spec](../experiment_specs/nspv3-hr02-fresh-pairs-luna-max.json)
+runner used this spec (`03bd9e45:sse_multivector/experiment_specs/nspv3-hr02-fresh-pairs-luna-max.json`)
 and `experiments/nspv3-hr02-fresh-pairs-luna-max-v1/`. Inputs are exact original
 HR02 titles and IDs from `target/hierarchy-build-v1/astra-titles-v1/titles.json`.
 Both directions of six pairs were selected before inference; none had appeared
@@ -496,7 +488,7 @@ changed. The 20 live cases also validated through the production runner.
 
 **NSP-Jev-v1 harder sample — completed:** after the user approved a small
 harder test, `experiments/nsp-jev-v1-hr02-harder-pairs-v1/` checked 13 new
-directions using [this spec](../experiment_specs/nsp-jev-v1-hr02-harder-pairs.json).
+directions using this spec (`03bd9e45:sse_multivector/experiment_specs/nsp-jev-v1-hr02-harder-pairs.json`).
 The nine pre-run agent expectations cover Foods/Foods (one identical-input
 control), Raw food/Veganism, Seeds and seed-derived products/Coffee beans,
 Food and drink/Fasting, and Workouts/Personal habit changes (both directions
@@ -680,7 +672,7 @@ until their expected answers are settled. In particular:
   a celebration was discussed, but final pair labels were not recorded.
 - coffee shop / #coffeechain: do not guess the unresolved name's meaning.
 
-The approved evaluation uses [this spec](../experiment_specs/nsp-jev-v3-hr02-agreed-pairs.json)
+The approved evaluation uses this spec (`03bd9e45:sse_multivector/experiment_specs/nsp-jev-v3-hr02-agreed-pairs.json`)
 and three observations per unique input. Shared preparation for
 `experiments/nsp-jev-v3-agreed-pairs-r1/` verified 17 exact title inputs, with
 15 new requests and two reusable v3 answers. The completed `-r2` and `-r3`
@@ -722,7 +714,7 @@ were performed. The approved next test is the fresh balanced sample below.
 
 The user approved keeping NSP-Jev-v3 unchanged and testing fresh actual node
 titles, with expectations recorded before inference and one call per input.
-The [spec](../experiment_specs/nsp-jev-v3-hr02-fresh-balanced.json) prepares
+The spec (`03bd9e45:sse_multivector/experiment_specs/nsp-jev-v3-hr02-fresh-balanced.json`) prepares
 `experiments/nsp-jev-v3-fresh-balanced-v1/`: twelve directed judgments, six
 expected Yes and six expected No. Exact titles were verified against the saved
 HR02 Astra title report. No matching directions occur in successful saved NSP
@@ -854,7 +846,7 @@ for user review; canonical HR02 is unchanged.
 
 The user approved unchanged **NSP-Jev-v3**, `typesafe/jev-1.13` provider-default,
 and **10 concurrent calls** across all 129 original pre-merge HR02 nodes.
-The [reusable spec](../experiment_specs/nsp-jev-v3-hr02-full.json) prepares
+The reusable spec (`03bd9e45:sse_multivector/experiment_specs/nsp-jev-v3-hr02-full.json`) prepares
 `experiments/nsp-jev-v3-hr02-full-v1/` from the existing `decision_hierarchy.py
 prepare` path, selecting every ID from
 `target/hierarchy-build-v1/astra-titles-v1/titles.json`. Inputs are saved in
@@ -904,7 +896,7 @@ of unresolved or mismatched evidence. Saved TRUE artifacts remain intact.
 
 **Browser build completed:** `target/hierarchy-build-v1/jev-merge-v1/` retains
 the reversible merge, all original decisions and source packets. Naming uses
-the [reusable spec](../experiment_specs/hr02-jev-merged-titles-v38-astra-low.json)
+the reusable spec (`03bd9e45:sse_multivector/experiment_specs/hr02-jev-merged-titles-v38-astra-low.json`)
 and `experiments/hr02-jev-merged-titles-v38-astra-low/`: five valid new subscription
 calls, zero reuse, no retries, producing `Bitcoin`, `coffee`, `nostr`, `Foods`
 and `Good morning greetings`. No relationship decisions were rerun. The runner
@@ -943,7 +935,7 @@ target/infomap-review-build/debug/sse-subject-navigation \
 ```
 
 The second batch is in `experiments/nspv2-hr02-additional-pairs-v1/`, with a
-reusable [spec](../experiment_specs/nspv2-hr02-additional-pairs-astra-low.json).
+reusable spec (`03bd9e45:sse_multivector/experiment_specs/nspv2-hr02-additional-pairs-astra-low.json`).
 Both batches retain original pre-merge node IDs, exact title inputs, expectations,
 receipts and separate agent assessments. Matching requests can be reused by the
 shared runner; rejected judgments are not validated graph links, and no frontier
@@ -1114,7 +1106,7 @@ requirements were applied. No prompt, grouping,
 relationship, membership-expansion or title-repair policy changes are approved
 by these requirements.
 
-## Current title-prompt experiment
+## Title-prompt comparison
 
 The frozen title configuration used by the **currently running TRUE job** is
 [v38](../hdbv2-node-description-probe-v38/prompt.txt) with `gpt-6-luna`, reasoning
@@ -1485,7 +1477,7 @@ Reprocessing the older HRv1 comparison under HD06 is still pending. No title,
 relation, membership or saved artifact was changed to implement this navigation
 rule.
 
-## Current evaluation decisions — September 15, 2026
+## Evaluation decisions — September 15, 2026
 
 **Coffee → Music at Coffee Shops is approved for evaluation.** The user explicitly
 approved this category relationship, superseding the earlier No in
@@ -1638,7 +1630,7 @@ verification (`./TRUE14/verification.json`), and the
 packaging manifest (`./TRUE14/packaging-manifest.json`) preserve the evidence.
 The unchanged inference implementation still writes `experiment: TRUE12` in its
 config; TRUE14's plan, execution record, verification, and outputs identify the
-new experiment explicitly. Frozen inputs and score/configuration identity were
+Frozen inputs and score/configuration identity were
 verified before packaging. Inference ran locally with no paid resources.
 
 ```bash
@@ -1744,7 +1736,7 @@ demonstrated semantic advantage requiring that graph; it does not prove that
 relationships never matter. The beets/preparation omission also has two
 independent barriers: a missing direct edge and missing lexical ancestry.
 
-[USM01](./USM01-PLAN.md) selects a bounded direct-occurrence comparison using
+[USM01](USM01-RESULTS.md#usm01-study-design) selects a bounded direct-occurrence comparison using
 one released LMMS sense representation: saved-lemma filtering, original-word
 morphological lookup, and unrestricted matching. The original-word control
 tests whether bypassing faulty lemmas explains any apparent improvement.
@@ -1787,7 +1779,7 @@ category selection and complete-note coverage unresolved.
 The [semantic-order investigation](./SEMANTIC-ORDER-RESOURCES.md) found a
 direct construction precedent and concrete SUMO paths across the missing
 noun/verb and Food distinctions. It also finds scope mismatches: the resource
-is not a verified semantic order. [SGC03's pre-run design](./SGC03-PLAN.md)
+is not a verified semantic order. [SGC03's pre-run design](ONTOLOGY-CONSTRUCTION.md#sgc03-study-design)
 separates approximate construction from mapping validity using noun-only and
 noun-plus-verb conditions and same-order singleton controls. The completed
 comparison and collateral-admission audit are linked above.
@@ -2123,8 +2115,6 @@ The note-balanced score and threshold above are experimental adaptations, not
 those papers' published algorithms. No moved diffusion coordinates, titles, or
 text embeddings generated from labels enter the calculation.
 
-Run from the repository root with the existing NumPy environment:
-
 ```sh
 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 \
 LD_LIBRARY_PATH=/nix/store/8lahnh9pn3lrrnhax5nk7ibvjcbjmnkm-gcc-15.2.0-lib/lib:/nix/store/b2swxfi8srrbsafvh9iyyhd26mz9giwf-zlib-1.3.2/lib \
@@ -2210,12 +2200,6 @@ This is a simple experimental cost proxy inspired by
 not its published optimizer. BioNav assumes an already-valid semantic hierarchy.
 Overlapping memberships here also prevent interpreting raw note counts as
 calibrated browsing probabilities.
-
-```sh
-python3 sse_multivector/select_note_categories.py \
-  sse_multivector/geometric-hierarchy-v1/GDC09/categories.json \
-  --output sse_multivector/navigation-research-v1/NP01 --run-id NP01
-```
 
 The unbounded control uses `--max-choices 0`, `--run-id NP00`, and its own output
 directory. Neither run changes the original browser's default artifact.

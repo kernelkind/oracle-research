@@ -1,8 +1,0 @@
-{
-  "schema_version": 1,
-  "groups": {
-    "v208-physical-repeat": ["../../target/compare-v208-physical-appearance-repeat-v1"],
-    "v208-original-aspect": ["../../target/compare-v208-production-aspect-v1"],
-    "v209-physical-first": ["../../target/compare-v209-physical-appearance-v1"]
-  }
-}

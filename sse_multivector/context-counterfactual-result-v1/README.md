@@ -91,7 +91,7 @@ The experiment tests SSE conditional on hand-supplied masks. It does not test au
 
 Under the frozen contract, Stage 2 did not run because Stage 1 failed. This
 directory records that result; related findings are collected in the
-[mask-fidelity evidence](../../docs/recommendation-engine/experiments/sse-multivector-isolation.md#mask-fidelity-evidence).
+[mask-fidelity evidence](../../docs/experiments/representation/mask-context.md#mask-fidelity-evidence).
 
 ## Reproduction and audit
 

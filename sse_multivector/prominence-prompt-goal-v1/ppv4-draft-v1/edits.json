@@ -1,9 +1,0 @@
-{
-  "base_sha256": "51474ee5ebf38455fc665816359185a5640395be97e8549bda933876c21dc646",
-  "edits": [
-    {
-      "old": "Assign a prominence score measuring how strongly this social-media post is about the meaning expressed by its mask. The score will help show notes most directly about that meaning first.",
-      "new": "Assign a prominence score measuring how strongly this social-media post is about the subject represented by its mask."
-    }
-  ]
-}

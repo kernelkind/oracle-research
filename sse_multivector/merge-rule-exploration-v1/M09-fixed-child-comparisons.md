@@ -28,7 +28,6 @@ The pie/bread union can support a broader food/ingredient relationship. The evid
 - V777 · N083: ⟦easter matcha-cashew pie⟧ ⟦no refined sugar⟧
 - V666 · N072: ⟦Irish soda bread⟧ ⟦I tried out recently⟧ ⟦currants aren't in season yet⟧
 
-
 ## 2. Sweet-tea variation meets regional food before the other tea masks
 
 Immediately before merge1583, V670/N072 remains a singleton. Group1192 contains hot/morning tea from N042/N080. Group1497 contains local flavors from N002 and the longer tea/bread analogy from N072.
@@ -55,7 +54,6 @@ V670 · N072: ⟦every Southerner has a different way of making sweet tea⟧
 
 - V019 · N002: ⟦Sorrento's⟧ ⟦Indulge⟧ ⟦local flavors⟧
 - V671 · N072: ⟦Soda bread⟧ ⟦recipes vary⟧ ⟦I hear⟧ ⟦much like⟧ ⟦Southerner⟧ ⟦different way of making sweet tea⟧
-
 
 ## First divergence from M01 is not a semantic verdict
 
@@ -100,7 +98,6 @@ All35 original IDs in the34 canonical leaves of1204 are listed, including the V2
 - V278 · N035: ⟦More coffee in cool places⟧
 - V279 · N035: ⟦More coffee⟧ ⟦cool places⟧
 - V285 · N036: ⟦Iced coffee⟧ ⟦served in ice⟧
-
 
 ## Complete originals for the decisive evidence
 

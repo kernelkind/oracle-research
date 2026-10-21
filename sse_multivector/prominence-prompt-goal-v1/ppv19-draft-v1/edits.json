@@ -1,9 +1,0 @@
-{
-  "base_sha256": "f4a0c5b8c3d99f61a3d4e3d253c178fbd8c7b67dd9243ad590f350694166638e",
-  "edits": [
-    {
-      "old": "Use the complete post to resolve the meanings of the selected words. Determine what the fragments jointly express on their own: what do they specify about the message, and what do they leave open compared with the complete post?",
-      "new": "Use the complete post to resolve the meanings of the selected words. Keeping those meanings fixed, consider which aspects of the post’s message could change without contradicting what the fragments jointly express. This identifies what the mask leaves unspecified."
-    }
-  ]
-}

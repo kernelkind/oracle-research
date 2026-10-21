@@ -63,6 +63,6 @@ Do not rerun this comparison or reword these same warnings automatically. A diff
 
 The proposal/configs were committed before generation at `bd0fb4089a09d908c4516ace1b29718d9c333c39`. The verifier reports generation as partial because the optional third trial was not run; the bounded comparison itself is finished by its stopping rule.
 
-Machine-readable decision (`./assessment.json`) · Review (`./review.json`) · Runtime (`./runtime.json`) · [Verifier](./verify.py) · Independent audit (`./independent-audit.json`)
+Machine-readable decision (`./assessment.json`) · Review (`./review.json`) · Runtime (`./runtime.json`) · Verifier (`03bd9e45:sse_multivector/subject-prompt-goal-v1/relation-rule-ablation-v1/verify.py`) · Independent audit (`./independent-audit.json`)
 
-See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-subject-prompt-goal-v1`.
+See conversion gaps (`03bd9e45:docs/experiments/publication-gaps.csv`) for `collection:tracked-subject-prompt-goal-v1`.

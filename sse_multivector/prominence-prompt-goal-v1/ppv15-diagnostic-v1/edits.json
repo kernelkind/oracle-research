@@ -1,9 +1,0 @@
-{
-  "base_sha256": "a06eedb69a46a1b5da8658acca75e07cd6e70a366d0527e5aa259dc5345c3809",
-  "edits": [
-    {
-      "old": "Return only a JSON object with one integer field, \"prominence\".",
-      "new": "Return only a JSON object with three fields: \"represented_meaning\" (briefly state the meaning you count as represented by the mask), \"missing_meaning\" (briefly state any meaning of the post you do not count as represented), and \"prominence\" (the integer score)."
-    }
-  ]
-}

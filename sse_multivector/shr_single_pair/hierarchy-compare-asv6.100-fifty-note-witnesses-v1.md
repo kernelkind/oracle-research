@@ -131,7 +131,7 @@ Compare request for this exact v109 pair is made as part of this classification.
 ## Frozen selection
 
 The [source](hierarchy-compare-asv6.100-fifty-note-witnesses-v1.json) and
-[specification](hierarchy-compare-asv6.100-fifty-note-witnesses-v1.spec.json)
+[specification] (`sse_multivector/shr_single_pair/hierarchy-compare-asv6.100-fifty-note-witnesses-v1.spec.json` at `03bd9e45`)
 prepare **102 requests**:
 
 - **32 original comparisons**, preserving the original local input and complete
@@ -459,10 +459,10 @@ itself remains unchanged and no reliability improvement is claimed.
 The user approved v75 and authorized preparing, running and reviewing the
 102-case panel. The current-main-based `oracle-mvp-compare-v75-qualification-v1`
 worktree isolates this bounded task from the older research runtime history.
-The source [projection](hierarchy-compare-v75-fifty-note-witnesses-v1.json) pins
+The source [projection] (`sse_multivector/shr_single_pair/hierarchy-compare-v75-fifty-note-witnesses-v1.json` at `03bd9e45`) pins
 the original v69 prepared experiment envelope by SHA-256. It imports original
 inputs and producer receipts, not historical comparison answers. The new
-[specification](hierarchy-compare-v75-fifty-note-witnesses-v1.spec.json) selects
+[specification] (`sse_multivector/shr_single_pair/hierarchy-compare-v75-fifty-note-witnesses-v1.spec.json` at `03bd9e45`) selects
 unchanged v75, Sol 6.1 medium, concurrency 32, automatic caching and the
 [five-field output schema](Hierarchy-compare-v75.output.schema.json).
 
@@ -1144,13 +1144,6 @@ linkage, prior answer or assistant history. Attributed native reviews preserve
 every non-review case field. Generation and reviewed snapshots are
 `initial-complete-generation.json` and `initial-reviewed.json` under
 `target/compare-condition-diagnostic-v1/`.
-
-The useful next proposed change is to test required purposes or roles by asking
-whether they can change while the child's defining kind or activity remains
-true, before treating a usual purpose as necessary. Keep the established
-activity/tool-role convention and positive controls. This needs a controlled
-prompt test; the present multi-field diagnostic does not identify one causal
-instruction or authorize a further edit merely by recording that suggestion.
 
 ### Condition diagnostic v2: preregistered purpose-variation test
 
@@ -5058,14 +5051,6 @@ source bindings, 39 code bindings, six runner configs, twelve distinct output
 receipts and 24 producer-receipt references. Original witness inputs, outputs
 and pre-call targets remain unchanged.
 
-The recommended next ablation replaces the identity/consumer-only mandatory
-positive prerequisite with a test of every applicable parent restriction absent
-from the child's explicit wording, requiring an actual necessary implication
-when that variation is rejected. Keep the rest of V176 unchanged and retain
-positive controls, so producing blanket neither or uncertainty cannot count as
-success. This is a proposal for a separate version and controlled test; the
-present diagnostic changes neither prompt nor meanings.
-
 ## V177 mandatory restriction-check ablation
 
 The user authorized the proposed single-mechanism edit and controlled test.
@@ -6196,7 +6181,7 @@ labels unresolved. Failed or unrun requests remain unresolved.
 This removes the earlier saved-versus-fresh contrast from the matched comparison;
 two draws still cannot establish population accuracy or isolate internal
 reasoning. The native
-[usage source](hierarchy-compare-v179-matched-input-order-usage-v1.json) accounts
+[usage source] (`sse_multivector/shr_single_pair/hierarchy-compare-v179-matched-input-order-usage-v1.json` at `03bd9e45`) accounts
 for the eight fresh requests separately by member order. Existing control results
 are not fresh controls for this diagnostic. No ordering policy or prompt revision
 is adopted solely because one presentation emits a convenient label.
@@ -6287,8 +6272,8 @@ The reusable [A-first source](hierarchy-compare-nonfood-purpose-a-first-v1.json)
 and [B-first source](hierarchy-compare-nonfood-purpose-b-first-v1.json) each
 contain the three pairs in both A/B assignments. Expected relations and review
 provenance remain in evidence outside model input. The two
-[A-first](hierarchy-compare-v179-nonfood-purpose-a-first-v1.spec.json) and
-[B-first](hierarchy-compare-v179-nonfood-purpose-b-first-v1.spec.json)
+[A-first] (`sse_multivector/shr_single_pair/hierarchy-compare-v179-nonfood-purpose-a-first-v1.spec.json` at `03bd9e45`) and
+[B-first] (`sse_multivector/shr_single_pair/hierarchy-compare-v179-nonfood-purpose-b-first-v1.spec.json` at `03bd9e45`)
 specifications use the existing generic native adapter, shared worker,
 Sol 6.1 medium/SSE and disabled explicit cache warming, matching the previous
 order diagnostic's request convention. No new adapter or execution script is
@@ -6313,7 +6298,7 @@ register output-specific assessments through native `review`. Producer-bound
 `node_pair_consistency` cannot certify directly specified synthetic endpoints;
 do not fabricate Bootstrap receipts to make it do so. Read-only normalization
 of native saved labels supplies the paired diagnostic counts. Native
-[usage aggregation](hierarchy-compare-v179-nonfood-purpose-usage-v1.json)
+[usage aggregation] (`sse_multivector/shr_single_pair/hierarchy-compare-v179-nonfood-purpose-usage-v1.json` at `03bd9e45`)
 retains all four experiments and actual attempt/usage accounting.
 
 This is a bounded mechanism diagnostic with three related semantic cases,
@@ -6410,7 +6395,7 @@ responses. The same shared worker, Sol 6.1 medium/SSE, automatic admission queue
 disabled explicit warming and persistent 20,000-attempt counter apply. A native
 run ceiling allows at most two provider attempts per case; count actual retries
 and failures separately. The native
-[usage source](hierarchy-compare-v179-v184-ambiguity-usage-v1.json) keeps both
+[usage source] (`sse_multivector/shr_single_pair/hierarchy-compare-v179-v184-ambiguity-usage-v1.json` at `03bd9e45`) keeps both
 prompts and both families separate.
 
 Before dispatch verify identical fixed inputs, output schema and contemporaneous
@@ -6517,7 +6502,7 @@ It consolidates repeated checks; it does not add a new output procedure.
 The A/B subject-and-meaning contract, four-field output instructions, schema,
 two synthetic examples and final input section remain unchanged. Instruction
 words fall from 754 to 662; total words from 1,261 to 1,169. Native
-[revision provenance](Hierarchy-compare-v185.md.revision.json) pins V179 and
+[revision provenance] (`sse_multivector/shr_single_pair/Hierarchy-compare-v185.md.revision.json` at `03bd9e45`) pins V179 and
 records this package intervention. V185 SHA256 is
 `abbc60964a81ca2eb40d8c0dc0c130edef3c711a19ad60db0d6efe82ccfa41c2`.
 
@@ -6553,7 +6538,7 @@ The shared runner's automatic queue supplies capacity; no concurrency field
 is added. The existing persistent 20,000-attempt counter bounds all calls and
 provider retries, with at most two lifetime attempts per case. It reads 19,205
 before preparation; this is not a new allowance. Native
-[usage aggregation](hierarchy-compare-v179-v185-whole-core-usage-v1.json)
+[usage aggregation] (`sse_multivector/shr_single_pair/hierarchy-compare-v179-v185-whole-core-usage-v1.json` at `03bd9e45`)
 separates arms and families. Request/cache/body and native receipt checks remain
 required; a cache read is not an answer reuse or a conversational context.
 
@@ -6738,8 +6723,8 @@ The first block prepares four native directories under
 V179/examples, no explicit warming and the shared automatic queue. The existing
 persistent 20,000-attempt counter reads 19,277 before preparation; provider
 retries/failures count, with at most two lifetime attempts per case. Native
-[first-block usage](hierarchy-compare-v179-meal-design-boundary-first-screen-usage-v1.json)
-and [conditional aggregate](hierarchy-compare-v179-meal-design-boundary-usage-v1.json)
+[first-block usage] (`sse_multivector/shr_single_pair/hierarchy-compare-v179-meal-design-boundary-first-screen-usage-v1.json` at `03bd9e45`)
+and [conditional aggregate] (`sse_multivector/shr_single_pair/hierarchy-compare-v179-meal-design-boundary-usage-v1.json` at `03bd9e45`)
 preserve separate original/diagnostic accounting.
 
 Only if all six closed anchors pass labels, directional proof review, strict
@@ -6881,7 +6866,7 @@ full post/tree, valid producer output and receipt, using the same validation as
 
 The [v1 source](hierarchy-compare-b109-closed-scope-source-v1.json) is an unrun
 preliminary preparation. Independent preflight withdraws five provisional
-labels before the [v2 screen](hierarchy-compare-v179-b109-closed-scope-v2.spec.json).
+labels before the [v2 screen] (`sse_multivector/shr_single_pair/hierarchy-compare-v179-b109-closed-scope-v2.spec.json` at `03bd9e45`).
 After response review, the grips versus handholds pair also loses its provisional
 positive expectation. The final
 [v3 source](hierarchy-compare-b109-closed-scope-source-v3.json) therefore has
@@ -6932,7 +6917,7 @@ permission for unstated conditions to vary. General kinds retain that permission
 unknown properties of a particular entity or event may not be chosen either
 to construct a counterexample or to prove coverage. The examples, four-field
 schema, A/B-only inputs and other rules stay identical. The native
-[edit source](hierarchy-compare-v186-fixed-entity.edits.json) and revision receipt
+[edit source] (`sse_multivector/shr_single_pair/hierarchy-compare-v186-fixed-entity.edits.json` at `03bd9e45`) and revision receipt
 preserve the baseline hash and exact change.
 
 The first fresh targeted draw uses the twenty unchanged control inputs plus
@@ -6992,8 +6977,8 @@ producer diagnostic, source context or expected label enters model input.
 Five pairs retain null expectations. The sixth is the exact reviewed MrBeast
 positive, not approval of its parent definition.
 
-[V179](hierarchy-compare-hr05-v179-fixed-scopes-v1.spec.json) and
-[V186](hierarchy-compare-hr05-v186-fixed-scopes-v1.spec.json) each complete twelve
+[V179] (`sse_multivector/shr_single_pair/hierarchy-compare-hr05-v179-fixed-scopes-v1.spec.json` at `03bd9e45`) and
+[V186] (`sse_multivector/shr_single_pair/hierarchy-compare-hr05-v186-fixed-scopes-v1.spec.json` at `03bd9e45`) each complete twelve
 fresh valid responses. The native checker covers all cases without skipped
 bindings. V179 has one conflict among six settled reversal pairs, on Equipment/
 Lunch boxes. V186 has one conflict among five settled pairs, on Food intention/
@@ -7057,7 +7042,7 @@ V186's one-rule replacement and resulting cache prefix/key. Requests contain
 the fixed developer prefix and variable user input, with `store:false` and no
 recorded conversation linkage. All source and historical receipt pins match.
 
-The [native aggregate source](hierarchy-compare-hr05-fixed-scopes-usage-v1.json)
+The [native aggregate source] (`sse_multivector/shr_single_pair/hierarchy-compare-hr05-fixed-scopes-usage-v1.json` at `03bd9e45`)
 produces `target/compare-hr05-fixed-scopes-v1/usage.json`: **26 actual attempts**,
 including two warmups, zero reuse/retries/failures/missing usage, and
 **$0.1855808 API-equivalent catalog cost**, not a subscription charge. Fourteen
@@ -7111,7 +7096,7 @@ mechanism in a new version and repeat the small gate. A promising candidate need
 an unchanged fresh confirmation and broader frozen-input regressions before an
 adoption recommendation. Keep source cohorts separate, preserve original
 meanings/receipts and count all dispatched attempts including warmups and failures.
-The [native first-gate usage source](hierarchy-compare-v187-intention-capability-gate-usage-v1.json)
+The [native first-gate usage source] (`sse_multivector/shr_single_pair/hierarchy-compare-v187-intention-capability-gate-usage-v1.json` at `03bd9e45`)
 keeps HR05 and synthetic groups separate. No Bootstrap edit/inference, hierarchy
 construction, UI refresh or outgoing owner message is part of this work.
 
@@ -7287,7 +7272,7 @@ Caching stays enabled; no attempt allowance remains for warming or retries.
 All sixteen deliberately unrun cases remain visible, rather than being
 backfilled with a previous version's answer.
 
-The [whole-loop native usage source](hierarchy-compare-v187-v191-gate-usage-v1.json)
+The [whole-loop native usage source] (`sse_multivector/shr_single_pair/hierarchy-compare-v187-v191-gate-usage-v1.json` at `03bd9e45`)
 produces `target/compare-v191-intention-capability-v1/sprint-usage.json`: eighty-three
 actual attempts, eight warmups, seventy-four valid comparisons, zero exact
 answer reuses, and one recovered retry whose failed attempt lacks usage.
@@ -7340,7 +7325,7 @@ distinct kinds of evidence.
 Native exports preserve the pre-cap snapshots and add
 `target/compare-v191-intention-capability-v1/{hr05,controls}-complete-native.json`
 and `target/compare-v191-intention-capability-repeat-v1/{hr05,controls}-native.json`.
-The [completed/repeat aggregate](hierarchy-compare-v191-complete-repeat-usage-v1.json)
+The [completed/repeat aggregate] (`sse_multivector/shr_single_pair/hierarchy-compare-v191-complete-repeat-usage-v1.json` at `03bd9e45`)
 records forty total attempts including the two historical pre-cap Equipment
 responses, thirty-six valid comparisons, four warmups, zero reuse/retries/failures/
 missing usage and $0.2630756 API-equivalent cost. Of those attempts, thirty-eight
@@ -8958,9 +8943,7 @@ warmups/retries/failures/missing usage, and $0.019874 API-equivalent cost. No
 main Compare version is adopted. Source prompts, specs and maintained findings
 are landed; saved inputs/outputs/receipts remain ignored native artifacts.
 
-The useful next diagnostic is independent validation of generated counterexample
-admission and exclusion in fresh context, preserving each node's subject and
-meaning and keeping the old verdict outside input. V220's joint evidence stayed
+ V220's joint evidence stayed
 inside the original relation-generation response and merely repeated its chosen
 reading. A rejected or unresolved witness cannot itself prove full coverage.
 Check native preparation support before proceeding; do not hand-assemble the

@@ -10,7 +10,7 @@ now accepted by the assistant or user, including the user's subsequent approval
 of Signs of autumn’s arrival. Coffee shop chains remains unresolved: the user
 commented "yea should prob say coffee shop tags/hashtags" without recording an
 approve/reject decision. That comment is not treated as an approved replacement
-or a new prompt rule. The [focused review](../hdbv2-node-titles-v21-astra-low/run-review.sh)
+or a new prompt rule. The focused review (`03bd9e45:sse_multivector/hdbv2-node-titles-v21-astra-low/run-review.sh`)
 and its original inputs remain unchanged. No TRUE inference occurred during that
 title-generation stage; the later TRUE05 follow-up is described below.
 
@@ -111,17 +111,7 @@ An independent reviewer saw masks and unique outputs without prompt-version or t
 
 The focused view contains the one flagged v21 title, every exact member mask, and the assistant's reasoning in a separate comment. B shows the fresh v20 response from the same trial. No user decisions are prefilled.
 
-```bash
-cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
-sse_multivector/hdbv2-node-description-probe-v21/run-review.sh
-```
-
 To inspect all 12 v21 outputs, with their matching v20 baselines:
-
-```bash
-cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
-sse_multivector/hdbv2-node-description-probe-v21/run-review-all.sh
-```
 
 These use separate new sessions under target/. Existing review decisions are untouched. Both views were opened with the production binary; mask scrolling, baseline comparison, navigation and safe exit were checked using temporary sessions under /tmp/. Those smoke sessions contain no decisions or comments. No review-tool code changed.
 
@@ -145,7 +135,5 @@ The user accepted the questioned chicken-derived title after seeing the complete
 and masks. No unresolved title question remains in this sample; the original reviewer
 concern and the user's decision are recorded separately in the follow-up.
 This is evidence about description clarity and scope, not TRUE accuracy or hierarchy quality.
-
-Existing tracking card: CREC-127. Plane tools were unavailable, so no external card update or status change is claimed.
 
 **Publication status:** `collection:tracked-hdbv2-node-description-probe-v21` is selected as `title-studies/hdbv2-node-description-probe-v21` in the [publication catalog](../../docs/experiments/publications.csv), with [dataset manifest](../../docs/experiments/downloads.md#dataset-manifest). The local export preserves saved answers and recorded assessments; input AS lineage remains unverified. Nothing has been uploaded.

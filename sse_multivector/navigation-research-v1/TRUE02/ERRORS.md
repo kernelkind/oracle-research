@@ -42,4 +42,4 @@ The native model already makes two of the three errors. Lowering the decision bo
 
 These explanations reflect judgments recorded before model scores, not rationalizations chosen to agree with the classifier. A literal object/process taxonomy would be a different task from the topical hierarchy evaluated here.
 
-There are 14 distinct error rows across the two decision rules: 13 native errors, three cutoff errors, two shared. [Every correct and incorrect decision](DECISIONS.md).
+There are 14 distinct error rows across the two decision rules: 13 native errors, three cutoff errors, two shared. Every correct and incorrect decision (`03bd9e45:sse_multivector/navigation-research-v1/TRUE02/DECISIONS.md`).

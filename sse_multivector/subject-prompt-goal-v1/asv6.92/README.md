@@ -34,11 +34,11 @@ authoring this control makes no teacher requests and selects no candidate.
 
 Native `experiment.py revise` applies one exact C1-block replacement to both
 the source and its exact POST template. The versioned
-[prompt edits](prompt-edits.json) and [template edits](edits.json) pin their
+prompt edits (`03bd9e45:sse_multivector/subject-prompt-goal-v1/asv6.92/prompt-edits.json`) and template edits (`03bd9e45:sse_multivector/subject-prompt-goal-v1/asv6.92/edits.json`) pin their
 respective ASv6.90 base hashes. Automatic receipts preserve provenance for the
-[source](ASv6.92.md.revision.json) and
-[template](../../experiment_specs/asv6.92-hr01-post-template.txt.revision.json).
-The [reusable template](../../experiment_specs/asv6.92-hr01-post-template.txt)
+source (`03bd9e45:sse_multivector/subject-prompt-goal-v1/asv6.92/ASv6.92.md.revision.json`) and
+template (`03bd9e45:sse_multivector/experiment_specs/asv6.92-hr01-post-template.txt.revision.json`).
+The reusable template (`03bd9e45:sse_multivector/experiment_specs/asv6.92-hr01-post-template.txt`)
 is exactly the prompt followed by `\n<post>\n{POST}\n</post>`.
 
 The completed original checkpoint has 8 accepts/4 rejects across 12 valid first

@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
-"""Generalization of the successful GTE Vast controller.
+"""Resumable Vast command workloads with verified retrieval and explicit cleanup.
 
-The original controller remains unchanged in gte/vast_full_build.py. Without a
-workload section this retains its GTE contract; with one, command/input/output
-configuration replaces only GTE-specific workload preparation and accounting.
-Command workloads preserve the instance until an explicit stop command.
+Completed and failed workloads preserve their instance until an explicit stop.
+Provider ownership, spending admission and invoice evidence remain source-bound.
 """
 
 from __future__ import annotations
@@ -33,11 +31,11 @@ from typing import BinaryIO, Iterator, NoReturn
 
 sys.dont_write_bytecode = True
 
-if not Path(__file__).with_name("calibration_package.py").is_file():
-    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "gte"))
-
-import calibration_package
-import full_build_package
+if __package__:
+    from . import calibration_package, full_build_package
+else:
+    import calibration_package
+    import full_build_package
 
 
 class OperationError(Exception):
@@ -280,8 +278,8 @@ class Context:
             raise OperationError("operation config must be a JSON object")
         if document.get("schema_version") != 1:
             raise OperationError("operation config schema_version must be 1")
-        if document.get("artifact_kind") not in ("gte-vast-full-build-operation", "vast-command-operation"):
-            raise OperationError("operation config artifact_kind is invalid")
+        if document.get("artifact_kind") != "vast-command-operation":
+            raise OperationError("only vast-command-operation is supported")
         if args.operation.startswith("_remote"):
             ledger = root / "budget-ledger.json"
         else:
@@ -296,109 +294,19 @@ class Context:
         return context
 
     def validate(self) -> None:
+        if self.config.get("artifact_kind") != "vast-command-operation":
+            raise OperationError("only vast-command-operation is supported")
         # New approvals must explicitly budget transfers; an old or missing
         # allowance is not evidence that transfers are free. Frozen runs keep
         # their original controller and contract.
         transfer = required_nonnegative_int(self.limits, "transfer_allowance_micro_usd")
         if transfer > self.limit("reservation_ceiling_micro_usd"):
             raise OperationError("transfer allowance exceeds the reservation ceiling")
-        if self.command_workload:
-            validate_command_context(self)
-            return
-        self.label
-        self.image
-        canonical_ledger = Path(
-            required_string(self.config, "canonical_ledger_path")
-        )
-        if not canonical_ledger.is_absolute():
-            raise OperationError("canonical_ledger_path must be absolute")
-        for field in (
-            "operator_sha256",
-            "controller_sha256",
-            "control_sha256s_sha256",
-            "transport_manifest_sha256",
-            "execution_package_manifest_sha256",
-            "descriptor_sha256",
-        ):
-            self.pin(field)
-        for field in ("controller_source_commit", "image_source_commit"):
-            required_string(self.pins, field)
-        for field in (
-            "disk_gb",
-            "maximum_rental_rate_micro_usd_per_hour",
-            "reservation_ceiling_micro_usd",
-            "lifetime_budget_micro_usd",
-            "artifact_storage_and_transfer_micro_usd",
-            "one_cold_restart_micro_usd",
-            "one_lost_shard_micro_usd",
-            "setup_cost_micro_usd",
-            "manual_stop_cost_micro_usd",
-        ):
-            self.limit(field)
-        if self.limit("reservation_ceiling_micro_usd") > self.limit(
-            "lifetime_budget_micro_usd"
-        ):
-            raise OperationError("reservation ceiling exceeds the lifetime budget")
-        if self.limit("setup_cost_micro_usd") >= self.limit(
-            "manual_stop_cost_micro_usd"
-        ):
-            raise OperationError("setup cost gate must precede the manual stop warning")
-        queries = required_object(self.config, "offer_queries")
-        required_string(queries, "us")
-        required_string(queries, "global")
-        for field in (
-            "represented_rows",
-            "total_rows",
-            "completed_shards",
-            "final_vector_bytes",
-        ):
-            required_positive_int(self.expected, field)
-        if required_positive_int(self.expected, "represented_rows") >= required_positive_int(
-            self.expected, "total_rows"
-        ):
-            raise OperationError("checkpoint rows must be smaller than total rows")
-        require_sha256(
-            required_string(self.expected, "build_identity_sha256"),
-            "expected.build_identity_sha256",
-        )
-        if "checkpoint_shard_ordinal" in self.expected:
-            required_nonnegative_int(self.expected, "checkpoint_shard_ordinal")
-            require_sha256(
-                required_string(self.expected, "checkpoint_vector_sha256"),
-                "expected.checkpoint_vector_sha256",
-            )
-        corpus = required_object(self.config, "corpus")
-        required_positive_int(corpus, "bytes")
-        require_sha256(required_string(corpus, "sha256"), "corpus.sha256")
-        for field in (
-            "provider_attempts",
-            "preparation_attempts",
-            "destroy_attempts",
-            "invoice_retry_attempts",
-        ):
-            required_positive_int(self.timing, field)
-        if required_positive_int(self.timing, "destroy_attempts") < 2:
-            raise OperationError("destroy confirmation requires at least two attempts")
-        for field in (
-            "provider_poll_seconds",
-            "preparation_poll_seconds",
-            "destroy_poll_seconds",
-            "invoice_retry_seconds",
-            "invoice_confirmation_seconds",
-            "invoice_not_before_seconds",
-            "status_watch_seconds",
-        ):
-            required_nonnegative_int(self.timing, field)
-
-    @property
-    def command_workload(self) -> bool:
-        return self.config.get("artifact_kind") == "vast-command-operation"
+        validate_command_context(self)
 
     @property
     def remote_python(self) -> str:
-        if self.command_workload:
-            return required_string(required_object(self.config, "workload"), "python")
-        return "/opt/gte-venv/bin/python"
+        return required_string(required_object(self.config, "workload"), "python")
 
     @property
     def label(self) -> str:
@@ -421,9 +329,6 @@ class Context:
     def limits(self) -> dict[str, object]:
         return required_object(self.config, "limits")
 
-    @property
-    def expected(self) -> dict[str, object]:
-        return required_object(self.config, "expected")
 
     @property
     def timing(self) -> dict[str, object]:
@@ -456,34 +361,6 @@ class Context:
     def approval_dir(self) -> Path:
         return self.path("launch/plans")
 
-    def controller(self, layout: str, arguments: list[str]) -> object:
-        result = completed_process(self.controller_arguments(layout, arguments))
-        try:
-            return json.loads(result.stdout)
-        except json.JSONDecodeError as error:
-            raise OperationError("gte-oracle did not return JSON") from error
-
-    def controller_arguments(self, layout: str, arguments: list[str]) -> list[str]:
-        return [
-            "docker",
-            "run",
-            "--rm",
-            "--pull",
-            "never",
-            "--network",
-            "none",
-            "--user",
-            f"{os.getuid()}:{os.getgid()}",
-            "-v",
-            f"{self.root}:/workspace/oracle-full-build",
-            "-w",
-            f"/workspace/oracle-full-build/{layout}",
-            "--entrypoint",
-            "/workspace/oracle-full-build/transport/control/gte-oracle",
-            self.image,
-            *arguments,
-        ]
-
 
 def verify_sha(path: Path, expected: str, field: str) -> None:
     if not path.is_file() or sha256_file(path) != expected:
@@ -502,95 +379,10 @@ def verify_control_sums(context: Context) -> None:
 
 
 def verify_reviewed_artifacts(
-    context: Context, *, require_local_execution_package: bool = True
+    context: Context
 ) -> None:
-    if context.command_workload:
-        verify_command_artifacts(context)
-        return
-    verify_control_sums(context)
-    verify_sha(
-        context.path("transport/control/gte-oracle"),
-        context.pin("controller_sha256"),
-        "controller",
-    )
-    source_commit = context.path(
-        "transport/control/gte-oracle-source-commit.txt"
-    ).read_text(encoding="utf-8").strip()
-    if source_commit != required_string(context.pins, "controller_source_commit"):
-        raise OperationError("controller source commit does not match the contract")
-    verify_sha(
-        context.path("transport/transport-manifest.json"),
-        context.pin("transport_manifest_sha256"),
-        "transport manifest",
-    )
-    execution_manifest = (
-        context.path("execution/package/package-manifest.json")
-        if require_local_execution_package
-        else context.path("transport/package-skeleton/package-manifest.json")
-    )
-    verify_sha(
-        execution_manifest,
-        context.pin("execution_package_manifest_sha256"),
-        "execution package manifest",
-    )
-    try:
-        full_build_package.verify_manifest(
-            context.path("transport"),
-            context.path("transport/transport-manifest.json"),
-        )
-        if require_local_execution_package:
-            full_build_package.verify_manifest(
-                context.path("execution/package"), execution_manifest
-            )
-    except (OSError, ValueError) as error:
-        raise OperationError(f"reviewed artifact verification failed: {error}") from error
-    verify_sha(context.operator_path, context.pin("operator_sha256"), "operator")
-    verify_sha(Path(__file__).resolve(), context.pin("operator_sha256"), "invoked operator")
-    if Path(__file__).resolve() != context.operator_path:
-        raise OperationError(
-            "reviewed workflow must be invoked through the transported operator"
-        )
-    if context.operator_path.read_bytes() != Path(__file__).resolve().read_bytes():
-        raise OperationError("invoked operator differs from transported operator")
-    package_config_paths = [
-        context.path("transport/package-skeleton/run/full-build-config.json")
-    ]
-    if require_local_execution_package:
-        package_config_paths.insert(
-            0, context.path("execution/package/run/full-build-config.json")
-        )
-    try:
-        launch_image = calibration_package.immutable_image_ref(context.image)
-    except ValueError as error:
-        raise OperationError(f"frozen launch container image is invalid: {error}") from error
-    for package_config_path in package_config_paths:
-        package_config = read_json(package_config_path)
-        if not isinstance(package_config, dict):
-            raise OperationError("frozen full-build config is invalid")
-        try:
-            package_image = calibration_package.immutable_image_ref(
-                package_config.get("container_image")
-            )
-        except ValueError as error:
-            raise OperationError(
-                f"frozen full-build container image is invalid: {error}"
-            ) from error
-        if package_image != launch_image:
-            raise OperationError(
-                "operation contract and frozen full-build config differ on container image"
-            )
-        full_build = package_config.get("full_build")
-        if not isinstance(full_build, dict):
-            raise OperationError("frozen full-build config has no full_build settings")
-        for field in (
-            "artifact_storage_and_transfer_micro_usd",
-            "one_cold_restart_micro_usd",
-            "one_lost_shard_micro_usd",
-        ):
-            if full_build.get(field) != context.limit(field):
-                raise OperationError(
-                    f"operation contract and frozen full-build config differ on {field}"
-                )
+    verify_command_artifacts(context)
+    return
 
 
 def vast_json(arguments: list[str]) -> object:
@@ -606,160 +398,23 @@ def sanitized_live_instances() -> list[dict[str, object]]:
         raise OperationError(f"Vast instance inventory is invalid: {error}") from error
 
 
-def search_offers(query: str, disk_gb: int) -> list[dict[str, object]]:
-    document = vast_json(
-        [
-            "search",
-            "offers",
-            query,
-            "--type",
-            "on-demand",
-            "--storage",
-            str(disk_gb),
-            "--order",
-            "dph_total",
-            "--limit",
-            "20",
-            "--raw",
-        ]
-    )
-    if not isinstance(document, list):
-        raise OperationError("Vast offer search did not return an array")
-    return [row for row in document if isinstance(row, dict)]
-
-
 def select_offer(context: Context) -> tuple[str, dict[str, object]]:
-    if context.command_workload:
-        offer = required_object(context.config, "selected_offer")
-        query = f"machine_id={offer['machine_id']} num_gpus={offer['num_gpus']} rentable=true rented=false"
-        return query, validate_offer(context, offer, str(offer["id"]))
-    queries = required_object(context.config, "offer_queries")
-    for name in ("us", "global"):
-        query = required_string(queries, name)
-        valid: list[dict[str, object]] = []
-        for row in search_offers(query, context.limit("disk_gb")):
-            identifier = row.get("id")
-            if isinstance(identifier, bool):
-                continue
-            try:
-                valid.append(
-                    full_build_package.validate_full_build_offer(row, str(identifier))
-                )
-            except ValueError:
-                continue
-        if valid:
-            valid.sort(
-                key=lambda row: (
-                    full_build_package.decimal_field(row, "dph_total"),
-                    int(str(row["id"])),
-                )
-            )
-            selected = valid[0]
-            rate = int(
-                (
-                    full_build_package.decimal_field(selected, "dph_total")
-                    * Decimal(1_000_000)
-                ).to_integral_value(rounding=ROUND_CEILING)
-            )
-            if rate > context.limit("maximum_rental_rate_micro_usd_per_hour"):
-                continue
-            return query, selected
-    raise OperationError("no Vast offer satisfies the frozen full-build contract")
+    offer = required_object(context.config, "selected_offer")
+    query = f"machine_id={offer['machine_id']} num_gpus={offer['num_gpus']} rentable=true rented=false"
+    return query, validate_offer(context, offer, str(offer["id"]))
 
 
 def verify_image(context: Context) -> None:
-    if context.command_workload:
-        completed_process(["docker", "image", "inspect", context.image])
-        completed_process(["docker", "run", "--rm", "--network", "none", "--entrypoint",
-                           "/usr/bin/tar", context.image, "--version"])
-        return
-    result = completed_process(
-        [
-            "docker",
-            "image",
-            "inspect",
-            context.image,
-            "--format",
-            '{{ index .Config.Labels "org.opencontainers.image.revision" }}',
-        ]
-    )
-    revision = result.stdout.decode("utf-8", errors="strict").strip()
-    if revision != required_string(context.pins, "image_source_commit"):
-        raise OperationError("local image does not match its frozen source commit")
-    completed_process(
-        [
-            "docker",
-            "run",
-            "--rm",
-            "--network",
-            "none",
-            "--entrypoint",
-            "/usr/bin/tar",
-            context.image,
-            "--version",
-        ]
-    )
+    completed_process(["docker", "image", "inspect", context.image])
+    completed_process(["docker", "run", "--rm", "--network", "none", "--entrypoint",
+                       "/usr/bin/tar", context.image, "--version"])
+    return
 
 
 def ensure_retrieval_destination(context: Context) -> None:
-    if context.command_workload:
-        for relative in ("result.next/work", "result.next/audit"):
-            context.path(relative).mkdir(parents=True, exist_ok=True, mode=0o700)
-        return
-    destination = context.path("result.next")
-    if context.path("result").exists():
-        return
-    if not destination.exists():
-        staging = context.path(".result.next.prepare")
-        if staging.exists():
-            shutil.rmtree(staging)
-        staging.mkdir(mode=0o700)
-        try:
-            completed_process(
-                [
-                    "cp",
-                    "-a",
-                    "--reflink=auto",
-                    str(context.path("execution/package")),
-                    str(staging / "package"),
-                ]
-            )
-            completed_process(
-                [
-                    "cp",
-                    "-a",
-                    str(context.path("transport/control")),
-                    str(staging / "control"),
-                ]
-            )
-            (staging / "work").mkdir(mode=0o700)
-            (staging / "audit").mkdir(mode=0o700)
-            sync_directory(staging)
-            os.replace(staging, destination)
-            sync_directory(destination.parent)
-        finally:
-            if staging.exists():
-                shutil.rmtree(staging)
-    for relative in ("package", "control", "work", "audit"):
-        if not (destination / relative).is_dir():
-            raise OperationError("result.next is not a complete retrieval destination")
-
-
-def verify_baseline_ledgers(context: Context) -> str:
-    paths = [
-        context.ledger,
-        context.path("execution/work/budget-ledger.json"),
-        context.path("transport/work-seed/budget-ledger.json"),
-    ]
-    hashes = []
-    for path in paths:
-        if not path.is_file():
-            raise OperationError(f"baseline ledger is missing: {path}")
-        read_json(path)
-        hashes.append(sha256_file(path))
-    if len(set(hashes)) != 1:
-        raise OperationError("canonical, execution, and transport ledgers differ")
-    return hashes[0]
+    for relative in ("result.next/work", "result.next/audit"):
+        context.path(relative).mkdir(parents=True, exist_ok=True, mode=0o700)
+    return
 
 
 def plan_document(
@@ -885,20 +540,10 @@ def refresh_approved_offer(
     if not isinstance(query, str) or not isinstance(approved, dict):
         raise OperationError("approved offer record is invalid")
     identifier = str(approved.get("id"))
-    if context.command_workload:
-        # The caller supplies the exact offer. A second search can return a
-        # different GPU pair from the same host; it is not an availability proof.
-        matches = [required_object(context.config, "selected_offer")]
-    else:
-        matches = [
-            row
-            for row in search_offers(query, context.limit("disk_gb"))
-            if str(row.get("id")) == identifier
-        ]
-    if len(matches) != 1:
-        raise OperationError("the exact approved Vast offer is no longer available")
     try:
-        selected = validate_offer(context, matches[0], identifier)
+        selected = validate_offer(
+            context, required_object(context.config, "selected_offer"), identifier
+        )
         for field in ("id", "machine_id", "bundle_id"):
             if selected.get(field) != approved.get(field):
                 raise ValueError(f"refreshed offer changed {field}")
@@ -931,165 +576,10 @@ def refresh_approved_offer(
     return selected
 
 
-def replace_from_expected(
-    source: Path,
-    destination: Path,
-    *,
-    allowed_existing_sha256: set[str],
-) -> None:
-    existing = sha256_file(destination) if destination.is_file() else None
-    source_digest = sha256_file(source)
-    if existing == source_digest:
-        return
-    if existing not in allowed_existing_sha256:
-        raise OperationError(f"refusing to replace unexpected authoritative file: {destination}")
-    destination.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
-    temporary = destination.with_name(f".{destination.name}.next-{os.getpid()}")
-    try:
-        shutil.copyfile(source, temporary)
-        os.chmod(temporary, 0o600)
-        with temporary.open("rb") as copied:
-            os.fsync(copied.fileno())
-        os.replace(temporary, destination)
-        sync_directory(destination.parent)
-    finally:
-        with contextlib.suppress(FileNotFoundError):
-            temporary.unlink()
-
-
 def ensure_reservation(
     context: Context, plan: dict[str, object]
 ) -> dict[str, object]:
-    if context.command_workload:
-        return reserve_command_workload(context, plan)
-    baseline = context.path("launch/pre-reservation-budget-ledger.json")
-    reservation_path = context.path("launch/full-build-reservation.json")
-    execution_ledger = context.path("execution/work/budget-ledger.json")
-    rejected_path = context.path("launch/rejected-reservation.json")
-    invoice_start = context.path("launch/invoice-start-date.txt")
-    if not invoice_start.exists():
-        atomic_bytes(invoice_start, f"{utc_now().date().isoformat()}\n".encode("utf-8"))
-    if not baseline.exists():
-        expected = plan.get("canonical_ledger_sha256")
-        if not isinstance(expected, str) or sha256_file(context.ledger) != expected:
-            raise OperationError("canonical ledger changed after approval planning")
-        if sha256_file(execution_ledger) != expected:
-            raise OperationError("execution ledger changed before reservation")
-        atomic_copy(context.ledger, baseline)
-    baseline_digest = sha256_file(baseline)
-
-    def finish_rejected_result(document: object) -> NoReturn:
-        if not isinstance(document, dict) or not isinstance(
-            document.get("controller_result"), dict
-        ):
-            raise OperationError("rejected reservation receipt is invalid")
-        result_digest = document.get("mutated_execution_ledger_sha256")
-        if not isinstance(result_digest, str):
-            raise OperationError("rejected reservation has no ledger identity")
-        require_sha256(result_digest, "rejected reservation ledger")
-        current = sha256_file(execution_ledger)
-        if current != baseline_digest:
-            replace_from_expected(
-                baseline,
-                execution_ledger,
-                allowed_existing_sha256={result_digest},
-            )
-        if sha256_file(context.ledger) != baseline_digest:
-            raise OperationError(
-                "canonical ledger changed during rejected reservation recovery"
-            )
-        reason = document.get("reason")
-        raise OperationError(
-            reason
-            if isinstance(reason, str) and reason
-            else "a controller reservation result was rejected before publication"
-        )
-
-    if rejected_path.exists():
-        finish_rejected_result(read_json(rejected_path))
-    created_receipt = False
-    if reservation_path.exists():
-        reservation = read_json(reservation_path)
-    else:
-        reservation = context.controller(
-            "execution",
-            [
-                "reserve-full-build",
-                "package/run/full-build-config.json",
-                utc_text(),
-            ],
-        )
-        if not isinstance(reservation, dict):
-            raise OperationError("reservation result is invalid")
-        created_receipt = True
-    if not isinstance(reservation, dict):
-        raise OperationError("reservation receipt is invalid")
-    previous = reservation.get("previous_ledger_sha256")
-    reserved = reservation.get("ledger_sha256")
-    def reject_new_result(reason: str) -> NoReturn:
-        if not created_receipt:
-            raise OperationError(reason)
-        mutated_digest = sha256_file(execution_ledger)
-        atomic_json(
-            rejected_path,
-            {
-                "schema_version": 1,
-                "reason": reason,
-                "controller_result": reservation,
-                "mutated_execution_ledger_sha256": mutated_digest,
-                "rejected_at_utc": utc_text(),
-            },
-        )
-        finish_rejected_result(read_json(rejected_path))
-
-    if previous != baseline_digest or not isinstance(reserved, str):
-        reject_new_result("reservation does not follow the approved ledger")
-    try:
-        require_sha256(reserved, "reservation ledger")
-    except OperationError:
-        reject_new_result("reservation ledger identity is invalid")
-    projection = plan.get("projection")
-    if not isinstance(projection, dict):
-        raise OperationError("approved plan has no reservation projection")
-    projection_fields = (
-        "remaining_compute_micro_usd",
-        "artifact_storage_and_transfer_micro_usd",
-        "paid_lazy_inference_micro_usd",
-        "one_cold_restart_micro_usd",
-        "one_lost_shard_micro_usd",
-        "total_micro_usd",
-        "projected_lifetime_total_micro_usd",
-        "remaining_lifetime_budget_micro_usd",
-    )
-    for field in projection_fields:
-        if reservation.get(field) != projection.get(field):
-            reject_new_result(
-                f"reservation projection differs from the approved plan on {field}"
-            )
-    total = reservation.get("total_micro_usd")
-    if isinstance(total, bool) or not isinstance(total, int):
-        reject_new_result("reservation total is invalid")
-    if total > context.limit("reservation_ceiling_micro_usd"):
-        reject_new_result("reservation exceeds the approved reservation ceiling")
-    lifetime_total = reservation.get("projected_lifetime_total_micro_usd")
-    if isinstance(lifetime_total, bool) or not isinstance(lifetime_total, int):
-        reject_new_result("reservation lifetime projection is invalid")
-    if lifetime_total > context.limit("lifetime_budget_micro_usd"):
-        reject_new_result("reservation exceeds the lifetime budget")
-    if sha256_file(execution_ledger) != reserved:
-        reject_new_result("execution ledger does not match its reservation receipt")
-    if created_receipt:
-        atomic_json(reservation_path, reservation)
-    replace_from_expected(
-        execution_ledger,
-        context.ledger,
-        allowed_existing_sha256={baseline_digest},
-    )
-    reserved_copy = context.path("launch/reserved-budget-ledger.json")
-    atomic_copy(execution_ledger, reserved_copy)
-    if sha256_file(reserved_copy) != reserved:
-        raise OperationError("reserved transfer ledger is invalid")
-    return reservation
+    return reserve_command_workload(context, plan)
 
 
 def write_preclaim_failure(context: Context, reason: str) -> None:
@@ -1155,13 +645,12 @@ def invoke_private_create(
         str(marker),
         str(outcome),
     ]
-    if context.command_workload:
-        arguments += ["--disk-gb", str(context.limit("disk_gb"))]
-        if context.config.get("onstart"):
-            arguments += ["--onstart-cmd", context.config["onstart"]]
-        if "local_volume" in context.config:
-            volume = context.config["local_volume"]
-            arguments += ["--local-volume-id", str(volume["id"])]
+    arguments += ["--disk-gb", str(context.limit("disk_gb"))]
+    if context.config.get("onstart"):
+        arguments += ["--onstart-cmd", context.config["onstart"]]
+    if "local_volume" in context.config:
+        volume = context.config["local_volume"]
+        arguments += ["--local-volume-id", str(volume["id"])]
     try:
         subprocess.run(
             arguments,
@@ -1344,9 +833,7 @@ def freeze_running_instance(
             if interval:
                 time.sleep(interval)
         if frozen is None:
-            if context.command_workload:
-                raise InstanceStartupPending("created Vast instance is still starting")
-            raise OperationError("created Vast instance did not become running")
+            raise InstanceStartupPending("created Vast instance is still starting")
         atomic_json(instance_path, frozen)
     try:
         validation = validate_instance_against_offer(
@@ -1400,7 +887,7 @@ def parse_vast_ssh_target(output: bytes) -> list[str]:
 def resolve_ssh_target(
     context: Context, instance_id: str, raw_instance: object | None = None,
 ) -> list[str]:
-    if not context.command_workload or not context.config.get("ssh_direct", False):
+    if not context.config.get('ssh_direct', False):
         return parse_vast_ssh_target(completed_process(["vastai", "ssh-url", instance_id]).stdout)
     if raw_instance is None:
         raw_instance = vast_json(["show", "instance", instance_id, "--raw"])
@@ -1964,7 +1451,7 @@ def remote_volume_prepare(context: Context, volume_root: Path) -> dict[str, obje
     if "local_volume" not in context.config:
         raise OperationError("volume preparation requires a frozen local volume")
     completed_process(["mountpoint", "-q", str(volume_root.parent)])
-    verify_reviewed_artifacts(context, require_local_execution_package=False)
+    verify_reviewed_artifacts(context)
     identity = volume_root / "volume-identity.json"
     if identity.exists():
         if read_json(identity) != context.config["local_volume"]:
@@ -2518,129 +2005,15 @@ def remote_attempt_status(context: Context, attempt_id: str) -> dict[str, object
 def remote_status_report(context: Context, attempt_id: str) -> dict[str, object]:
     result = remote_attempt_status(context, attempt_id)
     result.update(hardware_status(context))
-    if context.command_workload:
-        command = context.config["workload"].get("status_command")
-        if command:
-            try:
-                work = context.path("work")
-                result["progress"] = json.loads(subprocess.run(command, cwd=work if work.exists() else context.root,
-                    env={**os.environ, **context.config["workload"].get("environment", {})},
-                    capture_output=True, check=True, timeout=30).stdout)
-            except (subprocess.SubprocessError, OSError, ValueError) as error:
-                result["progress"] = {"error": str(error)}
-        return result
-    representation = context.path("work/representation")
-    progress: dict[str, object] = {
-        "completed_rows": 0,
-        "total_rows": required_positive_int(context.expected, "total_rows"),
-        "completed_shards": 0,
-        "total_shards": required_positive_int(context.expected, "completed_shards"),
-        "reused_checkpoint_rows": 0,
-        "completed_new_rows": 0,
-        "completed_new_shards": 0,
-        "newest_new_shard_age_seconds": None,
-    }
-    shard_files = sorted(
-        path
-        for path in representation.glob("shards/[0-9][0-9][0-9][0-9][0-9][0-9]/manifest.json")
-        if path.is_file()
-    )
-    if shard_files:
-        build_config = read_json(
-            context.path("package/run/full-build-config.json")
-        )
-        if not isinstance(build_config, dict):
-            raise OperationError("full-build config is invalid while reading progress")
-        shard_rows = required_positive_int(build_config, "shard_rows")
-        total_rows = required_positive_int(context.expected, "total_rows")
-        total_shards = required_positive_int(context.expected, "completed_shards")
-        record_bytes, remainder = divmod(
-            required_positive_int(context.expected, "final_vector_bytes"),
-            total_rows,
-        )
-        if remainder or record_bytes <= 0:
-            raise OperationError("expected vector size is not an exact row width")
-        completed_rows = 0
-        ordinals: set[int] = set()
-        rows_by_ordinal: dict[int, int] = {}
-        manifest_by_ordinal: dict[int, Path] = {}
-        for manifest_path in shard_files:
-            manifest = read_json(manifest_path)
-            if not isinstance(manifest, dict):
-                raise OperationError("remote representation shard manifest is invalid")
-            ordinal = manifest.get("ordinal")
-            start_row = manifest.get("start_row")
-            rows = manifest.get("rows")
-            if (
-                isinstance(ordinal, bool)
-                or not isinstance(ordinal, int)
-                or ordinal < 0
-                or ordinal >= total_shards
-                or manifest_path.parent.name != f"{ordinal:06d}"
-                or ordinal in ordinals
-                or isinstance(start_row, bool)
-                or not isinstance(start_row, int)
-                or start_row != ordinal * shard_rows
-                or isinstance(rows, bool)
-                or not isinstance(rows, int)
-                or rows != min(shard_rows, total_rows - start_row)
-                or manifest.get("descriptor_sha256")
-                != context.pin("descriptor_sha256")
-                or manifest.get("build_identity_sha256")
-                != required_string(
-                    context.expected, "build_identity_sha256"
-                )
-            ):
-                raise OperationError("remote representation shard identity is invalid")
-            vectors = manifest.get("vectors")
-            expected_vector_path = (
-                f"shards/{manifest_path.parent.name}/vectors.f32le"
-            )
-            expected_bytes = rows * record_bytes
-            vector_path = manifest_path.parent / "vectors.f32le"
-            if (
-                not isinstance(vectors, dict)
-                or vectors.get("file") != expected_vector_path
-                or vectors.get("records") != rows
-                or vectors.get("bytes") != expected_bytes
-                or not vector_path.is_file()
-                or vector_path.stat().st_size != expected_bytes
-            ):
-                raise OperationError("remote representation shard vectors are invalid")
-            ordinals.add(ordinal)
-            rows_by_ordinal[ordinal] = rows
-            manifest_by_ordinal[ordinal] = manifest_path
-            completed_rows += rows
-        checkpoint_ordinal = context.expected.get("checkpoint_shard_ordinal")
-        reused_rows = (
-            rows_by_ordinal.get(checkpoint_ordinal, 0)
-            if isinstance(checkpoint_ordinal, int)
-            and not isinstance(checkpoint_ordinal, bool)
-            else 0
-        )
-        new_ordinals = [
-            ordinal
-            for ordinal in ordinals
-            if ordinal != checkpoint_ordinal
-        ]
-        progress.update(
-            {
-                "completed_rows": completed_rows,
-                "completed_shards": len(ordinals),
-                "reused_checkpoint_rows": reused_rows,
-                "completed_new_rows": completed_rows - reused_rows,
-                "completed_new_shards": len(new_ordinals),
-            }
-        )
-        if new_ordinals:
-            newest = max(
-                manifest_by_ordinal[ordinal].stat().st_mtime
-                for ordinal in new_ordinals
-            )
-            progress["newest_new_shard_age_seconds"] = max(
-                0, int(time.time() - newest)
-            )
-    result["progress"] = progress
+    command = context.config["workload"].get("status_command")
+    if command:
+        try:
+            work = context.path("work")
+            result["progress"] = json.loads(subprocess.run(command, cwd=work if work.exists() else context.root,
+                env={**os.environ, **context.config["workload"].get("environment", {})},
+                capture_output=True, check=True, timeout=30).stdout)
+        except (subprocess.SubprocessError, OSError, ValueError) as error:
+            result["progress"] = {"error": str(error)}
     return result
 
 
@@ -2653,8 +2026,7 @@ def hardware_status(context: Context) -> dict[str, object]:
     }
     try:
         fields = "utilization.gpu,memory.used,memory.total"
-        if context.command_workload:
-            fields = "index,uuid," + fields
+        fields = "index,uuid," + fields
         observation = completed_process(
             [
                 "nvidia-smi",
@@ -2663,25 +2035,23 @@ def hardware_status(context: Context) -> dict[str, object]:
             ]
         ).stdout.decode("utf-8", errors="strict").strip()
         rows = [line.strip() for line in observation.splitlines() if line.strip()]
-        if not rows or not context.command_workload and len(rows) != 1:
+        if not rows:
             raise ValueError("expected exactly one GPU")
         devices = []
         for row in rows:
             parts = [value.strip() for value in row.split(",")]
             identity = {}
-            if context.command_workload:
-                if len(parts) != 5 or not parts[1].startswith("GPU-"):
-                    raise ValueError("GPU identity is invalid")
-                identity = {"index": int(parts[0]), "uuid": parts[1]}
-                parts = parts[2:]
+            if len(parts) != 5 or not parts[1].startswith("GPU-"):
+                raise ValueError("GPU identity is invalid")
+            identity = {"index": int(parts[0]), "uuid": parts[1]}
+            parts = parts[2:]
             values = [int(value) for value in parts]
             if len(values) != 3 or any(value < 0 for value in values):
                 raise ValueError("GPU metrics are invalid")
             devices.append({**identity, "utilization_percent": values[0],
                 "memory_used_bytes": values[1] * 1024 * 1024,
                 "memory_total_bytes": values[2] * 1024 * 1024})
-        if context.command_workload and (len({d["index"] for d in devices}) != len(devices)
-                or len({d["uuid"] for d in devices}) != len(devices) or any(d["index"] < 0 for d in devices)):
+        if len({d['index'] for d in devices}) != len(devices) or len({d['uuid'] for d in devices}) != len(devices) or any((d['index'] < 0 for d in devices)):
             raise ValueError("GPU identities are not distinct")
         gpu: dict[str, object] = devices[0] if len(devices) == 1 else {"devices": devices}
     except (OperationError, UnicodeDecodeError, ValueError) as error:
@@ -2726,68 +2096,6 @@ def spawn_remote_child(
     return child.pid
 
 
-def validate_representation(
-    context: Context, response: object, *, complete: bool
-) -> dict[str, object]:
-    if not isinstance(response, dict) or not isinstance(response.get("manifest"), dict):
-        raise OperationError("representation verification response is invalid")
-    manifest = response["manifest"]
-    expected = context.expected
-    total_rows = required_positive_int(expected, "total_rows")
-    build_identity = require_sha256(
-        required_string(expected, "build_identity_sha256"),
-        "expected.build_identity_sha256",
-    )
-    if manifest.get("complete") is not complete:
-        raise OperationError("representation completeness differs from the contract")
-    if manifest.get("total_rows") != total_rows:
-        raise OperationError("representation total rows differ from the contract")
-    if manifest.get("build_identity_sha256") != build_identity:
-        raise OperationError("representation build identity differs from the contract")
-    shards = manifest.get("shards")
-    if not isinstance(shards, list):
-        raise OperationError("representation shard list is invalid")
-    if complete:
-        if manifest.get("completed_rows") != total_rows:
-            raise OperationError("complete representation does not contain every row")
-        if len(shards) != required_positive_int(expected, "completed_shards"):
-            raise OperationError("complete representation shard count differs")
-        vector_bytes = 0
-        for shard in shards:
-            if not isinstance(shard, dict) or not isinstance(shard.get("vectors"), dict):
-                raise OperationError("complete representation shard is invalid")
-            value = shard["vectors"].get("bytes")
-            if isinstance(value, bool) or not isinstance(value, int) or value < 0:
-                raise OperationError("complete representation vector size is invalid")
-            vector_bytes += value
-        if vector_bytes != required_positive_int(expected, "final_vector_bytes"):
-            raise OperationError("complete representation byte count differs")
-    else:
-        if manifest.get("completed_rows") != required_positive_int(
-            expected, "represented_rows"
-        ):
-            raise OperationError("checkpoint represented rows differ from the contract")
-        checkpoint_ordinal = expected.get("checkpoint_shard_ordinal")
-        checkpoint_sha256 = expected.get("checkpoint_vector_sha256")
-        if checkpoint_ordinal is not None or checkpoint_sha256 is not None:
-            if (
-                isinstance(checkpoint_ordinal, bool)
-                or not isinstance(checkpoint_ordinal, int)
-                or checkpoint_ordinal < 0
-                or not isinstance(checkpoint_sha256, str)
-                or len(shards) != 1
-                or not isinstance(shards[0], dict)
-                or shards[0].get("ordinal") != checkpoint_ordinal
-                or not isinstance(shards[0].get("vectors"), dict)
-                or shards[0]["vectors"].get("sha256")
-                != require_sha256(
-                    checkpoint_sha256, "expected.checkpoint_vector_sha256"
-                )
-            ):
-                raise OperationError("checkpoint shard differs from the contract")
-    return response
-
-
 def transfer_receipt_values(context: Context) -> dict[str, object]:
     return {
         "schema_version": 1,
@@ -2809,7 +2117,7 @@ def remote_verify_transfer(context: Context) -> dict[str, object]:
         ):
             raise OperationError("remote transfer receipt differs from this operation")
         return {"verified": True, "receipt": receipt}
-    verify_reviewed_artifacts(context, require_local_execution_package=False)
+    verify_reviewed_artifacts(context)
     reservation = read_json(context.path("launch/full-build-reservation.json"))
     if not isinstance(reservation, dict) or reservation.get(
         "ledger_sha256"
@@ -2859,119 +2167,7 @@ def remote_prepare_worker(
             os.close(inherited_start_lock)
             inherited_start_lock = -1
             require_remote_transfer_receipt(context)
-            if context.command_workload:
-                prepare_remote_command(context)
-                status = 0
-                return {"prepared": True, "state": "complete"}
-            work = context.path("work")
-            if not work.exists():
-                staging = context.path("work.next")
-                if staging.exists():
-                    shutil.rmtree(staging)
-                shutil.copytree(context.path("transport/work-seed"), staging)
-                reservation = read_json(
-                    context.path("launch/full-build-reservation.json")
-                )
-                if not isinstance(reservation, dict) or not isinstance(
-                    reservation.get("ledger_sha256"), str
-                ):
-                    raise OperationError("remote reservation receipt is invalid")
-                reserved = context.path("launch/reserved-budget-ledger.json")
-                verify_sha(reserved, reservation["ledger_sha256"], "reserved ledger")
-                shutil.copyfile(reserved, staging / "budget-ledger.json")
-                os.chmod(staging / "budget-ledger.json", 0o600)
-                os.replace(staging, work)
-                sync_directory(context.root)
-            package = context.path("package")
-            if not package.exists():
-                staging = context.path("package.next")
-                if staging.exists():
-                    shutil.rmtree(staging)
-                shutil.copytree(context.path("transport/package-skeleton"), staging)
-                download = context.path("scratch/downloaded-bundle")
-                download.mkdir(parents=True, exist_ok=True)
-                environment = os.environ.copy()
-                environment.update({"HF_HUB_OFFLINE": "0", "TRANSFORMERS_OFFLINE": "0"})
-                completed_process(
-                    [
-                        "/opt/gte-venv/bin/python",
-                        "/opt/oracle-mvp/gte/model_bundle.py",
-                        "prepare",
-                        str(download),
-                    ],
-                    environment=environment,
-                )
-                (staging / "bundle").mkdir(parents=True, exist_ok=True)
-                os.replace(download / "model", staging / "bundle/model")
-                with contextlib.suppress(FileNotFoundError):
-                    (download / "model-lock.json").unlink()
-                try:
-                    full_build_package.verify_model_payload(
-                        staging / "bundle/model",
-                        staging / "bundle/model-lock.json",
-                        context.path("transport/model-payload-identity.json"),
-                    )
-                    full_build_package.restore_model_metadata(
-                        staging / "bundle/model",
-                        context.path("transport/legacy-huggingface"),
-                    )
-                except (OSError, ValueError) as error:
-                    raise OperationError(f"remote model verification failed: {error}") from error
-                completed_process(
-                    [
-                        "/opt/gte-venv/bin/python",
-                        "/opt/oracle-mvp/gte/model_bundle.py",
-                        "verify",
-                        str(staging / "bundle"),
-                    ]
-                )
-                corpus = required_object(context.config, "corpus")
-                try:
-                    full_build_package.reconstruct_corpus(
-                        context.path("transport/corpus/data.mdb.gz"),
-                        staging / "corpus-root/ndb/data.mdb",
-                        required_positive_int(corpus, "bytes"),
-                        require_sha256(
-                            required_string(corpus, "sha256"), "corpus.sha256"
-                        ),
-                        Path("/usr/bin/gzip"),
-                    )
-                    full_build_package.verify_manifest(
-                        staging, staging / "package-manifest.json"
-                    )
-                except (OSError, ValueError) as error:
-                    raise OperationError(f"remote package verification failed: {error}") from error
-                os.replace(staging, package)
-                sync_directory(context.root)
-            descriptor = command_json(
-            [
-                str(context.path("transport/control/gte-oracle")),
-                "describe-representation",
-                str(context.path("package/run/full-build-config.json")),
-            ]
-        )
-            atomic_json(context.path("work/offline-descriptor.json"), descriptor)
-            try:
-                host = calibration_package.capture_host(Path("nvidia-smi"), context.root)
-                identity = calibration_package.build_execution_identity(
-                    descriptor,
-                    recorded_offer(context),
-                    read_json(context.path("launch/create-result.json")),
-                    read_json(context.path("launch/instance.json")),
-                    host,
-                )
-            except (OSError, ValueError) as error:
-                raise OperationError(f"remote execution identity failed: {error}") from error
-            atomic_json(context.path("work/execution-identity.json"), identity)
-            verification = command_json(
-            [
-                str(context.path("transport/control/gte-oracle")),
-                "verify-representation",
-                str(context.path("package/run/full-build-config.json")),
-            ]
-        )
-            validate_representation(context, verification, complete=False)
-            atomic_json(context.path("work/preparation-verification.json"), verification)
+            prepare_remote_command(context)
             status = 0
             return {"prepared": True, "state": "complete"}
     finally:
@@ -3138,30 +2334,23 @@ def remote_controller(context: Context, attempt_id: str) -> NoReturn:
     atomic_bytes(
         attempt / "full-build.started", f"{utc_text()}\n".encode("utf-8")
     )
-    executable = str(context.path("transport/control/gte-oracle"))
-    arguments = [
-        executable,
-        "run-full-build",
-        str(context.path("package/run/full-build-config.json")),
-    ]
-    if context.command_workload:
-        workload = required_object(context.config, "workload")
-        arguments = workload["command"]
-        executable = arguments[0]
-        os.chdir(context.path("work"))
-        os.environ.update(workload.get("environment", {}))
-        os.environ["ORACLE_RUN_ATTEMPT_ID"] = attempt_id
-        for key in ("ORACLE_RUN_PREVIOUS_ATTEMPT_ID", "ORACLE_RUN_CONTINUATION_REASON"):
-            os.environ.pop(key, None)
-        resume = attempt / "resume.json"
-        if resume.exists():
-            document = read_json(resume)
-            os.environ["ORACLE_RUN_PREVIOUS_ATTEMPT_ID"] = document["previous_attempt"]
-            os.environ["ORACLE_RUN_CONTINUATION_REASON"] = document["reason"]
-        if workload["work_seconds"] is None:
-            os.environ.pop("ORACLE_RUN_DEADLINE_UTC", None)
-        else:
-            os.environ["ORACLE_RUN_DEADLINE_UTC"] = utc_text(utc_now() + timedelta(seconds=workload["work_seconds"]))
+    workload = required_object(context.config, "workload")
+    arguments = workload["command"]
+    executable = arguments[0]
+    os.chdir(context.path("work"))
+    os.environ.update(workload.get("environment", {}))
+    os.environ["ORACLE_RUN_ATTEMPT_ID"] = attempt_id
+    for key in ("ORACLE_RUN_PREVIOUS_ATTEMPT_ID", "ORACLE_RUN_CONTINUATION_REASON"):
+        os.environ.pop(key, None)
+    resume = attempt / "resume.json"
+    if resume.exists():
+        document = read_json(resume)
+        os.environ["ORACLE_RUN_PREVIOUS_ATTEMPT_ID"] = document["previous_attempt"]
+        os.environ["ORACLE_RUN_CONTINUATION_REASON"] = document["reason"]
+    if workload["work_seconds"] is None:
+        os.environ.pop("ORACLE_RUN_DEADLINE_UTC", None)
+    else:
+        os.environ["ORACLE_RUN_DEADLINE_UTC"] = utc_text(utc_now() + timedelta(seconds=workload["work_seconds"]))
     try:
         os.execv(executable, arguments)
     except OSError as error:
@@ -3177,8 +2366,7 @@ def remote_worker(context: Context, attempt_id: str, resume_from: str | None = N
     resume = None
     if resume_from is not None:
         resume_from = parse_attempt_id(resume_from)
-        if (not context.command_workload or context.config["workload"].get("resumable") is not True
-                or not isinstance(reason, str) or not reason.strip() or resume_from >= attempt_id):
+        if (context.config['workload'].get('resumable') is not True or not isinstance(reason, str) or (not reason.strip()) or (resume_from >= attempt_id)):
             raise OperationError("continuation requires an explicitly resumable workload and a reason")
         verify_reviewed_artifacts(context)
         try:
@@ -3377,8 +2565,7 @@ def remote_seal(context: Context, attempt_id: str) -> dict[str, object]:
 
 
 def progressive_policy(context: Context) -> dict[str, int] | None:
-    if not context.command_workload:
-        return None
+    pass
     policy = context.config["workload"].get("progressive_copy")
     if policy is None:
         return None
@@ -3797,7 +2984,7 @@ def ensure_retrieved(
 def resume(context: Context, reason: str) -> dict[str, object]:
     """Explicitly continue an opted-in frozen job on its existing instance."""
     verify_reviewed_artifacts(context)
-    if not context.command_workload or context.config["workload"].get("resumable") is not True:
+    if context.config['workload'].get('resumable') is not True:
         raise OperationError("the frozen workload does not permit continuation")
     if not isinstance(reason, str) or not reason.strip():
         raise OperationError("continuation requires a recorded reason")
@@ -3900,14 +3087,7 @@ def publish_verified_result(context: Context, attempt_id: str) -> bool:
     verification_path = candidate / "audit/local-verification.json"
     if not verification_path.exists():
         try:
-            if context.command_workload:
-                response = verify_command_results(context, candidate)
-            else:
-                response = context.controller(
-                    "result.next",
-                    ["verify-representation", "package/run/full-build-config.json"],
-                )
-                validate_representation(context, response, complete=True)
+            response = verify_command_results(context, candidate)
             atomic_json(verification_path, response)
         except OperationError as error:
             atomic_bytes(
@@ -4403,399 +3583,11 @@ def invoice_pending_result(
     }
 
 
-def rewrite_settlement_config(source: Path, destination: Path, stage: str) -> None:
-    document = read_json(source)
-    if not isinstance(document, dict):
-        raise OperationError("full-build config is invalid")
-    for section in ("calibration", "full_build"):
-        value = document.get(section)
-        if isinstance(value, dict) and "ledger_path" in value:
-            value["ledger_path"] = f"{stage}/budget-ledger.json"
-    atomic_json(destination, document)
-
-
-def settlement_layout(context: Context) -> tuple[str, bool]:
-    if context.path("result").is_dir():
-        return "result", (context.path("result/audit/local-verification.json").is_file())
-    invocation = context.path("launch/worker-invocations")
-    if invocation.is_dir() and any(invocation.glob("[0-9][0-9][0-9].json")):
-        if not context.path("launch/retrieval-verification.json").is_file():
-            raise OperationError(
-                "claimed remote ledger is not retrieved; settlement cannot continue"
-            )
-        return "result.next", False
-    if not (
-        context.path("launch/preclaim-failure.log").is_file()
-        or context.path("launch/preworker-instance-failure.log").is_file()
-    ):
-        raise OperationError("failure settlement has no durable failure evidence")
-    return "execution", False
-
-
-def failure_evidence(context: Context, layout: str) -> str:
-    if layout == "execution":
-        if context.path("launch/preworker-instance-failure.log").is_file():
-            return "../launch/preworker-instance-failure.log"
-        return "../launch/preclaim-failure.log"
-    attempt_id = last_attempt_id(context)
-    if attempt_id is None:
-        raise OperationError("worker failure has no attempt identity")
-    attempt = context.path(f"{layout}/work/full-build-attempts/{attempt_id}")
-    terminal = terminal_state(attempt)
-    if terminal is None:
-        raise OperationError("worker failure has no terminal evidence")
-    if terminal["kind"] == "full-build.exit" and terminal.get("exit_status") == 0:
-        path = context.path(f"{layout}/audit/local-verification-failure.log")
-        if not path.is_file():
-            raise OperationError("zero-exit worker failure lacks local verification evidence")
-        return "audit/local-verification-failure.log"
-    return f"work/full-build-attempts/{attempt_id}/{terminal['kind']}"
-
-
-def existing_settlement(context: Context) -> str | None:
-    layouts = [
-        layout
-        for layout in ("result", "result.next", "execution")
-        if context.path(f"{layout}/settlement").is_dir()
-    ]
-    if len(layouts) > 1:
-        raise OperationError("more than one published settlement exists")
-    return layouts[0] if layouts else None
-
-
-def finish_settlement(context: Context, layout: str) -> dict[str, object]:
-    published = context.path(f"{layout}/settlement")
-    try:
-        full_build_package.verify_manifest(
-            published, published / "settlement-manifest.json"
-        )
-    except (OSError, ValueError) as error:
-        raise OperationError(f"published settlement is invalid: {error}") from error
-    result = read_json(published / "settlement-result.json")
-    if not isinstance(result, dict) or not isinstance(result.get("ledger_sha256"), str):
-        raise OperationError("published settlement result is invalid")
-    require_sha256(result["ledger_sha256"], "settlement ledger")
-    settled_ledger = published / "budget-ledger.json"
-    if sha256_file(settled_ledger) != result["ledger_sha256"]:
-        raise OperationError("published settlement ledger differs from its receipt")
-    atomic_json(context.path("launch/settlement-result.json"), result)
-    if layout == "execution":
-        destination = context.path("result.next/settlement")
-        if destination.exists():
-            raise OperationError("result.next already contains another settlement")
-        os.replace(published, destination)
-        sync_directory(destination.parent)
-        layout = "result.next"
-    if layout == "result.next":
-        if context.path("result").exists():
-            raise OperationError("cannot publish result.next over an existing result")
-        os.replace(context.path("result.next"), context.path("result"))
-        sync_directory(context.root)
-    published = context.path("result/settlement")
-    settled_ledger = published / "budget-ledger.json"
-    reservation = read_json(context.path("launch/full-build-reservation.json"))
-    if not isinstance(reservation, dict) or not isinstance(
-        reservation.get("ledger_sha256"), str
-    ):
-        raise OperationError("reservation receipt is invalid at ledger publication")
-    require_sha256(reservation["ledger_sha256"], "reservation ledger")
-    replace_from_expected(
-        settled_ledger,
-        context.ledger,
-        allowed_existing_sha256={reservation["ledger_sha256"]},
-    )
-    if sha256_file(context.ledger) != result["ledger_sha256"]:
-        raise OperationError("canonical ledger publication failed")
-    try:
-        full_build_package.verify_manifest(
-            published, published / "settlement-manifest.json"
-        )
-    except (OSError, ValueError) as error:
-        raise OperationError(f"final settlement verification failed: {error}") from error
-    shutil.rmtree(context.path("launch/ssh"), ignore_errors=True)
-    return {"state": "settled", "settlement": result}
-
-
-def settlement_summary_from_ledger(
-    context: Context,
-    stage: Path,
-    operation: str,
-    actual_charge_micro_usd: int,
-    recorded_at_utc: str,
-) -> dict[str, object]:
-    ledger_path = stage / "budget-ledger.json"
-    before_path = stage / "pre-settlement-budget-ledger.json"
-    document = read_json(ledger_path)
-    config = read_json(stage / "full-build-config.json")
-    if not isinstance(document, dict) or not isinstance(config, dict):
-        raise OperationError("interrupted settlement state is invalid")
-    full_build = config.get("full_build")
-    if not isinstance(full_build, dict) or not isinstance(
-        full_build.get("reservation_id"), str
-    ):
-        raise OperationError("settlement config has no reservation identity")
-    reservation_id = full_build["reservation_id"]
-    kind = (
-        "full_build_settlement"
-        if operation == "settle-full-build"
-        else "failed_full_build_settlement"
-    )
-    entries = document.get("entries")
-    if not isinstance(entries, list):
-        raise OperationError("settled ledger has no entry list")
-    matches = [
-        entry
-        for entry in entries
-        if isinstance(entry, dict)
-        and entry.get("kind") == kind
-        and entry.get("reservation_id") == reservation_id
-    ]
-    if len(matches) != 1:
-        raise OperationError("interrupted settlement ledger is not uniquely settled")
-    entry = matches[0]
-    if (
-        entry.get("previous_ledger_sha256") != sha256_file(before_path)
-        or entry.get("actual_charge_micro_usd") != actual_charge_micro_usd
-        or entry.get("recorded_at_utc") != recorded_at_utc
-    ):
-        raise OperationError("interrupted settlement entry differs from its invocation")
-
-    def cents(field: str) -> int:
-        value = document.get(field)
-        if isinstance(value, bool) or not isinstance(value, int) or value < 0:
-            raise OperationError(f"settled ledger field is invalid: {field}")
-        return value * 10_000
-
-    return {
-        "ledger_sha256": sha256_file(ledger_path),
-        "lifetime_cap_micro_usd": cents("lifetime_cap_cents"),
-        "actual_spend_micro_usd": cents("actual_spend_cents"),
-        "outstanding_commitments_micro_usd": cents(
-            "outstanding_commitments_cents"
-        ),
-        "calibration_actual_spend_micro_usd": cents(
-            "calibration_actual_spend_cents"
-        ),
-        "calibration_outstanding_commitments_micro_usd": cents(
-            "calibration_outstanding_commitments_cents"
-        ),
-    }
-
-
-def run_settlement_controller(
-    context: Context,
-    layout: str,
-    stage: Path,
-    operation: str,
-    arguments: list[str],
-    actual_charge_micro_usd: int,
-) -> dict[str, object]:
-    result_path = stage / "settlement-result.json"
-    if result_path.exists():
-        result = read_json(result_path)
-        if not isinstance(result, dict):
-            raise OperationError("staged settlement result is invalid")
-        return result
-    recorded_path = stage / "settled-at.txt"
-    if recorded_path.exists():
-        recorded_at_utc = recorded_path.read_text(encoding="utf-8").strip()
-        parse_utc(recorded_at_utc, "settlement time")
-    else:
-        recorded_at_utc = utc_text()
-        atomic_bytes(recorded_path, f"{recorded_at_utc}\n".encode("utf-8"))
-    arguments = [*arguments, str(actual_charge_micro_usd), recorded_at_utc]
-    before = stage / "pre-settlement-budget-ledger.json"
-    ledger = stage / "budget-ledger.json"
-    output = stage / "settlement-result.json.next"
-    lock_path = stage / "controller.lock"
-    with file_lock(lock_path, blocking=False) as lock:
-        if output.is_file():
-            try:
-                candidate = read_json(output)
-            except OperationError:
-                candidate = None
-            if isinstance(candidate, dict) and candidate.get("ledger_sha256") == sha256_file(
-                ledger
-            ):
-                os.replace(output, result_path)
-                sync_directory(stage)
-                return candidate
-            output.unlink()
-        if sha256_file(ledger) != sha256_file(before):
-            result = settlement_summary_from_ledger(
-                context,
-                stage,
-                operation,
-                actual_charge_micro_usd,
-                recorded_at_utc,
-            )
-            atomic_json(result_path, result)
-            return result
-        atomic_json(
-            stage / "controller-invocation.json",
-            {
-                "schema_version": 1,
-                "operation": operation,
-                "arguments": arguments,
-                "recorded_at_utc": recorded_at_utc,
-            },
-        )
-        stderr = (stage / "controller.stderr").open("ab", buffering=0)
-        stdout = output.open("xb", buffering=0)
-        try:
-            child = subprocess.Popen(
-                context.controller_arguments(layout, [operation, *arguments]),
-                stdin=subprocess.DEVNULL,
-                stdout=stdout,
-                stderr=stderr,
-                start_new_session=True,
-                close_fds=True,
-                pass_fds=(lock.fileno(),),
-            )
-        except OSError as error:
-            raise OperationError(f"could not start settlement controller: {error}") from error
-        finally:
-            stdout.close()
-            stderr.close()
-        atomic_bytes(stage / "controller.pid", f"{child.pid}\n".encode("utf-8"))
-        status = child.wait()
-        atomic_bytes(stage / "controller.exit", f"{status}\n".encode("utf-8"))
-        if status != 0:
-            if sha256_file(ledger) != sha256_file(before):
-                result = settlement_summary_from_ledger(
-                    context,
-                    stage,
-                    operation,
-                    actual_charge_micro_usd,
-                    recorded_at_utc,
-                )
-                atomic_json(result_path, result)
-                return result
-            raise OperationError("settlement controller failed before changing its ledger")
-        candidate = read_json(output)
-        if not isinstance(candidate, dict):
-            raise OperationError("settlement controller returned an invalid result")
-        os.replace(output, result_path)
-        sync_directory(stage)
-        return candidate
-
-
-def recoverable_settlement_stage(root: Path) -> Path | None:
-    attempts = root / "settlement-attempts"
-    if not attempts.is_dir():
-        return None
-    recoverable = []
-    for stage in sorted(path for path in attempts.iterdir() if path.is_dir()):
-        required = (
-            stage / "budget-ledger.json",
-            stage / "pre-settlement-budget-ledger.json",
-            stage / "full-build-config.json",
-        )
-        if all(path.is_file() for path in required):
-            recoverable.append(stage)
-    if len(recoverable) > 1:
-        raise OperationError("more than one initialized settlement attempt exists")
-    return recoverable[0] if recoverable else None
-
-
-def finish_settlement_stage(context: Context, root: Path, stage: Path) -> None:
-    attempt_id = stage.name
-    for relative in (
-        "launch/provider-final-charge.json",
-        "launch/provider-final-invoice-first.json",
-        "launch/provider-final-invoice-confirmation.json",
-        "launch/invoice-not-before-utc.txt",
-        "launch/provider-final-invoice-first-observed-at.txt",
-        "launch/provider-final-invoice-confirmation-observed-at.txt",
-        "launch/destruction-confirmation.json",
-        "launch/destroyed-at.txt",
-    ):
-        source = context.path(relative)
-        if source.is_file():
-            atomic_copy(source, stage / source.name)
-    try:
-        full_build_package.write_manifest(
-            stage,
-            stage / "settlement-manifest.json",
-            "gte-full-build-settlement",
-        )
-        full_build_package.verify_manifest(stage, stage / "settlement-manifest.json")
-    except (OSError, ValueError) as error:
-        raise OperationError(f"settlement package verification failed: {error}") from error
-    os.replace(stage, root / "settlement")
-    sync_directory(root)
-    audit = root / "settlement-attempts" / attempt_id
-    audit.mkdir(mode=0o700)
-    atomic_json(
-        audit / "published.json",
-        {
-            "schema_version": 1,
-            "published_as": "settlement",
-            "settlement_manifest_sha256": sha256_file(
-                root / "settlement/settlement-manifest.json"
-            ),
-        },
-    )
-
-
 def settle(context: Context) -> dict[str, object]:
-    if context.command_workload:
-        charge = read_json(context.path("launch/provider-final-charge.json"))
-        return {"state": "ledger_reconciliation_required", "billing_possible": False,
-                "instance_id": recorded_instance_id(context), "provider_final_charge": charge,
-                "canonical_ledger_path": str(context.ledger)}
-    existing = existing_settlement(context)
-    if existing is not None:
-        return finish_settlement(context, existing)
     charge = read_json(context.path("launch/provider-final-charge.json"))
-    if not isinstance(charge, dict) or not isinstance(
-        charge.get("actual_charge_micro_usd"), int
-    ):
-        raise OperationError("provider final charge is invalid")
-    layout, success = settlement_layout(context)
-    root = context.path(layout)
-    published = root / "settlement"
-    if not published.exists():
-        stage = recoverable_settlement_stage(root)
-        if stage is None:
-            attempt_id = f"{utc_now().strftime('%Y%m%dT%H%M%S')}-{time.time_ns()}"
-            stage_relative = f"settlement-attempts/{attempt_id}"
-            stage = root / stage_relative
-            stage.mkdir(parents=True, mode=0o700)
-            source_ledger = root / "work/budget-ledger.json"
-            if not source_ledger.is_file():
-                raise OperationError("settlement source ledger is missing")
-            atomic_copy(source_ledger, stage / "pre-settlement-budget-ledger.json")
-            atomic_copy(source_ledger, stage / "budget-ledger.json")
-            rewrite_settlement_config(
-                root / "package/run/full-build-config.json",
-                stage / "full-build-config.json",
-                stage_relative,
-            )
-        else:
-            stage_relative = stage.relative_to(root).as_posix()
-        arguments = [stage_relative + "/full-build-config.json"]
-        operation = "settle-full-build"
-        if not success:
-            operation = "settle-failed-full-build"
-            arguments.append(failure_evidence(context, layout))
-        result = run_settlement_controller(
-            context,
-            layout,
-            stage,
-            operation,
-            arguments,
-            charge["actual_charge_micro_usd"],
-        )
-        if not isinstance(result, dict) or not isinstance(result.get("ledger_sha256"), str):
-            raise OperationError("controller settlement result is invalid")
-        require_sha256(result["ledger_sha256"], "settlement ledger")
-        if sha256_file(stage / "budget-ledger.json") != result["ledger_sha256"]:
-            raise OperationError("settlement ledger does not match the controller receipt")
-        if not (stage / "settlement-result.json").exists():
-            atomic_json(stage / "settlement-result.json", result)
-        finish_settlement_stage(context, root, stage)
-    return finish_settlement(context, layout)
+    return {"state": "ledger_reconciliation_required", "billing_possible": False,
+            "instance_id": recorded_instance_id(context), "provider_final_charge": charge,
+            "canonical_ledger_path": str(context.ledger)}
 
 
 def settle_preclaim_failure(context: Context) -> dict[str, object]:
@@ -4942,9 +3734,8 @@ def worker_status(
         raise OperationError("remote worker status has an unknown state")
     normalized = dict(response)
     normalized["state"] = state
-    if context.command_workload:
-        atomic_json(context.path(f"observations/{time.time_ns()}-{attempt_id}.json"),
-                    {"observed_at_utc": utc_text(), "attempt_id": attempt_id, "remote": normalized})
+    atomic_json(context.path(f"observations/{time.time_ns()}-{attempt_id}.json"),
+                {"observed_at_utc": utc_text(), "attempt_id": attempt_id, "remote": normalized})
     return normalized
 
 
@@ -5063,64 +3854,7 @@ def status_once(context: Context) -> dict[str, object]:
 
 
 def prepare(context: Context) -> dict[str, object]:
-    if context.command_workload:
-        return prepare_command_plan(context)
-    with operation_lock(context.root):
-        verify_reviewed_artifacts(context)
-        verify_local_ssh(context)
-        verify_image(context)
-        completed_process(["tar", "--version"])
-        ledger_sha256 = verify_baseline_ledgers(context)
-        descriptor = context.controller(
-            "execution",
-            ["describe-representation", "package/run/full-build-config.json"],
-        )
-        if not isinstance(descriptor, dict) or descriptor.get(
-            "descriptor_sha256"
-        ) != context.pin("descriptor_sha256"):
-            raise OperationError("offline descriptor differs from the frozen representation")
-        query, offer = select_offer(context)
-        if any(row.get("label") == context.label for row in sanitized_live_instances()):
-            raise OperationError("a live instance already uses the full-build label")
-        non_compute = {
-            "artifact_storage_and_transfer_micro_usd": context.limit(
-                "artifact_storage_and_transfer_micro_usd"
-            ),
-            "one_cold_restart_micro_usd": context.limit(
-                "one_cold_restart_micro_usd"
-            ),
-            "one_lost_shard_micro_usd": context.limit("one_lost_shard_micro_usd"),
-        }
-        non_compute_path = context.path("launch/full-build-non-compute-costs.json")
-        atomic_json(non_compute_path, non_compute)
-        projection = context.controller(
-            "execution",
-            [
-                "project-full-build",
-                "package/run/full-build-config.json",
-                "../launch/full-build-non-compute-costs.json",
-            ],
-        )
-        ensure_retrieval_destination(context)
-        plan = plan_document(context, query, offer, projection, ledger_sha256)
-        encoded = canonical_json(plan)
-        digest = hashlib.sha256(encoded).hexdigest()
-        plan_path = context.approval_dir / f"{digest}.json"
-        atomic_bytes(plan_path, encoded)
-        return {
-            "state": "awaiting_approval",
-            "paid_action_performed": False,
-            "approval_sha256": digest,
-            "plan": str(plan_path),
-            "offer_id": str(offer["id"]),
-            "hourly_rate_usd": str(offer["dph_total"]),
-            "projected_lifetime_total_micro_usd": projection[
-                "projected_lifetime_total_micro_usd"
-            ],
-            "reservation_ceiling_micro_usd": context.limit(
-                "reservation_ceiling_micro_usd"
-            ),
-        }
+    return prepare_command_plan(context)
 
 
 def run(context: Context, approval: str | None) -> dict[str, object]:
@@ -5137,7 +3871,7 @@ def run(context: Context, approval: str | None) -> dict[str, object]:
         if context.path("launch/result-loss-ledger-reconciliation.json").exists():
             if instance_id is None:
                 raise OperationError("result-loss evidence has no instance identity")
-            return ledger_reconciliation_state(context, instance_id, delete=not context.command_workload)
+            return ledger_reconciliation_state(context, instance_id, delete=not True)
         if context.path("launch/provider-final-charge.json").exists():
             return settle(context)
         if context.path("launch/destruction-confirmation.json").exists():
@@ -5154,17 +3888,11 @@ def run(context: Context, approval: str | None) -> dict[str, object]:
             if attempt_id is None:
                 raise OperationError("retrieved worker has no attempt identity")
             publish_verified_result(context, attempt_id)
-            if context.command_workload:
-                return preserved_instance_result(context, instance_id)
-            destroy_instance(context, instance_id)
-            charge = ensure_final_charge(context, instance_id)
-            if charge is None:
-                return invoice_pending_result(context, instance_id)
-            return settle(context)
+            return preserved_instance_result(context, instance_id)
         if context.path("launch/preworker-instance-failure.log").exists():
             if instance_id is None:
                 raise OperationError("pre-worker instance failure has no instance identity")
-            return cleanup_preworker_instance(context, instance_id, delete=not context.command_workload)
+            return cleanup_preworker_instance(context, instance_id, delete=not True)
         if (
             instance_id is None
             and not context.path("launch/create-request-attempted.txt").exists()
@@ -5203,7 +3931,7 @@ def run(context: Context, approval: str | None) -> dict[str, object]:
                         "utf-8"
                     ),
                 )
-            return cleanup_preworker_instance(context, instance_id, delete=not context.command_workload)
+            return cleanup_preworker_instance(context, instance_id, delete=not True)
         try:
             private_key, target = ensure_ssh(context, instance_id)
         except RemoteAccessUnavailable:
@@ -5252,7 +3980,7 @@ def run(context: Context, approval: str | None) -> dict[str, object]:
                     context.path("launch/preworker-instance-failure.log"),
                     f"{utc_text()} pre-worker failure: {error}\n".encode("utf-8"),
                 )
-            return cleanup_preworker_instance(context, instance_id, delete=not context.command_workload)
+            return cleanup_preworker_instance(context, instance_id, delete=not True)
         remote = worker_status(context, private_key, target, attempt_id)
         if remote["state"] in ("running", "starting"):
             return {
@@ -5269,13 +3997,13 @@ def run(context: Context, approval: str | None) -> dict[str, object]:
                 target,
                 attempt_id,
                 remote,
-                delete=not context.command_workload,
+                delete=not True,
             )
         raise OperationError("acknowledged worker has no recoverable remote state")
 
 
 def command_requires_completion(context: Context) -> bool:
-    return context.command_workload and context.config["workload"]["work_seconds"] is None
+    return True and context.config["workload"]["work_seconds"] is None
 
 
 def verify_completion_review(context: Context, instance_id: str | None, incomplete_stop_approval: str | None) -> None:
@@ -5320,8 +4048,7 @@ def verify_completion_review(context: Context, instance_id: str | None, incomple
 
 def run_watch(context: Context, approval: str | None) -> dict[str, object]:
     """Supervise the existing resumable run; no separate provider lifecycle."""
-    if not context.command_workload:
-        raise OperationError("run --watch requires a command workload")
+    pass
     verify_reviewed_artifacts(context)
     # A second watcher must fail before it can stop the active operation.
     with file_lock(context.path("watch.lock"), blocking=False):
@@ -5825,8 +4552,7 @@ def command_relative_path(value: object) -> Path:
 
 
 def validate_offer(context: Context, offer: object, identifier: str) -> dict[str, object]:
-    if not context.command_workload:
-        return full_build_package.validate_full_build_offer(offer, identifier)
+    pass
     if not isinstance(offer, dict) or str(offer.get("id")) != identifier:
         raise ValueError("offer differs from the personally selected offer")
     for field in ("id", "machine_id", "bundle_id", "num_gpus"):

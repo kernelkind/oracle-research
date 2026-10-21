@@ -1,9 +1,8 @@
-# HG process — start here
+# Subject-based hierarchy comparison
 
-The goal is a useful hierarchy for browsing posts. This is the SP-based process
-we are testing on 100 posts, not a settled production workflow. **HG1–HG7** name
-its stages; **LG01** names the technique used at HG3, regardless of post count.
-The current tests reuse saved HG1–HG2 outputs rather than rerunning SP or MP.
+These experiments tested an SP-based hierarchy process on 100 posts. **HG1–HG7**
+name its stages; **LG01** names the technique used at HG3, regardless of post
+count. The comparisons reused saved HG1–HG2 outputs rather than rerunning SP or MP.
 Subsections use **HGx.y** labels, such as **HG3.2** for selecting post pairs.
 
 **Completed bounded build: [HG100-SOL01](../bounded-hierarchy-v1/README.md).**
@@ -100,7 +99,7 @@ browser command and the important remaining local-to-global ancestry limitation.
    nodes, stop. If cross-post combinations create a cycle, undo every involved
    cross-post combination; never delete an SP relationship to repair it.
    LG01 does not add missing relationships between parent hierarchy nodes.
-   See the [detailed LG01 rules](../subject-order-probe.md#lg01--subject-hierarchy-merging).
+   See the [detailed LG01 rules](../../docs/experiments/hierarchy/subject-order-probe.md#lg01--subject-hierarchy-merging).
 
    **Visual example: saved HG3 results for N037 and N072.** This follows the
    same Cranberries entries used in the HG4 example below. All numbers are
@@ -589,7 +588,7 @@ previously approved prompts. Revision receipts record the exact changes.
 The proposed candidate source is distinct pairs of immediate parents of an
 LG01 node shared across posts, deduplicated by node identity. Sharing a child
 nominates a comparison; it does not establish equivalence or containment.
-The read-only investigation of the [LG01 100-post run](../subject-order-probe.md#smv2-100--unchanged-rules-on-all-100-posts)
+The read-only investigation of the [LG01 100-post run](../../docs/experiments/hierarchy/subject-order-probe.md#smv2-100--unchanged-rules-on-all-100-posts)
 did not adopt this as a construction rule or authorize model calls.
 
 ## Proposed HG8 — apply ancestor relationships
@@ -654,7 +653,7 @@ equivalences from HG7 rechecks remains a separate open decision; HG4.3 governs
 selection after accepted hierarchy changes.
 
 The user agreed to the following browsing-link rule, recorded as
-[HD22](../../docs/planning/release-decisions.md#sp-based-hierarchy-rules):
+[HD22](../../docs/experiments/hierarchy/design-decisions.md#sp-based-hierarchy-rules):
 omit a direct link A → B from the browsing view when another path of at least
 two links connects A to B. Derive the view from the complete acyclic ancestor
 graph, not by selecting one longest chain. Retain every node, multiple parent
@@ -669,7 +668,7 @@ LG01 browser outputs remain unchanged. It never removes a hierarchy node.
 
 ## Input and output
 
-Use the shared runner's [saved subject-pair adapter](../model-runner.md#saved-subject-pair-preparation)
+Use the shared runner's [saved subject-pair adapter](../model-runner.md#input-adapters)
 with saved source paths and explicit A/B node IDs. It assembles `INPUT_JSON`
 automatically; do not copy source entries into a case file. Keys `A` and `B`
 identify the two nodes. Each value is a list containing only `subject` and its
@@ -695,7 +694,7 @@ The output is a JSON object with exactly two string fields:
   `uncertain`.
 - `reason`: one short justification.
 
-The [six-pair experiment spec](../experiment_specs/lg01-bcpv4-six-pairs-astra-low-v1.json)
+The six-pair experiment spec (`03bd9e45:sse_multivector/experiment_specs/lg01-bcpv4-six-pairs-astra-low-v1.json`)
 uses the shared runner's existing output JSON Schema validation. The adapter
 can now derive an isolated combined-node preparation; it does not apply ancestor
 answers or change the LG01 baseline. A
@@ -741,7 +740,7 @@ the `uncertain` response.
 ## Remaining 43-pair test
 
 The user authorized the remaining comparisons with unchanged BCPv4/Astra low.
-The [spec](../experiment_specs/lg01-bcpv4-remaining-pairs-astra-low-v1.json) uses
+The spec (`03bd9e45:sse_multivector/experiment_specs/lg01-bcpv4-remaining-pairs-astra-low-v1.json`) uses
 the subject-pair adapter and [explicit source/pair selection](../experiment_specs/lg01-bcpv4-remaining-pairs-v1.json).
 Offline checks confirmed that the six prior pairs plus these 43 exactly cover
 the 49 pairs nominated by distinct immediate parents of cross-post shared LG01
@@ -770,7 +769,7 @@ revision, graph changes or new application rule follows automatically.
 The user authorized preparation of the proposed HG6 merges followed by seven
 changed HG7 comparisons, with BCPv4 / Astra low unchanged. The shared
 [source-reference spec](../experiment_specs/lg01-bcpv4-combined-pairs-v1.json)
-uses the [reusable adapter](../model-runner.md#saved-subject-pair-preparation);
+uses the [reusable adapter](../model-runner.md#input-adapters);
 no case payloads, rendered prompts or review files were assembled manually.
 Artifacts are isolated under
 `target/branch-comparison-v1/bcpv4-hg6-hg7-v1/experiment/`.
@@ -817,7 +816,7 @@ by the agreed browsing-link simplification and inspection of its Food branch.
 The read-only preflight found 13 ancestor answers and 13 `neither` answers,
 without cycles or conflicts with preserved SP ancestry or each other.
 
-The shared runner's [saved hierarchy export](../model-runner.md#saved-subject-hierarchy-export)
+The shared runner's [saved hierarchy export](../model-runner.md#hierarchy-construction-and-saved-results)
 revalidates the frozen preparation, current model inputs, settings and receipts.
 It applies all 13 ancestor proposals in a fresh directory and retains all
 1,753 nodes and 2,383 original SP entries. The 1,661 mapped SP links plus 13 new
@@ -855,7 +854,7 @@ rule is not adopted as HG4 or as a complete construction policy.
 The user authorized only those nine recovered Food comparisons, not all 387.
 The [source/pair selection](../experiment_specs/lg01-bcpv4-food-ancestors-v1.json)
 references the saved ancestor-test graph and original SP inputs; the
-[experiment spec](../experiment_specs/lg01-bcpv4-food-ancestors-astra-low-v1.json)
+experiment spec (`03bd9e45:sse_multivector/experiment_specs/lg01-bcpv4-food-ancestors-astra-low-v1.json`)
 uses the existing `subject_pairs` adapter. It assembles and freezes the inputs,
 posts, masks and provenance without manually copied cases. The model receives
 only subject/context arrays: 31 distinct entries for Food/Foods and one for each
@@ -941,7 +940,7 @@ references saved SP inputs and the extended Food hierarchy, with
 `selection: same_worded_siblings`, rather than an explicit case list. The
 shared `subject_pairs` adapter assembles cases, source hashes and review
 evidence automatically. Nomination evidence stays outside the prompt.
-The [experiment spec](../experiment_specs/lg01-bcpv4-same-worded-siblings-astra-low-v1.json)
+The experiment spec (`03bd9e45:sse_multivector/experiment_specs/lg01-bcpv4-same-worded-siblings-astra-low-v1.json`)
 uses unchanged BCPv4, Astra low, subscription provider, concurrency 3 and
 timeout 300 seconds.
 
@@ -1050,7 +1049,7 @@ judged and three unjudged. HG4.2 selected one new unjudged pair. The rules did
 not overlap. Using underlying links for HG4.1 added only already-judged pairs.
 The [source selection](../experiment_specs/lg01-bcpv4-hg4-second-pass-v1.json)
 uses `selection: hg4` and `exclude_compared`, without a hand-picked pair list.
-The [experiment spec](../experiment_specs/lg01-bcpv4-hg4-second-pass-astra-low-v1.json)
+The experiment spec (`03bd9e45:sse_multivector/experiment_specs/lg01-bcpv4-hg4-second-pass-astra-low-v1.json`)
 retains the earlier prompt, provider, model, reasoning, schema and concurrency.
 Preparation automatically produced exactly four cases.
 
@@ -1091,7 +1090,7 @@ Astra low, followed by a separate HG6–HG8 export. The
 [source selection](../experiment_specs/lg01-bcpv4-hg4-third-pass-v1.json)
 uses the same `hg4` rules and excludes current saved judgments from the
 second-pass export. The
-[experiment spec](../experiment_specs/lg01-bcpv4-hg4-third-pass-astra-low-v1.json)
+experiment spec (`03bd9e45:sse_multivector/experiment_specs/lg01-bcpv4-hg4-third-pass-astra-low-v1.json`)
 keeps all earlier prompt and runner settings. Preparation selected exactly the
 three previously measured pairs, without an explicit pair list.
 
@@ -1120,21 +1119,19 @@ zero HG4.2 pairs. Thus neither existing rule nominates an unjudged pair now.
 This exhausts those selection rules on this saved hierarchy; it does not
 establish that the hierarchy is complete or ready for browsing approval.
 
-## Next step
+## Remaining construction limits
 
-HG4.3 records the user-approved canonical repetition rule. Automatic execution
-of that loop is not implemented, and no further calls are authorized.
-
-Suggested, not started: a read-only audit of important missing parent
-relationships that HG4.1 and HG4.2 cannot select. The empty comparison queue
-does not establish that those rules cover the hierarchy's remaining gaps. The
-[HG8 draft](#proposed-hg8--apply-ancestor-relationships) still requires review of
-general conflict handling. Keep the saved LG01 hierarchy unchanged.
+The existing HG4.1 and HG4.2 rules exhausted their unjudged candidates on the
+saved hierarchy. That did not establish complete coverage of missing parent
+relationships. The [HG8 design](#proposed-hg8--apply-ancestor-relationships)
+also left general conflict handling unresolved; the separate
+[bounded build](../bounded-hierarchy-v1/README.md) records the later candidate
+selection and application process.
 
 ## Design references
 
 The draft follows the existing
-[SP hierarchy rules](../../docs/planning/release-decisions.md#sp-based-hierarchy-rules),
+[SP hierarchy rules](../../docs/experiments/hierarchy/design-decisions.md#sp-based-hierarchy-rules),
 particularly HD08–11 and the open placement question HD21. Drafting a one-pair
 prompt does not settle the placement question or change those rules.
 

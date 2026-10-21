@@ -812,17 +812,6 @@ class AutonomousSubjectPromptCandidateTests(unittest.TestCase):
                 {"adapter": "subjects"}, {}, output.group(1), None
             )
 
-    def test_autonomous_templates_contain_exact_candidate_and_post_variable(self):
-        root = Path(__file__).parent
-        for version in range(59, 88):
-            with self.subTest(version=version):
-                candidate = (
-                    root / f"subject-prompt-goal-v1/asv6.{version}/ASv6.{version}.md"
-                ).read_text()
-                template = (
-                    root / f"experiment_specs/asv6.{version}-hr01-post-template.txt"
-                ).read_text()
-                self.assertEqual(template, candidate + "\n<post>\n{POST}\n</post>")
 
     def test_asv660_explanation_preserves_reviewed_posts_outputs_and_rules(self):
         directory = FOCUSED_PROMPT_PATH.parent.parent
@@ -1442,8 +1431,6 @@ class FoodSubjectPromptExampleTests(unittest.TestCase):
         self.assertEqual(blocks[0][1:], blocks[1][1:])
         self.assertEqual(before.split("<example>", 1)[0], after.split("<example>", 1)[0])
         self.assertEqual(before.rsplit("</example>", 1)[1], after.rsplit("</example>", 1)[1])
-        template = Path(__file__).parent / "experiment_specs/asv6.75-hr01-post-template.txt"
-        self.assertEqual(template.read_text(), after + "\n<post>\n{POST}\n</post>")
         for block in blocks[1]:
             output = re.search(r"<output>\n(.*?)\n</output>", block, re.S).group(1)
             entries = experiment_inputs.validate(
@@ -1570,8 +1557,6 @@ class SharedActionSubjectPromptExampleTests(unittest.TestCase):
         self.assertEqual(blocks[0][1:], blocks[1][1:])
         self.assertEqual(sources[0].split("<example>", 1)[0], sources[1].split("<example>", 1)[0])
         self.assertEqual(sources[0].rsplit("</example>", 1)[1], sources[1].rsplit("</example>", 1)[1])
-        template = Path(__file__).parent / "experiment_specs/asv6.78-hr01-post-template.txt"
-        self.assertEqual(template.read_text(), sources[1] + "\n<post>\n{POST}\n</post>")
         # The shared-predicate example supplements R17's rhetoric case; all
         # established primary assignments stay exactly once.
         self.assertEqual(Counter(rule for case in FOCUSED_CASES for rule in case["primary_rules"]),
@@ -1715,8 +1700,6 @@ class OriginQualifiedSubjectPromptExampleTests(SharedActionSubjectPromptExampleT
         self.assertEqual(blocks[0][1:], blocks[1][1:])
         self.assertEqual(before.split("<example>", 1)[0], after.split("<example>", 1)[0])
         self.assertEqual(before.rsplit("</example>", 1)[1], after.rsplit("</example>", 1)[1])
-        template = Path(__file__).parent / "experiment_specs/asv6.88-hr01-post-template.txt"
-        self.assertEqual(template.read_text(), after + "\n<post>\n{POST}\n</post>")
         self.assertEqual(Counter(rule for case in FOCUSED_CASES for rule in case["primary_rules"]),
                          Counter({f"R{i:02d}": 1 for i in range(1, 35)}))
 
@@ -1760,8 +1743,6 @@ class CompleteSourceCollectionExampleTests(SpecificSourceEnumerationExampleTests
             r"<explanation>\n.*?\n</explanation>", "<explanation/>", s, count=1, flags=re.S
         )
         self.assertEqual(omit_first_explanation(before), omit_first_explanation(after))
-        template = Path(__file__).parent / "experiment_specs/asv6.89-hr01-post-template.txt"
-        self.assertEqual(template.read_text(), after + "\n<post>\n{POST}\n</post>")
 
 
 class CombinedReferenceAndSharedActionPromptTests(SharedActionSubjectPromptExampleTests):
@@ -1775,8 +1756,6 @@ class CombinedReferenceAndSharedActionPromptTests(SharedActionSubjectPromptExamp
         shared = (self.path.parent.parent / "asv6.86/ASv6.86.md").read_text()
         first = lambda s: re.findall(r"<example>\n.*?\n</example>", s, re.S)[0]
         self.assertEqual(self.path.read_text(), before.replace(first(before), first(shared), 1))
-        template = Path(__file__).parent / "experiment_specs/asv6.92-hr01-post-template.txt"
-        self.assertEqual(template.read_text(), self.path.read_text() + "\n<post>\n{POST}\n</post>")
         self.assertEqual(Counter(rule for case in FOCUSED_CASES for rule in case["primary_rules"]),
                          Counter({f"R{i:02d}": 1 for i in range(1, 35)}))
 
@@ -1836,8 +1815,6 @@ class BroadAndExactSourceCollectionExampleTests(SharedActionSubjectPromptExample
         for block in blocks[2]:
             output = re.search(r"<output>\n(.*?)\n</output>", block, re.S).group(1)
             experiment_inputs.validate({"adapter": "subjects"}, {}, output, None)
-        template = Path(__file__).parent / "experiment_specs/asv6.91-hr01-post-template.txt"
-        self.assertEqual(template.read_text(), after + "\n<post>\n{POST}\n</post>")
         self.assertEqual(Counter(rule for case in FOCUSED_CASES for rule in case["primary_rules"]),
                          Counter({f"R{i:02d}": 1 for i in range(1, 35)}))
 
@@ -1873,8 +1850,6 @@ class CompleteReferentResolutionPromptTests(unittest.TestCase):
             "purposes. Derive less specific descriptions only as broader headings."
         )
         self.assertEqual(self.path.read_text(), before.replace(old, new))
-        template = Path(__file__).parent / "experiment_specs/asv6.90-hr01-post-template.txt"
-        self.assertEqual(template.read_text(), self.path.read_text() + "\n<post>\n{POST}\n</post>")
         self.assertEqual(Counter(rule for case in FOCUSED_CASES for rule in case["primary_rules"]),
                          Counter({f"R{i:02d}": 1 for i in range(1, 35)}))
 
@@ -1899,9 +1874,6 @@ class FiniteSourceCollectionPromptTests(SharedActionSubjectPromptExampleTests):
                                  re.search(pattern, current, re.S).group(1))
             output = re.search(r"<output>\n(.*?)\n</output>", current, re.S).group(1)
             experiment_inputs.validate({"adapter": "subjects"}, {}, output, None)
-        template = (Path(__file__).parent / "experiment_specs" /
-                    f"{self.path.parent.name}-hr01-post-template.txt")
-        self.assertEqual(template.read_text(), after + "\n<post>\n{POST}\n</post>")
         self.assertEqual(Counter(rule for case in FOCUSED_CASES for rule in case["primary_rules"]),
                          Counter({f"R{i:02d}": 1 for i in range(1, 35)}))
 
@@ -1953,8 +1925,6 @@ class GroupedSourceCopiesPromptTests(FiniteSourceCollectionPromptTests):
             )["parsed"]["subjects"]
             self.assertEqual(Counter(tuple(entry.items()) for entry in old_entries),
                              Counter(tuple(entry.items()) for entry in new_entries))
-        template = Path(__file__).parent / "experiment_specs/asv6.95-hr01-post-template.txt"
-        self.assertEqual(template.read_text(), after + "\n<post>\n{POST}\n</post>")
         self.assertEqual(Counter(rule for case in FOCUSED_CASES for rule in case["primary_rules"]),
                          Counter({f"R{i:02d}": 1 for i in range(1, 35)}))
 

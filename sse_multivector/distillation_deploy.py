@@ -14,7 +14,7 @@ import tempfile
 import threading
 import time
 
-from gte.full_build_package import write_manifest, verify_manifest
+from vast.full_build_package import write_manifest, verify_manifest
 from sse_multivector.distillation_run import (load_data, read_json, sha256, write_json,
     preparation_data, shared_code_files, continuation_config, subject_parent, subject_stage_summary, subject_test_summary, verify_subject_run)
 
@@ -32,8 +32,8 @@ CODE_FILES = (
     "sse_multivector/distillation/qwen-continuation-v1.vast.json",
     "sse_multivector/distillation/Dockerfile",
     "vast/runner.py", "vast/package.py",
-    "gte/full_build_package.py",
-    "gte/calibration_package.py", "gte/vast_private_create.py",
+    "vast/full_build_package.py",
+    "vast/calibration_package.py", "vast/vast_private_create.py",
 )
 REMOTE_PYTHON = "/opt/distillation-venv/bin/python"
 

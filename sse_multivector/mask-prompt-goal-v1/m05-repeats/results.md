@@ -20,4 +20,4 @@ Stop expanding this version. Investigate a small general scope-instruction chang
 
 The two calls used 4,900 input and 30 output tokens, with fresh threads and workdirs. No tools, retries, hand corrections or pressure stops. Raw judgments and checks (`./review.json`)
 
-See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-mask-prompt-goal-v1`.
+See conversion gaps (`03bd9e45:docs/experiments/publication-gaps.csv`) for `collection:tracked-mask-prompt-goal-v1`.

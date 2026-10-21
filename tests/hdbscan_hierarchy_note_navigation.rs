@@ -1,6 +1,5 @@
 use std::collections::BTreeSet;
 use std::fs;
-use std::path::Path;
 
 use oracle_mvp::hdbscan_hierarchy::Hierarchy;
 use serde_json::{Value, json};
@@ -334,106 +333,6 @@ fn source_mask_integrity_checks_are_shared_with_the_original_loader() {
             "accepted {case}"
         );
     }
-}
-
-#[test]
-fn saved_hdbv3_keeps_the_requested_raw_refinements_and_complete_memberships() {
-    let root = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("sse_multivector/real-note-fine-segmentation-v1");
-    let hierarchy = Hierarchy::load_note_navigation(
-        &root.join("hdbv3-cross-note-edges-v1/response.json"),
-        &root.join("vectors/vector-map.json"),
-        &root.join("reviewed-input.json"),
-    )
-    .unwrap();
-    assert_eq!(hierarchy.root, 1830);
-    assert_eq!(hierarchy.groups.len(), 246);
-    assert_eq!(hierarchy.groups[&1830].children.len(), 10);
-    assert_eq!(
-        (
-            hierarchy.groups[&1830].vector_count,
-            hierarchy.groups[&1830].note_count
-        ),
-        (916, 100)
-    );
-    let mut pending = vec![(hierarchy.root, 0)];
-    let mut maximum_depth = 0;
-    while let Some((id, depth)) = pending.pop() {
-        maximum_depth = maximum_depth.max(depth);
-        let group = &hierarchy.groups[&id];
-        let points = members(&hierarchy, id);
-        let notes = points
-            .iter()
-            .flat_map(|p| {
-                hierarchy.vectors[p]
-                    .iter()
-                    .map(|mask| mask.note_id.as_str())
-            })
-            .collect::<BTreeSet<_>>();
-        assert_eq!(group.vector_count, points.len());
-        assert_eq!(group.note_count, notes.len());
-        if let Some(parent) = group.parent {
-            assert!(group.note_count >= 2);
-            assert!(group.note_count < hierarchy.groups[&parent].note_count);
-        }
-        pending.extend(group.children.iter().map(|child| (*child, depth + 1)));
-    }
-    assert_eq!(maximum_depth, 54);
-    let mask_ids = |group| {
-        members(&hierarchy, group)
-            .into_iter()
-            .flat_map(|point| hierarchy.vectors[&point].iter().map(|mask| mask.id.clone()))
-            .collect::<BTreeSet<_>>()
-    };
-    assert_eq!(
-        mask_ids(1204),
-        ["V113", "V114", "V115", "V672", "V673", "V674"]
-            .into_iter()
-            .map(str::to_owned)
-            .collect()
-    );
-    assert_eq!(hierarchy.groups[&1204].parent, Some(1254));
-    assert_eq!(
-        (
-            hierarchy.groups[&1254].vector_count,
-            hierarchy.groups[&1254].note_count
-        ),
-        (7, 3)
-    );
-    assert!(mask_ids(1254).contains("V098"));
-    let coffee = mask_ids(1090);
-    assert!(coffee.contains("V494") && coffee.contains("V503"));
-    assert_eq!(
-        (
-            hierarchy.groups[&1090].vector_count,
-            hierarchy.groups[&1090].note_count
-        ),
-        (41, 19)
-    );
-    assert!(!members(&hierarchy, 1090).iter().any(|point| {
-        hierarchy.vectors[point]
-            .iter()
-            .any(|mask| mask.id == "V733")
-    }));
-    for group in [1023, 1063] {
-        assert_eq!(
-            (
-                hierarchy.groups[&group].vector_count,
-                hierarchy.groups[&group].note_count
-            ),
-            (2, 2)
-        );
-    }
-    let owners = hierarchy
-        .groups
-        .values()
-        .flat_map(|group| group.vectors.iter().copied())
-        .collect::<Vec<_>>();
-    assert_eq!(owners.len(), 916);
-    assert_eq!(
-        owners.into_iter().collect::<BTreeSet<_>>(),
-        (0..916).collect()
-    );
 }
 
 #[test]

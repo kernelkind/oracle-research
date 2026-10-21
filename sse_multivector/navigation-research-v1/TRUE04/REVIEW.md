@@ -8,7 +8,7 @@ Each question asks: **Does A contain B?** TRUE received only the exact titles, i
 premise: This text is about {B}. hypothesis: This text is about {A}.
 ```
 
-The 61 original groups include repeated Food, Coffee and Bitcoin titles. This document shows each distinct ordered title pair once. [DECISIONS.md](DECISIONS.md) preserves every original group ID and all 3,660 directions; `scores.jsonl` contains each exact input and full-precision score.
+The 61 original groups include repeated Food, Coffee and Bitcoin titles. This document shows each distinct ordered title pair once. DECISIONS.md (`03bd9e45:sse_multivector/navigation-research-v1/TRUE04/DECISIONS.md`) preserves every original group ID and all 3,660 directions; `scores.jsonl` contains each exact input and full-precision score.
 
 Scores below are rounded to six decimals. They are the full-vocabulary probability of first generating token `1`, not cosine or calibrated containment confidence. **Native** is the generated Yes/No answer. The separate frozen cutoff accepts scores **greater than 0.142**.
 

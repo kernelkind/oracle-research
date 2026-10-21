@@ -247,18 +247,6 @@ impl SnapshotLayout {
         self.root.join("canonical")
     }
 
-    pub(crate) fn embedding_root(&self) -> PathBuf {
-        self.root.join("embeddings")
-    }
-
-    pub(crate) fn corpus_stage_root(&self) -> PathBuf {
-        self.root.join("stages")
-    }
-
-    pub(crate) fn preflight_root(&self) -> PathBuf {
-        self.root.join("preflight")
-    }
-
     fn work_dir(&self) -> PathBuf {
         self.root.join("work")
     }
@@ -275,17 +263,6 @@ impl SnapshotLayout {
         self.work_dir().join("canonical")
     }
 
-    pub(crate) fn embedding_stage(&self, artifact_name: &str) -> PathBuf {
-        self.work_dir().join(format!("embedding-{artifact_name}"))
-    }
-
-    pub(crate) fn corpus_stage_work(&self, name: &str) -> PathBuf {
-        self.work_dir().join(format!("corpus-stage-{name}"))
-    }
-
-    pub(crate) fn preflight_work(&self, name: &str) -> PathBuf {
-        self.work_dir().join(format!("preflight-{name}"))
-    }
 }
 
 /// Counts recorded after NostrDB validates the source snapshot.
@@ -858,10 +835,6 @@ pub(crate) enum Validation {
 
 pub(crate) fn open_ndb(path: &Path, validation: Validation) -> Result<Ndb> {
     open_ndb_with_ingesters(path, validation, None, false)
-}
-
-pub(crate) fn open_existing_ndb(path: &Path, validation: Validation) -> Result<Ndb> {
-    open_ndb_with_ingesters(path, validation, None, true)
 }
 
 fn open_source_ingest_ndb(path: &Path) -> Result<Ndb> {

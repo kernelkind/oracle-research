@@ -43,11 +43,6 @@ __pycache__/
 !/sse_multivector/*-v[0-9]*/**/package.json
 !/sse_multivector/*-v[0-9]*/**/package-lock.json
 !/sse_multivector/*-v[0-9]*/**/*prompt-versions.json
-!/sse_multivector/*-v[0-9]*/**/review-groups.json
-!/sse_multivector/*-v[0-9]*/**/edits.json
-!/sse_multivector/*-v[0-9]*/**/prompt-edits.json
-!/sse_multivector/*-v[0-9]*/**/*.revision.json
-!/sse_multivector/*-v[0-9]*/**/revision-notes.json
 !/sse_multivector/*-v[0-9]*/**/tests/fixtures/**/*.json
 !/sse_multivector/*-v[0-9]*/**/tests/fixtures/**/*.jsonl
 !/sse_multivector/subject-prompt-goal-v1/autonomous-sp-v1/diagnostic-cases.json

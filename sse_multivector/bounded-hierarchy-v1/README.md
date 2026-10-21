@@ -733,7 +733,7 @@ assessments, not newly established user decisions:
 
 The maintained [selection](../experiment_specs/hg100-sol01-sp-links-six-v1.json)
 contains source indices and a hash-bound source reference, not copied case data.
-The [spec](../experiment_specs/hg100-sol01-sp-links-sol-low-v1.json) pins the
+The spec (`03bd9e45:sse_multivector/experiment_specs/hg100-sol01-sp-links-sol-low-v1.json`) pins the
 existing prompt, subscription model and comparison schema. Preparation creates
 the actual prompts, review evidence and manifests automatically:
 
@@ -764,7 +764,7 @@ original HG100-SOL01 snapshot remains byte-for-byte unchanged.
 The user subsequently approved preparing all saved SP links to measure workload,
 not sending the full check. The [all-links source selection](../experiment_specs/hg100-sol01-sp-links-all-v1.json)
 uses the same hash-bound original inputs and `original_sp_edges: "all"`.
-The [all-links spec](../experiment_specs/hg100-sol01-sp-links-all-sol-low-v1.json)
+The all-links spec (`03bd9e45:sse_multivector/experiment_specs/hg100-sol01-sp-links-all-sol-low-v1.json`)
 keeps BCPv5, GPT-6.1 Sol low, the schema and model settings unchanged.
 
 The shared runner's `prepared_inputs` report summarizes the selected comparison

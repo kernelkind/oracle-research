@@ -17,7 +17,7 @@ The cross-note tests cover every alias's source note, exact-vector groups spanni
 
 Python checks passed: 21 package/adapter checks; all five runner tests with the newly frozen binary, none skipped; and five preservation/comparison tests. The Python implementation agent also ran 25 existing scaled-vector/post-hoc-review checks successfully. Rustfmt, targeted Ruff, and scoped whitespace checks passed.
 
-The complete staged whitespace check flags copied original-note whitespace in the two generated `unassigned.txt` evidence files. Those source-text exports are intentionally preserved, not reformatted; code and authored documentation pass the scoped check.
+Those source-text exports are intentionally preserved, not reformatted; code and authored documentation pass the scoped check.
 
 Known unrelated limitations remain: three historical runner tests pin an old executable SHA that was already absent before this change; three historical full-note reviewer assertions conflict with the previously approved masks-only UI. Neither old test set was weakened or rewritten. The corresponding current production paths were tested above; this is not a claim that every repository test passes.
 

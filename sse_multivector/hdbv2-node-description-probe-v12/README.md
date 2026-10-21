@@ -25,10 +25,6 @@ Every exact input mask, both raw titles, historical v11 title, and per-group rea
 
 All twelve results are available in the existing review tool:
 
-```sh
-/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/hdbv2-node-description-probe-v12/run-review.sh
-```
-
 This is optional inspection, not a request to adjudicate twelve uncertain decisions. No user decisions were prefilled. The historical v11 title is context, not a fresh control. Each card shows the current trial, all its masks, and a separate assistant comment.
 
 `verification.json` records twelve distinct threads/workspaces, one attempt per call, exact approved prompts, unchanged masks and previous versions, no tools, and usage. Total: 21,542 input tokens and 2,368 output tokens, including 2,233 reasoning tokens. Existing subscription only; no new API billing or rented compute.

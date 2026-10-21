@@ -1,9 +1,0 @@
-{
-  "base_sha256": "be0542cabf7913858133214d7a6582a34ff6e76bca5157c37c44a048f4bd6981",
-  "edits": [
-    {
-      "old": "Describe the same node meaning for use across posts, including activities that belong to a named community when the evidence supports them. A community hashtag alone does not make every part of a tagged post concern that community's subject. If the supplied evidence does not establish the meaning, say what remains unresolved rather than inventing a definition.",
-      "new": "Describe the same node meaning for use across posts. For a named community or initiative, distinguish the community itself and its established purpose from subjects its members happen to discuss. Use the known referent of the name or an explicit explanation in the evidence; the frequency of a subject in tagged posts does not establish that subject as the community's purpose. Do not redefine an initiative to match the sample. Include supported community activities without making unrelated details of members' posts part of its meaning. If the referent or its scope remains unresolved, describe that uncertainty rather than guessing a theme."
-    }
-  ]
-}

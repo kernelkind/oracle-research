@@ -1,7 +1,0 @@
-{
-  "prepared_experiment": {
-    "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-compare-disambiguation-v1/target/compare-asv6.100-regeneration-v2/compare-v69-qualified",
-    "sha256": "b439c1836c5cd2e2e3c37082b8a9a75673d169ba964e67ba3e5ff4c8437e5201"
-  },
-  "input_view": "fixed_meanings"
-}

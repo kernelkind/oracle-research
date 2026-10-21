@@ -1,8 +1,0 @@
-{
-  "selection_mode": "automatic",
-  "count": 1000,
-  "seed": "hr37-corpus-v1",
-  "candidates": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr37-v53-auto/target/hierarchy-hr37-v53-auto-1000-note-v1/export/candidates.jsonl",
-  "candidate_manifest": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr37-v53-auto/target/hierarchy-hr37-v53-auto-1000-note-v1/export/manifest.json",
-  "token_counts": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-hierarchy-hr37-v53-auto/target/hierarchy-hr37-v53-auto-1000-note-v1/tokens.json"
-}

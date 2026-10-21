@@ -124,4 +124,4 @@ Run the two already-planned additional M05 calls, unchanged, to see whether the 
 
 Six mask calls used 15,580 input and 737 output tokens. Cached input and reasoning are included in those totals. No pressure guard fired. Verification (`./verification.json`) preserves source placements, execution identity and usage.
 
-See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-mask-prompt-goal-v1`.
+See conversion gaps (`03bd9e45:docs/experiments/publication-gaps.csv`) for `collection:tracked-mask-prompt-goal-v1`.

@@ -283,9 +283,7 @@ entries were processed, and unqueried pairs are not negative judgments. Missing
 groups could reflect semantic restrictions, contradictory earlier decisions or
 work not nominated; this run does not isolate their relative contributions.
 
-The most useful next review is the **accepted relationships still visible**:
-Food dishes→Bread/Salsa, Food→the author's coffee, Food→Eating, and the
-Cuisine→bagel-making shortcut. Check the exact fixed meanings and decide which
+ Check the exact fixed meanings and decide which
 whole information scope is justified before treating them as regressions. This
 would distinguish a genuinely wrong positive from an overly restrictive earlier
 meaning. Once those judgments are settled, use frozen complete chains and
@@ -303,7 +301,7 @@ interpretation. The other fourteen holds preserve comparison uncertainty or
 placement contradictions; they are not fourteen independent prompt defects.
 The raw graph reaches all fifty notes and permits individual access to each.
 
-The [preferred menu source](hierarchy-as100-fifty-note-shape-v2.json) shapes only
+The [preferred menu source] (`sse_multivector/shr_single_pair/hierarchy-as100-fifty-note-shape-v2.json` at `03bd9e45`) shapes only
 saved nodes and witnessed ancestry into `menu-v2`. Its native audit records:
 
 | Measure | Result |
@@ -328,7 +326,7 @@ Preserving the full Food view therefore requires at least ten choices with
 currently witnessed nodes. The bound does not apply to unconstructed topics
 or prove semantic infeasibility. New valid groupings could improve it.
 
-The [cleaner alternative](hierarchy-as100-fifty-note-shape-v1.json), `menu-v1`,
+The [cleaner alternative] (`sse_multivector/shr_single_pair/hierarchy-as100-fifty-note-shape-v1.json` at `03bd9e45`), `menu-v1`,
 has 70 nodes and 72 strictly narrowing edges. It omits two witnessed shortcuts,
 Dinners→Lamb and Cuisine→bagel-making, and needs 136 rather than 134 total
 shortest selections. It has the same three K violations. The Cuisine shortcut
@@ -421,8 +419,7 @@ All 34 maintained AS100 JSON sources parsed, all 252 original-entry pointers
 were checked against the native collection, and all
 Bootstrap prefetch specifications preserve identical prompt/schema/runner
 settings. The writeup and its prompt/menu dependencies are integrated into main.
-The research worktree remains because native artifacts and frozen source paths
-still reference it. Current canonical runtime components are integrated into
+ Current canonical runtime components are integrated into
 main separately from the branch's inherited research history. Both menu recipes
 retain their original relative
 artifact bindings. Reproduction requires the original recipes and saved graph

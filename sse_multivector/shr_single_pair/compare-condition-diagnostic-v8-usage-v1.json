@@ -1,8 +1,0 @@
-{
-  "schema_version": 1,
-  "groups": {
-    "condition_core_v8": [
-      "../../target/compare-condition-diagnostic-v8/core-v1"
-    ]
-  }
-}

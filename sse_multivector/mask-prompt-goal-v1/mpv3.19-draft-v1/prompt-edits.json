@@ -1,9 +1,0 @@
-{
-  "base_sha256": "ff0ce136717980091b5f502e60ffb8b44442d8aa29faf509fb183e0126d9c70a",
-  "edits": [
-    {
-      "old": "<examples>\n<example_post>\nMy train arrived twenty minutes late.\n</example_post>\n\n<example_indexed_post>\n[1]My [2]train [3]arrived [4]twenty [5]minutes [6]late.\n</example_indexed_post>\n\n<example>\n<subject>Trains</subject>\n<response>[{\"start\":2,\"end\":2}]</response>\n</example>\n\n<example>\n<subject>The author's train arriving twenty minutes late</subject>\n<response>[{\"start\":1,\"end\":6,\"end_marked\":\"⟦late⟧.\"}]</response>\n</example>\n</examples>",
-      "new": "<examples>\n<example_post>\nMy daughter's bicycle was damaged. On Saturday I repaired it using secondhand parts. Yesterday I fixed two more bikes for our neighbours, then watched a film.\n</example_post>\n\n<example_indexed_post>\n[1]My [2]daughter's [3]bicycle [4]was [5]damaged. [6]On [7]Saturday [8]I [9]repaired [10]it [11]using [12]secondhand [13]parts. [14]Yesterday [15]I [16]fixed [17]two [18]more [19]bikes [20]for [21]our [22]neighbours, [23]then [24]watched [25]a [26]film.\n</example_indexed_post>\n\n<example>\n<subject>Bicycle repair</subject>\n<response>[{\"start\":3,\"end\":3},{\"start\":9,\"end\":9},{\"start\":16,\"end\":16},{\"start\":19,\"end\":19}]</response>\n</example>\n\n<example>\n<subject>The author repairing their daughter's bicycle on Saturday using secondhand parts</subject>\n<response>[{\"start\":1,\"end\":3},{\"start\":6,\"end\":9},{\"start\":11,\"end\":13,\"end_marked\":\"⟦parts⟧.\"}]</response>\n</example>\n</examples>"
-    }
-  ]
-}

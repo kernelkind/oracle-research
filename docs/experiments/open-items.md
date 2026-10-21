@@ -74,13 +74,13 @@ Final graphs, partitions, memberships, navigation measurements and performance
 results are selected. TRUE10 retains its raw/canonical cycles and two agent
 assessments without treating them as user decisions. The performance evidence
 still lacks the exact admitted 180-case training selection and frozen fitter
-runtime required for full replay. [Commands and limits](reproduce.md#saved-hierarchy-navigation-and-performance-checks).
+runtime required for full replay. [Commands and limits](reproduce.md#verify-and-restore-the-dataset).
 
 ### Selected archived baseline evidence
 
 CREC's assembled answers and reused work remain identified. TEv4.1 and
 narrowest-subject geometry retain their final measurements. Unknown AS lineage
-remains unknown; these are historical results. [Commands](reproduce.md#archived-baseline-checks).
+remains unknown; these are historical results. [Commands](reproduce.md#verify-and-restore-the-dataset).
 
 ### Selected segmentation, title and frontier evidence
 
@@ -88,28 +88,28 @@ Final segmentations, title answers and recorded decisions remain separate from
 later authored corrections. Frontier partial answers/failures and reused
 baselines remain distinct. Teacher-parity results are interim: its summary
 counts eight answers where receipts retain ten, and no final parity verdict is
-recorded. [Segmentation/title](reproduce.md#fine-region-title-and-real-note-segmentation-checks)
-and [frontier](reproduce.md#frontier-comparison-checks) commands preserve these limits.
+recorded. [Segmentation/title](reproduce.md#verify-and-restore-the-dataset)
+and [frontier](reproduce.md#verify-and-restore-the-dataset) commands preserve these limits.
 
 ### Selected early prompt and prominence evidence
 
 Saved answers, partial outcomes, original scores/masks and attributed reviews
 are selected. Later rereviews do not overwrite original decisions. Known
 pre-ASv6.100 derivatives remain historical; unknown lineage remains unknown.
-[Commands and interpretation](reproduce.md#early-prompt-and-manual-prominence-study-checks).
+[Commands and interpretation](reproduce.md#verify-and-restore-the-dataset).
 
 ### Selected subject/mask evidence
 
 Original assessments, corrections and user decisions remain separate. Reused
 responses are not fresh calls; original answer bodies remain verbatim. Known
-old-AS derivatives are historical. [Commands](reproduce.md#historical-subject-and-mask-study-checks).
+old-AS derivatives are historical. [Commands](reproduce.md#verify-and-restore-the-dataset).
 
 ### Selected title/description evidence
 
 Saved answers, final title selections and failed attempts remain distinct.
 Unattributed review comments do not imply user decisions. The exports preserve
 input order, exact masks and deduplication/hashtag conditions.
-[Commands](reproduce.md#historical-title-study-checks).
+[Commands](reproduce.md#verify-and-restore-the-dataset).
 
 ### Selected SSE representation evidence
 
@@ -118,110 +118,44 @@ outputs, so AS classification does not apply. Final comparisons and fixed
 inputs are retained; the compound-subject result includes its required complete
 45-by-45 cosine table. The context-counterfactual compiled worker-request bytes
 are absent: agreement among recorded hashes does not reconstruct those bytes.
-[Commands and checks](reproduce.md#sse-representation-study-checks).
+[Commands and checks](reproduce.md#verify-and-restore-the-dataset).
 
-## Current Oracle/runner compatibility
+## Source versions
 
-The [reproduction guide](reproduce.md#what-has-been-tested) separates checked
-reader paths from untested ones. Local exporter/fixture checks do not establish
-successful replay of all archived studies or live-provider compatibility.
-Two broader evaluation-workflow fixtures previously failed at allowance/resume
-and effort-analysis concurrency; those failures were also present with unchanged
-Oracle source and the same runner. They are not reported as successful replays.
+Original producer revisions remain in scientific records. The bundled
+[commit map](commit-map.txt) supports source lookup after publication-history
+cleanup. Some historical producer bindings remain incomplete:
 
-## Original-file links and replay
+- HR34's recorded construction revision
+  `bf7801bc1d92491b20eab8d075fb8d57b83d6b3e` has no public mapping in the reviewed
+  source selection. A later source copy does not establish those producer bytes.
+- TRUE10's retained source identity includes a hash mismatch. Its published final
+  graph and assessments remain evidence; that mismatch limits exact producer replay.
+- A source path and SHA-256 identify bytes but do not identify a Git revision.
+  Some original verifiers also require generated blobs deliberately omitted from
+  public source history.
 
-Study records name original data paths as text and selected exports by
-publication ID. Compact restoration does not recreate original run layouts.
-These historical checks still require original artifacts:
+The [source guide](reproduce.md#which-code-is-being-repeated) distinguishes
+original producer revisions from the later pre-cleanup source preserved at
+`03bd9e4595fbbf6be18cd08e7d273e69ff563a9b`. Do not substitute a current or later
+implementation while claiming an exact historical replay.
 
-- [Saved Infomap tests](../../sse_multivector/test_infomap_saved_results.py):
-  original I01–I04 graphs, configurations, hierarchies and source files.
-- [Omission-call tests](../../sse_multivector/real-note-fine-segmentation-v1/test_omission_calls.py):
-  saved calls and the original `N001-AS/config.json`.
-- [Legacy segmentation preparation](../../sse_multivector/real-note-fine-segmentation-v1/generation.py):
-  original example/reference configurations beyond retained package contracts.
-- Fine-region SCC/partition/hierarchy launchers: the original
-  `sse_multivector/baselines/communicated-meaning-tev4-1/baseline.tar.zst`.
-
-A clean-checkout replay plan for these paths remains open. The four authored
-ASv6.26–ASv6.28 reports and their 78 raw answers are retained in source/selected
-results; the two full-output display files are local originals. These derivatives
-remain historical under the ASv6.100 rule.
-
-## Preserve the source history
-
-Original generation IDs remain in evidence, with public-source resolution via
-[commit-map.txt](commit-map.txt). [Code versions](code-versions.csv) records the
-original availability audit: HR34 construction revision
-`bf7801bc1d92491b20eab8d075fb8d57b83d6b3e` was found in the original repository
-but absent from that publication-clone snapshot. Do not claim its source was
-published without checking the mapped history. Some verifiers also need removed
-generated blobs, available only in the preserved originals.
-
-## Assemble and test the release
-
-Before publication, choose public repositories and pin revisions in the index,
-review the final physical contents, and run the reader commands with original
-research storage unavailable. The [dataset manifest](downloads.md#dataset-manifest)
-binds the selected files. Preserve experiment identities, exact selections,
-versions, reuse, incomplete outcomes and all replay limits.
+## Tested reader paths
 
 A complete 12-post generation/browsing path passed in a fresh Debian 13 VM with
-8 GiB RAM and four CPU cores. This is a workflow check, not semantic approval or
-million-note scaling evidence. HR39 and compact fine-tune comparison browsing
-also passed locally. Hosted reader tests and fresh GPU training/adapter-use
-instructions remain unverified. No upload is authorized by preparing files.
+8 GiB RAM and four CPU cores. HR39 browsing, saved fine-tune comparison,
+recorded-post preparation and HR36 preparation also passed using compact files.
+These check the documented workflows and saved arithmetic; they do not establish
+semantic quality, a fresh historical model draw or million-note scaling.
 
-## Prepare verification metadata
+Native subject/claim review has a separate, pre-existing integration failure.
+The Python-to-Rust review test rejects the subject generation manifest because
+Rust checks the local compatibility shim's hash instead of the shared runner's
+implementation hash. The failing test remains in `tests/sse_prompt_review.rs`;
+the cleanup did not change that validation. Its source-resolution repair remains
+open.
 
-This describes the implemented verifier for complete original native experiment
-files, including the locally tested HR39 package. It is not a requirement to
-include those files in the agreed compact publication. It cannot verify reduced
-exports against the original whole-file hashes. When using a complete local
-package, readers run `verify` without supplying research-machine paths.
-
-Stage the selected native experiments and their required files under one
-extraction root. Include each plan, prepared configuration, run manifest,
-results and any runner/worker upgrade ledgers, all bound source versions, and
-the producer receipts needed by reused answers. Resolve historical input
-versions using the inventory before staging. Use copies of the frozen bytes.
-The command checks only the complete native files staged for this workflow;
-it does not select publication contents, copy evidence or export final results.
-
-An original path can require different historical contents in different plans.
-The current location file maps each original path to one destination, so a
-single shared mapping cannot verify conflicting versions. Resolve that packaging
-limitation before preparing a shared package for those experiments.
-
-Use the private original-to-staged locations from file selection and copying.
-For the HR39 example, with the setup variables from the reproduction guide and
-that private file saved outside the staging root:
-
-```bash
-cd "$ORACLE_ROOT"
-source target/hierarchy-env/bin/activate
-python sse_multivector/experiment.py prepare-release "$RELEASE_ROOT" \
-  --locations target/reproduction/private-locations.json \
-  --experiment evidence/hierarchy-run-store/hr39-v53-auto-5000-note-v1/HR39-resumed-1/batch-00025/experiment
-```
-
-Repeat `--experiment` for all selected native experiments sharing that extraction
-root. Preparation verifies them and writes `experiment-locations.json` only
-after they pass. The generated file contains relative destinations for only the
-locations those checks use, including original producers of reused responses.
-Shared sources are hashed once per invocation. No model calls are made.
-The private location format is documented in the runner's publisher instructions.
-
-Preparation rejects dependencies outside the staging root and does not overwrite
-an existing locations file. Missing files, changed source bytes and invalid
-receipts must be resolved before packaging. A successful integrity check may
-still include failed or unrun cases; preserve their recorded status.
-
-Include the generated file at the extraction root and add it to the final
-archive file list and checksums. Keep the private staging locations outside the
-archive. When splitting a collection into several archives, preserve the common
-extraction layout and supply the same complete metadata with the pieces. Do not
-overwrite it with independently generated partial mappings. Check the required
-downloads together after extraction elsewhere, with original storage unavailable,
-using the reader command without `--locations`.
+Hosted download tests and fresh GPU training/adapter-inference runs remain
+unverified. Public repository names, pinned dataset/model revisions and final
+publication approval remain open. The [reproduction guide](reproduce.md#what-has-been-tested)
+records the tested scope.

@@ -40,12 +40,6 @@ attribution_loss, missing_subject, redundant`. Full criteria text is in
 
 Prepare (offline, refuses to overwrite evidence):
 
-```bash
-cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
-python3 sse_multivector/frontier-model-comparison-v1/sp-mp-teacher-parity-v1/study.py prepare
-```
-
-New experiments use [the shared experiment workflow](../../model-runner.md#prompt-experiments-one-supported-workflow).
 The old saved-batch CLI is retired. Preserve these inputs and receipts as evidence;
 import them with an explicit template/input mapping rather than rerunning the baseline.
 The preparation/collection scripts below describe this saved study, not a second
@@ -54,17 +48,7 @@ supported workflow for new prompt experiments.
 Collect (verifies pinned inputs and every saved receipt, decodes masks with
 the pinned decoder, extracts usage and cost):
 
-```bash
-cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
-python3 sse_multivector/frontier-model-comparison-v1/sp-mp-teacher-parity-v1/study.py collect
-```
-
 Build blind scoring packets and the unblinding map:
-
-```bash
-cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
-python3 sse_multivector/frontier-model-comparison-v1/sp-mp-teacher-parity-v1/study.py packets
-```
 
 Scoring: each scorer reads one packet (`packet-a.json`, `packet-b.json`) and
 writes `score-a.json` / `score-b.json` as
@@ -74,11 +58,6 @@ read. Twenty-four overlap slots are scored by both scorers for consistency.
 Scoring is judgment work, separate from collection; no model calls.
 
 Unblind and evaluate the parity rule:
-
-```bash
-cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
-python3 sse_multivector/frontier-model-comparison-v1/sp-mp-teacher-parity-v1/study.py report
-```
 
 ## Limits
 

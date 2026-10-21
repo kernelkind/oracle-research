@@ -51,8 +51,8 @@ a reliable repair.
 
 ## Provenance and checks
 
-The [source edit](prompt-edits.json) pins ASv6.90's source hash and replaces one
-complete C1 block through native revision. The [template edit](edits.json) pins
+The source edit (`03bd9e45:sse_multivector/subject-prompt-goal-v1/asv6.91/prompt-edits.json`) pins ASv6.90's source hash and replaces one
+complete C1 block through native revision. The template edit (`03bd9e45:sse_multivector/subject-prompt-goal-v1/asv6.91/edits.json`) pins
 ASv6.90's reusable POST template independently. Both native receipts preserve
 the exact changed strings and resulting hashes. C1's post and output are
 byte-identical to ASv6.86; only its explanation changes. All other bytes preserve

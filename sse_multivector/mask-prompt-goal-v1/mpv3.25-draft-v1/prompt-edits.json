@@ -1,9 +1,0 @@
-{
-  "base_sha256": "fafc857df46f5bdfd525d81b26f540b888bcf91ddef54f98a6ee049b47ceb9d7",
-  "edits": [
-    {
-      "old": "Select every occurrence expressing it at that level, explicitly or implicitly, including repeated expressions of the same meaning.",
-      "new": "Select every occurrence that expresses the supplied subject's meaning at that level, including paraphrases, implicit expressions, and repetitions. Wording that merely expresses a related meaning does not qualify."
-    }
-  ]
-}

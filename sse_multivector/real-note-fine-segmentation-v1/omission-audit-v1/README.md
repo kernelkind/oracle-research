@@ -63,7 +63,7 @@ For the 28 pairs unanimously accepted by the assistant assessments, change the l
 
 ## Integrity and resources
 
-The completed user review binds to review set `RN1a389ae36016` and artifact SHA-256 `9790b8e1f1635c6d91432316dd967fb6ba8aa0cef8f69ec1aa055511b9f64db5`. The saved response SHA-256 is `bf4767d4c19928d1a16121110d8dfa06af3f5f8dce5fd19387d92c30c85d0372`; the session SHA-256 is `821db7a8c90302777a9d0405e90d4857e33509af4204838c2fe4b111b25da095`. The first pair has a pending same-value Valid reselection with a prior confirmed Valid verdict; the exported response correctly retains that prior verdict. Session and response files remain local, untracked, and unmodified by this documentation update.
+The completed user review binds to review set `RN1a389ae36016` and artifact SHA-256 `9790b8e1f1635c6d91432316dd967fb6ba8aa0cef8f69ec1aa055511b9f64db5`. The saved response SHA-256 is `bf4767d4c19928d1a16121110d8dfa06af3f5f8dce5fd19387d92c30c85d0372`; the session SHA-256 is `821db7a8c90302777a9d0405e90d4857e33509af4204838c2fe4b111b25da095`. The first pair has a pending same-value Valid reselection with a prior confirmed Valid verdict; the exported response correctly retains that prior verdict.
 
 No subjects, masks, vectors, original HDBSCAN results, or existing user decisions changed. All 20 model calls succeeded once with 20 distinct recorded threads and isolated workspaces, using the existing Astra-low subscription runner. Four calls proposed text partners; sixteen calls supplied two assessments for each sampled pair. Exact prompts, responses, and isolation receipts are saved under `text/` and `assessments/`.
 

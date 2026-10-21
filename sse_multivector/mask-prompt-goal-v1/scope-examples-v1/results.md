@@ -30,4 +30,4 @@ Both calls returned exact fragments in source order, with unique placements and 
 
 Raw outputs, settings, timing and resource records are in `probe/`. These two masks do not establish a general success rate or any SSE result.
 
-See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-mask-prompt-goal-v1`.
+See conversion gaps (`03bd9e45:docs/experiments/publication-gaps.csv`) for `collection:tracked-mask-prompt-goal-v1`.

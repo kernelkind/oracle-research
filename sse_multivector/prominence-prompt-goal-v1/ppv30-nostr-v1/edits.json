@@ -1,9 +1,0 @@
-{
-  "base_sha256": "5c5f160fbcc42890d8e964aeab9bbe44969e6ca7df0f35dbead25af8b254bd95",
-  "edits": [
-    {
-      "old": "Use the complete post to interpret the hierarchy node title as it applies to that post.",
-      "new": "The hierarchy node title comes from Nostr posts, where hashtags can identify communities. Use the complete post to interpret the hierarchy node title as it is used on Nostr."
-    }
-  ]
-}

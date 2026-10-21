@@ -136,11 +136,101 @@ All 44 earlier TRUE03 inputs and decisions reproduced unchanged: 41/44 still mat
 
 An independent audit verified every input, score and saved decision, replayed all first-token probabilities from the saved logits, and independently reproduced the complete semantic-analysis arithmetic. It did not re-adjudicate semantic judgments. The one offline CPU run took **76 minutes**, with about **44.24 GiB peak process memory** and no run-scope swap. No additional inference was used for verification.
 
-- [Every accepted relationship and missed nomination](REVIEW.md), [all 3,660 decisions](DECISIONS.md).
+- [Every accepted relationship and missed nomination](REVIEW.md), all 3,660 decisions (`03bd9e45:sse_multivector/navigation-research-v1/TRUE04/DECISIONS.md`).
 - Exact inputs (`inputs.json`), native outputs and full-precision scores (`scores.jsonl`), semantic analysis (`semantic-analysis.json`), accepted-pair judgments (`title-pair-judgments.json`).
-- [Frozen plan](../TRUE04-PLAN.md), pre-score reference (`../true04-reference.json`), [reference-review history](../TRUE04-REFERENCE-REVIEW.md), fresh review of misses (`missed-reference-review.json`).
-- [Execution, tests and resource details](EXECUTION.md), independent verification (`verification.json`), completion hashes (`completion.json`).
+- [Frozen plan](RESULTS.md#true04-study-design), pre-score reference (`../true04-reference.json`), [reference-review history](../TRUE04-REFERENCE-REVIEW.md), fresh review of misses (`missed-reference-review.json`).
+- [Execution, tests and resource details](RESULTS.md#true04-runtime-and-verification), independent verification (`verification.json`), completion hashes (`completion.json`).
 
 The 449 MiB raw-logit file remains locally preserved as `first-token-logits.npy`, excluded from Git by an exact path rule. Its hash is in the completion record. Inputs, outputs, reviews and summaries remain with the original run; selected final results are identified below. Shared source lives in `sse_multivector/`, with the original run layout preserved in Git history.
 
 **Selected data:** Compact pair-score results, inputs and parameters for `TRUE04` are selected for release as `numerical/pair-scores-7dd83c45e206d5c8` in the [publication catalog](../../../docs/experiments/publications.csv). These compact exports use a different format. Other cited artifacts remain separate originals.
+
+## TRUE04 study design
+
+### Question
+
+Does the unchanged TRUE03 setup make useful containment decisions across the complete set of 61 original HDBv2 group titles, rather than just the selected pilot pairs?
+
+The user approved this expansion. Keep the exact v20/Astra-low titles, model, input wording, score calculation and **score > 0.142** rule. Do not generate titles, change memberships, construct a hierarchy, retune a cutoff or filter pairs by cosine.
+
+### Inputs
+
+Source: `../hdbv2-node-titles-v20-astra-low/titles.json`, SHA256 `424ffe683fe5fdb3de152cfc6fa09496dfef9fdef422e7a22618b28cc1e20716`.
+
+Score all **3,660 ordered pairs** of distinct group IDs. The 61 groups have 58 distinct title strings; repeated Food, Coffee and Bitcoin titles remain separate source groups. Repeated strings are not independent evidence of semantic generalization.
+
+For **A contains B?**, TRUE sees only:
+
+No masks, notes, expected answers, IDs or reviewer explanations enter the model. Its native answer and the cutoff decision are recorded separately. The score is the full-vocabulary probability of the first output token being `1`, not cosine or a calibrated probability of containment.
+
+### Semantic review
+
+Before inspecting scores, two clean-context reviewers consider all possible parents for disjoint halves of the child-title list. They nominate clear containments and scope-ambiguous relationships, with short reasons. The coordinating reviewer checks these nominations and freezes the resulting reference before inspecting predictions. Unlisted pairs are **not** silently labeled No.
+
+This is a revisable semantic reference, not a prescribed unique hierarchy. Ordinary category meanings guide the judgments; merely related subjects need not contain one another. Do not reject reasonable emergent relationships because they were unexpected, or elevate niche counterexamples into decisive failures.
+
+After inference:
+
+1. Inspect every accepted relationship for valid containment, a clear wrong link, or genuine ambiguity.
+2. Inspect missed relationships from the pre-score reference. Preserve disagreements with that reference explicitly.
+3. Recheck the 44 TRUE03 directions as a repeat of known evidence, not independent validation.
+4. Inspect reciprocal decisions and inconsistent chains. Do not consolidate reciprocal errors into equivalent categories or silently repair the output.
+
+Report accepted-link quality and recovery of the clear reference separately. Do not present a high overall accuracy dominated by thousands of unrelated negative pairs. Show exact titles, model inputs, scores and semantic reasons for concrete problems. This test cannot establish title-to-mask fidelity, missing-parent generation or general performance outside this collection.
+
+### Execution
+
+One offline CPU process using the pinned `google/t5_xxl_true_nli_mixture` revision `aa6cfe1dd4257853bfdd772992045f41bfc14988`, float32, four threads and batch four. Keep the TRUE03 inference function unchanged. Extend reporting to accept unlabeled rows rather than fabricate an answer key.
+
+Use the existing Python 3.11.14 runtime and cached packages/model; no paid calls, rentals, training or downloads. Require 70 GiB available memory before launch. Run under a 60 GiB memory limit, zero permitted swap and four-CPU quota. Do not stop unrelated processes. Save a new `TRUE04/` output, refusing overwrite; preserve all prior experiments.
+
+Freeze source titles, all inputs, runner/scorer code and hashes before loading. Preserve native outputs, full first-token logits, scores, runtime/resource records and analysis. Independently verify inputs and replay scores from saved logits without a second model load. Full inference is expected to take substantially longer than the 44-question pilot.
+
+## TRUE04 runtime and verification
+
+The approved [TRUE04 plan](RESULTS.md#true04-study-design) completed one offline CPU run over all 3,660 ordered pairs of distinct source group IDs. This record documents execution and provenance, not a new semantic assessment.
+
+### Frozen inputs and decisions
+
+The source was `sse_multivector/hdbv2-node-titles-v20-astra-low/titles.json`, preserved byte-for-byte as `titles.json`, SHA256 `424ffe683fe5fdb3de152cfc6fa09496dfef9fdef422e7a22618b28cc1e20716`. Its 61 groups have 58 distinct title strings: repeated Food, Coffee and Bitcoin titles remain separate groups. There are 1,830 unordered group pairs and 3,309 unique model-input strings. No titles or memberships were changed.
+
+Each row asks **A contains B?**: does belonging to B warrant belonging to A? B is the premise and A the hypothesis, with the exact input:
+
+Only the exact title strings enter this text. IDs remain row metadata; masks, source notes, expected answers and review explanations are absent. `inputs.json` has SHA256 `e4e118d4ac430ea74dade05f6c3135a8ecce574490f47af9b2463df7609ac17c`.
+
+`started.json` records the input and four source-file hashes. The runner froze those files before checkpoint hashing/loading and refused an existing output directory. The frozen copies are `true_all_titles_probe.py`, `true_holdout_probe.py`, `true_category_probe.py` and `hierarcaps_mask_probe.py`. Verification found the inference function, scorer and threshold behavior unchanged from TRUE03.
+
+The model was cached `google/t5_xxl_true_nli_mixture`, revision `aa6cfe1dd4257853bfdd772992045f41bfc14988`, with 11,307,321,344 float32 parameters. `model-files.json` records checkpoint/tokenizer hashes; the runner checked all five weight-shard hashes before loading. `config.json` records no missing, unexpected or mismatched keys, or loading errors.
+
+Two decisions were retained separately:
+
+- Native: complete greedy output `0` or `1`, with EOS required and no cutoff. Tokenization is `0` → `[3, 632]`, `1` → `[209]`; the initial token `3` alone is not a complete No answer.
+- Cutoff: `entailment_score > 0.142`, strictly greater than. The score is the full-vocabulary first-output-token probability of token `209`, not the binary-renormalized label-prefix score or a calibrated probability of containment.
+
+Generation used no sampling, one beam, at most three new tokens and seed 0. No input truncation was allowed; the largest input was 43 tokens against a 512-token limit.
+
+### Runtime and resources
+
+The existing Python 3.11.14 runtime used torch `2.8.0+cpu`, transformers `4.57.1`, huggingface_hub `0.36.2`, numpy `2.3.4` and safetensors `0.6.2`. Inference used CPU float32, four threads, one inter-op thread and batches of four (915 batches). No external paid API, model/package download, training or rental was used for this execution.
+
+`resources.json` records launch at `2026-09-14 20:27:58 UTC`, 107 GiB available host memory at preflight, and no concurrent large model process. The launch required at least 70 GiB available, then applied a 60 GiB memory limit, zero permitted scope swap and a four-CPU quota. All recorded active-scope samples reported `MemorySwapCurrent=0`. About 12 GiB of host swap was already in use before launch; that is not swap used by this run.
+
+`completion.json` records 3,660 completed rows, 4,542.877 seconds for the inference interval and 4,568.646 seconds total (76 minutes 8.646 seconds), including a 25.769-second startup/load interval from `config.json`. These are runner timers, not launch-to-last-observation wall time; the inference interval also includes result-artifact construction. Peak process RSS was 46,387,100 KiB (44.24 GiB). The smaller sampled scope `MemoryPeak` values in `resources.json` are a separate accounting observation, not a replacement for process RSS. The resource record reports successful process exit and an inactive scope, observed at `21:47:27 UTC`.
+
+### Saved evidence and verification
+
+The original inputs, frozen source, scores/native token sequences, decisions, configuration, resource records and review/analysis JSON were retained with the run. Generated artifacts are outside this Git checkout; selected final results are identified below. `first-token-logits.npy` remains local and explicitly Git-ignored: 470,354,048 bytes (about 449 MiB), shape `(3660, 32128)`, float32. Its SHA256 is `f5b4eddd88edb02ccbd970e58cdb02283053190111b6d82877264678f4b7f7c4`, recorded in `completion.json` and `verification.json`. A Git checkout alone does not include these raw logits or the cached model weights.
+
+The independent integrity review passed without discrepancies. It reconstructed all inputs and input tokens, checked artifact/source hashes and every machine-produced decision/report row, and replayed all 117,588,480 saved finite logits using full-vocabulary softmax in float64. Numeric differences from stored diagnostics were within `2e-15`; every cutoff decision matched the strict rule. It also checked semantic-analysis arithmetic, not the correctness of semantic judgments. No model, torch or transformers was imported for verification, and no inference was repeated.
+
+Verification limits remain explicit:
+
+- First-token logits establish the first greedy token and displayed score. Later-token logits were not saved; complete labels/EOS were checked against saved generated sequences and tokenizer decoding, not independent later-token inference.
+- The review checked nonweight model files and the recorded manifest but did not reread or rehash weight shards. Their hashes were checked by the original runner.
+- All 44 reused TRUE03 inputs/tokenizations and native/cutoff decisions matched. Only 19 logits rows were bit-identical; the maximum score difference was `6.700754752175797e-7`. This is not a claim of bit-for-bit inference reproducibility or independent new validation.
+- Scope exit/resource observations are recorded separately from numerical replay. Arithmetic/integrity checks do not establish semantic correctness or general population accuracy.
+
+```text
+python3 -m unittest test_true_all_titles_probe test_true_generated_title_probe test_true_holdout_probe test_true_category_probe
+python3.11 -m unittest test_true_category_probe test_rse_category_probe test_hierarcaps_category_probe test_hierarcaps_mask_probe
+```

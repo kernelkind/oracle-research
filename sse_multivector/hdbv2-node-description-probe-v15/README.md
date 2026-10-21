@@ -45,11 +45,6 @@ The user approved both previously questioned broader titles in the saved v14 rev
 
 There are no outstanding judgments requiring user review. This one-card view reopens the accepted title with every member mask and the original assistant objection:
 
-```bash
-cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
-  ./sse_multivector/hdbv2-node-description-probe-v15/run-review.sh
-```
-
 `run-review-all.sh` opens all twelve results in a separate session. B compares each candidate with the matching historical v14 response. No user decisions were prefilled; the focused session now contains the user's approval.
 
 ## Controls and evidence

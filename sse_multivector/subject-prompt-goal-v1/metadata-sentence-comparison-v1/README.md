@@ -65,4 +65,4 @@ The [subsequent confirmation](../metadata-confirmation-v1/README.md) completed t
 
 Usage: 123,438 input tokens and 17,006 output tokens, including 7,561 reasoning tokens; 1,920 input tokens were cached. No new paid API or rental resources were used. The canonical ASv6.8 registry, validation plan and unseen final inputs remain unchanged.
 
-See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-subject-prompt-goal-v1`.
+See conversion gaps (`03bd9e45:docs/experiments/publication-gaps.csv`) for `collection:tracked-subject-prompt-goal-v1`.

@@ -11,7 +11,7 @@ test('comparison CLI help preserves spending approval without requiring provider
     { encoding: 'utf8', env: {} });
   assert.equal(result.status, 0, result.stderr);
   assert.match(result.stdout, /approved maximum spend/);
-  assert.match(result.stdout, /budget-ledger\.json/);
+  assert.match(result.stdout, /Authentication and provider setup are shared with run-model\.sh/);
   assert.match(result.stdout, /Provider-enforced spending caps are not required/);
 });
 

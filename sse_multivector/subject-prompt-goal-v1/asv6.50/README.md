@@ -83,7 +83,7 @@ coverage and new errors. Its setup and results are recorded below.
 
 On October 1, 2026, the user authorized testing unchanged, frozen ASv6.48 on
 the four regression posts with GPT-6.1 Sol xhigh before testing this draft.
-The [reusable experiment spec](../../experiment_specs/sol61-xhigh-sp-scope-regression-v1.json)
+The reusable experiment spec (`03bd9e45:sse_multivector/experiment_specs/sol61-xhigh-sp-scope-regression-v1.json`)
 uses the shared `subjects` adapter and the complete original posts. Each
 rendered prompt's SHA-256 matches its original Astra-low request. The run used
 the subscription WebSocket route, four concurrent requests, a 1,800-second
@@ -277,7 +277,7 @@ two-attempt policy per case for eligible provider failures. Baselines are not
 rerun; paid API fallback and output caps remain absent.
 
 The shared revision command derives the
-[ASv6.50 post template](../../experiment_specs/asv6.50-hr01-post-template.txt)
+ASv6.50 post template (`03bd9e45:sse_multivector/experiment_specs/asv6.50-hr01-post-template.txt`)
 from the existing ASv6.48 post template. Its instructions are byte-identical
 to approved ASv6.50, followed by the same `<post>` wrapper and `{POST}` variable.
 The revision receipt pins the baseline template and single approved edit.
@@ -417,7 +417,7 @@ separate model pass or output fields are added. The change stays within one
 SP request; actual model token use remains unmeasured.
 
 Shared `experiment.py revise` generated the new prompt and its
-[ASv6.51 revision receipt](../asv6.51/ASv6.51.md.revision.json) against ASv6.50,
+ASv6.51 revision receipt (`03bd9e45:sse_multivector/subject-prompt-goal-v1/asv6.51/ASv6.51.md.revision.json`) against ASv6.50,
 the last approved prompt at the time, with SHA-256
 `2ab157eb34f49edd2a443799c439be8eff512fe61df96f6d508434f4d3807a1c`.
 The ASv6.51 SHA-256 is
@@ -437,7 +437,7 @@ three native `prepare --from ... --prompt ... --prompt-id ASv6.51 --repeat`
 trials inherits its corresponding completed ASv6.50 trial, pairing all four
 cases with saved answers without regenerating a baseline.
 
-The [ASv6.51 post template](../../experiment_specs/asv6.51-hr01-post-template.txt)
+The ASv6.51 post template (`03bd9e45:sse_multivector/experiment_specs/asv6.51-hr01-post-template.txt`)
 was derived through shared `revise` from the ASv6.50 template using the single
 approved paragraph edit. Its instructions are exactly approved ASv6.51, with
 the unchanged `<post>` wrapper and `{POST}` variable. Native revision receipts
@@ -670,7 +670,7 @@ with the instructions; discrepancies can reduce reliability.
 That guidance does not establish that these particular examples improve SP.
 
 Shared `experiment.py revise` generated the draft and its
-[ASv6.52 revision receipt](../asv6.52/ASv6.52.md.revision.json) against approved
+ASv6.52 revision receipt (`03bd9e45:sse_multivector/subject-prompt-goal-v1/asv6.52/ASv6.52.md.revision.json`) against approved
 ASv6.51 SHA-256
 `db164a973f81791445b1816a9a2cc79da36e9e20a294b1dea9292552ae298cc7`.
 The draft SHA-256 is
@@ -739,7 +739,7 @@ checks do not independently prove natural-language entailment or teacher
 generalization; the semantic relationships remain an agent assessment.
 
 Shared `experiment.py revise` generated the prompt and its
-[ASv6.53 revision receipt](../asv6.53/ASv6.53.md.revision.json) against approved
+ASv6.53 revision receipt (`03bd9e45:sse_multivector/subject-prompt-goal-v1/asv6.53/ASv6.53.md.revision.json`) against approved
 ASv6.51 SHA-256
 `db164a973f81791445b1816a9a2cc79da36e9e20a294b1dea9292552ae298cc7`.
 The ASv6.53 SHA-256 is
@@ -766,7 +766,7 @@ themselves, while keeping every rule demonstrated.
 
 This map describes [ASv6.58 (candidate, tested on Sol xhigh)](../asv6.58/ASv6.58.md).
 Later autonomous candidates and their changed demonstrations are tracked in
-the [campaign rule map](../autonomous-sp-v1/README.md#rule-coverage-for-asv661).
+the [campaign rule map](../autonomous-sp-v1/README.md#rule-coverage-for-asv661-and-subsequent-candidates).
 Case IDs identify its seven examples in source order. Each case contains its
 complete post and expected JSON. Each of the 34 existing instruction clauses
 has exactly one primary case. Nine secondary demonstrations remain because
@@ -897,7 +897,7 @@ an explanation for every secondary demonstration. The prompt, revision receipt,
 example posts, expected subjects and reviewed relationships are unchanged.
 
 Shared `experiment.py revise` generated the prompt and
-[ASv6.54 revision receipt](../asv6.54/ASv6.54.md.revision.json) directly against
+ASv6.54 revision receipt (`03bd9e45:sse_multivector/subject-prompt-goal-v1/asv6.54/ASv6.54.md.revision.json`) directly against
 approved ASv6.51 SHA-256
 `db164a973f81791445b1816a9a2cc79da36e9e20a294b1dea9292552ae298cc7`.
 The ASv6.54 SHA-256 is
@@ -920,8 +920,8 @@ blocks match. This comparison examines consolidation before another edit;
 it does not establish a general failure rate or imply adoption.
 
 Native `experiment.py revise` generated the reusable
-[ASv6.54 post template](../../experiment_specs/asv6.54-hr01-post-template.txt)
-and [revision receipt](../../experiment_specs/asv6.54-hr01-post-template.txt.revision.json)
+ASv6.54 post template (`03bd9e45:sse_multivector/experiment_specs/asv6.54-hr01-post-template.txt`)
+and revision receipt (`03bd9e45:sse_multivector/experiment_specs/asv6.54-hr01-post-template.txt.revision.json`)
 against the approved ASv6.51 post template, preserving the post wrapper.
 The template is the unchanged ASv6.54 source followed by that wrapper; its
 SHA-256 is
@@ -1108,7 +1108,7 @@ The fixture and agent semantic review are not independent proofs of entailment
 or teacher generalization.
 
 Shared `experiment.py revise` generated the prompt and
-[ASv6.55 revision receipt](../asv6.55/ASv6.55.md.revision.json) directly against
+ASv6.55 revision receipt (`03bd9e45:sse_multivector/subject-prompt-goal-v1/asv6.55/ASv6.55.md.revision.json`) directly against
 approved ASv6.51 SHA-256
 `db164a973f81791445b1816a9a2cc79da36e9e20a294b1dea9292552ae298cc7`.
 The ASv6.55 SHA-256 is
@@ -1130,8 +1130,8 @@ original post text, source evidence, output schema and model settings are
 preserved; saved baselines are not regenerated.
 
 Shared `experiment.py revise` derives the
-[ASv6.55 post template](../../experiment_specs/asv6.55-hr01-post-template.txt)
-and its [native receipt](../../experiment_specs/asv6.55-hr01-post-template.txt.revision.json)
+ASv6.55 post template (`03bd9e45:sse_multivector/experiment_specs/asv6.55-hr01-post-template.txt`)
+and its native receipt (`03bd9e45:sse_multivector/experiment_specs/asv6.55-hr01-post-template.txt.revision.json`)
 from the approved ASv6.51 template. The source prompt and unchanged `{POST}`
 wrapper match exactly. The ASv6.55 template SHA-256 is
 `5a321bf7146bc5d577fbd8f5d32a4fc11ac3adb7090c2f76988b43c2145720a5`;
@@ -1316,7 +1316,7 @@ These checks establish fixture consistency; the agent's source and relationship
 review does not establish that the draft generalizes on model outputs.
 
 Shared `experiment.py revise` generated the prompt and
-[ASv6.56 revision receipt](../asv6.56/ASv6.56.md.revision.json) directly against
+ASv6.56 revision receipt (`03bd9e45:sse_multivector/subject-prompt-goal-v1/asv6.56/ASv6.56.md.revision.json`) directly against
 then-approved ASv6.51 SHA-256
 `db164a973f81791445b1816a9a2cc79da36e9e20a294b1dea9292552ae298cc7`.
 The receipt reconstructs the exact draft, whose SHA-256 is
@@ -1342,8 +1342,8 @@ complete original posts, evidence, schema and runner settings. ASv6.51 and
 ASv6.54 remain saved comparison evidence; no baseline is regenerated.
 
 Native `experiment.py revise` derives the reusable
-[ASv6.56 post template](../../experiment_specs/asv6.56-hr01-post-template.txt)
-and [revision receipt](../../experiment_specs/asv6.56-hr01-post-template.txt.revision.json)
+ASv6.56 post template (`03bd9e45:sse_multivector/experiment_specs/asv6.56-hr01-post-template.txt`)
+and revision receipt (`03bd9e45:sse_multivector/experiment_specs/asv6.56-hr01-post-template.txt.revision.json`)
 directly from the approved ASv6.56 source. It adds only the existing `{POST}`
 wrapper, byte-identical to the ASv6.51 and ASv6.55 wrappers. The template
 SHA-256 is `d984a8f4ea4e9838a91f58eb967d0ee7be0f3cb95e159bd39a4dc3a597ca1964`.
@@ -1540,7 +1540,7 @@ order and preservation. These checks establish example and fixture consistency;
 they do not establish model generalization.
 
 Native `experiment.py revise` generated the prompt and
-[ASv6.57 revision receipt](../asv6.57/ASv6.57.md.revision.json) directly against
+ASv6.57 revision receipt (`03bd9e45:sse_multivector/subject-prompt-goal-v1/asv6.57/ASv6.57.md.revision.json`) directly against
 approved ASv6.56 SHA-256
 `a1a1292b45ab5afa9a2a87c25ac0434e7e2b4428b518767f846e67130ce4b4d2`.
 One exact edit replaces C1; the receipt reconstructs the exact draft. ASv6.57
@@ -1565,8 +1565,8 @@ trial with the corresponding saved ASv6.56 trial, preserving complete original
 posts, review evidence, schema and runner settings. No baseline is regenerated.
 
 Native `experiment.py revise` derives the reusable
-[ASv6.57 post template](../../experiment_specs/asv6.57-hr01-post-template.txt)
-and [revision receipt](../../experiment_specs/asv6.57-hr01-post-template.txt.revision.json)
+ASv6.57 post template (`03bd9e45:sse_multivector/experiment_specs/asv6.57-hr01-post-template.txt`)
+and revision receipt (`03bd9e45:sse_multivector/experiment_specs/asv6.57-hr01-post-template.txt.revision.json`)
 directly from the approved ASv6.57 source. It adds only the existing `{POST}`
 wrapper, byte-identical to the ASv6.56 and earlier comparison wrappers. The
 template SHA-256 is
@@ -1741,7 +1741,7 @@ check; it was corrected before the passing run. Offline checks establish
 example and fixture consistency, not generalization to the regression posts.
 
 Native `experiment.py revise` generated the prompt and
-[ASv6.58 revision receipt](../asv6.58/ASv6.58.md.revision.json) directly against
+ASv6.58 revision receipt (`03bd9e45:sse_multivector/subject-prompt-goal-v1/asv6.58/ASv6.58.md.revision.json`) directly against
 approved ASv6.57 SHA-256
 `0257ef96bf407d2941d16c26c2e4fecf67bacbe7183d1bbc14c3001e6b07bdaf`.
 One exact edit changes C1; the receipt reconstructs the exact draft. ASv6.58
@@ -1767,8 +1767,8 @@ evidence, schema and runner settings are preserved. Every saved baseline output,
 parse and receipt matches; no baseline is regenerated.
 
 Native `experiment.py revise` derives the reusable
-[ASv6.58 post template](../../experiment_specs/asv6.58-hr01-post-template.txt)
-and [revision receipt](../../experiment_specs/asv6.58-hr01-post-template.txt.revision.json)
+ASv6.58 post template (`03bd9e45:sse_multivector/experiment_specs/asv6.58-hr01-post-template.txt`)
+and revision receipt (`03bd9e45:sse_multivector/experiment_specs/asv6.58-hr01-post-template.txt.revision.json`)
 directly from the approved source. The template adds only the existing `{POST}`
 wrapper, byte-identical to the previous wrappers, and reconstructs exactly from
 its native receipt. It contains 18,097 UTF-8 bytes; SHA-256 is

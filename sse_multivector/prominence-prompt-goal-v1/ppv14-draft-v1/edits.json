@@ -1,9 +1,0 @@
-{
-  "base_sha256": "551711115f3e6857192c8df80dc52f60f32771b04a53a46dfdbab818d1eb917a",
-  "edits": [
-    {
-      "old": "Assess the selected fragments together in the context of the post.\n\n",
-      "new": "Assess the selected fragments together in the context of the post.\n\nIgnore URLs and opaque encoded identifiers when assessing the post’s semantic meaning. Surrounding prose about them still counts.\n\n"
-    }
-  ]
-}

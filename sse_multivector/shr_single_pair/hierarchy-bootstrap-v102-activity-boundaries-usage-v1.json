@@ -1,9 +1,0 @@
-{
-  "schema_version": 1,
-  "groups": {
-    "v102_first": [
-      "../../target/bootstrap-asv6.100-regression-refresh-v1/v102-activity-boundaries-v1/rocket",
-      "../../target/bootstrap-asv6.100-regression-refresh-v1/v102-activity-boundaries-v1/controls"
-    ]
-  }
-}

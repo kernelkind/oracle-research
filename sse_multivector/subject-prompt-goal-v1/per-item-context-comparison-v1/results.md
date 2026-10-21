@@ -103,4 +103,4 @@ The calls completed in 41.4 seconds. Resource sampling continued throughout, wit
 
 The runner passed 60 regression/consumer tests; the resource driver passed nine tests. Both changes were tested with expected failures before implementation. No reserved final data was used, and the earlier final-note exposure remains outside this experiment.
 
-See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-subject-prompt-goal-v1`.
+See conversion gaps (`03bd9e45:docs/experiments/publication-gaps.csv`) for `collection:tracked-subject-prompt-goal-v1`.

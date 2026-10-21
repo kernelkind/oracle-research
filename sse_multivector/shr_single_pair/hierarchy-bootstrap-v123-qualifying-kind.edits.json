@@ -1,8 +1,0 @@
-{
-  "edits": [
-    {
-      "old": "Distinguish what the subject identifies from which information belongs under it. Examine roles, purposes and states expressed by the selected subject or required by its intended sense. Decide whether they identify the topic, limit the information covered, or do both. State which conditions define the chosen kind and which must hold for a particular example. A role, use or component relationship does not by itself settle what kind qualifies through it.",
-      "new": "Distinguish what the subject identifies from which information belongs under it. First identify each kind covered and the features required to make it the intended kind, including any defining role. A role, use or component relationship must apply to that kind with its required features; the relationship alone does not establish membership. Examine whether further roles, purposes or states identify the topic, limit the information covered, or do both. For every condition proposed for the meaning, identify and resolve any material ambiguity in what it requires or whom it applies to. State which conditions define a kind and which must hold for a particular example."
-    }
-  ]
-}

@@ -1,9 +1,0 @@
-{
-  "base_sha256": "dd4a6db37108af24d085b3b2fbcdfd6df55884a1dee9e0c945f4408b483e22b4",
-  "edits": [
-    {
-      "old": "Compare only the proposed `subject` strings. A child heading must itself preserve every restriction of its parent: type, purpose, modifier, action, negation and relationship.",
-      "new": "Compare only the proposed `subject` strings across possible posts in any domain, including uses unlike the one described here. Classify what each heading necessarily means; the domain of this post cannot narrow an unrestricted heading. A child heading must itself preserve every restriction of its parent: type, purpose, modifier, action, negation and relationship."
-    }
-  ]
-}

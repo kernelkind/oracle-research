@@ -1,6 +1,6 @@
 .git
 target
-gte/__pycache__
+**/__pycache__
 tests
 budget-ledger.json
 flake.nix

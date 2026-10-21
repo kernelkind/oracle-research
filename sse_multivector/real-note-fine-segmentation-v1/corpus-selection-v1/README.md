@@ -44,16 +44,7 @@ database scan, network request, download, or model-generation call was used.
 
 The original token-count command, from the repository root:
 
-```sh
-docker run --rm --pull=never --network none --read-only --security-opt no-new-privileges --cap-drop ALL --pids-limit 128 --cpus 2 --memory 2g --memory-swap 2g --user 1000:100 --tmpfs /tmp:rw,noexec,nosuid,nodev,size=128m --env HOME=/tmp --env HF_HOME=/tmp/huggingface --env HF_HUB_OFFLINE=1 --env TRANSFORMERS_OFFLINE=1 --env TOKENIZERS_PARALLELISM=false --env PYTHONDONTWRITEBYTECODE=1 --mount type=bind,src=/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/real-note-fine-segmentation-v1/corpus-audit,dst=/workspace/corpus-audit,readonly --mount type=bind,src=/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/real-note-fine-segmentation-v1/corpus-selection-v1,dst=/workspace/corpus-selection-v1 --mount type=bind,src=/home/dev/src/notedeck_worktrees/algos/oracle-mvp/target/sse-multivector-diagnostic-v1/model/sentence-t5-base-fc5d4628481afbbaaacd7af6bb07cf9d3865f781,dst=/model,readonly sha256:a6c9674dca720e1f094b7feeb1397b6e6b0a97e10f13e0a6555deebf4b70ddaa python /workspace/corpus-selection-v1/freeze_selection.py tokenize --model /model
-python3 sse_multivector/real-note-fine-segmentation-v1/corpus-selection-v1/freeze_selection.py draft
-```
-
 After complete-note inspection and creation of the review record:
-
-```sh
-python3 sse_multivector/real-note-fine-segmentation-v1/corpus-selection-v1/freeze_selection.py freeze
-```
 
 All outputs are create-once: these commands intentionally fail if their output
 already exists. Preserve this frozen version and its history; do not delete

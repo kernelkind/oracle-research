@@ -1,5 +1,4 @@
 use std::fs;
-use std::path::Path;
 
 use oracle_mvp::hdbscan_hierarchy::Hierarchy;
 use serde_json::{Value, json};
@@ -264,34 +263,5 @@ fn rejects_missing_or_ambiguous_original_vector_and_note_mappings() {
         }
         let error = load_fixture(&response, &vectors, &notes).expect_err(case);
         assert!(error.to_string().contains(expected), "{case}: {error}");
-    }
-}
-
-#[test]
-fn loads_saved_hdbv2_artifact_without_modifying_sources() {
-    let base = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("sse_multivector/real-note-fine-segmentation-v1");
-    let response = base.join("hdbscan-cross-note/response.json");
-    let vectors = base.join("vectors/vector-map.json");
-    let notes = base.join("reviewed-input.json");
-    let paths = [&response, &vectors, &notes];
-    let before = paths.map(|path| fs::read(path).expect("saved artifact"));
-    let hierarchy = Hierarchy::load(&response, &vectors, &notes).expect("valid saved HDBv2");
-    assert_eq!(hierarchy.root, 916);
-    assert_eq!(hierarchy.groups.len(), 130);
-    assert_eq!(hierarchy.vectors.len(), 916);
-    assert_eq!(hierarchy.vectors.values().map(Vec::len).sum::<usize>(), 945);
-    assert_eq!(hierarchy.groups[&916].vector_count, 916);
-    assert_eq!(hierarchy.groups[&916].note_count, 100);
-    assert_eq!(
-        hierarchy
-            .groups
-            .values()
-            .map(|group| group.note_count)
-            .min(),
-        Some(2)
-    );
-    for (path, original) in paths.into_iter().zip(before) {
-        assert_eq!(fs::read(path).expect("unchanged artifact"), original);
     }
 }

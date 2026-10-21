@@ -20,8 +20,8 @@ sentence in `Identify category ambiguities`: an intention does not establish
 other defining features or completed use. Intention-defined kinds remain
 permitted; when additional features are required, they must be preserved.
 
-The [v125 edit source](hierarchy-bootstrap-v125-whole-definition.edits.json)
-and [v126 edit source](hierarchy-bootstrap-v126-intention-kind-features.edits.json)
+The [v125 edit source] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v125-whole-definition.edits.json` at `03bd9e45`)
+and [v126 edit source] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v126-intention-kind-features.edits.json` at `03bd9e45`)
 have separate native revision receipts. Examples, input/output contracts,
 factual-evidence rules and all other prompt text stay fixed. No poison, medicine,
 Food-specific condition or real validation example enters either prompt.
@@ -166,7 +166,7 @@ for general hierarchy generation.
 
 ## Native accounting and verification
 
-The [native usage source](hierarchy-bootstrap-v125-v126-food-usage-v1.json)
+The [native usage source] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v125-v126-food-usage-v1.json` at `03bd9e45`)
 produces `target/bootstrap-v126-hr04-four-foods-v1/usage-native-v1.json`.
 Twelve definitions are valid and nonnull, with no answer reuse. Seventeen actual
 attempts include four warmups and one failed risotto request recovered by one

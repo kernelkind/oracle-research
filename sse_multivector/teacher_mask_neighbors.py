@@ -5,11 +5,27 @@ Preparation validates experiment receipts and reuses exact saved masks. The
 ordinary SSE worker encodes new masks plus one replay control per query note.
 """
 import argparse
+import hashlib
+import json
 from pathlib import Path
 
 from sse_multivector import experiment
 from sse_multivector.ancestor_cosine_probe import load_vectors, cosine
-from sse_multivector.hierarchy_refresh import encode_inputs, read, save, sha
+from sse_multivector.hierarchy_inputs import encode_inputs
+
+
+def read(path):
+    return json.loads(Path(path).read_bytes())
+
+
+def sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def save(path, value):
+    with Path(path).open("x", encoding="utf-8") as stream:
+        json.dump(value, stream, ensure_ascii=False, indent=2, allow_nan=False)
+        stream.write("\n")
 
 
 def mask_inputs(cases):

@@ -74,7 +74,7 @@ The only ambiguous title is the same “Coffee chains” wording already present
 - All 386 snapshotted prior files were unchanged after generation. Subsequent current-status documentation updates, if any, are explicitly listed in verification; raw evidence and user decisions remain preserved.
 - This is a small reused diagnostic, not a general accuracy estimate. Coffeechain and coffee preparation share one underlying note through different masks.
 - Generation used **41,631 input tokens** (5,760 cached) and **1,117 output tokens** (924 reasoning): **42,748 input plus output**. Subcounts are included, not additional. Main-agent work and the independent audit are excluded.
-- Existing authorized Codex subscription only; no API billing, purchase, rental, account switch, saved-title replacement, prompt freeze, TRUE run or hierarchy change. Tracking card: CREC-127. No Plane tool was available.
+- Existing authorized Codex subscription only; no API billing, purchase, rental, account switch, saved-title replacement, prompt freeze, TRUE run or hierarchy change.
 
 Exact v22 inputs (`./inputs-v22.json`), exact v23 inputs (`./inputs-v23.json`), every output and per-call usage (`./comparison.json`), [run plan](./run-plan.json), verification (`./verification.json`).
 

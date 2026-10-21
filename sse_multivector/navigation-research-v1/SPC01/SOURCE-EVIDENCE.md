@@ -6284,6 +6284,4 @@ Description: The author and others currently live on a half-acre lot in town.
 
 Masks: V155
 
-> This year’s beets. Vac sealed and ready for the freezer. Not too bad for a 4x4 raised bed. 5 meals of sides in a pinch. I am looking forward to having more garden space but this is good while ⟦we⟧ are ⟦still in a half acre lot in town⟧. https://image.nostr.build/b4349cc1251dccf78990620ee851ad0ae449327da16ac31391e3e71fafdbe65c.jpg https://image.nostr.build/5c7e4ba19bb3c2e98cb57753679d33be2bbad3a07900afc86315c85f80bc46e4.jpg 
-
-
+> This year’s beets. Vac sealed and ready for the freezer. Not too bad for a 4x4 raised bed. 5 meals of sides in a pinch. I am looking forward to having more garden space but this is good while ⟦we⟧ are ⟦still in a half acre lot in town⟧. https://image.nostr.build/b4349cc1251dccf78990620ee851ad0ae449327da16ac31391e3e71fafdbe65c.jpg https://image.nostr.build/5c7e4ba19bb3c2e98cb57753679d33be2bbad3a07900afc86315c85f80bc46e4.jpg

@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "generation_policy": "hierarchy-generation-v5.3",
+  "corpus": "../../target/hierarchy-example/subject-collection/subjects.json",
+  "local_schema_version": 4,
+  "bootstrap_spec": "bootstrap.spec.json",
+  "consolidation_spec": "consolidation.spec.json",
+  "worker_config": "worker-config.json",
+  "hdbscan_binary": "../../target/release/fine-segmentation-candidate"
+}

@@ -48,11 +48,6 @@ The saved session is `target/hdbv2-node-description-v15-additional-v1-review-ses
 
 Reopen the two completed cards, each with all its masks and original assistant reasoning:
 
-```bash
-cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
-  ./sse_multivector/hdbv2-node-description-probe-v15-additional-v1/run-review.sh
-```
-
 `run-review-all.sh` optionally shows all twelve outputs in a separate session. B shows the other trial of the same prompt, not a prior-version baseline.
 
 ## What the accepted outputs establish

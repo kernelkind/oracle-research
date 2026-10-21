@@ -18,7 +18,7 @@ prompt revision/assembly receipts, useful research findings and the selected
 experiment index in Git. Generated experiment data is supplied separately.
 Complete original working directories are not additional required downloads.
 
-### Generated-data history rewrite
+### Original source revisions
 
 The publication history omits generated data and reviewed private material.
 Original revision IDs remain in scientific records. The bundled
@@ -81,7 +81,7 @@ The 256 shared files contain 58,232 values used by 402,200 references.
 `dataset.json` binds both physical file hashes and the original compact-export
 hashes. Verification checks references and reconstructed bytes; restoration
 recovers the original compact files exactly. See the
-[prepare, verify and restore commands](reproduce.md#check-the-converted-local-selection).
+[verify and restore commands](reproduce.md#verify-and-restore-the-dataset).
 The category sizes below exclude content charged once to the shared row.
 
 | Data | Selected outputs | Uncompressed size |
@@ -120,10 +120,9 @@ saved records, not independent trials.
 [corpora.csv](corpora.csv) identifies the nine original subject corpora used by
 the official hierarchy runs; [hierarchy.csv](hierarchy.csv) records their
 selections. The original files contain generated subjects and expanded data as
-well as posts. Their combined 407.17 MiB is not a requirement to publish those
-files unchanged. Export the used inputs and final results according to their
-role above. Keep data derived from subject prompts older than **ASv6.100**
-clearly labeled as historical evidence.
+well as posts. The selected downloads contain the used inputs and final results according to
+their roles above. Results derived from subject prompts older than **ASv6.100**
+remain labeled as historical evidence.
 
 Publish **all 17 evaluated subject fine-tune adapters on Hugging Face**. Each includes
 `adapter_model.safetensors` and `adapter_config.json`, with its pinned base-model
@@ -142,7 +141,7 @@ revisions. The selected `inputs/adapter-hashes/adapters.jsonl`, bound by the
 [dataset manifest](#dataset-manifest), binds each weight/configuration pair
 to its hashes and sizes. Publication does not designate any checkpoint as
 production-approved.
-The [final L1 comparison](../planning/fine-tuning-pilot-process.md#l1-only-test-results-october-15)
+The [final L1 comparison](subject-extraction/fine-tuning.md#l1-only-test-results-october-15)
 uses Qwen checkpoints 1000 and 3000 and each Gemma model's checkpoint 1000;
 the other evaluated checkpoints will also be published.
 
@@ -279,8 +278,8 @@ With `--spec SELECTION --study ID`, the same command exports the explicitly
 hash-bound atomic subject and subject/mask goal studies. The source argument is
 their original repository root. It writes the five files above, retaining exact
 saved responses, scientific methods and recorded corrections/decisions. See the
-[three selections and checks](reproduce.md#historical-subject-and-mask-study-checks).
-The [early prompt and manual prominence selections](reproduce.md#early-prompt-and-manual-prominence-study-checks)
+[three selections and checks](reproduce.md#verify-and-restore-the-dataset).
+The [early prompt and manual prominence selections](reproduce.md#verify-and-restore-the-dataset)
 use the same explicit command with their own study IDs. Receipt-only partial
 answers, unknown outcomes, final scores and recorded review history remain
 source-bound; preparation calls do not become additional standalone results.
@@ -329,9 +328,8 @@ Unsupported historical schemas fail explicitly.
 
 All these exports use staged, managed output directories and payload hashes.
 An unchanged refresh preserves bytes and modification times; unrelated files or
-another source's destination are refused. The [local historical selection](#measured-local-exports)
-has been backfilled, including TRUE10. Final download verification remains
-unfinished. These local exports have not published the collection.
+another source's destination are refused. The [selected outputs](#measured-local-exports) are prepared locally. Hosted
+download verification remains unfinished.
 
 ## Start small
 
@@ -348,13 +346,11 @@ published per-note scores, without original research directories or models.
 The [HR36 examples](reproduce.md#try-asv6100-on-a-recorded-post) use its compact
 ordered selection and the shared posts. Construction additionally uses
 `inputs/hr36-subjects`: about 4.76 MiB preserving the full local subject trees
-and exact-post hashes. This replaces the earlier 41.37 MiB original-corpus
-dependency. Transport logs, receipts and other extraction-run internals remain
-in the preserved local originals. Both preparation examples passed locally:
-all 5,378 Bootstrap inputs match the earlier full-corpus preparation. No new
-model answers, encoding or clustering ran.
+and exact-post hashes. Transport logs, receipts and other extraction-run internals are outside the
+compact selection. The recorded-input preparation checks matched all 5,378
+Bootstrap inputs without model inference, encoding or clustering.
 
-## File selection and archive layout
+## Catalogs and manifest
 
 | Record | Purpose |
 | --- | --- |
@@ -362,21 +358,19 @@ model answers, encoding or clustering ran.
 | [publications.csv](publications.csv) | Included bundle identities and coverage qualifications, plus shared-content row |
 | `dataset.json` in the dataset | Exact physical and restored paths, sizes and SHA-256 hashes |
 | [models.csv](models.csv) | All adapter identities and pinned base-model revisions |
-| [historical-files.csv](historical-files.csv) and [historical-uses.csv](historical-uses.csv) | Original artifact blob/commit associations |
 
 ### Dataset manifest
 
 The dataset's `dataset.json` is the authoritative file manifest. It records
 physical paths, sizes and SHA-256 hashes, shared-content bindings and the exact
 compact-export bytes recoverable by restoration. Use the
-[dataset verification and restoration commands](reproduce.md#check-the-converted-local-selection)
+[dataset verification and restoration commands](reproduce.md#verify-and-restore-the-dataset)
 before opening restored results with consumers that expect their original JSON.
 The [inventory](inventory.json) pins the prepared manifest hash and category totals.
 
-## Before downloads become available
+## Availability
 
-Choose repository names and pin the exact Hugging Face revisions in the index.
-Review the final contents, preserve the recorded reproduction limits, and test
-the reader instructions using only those downloads and documented upstream
-dependencies. Local conversion and integrity checks do not authorize publication
-or establish semantic quality. Complete original working files remain private.
+The dataset and adapters are prepared locally. Public repository names, pinned
+Hugging Face revisions and hosted reader tests remain pending. See
+[evidence limits](open-items.md) for the tested scope and unresolved historical
+bindings. Nothing has been uploaded.

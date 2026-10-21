@@ -1,9 +1,0 @@
-{
-  "base_sha256": "8843475dfff10e3fbebbbe8b249e4404d98be62400510ace521a67f5e6db5fab",
-  "edits": [
-    {
-      "old": "Judge meaning, not word count or grammatical completeness.",
-      "new": "When a part lists or credits several subjects or kinds of creator, distinguish the meaning about this node from separately meaningful references to the others. A list, attribution or greeting does not make all of its meaning concern every named subject. Do not divide synonymous names or a restatement of the same meaning into separate subjects. Do not infer the content of a URL or an unseen attachment.\n\nJudge meaning, not word count or grammatical completeness."
-    }
-  ]
-}

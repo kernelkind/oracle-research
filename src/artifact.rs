@@ -9,16 +9,6 @@ use sha2::{Digest, Sha256};
 
 use crate::snapshot::{Error, Result, io_error};
 
-/// Return whether `name` is one safe, non-special filesystem component.
-pub(crate) fn is_safe_artifact_name(name: &str) -> bool {
-    !name.is_empty()
-        && name != "."
-        && name != ".."
-        && name
-            .bytes()
-            .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'.' | b'_' | b'-'))
-}
-
 /// Description of one immutable fixed-record artifact.
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct ArtifactFile {
@@ -60,33 +50,6 @@ pub(crate) fn describe_fixed_artifact(
         bytes,
         sha256: hash_file(path)?,
     })
-}
-
-pub(crate) fn verify_fixed_artifact(
-    root: &Path,
-    artifact: &ArtifactFile,
-    expected_file: &str,
-    expected_record_bytes: usize,
-    expected_records: u64,
-) -> Result<()> {
-    if artifact.file != expected_file {
-        return Err(Error::Invariant(format!(
-            "artifact file `{}` does not match expected `{expected_file}`",
-            artifact.file
-        )));
-    }
-    let expected = describe_fixed_artifact(
-        &root.join(expected_file),
-        expected_file,
-        expected_record_bytes,
-        expected_records,
-    )?;
-    if artifact != &expected {
-        return Err(Error::Invariant(format!(
-            "artifact metadata for `{expected_file}` does not match its file"
-        )));
-    }
-    Ok(())
 }
 
 pub(crate) fn hash_file(path: &Path) -> Result<String> {

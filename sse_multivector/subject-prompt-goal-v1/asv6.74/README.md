@@ -37,7 +37,7 @@ call per post; the hierarchy's repeated branches remain part of the existing
 contract. This revision adds no production component or model pass.
 
 The primary clause assignments stay those in the maintained
-[34-clause map](../autonomous-sp-v1/README.md#rule-coverage-for-asv661).
+[34-clause map](../autonomous-sp-v1/README.md#rule-coverage-for-asv661-and-subsequent-candidates).
 C1 demonstrates its sixteen primary clauses as follows:
 
 | Clauses | Demonstration |

@@ -66,7 +66,7 @@ The intended next discussion concerns the name’s interpretation, not teaching 
 - Exact source-byte masks and rendered instance block match the previous diagnostic. An independent read-only audit checked provenance, prompt neutrality, execution and limits.
 - All 107 snapshotted prior files, including the user’s review session, remain unchanged. Seven existing input-preparation tests passed. No production code changed.
 - Generation usage: 6,510 input tokens (5,760 cached), 311 output tokens (46 reasoning); **6,821 input plus output tokens**. Cached and reasoning counts are subsets. Main-agent work and the independent audit are not included.
-- No new API billing, rental, account switch or purchase. CREC-127 remains the tracking card; Plane tools were unavailable.
+- No new API billing, rental, account switch or purchase.
 
 [Run plan](./run-plan.json), all raw responses and usage (`./responses.json`), analysis (`./analysis.json`), integrity checks (`./verification.json`), [previous title diagnostic](../hdbv21-format-sentence-v1/README.md).
 

@@ -39,5 +39,4 @@ All six requests used fresh processes and one user message, empty application in
 
 Predeclared plan (`./plan.json`), semantic review (`./review.json`), summary (`./summary.json`), verification (`./verification.json`), scheduler record (`./scheduler/results.json`).
 
-
 **Selected data:** Posts, final answers, recorded assessments, measurements and parameters are selected for release as `prompt-studies/asv6.28-fresh-v1-ce12886f6c3c` in the [publication catalog](../../../docs/experiments/publications.csv). The compact files use a different layout from the original local artifacts cited above.

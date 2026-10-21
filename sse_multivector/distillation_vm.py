@@ -49,17 +49,17 @@ def prepare_package(source, destination):
     (destination / "vast").mkdir()
     for name in ("runner.py", "package.py"):
         shutil.copyfile(source / "vast" / name, destination / "vast" / name)
-    (destination / "gte").mkdir()
-    shutil.copyfile(source / "gte/full_build_package.py", destination / "gte/full_build_package.py")
-    shutil.copyfile(source / "gte/calibration_package.py", destination / "gte/calibration_package.py")
-    shutil.copyfile(source / "gte/vast_private_create.py", destination / "gte/vast_private_create.py")
+
+    shutil.copyfile(source / "vast/full_build_package.py", destination / "vast/full_build_package.py")
+    shutil.copyfile(source / "vast/calibration_package.py", destination / "vast/calibration_package.py")
+    shutil.copyfile(source / "vast/vast_private_create.py", destination / "vast/vast_private_create.py")
     for name, path in shared_code_files().items():
         target = destination / name
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(path, target)
     write_json(destination / "package.json", {name: sha256(destination / "sse_multivector" / name)
                                              for name in PACKAGE_FILES} | {
-        "gte/full_build_package.py": sha256(destination / "gte/full_build_package.py")} | {
+        "vast/full_build_package.py": sha256(destination / "vast/full_build_package.py")} | {
         name: sha256(destination / name) for name in shared_code_files()})
 
 
@@ -90,8 +90,8 @@ DEPLOYMENT_FILES = {
         "distillation_deploy.py", "test_distillation_deploy.py", "distillation_vast.py",
         "test_distillation_vast.py", "distillation_cache.py", "test_distillation_cache.py",
         "distillation/vast-launch.json", "distillation/qwen-continuation-v1.vast.json")
-} | {"vast/runner.py", "vast/package.py", "gte/full_build_package.py",
-     "gte/calibration_package.py", "gte/vast_private_create.py"}
+} | {"vast/runner.py", "vast/package.py", "vast/full_build_package.py",
+     "vast/calibration_package.py", "vast/vast_private_create.py"}
 
 
 def file_hashes(directory, excluded=()):

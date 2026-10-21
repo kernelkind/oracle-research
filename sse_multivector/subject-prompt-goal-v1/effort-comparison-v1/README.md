@@ -14,4 +14,4 @@ The remaining 24 calls finished in 2 minutes 32 seconds at up to 12 concurrent c
 
 ASv6.8 and the original development/final validation requirements remain unchanged. No final-validation input was used. This was a diagnostic comparison, not a permanent migration or a passing extractor.
 
-See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-subject-prompt-goal-v1`.
+See conversion gaps (`03bd9e45:docs/experiments/publication-gaps.csv`) for `collection:tracked-subject-prompt-goal-v1`.

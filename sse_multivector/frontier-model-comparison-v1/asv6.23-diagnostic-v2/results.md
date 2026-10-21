@@ -6,10 +6,6 @@ Muse Spark is the most promising alternative in this sample. It is not yet an es
 
 From `oracle-mvp`, run:
 
-```bash
-./sse_multivector/frontier-model-comparison-v1/asv6.23-diagnostic-v2/run-review.sh
-```
-
 Left/right changes the note; 1–4 switches models. Tab selects the note, output or separate assistant-comment pane; up/down scrolls. Press `i` to switch between the original note and the prepared model input where they differ. Press `q` to exit. The viewer is read-only and makes no model calls.
 
 ## What ran

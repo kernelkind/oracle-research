@@ -203,7 +203,7 @@ the edge. The surviving recipe/stock and Coffee qualifications remain visible.
 
 ## Accounting and verification
 
-The native [seven-experiment accounting source](hierarchy-bootstrap-v117-focused-qualification-usage-v1.json)
+The native [seven-experiment accounting source] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v117-focused-qualification-usage-v1.json` at `03bd9e45`)
 produces `target/bootstrap-v117-focused-qualification-v1/usage-final-v1.json`.
 It records 63 valid definitions, 72 attempts, seven warmups, two recovered
 provider failures and zero exact-answer reuses. Both failed attempts lack

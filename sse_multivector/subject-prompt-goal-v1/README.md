@@ -1,4 +1,4 @@
-# Subject-prompt goal
+# Subject-prompt development
 
 **Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
 
@@ -33,9 +33,9 @@ The earlier [ASv6.27 subject-index experiment](./asv6.27-comparison-v1/RESULTS.m
 
 The earlier [ASv6.26 comparison against frozen ASv6.23](./asv6.26-comparison-v1/RESULTS.md) added some useful broader subjects but also failed to independently name Coffee shops. Its 254 subjects and all raw evidence remain preserved. The proposed worked-example approach was not run; the user chose the separate subject-index experiment instead.
 
-## Earlier checkpoints
+## Development comparisons
 
-Current work: ASv6.23 passes the [development repeatability check](./asv6.23-validation-v1/repeat/results.md). All26 outputs for the eight fixed repeated notes were considered:25 fully accepted,446/449 subjects accepted, with one unresolved pattern in one insurance output and no recurring failure. The goal total is600 generation calls. The approved next step is final-entry repair and84-call final validation with the prompt/model/gates unchanged. ASv6.8 remains the frozen default until a candidate passes final validation.
+ASv6.23 passed the [development repeatability check](./asv6.23-validation-v1/repeat/results.md). All26 outputs for the eight fixed repeated notes were considered:25 fully accepted,446/449 subjects accepted, with one unresolved pattern in one insurance output and no recurring failure. The final validation above subsequently tested the unchanged prompt, model and gates.
 
 Current result: the [broader ASv6.13-versus-ASv6.23 comparison](./per-item-context-development-v1/results.md) is complete: 56 fresh Astra-low calls over all 28 existing development notes, and all 552 final subjects reviewed. ASv6.23 had 27/28 fully accepted lists versus 25/28 for ASv6.13, with no definite errors and one unresolved interpretation. It passes the existing first-pass thresholds, not repeated-development or final-validation gates. The advantage is modest: one clear hiring-context error and one unresolved reader-role wording were avoided; both prompts retained an uncertain reading of the snow note. Outside the prior two-note probe, fully accepted lists were 25/26 versus 24/26.
 

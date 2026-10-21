@@ -1,5 +1,3 @@
-use std::path::{Path, PathBuf};
-
 use crossterm::event::{Event, KeyCode, KeyEvent, KeyModifiers};
 use oracle_mvp::reference_map::{
     ApprovedHierarchy, HierarchyNote, LeafMembership, MembershipStrength, ReviewOutcome,
@@ -9,17 +7,12 @@ use oracle_mvp::reference_tui::{
     ApprovalEvidence, ApprovalEvidenceLayout, ApprovalGuidance, ApprovalScreen, ApprovalTuiAction,
     ApprovalTuiModel, NavigationTuiAction, ReferenceNavigationTuiModel,
 };
-use oracle_mvp::sse_subject_navigation::load_sse_subject_hierarchy;
 use ratatui::Terminal;
 use ratatui::backend::TestBackend;
 use sha2::{Digest, Sha256};
 
 fn key(code: KeyCode) -> Event {
     Event::Key(KeyEvent::new(code, KeyModifiers::NONE))
-}
-
-fn project_path(path: &str) -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR")).join(path)
 }
 
 fn approval_screen() -> ApprovalScreen {
@@ -758,33 +751,4 @@ fn finished_navigation_uses_subject_choices_then_hidden_weight_note_browsing() {
     let restored = render_navigation(&mut model);
     assert!(restored.contains("What would you like to explore?"));
     assert!(restored.contains("Technology"));
-}
-
-#[test]
-fn finished_navigation_accepts_the_source_bound_sse_hierarchy() {
-    let hierarchy = load_sse_subject_hierarchy(
-        project_path("sse_multivector/manual-subject-hierarchy-v1/hierarchy.json"),
-        project_path("sse_multivector/fine-region-hierarchy-result-v2/analysis.json"),
-        project_path("sse_multivector/fine-region-partition-result-v1/analysis.json"),
-    )
-    .expect("load SSE hierarchy");
-    let mut model = ReferenceNavigationTuiModel::from_navigation_hierarchy(hierarchy)
-        .expect("open SSE hierarchy");
-
-    let root = render_navigation(&mut model);
-    assert!(root.contains("What would you like to explore?"), "{root}");
-    assert!(root.contains("Food and drink"), "{root}");
-    assert!(root.contains("Equipment"), "{root}");
-
-    model.handle_event(key(KeyCode::Down));
-    model.handle_event(key(KeyCode::Down));
-    model.handle_event(key(KeyCode::Enter));
-    let equipment = render_navigation(&mut model);
-    assert!(equipment.contains("Equipment — choose a narrower subject"));
-    assert!(equipment.contains("Bitcoin mining"));
-
-    model.handle_event(key(KeyCode::Enter));
-    model.handle_event(key(KeyCode::Enter));
-    let note = render_navigation(&mut model);
-    assert!(note.contains("Equipment > Bitcoin mining > Home Bitcoin mining"));
 }

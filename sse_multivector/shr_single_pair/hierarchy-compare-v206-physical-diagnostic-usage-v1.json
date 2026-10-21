@@ -1,8 +1,0 @@
-{
-  "schema_version": 1,
-  "groups": {
-    "v206-original-aspect-screen": ["../../target/compare-v206-unknown-example-screen-v1"],
-    "physical-appearance-v202": ["../../target/compare-v202-physical-appearance-v1"],
-    "physical-appearance-v206": ["../../target/compare-v206-physical-appearance-v1"]
-  }
-}

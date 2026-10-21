@@ -2377,10 +2377,21 @@ fn verified_note_proposal_is_bound_to_the_real_learning_sample() {
     );
 }
 
+// Frozen fixtures include selected notes, not the original full source sample.
+// The synthetic sample test above exercises source hash and content verification.
+fn tracked_crec_116_proposal() -> NoteProposal {
+    let proposal: NoteProposal = serde_json::from_slice(
+        &fs::read("tests/fixtures/reference-map/crec-116-note-proposal-v3.json")
+            .expect("read tracked CREC-116 proposal"),
+    )
+    .expect("decode tracked CREC-116 proposal");
+    proposal.validate().expect("validate tracked proposal structure");
+    proposal
+}
+
 #[test]
-fn tracked_crec_116_proposal_is_complete_and_source_bound() {
-    let proposal = load_verified_note_proposal("reference_map/crec-116-note-proposal-v3.json")
-        .expect("tracked CREC-116 proposal");
+fn tracked_crec_116_proposal_is_complete_and_structurally_valid() {
+    let proposal = tracked_crec_116_proposal();
     assert_eq!(proposal.notes.len(), REFERENCE_NOTE_COUNT);
     assert_eq!(
         proposal
@@ -2395,8 +2406,7 @@ fn tracked_crec_116_proposal_is_complete_and_source_bound() {
 
 #[test]
 fn tracked_crec_116_revision_uses_the_stratified_48_candidate_set() {
-    let proposal = load_verified_note_proposal("reference_map/crec-116-note-proposal-v3.json")
-        .expect("tracked CREC-116 proposal");
+    let proposal = tracked_crec_116_proposal();
     assert_eq!(
         proposal
             .notes
@@ -2411,7 +2421,7 @@ fn tracked_crec_116_revision_uses_the_stratified_48_candidate_set() {
     );
 
     let prior: NoteProposal = serde_json::from_slice(
-        &fs::read("reference_map/crec-115-note-proposal-v2.json")
+        &fs::read("tests/fixtures/reference-map/crec-115-note-proposal-v2.json")
             .expect("read prior 64-note proposal"),
     )
     .expect("decode prior proposal");
@@ -2427,11 +2437,11 @@ fn tracked_crec_116_revision_uses_the_stratified_48_candidate_set() {
 #[test]
 fn tracked_crec_116_plan_matches_the_source_bound_proposal() {
     let plan: serde_json::Value = serde_json::from_slice(
-        &fs::read("reference_map/crec-116-note-metadata-v3.json").expect("read selection plan"),
+        &fs::read("tests/fixtures/reference-map/crec-116-note-metadata-v3.json").expect("read selection plan"),
     )
     .expect("decode selection plan");
     let proposal: serde_json::Value = serde_json::from_slice(
-        &fs::read("reference_map/crec-116-note-proposal-v3.json").expect("read note proposal"),
+        &fs::read("tests/fixtures/reference-map/crec-116-note-proposal-v3.json").expect("read note proposal"),
     )
     .expect("decode note proposal");
 
@@ -2461,8 +2471,7 @@ fn tracked_crec_116_plan_matches_the_source_bound_proposal() {
 
 #[test]
 fn tracked_crec_116_draft_uses_independent_overlapping_subjects() {
-    let proposal = load_verified_note_proposal("reference_map/crec-116-note-proposal-v3.json")
-        .expect("tracked CREC-116 proposal");
+    let proposal = tracked_crec_116_proposal();
     let mut review = NoteReviewSession::new(&proposal).expect("create complete review");
     for note in &proposal.notes {
         review
@@ -2479,7 +2488,7 @@ fn tracked_crec_116_draft_uses_independent_overlapping_subjects() {
     let approved =
         ApprovedNoteSet::from_review(&proposal, &review).expect("derive expected approved set");
     let draft: HierarchyDraft = serde_json::from_slice(
-        &fs::read("reference_map/crec-116-hierarchy-draft-v3.json")
+        &fs::read("tests/fixtures/reference-map/crec-116-hierarchy-draft-v3.json")
             .expect("read tracked hierarchy draft"),
     )
     .expect("decode hierarchy draft");
@@ -2625,10 +2634,9 @@ fn tracked_maps_sha256(proposal: &NoteProposal, draft: &HierarchyDraft, slots: &
 
 #[test]
 fn tracked_crec_116_correction_pass_preserves_or_explicitly_revises_note_maps() {
-    let proposal = load_verified_note_proposal("reference_map/crec-116-note-proposal-v3.json")
-        .expect("tracked CREC-116 proposal");
+    let proposal = tracked_crec_116_proposal();
     let draft: HierarchyDraft = serde_json::from_slice(
-        &fs::read("reference_map/crec-116-hierarchy-draft-v3.json")
+        &fs::read("tests/fixtures/reference-map/crec-116-hierarchy-draft-v3.json")
             .expect("read tracked hierarchy draft"),
     )
     .expect("decode hierarchy draft");
@@ -2974,7 +2982,7 @@ fn tracked_crec_116_correction_pass_preserves_or_explicitly_revises_note_maps() 
 #[test]
 fn tracked_crec_116_uses_bounded_grouping_nodes_without_duplicate_leaf_labels() {
     let draft: HierarchyDraft = serde_json::from_slice(
-        &fs::read("reference_map/crec-116-hierarchy-draft-v3.json")
+        &fs::read("tests/fixtures/reference-map/crec-116-hierarchy-draft-v3.json")
             .expect("read tracked hierarchy draft"),
     )
     .expect("decode hierarchy draft");
@@ -3015,7 +3023,7 @@ fn tracked_crec_116_uses_bounded_grouping_nodes_without_duplicate_leaf_labels() 
 #[test]
 fn tracked_crec_116_hierarchy_applies_the_approved_parent_corrections() {
     let draft: HierarchyDraft = serde_json::from_slice(
-        &fs::read("reference_map/crec-116-hierarchy-draft-v3.json")
+        &fs::read("tests/fixtures/reference-map/crec-116-hierarchy-draft-v3.json")
             .expect("read tracked hierarchy draft"),
     )
     .expect("decode hierarchy draft");
@@ -3112,7 +3120,7 @@ fn tracked_crec_116_hierarchy_applies_the_approved_parent_corrections() {
 
 #[test]
 fn tracked_crec_116_review_session_preserves_the_human_hierarchy_decisions() {
-    let tracked_session = "reference_map/crec-116-hierarchy-note-branch-review-session-v1.json";
+    let tracked_session = "tests/fixtures/reference-map/crec-116-hierarchy-note-branch-review-session-v1.json";
     let envelope: serde_json::Value = serde_json::from_slice(
         &fs::read(tracked_session).expect("read tracked CREC-116 review session"),
     )
@@ -3169,8 +3177,7 @@ fn tracked_crec_116_review_session_preserves_the_human_hierarchy_decisions() {
         "approved"
     );
 
-    let proposal = load_verified_note_proposal("reference_map/crec-116-note-proposal-v3.json")
-        .expect("tracked CREC-116 proposal");
+    let proposal = tracked_crec_116_proposal();
     let mut note_review = NoteReviewSession::new(&proposal).expect("create note review");
     for note in &proposal.notes {
         note_review
@@ -3187,7 +3194,7 @@ fn tracked_crec_116_review_session_preserves_the_human_hierarchy_decisions() {
     let approved_notes =
         ApprovedNoteSet::from_review(&proposal, &note_review).expect("derive approved notes");
     let draft: HierarchyDraft = serde_json::from_slice(
-        &fs::read("reference_map/crec-116-hierarchy-draft-v3.json")
+        &fs::read("tests/fixtures/reference-map/crec-116-hierarchy-draft-v3.json")
             .expect("read tracked hierarchy draft"),
     )
     .expect("decode tracked hierarchy draft");
@@ -3217,9 +3224,9 @@ fn tracked_crec_116_review_session_preserves_the_human_hierarchy_decisions() {
 }
 
 #[test]
-fn tracked_crec_116_approved_hierarchy_is_complete_and_source_bound() {
+fn tracked_crec_116_approved_hierarchy_is_complete_and_bound_to_the_proposal() {
     let hierarchy: ApprovedHierarchy = serde_json::from_slice(
-        &fs::read("reference_map/crec-116-approved-hierarchy-v1.json")
+        &fs::read("tests/fixtures/reference-map/crec-116-approved-hierarchy-v1.json")
             .expect("read tracked CREC-116 approved hierarchy"),
     )
     .expect("decode tracked CREC-116 approved hierarchy");
@@ -3227,8 +3234,7 @@ fn tracked_crec_116_approved_hierarchy_is_complete_and_source_bound() {
         .validate()
         .expect("tracked CREC-116 approved hierarchy");
 
-    let proposal = load_verified_note_proposal("reference_map/crec-116-note-proposal-v3.json")
-        .expect("tracked CREC-116 proposal");
+    let proposal = tracked_crec_116_proposal();
     let mut note_review = NoteReviewSession::new(&proposal).expect("create note review");
     for note in &proposal.notes {
         note_review
@@ -3245,7 +3251,7 @@ fn tracked_crec_116_approved_hierarchy_is_complete_and_source_bound() {
     let approved_notes =
         ApprovedNoteSet::from_review(&proposal, &note_review).expect("derive approved notes");
     let draft: HierarchyDraft = serde_json::from_slice(
-        &fs::read("reference_map/crec-116-hierarchy-draft-v3.json")
+        &fs::read("tests/fixtures/reference-map/crec-116-hierarchy-draft-v3.json")
             .expect("read tracked hierarchy draft"),
     )
     .expect("decode tracked hierarchy draft");
@@ -3297,7 +3303,7 @@ fn tracked_crec_116_approved_hierarchy_is_complete_and_source_bound() {
 #[test]
 fn tracked_nostr_technical_subject_uses_one_coherent_label() {
     let draft: HierarchyDraft = serde_json::from_slice(
-        &fs::read("reference_map/crec-116-hierarchy-draft-v3.json")
+        &fs::read("tests/fixtures/reference-map/crec-116-hierarchy-draft-v3.json")
             .expect("read tracked hierarchy draft"),
     )
     .expect("decode hierarchy draft");
@@ -3320,7 +3326,7 @@ fn tracked_nostr_technical_subject_uses_one_coherent_label() {
 #[test]
 fn tracked_books_and_history_subjects_are_separate() {
     let draft: HierarchyDraft = serde_json::from_slice(
-        &fs::read("reference_map/crec-116-hierarchy-draft-v3.json")
+        &fs::read("tests/fixtures/reference-map/crec-116-hierarchy-draft-v3.json")
             .expect("read tracked hierarchy draft"),
     )
     .expect("decode hierarchy draft");

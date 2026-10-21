@@ -11,9 +11,6 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-EXPERIMENT = ROOT / "sse_multivector/real-note-fine-segmentation-v1"
-FROZEN = EXPERIMENT / "vectors"
-COMPOSE = EXPERIMENT / "coverage-expansion-v1/coverage_artifacts.py"
 
 
 def read(path):
@@ -82,6 +79,22 @@ class ExactMaskDeduplicationCliTests(unittest.TestCase):
                 {"id": "S8", "subject": "Unresolved.", "judgment": "unresolved"},
             ]
         )
+        self.encoder = self.root / "encoder.json"
+        self.subject_package = self.root / "subject-package.json"
+        self.mask_package = self.root / "mask-package.json"
+        write(self.encoder, {
+            "schema_version": 1,
+            "checkpoint_path": "unused/checkpoint", "checkpoint_sha256": "a" * 64,
+            "base_model_artifact_path": "unused/model",
+            "base_model_artifact_tree_sha256": "b" * 64,
+            "worker_path": "sse_multivector/worker.py", "worker_sha256": "c" * 64,
+            "container_image": "sha256:" + "d" * 64, "note_batch_size": 8,
+            "model": {"base_model": "sentence-transformers/sentence-t5-base",
+                      "dimensions": 2, "maximum_tokens": 512,
+                      "pooling": "selected-contextual-token-mean-linear-relu-linear-v1"},
+        })
+        write(self.subject_package, {"status": "frozen", "version": "ASv6.23"})
+        write(self.mask_package, {"status": "frozen", "version": "MPv3.5"})
 
     def cli(self, *arguments, success=True):
         result = subprocess.run(
@@ -107,9 +120,9 @@ class ExactMaskDeduplicationCliTests(unittest.TestCase):
             "sse_multivector.real_note_segmentation",
             "prepare",
             reviewed,
-            FROZEN / "encoder.json",
-            FROZEN / "subject-package.json",
-            FROZEN / "mask-package.json",
+            self.encoder,
+            self.subject_package,
+            self.mask_package,
             prepared,
             success=success,
         )
@@ -229,50 +242,6 @@ class ExactMaskDeduplicationCliTests(unittest.TestCase):
             self.assertEqual(before, {key: after[key] for key in before})
         self.assertEqual(8, len(read(vectors / "candidate-request.json")["inputs"]))
 
-    def test_compose_cli_keeps_all_frozen_rows_and_new_subject_associations(self):
-        frozen_before = {path.name: identity(path) for path in FROZEN.iterdir()}
-        prepared, _ = self.prepare(self.document, "deduplicated")
-        added = self.finalize(prepared, "added")
-        selection = self.root / "selection.json"
-        write(
-            selection,
-            {"schema_version": 1, "note_ids": [note["note_id"] for note in self.document["notes"]]},
-        )
-        combined = self.root / "combined"
-        self.cli(COMPOSE, "compose", FROZEN, added, selection, combined)
-        old_map = read(FROZEN / "vector-map.json")
-        added_map = read(added / "vector-map.json")
-        combined_map = read(combined / "vector-map.json")
-        old_count = old_map["vector_count"]
-        self.assertEqual(945, old_count)
-        self.assertEqual(953, combined_map["vector_count"])
-        self.assertEqual(old_map["vectors"], combined_map["vectors"][:old_count])
-        for filename in ("raw-vectors.f32le", "normalized-vectors.f64le"):
-            self.assertEqual(
-                (FROZEN / filename).read_bytes() + (added / filename).read_bytes(),
-                (combined / filename).read_bytes(),
-            )
-        self.assertEqual(
-            read(FROZEN / "reviewed-input.json")["notes"] + self.document["notes"],
-            read(combined / "reviewed-input.json")["notes"],
-        )
-        old_note_count = len(old_map["notes"])
-        for original, composed in zip(
-            added_map["vectors"], combined_map["vectors"][old_count:], strict=True
-        ):
-            self.assertEqual(original["vector_id"], composed["vector_id"])
-            self.assertEqual(original["worker_subject_id"], composed["worker_subject_id"])
-            original_sources = original.get("reviewed_subjects", [])
-            composed_sources = composed.get("reviewed_subjects", [])
-            self.assertEqual(len(original_sources), len(composed_sources))
-            for source, copied in zip(original_sources, composed_sources, strict=True):
-                expected = dict(source)
-                expected["reviewed_note_index"] += old_note_count
-                expected["note_short_id"] = f"N{expected['reviewed_note_index'] + 1:03d}"
-                self.assertEqual(expected, copied)
-        self.assertEqual(
-            frozen_before, {path.name: identity(path) for path in FROZEN.iterdir()}
-        )
 
     def test_invalid_opt_in_or_invalid_duplicate_mask_is_not_silently_accepted(self):
         for index, value in enumerate((None, 0, 1, "true", [])):

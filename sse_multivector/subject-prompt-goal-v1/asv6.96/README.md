@@ -73,7 +73,7 @@ preservation audits do not establish semantic correctness or model adherence.
 
 ## Provenance and verification
 
-Native [source edits](prompt-edits.json) and [template edits](edits.json) pin
+Native source edits (`03bd9e45:sse_multivector/subject-prompt-goal-v1/asv6.96/prompt-edits.json`) and template edits (`03bd9e45:sse_multivector/subject-prompt-goal-v1/asv6.96/edits.json`) pin
 ASv6.95 and produce versioned revision receipts. The authored order check first
 fails on ASv6.95 after validating all seven outputs through the production
 subjects adapter: instructions remain after the examples. The focused checks

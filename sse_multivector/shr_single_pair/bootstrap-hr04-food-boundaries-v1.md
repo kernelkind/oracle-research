@@ -25,7 +25,7 @@ ASv6.100, template SHA-256
 `0e3fdfb713128233ba65070c0092914a38b0059a2eb5e873c0d828add1c5d52f`.
 No deprecated subject input or generated ancestor meaning enters the requests.
 
-The [frozen test specification](hierarchy-bootstrap-v109-hr04-food-boundaries-v1.spec.json)
+The [frozen test specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v109-hr04-food-boundaries-v1.spec.json` at `03bd9e45`)
 uses unchanged Bootstrap-v109, GPT-6.1 Sol medium, SSE, automatic prefix caching
 and the main shared worker. The native adapter's exact `INPUT_JSON` strings,
 rendered prompts, schemas and actual provider bodies match each original HR04
@@ -94,7 +94,7 @@ retains node-specific evidence under `historical_witnesses`. Receipt references
 inside review metadata are descriptive, not automatic receipt validation; the
 two original native receipts were inspected separately.
 
-The [unchanged-v109 preparation specification](hierarchy-bootstrap-v109-asv6.100-regressions-v4.spec.json)
+The [unchanged-v109 preparation specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v109-asv6.100-regressions-v4.spec.json` at `03bd9e45`)
 supports an offline input/isolation check. It does not select a new Bootstrap
 candidate or authorize inference. No Bootstrap prompt or historical artifact
 is changed by retaining this regression.
@@ -162,7 +162,7 @@ definitions and three warmups, with zero reuses, failures or retries. All six
 definition requests report cache hits. The existing attempt counter moved from
 19,368 to 19,377 without reset.
 
-[Native accounting](hierarchy-bootstrap-v109-hr04-food-boundaries-usage-v1.json)
+[Native accounting] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v109-hr04-food-boundaries-usage-v1.json` at `03bd9e45`)
 records historical generation separately from this task's three fresh draws.
 `usage-native-v1.json` reports a fresh API-equivalent total of $0.0477292,
 including warmups; usage is complete. These are catalog estimates rather than

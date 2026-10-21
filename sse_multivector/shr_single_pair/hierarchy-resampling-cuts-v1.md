@@ -1868,7 +1868,7 @@ frozen spec/plan, paired vectors, both native requests/results, complete
 `agreement-audit.json` cross-tab and compact `agreement-groups.md`. Independent
 checks validate source/code hashes, paired opaque IDs/order, configuration,
 disjoint complete group/unassigned partitions and the original title partition.
-The task worktree remains for these frozen source/artifact paths. No model,
+ No model,
 training, new encoding, consolidation, UI update or production policy change
 occurred.
 
@@ -1928,7 +1928,7 @@ calculation reconstructs every group directly from set intersections, verifies
 the complete disjoint input union, and confirms every strict-agreement block
 remains intact within a resulting group. All checks pass. Source hashes remain
 unchanged. No new encoding, model call, training, hierarchy, UI or HiGen policy
-change occurred. The existing task worktree remains for frozen evidence paths.
+change occurred.
 
 ### Combined title and meaning similarity before HDBSCAN
 
@@ -1999,8 +1999,7 @@ against the saved-view mean is `5.55e-16`.
 External ignored evidence is retained in
 `oracle-mvp-hdbscan-combined-view-v1/target/hdbscan-combined-view-v1/`:
 frozen spec/plan and paired input, raw combined request/result, complete
-`audit.json` and compact `groups.md`. The task worktree remains for these frozen
-source/artifact paths. No new SSE encoding, model call, training, consolidation,
+`audit.json` and compact `groups.md`.  No new SSE encoding, model call, training, consolidation,
 hierarchy generation, UI update or HiGen integration occurred.
 
 ### Unchanged combined similarity on the HR36 source corpus
@@ -2284,8 +2283,7 @@ canonical graph, synthetic definition or UI change occurs.
 Ignored evidence is on the external drive, linked from the retained task
 worktree `oracle-mvp-combined-section-scoring-v1/target/combined-section-scoring-v1/`:
 `spec.json`, the frozen panel and complete `comparison-and-verification.json`.
-Executed source is `5061f8d5`; the worktree remains for frozen source and artifact
-paths. Before repeating the representation comparison on another corpus,
+Executed source is `5061f8d5`. Before repeating the representation comparison on another corpus,
 inspect whether separate roots duplicate information in this saved result.
 This directly tests the user's clarified quality criterion; breadth alone is
 not a reason to change the grouping. A later unchanged comparison on the other
@@ -2357,16 +2355,7 @@ Audit evidence is ignored on the external drive, linked at
 `oracle-mvp-root-information-audit-v1/target/root-information-audit-v1/audit.json`.
 It retains all 27 split-title families with complete meanings, ranked cross-root
 meaning matches for every section pair, seven inspected witnesses, their
-nearest entries and center/group routing, plus different-sense controls.
-The task worktree remains for this evidence path; source hierarchies and saved
-producer files are unchanged.
-
-The next suggested component test is whether requiring reciprocal nearest
-matches to stay together can reduce these splits while preserving different
-senses and the coverage/size requirements. This targets connections already
-present in the saved vectors without choosing a new fixed similarity cutoff.
-It remains an untested hypothesis; the seven post-selected witnesses alone do
-not establish that such a rule generalizes or is safe to adopt.
+nearest entries and center/group routing, plus different-sense controls. Source hierarchies and saved producer files are unchanged.
 
 ### Reciprocal nearest matches before broader section assignment
 
@@ -2470,16 +2459,7 @@ unchanged on resume. All 63 checks pass on combined main. Generated evidence is
 ignored on the external drive, linked from the retained executed worktree at
 `oracle-mvp-reciprocal-section-groups-v1/target/reciprocal-section-groups-v1/`:
 the frozen spec/panel, runtime and complete `comparison-and-verification.json`.
-Source checkpoint is `100fdb6b`; the worktree remains for frozen execution and
-artifact paths. No inference, encoding, training, UI or HiGen activation occurs.
-
-Next suggested component test: allow an entry that points into a reciprocal
-group to join that group, while measuring unwanted connections and any large
-components. Payments motivates this directly: a third definition finds its
-matching topic but is excluded solely by one-to-one reciprocity. This would
-test that remaining mechanism without introducing a fixed cosine threshold.
-It is not yet implemented, run or approved for adoption; the present improvement
-does not establish a general root-distinctness guarantee.
+Source checkpoint is `100fdb6b`. No inference, encoding, training, UI or HiGen activation occurs.
 
 ### One-pass attachments into reciprocal groups
 
@@ -2564,14 +2544,8 @@ resume validate. All 65 current checks pass on combined main. Source checkpoint
 is `bbde4812`; ignored evidence is on the external drive, linked under the
 retained executed worktree's `target/nearest-group-attachments-v1/`:
 the frozen spec/panel, runtime and `comparison-and-verification.json`.
-The worktree remains for frozen code and artifact paths. No inference, encoding,
+ No inference, encoding,
 training, UI refresh or HiGen activation occurs.
-
-The next suggested test is the unchanged method on the other saved hash-selected
-1,000-note corpus. This would check whether the reduction in split information
-and the size/coverage results generalize beyond the corpus that supplied these
-post-selected witnesses, while exposing further joins between different meanings.
-That test has not been started or authorized by this record.
 
 ### Manual unchanged attachment test on the second thousand-note corpus
 
@@ -2632,14 +2606,7 @@ Ignored evidence is on the external drive, linked from
 `oracle-mvp-second-corpus-attachments-manual-v1/target/second-corpus-attachments-manual-v1/`:
 the frozen grouping and section specs, actual native groups, all three panels,
 runtime, `cross-section-matches.json` and complete `comparison-and-verification.json`.
-Executed source checkpoint is `f23e861c`; the task worktree remains for frozen
-code and artifact paths. No HiGen policy, hierarchy or review UI is changed.
-
-A useful next manual component test is one child level beneath the largest
-resulting root. Root breadth is permitted because deeper levels should narrow
-the choices; that test would check whether the same method actually provides
-useful narrowing before a hierarchy-construction integration proposal. This
-further test has not been started or authorized by this record.
+Executed source checkpoint is `f23e861c`. No HiGen policy, hierarchy or review UI is changed.
 
 ### Manual child subdivision beneath the largest second-corpus root
 
@@ -2724,18 +2691,8 @@ is `44081e94`; its 66 relevant production-path checks pass on combined main.
 Ignored evidence is retained on the external drive, linked under
 `oracle-mvp-second-corpus-child-manual-v1/target/second-corpus-child-manual-v1/`:
 the frozen spec/panel, cross-child matches, `all-starts-review.json` and complete
-`comparison-and-verification.json`. The worktree remains for frozen source and
-artifact paths. No model calls, new encoding, training, HiGen activation or UI
+`comparison-and-verification.json`.  No model calls, new encoding, training, HiGen activation or UI
 refresh occur.
-
-A useful next component test is a matched child split without the optional
-attachment pass, keeping the original fine groups, reciprocal constraints,
-vectors, seeds and objective fixed. Food preparation supplies a concrete reason
-to isolate this constraint. Check both the information boundaries and any
-return of split definitions: removing attachments may improve one at the
-expense of the other. This would test the component's net contribution at
-child level rather than picking a preferred start from reviewed witnesses.
-That further fit has not been started or authorized by this record.
 
 ### Manual unchanged child splits beneath all six second-corpus roots
 
@@ -4123,17 +4080,6 @@ usefulness, duplicated information or decisions. The existing vectors contain
 useful signals that this objective sometimes discards. This does not prove
 that every existing group is semantically correct or that protecting every
 neighbor edge will improve the entire hierarchy.
-
-The next suggested manual component test is to score the **already saved**
-eight alternatives by preservation of reciprocal nearest connections between
-whole groups, and inspect which partitions that would favor in both corpora.
-Keep original meanings/fine groups separate and unchanged: sharing a broader
-section is not equivalence or a permanent fine-group merge. Include the retained
-different-sense controls and inspect complete memberships, rather than selecting
-a seed solely because it repairs these post-selected examples. This targets
-the observed loss of direct connections without another encoding or model
-call. It remains a hypothesis, not an adopted selection rule; no alternative
-partition or hierarchy was generated or activated in this audit.
 
 External ignored evidence:
 `/mnt/external/algos-archive/oracle-mvp/first-two-level-audit-v1/`:

@@ -117,4 +117,4 @@ Token usage: ASv6.13 used 47,331 input and 6,751 output tokens; ASv6.21 used 51,
 
 [Predeclared comparison](./proposal.json) · Assessment (`./assessment.json`) · Review reconciliation (`./review-reconciliation.json`) · Verification (`./verification.json`)
 
-See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-subject-prompt-goal-v1`.
+See conversion gaps (`03bd9e45:docs/experiments/publication-gaps.csv`) for `collection:tracked-subject-prompt-goal-v1`.

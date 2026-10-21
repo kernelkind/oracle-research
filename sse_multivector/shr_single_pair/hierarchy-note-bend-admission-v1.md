@@ -729,8 +729,7 @@ and complete reasons; `whole-note-results-after-review.json` is a separate
 updated assessment copy. Identity, current-selection, source-hash, bounded-change
 and recount checks pass. All other note/root judgments and the numerical replay
 remain unchanged. No new model calls, encodings, training, scoring, production
-code, hierarchy edits or UI refresh occurred. Retain the research worktree for
-the frozen evidence paths on external storage.
+code, hierarchy edits or UI refresh occurred.
 
 ### Verification and retained evidence
 
@@ -893,7 +892,7 @@ historical membership must not silently become new semantic gold.
 
 Ignored evidence in the retained research worktree:
 `target/food-halves-v1/note-bend-admission-v1/`, through its external-storage
-symlink. The worktree remains necessary for frozen source and artifact paths.
+symlink.
 
 - Plan SHA256:
   `9f8ff1144e6e4e5b5671ac4daa1ae582f67502b7f62ac10cc9cef17216f6ea51`.

@@ -137,8 +137,6 @@ Review set: `RN0a50c8a3dcab`. All decisions match the session and original revie
 | `arm-b-user-response.json` | `0d9cf5e6ffbf6677aaff9ecf800d0df2d34e58283bb402d38f24ed47e1814e40` |
 | `arm-b-user-session.json` | `31f1ffa18c264bc08452ba758e73690cb4d2a478cf826bc245ad1041da79128d` |
 
-The local session and response files for both reviews remain untracked and unmodified by this documentation update.
-
 ### Commands to revisit the completed reviews
 
 These historical commands require the original local review artifacts and the

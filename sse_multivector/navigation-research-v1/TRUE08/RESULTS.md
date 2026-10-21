@@ -112,6 +112,6 @@ The fixed parent and repeated Steak node are bound to existing v21 category IDs.
 - Independent verification (`./verification.json`) reproduced all 16 scores and decisions and checked frozen inputs, prior artifacts and unchanged model settings. The Steak forward result exactly reproduces TRUE07. Its reverse score differs only by about 0.000000025, with no decision change.
 - Offline local run: 63.6 seconds including checkpoint verification/loading; 43.37 GiB peak process RSS. One model process, 60GiB scope memory limit, no scope swap. All 42 relevant regressions passed before and after.
 - Shared production code and all frozen TRUE07 inputs/raw outputs remain unchanged. The legacy fixture schema tag is TRUE03; runtime identity is TRUE08. Raw shared DECISIONS.md says “holdout,” but this is a selected diagnostic.
-- No hierarchy, title change, extra model comparison or UI was generated. Existing Plane card is CREC-127; the Plane tool was unavailable, so no external card update is claimed.
+- No hierarchy, title change, extra model comparison or UI was generated.
 
 **Selected data:** Compact pair-score results, inputs and parameters for `TRUE08/run` are selected for release as `numerical/pair-scores-e42f023da4b36520` in the [publication catalog](../../../docs/experiments/publications.csv). These compact exports use a different format. Other cited artifacts remain separate originals.

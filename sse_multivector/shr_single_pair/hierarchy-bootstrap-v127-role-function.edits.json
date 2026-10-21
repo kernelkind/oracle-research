@@ -1,8 +1,0 @@
-{
-  "edits": [
-    {
-      "old": "When something qualifies through a role, use or component relationship, specify both the kind and the required relationship.",
-      "new": "When something qualifies through a role, use or component relationship, specify both the kind and the required relationship. Decide whether having that relationship is enough once the kind's conditions hold, or whether a particular function or purpose is also required. State any required function or purpose explicitly, including whether it concerns an intended or actual role."
-    }
-  ]
-}

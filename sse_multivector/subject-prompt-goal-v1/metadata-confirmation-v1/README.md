@@ -44,4 +44,4 @@ All 12 calls used unique fresh threads and working directories, one turn and no 
 
 Usage: 28,296 input and 6,427 output tokens, including 2,636 reasoning tokens. Minimum observed available memory was 105.23 GiB; both memory and I/O PSI avg10 maxima were zero. Calls were sequential with host monitoring and the existing launcher limits. No new paid resource, credential change, model change or downstream work occurred. The canonical ASv6.8 registry, acceptance criteria and final inputs are unchanged.
 
-See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-subject-prompt-goal-v1`.
+See conversion gaps (`03bd9e45:docs/experiments/publication-gaps.csv`) for `collection:tracked-subject-prompt-goal-v1`.

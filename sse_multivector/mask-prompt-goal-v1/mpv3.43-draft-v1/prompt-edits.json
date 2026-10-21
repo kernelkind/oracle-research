@@ -1,9 +1,0 @@
-{
-  "base_sha256": "5d4d41e92ad14d47272ca0780ce4a24dbdf2ef7d9a3d218f06e2c8da190c4f0f",
-  "edits": [
-    {
-      "old": "Identify how the words in the post relate to one another before choosing which to include. Do not select extra words solely to make a relationship explicit if those words also add meaning the supplied subject does not require.",
-      "new": "Select words for the meanings and relationships they have in the post, not for a meaning created by combining them out of context. A relationship can remain clear from the post without every connecting word being selected."
-    }
-  ]
-}

@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "prompt": {
+    "id": "Hierarchy-consolidated-grouped-v1",
+    "path": "../../sse_multivector/shr_single_pair/Hierarchy-consolidated-grouped-v1.md"
+  },
+  "dataset": {
+    "adapter": "generic",
+    "path": "unused-source.json"
+  },
+  "runner": {
+    "provider": "openai-codex",
+    "auth_file": null,
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "medium",
+    "transport": "sse",
+    "runner_binary": "../../sse_multivector/run-model.sh",
+    "prompt_cache": true,
+    "timeout_seconds": 3600,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "meaning": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "title",
+        "meaning"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "scheduling_group": "hierarchy-example"
+}

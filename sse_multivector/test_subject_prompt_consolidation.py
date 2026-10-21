@@ -43,8 +43,6 @@ class ConsolidatedSubjectPromptTests(example_checks.FiniteSourceCollectionPrompt
         before = BASELINE_PATH.read_text()
         after = self.path.read_text()
         self.assertEqual(self.validated_blocks(before), self.validated_blocks(after))
-        template = ROOT / "experiment_specs" / f"{self.path.parent.name}-hr01-post-template.txt"
-        self.assertEqual(template.read_text(), after + "\n<post>\n{POST}\n</post>")
         # This counts existing assignments, not rewritten instruction meanings.
         self.assertEqual(
             Counter(rule for case in example_checks.FOCUSED_CASES for rule in case["primary_rules"]),
@@ -93,8 +91,6 @@ class FoodClassificationSubjectPromptTests(example_checks.GroupedSourceCopiesPro
         for block in blocks[1]:
             output = re.search(r"<output>\n(.*?)\n</output>", block, re.S).group(1)
             experiment_inputs.validate({"adapter": "subjects"}, {}, output, None)
-        template = ROOT / "experiment_specs/asv6.97-hr01-post-template.txt"
-        self.assertEqual(template.read_text(), after + "\n<post>\n{POST}\n</post>")
         self.assertEqual(
             Counter(rule for case in example_checks.FOCUSED_CASES for rule in case["primary_rules"]),
             Counter({f"R{i:02d}": 1 for i in range(1, 35)}),
@@ -135,8 +131,6 @@ class TitledRecipeSubjectPromptTests(unittest.TestCase):
         for block in blocks:
             output = re.search(r"<output>\n(.*?)\n</output>", block, re.S).group(1)
             experiment_inputs.validate({"adapter": "subjects"}, {}, output, None)
-        template = ROOT / "experiment_specs/asv6.98-hr01-post-template.txt"
-        self.assertEqual(template.read_text(), after + "\n<post>\n{POST}\n</post>")
 
 
 class SharedToolSubjectPromptTests(FoodClassificationSubjectPromptTests):
@@ -187,8 +181,6 @@ class SharedToolSubjectPromptTests(FoodClassificationSubjectPromptTests):
         for block in blocks[1]:
             output = re.search(r"<output>\n(.*?)\n</output>", block, re.S).group(1)
             experiment_inputs.validate({"adapter": "subjects"}, {}, output, None)
-        template = ROOT / "experiment_specs" / f"{self.path.parent.name}-hr01-post-template.txt"
-        self.assertEqual(template.read_text(), after + "\n<post>\n{POST}\n</post>")
         self.assertEqual(
             Counter(rule for case in example_checks.FOCUSED_CASES for rule in case["primary_rules"]),
             Counter({f"R{i:02d}": 1 for i in range(1, 35)}),

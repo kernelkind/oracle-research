@@ -1,9 +1,0 @@
-{
-  "schema_version": 1,
-  "groups": {
-    "consolidation_v11_grilling_plan_controls": [
-      "../../target/canonical-shaping-selection-v1/consolidation-v11-grilling-plan-first-v1",
-      "../../target/canonical-shaping-selection-v1/consolidation-v11-grilling-plan-repeat-v1"
-    ]
-  }
-}

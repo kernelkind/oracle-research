@@ -1,8 +1,0 @@
-{
-  "prepared_experiment": {
-    "path": "../../target/compare-v179-examples-ablation-v2/v179-pair-01",
-    "sha256": "0502f9dac9a039fb6f407b97c9dc6d5f18c075379f12aad23eb6d60dcdf4d43e"
-  },
-  "input_view": "symmetric_fixed_meanings",
-  "input_order": ["B", "A"]
-}

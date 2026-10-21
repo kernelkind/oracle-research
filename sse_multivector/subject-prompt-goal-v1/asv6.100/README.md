@@ -42,7 +42,7 @@ participant. ASv6.100 passes 169 focused consolidation, example, revision and
 attempt-budget checks through production subject validation. Static correctness
 does not establish teacher correctness.
 
-Pinned native [source edits](prompt-edits.json) and [template edits](edits.json)
+Pinned native source edits (`03bd9e45:sse_multivector/subject-prompt-goal-v1/asv6.100/prompt-edits.json`) and template edits (`03bd9e45:sse_multivector/subject-prompt-goal-v1/asv6.100/edits.json`)
 generate separate revision receipts. Source SHA256:
 `76aa2c831ab6d65802de4c76a960f8618c7ec7ee4cd62e619621ec8a453b095d`.
 Static review catches and removes a duplicated phrase in two context fields

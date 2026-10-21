@@ -226,6 +226,6 @@ These are all 24 canonical v21 masks for the eight categories. They were availab
 - Independent verification (`./verification.json`) reproduced every score and decision, checked all frozen/source hashes, and found no discrepancies. Exact repeated inputs retained their old decisions; maximum score difference from TRUE05/06 was 0.0000000482. All 42 relevant regression tests passed before and after inference.
 - The local run used the cached pinned TRUE weights, CPU float32 and four threads. It took 105.1 seconds including model verification/loading, with 43.53 GiB peak process RSS. No external model API, rental, training or download.
 - Existing v21 titles, source masks, TRUE05, TRUE06 and shared inference code were not changed. The shared fixture's TRUE03 tag is only schema compatibility; the runtime experiment is TRUE07. The generic raw DECISIONS.md uses the word “holdout”; this experiment is not a holdout.
-- No UI, category graph or later model comparison was built in this task. CREC-127 is the existing tracking card; Plane MCP was unavailable, so no external card update is claimed.
+- No UI, category graph or later model comparison was built in this task.
 
 **Selected data:** Compact pair-score results, inputs and parameters for `TRUE07/run` are selected for release as `numerical/pair-scores-d1116bc357976e0f` in the [publication catalog](../../../docs/experiments/publications.csv). These compact exports use a different format. Other cited artifacts remain separate originals.

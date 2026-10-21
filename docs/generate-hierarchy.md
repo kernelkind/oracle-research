@@ -22,8 +22,7 @@ public encoder downloads and hash checks, subject extraction, definition writing
 CPU encoding, clustering, unsigned publication export and interactive browsing.
 Offline export and browsing also passed after the VM login was revoked.
 This validates the small workflow; semantic quality and larger-corpus resource
-requirements remain separate questions. The final public repository URLs and
-runner submodule setup remain pending.
+requirements remain separate questions. The public repository URLs and runner submodule setup remain pending.
 
 ## 1. Install the runtime
 
@@ -75,8 +74,7 @@ Python package or tokenizer conversion is needed.
 
 ## 2. Authenticate
 
-For a machine without Anvil's account service, explicitly select direct
-authentication and log in through pi-ai:
+Select direct authentication and log in through pi-ai:
 
 ```bash
 cd "$ORACLE_ROOT"
@@ -102,10 +100,6 @@ revocation, then failed with `401 refresh_token_invalidated`. The local credenti
 file was removed. This verifies revocation of renewal; immediate invalidation of
 an already-issued access token was not tested. Deleting a local credential file
 alone does not revoke the credential at OpenAI.
-
-On Anvil, leave `EXPERIMENT_RUNNER_AUTH` unset to continue using the selected
-`agent-account` account and the existing credential service. Direct mode is an
-explicit alternative; neither mode falls back to the other.
 
 To use OpenRouter instead, complete its login:
 
@@ -197,7 +191,7 @@ starts from an exported file; the generator does not fetch posts from relays.
 Choose several posts with enough shared subject matter to form groups. One
 post is useful for checking input format, but not for evaluating discovery.
 
-The maintained [example configurations](../sse_multivector/examples/hierarchy-v5.3/)
+The maintained [example configurations](../examples/hierarchy-v5.3)
 use paths relative to their own files:
 
 | File | Purpose |
@@ -235,7 +229,7 @@ cd "$ORACLE_ROOT"
 source target/hierarchy-env/bin/activate
 python sse_multivector/experiment.py prepare \
   target/hierarchy-example/subjects \
-  --spec sse_multivector/examples/hierarchy-v5.3/subjects.spec.json \
+  --spec examples/hierarchy-v5.3/subjects.spec.json \
   --history-root target/hierarchy-example/history
 python sse_multivector/experiment.py show target/hierarchy-example/subjects
 ```
@@ -273,7 +267,7 @@ Prepare the frozen hierarchy state without inference:
 cd "$ORACLE_ROOT"
 python sse_multivector/experiment.py prepare-hierarchy \
   target/hierarchy-example/hierarchy \
-  --spec sse_multivector/examples/hierarchy-v5.3/hierarchy.spec.json \
+  --spec examples/hierarchy-v5.3/hierarchy.spec.json \
   --history-root target/hierarchy-example/history
 ```
 
@@ -357,7 +351,7 @@ shows restoration, export and browsing without models or login.
 All generated files in this example live under ignored `target/`. Preserve the
 source posts, collected subjects, saved experiment history and hierarchy state
 if you want to resume or audit the run. The two viewer files are sufficient for
-browsing. See [HiGen V5.3](recommendation-engine/hierarchy-generation-v5.md) for
+browsing. See [HiGen V5.3](design/hierarchy-generation.md) for
 the algorithm and [the runner reference](../sse_multivector/model-runner.md)
 for detailed preparation, receipt and recovery behavior.
 
@@ -365,7 +359,7 @@ for detailed preparation, receipt and recovery behavior.
 
 `export-canonical-nostr` saves a completed hierarchy as signed Nostr events in a
 local JSONL file
-using the [toy hierarchy snapshot protocol](recommendation-engine/design/hierarchy-serving-protocol-decisions.md).
+using the [toy hierarchy snapshot protocol](design/nostr-hierarchy-snapshot.md).
 
 The format is intended for local or private testing. Please avoid publishing
 its experimental events to public Nostr relays. Exporting makes no model calls
@@ -403,7 +397,7 @@ more than 500 directly linked posts.
 `hierarchy-events.jsonl` contains kind `8680` node events, children before
 parents, followed by the kind `18680` starting event. Nodes contain titles,
 ordered child references and source-post IDs under the
-[toy hierarchy snapshot protocol](recommendation-engine/design/hierarchy-serving-protocol-decisions.md).
+[toy hierarchy snapshot protocol](design/nostr-hierarchy-snapshot.md).
 Source post bodies and the secret key are not included. Each node links only
 posts absent from its descendants; posts outside the hierarchy's roots are
 excluded.
@@ -412,7 +406,7 @@ The printed JSON summary gives the author public key, starting event ID, counts,
 timestamp, UUID namespace and source-state hash. Keep the namespace: if you move
 the saved run, supply it with `--uuid-namespace` to retain node UUIDs.
 `--created-at` can set the event timestamp; the default is the current time.
-See the [export reference](../sse_multivector/model-runner.md#offline-nostr-export)
+See the [export reference](../sse_multivector/model-runner.md#hierarchy-construction-and-saved-results)
 for the remaining identity and ordering details.
 
 This guide ends at the local export file; use the terminal viewer above to

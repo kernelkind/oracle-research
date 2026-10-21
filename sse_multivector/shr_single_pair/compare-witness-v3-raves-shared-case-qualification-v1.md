@@ -97,9 +97,3 @@ the corrected combined suite above passed. Reviewed support commit `2d47db56`
 is on local main through integration `cb53adbb`. Unrelated release-planning
 edits were preserved. Prepared inputs remain frozen; the native upgrade record
 captures main's review-batching/evidence-reuse adapter changes before execution.
-
-This round ends here. A proposed next diagnostic would explicitly establish
-participation use in one case and rule it out in another, holding both meanings
-fixed, to separate missing case facts from how the prompt propagates admitted
-information connections. That is a suggestion, not authorization or a prepared
-follow-on run. No Bootstrap work or hierarchy construction occurred.

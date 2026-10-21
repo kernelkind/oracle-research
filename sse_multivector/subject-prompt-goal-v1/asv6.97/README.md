@@ -45,8 +45,8 @@ These checks verify authored fixtures and production validation, not model
 accuracy. Two independent semantic reviews inspect the actual edges and source
 copies and find no new inconsistency; this does not establish model repair.
 
-Native source and template revisions use pinned [source edits](prompt-edits.json)
-and [template edits](edits.json), preserving the exact POST wrapper. Source SHA256:
+Native source and template revisions use pinned source edits (`03bd9e45:sse_multivector/subject-prompt-goal-v1/asv6.97/prompt-edits.json`)
+and template edits (`03bd9e45:sse_multivector/subject-prompt-goal-v1/asv6.97/edits.json`), preserving the exact POST wrapper. Source SHA256:
 `4533c70516beccd4c1b444b1d1c1819e2e3e72c95e78958983b662cf0e2be06a`.
 This follows the official guidance on [direct instructions and aligned examples](https://developers.openai.com/api/docs/guides/reasoning-best-practices);
 guidance compliance does not establish success on this task.

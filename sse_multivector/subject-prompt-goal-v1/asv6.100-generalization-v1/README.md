@@ -28,7 +28,7 @@ Keep ASv6.100 unchanged: source SHA-256
 `76aa2c831ab6d65802de4c76a960f8618c7ec7ee4cd62e619621ec8a453b095d`,
 template SHA-256
 `0e3fdfb713128233ba65070c0092914a38b0059a2eb5e873c0d828add1c5d52f`.
-Use [the native specification](../../experiment_specs/asv6.100-generalization-v1.json), the existing subject schema and
+Use the native specification (`03bd9e45:sse_multivector/experiment_specs/asv6.100-generalization-v1.json`), the existing subject schema and
 subscription `openai-codex/gpt-6.1-sol/medium`, WebSocket, 1,800-second timeout,
 no output cap or paid fallback. Three independent trials each contain the same
 60 complete inputs: 40 fresh real Nostr posts and 20 authored stress cases.

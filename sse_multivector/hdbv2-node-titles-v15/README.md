@@ -12,11 +12,6 @@ The user approved all three titles raised for judgment, without comments. Of the
 
 The default review reopens the three approved titles, with every member mask and my original reasoning in a separate comment:
 
-```bash
-cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
-  ./sse_multivector/hdbv2-node-titles-v15/run-review.sh
-```
-
 - Successful recipe results — S07d0857008: approved.
 - Rate reduction — S6621c8eaa9: approved.
 - Foods with “cheese” in the name — Sa6996b199f: approved.

@@ -65,23 +65,6 @@ fn manual_notes_mode_checks_categories_and_direct_parent_notes_without_a_termina
 }
 
 #[test]
-fn old_fine_segment_invocation_still_loads_without_the_manual_notes_mode() {
-    let output = Command::new(env!("CARGO_BIN_EXE_sse-subject-navigation"))
-        .args([
-            "sse_multivector/manual-subject-hierarchy-v1/hierarchy.json",
-            "sse_multivector/fine-region-hierarchy-result-v2/analysis.json",
-            "sse_multivector/fine-region-partition-result-v1/analysis.json",
-        ])
-        .output()
-        .unwrap();
-    assert!(!output.status.success());
-    assert!(
-        String::from_utf8_lossy(&output.stderr)
-            .contains("must be started from an interactive terminal")
-    );
-}
-
-#[test]
 fn unknown_manual_option_is_rejected_before_display() {
     let output = Command::new(env!("CARGO_BIN_EXE_sse-subject-navigation"))
         .args(["--notes", "a", "b", "--approve"])

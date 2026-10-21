@@ -27,7 +27,7 @@ working experimental v126 while keeping task-specific evidence, diagnostics and
 null behavior outside the shared source. Neither has new inference qualification
 or activation from this mechanical change; v126 remains the working experimental
 baseline described below. Future common writing changes must publish both new
-prompt versions together. See [the native workflow](../model-runner.md#synchronized-bootstrap-and-consolidation-definition-writing).
+prompt versions together. See [the native workflow](../model-runner.md#paired-definition-writing-prompts).
 
 ## Definitions without examples: Bootstrap-v134 and Consolidation-v22
 
@@ -56,7 +56,7 @@ preparation verifies that both full original post/hierarchy payloads match the
 saved HR38 inputs exactly. The [collection](hierarchy-bootstrap-no-examples-v1.json)
 adds the eight prior native scope/title inputs through source-bound regeneration;
 historical judgments remain outside model input and are not restored gold.
-The [specification](hierarchy-bootstrap-no-examples-v1.spec.json) uses
+The [specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-no-examples-v1.spec.json` at `03bd9e45`) uses
 GPT-6.1 Sol medium, subscription SSE, the existing five-field schema and an
 isolated runner source. There is no added generation or postprocessing step.
 
@@ -84,9 +84,7 @@ retries or exact reuses. Complete API-equivalent catalog cost is $0.0997068,
 not a subscription cash charge. All 38 relevant contract, assembly and revision
 checks pass. Frozen native results, inputs and attributed reviews remain at
 `oracle-mvp-bootstrap-no-examples-v1/target/bootstrap-no-examples-v1/draw1`.
-Retain that worktree and the isolated runner source
-`experiment-runner-bootstrap-no-examples-source-v1`, pinned at `38561fe`, for
-their absolute source and artifact references.
+
 
 This is a prompt qualification panel, not a hierarchy experiment. Existing
 meanings, vectors, saved hierarchies and constructor prompt pins are unchanged.
@@ -98,7 +96,7 @@ tested experimental source, without activation or general reliability approval.
 The user requested deeper testing, not a prompt change. The frozen
 [node selections](hierarchy-bootstrap-no-examples-deep-nodes-v1.json),
 [collection](hierarchy-bootstrap-no-examples-deep-v1.json) and
-[specification](hierarchy-bootstrap-no-examples-deep-v1.spec.json) contain 48
+[specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-no-examples-deep-v1.spec.json` at `03bd9e45`) contain 48
 inputs across 29 original posts: the two original People cases, six held-out
 People contexts, 16 broad/specific pairs and the eight original controls. This
 adds 38 previously untested inputs to the initial ten. All 2,000 origins in the
@@ -177,7 +175,7 @@ its batch, estimated quantity and both preservation/storage stages. Meaning
 generation remains stochastic; this test does not prove every boundary correct
 or compare numerical representation quality.
 
-The [native usage source](hierarchy-bootstrap-no-examples-deep-usage-v1.json)
+The [native usage source] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-no-examples-deep-usage-v1.json` at `03bd9e45`)
 aggregates 144 fresh case outputs plus three warmups: 147 attempts, zero failed
 or retry attempts, zero reuses and complete observed usage. API-equivalent
 catalog cost is $1.0519176, not a subscription cash charge. Native results,
@@ -201,7 +199,7 @@ and evidence remain fixed. Both original examples validate through production
 preparation/validation; the new-version test failed before publication and the
 38 focused checks pass afterward. Historical prompt bytes are preserved.
 
-The [specification](hierarchy-bootstrap-no-examples-deep-v135.spec.json) preserves
+The [specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-no-examples-deep-v135.spec.json` at `03bd9e45`) preserves
 the 48-input panel. Three concurrent native `prepare --from` / `run` batches
 retain each V134 draw's exact inputs and model/schema/transport settings as a
 matched baseline, with fresh requests and new prompt-cache prefixes. All 144
@@ -227,7 +225,7 @@ Required dashboard features, dahlia-request parts, conditional BCH plans and the
 particular stock-preservation plan survive all three draws. These assessments do
 not imply that every other possible semantic boundary has been qualified.
 
-[Native usage](hierarchy-bootstrap-no-examples-deep-v135-usage-v1.json) records
+[Native usage] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-no-examples-deep-v135-usage-v1.json` at `03bd9e45`) records
 147 attempts including three warmups, zero failed/retry attempts, zero reuses
 and complete observed usage. API-equivalent catalog cost is $1.0749644, not a
 subscription cash charge. Exact inputs, outputs, attributed reviews and accounting
@@ -246,7 +244,7 @@ feathered vertebrate animals; observed robins and sparrows remain outside the
 meaning. The prior two examples are preserved. The production example-validation
 test fails before publication and all 39 focused checks pass afterward.
 
-The [matched specification](hierarchy-bootstrap-no-examples-deep-v136.spec.json)
+The [matched specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-no-examples-deep-v136.spec.json` at `03bd9e45`)
 uses three concurrent native fresh draws from the same V134 panel, preserving
 all 48 inputs and model/schema/transport settings per draw. All 144 responses
 validate. Native agent reviews record:
@@ -275,7 +273,7 @@ scope. These judgments use the existing rubric and are not human approval.
 The dashboard, dahlia, conditional BCH and stock-plan controls retain their
 required details in all draws.
 
-[Native accounting](hierarchy-bootstrap-no-examples-deep-v136-usage-v1.json)
+[Native accounting] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-no-examples-deep-v136-usage-v1.json` at `03bd9e45`)
 records 147 attempts including three warmups, zero failed/retry attempts or
 reuses and complete usage. API-equivalent catalog cost is $1.0167436, not a
 subscription cash charge. Artifacts and native reviews remain under
@@ -297,7 +295,7 @@ negatives examples are preserved. This applies the
 to align examples with the desired behavior and test changes systematically.
 It adds no word cap, phrase blacklist, output cleanup or constructor migration.
 
-The [matched specification](hierarchy-bootstrap-no-examples-deep-v137.spec.json)
+The [matched specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-no-examples-deep-v137.spec.json` at `03bd9e45`)
 again preserves all 48 inputs and model/schema/transport settings from each V134
 draw. Three fresh batches start concurrently through the native shared queue.
 All 144 responses validate. Fresh attributed native agent review records:
@@ -347,7 +345,7 @@ boundary between defining range and illustration. These are not user-approved
 gold judgments. After three prompt revisions this same panel is development
 evidence, not unseen validation or a population reliability estimate.
 
-[Native accounting](hierarchy-bootstrap-no-examples-deep-v137-usage-v1.json)
+[Native accounting] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-no-examples-deep-v137-usage-v1.json` at `03bd9e45`)
 records 147 attempts including three warmups, zero failed/retry attempts or
 reuses and complete observed usage. API-equivalent catalog cost is $1.0991464,
 not a subscription cash charge. Exact inputs, baselines, outputs, attributed
@@ -402,8 +400,8 @@ ingredient clauses, one R Cheap collaboration interpretation and one Ali Smith
 meaning that adds "merely" to the prohibition on treating the arts as industry.
 These are fresh agent judgments and do not establish causal regressions.
 
-The [specification](hierarchy-bootstrap-no-examples-deep-v138.spec.json) and
-[native usage source](hierarchy-bootstrap-scope-v138-usage-v1.json) preserve the
+The [specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-no-examples-deep-v138.spec.json` at `03bd9e45`) and
+[native usage source] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-scope-v138-usage-v1.json` at `03bd9e45`) preserve the
 full-panel settings and all twelve batch references. Artifacts remain under
 `target/bootstrap-scope-v138/` in the retained task worktree. Native totals are
 153 fresh outputs, 165 attempts including twelve warmups, zero failed/retry
@@ -429,8 +427,8 @@ from the prompt examples and rules. All 40 focused checks pass after the new
 example's expected missing-publication failure. Native approved-base revision
 receipts reconstruct both compiled prompts.
 
-The [specification](hierarchy-bootstrap-no-examples-deep-v139.spec.json) and
-[native usage source](hierarchy-bootstrap-scope-v139-usage-v1.json) preserve three
+The [specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-no-examples-deep-v139.spec.json` at `03bd9e45`) and
+[native usage source] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-scope-v139-usage-v1.json` at `03bd9e45`) preserve three
 48-input batches and nine additional single-case repeats, matched to V138's
 exact inputs and model/schema/transport settings. All twelve ready batches
 start without waiting for unrelated completion; only the native shared queue
@@ -491,8 +489,8 @@ panel checks. The prompt, paired Consolidation-v27 rules, examples and construct
 pins remain unchanged throughout this test. The
 [node references](hierarchy-bootstrap-v139-unseen-nodes-v1.json),
 [collection](hierarchy-bootstrap-v139-unseen-v1.json),
-[specification](hierarchy-bootstrap-v139-unseen-v1.spec.json) and
-[usage source](hierarchy-bootstrap-v139-unseen-usage-v1.json) freeze 48 inputs as
+[specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v139-unseen-v1.spec.json` at `03bd9e45`) and
+[usage source] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v139-unseen-usage-v1.json` at `03bd9e45`) freeze 48 inputs as
 24 root/specific pairs from 24 posts by 24 authors. All source notes identify
 ASv6.100. Selection precedes all V139 outputs for these inputs.
 
@@ -621,10 +619,10 @@ failure is descriptive restatement, not a numeric cutoff. No new baseline
 inference was required. The original draw-2 answer remains the saved comparison
 baseline, separately from the replay's reused draw.
 
-The [matched specification](hierarchy-bootstrap-title-v140-matched.spec.json)
+The [matched specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-title-v140-matched.spec.json` at `03bd9e45`)
 uses the same 48 inputs as the V139 unseen test. They are now development inputs,
 not a new unseen sample. The
-[control specification](hierarchy-bootstrap-title-v140-controls.spec.json) uses
+[control specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-title-v140-controls.spec.json` at `03bd9e45`) uses
 eight selected inputs from the earlier 48-input panel: the original two People
 cases, the wine/dragon-blood comparison, Artificial intelligence, Half-and-half,
 Chicken stock, the specific stock-preservation plan and pottery soup mugs.
@@ -655,7 +653,7 @@ stock meanings retain the saved carcasses, today's batch, approximate 25-quart
 yield and both preservation/storage stages. No clear illustrative-member failure
 was identified. Agent review is not human approval.
 
-Native [accounting](hierarchy-bootstrap-title-v140-usage-v1.json) records 174 new
+Native [accounting] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-title-v140-usage-v1.json` at `03bd9e45`) records 174 new
 attempts, including six warmups, zero failures or retries, one reused baseline
 response and complete usage. API-equivalent new-call cost is $1.2641192; it is
 not a subscription cash charge. Exact results and attributed reviews remain in
@@ -673,8 +671,8 @@ examples, shared rules-v12, Consolidation-v27 and constructor pins remain
 unchanged. The existing native V140 failures establish the failing regression
 before this edit.
 
-The [matched](hierarchy-bootstrap-title-v141-matched.spec.json) and
-[control](hierarchy-bootstrap-title-v141-controls.spec.json) specifications repeat
+The [matched] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-title-v141-matched.spec.json` at `03bd9e45`) and
+[control] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-title-v141-controls.spec.json` at `03bd9e45`) specifications repeat
 the exact 48 and eight input selections from V140, three fresh draws each, using
 the corresponding V140 draws as baselines. Preparation verifies identical input
 hashes and model/runner settings. All six ready batches launch concurrently in
@@ -696,7 +694,7 @@ federal identity in both the broad shutdown root and shutdown-odds event, each
 in all three draws. No scope qualification is rejected merely for being a
 qualification. Half-and-half retains the exact US milkfat interval in all three
 controls; stock meanings retain the full batch and preservation/storage details.
-Native [accounting](hierarchy-bootstrap-title-v141-usage-v1.json) records 174 new
+Native [accounting] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-title-v141-usage-v1.json` at `03bd9e45`) records 174 new
 attempts including six warmups, zero failures/retries/reuses and complete usage.
 The API-equivalent cost is $1.2621704, not a subscription cash charge. All 41
 focused checks pass. V142 below tests brief examples of naming an entire
@@ -712,8 +710,8 @@ panels. V141's title instruction, four complete Bootstrap examples, shared
 rules-v12 and Consolidation-v27 are unchanged. Native V141 results establish the
 failing cases before this edit.
 
-The [matched](hierarchy-bootstrap-title-v142-matched.spec.json) and
-[control](hierarchy-bootstrap-title-v142-controls.spec.json) tests again freeze
+The [matched] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-title-v142-matched.spec.json` at `03bd9e45`) and
+[control] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-title-v142-controls.spec.json` at `03bd9e45`) tests again freeze
 the same 48 and eight inputs, three independent draws each, with matching V141
 baselines and verified identical input hashes/model settings. All ready batches
 launch concurrently; the pre-call plan and exact results remain in
@@ -736,7 +734,7 @@ same restriction on one broad shutdown root. All three Half-and-half controls
 retain the exact milkfat interval; the stock meanings preserve all batch and
 preservation/storage details. Scope qualifications are not counted as examples.
 All 41 focused checks pass. Native
-[accounting](hierarchy-bootstrap-title-v142-usage-v1.json) records 174 new
+[accounting] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-title-v142-usage-v1.json` at `03bd9e45`) records 174 new
 attempts including six warmups, zero failures/retries/reuses and complete usage.
 API-equivalent cost is $1.2363892, not a subscription cash charge. Constructor
 pins remain V133; no hierarchy is rebuilt or adopted.
@@ -750,8 +748,8 @@ of steps, parts or conditions. Both brief title examples, four complete examples
 shared rules-v12 and Consolidation-v27 are unchanged. V142's native failures
 establish the regression before the edit.
 
-The [matched](hierarchy-bootstrap-title-v143-matched.spec.json) and
-[control](hierarchy-bootstrap-title-v143-controls.spec.json) tests retain the
+The [matched] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-title-v143-matched.spec.json` at `03bd9e45`) and
+[control] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-title-v143-controls.spec.json` at `03bd9e45`) tests retain the
 same 48 and eight inputs, with three fresh draws each and corresponding V142
 baselines. Native preparation verifies identical input hashes and model/runner
 settings. All ready batches start concurrently; the pre-call plan and results
@@ -774,7 +772,7 @@ misattribute whose history is reported. The full meanings retain the actual
 relationship. All three Half-and-half controls retain the exact milkfat range,
 and stock meanings preserve the complete batch and preservation/storage details.
 Scope qualifications are not examples. All 41 focused checks pass. Native
-[accounting](hierarchy-bootstrap-title-v143-usage-v1.json) records 174 new attempts
+[accounting] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-title-v143-usage-v1.json` at `03bd9e45`) records 174 new attempts
 including six warmups, zero failures/retries/reuses and complete usage.
 API-equivalent cost is $1.248368, not a subscription cash charge. Constructor
 pins remain V133.
@@ -787,8 +785,8 @@ examples and immediately before the final input. The section is byte-identical,
 appears once, and no instruction or example is added. Shared rules-v12,
 Consolidation-v27 and all complete example meanings are unchanged.
 
-The [matched](hierarchy-bootstrap-title-v144-matched.spec.json) and
-[control](hierarchy-bootstrap-title-v144-controls.spec.json) tests repeat the
+The [matched] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-title-v144-matched.spec.json` at `03bd9e45`) and
+[control] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-title-v144-controls.spec.json` at `03bd9e45`) tests repeat the
 same 48 and eight inputs, three fresh draws each, with corresponding V143
 baselines and verified identical input hashes/model settings. All ready batches
 start concurrently. The pre-call plan and exact results remain under
@@ -809,7 +807,7 @@ US federal identity in the shutdown-odds event (three each). The tenth is one
 Half-and-half response that preserves the numeric interval but leaves its
 mass/weight basis implicit. Other controls preserve that basis and all stock
 batch/process details. Scope qualifications are not examples. All 41 focused
-checks pass. Native [accounting](hierarchy-bootstrap-title-v144-usage-v1.json)
+checks pass. Native [accounting] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-title-v144-usage-v1.json` at `03bd9e45`)
 records 174 new attempts including six warmups, zero failures/retries/reuses and
 complete usage. API-equivalent cost is $1.250252, not a subscription cash charge.
 Constructor pins remain V133.
@@ -823,8 +821,8 @@ the same central topic, with exact scope, steps and qualifications supplied by
 meaning. Three wrapper edits preserve shared rules-v12, Consolidation-v27 and
 all full/brief examples. Native V144 results establish the failing cases first.
 
-The [matched](hierarchy-bootstrap-title-v145-matched.spec.json) and
-[control](hierarchy-bootstrap-title-v145-controls.spec.json) tests use the same
+The [matched] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-title-v145-matched.spec.json` at `03bd9e45`) and
+[control] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-title-v145-controls.spec.json` at `03bd9e45`) tests use the same
 48 and eight inputs, three fresh draws each, with V144 baselines and verified
 identical input hashes/model settings. All ready batches launch concurrently.
 All 168 outputs are valid and non-null. The pre-call plan and exact results
@@ -850,7 +848,7 @@ broader name consistent with the original request to leave detail in meaning.
 All three Half-and-half controls preserve the exact milkfat interval and weight
 basis, and stock meanings retain the complete batch and preservation/storage
 details. Qualifications are not illustrative examples. All 41 focused checks
-pass. Native [accounting](hierarchy-bootstrap-title-v145-usage-v1.json) records
+pass. Native [accounting] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-title-v145-usage-v1.json` at `03bd9e45`) records
 174 new attempts including six warmups, zero failures/retries/reuses and complete
 usage. API-equivalent cost is $1.1539464, not a subscription cash charge. V145
 remains unqualified; constructor pins stay V133. V146 below tests naming a stated
@@ -865,8 +863,8 @@ that strategy. V145's opening task/scope framing, both brief meanings, all four
 full examples, shared rules-v12 and Consolidation-v27 are unchanged. Existing
 V145 outputs establish the failing regression before these two edits.
 
-The [matched](hierarchy-bootstrap-title-v146-matched.spec.json) and
-[control](hierarchy-bootstrap-title-v146-controls.spec.json) tests again use the
+The [matched] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-title-v146-matched.spec.json` at `03bd9e45`) and
+[control] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-title-v146-controls.spec.json` at `03bd9e45`) tests again use the
 same 48 and eight inputs, three fresh draws each, with V145 baselines and verified
 identical input hashes/model settings. All ready batches launch concurrently.
 All 168 outputs are valid and non-null. The pre-call plan and exact results
@@ -894,7 +892,7 @@ All three Half-and-half controls preserve the exact milkfat interval and weight
 basis; stock meanings preserve the full batch and process details. Qualifications
 are not examples, including the People phrasing "including those living and those
 who have died." All 41 focused checks pass. Native
-[accounting](hierarchy-bootstrap-title-v146-usage-v1.json) records 174 new attempts
+[accounting] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-title-v146-usage-v1.json` at `03bd9e45`) records 174 new attempts
 including six warmups, zero failures/retries/reuses and complete usage.
 API-equivalent cost is $1.1655304, not a subscription cash charge. V146 remains
 experimental and unqualified for adoption; constructor pins stay V133.
@@ -912,8 +910,8 @@ student example are unchanged. There is no numeric word target or punctuation
 ban. Meaning retains exact scope and qualifications; qualifications are not
 illustrative examples.
 
-The [matched](hierarchy-bootstrap-title-v147-matched.spec.json) and
-[control](hierarchy-bootstrap-title-v147-controls.spec.json) tests use the same
+The [matched] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-title-v147-matched.spec.json` at `03bd9e45`) and
+[control] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-title-v147-controls.spec.json` at `03bd9e45`) tests use the same
 48 and eight inputs, three fresh draws each, with V146 baselines and verified
 identical input hashes/model settings. All ready batches launch concurrently.
 These inputs have informed prompt revisions and are development inputs, not an
@@ -945,7 +943,7 @@ exact milkfat interval and mass/weight basis. The People definitions contain no
 illustrative people; any living/deceased wording is a scope qualification.
 All 41 focused checks pass.
 
-Native [accounting](hierarchy-bootstrap-title-v147-usage-v1.json) records 175 new
+Native [accounting] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-title-v147-usage-v1.json` at `03bd9e45`) records 175 new
 attempts including six warmups and one recovered failed attempt/retry, with no
 exact reuses or final failures. Usage is incomplete for one attempt. The known
 API-equivalent cost subtotal is $1.1817048; unknown usage is not zero cost, and
@@ -958,7 +956,7 @@ not used to tune these revisions. No hierarchy has been rebuilt or adopted.
 The user authorized testing frozen V147 on untouched inputs with fixed criteria
 and independent review. The [pre-call protocol](hierarchy-bootstrap-v147-heldout-v1.json),
 [source selectors](hierarchy-bootstrap-v147-heldout-nodes-v1.json) and
-[native specification](hierarchy-bootstrap-v147-heldout-v1.spec.json) freeze
+[native specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v147-heldout-v1.spec.json` at `03bd9e45`) freeze
 80 new posts from 80 distinct authors: 60 selected by a fixed seeded ordering and twenty keyword
 challenge selections (five each for food, People, plans/preferences and
 relationships/actions). Each post supplies one original root and one specific
@@ -1069,7 +1067,7 @@ Non-null titles have median three whitespace words, empirical 95th percentile
 seven and maximum nine; these are descriptive counts, not grading cutoffs.
 
 All 41 focused mechanical checks pass. Native
-[accounting](hierarchy-bootstrap-v147-heldout-usage-v1.json) records 484 attempts
+[accounting] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v147-heldout-usage-v1.json` at `03bd9e45`) records 484 attempts
 including three warmups and one recovered failed attempt/retry. One attempt has
 unknown usage/cost. The known API-equivalent subtotal is $3.2272744, not a
 complete cost or subscription cash charge; unknown usage is not zero cost.
@@ -1117,7 +1115,7 @@ full example outputs stay exact. The short preference example retains the word
 publication/distribution details. There is no numeric word target.
 
 The [pre-call regression collection](hierarchy-bootstrap-v149-regression-v1.json)
-and [specification](hierarchy-bootstrap-v149-regression-v1.spec.json) freeze
+and [specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v149-regression-v1.spec.json` at `03bd9e45`) freeze
 24 original ASv6.100 inputs with three fresh draws: the three agreed failures
 and 21 controls, including their broad roots, original People/numeric/stock-plan
 cases, goal naming, defining tag/constituent lists, alternatives and an unresolved
@@ -1151,7 +1149,7 @@ and weight basis, and the stock plan's complete batch/method/storage conditions.
 The uncertainties concern one Countries definition restricted to sovereign
 states and one stock title that still adds pantry storage. Neither is silently
 accepted or used to invent a word cutoff. All 42 focused mechanical checks pass.
-Native [accounting](hierarchy-bootstrap-v149-fix-usage-v1.json) records 75 new
+Native [accounting] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v149-fix-usage-v1.json` at `03bd9e45`) records 75 new
 attempts, including three warmups, with no failures, retries or reuses and
 complete usage. API-equivalent cost is $0.6801948, not subscription cash spend.
 V149 remains experimental; untouched qualification has not started.
@@ -1166,14 +1164,14 @@ the required fragility of the goods while omitting illustrative van/train modes
 copied into its selected subject. The remaining three full examples, title
 policy, shared rules-v13 and Consolidation-v28 companion are unchanged.
 
-The [regression specification](hierarchy-bootstrap-v150-regression-v1.spec.json)
+The [regression specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v150-regression-v1.spec.json` at `03bd9e45`)
 freezes the same 24 exact inputs, three fresh draws each, with V149 saved answers
 as baselines. The same gate requires all nine agreed-case responses to pass and
 no clear control regression. Qualification remains dependent on that result.
 
 The separate [qualification protocol](hierarchy-bootstrap-v150-heldout-v1.json),
 [selectors](hierarchy-bootstrap-v150-heldout-nodes-v1.json) and
-[specification](hierarchy-bootstrap-v150-heldout-v1.spec.json) freeze 80 further
+[specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v150-heldout-v1.spec.json` at `03bd9e45`) freeze 80 further
 posts from 80 authors, paired root/specific entries and three draws (480 planned
 responses). Sixty posts use seeded ordering and twenty use the same declared
 lexical challenge families. Selection excludes all 133 earlier posts and 130
@@ -1200,7 +1198,7 @@ control meaning listed illustrative capabilities. Two country definitions and
 three borderline titles remained uncertain. The review journal preserves these
 judgments; this development review is not independent qualification.
 
-Native [accounting](hierarchy-bootstrap-v150-fix-usage-v1.json) records 78 attempts:
+Native [accounting] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v150-fix-usage-v1.json` at `03bd9e45`) records 78 attempts:
 72 responses, three warmups and three recovered failed attempts. Three attempts
 lack usage, so $0.5839596 is only the known API-equivalent subtotal, not complete
 cost or subscription cash spend. The prepared V150 qualification has zero
@@ -1219,11 +1217,11 @@ Plans and preferences still use their stated goal, leaving steps and exact scope
 in meaning. Full examples, shared rules-v13 and Consolidation-v28 are unchanged.
 No title length target, punctuation constraint or production API is added.
 
-The [regression specification](hierarchy-bootstrap-v151-regression-v1.spec.json)
+The [regression specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v151-regression-v1.spec.json` at `03bd9e45`)
 uses the same 24 inputs and three fresh draws, retaining V150 answers as the
 baseline. All nine agreed-case responses must pass with no clear control
 regression before qualification can run. The [new frozen protocol](hierarchy-bootstrap-v151-heldout-v1.json)
-and [specification](hierarchy-bootstrap-v151-heldout-v1.spec.json) reuse the exact
+and [specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v151-heldout-v1.spec.json` at `03bd9e45`) reuse the exact
 80-post panel already selected for V150: there are no qualification outputs to
 inspect or tune against, and no new favorable selection is made. Its original
 selectors, exclusion manifest and rubric remain frozen. The inherited assignment
@@ -1241,7 +1239,7 @@ Earlier versions' borderline stock-title judgments are preserved rather than
 silently relabeled. The two writing-tool titles remain borderline restatements.
 All defining alternatives, seven alert tags, UK parts, dairy numeric boundaries
 and stock batch/process/storage conditions are retained. Native
-[accounting](hierarchy-bootstrap-v151-fix-usage-v1.json) records 75 attempts including
+[accounting] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v151-fix-usage-v1.json` at `03bd9e45`) records 75 attempts including
 three warmups, no failures/retries/reuses, complete usage and $0.52963 API-equivalent
 cost. The 480 qualification responses still have zero attempts and outputs.
 
@@ -1255,11 +1253,11 @@ in meaning. The rule still preserves referents and roles, derives titles solely
 from finalized meanings and allows familiar broader names. All examples, meaning
 rules, shared rules-v13 and Consolidation-v28 remain unchanged.
 
-The [regression specification](hierarchy-bootstrap-v152-regression-v1.spec.json)
+The [regression specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v152-regression-v1.spec.json` at `03bd9e45`)
 uses the same 24 inputs, three fresh draws and saved V151 answers as baselines.
 Before the [frozen qualification protocol](hierarchy-bootstrap-v152-heldout-v1.json)
 can run, all nine agreed-case responses and all three stock-plan titles must pass,
-with no clear control regression. The [qualification specification](hierarchy-bootstrap-v152-heldout-v1.spec.json)
+with no clear control regression. The [qualification specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v152-heldout-v1.spec.json` at `03bd9e45`)
 retains the exact same 80-post panel, still unused in development and with no model
 outputs from V150 or V151. No selection, rubric or desired titles change; the new
 protocol corrects the inherited version label in reviewer assignment. Constructors
@@ -1271,7 +1269,7 @@ plans use “Chicken stock preservation plan”; draw 3 still joins preservation
 storage in its title, failing the explicit stock-title gate. Country sense is
 uncertain twice and a writing-tools title once. Defining meaning conditions remain
 intact; the People qualification “considered individually or collectively” is not
-an illustrative example and passes. Native [accounting](hierarchy-bootstrap-v152-fix-usage-v1.json)
+an illustrative example and passes. Native [accounting] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v152-fix-usage-v1.json` at `03bd9e45`)
 records 75 attempts including three warmups, no failures/retries/reuses, complete
 usage and $0.581502 API-equivalent cost. Qualification still has zero attempts and
 outputs; no heldout result has informed these revisions.
@@ -1287,11 +1285,11 @@ finalized meaning, and meaning cannot be revised to fit a title. The full and br
 examples, all meaning instructions, shared rules-v13 and Consolidation-v28 are
 unchanged. There is no word limit or punctuation optimization.
 
-The [regression specification](hierarchy-bootstrap-v153-regression-v1.spec.json)
+The [regression specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v153-regression-v1.spec.json` at `03bd9e45`)
 retains 24 inputs and three fresh draws with V152 baselines. The same gate requires
 all nine agreed-case responses, all three stock-plan titles and no clear control
 regression. The [qualification protocol](hierarchy-bootstrap-v153-heldout-v1.json)
-and [specification](hierarchy-bootstrap-v153-heldout-v1.spec.json) retain the exact
+and [specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v153-heldout-v1.spec.json` at `03bd9e45`) retain the exact
 still-unrun 80-post panel and fixed rubric. V150, V151 and V152 qualification have
 no attempts or outputs. Constructors stay V133; source publication remains
 experimental. Results and native accounting will be appended after testing.
@@ -1302,7 +1300,7 @@ preservation and pantry storage; one AI meaning enumerates illustrative abilitie
 A furniture meaning's support/posture/comfort list is uncertain as possible
 illustration of bodily needs; one country meaning and two writing-tools titles
 are also uncertain. No qualification runs start. Native
-[accounting](hierarchy-bootstrap-v153-fix-usage-v1.json) records 75 attempts including
+[accounting] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v153-fix-usage-v1.json` at `03bd9e45`) records 75 attempts including
 three warmups, no failures/retries/reuses, complete usage and $0.521432 API-equivalent
 cost. Reviewers also catch a pre-call metadata typo: V153v1's purpose still names
 v152, although its actual prompt hash and assignment identify V153. Those unrun
@@ -1320,11 +1318,11 @@ illustrations demonstrate the required distinction without using qualification
 inputs, exact expected stock wording, a word limit or punctuation rules. Full
 examples, shared rules-v13 and Consolidation-v28 remain unchanged.
 
-The [regression specification](hierarchy-bootstrap-v154-regression-v1.spec.json)
+The [regression specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v154-regression-v1.spec.json` at `03bd9e45`)
 retains 24 inputs, three fresh draws and saved V153 baselines. The same gate
 requires all nine agreed-case responses, all three stock-plan titles and no clear
 control regression. The correctly labeled [qualification protocol](hierarchy-bootstrap-v154-heldout-v1.json)
-and [specification](hierarchy-bootstrap-v154-heldout-v1.spec.json) retain the
+and [specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v154-heldout-v1.spec.json` at `03bd9e45`) retain the
 unchanged 80-post panel and rubric. V150 through V153 qualification have zero
 attempts and outputs; no heldout result has informed these revisions. Constructors
 stay V133 and source remains experimental. Results will be appended after testing.
@@ -1335,7 +1333,7 @@ uncertainties (three writing-tools titles and one country meaning). AI and Peopl
 meanings omit illustrations in every draw; defining lists and numeric boundaries
 remain intact. One stock title still appends pantry storage to preservation, so
 the stock gate fails and qualification remains unrun. Native
-[accounting](hierarchy-bootstrap-v154-fix-usage-v1.json) records 75 attempts including
+[accounting] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v154-fix-usage-v1.json` at `03bd9e45`) records 75 attempts including
 three warmups, no failures/retries/reuses, complete usage and $0.5460408 API-equivalent
 cost. The counterexample demonstrated only an operation list, while the actual
 remaining failure names the goal and then appends an operation.
@@ -1350,11 +1348,11 @@ meaning instructions, shared rules-v13 and Consolidation-v28 remain unchanged.
 This uses a generic case to demonstrate the actual error, with no word limit,
 punctuation rule or exact desired stock title supplied.
 
-The [regression specification](hierarchy-bootstrap-v155-regression-v1.spec.json)
+The [regression specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v155-regression-v1.spec.json` at `03bd9e45`)
 retains 24 exact inputs, three fresh draws and V154 baselines. The same gate
 requires all nine agreed-case responses, all three stock-plan titles and no clear
 control regression. The correctly labeled [qualification protocol](hierarchy-bootstrap-v155-heldout-v1.json)
-and [specification](hierarchy-bootstrap-v155-heldout-v1.spec.json) retain the fixed
+and [specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v155-heldout-v1.spec.json` at `03bd9e45`) retain the fixed
 80-post panel and rubric; V150 through V154 qualification have zero attempts and
 outputs. Constructors stay V133 and source remains experimental. Results and
 native accounting will be appended after testing.
@@ -1366,7 +1364,7 @@ Root review of 72 mechanically valid responses records 68 accepts, one rejection
 and three uncertainties (one country meaning, one writing-tools title and one
 meaning explaining a rejected coadministration restriction). The latter is a
 qualification, not an example. Native
-[accounting](hierarchy-bootstrap-v155-fix-usage-v1.json) records 75 attempts including
+[accounting] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v155-fix-usage-v1.json` at `03bd9e45`) records 75 attempts including
 three warmups, no failures/retries/reuses, complete usage and $0.5407224 API-equivalent
 cost. No qualification outputs have been generated.
 
@@ -1379,11 +1377,11 @@ shared rules-v13 now occur near the final input; the full examples and shorter
 title rule/counterexample are unchanged. Consolidation-v28 remains the paired
 experimental companion.
 
-The [regression specification](hierarchy-bootstrap-v156-regression-v1.spec.json)
+The [regression specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v156-regression-v1.spec.json` at `03bd9e45`)
 retains 24 exact inputs, three fresh draws and V155 baselines. The same gate
 requires all nine agreed-case responses, all three stock-plan titles and no clear
 control regression. The correctly labeled [qualification protocol](hierarchy-bootstrap-v156-heldout-v1.json)
-and [specification](hierarchy-bootstrap-v156-heldout-v1.spec.json) retain the fixed
+and [specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v156-heldout-v1.spec.json` at `03bd9e45`) retain the fixed
 80-post panel, rubric and assignments. V150 through V155 qualification have zero
 attempts and outputs; no heldout result has informed these revisions. Constructors
 stay V133 and source remains experimental. Results will be appended after testing.
@@ -1397,7 +1395,7 @@ illustrations, but those successes do not outweigh the referent changes. The
 uncertainties concern two writing-tools titles, two country senses, one possible
 furniture illustration and one explanation of a rejected prescription restriction.
 A read-only output-contract audit finds no competing semantic instruction in the
-schema or transport. Native [accounting](hierarchy-bootstrap-v156-fix-usage-v1.json)
+schema or transport. Native [accounting] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v156-fix-usage-v1.json` at `03bd9e45`)
 records 75 attempts including three warmups, no failures/retries/reuses, complete
 usage and $0.6136752 API-equivalent cost. Qualification remains entirely unrun.
 
@@ -1411,11 +1409,11 @@ matter rather than define the field. The defining edible-plant qualification,
 all full examples, title instructions and title examples are unchanged from V155.
 Shared rules-v13 and Consolidation-v28 remain unchanged.
 
-The [regression specification](hierarchy-bootstrap-v157-regression-v1.spec.json)
+The [regression specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v157-regression-v1.spec.json` at `03bd9e45`)
 retains 24 exact inputs, three fresh draws and V156 saved baselines. The unchanged
 gate requires all nine agreed-case responses, all three stock-plan titles and no
 clear control regression. The [qualification protocol](hierarchy-bootstrap-v157-heldout-v1.json)
-and [specification](hierarchy-bootstrap-v157-heldout-v1.spec.json) retain the fixed
+and [specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v157-heldout-v1.spec.json` at `03bd9e45`) retain the fixed
 80-post panel, rubric and assignments. V150 through V156 qualification have zero
 attempts and outputs; no heldout result has informed these revisions. Constructors
 stay V133 and source remains experimental. Results will be appended after testing.
@@ -1426,7 +1424,7 @@ responses pass: one title still turns the linked video into its promotion.
 All three stock titles name preservation, all AI definitions omit illustrative
 abilities, and every People definition states human beings directly. Required
 alternatives, joint parts and numeric limits remain intact. Native
-[accounting](hierarchy-bootstrap-v157-fix-usage-v1.json) records 75 attempts including
+[accounting] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v157-fix-usage-v1.json` at `03bd9e45`) records 75 attempts including
 three warmups, no failures/retries/reuses, complete usage and $0.5550492 API-equivalent
 cost. Qualification remains entirely unrun.
 
@@ -1440,11 +1438,11 @@ shared rules-v13 and Consolidation-v28 are unchanged. This demonstrates the
 remaining referent error using a generic topic, without supplying the expected
 title for the tested video or imposing word/punctuation constraints.
 
-The [regression specification](hierarchy-bootstrap-v158-regression-v1.spec.json)
+The [regression specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v158-regression-v1.spec.json` at `03bd9e45`)
 retains 24 exact inputs, three fresh draws and V157 saved baselines. The unchanged
 gate requires all nine agreed-case responses, all three stock-plan titles and no
 clear control regression. The [qualification protocol](hierarchy-bootstrap-v158-heldout-v1.json)
-and [specification](hierarchy-bootstrap-v158-heldout-v1.spec.json) retain the fixed
+and [specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v158-heldout-v1.spec.json` at `03bd9e45`) retain the fixed
 80-post panel, rubric and assignments. V150 through V157 qualification have zero
 attempts and outputs; no heldout result has informed these revisions. Constructors
 stay V133 and source remains experimental. Completed results follow below.
@@ -1480,7 +1478,7 @@ structural validity is not a semantic acceptance verdict. The same fixed rubric
 and assignments apply, and reviewers receive no desired qualification titles or
 development judgments.
 
-Native [accounting](hierarchy-bootstrap-v158-fix-usage-v1.json) is complete:
+Native [accounting] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v158-fix-usage-v1.json` at `03bd9e45`) is complete:
 75 regression attempts cost $0.5674588 API-equivalent; 483 qualification attempts
 cost $3.3920368. Combined 558 attempts include six warmups, with no failures,
 retries, missing usage or answer reuses; total API-equivalent cost is $3.9594956.
@@ -1627,7 +1625,7 @@ on [clear instructions](https://developers.openai.com/api/docs/guides/model-opti
 and [simple, direct reasoning-model prompts](https://developers.openai.com/api/docs/guides/reasoning-best-practices#how-to-prompt-reasoning-models-effectively).
 
 The [regression collection](hierarchy-bootstrap-v159-regression-v1.json) and
-[specification](hierarchy-bootstrap-v159-regression-v1.spec.json) retain the
+[specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v159-regression-v1.spec.json` at `03bd9e45`) retain the
 original 24 inputs and add root/specific pairs for V158 posts 014, 030, 045, 058,
 064 and 074: 36 inputs and three fresh draws. The gate requires all six responses
 for the two V158 failures, all nine original agreed-case responses and all three
@@ -1658,7 +1656,7 @@ supported relationships. A descriptive subject can repeat an illustrative member
 so unconditional name retention may compete with omitting that member. This is
 a hypothesis, not an established explanation of V159's failures. No new rule,
 example, shared-rules version, companion or generation setting is introduced.
-The [regression specification](hierarchy-bootstrap-v160-regression-v1.spec.json)
+The [regression specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v160-regression-v1.spec.json` at `03bd9e45`)
 retains the same 36 inputs and unchanged gate, with three fresh draws. Results
 follow below; no untouched qualification response has informed this revision.
 
@@ -1689,7 +1687,7 @@ model settings are unchanged. The paired assembly checks preserve both historica
 versions and keep the common rule synchronized. Publishing the pair does not
 qualify Consolidation-v29 semantics or change constructor pins.
 
-The [regression specification](hierarchy-bootstrap-v161-regression-v1.spec.json)
+The [regression specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v161-regression-v1.spec.json` at `03bd9e45`)
 retains the same 36 exact inputs, three fresh draws and unchanged gate. No
 qualification response has informed this candidate.
 
@@ -1717,7 +1715,7 @@ between a complete definition and a browsing title explicit without a length cap
 punctuation restriction or new example. Shared rules-v14, Consolidation-v29,
 all examples, schema and model settings are unchanged.
 
-The [regression specification](hierarchy-bootstrap-v162-regression-v1.spec.json)
+The [regression specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v162-regression-v1.spec.json` at `03bd9e45`)
 retains the same 36 exact inputs, three fresh draws and unchanged gate. No
 qualification response has informed this revision.
 
@@ -1744,7 +1742,7 @@ not independent qualification.
 
 The [protocol](hierarchy-bootstrap-v162-heldout-v1.json),
 [selectors](hierarchy-bootstrap-v162-heldout-nodes-v1.json) and
-[specification](hierarchy-bootstrap-v162-heldout-v1.spec.json) freeze a new panel
+[specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v162-heldout-v1.spec.json` at `03bd9e45`) freeze a new panel
 before qualification inference. The V158 title/meaning criteria and verdict
 definitions are unchanged. The prompt SHA256 is
 `c72c9c5f098a23adac79a8e8f60d535f777019c8d7e0f566a4b829d8ee934c61`;
@@ -1882,7 +1880,7 @@ supplement's full article identity, date and future-reading status remain in
 meaning in all three draws; two titles briefly name the public-artists article,
 while the longer first title remains uncertain.
 
-The [native usage specification](hierarchy-bootstrap-v162-fix-usage-v1.json)
+The [native usage specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v162-fix-usage-v1.json` at `03bd9e45`)
 groups the red replay, all four development candidates and final qualification.
 Native `summarize-experiments` reports the following new-attempt accounting;
 estimates are API-catalog equivalents, not subscription charges or invoices.
@@ -1921,15 +1919,7 @@ saved corpus, one generation model/reasoning setting and unblinded root judgment
 without independent assessment or human calibration. V158 used a different panel
 and review process, so these totals do not measure paired improvement. Full
 hierarchy construction and Consolidation-v29 semantics remain untested;
-constructor pins stay V133. The useful next step is to review the repeated title
-failures and unresolved example/qualification boundaries before authorizing a
-separate development round; this report does not start that work.
-
-## Meaning-derived titles: Bootstrap-v130
-
-The user requested a concise title based solely on the explicit meaning.
-[Bootstrap-v130](Hierarchy-bootstrap-v130.md) adds `title` after `meaning` in
-the response. It instructs the model to finalize the meaning first, then name
+constructor pins stay V133.  It instructs the model to finalize the meaning first, then name
 that topic with the shortest clear phrase supported entirely by the meaning,
 preserving its identity and the qualifiers needed to distinguish its scope.
 Input and diagnostics supply no additional title details. A null meaning
@@ -1951,7 +1941,7 @@ evidence without establishing general title quality or hierarchy compatibility.
 
 The user authorized testing V130 and inspecting sample outputs because of
 verbosity concerns. The [native collection](hierarchy-bootstrap-v130-title-samples-v1.json)
-and [specification](hierarchy-bootstrap-v130-title-samples-v1.spec.json) select
+and [specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v130-title-samples-v1.spec.json` at `03bd9e45`) select
 eight existing ASv6.100 inputs covering broad and named topics, activities and a
 long particular plan. Native preparation regenerates the complete original root
 trees and keeps saved judgments and answers outside model input. The prompt,
@@ -2740,14 +2730,7 @@ invoice. The existing shared 20,000-attempt counter was preserved.
 
 This experiment did not edit or activate a prompt, perform Compare calls,
 construct a hierarchy or refresh a UI. Native inputs, outputs and reviews remain
-ignored in the retained worktree. The recommended next step is to examine the
-particular-ensemble choice and the independently unclosed enthusiasm target
-before another edit; no follow-on test or prompt change has begun.
-
-## Existing Bootstrap qualification
-
-The user approved [Bootstrap-v103](Hierarchy-bootstrap-v103.md) and qualification
-on the current 344-case collection. The initial completed agent review
+ignored in the retained worktree.  The initial completed agent review
 found one factual-support failure and two materially ambiguous meanings. Two
 fresh diagnostic draws reproduce the factual failure and Rome's unclear final
 scope; review of the amusement qualifier remains disputed. A subsequent user
@@ -2862,7 +2845,7 @@ definitions expressly require heat, but the test does not impose heat-required
 gold on all supported interpretations. No insulation restriction returned in
 the two v103 draws. Agent reviews are not human semantic gold or Compare labels.
 
-[Native seven-draw accounting](hierarchy-bootstrap-v99-v103-repeat-usage-v1.json)
+[Native seven-draw accounting] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v99-v103-repeat-usage-v1.json` at `03bd9e45`)
 records 182 valid fresh meanings, 197 actual attempts, zero exact reuses and one
 recovered provider retry with missing usage. Known API-equivalent reference cost
 is $1.827474; complete cost is unknown. These are subscription runs, not newly
@@ -2971,7 +2954,7 @@ Five consequential cases additionally have output-bound native agent reviews;
 the 341/1/2 figures are the original complete cohort assessment, not 344 CLI review
 records or human decisions. Original outputs and earlier reviews stay unchanged.
 
-[Native accounting](hierarchy-bootstrap-v103-asv6.100-full-usage-v1.json) records
+[Native accounting] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v103-asv6.100-full-usage-v1.json` at `03bd9e45`) records
 321 newly dispatched attempts: 319 valid case calls, one warmup and one recovered
 provider failure. There are no terminal failures or unrun cases. Prefix cache
 hits occur on 317 fresh successful case calls. Known fresh API-equivalent cost
@@ -3079,7 +3062,7 @@ repeats do not isolate which instruction causes either pattern. Change and test
 factual grounding separately from final-scope expression. No prompt edit,
 Compare call or hierarchy build has begun in this diagnostic.
 
-[Native repeat accounting](hierarchy-bootstrap-v103-scope-repeat-usage-v1.json)
+[Native repeat accounting] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v103-scope-repeat-usage-v1.json` at `03bd9e45`)
 records 18 fresh answers and 21 actual attempts: 18 successful case calls, two
 warmups and one recovered provider failure. All 18 successful case calls hit the
 prefix cache. There are no terminal failures or remaining cases. Known
@@ -3205,7 +3188,7 @@ The user approved the proposed next step: draft a revision targeting genuinely
 ambiguous consumer/product roles while preserving clear broad definitions.
 Native `revise` created [Bootstrap-v104](Hierarchy-bootstrap-v104.md) against
 the unchanged approved v103 baseline, with
-[exact revision provenance](Hierarchy-bootstrap-v104.md.revision.json).
+[exact revision provenance] (`sse_multivector/shr_single_pair/Hierarchy-bootstrap-v104.md.revision.json` at `03bd9e45`).
 Two independent read-only reviewers challenged the wording before publication.
 
 Only the second paragraph of Identify category ambiguities changes. It asks
@@ -3296,7 +3279,7 @@ Native artifacts in the retained task worktree:
   SHA-256 `91c87f1885df5a5663486b01bccea1577666adf99b9f23be4b3e91f26912d09e`.
 - `target/bootstrap-v104-consumer-controls-v1/usage-both-draws.json`, produced
   by native `summarize-experiments` using
-  [the maintained accounting source](hierarchy-bootstrap-v104-consumer-controls-usage-v1.json).
+  [the maintained accounting source] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v104-consumer-controls-usage-v1.json` at `03bd9e45`).
 
 Accounting: 13 valid fresh meanings, two cache warmups, 15 total attempts,
 zero exact reuses, failures or retries, and complete saved usage. All 13
@@ -3321,7 +3304,7 @@ output, earlier review or comparison label is rewritten to manufacture a pass.
 The user authorized the proposed v105 edit and focused testing. Native `revise`
 created [experimental Bootstrap-v105](Hierarchy-bootstrap-v105.md) against
 approved v104, preserving the exact changes in
-[its revision receipt](Hierarchy-bootstrap-v105.md.revision.json).
+[its revision receipt] (`sse_multivector/shr_single_pair/Hierarchy-bootstrap-v105.md.revision.json` at `03bd9e45`).
 Two read-only reviewers challenged the draft. The Resolve paragraph now asks
 for a qualifying role, purpose or state to be chosen together with the action
 or product it qualifies. The final Write paragraph asks each independently
@@ -3423,7 +3406,7 @@ Native artifacts in the retained task worktree:
   SHA-256 `f3b24a44851509e2828244e0596d698bf7e53578ad1b37227554bdfacca1872f`.
 - `target/bootstrap-v105-consumer-controls-v1/usage-both-draws.json`, produced
   by native `summarize-experiments` from
-  [the maintained accounting source](hierarchy-bootstrap-v105-consumer-controls-usage-v1.json).
+  [the maintained accounting source] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v105-consumer-controls-usage-v1.json` at `03bd9e45`).
 
 Accounting: 13 valid fresh meanings and two cache warmups, 15 attempts total,
 zero reuses, failures or retries, and complete saved usage. All 13 meaning
@@ -3499,7 +3482,7 @@ Native artifacts in the retained task worktree:
   SHA-256 `0dce60f048823d4cb33b9d43df81c70f8654fb5980a683e3c4bf0a8e01eb6e67`.
 - `target/bootstrap-v105-food-preparation-repeat2-v1/usage-all-v105-draws.json`:
   native accounting from
-  [the extended usage source](hierarchy-bootstrap-v105-consumer-controls-usage-v2.json).
+  [the extended usage source] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v105-consumer-controls-usage-v2.json` at `03bd9e45`).
 
 This follow-up used one meaning attempt and one cache warmup, with no reuse,
 failure or retry. Both have saved usage; API-equivalent cost is $0.0115572.
@@ -3598,7 +3581,7 @@ trees without new AS inference. Native schema-4 preparation supplies the full
 post and complete root tree. No generated meanings, historical labels or
 review metadata enter the model input.
 
-The [native spec](hierarchy-bootstrap-v105-complete-branches-v1.spec.json)
+The [native spec] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v105-complete-branches-v1.spec.json` at `03bd9e45`)
 freezes unchanged Bootstrap-v105, SHA-256
 `3c851548f70d9e6cf4ad5ff3bf0bef312abc2dafeb6b2e8334a3ea9f7f612bd8`,
 output schema 79, GPT-6.1 Sol medium, subscription SSE and automatic caching.
@@ -3734,7 +3717,7 @@ The first reviewed snapshot remains preserved.
 Original reuse chains remain in
 `run/results.jsonl`; existing experiments and their reviews are preserved.
 
-[Native usage source](hierarchy-bootstrap-v105-complete-branches-usage-v1.json)
+[Native usage source] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v105-complete-branches-usage-v1.json` at `03bd9e45`)
 produces `usage-native-v1.json`, SHA-256
 `81d6e0633fde733847dcaf1fa1e7fce47a0821b35b80cd60b8e103ed16cb5aae`.
 The run contributes 111 fresh attempts: 110 meanings and one warmup. There are
@@ -3830,7 +3813,7 @@ The predeclared review criteria are:
 Execution uses the main shared stable launcher from this isolated task worktree,
 automatic caching/fair scheduling and the existing persistent 20,000-attempt
 counter. Fresh attempts, warmups, failures and exact reuses are accounted natively
-through [the diagnostic usage source](hierarchy-bootstrap-v105-scope-identity-usage-v1.json).
+through [the diagnostic usage source] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v105-scope-identity-usage-v1.json` at `03bd9e45`).
 This small adaptive repeat panel does not estimate general reliability or
 attribute failure to a particular sentence. No prompt edit is justified merely
 by repeating a failure already subject to an explicit instruction.
@@ -3947,7 +3930,7 @@ are exact contiguous substrings of their source posts.
 | Draw 1 rejected business-child receipt | `493d783b8fa128ff1a4910578203f88fcab7e2ef6ef3fadcf4dac6cdb5193f98` |
 | Draw 2 rejected business-child receipt | `16debd94f864a6b8cea47ad463c1c82da0aabdb28e7e6ea62034e14e4ef9386d` |
 
-The predeclared [usage source](hierarchy-bootstrap-v105-scope-identity-usage-v1.json)
+The predeclared [usage source] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v105-scope-identity-usage-v1.json` at `03bd9e45`)
 produces `target/bootstrap-v105-scope-identity-diagnostic-v1/usage-native-v1.json`,
 SHA-256 `66100b8c869985243b5507aa0dd610cb0241234f57d82fff2ee13551896afb88`.
 Sixteen fresh meaning calls plus two cache warmups use 18 actual attempts, with
@@ -4041,7 +4024,7 @@ permitted. Unrun/failed answers remain unresolved. The main shared stable launch
 uses Sol 6.1 medium/SSE, automatic prefix caching and fair scheduling with at most
 30 requests shared across experiments; no new concurrency field is introduced.
 
-The [native usage source](hierarchy-bootstrap-v106-v108-authority-parent-usage-v1.json)
+The [native usage source] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v106-v108-authority-parent-usage-v1.json` at `03bd9e45`)
 separates all four conditions. This adaptive eight-case panel isolates blocks,
 not individual sentences or an internal mechanism; two draws do not estimate
 general reliability or qualify a prompt for full branches. The next broader
@@ -4502,7 +4485,7 @@ meanings are not broadened during branch review, and no physical-instance rule i
 substituted for information-topic containment.
 
 Native accounting from
-[the stock-repeat usage source](hierarchy-bootstrap-v109-stock-repeat-usage-v1.json)
+[the stock-repeat usage source] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v109-stock-repeat-usage-v1.json` at `03bd9e45`)
 records eight actual attempts: four fresh meanings and four automatic warmups,
 zero answer reuses, retries or failures. All usage is known; API-equivalent cost
 is **$0.0847848**, with reasoning already included in output. Caching is enabled
@@ -4672,8 +4655,8 @@ improvement. Repeat consequential differences before attributing an effect.
 These selected development cases are not a representative reliability estimate.
 
 Reusable definitions are the
-[contextual spec](hierarchy-bootstrap-context-ablation-with-context-v1.spec.json),
-[context-free spec](hierarchy-bootstrap-context-ablation-without-context-v1.spec.json)
+[contextual spec] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-context-ablation-with-context-v1.spec.json` at `03bd9e45`),
+[context-free spec] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-context-ablation-without-context-v1.spec.json` at `03bd9e45`)
 and [source view](hierarchy-bootstrap-context-ablation-subjects-only-v1.json).
 Native experiments are under `target/bootstrap-context-ablation-v1/`.
 Preparation makes no teacher calls. The completed execution uses the shared
@@ -4755,7 +4738,7 @@ receipts remain in their native reports and `run/results.jsonl`.
 | `with-context-repeat` | `765ee3356893157397348fa48bb0045a6ed226993acf6c4c8d98c6f60da35e1f` | `1f33760940a34d530e54ea01f386ad0be7e069af3b22a4dcaea7b8957c6f9fe6` |
 | `without-context-repeat` | `2b6628669efdc9fa8f21547a1d2ac31de0dca74449c34fcaf773b4138a6d05e8` | `67fbdd901d0bf57b0c1c904de6c259d6318283fcf4992b1e3658f03b56c2056b` |
 
-Native [usage source](hierarchy-bootstrap-context-ablation-usage-v1.json) and
+Native [usage source] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-context-ablation-usage-v1.json` at `03bd9e45`) and
 `target/bootstrap-context-ablation-v1/usage-native-v1.json` account for all four
 experiments: **37 attempts**, comprising 32 valid meaning calls, four prefix
 warmups and one recovered HTTP 503 failure. The failure exposes no recognized
@@ -4822,11 +4805,11 @@ review will examine all outputs and exact receipts. Changed input evidence and
 a separate post-only task cannot uniquely establish an internal model mechanism,
 nor make the original ambiguous interpretation demonstrably false.
 
-Reusable sources are the [post-only spec](hierarchy-bootstrap-coffee-grounding-post-only-v1.spec.json),
+Reusable sources are the [post-only spec] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-coffee-grounding-post-only-v1.spec.json` at `03bd9e45`),
 [post controls](hierarchy-bootstrap-coffee-grounding-post-controls-v1.json),
 [context-free view](hierarchy-bootstrap-coffee-grounding-subjects-only-v1.json),
-[Bootstrap spec](hierarchy-bootstrap-coffee-grounding-controls-v1.spec.json) and
-[native usage source](hierarchy-bootstrap-coffee-grounding-usage-v1.json).
+[Bootstrap spec] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-coffee-grounding-controls-v1.spec.json` at `03bd9e45`) and
+[native usage source] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-coffee-grounding-usage-v1.json` at `03bd9e45`).
 Frozen preparations are under `target/bootstrap-coffee-grounding-v1/`, using
 `post-only-draw1`, `post-only-draw2`, `controls-draw1` and `controls-draw2`.
 Preparation performs no inference; the user separately authorized execution.
@@ -4893,7 +4876,7 @@ Native case IDs, with `controls-draw1` / `controls-draw2` as experiment suffixes
 | `controls-draw1` | Explicit hashtag clarification | `7006f4388793ca40d893b6f930e04583899e045c8a0f844735ed052736846733` |
 | `controls-draw2` | Explicit hashtag clarification | `17e279d3df2572e395395c91ce30cd1dae50294a98645014280c5bd4c9a7a18b` |
 
-Native [usage accounting](hierarchy-bootstrap-coffee-grounding-usage-v1.json),
+Native [usage accounting] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-coffee-grounding-usage-v1.json` at `03bd9e45`),
 saved as `target/bootstrap-coffee-grounding-v1/usage-native-v1.json`, records
 **10 attempts**: eight valid case calls and two cache-prefix warmups; zero
 reuses, retries, failures, invalid receipts or unrun cases. Usage is complete;
@@ -4906,14 +4889,11 @@ resetting it; other experiments' concurrent usage is outside this panel's cost.
 
 Following review of this witness, the user approved the
 [sense and factual-evidence rule](#approved-sense-and-factual-evidence-rule)
-above. A useful next step is to assess the remaining flagged meanings for
-concrete contradictions or unjustified factual claims using their own evidence,
-keeping scope preference and ordinary interpretive uncertainty separate.
+above.
 That [further audit is complete](#remaining-flagged-meanings-under-the-approved-rule).
 No Bootstrap revision/adoption, Compare test, hierarchy construction or
 context-removal activation occurred in this diagnostic or the subsequent audit.
-Retain the worktree because native receipts and original source bindings refer
-to its absolute artifact paths.
+
 
 ### Remaining flagged meanings under the approved rule
 
@@ -5155,7 +5135,7 @@ interpretation still entails their shortcut. A stricter individual-use reading
 must qualify the original Food-to-Risotto link too. No fresh Compare labels or
 complete-branch generation were obtained here.
 
-Native [usage source](hierarchy-bootstrap-v109-food-boundary-repeat-usage-v1.json)
+Native [usage source] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v109-food-boundary-repeat-usage-v1.json` at `03bd9e45`)
 and ignored `usage.json` account for ten actual attempts: eight definitions and
 two warmups, with zero reuse, retries, failures or missing usage. Complete
 API-equivalent cost is $0.1075436, including warmups; this is catalog pricing,
@@ -5242,10 +5222,10 @@ record SHA-256 values are:
 | `business-confirmed` | `4c2214d500022f8d306344dc8d712f0eb566ea4361868f86b0fe3a2b355fa7f9` |
 | `hashtag-clarified` | `633dd489ff0cd79c6f20cef5ef5eb42e23374d0f8cf9253f953c02aa9e7b200f` |
 
-The [reusable v109 spec](hierarchy-bootstrap-v109-coffee-grounding-controls-v1.spec.json)
+The [reusable v109 spec] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v109-coffee-grounding-controls-v1.spec.json` at `03bd9e45`)
 uses the existing [synthetic post-control source](hierarchy-bootstrap-coffee-grounding-post-controls-v1.json)
 directly, retaining contexts. The
-[native accounting source](hierarchy-bootstrap-v109-coffee-reference-usage-v1.json)
+[native accounting source] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v109-coffee-reference-usage-v1.json` at `03bd9e45`)
 produces `target/bootstrap-v109-coffee-reference-v1/usage-native-v1.json`.
 It records **four newly dispatched attempts**: three definitions and one prefix
 warmup, with one exact answer reuse and no retries, failures, invalid receipts
@@ -5264,8 +5244,7 @@ controls also changed the prompt, so they do not provide a one-factor context
 ablation. Each current control has only one fresh draw. The two nulls remain
 synthetic source conflicts, not real-corpus failures or negative Compare labels.
 No prompt edit or adoption, Compare call or hierarchy build occurred; v104
-remains approved and v109 experimental. Retain this worktree for its source
-bindings and native receipts.
+remains approved and v109 experimental.
 
 ### Coffee-reference single-sentence ablation: predeclared check
 
@@ -5305,7 +5284,7 @@ recommendation. Controls have one fresh draw per condition in this stage.
 
 The initial experiments are `target/bootstrap-coffee-reference-ablation-v1/v109`
 and `target/bootstrap-coffee-reference-ablation-v1/v111`, prepared with the
-[v109 spec](hierarchy-bootstrap-coffee-reference-ablation-v1.spec.json) and
+[v109 spec] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-coffee-reference-ablation-v1.spec.json` at `03bd9e45`) and
 native `prepare --from --prompt` for v111. Each initial run is bounded to six
 new attempts, including warmup and retries. Conditional original repeats may
 use three attempts per condition, for at most eighteen newly dispatched
@@ -5371,7 +5350,7 @@ contains these four freshly generated v109 answers and exact receipts.
 | v111 | Hashtag clarification | `b2f486bd79b0da7eaa4b267ceb7a6f1a064c32df8b1cd23134af16c615938f64` |
 | v111 | Original | `2a185334c83e2a664c1088ffa7ab706946dcb2882e05bcce55ca1254974b71a7` |
 
-The [native accounting source](hierarchy-bootstrap-coffee-reference-ablation-usage-v1.json)
+The [native accounting source] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-coffee-reference-ablation-usage-v1.json` at `03bd9e45`)
 produces `target/bootstrap-coffee-reference-ablation-v1/usage-native-v1.json`.
 It records **ten newly dispatched attempts**: eight definitions and two
 warmups. API-equivalent cost is **$0.0805732**, with complete usage and reasoning
@@ -5480,7 +5459,7 @@ the fresh v109 outputs and receipts exactly. The single-sentence replacement
 and source ASv6.100 provenance were verified separately; source and synthetic
 qualifications remain unchanged.
 
-The [native accounting source](hierarchy-bootstrap-coffee-choice-ablation-usage-v1.json)
+The [native accounting source] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-coffee-choice-ablation-usage-v1.json` at `03bd9e45`)
 produces `target/bootstrap-coffee-choice-ablation-v1/usage-native-v1.json`:
 **ten fresh attempts**, eight valid definitions and two warmups, zero reuses,
 retries, failures, invalid receipts or unfinished cases. Complete native
@@ -5683,7 +5662,7 @@ reused. The full low run's initial cap exhausted after recovery, requiring a
 native resume that also warmed again. Failed partial outputs were never scored
 as meanings or semantic negatives.
 
-The [native accounting source](hierarchy-bootstrap-v109-low-reasoning-usage-v1.json)
+The [native accounting source] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v109-low-reasoning-usage-v1.json` at `03bd9e45`)
 produces `target/bootstrap-v109-low-reasoning-v1/usage-native-v2.json`. Native
 artifacts and source-relative accounting remain in the retained
 `oracle-mvp-shr-pair-correctness-v1` worktree. The full low run records 52,206

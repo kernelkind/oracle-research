@@ -8,7 +8,6 @@ import ijson
 from ijson.common import ObjectBuilder
 
 from . import real_note_segmentation as segmentation
-from . import fine_segmentation_candidate_runs as candidate
 from . import worker
 
 
@@ -113,7 +112,7 @@ def prepare(sources, selection, metadata):
     inputs, answers, judgments, results = [], [], [], []
     datasets, runs, evidence, notes = {}, {}, {}, {}
     versions, reused = set(), []
-    for module in (segmentation, worker, candidate):
+    for module in (segmentation, worker):
         path = Path(module.__file__)
         stat = path.stat()
         reused.append((path, (stat.st_ino, stat.st_size, stat.st_mtime_ns, stat.st_ctime_ns)))

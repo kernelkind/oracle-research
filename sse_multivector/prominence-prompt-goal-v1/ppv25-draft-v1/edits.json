@@ -1,9 +1,0 @@
-{
-  "base_sha256": "317b6b789fbe10de9418be0b4add187eed66d6de78578619476318594d7bd7c3",
-  "edits": [
-    {
-      "old": "Then judge how much the represented and missing meaning matter to the complete post. Consider how the complete post develops, supports, or depends on the represented meaning. Representing the complete post’s topic alone may leave important meaning missing.",
-      "new": "Then judge how much the represented and missing meaning each matter to the complete post. Consider how the rest of the post develops, supports, or depends on each. Representing the complete post’s topic alone may leave important meaning missing."
-    }
-  ]
-}

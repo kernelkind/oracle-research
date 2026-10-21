@@ -47,7 +47,6 @@ PYTHONPATH=sse_multivector/prominence-prompt-goal-v1/ppv10-ranking-v1 \
 python3 -c 'import study; study.ROOT = study.ROOT.parent / "ppv10-coffee-node-v1"; study.prepare()'
 ```
 
-New experiments use [the shared experiment workflow](../../model-runner.md#prompt-experiments-one-supported-workflow).
 The old saved-batch CLI is retired. Preserve these inputs and receipts as evidence;
 import them with an explicit template/input mapping rather than rerunning the baseline.
 The preparation/collection scripts below describe this saved study, not a second

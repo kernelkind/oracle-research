@@ -1,9 +1,0 @@
-{
-  "base_sha256": "980d15f0eeb81c5ad6f2aa83199d58069db1bd6c8706927f77a809ef660556dc",
-  "edits": [
-    {
-      "old": "For this diagnostic response only, use the specification above to enumerate the specific subjects expressed by the complete post. Return a flat list rather than a hierarchy: do not derive broader headings or repeat subjects across branches. Retain individual subjects, their particular instances and every expressed combination, with their complete supported referents, amounts, modifiers, negation and relationships in the subject strings. Use the same subjects JSON object and number/context/subject fields, assigning consecutive root numbers 1, 2, 3 and so on. This diagnostic mode replaces hierarchy construction and placement, not source-subject retention.",
-      "new": "For this diagnostic response only, use the specification above to enumerate the specific subjects expressed by the complete post. Return the complete hierarchy: derive broader headings and repeat source subjects across compatible branches. Retain individual subjects, their particular instances and every expressed combination, with their complete supported referents, amounts, modifiers, negation and relationships in the subject strings. Use the same subjects JSON object and number/context/subject fields, assigning section-style hierarchy numbers 1, 1.1, 1.1.1 and so on. This diagnostic mode retains hierarchy construction and placement as well as source-subject retention."
-    }
-  ]
-}

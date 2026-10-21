@@ -1,8 +1,0 @@
-{
-  "schema_version": 2,
-  "max_choices": 6,
-  "max_entries": 200,
-  "local_candidate_limit": 32,
-  "comparison_policy": "hierarchy-as100-fifty-note-guarded-v1.json",
-  "history_root": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-canonical-graph-construction-v1/target"
-}

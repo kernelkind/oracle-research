@@ -11,7 +11,7 @@ use nostrdb::{Filter, Ndb, Note, Transaction};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 
-use crate::artifact::{ArtifactFile, describe_fixed_artifact, verify_fixed_artifact};
+use crate::artifact::{ArtifactFile, describe_fixed_artifact};
 use crate::snapshot::{
     CorpusManifest, DamusSnapshot, EligibilityRules, Error, Result, Validation, count_with_db,
     create_directory, io_error, ndb_error, open_ndb, read_manifest, require_directory,
@@ -66,38 +66,6 @@ pub struct CanonicalManifest {
     pub rows: CanonicalArtifact,
     /// Event ID followed by canonical event ID, sorted by event ID.
     pub aliases: CanonicalArtifact,
-}
-
-/// Verify the canonical rules, count accounting, and complete stable row artifact.
-pub(crate) fn verify_canonical_rows(root: &Path, manifest: &CanonicalManifest) -> Result<()> {
-    if manifest.schema_version != CANONICAL_MANIFEST_SCHEMA_VERSION
-        || manifest.eligibility != EligibilityRules::mvp()
-        || manifest.content_rule != CONTENT_RULE
-        || manifest.canonical_event_rule != CANONICAL_EVENT_RULE
-        || manifest.row_order_rule != ROW_ORDER_RULE
-    {
-        return Err(Error::Invariant(
-            "canonical manifest has incompatible schema or rules".to_owned(),
-        ));
-    }
-    let accounted = manifest
-        .counts
-        .canonical_rows
-        .checked_add(manifest.counts.duplicate_events)
-        .ok_or_else(|| Error::Invariant("canonical event count overflowed u64".to_owned()))?;
-    if accounted != manifest.counts.eligible_events {
-        return Err(Error::Invariant(format!(
-            "canonical manifest accounts for {accounted} events but records {} eligible events",
-            manifest.counts.eligible_events
-        )));
-    }
-    verify_fixed_artifact(
-        root,
-        &manifest.rows,
-        "rows.bin",
-        EVENT_ID_BYTES,
-        manifest.counts.canonical_rows,
-    )
 }
 
 pub(crate) fn canonicalize_corpus(pipeline: &DamusSnapshot) -> Result<CanonicalManifest> {

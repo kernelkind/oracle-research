@@ -97,7 +97,7 @@ the returned compatible headings.
 
 ## Existing instruction coverage
 
-The [34-clause primary map](../autonomous-sp-v1/README.md#rule-coverage-for-asv661)
+The [34-clause primary map](../autonomous-sp-v1/README.md#rule-coverage-for-asv661-and-subsequent-candidates)
 retains every assignment. C1's sixteen primary clauses are demonstrated here:
 
 | Clauses | Demonstration |

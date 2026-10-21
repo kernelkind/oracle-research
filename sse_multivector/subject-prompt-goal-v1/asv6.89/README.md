@@ -40,8 +40,8 @@ actual scope failures persist. The [completed comparison](../isolation-v1/source
 preserves the unavailable answer without retry and establishes no reliable fix.
 
 The native `experiment.py revise` command applied the single exact edit in
-[prompt-edits.json](prompt-edits.json). Its automatic
-[revision receipt](ASv6.89.md.revision.json) pins the ASv6.87 base and records
+prompt-edits.json (`03bd9e45:sse_multivector/subject-prompt-goal-v1/asv6.89/prompt-edits.json`). Its automatic
+revision receipt (`03bd9e45:sse_multivector/subject-prompt-goal-v1/asv6.89/ASv6.89.md.revision.json`) pins the ASv6.87 base and records
 the authored prompt. The reusable
-[POST template](../../experiment_specs/asv6.89-hr01-post-template.txt) is the
+POST template (`03bd9e45:sse_multivector/experiment_specs/asv6.89-hr01-post-template.txt`) is the
 exact prompt followed by `\n<post>\n{POST}\n</post>`.

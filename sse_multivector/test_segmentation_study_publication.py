@@ -119,6 +119,8 @@ class SegmentationStudyPublicationTests(unittest.TestCase):
         self.assertEqual(user['verdict'], 'uncertain')
         self.assertEqual(user['comment'], 'Needs further review.')
         metadata = json.loads((self.output/'experiment.json').read_text())
+        self.assertNotIn('sse_multivector/fine_segmentation_candidate_runs.py',
+                         metadata['exporter_sources'])
         self.assertEqual(metadata['authored_context']['sources'][0]['path'], 'README.md')
         self.assertIn('original saved states', metadata['authored_context']['status'])
         self.assertEqual(metadata['subject_provenance']['versions'], ['ASv6.23'])

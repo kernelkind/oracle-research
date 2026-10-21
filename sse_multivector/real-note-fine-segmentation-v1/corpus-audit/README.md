@@ -132,19 +132,9 @@ prior clustering results were inspected or used to choose an area.
 
 From the repository root, with the existing tmpfs source still present:
 
-```sh
-python3 sse_multivector/real-note-fine-segmentation-v1/corpus-audit/audit_corpus.py
-python3 sse_multivector/real-note-fine-segmentation-v1/corpus-audit/publish_audit.py
-```
-
 The first command reconstructs candidate pools from original source text; the
 second applies the separately stored manual audit and packages its evidence.
 Both overwrite only the new audit's own generated files. Do not run them on
 large database artifacts or substitute a different source under the same audit.
 
 To reproduce the separate short-note extension and combined eligibility:
-
-```sh
-python3 sse_multivector/real-note-fine-segmentation-v1/corpus-audit/audit_corpus.py --area food --min-words 5 --max-words 17 --max-candidates 120 --output sse_multivector/real-note-fine-segmentation-v1/corpus-audit/short-note-audit-v1
-python3 sse_multivector/real-note-fine-segmentation-v1/corpus-audit/publish_short_audit.py
-```

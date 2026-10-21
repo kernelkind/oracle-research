@@ -79,9 +79,6 @@ class GitIgnoreTests(unittest.TestCase):
             "sse_multivector/subject-prompt-goal-v1/example/prompt-versions.json",
             "sse_multivector/subject-prompt-goal-v1/example/package.json",
             "sse_multivector/subject-prompt-goal-v1/example/package-lock.json",
-            "sse_multivector/subject-prompt-goal-v1/example/edits.json",
-            "sse_multivector/mask-prompt-goal-v1/example/prompt-edits.json",
-            "sse_multivector/subject-prompt-goal-v1/example/ASv6.48.md.revision.json",
             "sse_multivector/atomic-subject-prompt-versions.json",
             "sse_multivector/frontier_runner/package.json",
             "sse_multivector/frontier_runner/package-lock.json",
@@ -90,9 +87,19 @@ class GitIgnoreTests(unittest.TestCase):
             "sse_multivector/future-experiment-v2/tests/fixtures/example.jsonl",
             "docs/planning/release-decisions.md",
             "tests/fixtures/budget-ledger.json",
-            "models/gte-multilingual-base-tokenizer.lock.json",
+            "examples/hierarchy-v5.3/subjects.spec.json",
         ]
         self.assertEqual(self.ignored(paths), set())
+
+    def test_prompt_edit_working_records_stay_local(self):
+        paths = [
+            "sse_multivector/subject-prompt-goal-v1/example/edits.json",
+            "sse_multivector/mask-prompt-goal-v1/example/prompt-edits.json",
+            "sse_multivector/subject-prompt-goal-v1/example/ASv6.48.md.revision.json",
+            "sse_multivector/mask-prompt-goal-v1/example/revision-notes.json",
+            "sse_multivector/subject-prompt-goal-v1/example/review-groups.json",
+        ]
+        self.assertEqual(self.ignored(paths), set(paths))
 
     def test_existing_cache_and_dependency_exclusions_still_apply(self):
         paths = [

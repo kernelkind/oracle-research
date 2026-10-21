@@ -1,8 +1,0 @@
-{
-  "schema_version": 1,
-  "groups": {
-    "fresh-v209-core": ["../../target/compare-v210-v211-scope-ablation-v1/reference/core"],
-    "v210-illustration": ["../../target/compare-v210-v211-scope-ablation-v1/illustration/core", "../../target/compare-v210-v211-scope-ablation-v1/illustration/physical", "../../target/compare-v210-v211-scope-ablation-v1/illustration/goal"],
-    "v211-occurrence": ["../../target/compare-v210-v211-scope-ablation-v1/occurrence/core", "../../target/compare-v210-v211-scope-ablation-v1/occurrence/physical", "../../target/compare-v210-v211-scope-ablation-v1/occurrence/goal"]
-  }
-}

@@ -13,7 +13,7 @@ from unittest import mock
 
 import package
 import runner
-from test_generalization import FAKE_COMMAND
+from controller_fixtures import FAKE_COMMAND
 
 
 class CommandWorkloadTest(unittest.TestCase):
@@ -880,7 +880,7 @@ class CommandWorkloadTest(unittest.TestCase):
     def test_selected_offer_is_an_input_not_a_search_to_repeat(self):
         self.freeze()
         query, offer = self.module.select_offer(self.context)
-        with mock.patch.object(self.module, "search_offers", side_effect=AssertionError("must not repeat offer selection")):
+        with mock.patch.object(self.module, "vast_json", side_effect=AssertionError("must not repeat offer selection")):
             self.assertEqual(self.module.refresh_approved_offer(self.context, {"offer": offer, "offer_query": query}), offer)
 
     def test_package_rejects_unrecognized_old_spec_and_overlapping_inputs(self):
@@ -947,8 +947,8 @@ class CommandWorkloadTest(unittest.TestCase):
         self.assertFalse(self.root.exists())
 
     def lifecycle_fixture(self, volume=False):
-        import test_vast_full_build as original
-        fixture = original.VastFullBuildCliTest()
+        import controller_fixtures as original
+        fixture = original.ControllerFixture()
         fixture.setUp()
         self.addCleanup(fixture.doCleanups)
         # Retain the successful controller's provider fixture; account only for
@@ -994,7 +994,7 @@ class CommandWorkloadTest(unittest.TestCase):
                 subprocess.run(['git', '-C', str(self.base), *args], check=True, capture_output=True)
         self.freeze()
         configuration = runner.read_json(self.config)
-        configuration["timing"] = fixture.operation_contract()["timing"]
+        configuration["timing"] = original.TIMING
         runner.atomic_json(self.config, configuration, replace=True)
         fixture.root, fixture.operator, fixture.config, fixture.ledger = self.root, self.operator, self.config, self.ledger
         fixture.environment["FAKE_FULL_BUILD_ROOT"] = str(self.root)

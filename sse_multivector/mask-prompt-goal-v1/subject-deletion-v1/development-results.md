@@ -420,4 +420,4 @@ Subject: An olive tree on the Acropolis.
 
 Accepted. The caption's olive tree and Acropolis location are retained, without credit text or image URLs.
 
-See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-mask-prompt-goal-v1`.
+See conversion gaps (`03bd9e45:docs/experiments/publication-gaps.csv`) for `collection:tracked-mask-prompt-goal-v1`.

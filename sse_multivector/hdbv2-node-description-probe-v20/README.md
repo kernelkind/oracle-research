@@ -31,11 +31,7 @@ The complete comparison (`./comparison.json`) contains every exact title, all ma
 
 The default review presents **all eight failed outputs from both versions, plus the one uncertain output**. Version and trial appear in each item ID. All masks are shown; assistant reasoning has a separate comment section. B displays the other version's answer from the same trial. No user decisions are prefilled.
 
-```bash
-/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/hdbv2-node-description-probe-v20/run-review.sh
-```
-
-[run-review-all.sh](./run-review-all.sh) presents all 24 outputs, including successes, in a separate session.
+run-review-all.sh (`03bd9e45:sse_multivector/hdbv2-node-description-probe-v20/run-review-all.sh`) presents all 24 outputs, including successes, in a separate session.
 
 ## What was tested
 
@@ -56,7 +52,5 @@ Dogs worked in both v20 trials, while the baseline repeated its spelling-based f
 Do not adopt or freeze v20 on this Sol-only result. The user subsequently requested [Astra-low title generation with unchanged v20](../hdbv2-node-description-probe-v20-astra-low-v1/README.md). That comparison uses these saved Sol outputs without changing them or rerunning Sol. Astra produced 11 titles judged usable and one judged too narrow on the same six groups; neither prompt nor model was frozen.
 
 The [official Sol guidance](https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6#prompt-migration-workflow) informed keeping the comparison controlled; it does not establish a cause for these outputs.
-
-CREC-127 remains the tracking card. Plane tools were unavailable in this session, so its external status/comment could not be updated.
 
 **Publication status:** `collection:tracked-hdbv2-node-description-probe-v20` is selected as `title-studies/hdbv2-node-description-probe-v20` in the [publication catalog](../../docs/experiments/publications.csv), with [dataset manifest](../../docs/experiments/downloads.md#dataset-manifest). The local export preserves saved answers and recorded assessments; input AS lineage remains unverified. Nothing has been uploaded.

@@ -5,8 +5,8 @@
 The user authorized targeting the qualifying-kind gap exposed by Compare's
 counterexamples. [Bootstrap-v123](Hierarchy-bootstrap-v123.md) replaces one
 paragraph in `Identify category ambiguities`, directly from tested v122. The
-[native edits](hierarchy-bootstrap-v123-qualifying-kind.edits.json) and
-[revision receipt](Hierarchy-bootstrap-v123.md.revision.json) preserve exact
+[native edits] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v123-qualifying-kind.edits.json` at `03bd9e45`) and
+[revision receipt] (`sse_multivector/shr_single_pair/Hierarchy-bootstrap-v123.md.revision.json` at `03bd9e45`) preserve exact
 before/after text and hashes. Existing Resolve and Write instructions, both
 synthetic examples, input shape and output schema wording remain unchanged.
 V123 is tested experimentally, not activated or comprehensively qualified.
@@ -132,7 +132,7 @@ agent evidence, not human approval.
 
 ## Accounting and checks
 
-Native [usage summarization](hierarchy-bootstrap-v123-hr04-four-foods-usage-v1.json)
+Native [usage summarization] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v123-hr04-four-foods-usage-v1.json` at `03bd9e45`)
 binds the four-case draw and two-case repeat separately. Eight attempts include
 six fresh definitions and two automatic warmups. There are no failures, retries,
 reuses or missing usage; all six definition requests report cache hits. Known

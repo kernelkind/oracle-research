@@ -220,30 +220,6 @@ class CliTests(unittest.TestCase):
             self.assertEqual(hierarchy, json.loads((root / 'repeat/hierarchy.json').read_text()))
 
 
-class LauncherTests(unittest.TestCase):
-    def test_launcher_freezes_settings_and_separate_seed_identity(self):
-        with tempfile.TemporaryDirectory() as temporary:
-            root = Path(temporary)
-            script = root / 'sse_multivector/run-hidef-experiment.sh'
-            script.parent.mkdir()
-            shutil.copy2(Path(__file__).with_name(script.name), script)
-            binary = root / 'bin/nix'
-            binary.parent.mkdir()
-            binary.write_text('#!/usr/bin/env bash\nprintf "%s\\n" "$@"\n')
-            binary.chmod(0o755)
-            env = {**os.environ, 'PATH': str(binary.parent) + os.pathsep + os.environ['PATH']}
-            for seed in (123, 124, 125):
-                command = [str(script), str(seed), str(root / f'seed{seed}'), '--plan']
-                result = subprocess.run(command, env=env, cwd='/', capture_output=True, text=True)
-                self.assertEqual(result.returncode, 0, result.stderr)
-                args = result.stdout.splitlines()
-                self.assertIn('HDFv1-seed' + str(seed), args)
-                self.assertIn(str(root / 'sse_multivector/hidef-requirements.lock'), args)
-                self.assertEqual(args[-13:], ['--minres', '.001', '--maxres', '25', '--density', '.1',
-                    '--neighbors', '10', '--persistence', '5', '--consensus-percent', '75', '--plan'])
-            rejected = subprocess.run([str(script), '126', str(root / 'unknown')], env=env,
-                                      capture_output=True, text=True)
-            self.assertEqual(rejected.returncode, 2)
 
 
 if __name__ == '__main__':

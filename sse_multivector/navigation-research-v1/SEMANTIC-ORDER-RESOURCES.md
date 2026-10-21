@@ -190,7 +190,7 @@ benchmark or a claim that enumerating every possible larger graph is practical.
 Full logical theorem proving and inferred participants are outside this test.
 
 No SUMO mapping, new hierarchy, or browser is adopted here. The
-[SGC03 pre-run design](./SGC03-PLAN.md) separates noun-only and noun-plus-verb
+[SGC03 pre-run design](ONTOLOGY-CONSTRUCTION.md#sgc03-study-design) separates noun-only and noun-plus-verb
 augmentation, requires same-order singleton controls, and distinguishes local
 membership from mapping validity. It explicitly does not test an already
 contradicted claim of universally sound containment. A positive pilot with

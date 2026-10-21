@@ -86,4 +86,4 @@ Generation used 14,861 input tokens and 136 output tokens; 1,920 input tokens we
 
 Raw review (`./review.json`) · Mechanical and isolation checks (`./verification.json`) · Execution record (`./execution/results.json`)
 
-See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-mask-prompt-goal-v1`.
+See conversion gaps (`03bd9e45:docs/experiments/publication-gaps.csv`) for `collection:tracked-mask-prompt-goal-v1`.

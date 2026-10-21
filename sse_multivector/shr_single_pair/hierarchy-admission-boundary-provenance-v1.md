@@ -157,7 +157,7 @@ specified, approved or activated by these findings.
 
 Ignored evidence remains in the research worktree under
 `target/food-halves-v1/boundary-provenance-audit-v1/` through the external-storage
-symlink. The worktree remains necessary for frozen artifact/source paths.
+symlink.
 
 - Frozen plan SHA256:
   `2e24f997f0bac09cfde5a3edadf2e0e6d477d728614b9ef831279612a7cbdc32`.

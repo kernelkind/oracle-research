@@ -121,7 +121,6 @@ Ranges are inclusive. Each semicolon separates a required source note.
 | Seasoning | N046 V360/V362; N063 V525/V538/V539; N096 V872/V881 |
 | Tomatoes | N023 V164; N026 V196–V200/V207/V208/V214–V218; N031 V255–V260; N053 V413–V415 |
 
-
 ### Raw/display counterpart registry
 
 Each cell is raw ID→display ID / distinct notes; one ID means raw and display agree. Counts locate groups, not semantic grades.

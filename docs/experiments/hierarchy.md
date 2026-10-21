@@ -4,9 +4,9 @@ These are the 37 runs recorded in the comparison workbook, HR03–HR39.
 The status and output counts below are the recorded results, not a new evaluation.
 Completion does not imply full coverage or semantic approval.
 
-Read the [run descriptions and findings](../recommendation-engine/hierarchy-runs.md)
+Read the [run descriptions and findings](hierarchy/runs.md)
 for interpretation. [Exact settings and source versions](hierarchy.csv),
-[corpora](corpora.csv) and the [full parameter ledger](../recommendation-engine/hierarchy-parameters.csv)
+[corpora](corpora.csv) and the [full parameter ledger](hierarchy/parameters.csv)
 connect each run to its evidence and ordered note selection.
 
 | Run | Input notes | Output notes | HiGen | Recorded status |
@@ -48,3 +48,31 @@ connect each run to its evidence and ordered note selection.
 | HR37 | 1000 | 622 | V5.3 | Complete; partial root coverage |
 | HR38 | 2000 | 1328 | V5.3 | Complete; partial root coverage |
 | HR39 | 5000 | 2693 | V5.3 | Complete |
+
+## Methods and investigations
+
+The [current HiGen V5.3 reference](../design/hierarchy-generation.md) describes
+new construction. Earlier [V3 methods](hierarchy/higen-v3.md) and
+[V4 methods](hierarchy/higen-v4.md) explain their recorded trials.
+[Performance measurements](hierarchy/performance.md), [scaling evidence](scalability.md)
+and the [HR09 investigation](hierarchy/hr09-investigation.md) cover important
+runtime and semantic limits.
+
+The numerical investigations leading to recursive construction are grouped by
+question:
+
+- Cut selection: [HR21 partition controls](hierarchy/hr21-root-partition-controls-v1.md)
+  and [trimmed-bend epsilon](hierarchy/hr21-epsilon-selection-v1.md).
+- Corpus controls: [100 Food/Drink notes](hierarchy/food-drink-hundred-epsilon-v1.md),
+  [50 Music notes](hierarchy/music-fifty-epsilon-v1.md) and
+  [25 Food plus 25 Music notes](hierarchy/food-music-fifty-epsilon-v1.md).
+- Input selection: [S05 with originally unassigned entries](hierarchy/food-drink-s05-inside-v1.md)
+  and [S05 alone](hierarchy/food-drink-s05-only-v1.md).
+- Synthetic replacement: [first root](hierarchy/food-drink-s05-root-v1.md),
+  [reclustering](hierarchy/food-drink-s05-recluster-v1.md),
+  [excluding original noise](hierarchy/food-drink-s05-synthetic-grouped-v1.md),
+  [second replacement](hierarchy/food-drink-s10-synthetic-grouped-v1.md) and
+  [six-root result](hierarchy/food-drink-six-roots-v1.md).
+
+These records preserve actual controls, findings and failures. A numerical group
+or visually appealing cut is not itself a validated semantic category.

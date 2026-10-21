@@ -73,10 +73,7 @@ conservative admission candidate remains unchanged.
 
 ## Evidence and verification
 
-Ignored artifacts remain at
-`target/food-halves-v1/hr38-people-standalone-controls-v1/` through the existing
-external-storage symlink. Retain the research worktree for frozen source and
-artifact references.
+Local evidence directory: `target/food-halves-v1/hr38-people-standalone-controls-v1/`.
 
 - Plan frozen before the new vectors, SHA256:
   `9d3ff2d1751e31b0016fd24d8c94ce700b3e6d8a5bc7f9f04d1fb2ad08b1c9a2`.

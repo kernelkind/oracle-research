@@ -1,8 +1,0 @@
-{
-  "schema_version": 1,
-  "groups": {
-    "v202-goal-and-illustration": [
-      "../../target/compare-v202-goal-and-illustration-v1"
-    ]
-  }
-}

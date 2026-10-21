@@ -1,8 +1,0 @@
-{
-  "candidate_rows": 4000,
-  "language_model_path": "/home/dev/src/notedeck_worktrees/algos/damus_snapshot/models/glotlid-v3/model_v3.bin",
-  "ordered_event_ids_path": "/home/dev/src/notedeck_worktrees/algos/damus_snapshot/runs/crec-105-fresh-corpus-v9/publication/10m-adcf8f016f6a-v1/english-eligible/ordered-event-ids.bin",
-  "ordered_event_ids_sha256": "4166d105437ab82fda75c3a10bbd4bc53b4aaf9560990a89981a98122543625d",
-  "selection_domain": "hr38-corpus-v1",
-  "source_corpus_path": "/home/dev/src/notedeck_worktrees/algos/damus_snapshot/runs/crec-105-fresh-corpus-v9/derivation/cumulative-filtered.ndb"
-}

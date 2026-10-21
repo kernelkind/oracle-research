@@ -30,11 +30,6 @@ The user approved `S6621c8eaa9-trial-2`, “Temporal deceleration,” with an em
 
 The default review now reopens this accepted title, with all masks and the original assistant concern in a separate comment. No further review is required for it.
 
-```bash
-cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
-  ./sse_multivector/hdbv2-node-description-probe-v16/run-review.sh
-```
-
 `run-review-problems.sh` shows both dog responses. `run-review-all.sh` shows all 18 responses. Each has a separate session. B shows the exact saved v15 answer. No decisions were prefilled; the focused session now contains the user's actual approval.
 
 I read every mask and response. Before user review, an independent semantic review agreed on both dog failures and the uncertain time title, but also questioned “Casual conversation about one’s day.” I accept that title because it describes the communication about someone's day, rather than merely classifying English expressions. The initial disagreement is preserved in `./assessment-audit.json`, not concealed as unanimous agreement. The subsequent user approval is recorded above without rewriting those earlier assessments.

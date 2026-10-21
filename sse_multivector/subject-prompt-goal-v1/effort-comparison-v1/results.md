@@ -1001,4 +1001,4 @@ Fully accepted.
 21. Enforcement is tightening.
 22. The post asks how many additional actors will conclude, as enforcement tightens, that Bitcoin is usable for settlement when other financial rails can be cut.
 
-See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-subject-prompt-goal-v1`.
+See conversion gaps (`03bd9e45:docs/experiments/publication-gaps.csv`) for `collection:tracked-subject-prompt-goal-v1`.

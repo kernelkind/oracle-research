@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "request_path": "unused",
+  "request_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "checkpoint_path": "../../target/hierarchy-example/models/subencoder_st5_base.ckpt",
+  "base_model_artifact_path": "../../target/hierarchy-example/models/sentence-t5-base",
+  "device": "cpu",
+  "output_path": "unused",
+  "checkpoint_sha256": "ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d",
+  "base_model_artifact_tree_sha256": "bba50abbbb7de6165ee3828c4e4abb0c88a6386bd4754374469246cde5017e5d",
+  "container_image": "sha256:a6c9674dca720e1f094b7feeb1397b6e6b0a97e10f13e0a6555deebf4b70ddaa",
+  "model": {
+    "base_model": "sentence-transformers/sentence-t5-base",
+    "dimensions": 768,
+    "maximum_tokens": 512,
+    "pooling": "selected-contextual-token-mean-linear-relu-linear-v1"
+  },
+  "note_batch_size": 8
+}

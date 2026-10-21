@@ -62,7 +62,7 @@ Some retained memberships are consensus results that never occurred as one exact
 
 ## Four new groups selected mechanically
 
-These were selected using the frozen hash rule in [PLAN.md](./PLAN.md): two new groups with 2–4 notes, two with 5–14 notes. No newly added primary group contains 15 or more notes, so that stratum is empty. Selection did not depend on semantic quality.
+These were selected using the frozen hash rule in [PLAN.md](README.md#hdfv3-study-design): two new groups with 2–4 notes, two with 5–14 notes. No newly added primary group contains 15 or more notes, so that stratum is empty. Selection did not depend on semantic quality.
 
 **1640 · two notes**
 

@@ -14,11 +14,6 @@ build time). The production registry still freezes PPv2 and is untouched.
 
 ## Open the review
 
-```bash
-cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp
-./sse_multivector/prominence-prompt-goal-v1/ranking-review-v1/run-review.sh
-```
-
 The launcher opens the saved batch with the prebuilt `model-output-review`
 binary — no downloads, no model calls; the UI is read-only and saves no
 decisions. If that binary is missing, the launcher first builds it through Nix
@@ -116,11 +111,6 @@ validates neither clustering nor titles; PPv10 is not production-frozen.
 
 Regenerate the batch:
 
-```bash
-cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
-python3 sse_multivector/prominence-prompt-goal-v1/ranking-review-v1/build_review.py
-```
-
 Validate without opening a terminal:
 
 ```bash
@@ -130,10 +120,3 @@ cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
 ```
 
 Run the tests:
-
-```bash
-cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
-python3 -m unittest discover \
-  -s sse_multivector/prominence-prompt-goal-v1/ranking-review-v1 \
-  -p test_build_review.py
-```

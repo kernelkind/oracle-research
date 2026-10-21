@@ -37,7 +37,7 @@ declared unavailable or generally unsuitable.[^4]
 
 ## SRR01: fixed descriptions, different learned task
 
-[Plan](./SRR01-PLAN.md), all 908 scored pairs (`./SRR01/scores.json`),
+[Plan](SENSE-RELATIONS.md#srr01-study-design), all 908 scored pairs (`./SRR01/scores.json`),
 configuration and hashes (`./SRR01/config.json`).
 
 Inputs were frozen before scoring:
@@ -93,7 +93,7 @@ errors. Both antonym and both unrelated examples agree with their labels.
 
 ## SRR02: same model and groups, explicit definitions
 
-[Plan](./SRR02-PLAN.md), [frozen definitions](./SRR02/definitions.json),
+[Plan](SENSE-RELATIONS.md#srr02-study-design), [frozen definitions](./SRR02/definitions.json),
 all 56 comparisons including baseline scores (`./SRR02/scores.json`).
 
 This changes only the eight manual descriptions, preserving their intended
@@ -148,7 +148,7 @@ control remained. SRR03 mechanically concatenates each unchanged GDR01 descripti
 `: `, and its unchanged SRR02 definition. It adds no new explanation or selected
 exception. HyperDef's joint term-and-definition representation motivates this
 control; concatenation into this different classifier does not reproduce that
-model.[^7] [Plan](./SRR03-PLAN.md), [exact inputs](./SRR03/definitions.json),
+model.[^7] [Plan](SENSE-RELATIONS.md#srr03-study-design), [exact inputs](./SRR03/definitions.json),
 all 56 scored pairs (`./SRR03/scores.json`).
 
 This does not rescue the classifier. It produces 25 directional predictions,
@@ -274,3 +274,97 @@ Runtime timing fields are observational and are not expected to be identical.
 - `SRR03` — `numerical/pair-scores-55e2f987d071484a`.
 
 These compact exports use a different format. Other cited artifacts remain separate originals.
+
+## SRR01 study design
+
+GDR03 exposed association errors in generic topic classification. SRR01 tests
+a different learned task: predicting the relationship between two meanings.
+It does not change the existing groups or build a hierarchy from the predictions.
+
+Use `ChangeIsKey/change-type-classifier`, revision
+`5c833b8a1f6e1f6fc3e27c533ce16e21949c931e`. It is a 355M-parameter RoBERTa-large
+cross-encoder with five outputs, trained on WordNet definition pairs. The labels
+in the released checkpoint are homonym, hyponym, hypernym, co-hyponym and antonym.
+The author's test records establish orientation: hyponym means the first input
+is narrower than the second. No equality/identity class exists.
+
+**Hypothesis:** explicitly training the relation type can retain the bread
+narrowing while avoiding Coffee/greeting and human-diet/Dog containment errors
+seen with the topic classifier. Existing subjects may be inadequate inputs:
+they often name a concept or report an event rather than define a sense.
+
+Freeze two input conditions before scoring:
+
+- All 842 cross-group subject-candidate pairs from GDR02, directly as two texts.
+  No aboutness wrapper, shortening, candidate selection or new generation.
+- All 56 ordered pairs of GDR01's eight manually clarified descriptions. Reuse
+  them exactly; these remain diagnostic manual inputs, not an automatic method.
+
+Also run the first two records of each of the five classes in the author's
+pinned WordNet test file. These ten examples check implementation and label
+orientation, not performance on Nostr data. Preserve their source and exact text.
+Keep all logits and normalized scores, not merely the winning class.
+
+Use two CPU threads, batch size four, deterministic evaluation and no silent
+truncation. No fitting, score-threshold sweep, paid inference or GPU rental.
+
+Read directional predictions against the unchanged source masks and notes.
+Keep related-but-not-broader cases and description-scope issues separate. The
+model cannot validate equality; forcing its greeting-equivalence pairs into one
+of five classes is a documented limitation, not proof of a new strict parent.
+No majority of easy negatives or native benchmark examples can certify a useful
+hierarchy. If the available descriptions fail while native definitions work,
+investigate that input mismatch rather than simply declaring the model useless.
+
+Sources: [paper](https://aclanthology.org/2024.acl-long.249.pdf),
+[model](https://huggingface.co/ChangeIsKey/change-type-classifier/tree/5c833b8a1f6e1f6fc3e27c533ce16e21949c931e),
+[author data and code](https://github.com/ChangeIsKey/change-type-classification/tree/71ceac95188eb41eaed4ba831c1c2a212c004a76).
+
+## SRR02 study design
+
+SRR01 retained Bread → Sourdough but confused Coffee with a morning greeting
+when supplied short names. Its existing manual descriptions removed that error
+without establishing reliable relations generally. The checkpoint was trained
+on definitions, not category names.
+
+**Hypothesis:** changing the eight fixed GDR01 descriptions into explicit
+definitions of the same meanings improves the directional distinctions. Keep
+the model, ordered pairs, groups, masks and notes fixed. Score all 56 ordered
+pairs, not just the failures. No threshold tuning or hierarchy construction.
+
+Definitions are manually supplied diagnostic inputs, frozen before inference.
+They are not an automatic labeling solution. They must preserve the original
+scope (including coffee shops) and describe each meaning independently, without
+mentioning another group's inclusion or exclusion as a test-specific instruction.
+
+Inspect whether Sourdough remains narrower than Bread, Coffee stops being
+narrower than greetings, and the human carnivore diet stops containing Dogs.
+Also inspect every other directional prediction, including the bread/diet
+error that appeared with SRR01's manual descriptions. The two greeting groups
+are equivalent for this experiment; the classifier has no equality output and
+cannot establish a useful narrowing between them.
+
+If definitions help, the result supports investigating how to obtain faithful
+definitions from complete mask groups. It does not establish a hierarchy or
+justify using a single seed's meaning to describe its whole group. If they do
+not, inspect the concrete errors rather than adapting the definitions to scores.
+
+## SRR03 study design
+
+SRR01's short descriptions and SRR02's definitions each lose different
+distinctions. The definition-only condition also removes the subject's familiar
+name. Before abandoning this checkpoint, test whether the two sources of
+information are complementary.
+
+**Hypothesis:** retaining each original GDR01 description beside its unchanged
+SRR02 definition reduces the wrong directional relationships. This is not another
+rewriting pass: concatenate the two frozen strings with `: `, identically for
+every one of the eight meanings. No examples, instructions, selected exceptions,
+new semantic content or threshold fitting. All 56 original ordered pairs remain.
+
+HyperDef's use of terms together with their sense definitions motivates the
+information control, not a claim that this checkpoint implements HyperDef:
+[Term Definitions Help Hypernymy Detection](https://aclanthology.org/S18-2025.pdf),
+§3. Scores from SRR01/SRR02 remain unchanged. Audit all directional predictions,
+not just the known false links. Definition/name inputs are still manual controls;
+successful classification would not establish automatic group descriptions.

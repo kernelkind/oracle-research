@@ -208,15 +208,6 @@ descriptions independent of old ancestry, with memberships separately auditable.
 
 From the repository root, using a new output directory:
 
-```sh
-PYTHONPATH="$PWD/sse_multivector" python3 \
-  sse_multivector/select_mask_distinctions.py \
-  sse_multivector/navigation-research-v1/NP01/categories.json \
-  --hierarchy sse_multivector/geometric-hierarchy-v1/GDC09/hierarchy.json \
-  --evidence sse_multivector/geometric-hierarchy-v1/GDC09/evidence.json \
-  --output /tmp/nd02-reproduction --run-id ND02-NP01
-```
-
 The snapshot is not standalone: it imports `select_note_categories.py`. Its
 required hash and committed version are in `./ND02-provenance.json`.
 The independent audit reproduced all six artifacts byte-for-byte for both runs

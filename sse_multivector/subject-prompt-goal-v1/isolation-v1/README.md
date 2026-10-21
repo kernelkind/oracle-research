@@ -607,7 +607,6 @@ quality reruns or stopping. Completing both fixed screens reaches 916 before
 the planned 48 fresh validation answers. Do not treat the additional baseline
 as a new candidate or use validation results to revise the selected prompt.
 
-
 ## General-heading permission control, frozen before generation
 
 The existing “need not retell” permission follows the requirement that each

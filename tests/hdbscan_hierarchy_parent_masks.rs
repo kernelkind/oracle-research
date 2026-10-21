@@ -1,5 +1,4 @@
 use std::collections::BTreeMap;
-use std::path::Path;
 
 use crossterm::event::{Event, KeyCode, KeyEvent, KeyModifiers};
 use oracle_mvp::hdbscan_hierarchy::{Group, Hierarchy, MaskInstance};
@@ -160,28 +159,4 @@ fn manual_selection_view_keeps_parent_masks_from_repeated_notes() {
     let rendered = screen(&mut model);
     assert!(rendered.contains("⟦Parent A⟧"));
     assert!(rendered.contains("⟦Parent B⟧"));
-}
-
-#[test]
-fn real_raw_1043_hides_parent_mask_but_keeps_children_and_counts() {
-    let base = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("sse_multivector/real-note-fine-segmentation-v1");
-    let tree = Hierarchy::load(
-        &base.join("hdbscan-cross-note/response.json"),
-        &base.join("vectors/vector-map.json"),
-        &base.join("reviewed-input.json"),
-    )
-    .unwrap();
-    let mut model = HierarchyExplorer::new(tree, Some(1043)).unwrap();
-    let rendered = screen(&mut model);
-    assert!(!rendered.contains("V843"), "{rendered}");
-    assert!(rendered.contains("1043 · 4 notes"));
-    assert!(rendered.contains("▸ 1044"));
-    assert!(rendered.contains("▸ 1045"));
-    key(&mut model, KeyCode::Char('j'));
-    key(&mut model, KeyCode::Char('j'));
-    key(&mut model, KeyCode::Char('l'));
-    let child = screen(&mut model);
-    assert!(child.contains("V826"));
-    assert!(child.contains("⟦I got up early and put the roast and veggies in the crockpot⟧"));
 }

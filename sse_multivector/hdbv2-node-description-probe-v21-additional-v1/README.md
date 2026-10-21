@@ -41,17 +41,7 @@ The evidence supports continued consideration of v21, not a general accuracy est
 
 The focused view contains only the two questions, with every exact mask and a separate assistant comment. B displays the saved v20 title as historical context. No prior results or user review sessions are replaced.
 
-```bash
-cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector
-./hdbv2-node-description-probe-v21-additional-v1/run-review.sh
-```
-
 Optional, all 12 new outputs:
-
-```bash
-cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector
-./hdbv2-node-description-probe-v21-additional-v1/run-review-all.sh
-```
 
 Both views were opened with the unchanged production binary. Mask scrolling, moving between questions, baseline comparison and safe exit were checked using temporary sessions under /tmp/. Those sessions contain no decisions or user comments; the real sessions under target/ were not prefilled. No review-tool code changed.
 
@@ -67,5 +57,3 @@ Both views were opened with the unchanged production binary. Mask scrolling, mov
 - Existing authorized subscription only; no new API billing, rental, purchase, credential changes or account switch. No mask corrections, clustering, TRUE calls or hierarchy changes.
 
 comparison.json contains exact titles, historical context, masks, assessments and raw-result paths. assistant-review.json and independent-review.json preserve differing judgments. The independent reviewer received only semantic-review-input.json, without prior outputs or the main review. Source notes and byte spans remain available in ../hdbv2-node-titles-v20-astra-low/source-packets.json but were not supplied for title generation.
-
-Existing tracking card: CREC-127. Plane tools were unavailable; no external update is claimed.

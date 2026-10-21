@@ -74,10 +74,7 @@ method or a new admission rule.
 
 ## Evidence and verification
 
-Ignored artifacts remain at
-`target/food-halves-v1/hr38-reactions-selection-v1/` in the research worktree,
-through its external-storage symlink. Retain the worktree for these source and
-artifact paths.
+Local evidence directory: `target/food-halves-v1/hr38-reactions-selection-v1/`.
 
 - Analysis plan frozen before new SSE output, SHA256:
   `debf426b72038ef4e9266cd40079ec6054323446fa4fe41f62e1eebace11260b`.

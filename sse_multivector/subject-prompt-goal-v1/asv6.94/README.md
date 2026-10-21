@@ -47,9 +47,9 @@ without those trims. Indirect purchase-topic compatibility remains excluded.
 Both native answers have bound rejects for these expected production-path
 failures; no artificial prose-matching failure substitutes for model behavior.
 
-The [source edit](prompt-edits.json) pins the exact ASv6.93 source hash and
+The source edit (`03bd9e45:sse_multivector/subject-prompt-goal-v1/asv6.94/prompt-edits.json`) pins the exact ASv6.93 source hash and
 replaces only its three collection traversal sentences with the requested two.
-The [template edit](edits.json) independently pins ASv6.93's reusable POST
+The template edit (`03bd9e45:sse_multivector/subject-prompt-goal-v1/asv6.94/edits.json`) independently pins ASv6.93's reusable POST
 template. Native revision receipts preserve both bases, exact changed strings
 and destination hashes. Unchanged example bytes, the finite C1 demonstration,
 all seven production-validated outputs and the exact POST wrapper are checked

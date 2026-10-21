@@ -1,5 +1,4 @@
 use std::collections::BTreeMap;
-use std::path::Path;
 
 use crossterm::event::{Event, KeyCode, KeyEvent, KeyModifiers};
 use oracle_mvp::manual_note_hierarchy::{ManualCategory, ManualNote, ManualNoteHierarchy};
@@ -19,41 +18,6 @@ fn screen(model: &mut ManualNoteExplorer) -> String {
         .map(|y| (0..80).map(|x| buffer[(x, y)].symbol()).collect::<String>())
         .collect::<Vec<_>>()
         .join("\n")
-}
-
-#[test]
-fn saved_gdc09_categories_show_labels_and_note_counts_without_ids() {
-    let hierarchy = ManualNoteHierarchy::load(
-        Path::new("sse_multivector/geometric-hierarchy-v1/GDC09/categories.json"),
-        Path::new("sse_multivector/real-note-fine-segmentation-v1/reviewed-input.json"),
-    )
-    .unwrap();
-    let root = &hierarchy.nodes[&hierarchy.root_node_id];
-    let expected_heading = root.label.clone();
-    let ids = std::iter::once(&root.node_id)
-        .chain(root.children.iter())
-        .map(|id| format!("[{id}]"))
-        .collect::<Vec<_>>();
-    let expected_rows = root
-        .children
-        .iter()
-        .map(|id| {
-            let child = &hierarchy.nodes[id];
-            format!("{} · {} notes", child.label, hierarchy.note_ids(id).len())
-        })
-        .collect::<Vec<_>>();
-    let mut model = ManualNoteExplorer::categories(hierarchy);
-    let rendered = screen(&mut model);
-    for expected in std::iter::once(&expected_heading).chain(&expected_rows) {
-        assert!(
-            rendered.contains(expected),
-            "missing saved category identity {expected:?}:\n{rendered}"
-        );
-    }
-    for id in ids {
-        assert!(!rendered.contains(&id), "{rendered}");
-    }
-    assert!(rendered.contains("GDC09-note-categories"), "{rendered}");
 }
 
 #[test]

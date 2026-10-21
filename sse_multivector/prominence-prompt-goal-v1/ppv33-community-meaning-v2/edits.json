@@ -1,9 +1,0 @@
-{
-  "base_sha256": "d3c334ccff525c4557ad16a4657595109745d1d7d66197ba0a064f433263dc2a",
-  "edits": [
-    {
-      "old": "If the node identifies a community, distinguish interactions directed to that community from the other subjects being discussed.",
-      "new": "If the node identifies a community, count both the substantive subjects explicitly included in node_description and interactions directed to that community. Discussion of the community's stated focus still concerns the node; do not reduce it to the act of sharing that discussion. Distinguish the additional community interaction from other subjects not included in the description."
-    }
-  ]
-}

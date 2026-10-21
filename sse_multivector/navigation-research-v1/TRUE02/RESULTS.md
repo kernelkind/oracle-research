@@ -107,12 +107,93 @@ After the pause for node-description work, the user approved resuming TRUE tests
 
 ## Complete evidence
 
-- [Every decision, exact descriptions, scores, and native errors](DECISIONS.md).
+- Every decision, exact descriptions, scores, and native errors (`03bd9e45:sse_multivector/navigation-research-v1/TRUE02/DECISIONS.md`).
 - [All errors with explanations](ERRORS.md).
 - Raw inputs (`inputs.json`), raw outputs and token IDs (`scores.jsonl`), raw analysis (`analysis.json`).
-- [Frozen plan](../TRUE02-PLAN.md), [pre-score independent review](../TRUE02-BLIND-REVIEW.md).
-- [Execution and reproducibility](EXECUTION.md), independent verification (`verification.json`).
+- [Frozen plan](RESULTS.md#true02-study-design), [pre-score independent review](../TRUE02-BLIND-REVIEW.md).
+- [Execution and reproducibility](RESULTS.md#true02-runtime-and-verification), independent verification (`verification.json`).
 
 TRUE01 and this run's frozen source snapshots remain unchanged. No hierarchy or cutoff adjustment was made in TRUE02. TRUE03 and TRUE04 have separate artifacts. The current runner shares the same inference implementation through a tested extraction; TRUE04 adds reporting for unlabeled rows without changing inference or inventing expected answers.
 
 **Selected data:** Compact pair-score results, inputs and parameters for `TRUE02` are selected for release as `numerical/pair-scores-e0df9005e4fdba93` in the [publication catalog](../../../docs/experiments/publications.csv). These compact exports use a different format. Other cited artifacts remain separate originals.
+
+## TRUE02 study design
+
+### Question
+
+TRUE01's topic-sentence scores placed all valid relationships above all invalid relationships in ten constructed families. The gap was only 0.003920. Does this useful separation survive a different set with many closely related, overlapping categories?
+
+This tests a proposed component, not an adopted hierarchy. No model training, HDBSCAN changes, category-generation changes, or graph construction are included.
+
+### Frozen comparison
+
+Keep TRUE01's released checkpoint, exact topic wrapper, tokenizer, float32 CPU inference, greedy generation, and score calculation unchanged. The only semantic input change is the category set. Bare titles are not retested.
+
+For **A contains B?**, the model receives:
+
+The model sees neither our expected answers nor our scope explanations. Our wrapper is an adaptation for topical containment, not an instruction prescribed by the TRUE paper.
+
+Keep native Yes/No answers and the full score. Separately accept when the score is **strictly greater than 0.142**, the provisional cutoff proposed from TRUE01 before any TRUE02 score is observed. Do not change this cutoff after scoring. The score is the full-vocabulary probability of first output token `1`; it is not cosine or a calibrated probability of category containment.
+
+### New examples and judgments
+
+[Exact fixture](../true02-fixture.json): six categories in each of food, software, economics, politics, and interpersonal relationships. Test every distinct pair within each domain in both directions: **75 unordered pairs, 150 directional decisions**. Do not add easy unrelated cross-domain pairs to increase apparent accuracy.
+
+The descriptions are manually constructed realistic categories, **not actual generated HDBSCAN labels**. This isolates the relationship scorer from label-generation quality. The domains recur from TRUE01; the category pairs are new. This is unseen-example transfer within familiar broad domains, not proof of transfer to all new domains or of an end-to-end hierarchy.
+
+Expected-positive directions are explicitly listed; all remaining directions are expected No. Reciprocal positives represent equivalence. Scope explanations provide noncontainment counterexamples. A separate reviewer audits all unordered pairs without access to TRUE02 scores. Resolve or explicitly set aside genuinely ambiguous judgments before freezing the fixture, never by inspecting predictions.
+
+This evaluation concerns topical containment. For example, bread baking is a narrower topic under bread, even though a process is not a physical loaf. If a disputed pair cannot sustain a clear topical judgment, it must not be presented as a definitive model error.
+
+### Analysis fixed before scoring
+
+1. Report correct/incorrect native decisions and decisions at 0.142, globally and per domain. Also report whether both directions of each pair are correct.
+2. Report strict containment, equivalence, reverse containment, and noncontainment separately. Inspect all errors with both complete descriptions and scores.
+3. Check whether any expected-negative score reaches or exceeds an expected-positive score, globally and within each domain. Preserve all such orderings. No new cutoff is fitted.
+4. If separation holds, this strengthens evidence for a threshold-based component on these inputs. If ordering is clean within domains but not across them, a shared threshold is questionable. If valid and invalid relationships interleave within a domain, no cutoff can perfectly separate those observations. That is not by itself proof that the model is unusable or that every observed error is unacceptable.
+5. Treat counts as descriptive: the 150 directions share only 30 descriptions and five collections. They are not 150 independent samples. Revisit semantic ambiguity transparently, preserving the original judgments and reporting any disputed case separately rather than silently correcting the answer key.
+
+### Execution constraints
+
+Run locally from the cached pinned checkpoint, one inference process, four CPU threads, batch four, maximum 60 GiB RAM, zero swap for the run. Check available memory and competing processes before launch. No paid compute or downloads are planned.
+
+Save the frozen fixture hash before inference, exact serialized inputs, native generated tokens, raw logits, scores, configuration, model hashes, code hashes, and resource measurements under `TRUE02/`. Refuse overwrites. Preserve TRUE01 and all earlier results. Independently replay the saved calculations without another model run. No review UI is part of this experiment.
+
+## TRUE02 runtime and verification
+
+Run locally on September 12, 2026. No training, paid resources, downloads, GPU, quantization, or remote model code. TRUE01 and all earlier artifacts remain byte-for-byte unchanged.
+
+### Frozen identity
+
+- Model: `google/t5_xxl_true_nli_mixture`, revision `aa6cfe1dd4257853bfdd772992045f41bfc14988`.
+- 11,307,321,344 parameters; CPU float32; evaluation/inference mode.
+- Four threads, batch four, seed zero, deterministic algorithms, unchanged native greedy decoding with at most three new tokens.
+- Exact tokenizer: `0` maps to `[3,632]`; `1` maps to `[209]`. Complete generated text with EOS determines native Yes/No. Whitespace token `3` alone is not a No answer.
+- Score: full-vocabulary probability of first token `209`. Frozen cutoff: strictly greater than `0.142`.
+- Fixture SHA256: `a514757d32adc0c31f859d0d8a912870cec4c7296ee07d231d9edc7608098e21`.
+- Inputs SHA256: `cad6f8c463afc25108ebf42f93093773b3c3026601e62d5168bb0b441f171948`.
+- Unchanged TRUE01 scorer SHA256: `334f5d7fc2e0ce390be049d828499dd130553ca981544df5a4656953fc525228`.
+
+The 150 prepared inputs, exact fixture bytes, source snapshots, and source hashes were saved before checkpoint hashing or inference. The command required the fixture hash above and refused an existing output directory. The separate fixture review was completed before launch. No pair from TRUE01 was repeated. All five pinned weight hashes match; all checkpoint loading-error lists are empty. Model-file hashes and inference configuration match TRUE01. Maximum input length was 32 tokens; no truncation occurred.
+
+Package versions: torch 2.8.0+cpu, transformers 4.57.1, huggingface_hub 0.36.2, numpy 2.3.4, safetensors 0.6.2.
+
+### Resources
+
+The host had approximately 100 GiB available RAM before launch. One model process ran inside a systemd scope capped at **60 GiB RAM**, **zero swap**, and **four CPUs**. Other processes were not stopped or changed.
+
+- Total runner time, including checkpoint hashing/loading: **266.81 seconds**.
+- Generation and packaging: **219.80 seconds**.
+- Peak process RSS: **45,542,088 KiB**, about **43.43 GiB**.
+- Observed scope swap: **zero**. The configured no-swap limit remained in force.
+- Exit status: **0**. The inference scope is inactive; no model process remains.
+
+Raw completion measurements and output hashes (`completion.json`). The approximately 19 MiB result directory retains all 150 full-vocabulary first-token logit arrays.
+
+### Tests and independent checks
+
+The separate verifier (`03bd9e45:sse_multivector/navigation-research-v1/TRUE02/verify.py`) imports no production scoring code and loads no neural model. It independently reconstructs all 150 expected directions and input strings, checks saved source/model/artifact hashes against TRUE01, retokenizes the inputs, decodes native answers, recomputes full-vocabulary probabilities using NumPy, checks the frozen cutoff, and recounts per-domain/per-kind errors, complete-pair correctness, and score inversions.
+
+All checks pass; maximum score-replay difference is **4.44e-16**. The verifier ran in its own 2 GiB, no-swap, two-CPU scope. Complete verification result (`verification.json`).
+
+A separate reviewer also checked all semantic expectations before scoring and, after scoring, inspected every error and the input/scoring snapshots. It found no required answer-key correction or implementation/scoring mismatch. This verifies the executed protocol, not universal semantic truth or a second independent model run.

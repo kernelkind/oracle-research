@@ -1,9 +1,0 @@
-{
-  "base_sha256": "0539158131a807b9d6afcb389adf8dab73317e6d5ddbce110740accee2a7b609",
-  "edits": [
-    {
-      "old": "2 cables: cable A is 2 m long and cable B is 3 m long. A is not longer than B.",
-      "new": "2 cables: cable A is not longer than cable B. Cable A is 2 m long and cable B is 3 m long."
-    }
-  ]
-}

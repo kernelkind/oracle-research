@@ -1592,4 +1592,3 @@ Minimum member-pair cosine: `0.384114`. Nearest external cosine: `0.695992`.
 - `V193` · note `f55043b51692`
   - Takeaway: The author urges people to choose carefully and frames free, open, private money for the people as preferable to surveillance-oriented government money.
   - Selected source: `We're at a crossroads: government surveillance money or free, open, private people's money. Choose wisely.`
-

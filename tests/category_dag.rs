@@ -1,6 +1,5 @@
-use std::collections::BTreeSet;
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use std::process::Command;
 
 use crossterm::event::{Event, KeyCode, KeyEvent, KeyModifiers};
@@ -257,74 +256,4 @@ fn category_cli_checks_the_unchanged_shared_graph_without_a_terminal() {
     assert!(stdout.contains("4 categories · 2 notes"), "{stdout}");
     assert_eq!(stdout.matches("Children: shared").count(), 2, "{stdout}");
     assert_eq!(fs::read(&fixture.spec).unwrap(), before);
-}
-
-#[test]
-fn saved_true11_keeps_every_canonical_category_edge_and_original_note_membership() {
-    let directory = Path::new("sse_multivector/navigation-research-v1/TRUE11");
-    let (hierarchy, masks) = ManualNoteHierarchy::load_with_masks(
-        &directory.join("categories.json"),
-        Path::new("sse_multivector/real-note-fine-segmentation-v1/reviewed-input.json"),
-    )
-    .unwrap();
-    let native: Value =
-        serde_json::from_slice(&fs::read(directory.join("native-notes.json")).unwrap()).unwrap();
-    let graph: Value =
-        serde_json::from_slice(&fs::read(directory.join("native-graph.json")).unwrap()).unwrap();
-    let nodes = native["nodes"].as_array().unwrap();
-    assert_eq!(nodes.len(), 58);
-    assert_eq!(hierarchy.nodes.len(), 59);
-    assert_eq!(hierarchy.note_ids(&hierarchy.root_node_id).len(), 77);
-    assert!(hierarchy.has_shared_categories());
-    assert!(masks.is_some());
-    let strings = |value: &Value| {
-        value
-            .as_array()
-            .unwrap()
-            .iter()
-            .map(|item| item.as_str().unwrap().to_owned())
-            .collect::<BTreeSet<_>>()
-    };
-    let originals = |short_ids: &[String]| {
-        short_ids
-            .iter()
-            .map(|short| hierarchy.notes[short].note_id.clone())
-            .collect::<BTreeSet<_>>()
-    };
-    assert_eq!(
-        hierarchy.nodes[&hierarchy.root_node_id]
-            .children
-            .iter()
-            .cloned()
-            .collect::<BTreeSet<_>>(),
-        strings(&graph["roots"])
-    );
-    for node in nodes {
-        let id = node["group"].as_str().unwrap();
-        let category = &hierarchy.nodes[id];
-        assert_eq!(category.node_id, id);
-        assert_eq!(category.label, node["title"].as_str().unwrap());
-        assert_eq!(
-            originals(&category.note_ids),
-            strings(&node["own_note_ids"]),
-            "{id}"
-        );
-        assert_eq!(
-            originals(&hierarchy.note_ids(id)),
-            strings(&node["recursive_note_ids"]),
-            "{id}"
-        );
-        let expected_children = graph["transitive_reduced_edges"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .filter(|edge| edge["a_id"] == id)
-            .map(|edge| edge["b_id"].as_str().unwrap().to_owned())
-            .collect::<BTreeSet<_>>();
-        assert_eq!(
-            category.children.iter().cloned().collect::<BTreeSet<_>>(),
-            expected_children,
-            "{id}"
-        );
-    }
 }

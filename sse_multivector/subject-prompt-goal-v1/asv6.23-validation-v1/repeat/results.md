@@ -34,4 +34,4 @@ This is an operational development pass, not evidence that arbitrary corpus extr
 
 Full source notes and outputs (`./full-outputs.md`) · Decisions (`./review.json`) · Counts and gate assessment (`./assessment.json`)
 
-See [conversion gaps](../../../../docs/experiments/publication-gaps.csv) for `collection:tracked-subject-prompt-goal-v1`.
+See conversion gaps (`03bd9e45:docs/experiments/publication-gaps.csv`) for `collection:tracked-subject-prompt-goal-v1`.

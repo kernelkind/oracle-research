@@ -1,21 +1,11 @@
 use std::collections::BTreeMap;
-use std::path::Path;
 
-use crossterm::event::{Event, KeyCode, KeyEvent, KeyEventKind, KeyModifiers};
+use crossterm::event::{Event, KeyCode, KeyEvent, KeyModifiers};
 use oracle_mvp::manual_note_hierarchy::{ManualCategory, ManualNote, ManualNoteHierarchy};
 use oracle_mvp::manual_note_hierarchy_tui::ManualNoteExplorer;
 use ratatui::Terminal;
 use ratatui::backend::TestBackend;
 use unicode_width::UnicodeWidthStr;
-
-fn coffee() -> ManualNoteHierarchy {
-    let base = Path::new(env!("CARGO_MANIFEST_DIR")).join("sse_multivector");
-    ManualNoteHierarchy::load(
-        &base.join("manual-coffee-hierarchy-v1/hierarchy.json"),
-        &base.join("real-note-fine-segmentation-v1/reviewed-input.json"),
-    )
-    .expect("load the manual hierarchy and its original notes")
-}
 
 fn key(model: &mut ManualNoteExplorer, code: KeyCode) -> bool {
     model.handle_event(Event::Key(KeyEvent::new(code, KeyModifiers::NONE)))
@@ -45,102 +35,6 @@ fn screen(model: &mut ManualNoteExplorer, width: u16, height: u16) -> String {
         })
         .collect::<Vec<_>>()
         .join("\n")
-}
-
-#[test]
-fn coffee_menu_keeps_child_subjects_separate_from_note_actions() {
-    let mut model = ManualNoteExplorer::new(coffee());
-    let initial = screen(&mut model, 80, 24);
-    for expected in [
-        "Coffee",
-        "18 notes",
-        "Morning coffee",
-        "6 notes",
-        "Coffee preparation",
-        "5 notes",
-        "View all 18 notes",
-        "View 7 notes outside children",
-        "j/k",
-        "h/l",
-    ] {
-        assert!(initial.contains(expected), "Missing {expected}: {initial}");
-    }
-    for absent in ["Other coffee", "V001", "HDBSCAN", "Good...er...Afternoon"] {
-        assert!(!initial.contains(absent), "Unexpected {absent}: {initial}");
-    }
-}
-
-#[test]
-fn both_coffee_children_open_every_original_note_and_restore_menu_cursor() {
-    let mut model = ManualNoteExplorer::new(coffee());
-    key(&mut model, KeyCode::Char('l'));
-    for (index, id) in ["N018", "N041", "N043", "N058", "N071", "N095"]
-        .into_iter()
-        .enumerate()
-    {
-        let note = screen(&mut model, 80, 24);
-        assert!(note.contains("Coffee > Morning coffee"), "{note}");
-        assert!(note.contains(id), "Missing {id}: {note}");
-        assert!(note.contains(&format!("Note {} of 6", index + 1)), "{note}");
-        if index == 0 {
-            assert!(note.contains("Good...er...Afternoon Nostr!"), "{note}");
-        }
-        key(&mut model, KeyCode::Char('l'));
-    }
-    assert!(screen(&mut model, 80, 24).contains("Note 6 of 6"));
-    key(&mut model, KeyCode::Char('h'));
-    assert!(screen(&mut model, 80, 24).contains("N071"));
-    assert!(!key(&mut model, KeyCode::Esc));
-    key(&mut model, KeyCode::Char('j'));
-    key(&mut model, KeyCode::Enter);
-    for (index, id) in ["N036", "N045", "N052", "N060", "N086"]
-        .into_iter()
-        .enumerate()
-    {
-        let note = screen(&mut model, 80, 24);
-        assert!(note.contains("Coffee > Coffee preparation"), "{note}");
-        assert!(note.contains(id), "Missing {id}: {note}");
-        assert!(note.contains(&format!("Note {} of 5", index + 1)), "{note}");
-        key(&mut model, KeyCode::Right);
-    }
-    key(&mut model, KeyCode::Backspace);
-    key(&mut model, KeyCode::Enter);
-    assert!(screen(&mut model, 80, 24).contains("N036"));
-}
-
-#[test]
-fn parent_actions_show_all_notes_or_only_notes_outside_children() {
-    let mut model = ManualNoteExplorer::new(coffee());
-    key(&mut model, KeyCode::Down);
-    key(&mut model, KeyCode::Down);
-    key(&mut model, KeyCode::Enter);
-    for (index, id) in [
-        "N004", "N018", "N029", "N035", "N036", "N038", "N041", "N043", "N045", "N052", "N058",
-        "N060", "N065", "N071", "N079", "N086", "N094", "N095",
-    ]
-    .into_iter()
-    .enumerate()
-    {
-        let note = screen(&mut model, 80, 24);
-        assert!(note.contains(id), "Missing {id}: {note}");
-        assert!(
-            note.contains(&format!("Note {} of 18", index + 1)),
-            "{note}"
-        );
-        key(&mut model, KeyCode::Right);
-    }
-    key(&mut model, KeyCode::Backspace);
-    key(&mut model, KeyCode::Down);
-    key(&mut model, KeyCode::Enter);
-    for (index, id) in ["N004", "N029", "N035", "N038", "N065", "N079", "N094"]
-        .into_iter()
-        .enumerate()
-    {
-        let note = screen(&mut model, 80, 24);
-        assert!(note.contains(id), "Missing {id}: {note}");
-        assert!(note.contains(&format!("Note {} of 7", index + 1)), "{note}");
-        key(&mut model, KeyCode::Right);
-    }
 }
 
 fn nested() -> ManualNoteHierarchy {
@@ -289,23 +183,4 @@ fn overlap_is_deduplicated_and_does_not_create_an_empty_outside_action() {
     let root = screen(&mut model, 80, 24);
     assert!(root.contains("View all 1 note"), "{root}");
     assert!(!root.contains("outside children"), "{root}");
-}
-
-#[test]
-fn small_terminals_can_exit_and_released_keys_do_not_navigate() {
-    let mut model = ManualNoteExplorer::new(coffee());
-    let original = screen(&mut model, 80, 24);
-    model.handle_event(Event::Key(KeyEvent::new_with_kind(
-        KeyCode::Char('j'),
-        KeyModifiers::NONE,
-        KeyEventKind::Release,
-    )));
-    assert_eq!(screen(&mut model, 80, 24), original);
-    for (width, height) in [(1, 1), (30, 8), (80, 10)] {
-        let small = screen(&mut model, width, height);
-        assert!(!small.is_empty());
-        assert!(key(&mut model, KeyCode::Char('q')));
-        assert!(control(&mut model, 'c'));
-    }
-    assert_eq!(screen(&mut model, 80, 24), original);
 }

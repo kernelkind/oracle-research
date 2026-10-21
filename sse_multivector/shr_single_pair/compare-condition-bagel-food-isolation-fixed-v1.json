@@ -1,7 +1,0 @@
-{
-  "prepared_experiment": {
-    "path": "/home/dev/src/notedeck_worktrees/algos/oracle-mvp-compare-v75-qualification-v1/target/compare-condition-diagnostic-v4/bagel-food-isolation-source-v1",
-    "sha256": "6aa225a158d9dbf9c38c07d10d2c55d0fdb2adf7be2f6a1ec0f093005ad32e7f"
-  },
-  "input_view": "fixed_meanings"
-}

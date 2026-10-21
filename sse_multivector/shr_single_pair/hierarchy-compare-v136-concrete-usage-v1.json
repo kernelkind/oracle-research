@@ -1,7 +1,0 @@
-{
-  "schema_version": 1,
-  "groups": {
-    "core": ["../../target/compare-v136-concrete-gate-v1/core"],
-    "controls": ["../../target/compare-v136-concrete-gate-v1/controls"]
-  }
-}

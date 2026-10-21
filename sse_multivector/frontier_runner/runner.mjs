@@ -116,12 +116,10 @@ Providers: openai-codex (gpt-6-astra, low), openrouter (pi-ai openai-completions
 OpenRouter requires max_output_tokens; reasoning may be provider-default.
 Optional: timeout_seconds (default 300). No retries, implicit batches, or prompt repair.
 preview reads no credentials and cannot send. run requires --send.
-Subscription auth: the selected account's credential service, launched automatically.
-No upstream credential export, auth files, or paid OpenAI API fallback.
-OpenRouter auth: the same local credential service, with one shared provider key.
-Never reads OPENROUTER_API_KEY or OPENAI_API_KEY; no direct upstream fallback.
-Before paid execution, obtain approved maximum spend and record the commitment in
-budget-ledger.json. Provider-enforced spending caps are not required.
+Authentication and provider setup are shared with run-model.sh.
+See run-model.sh --help for login instructions. Keep credentials outside the repository.
+Before paid execution, obtain approved maximum spend.
+Provider-enforced spending caps are not required.
 Timeouts/output limits are not spending approval or a monetary hard cap.
 Local output checks test JSON/source integrity, NOT semantic correctness.
 `;
@@ -131,7 +129,7 @@ async function main() {
     help: { type: 'boolean' }, send: { type: 'boolean' }, 'auth-file': { type: 'string' }, 'pi-config': { type: 'boolean' },
   } });
   if (values.help) { process.stdout.write(help); return; }
-  if (values['auth-file']) throw new Error('--auth-file is no longer supported; subscription credentials are service-owned. Remove the option or set batch auth_file to null.');
+  if (values['auth-file']) throw new Error('--auth-file is not supported by this frozen adapter. Authenticate with run-model.sh login and omit this option.');
   const [command, path] = positionals;
   if (!['preview', 'run'].includes(command) || positionals.length > 2) throw new Error(help);
   if (command === 'run' && !values.send) throw new Error('Sending requires the explicit --send flag');

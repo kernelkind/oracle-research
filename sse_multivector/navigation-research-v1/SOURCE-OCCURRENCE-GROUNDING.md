@@ -144,7 +144,7 @@ not be correct: the released demonstration retrieves Capone for Corleone.[^lmms]
 
 This mechanism addresses a demonstrated candidate-filter limitation. It is
 not adopted merely because it is inexpensive or available. The controlled
-[USM01 plan](./USM01-PLAN.md) compares saved-lemma filtering, original-word
+[USM01 plan](USM01-RESULTS.md#usm01-study-design) compares saved-lemma filtering, original-word
 morphological lookup and unrestricted matching using the same vectors.
 The original-word control already repairs the known lemma exclusions; beating
 only the faulty parser input would not establish value from removing lexical

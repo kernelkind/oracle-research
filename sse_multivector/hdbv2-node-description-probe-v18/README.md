@@ -30,10 +30,6 @@ Urination is supported by only the latter two. Adding it to the shared title bre
 
 The default review (`./review.json`) shows the one distinct uncertainty, with every mask and my reasoning in a separate comment. Both day trials differ only in capitalization, so that question is shown once; both raw answers remain in the complete review. `run-review-all.sh` shows all 12 v18 titles with the corresponding fresh v16 title available; `run-review-problems.sh` shows the four rejected v18 titles. No user decisions are prefilled.
 
-```bash
-/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/hdbv2-node-description-probe-v18/run-review.sh
-```
-
 ## Authorized change
 
 V18 adds only this sentence after v16's opening:
@@ -79,7 +75,5 @@ Do not adopt v18 on this evidence. The dog failure did not recur in either fresh
 The user subsequently rejected the unrun v19 draft and approved the [v20 comparison](../hdbv2-node-description-probe-v20/README.md). V20 starts from v16 and states the shared-subject task and independent-support requirement in its opening. All 24 new calls completed, but v20 still has art, combined-activity and positivity failures. The v20 review exposes all eight failed outputs across both versions plus one uncertain baseline title. Neither version was frozen; this v18 record and its raw results remain unchanged apart from this follow-up link.
 
 The [official GPT-5.6 guidance](https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6#prompt-migration-workflow) informed the one-change comparison, not its semantic judgments.
-
-CREC-127 remains the tracking card. Plane tools were not available in this session, so its external status/comment could not be updated.
 
 **Publication status:** `collection:tracked-hdbv2-node-description-probe-v18` is selected as `title-studies/hdbv2-node-description-probe-v18` in the [publication catalog](../../docs/experiments/publications.csv), with [dataset manifest](../../docs/experiments/downloads.md#dataset-manifest). The local export preserves saved answers and recorded assessments; input AS lineage remains unverified. Nothing has been uploaded.

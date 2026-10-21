@@ -45,11 +45,7 @@ This is encouraging transfer beyond the first six groups, with no remaining obje
 
 The focused review can revisit both approved football outputs, with every mask and the original pre-review assistant reasoning. It is no longer an outstanding review request. B displays the other trial. The approval is recorded in chat above, not prefilled into a TUI session.
 
-```bash
-/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/hdbv2-node-description-probe-v20-astra-low-additional-v1/run-review.sh
-```
-
-[run-review-all.sh](./run-review-all.sh) presents all 12 outputs in a separate session.
+run-review-all.sh (`03bd9e45:sse_multivector/hdbv2-node-description-probe-v20-astra-low-additional-v1/run-review-all.sh`) presents all 12 outputs in a separate session.
 
 ## Selection and provenance
 
@@ -70,6 +66,6 @@ Full notes and byte ranges are provenance only. Generation received only numbere
 - Usage: 26,976 input tokens including 1,920 cached; 295 output tokens including 201 reasoning tokens. Prefix caching did not reuse conversations.
 - `./verification.json` records independent input/output/hash/isolation checks and production review-tool smoke tests.
 
-Raw artifacts and user review sessions are unchanged. This report and the follow-up summary in the [first Astra report](../hdbv2-node-description-probe-v20-astra-low-v1/README.md) record the later chat approval separately from the original assessments. CREC-127 remains the existing card; Plane tools were unavailable, so its external status/comment could not be updated.
+Raw artifacts and user review sessions are unchanged. This report and the follow-up summary in the [first Astra report](../hdbv2-node-description-probe-v20-astra-low-v1/README.md) record the later chat approval separately from the original assessments.
 
 **Publication status:** `collection:tracked-hdbv2-node-description-probe-v20-astra-low-additional-v1` is selected as `title-studies/hdbv2-node-description-probe-v20-astra-low-additional-v1` in the [publication catalog](../../docs/experiments/publications.csv), with [dataset manifest](../../docs/experiments/downloads.md#dataset-manifest). The local export preserves saved answers and recorded assessments; input AS lineage remains unverified. Nothing has been uploaded.

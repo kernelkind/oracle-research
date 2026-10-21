@@ -8,7 +8,7 @@ preference into the working v126 candidate. It chooses the broadest coherent
 supported interpretation while selecting defining conditions, preserving
 identity, expressed restrictions and unknown particular facts. Different
 identities or word meanings cannot be combined to manufacture a larger topic.
-The [edit source](hierarchy-bootstrap-v128-supported-breadth.edits.json) replaces
+The [edit source] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v128-supported-breadth.edits.json` at `03bd9e45`) replaces
 two uniquely matched passages; all other v126 bytes remain fixed.
 
 This is **one scope-selection factor**, not the complete
@@ -126,13 +126,13 @@ test is the complete unchanged BBv7 on these same four inputs and counterexample
 separately labeled from this partial port, before concluding whether the broader
 approach helps. A successful breadth condition must preserve defining features,
 legitimate ingredients and explicit boundaries; equal output strings or blanket
-clinical exclusion are not the objective. This follow-on test has not begun.
+clinical exclusion are not the objective.
 
 ## Accounting and verification
 
-The [complete native usage source](hierarchy-bootstrap-v128-four-foods-breadth-usage-v2.json)
+The [complete native usage source] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v128-four-foods-breadth-usage-v2.json` at `03bd9e45`)
 produces `target/bootstrap-v128-four-foods-breadth-v1/usage-native-v2.json`.
-The [first-draw source](hierarchy-bootstrap-v128-four-foods-breadth-usage-v1.json)
+The [first-draw source] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v128-four-foods-breadth-usage-v1.json` at `03bd9e45`)
 and its earlier report remain unchanged. Six fresh valid nonnull definitions use
 eight attempts including two warmups, with zero failures, retries or reuses.
 All six definition requests report cache hits. Complete incremental native

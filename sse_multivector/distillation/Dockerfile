@@ -27,7 +27,7 @@ RUN uv pip install --python /opt/distillation-venv/bin/python --target /opt/dist
 WORKDIR /work
 FROM runtime
 COPY experiment_runner/ /work/experiment_runner/
-COPY gte/full_build_package.py gte/calibration_package.py gte/vast_private_create.py /work/gte/
+COPY vast/full_build_package.py vast/calibration_package.py vast/vast_private_create.py /work/vast/
 COPY sse_multivector/distillation/requirements.lock sse_multivector/distillation/Dockerfile \
     sse_multivector/distillation/requirements-gpu.lock \
     sse_multivector/distillation/vast-launch.json \

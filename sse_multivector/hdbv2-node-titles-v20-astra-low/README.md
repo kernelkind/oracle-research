@@ -10,20 +10,12 @@ No title objections remain for this run: 59 titles were assistant-accepted, and 
 
 The default view can revisit the two approved items, with every exact mask and my original reasoning in a separate comment. No further review is requested:
 
-```bash
-/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/hdbv2-node-titles-v20-astra-low/run-review.sh
-```
-
 - **Coffee Chains — Sf5a4b23523:** user-approved, with no comment. My earlier objection about café businesses is not an outstanding rejection.
 - **Grow Nostr Campaign — S53be040f52:** user-approved, with no comment. My earlier uncertainty about the campaign interpretation is resolved for this title review.
 
 The saved session is `target/hdbv2-node-titles-v20-astra-low-review-session.json`, SHA256 `ec3cc5a12d500524c5181713de8388ee91b3c4d8df9fe2fceb01d9da3b0243b8`. Its batch hash matches the unchanged focused review, and it contains exactly these two approvals with empty comments. No rationale, general interpretation rule or prompt/model freeze is inferred from those clicks.
 
 Optional, all 61 titles:
-
-```bash
-/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/hdbv2-node-titles-v20-astra-low/run-review-all.sh
-```
 
 The views use separate sessions in `target/`. The focused session now contains the user's actual approvals; no decisions were prefilled. B shows an already-saved second Astra trial for the six reused groups; other groups explicitly have no comparison response. This makes no new calls. Original notes and byte spans remain in `source-packets.json`; the title model and title review use the masks only.
 
@@ -61,6 +53,6 @@ The source packets match the v15 source artifact byte for byte. Independent inte
 
 Both review views were opened with the existing production binary. The focused view showed both items and their separate comments; the full view showed all 61 and the existing comparison view. Smoke-test sessions were saved only under `/tmp/`, with all decisions unset. No review-tool code was changed.
 
-Plane card CREC-127 could not be updated because no Plane tool was available in this session. No card status change is claimed.
+No card status change is claimed.
 
 **Publication status:** `collection:tracked-hdbv2-node-titles-v20-astra-low` is selected as `title-studies/hdbv2-node-titles-v20-astra-low` in the [publication catalog](../../docs/experiments/publications.csv), with [dataset manifest](../../docs/experiments/downloads.md#dataset-manifest). The local export preserves saved answers and recorded assessments; input AS lineage remains unverified. Nothing has been uploaded.

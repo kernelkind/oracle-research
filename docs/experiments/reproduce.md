@@ -6,8 +6,8 @@ current publication code and the recorded inputs; they keep new outputs separate
 from the original results.
 
 **Downloads are not available yet.** The
-[shared-dataset commands](#check-the-converted-local-selection) prepare, verify
-and restore the local upload files listed in [dataset manifest](downloads.md#dataset-manifest).
+[dataset commands](#verify-and-restore-the-dataset) verify
+and restore the selected files listed in [dataset manifest](downloads.md#dataset-manifest).
 Restoration recovers original compact exports, not complete native experiment
 directories. Browsing, HR36 preparation and training-input checks
 use restored compact files. Hosted reader workflows and a fresh GPU training
@@ -101,7 +101,7 @@ target/release/sse-subject-navigation \
 
 This opens the existing result: six root choices representing 2,693 of the 5,000
 input notes. It does not regenerate the hierarchy or establish that its topic
-choices are semantically correct. The [HR39 record](../recommendation-engine/hierarchy-runs.md#hr39--automatically-sampled-5000-note-higen-v53)
+choices are semantically correct. The [HR39 record](hierarchy/runs.md#hr39--automatically-sampled-5000-note-higen-v53)
 describes the run and its review status.
 
 `export-canonical-viewer --posts` checks both payload hashes in `experiment.json`,
@@ -160,7 +160,7 @@ export CASE_ID=e975bb986241e25414d5aaa81bd9464ed667fce43d81093fbd88e94c1b879d63
     --note-ids target/reproduction/AS-inputs/selection/input-note-ids.txt \
     --output target/hierarchy-example/posts.json
   python sse_multivector/experiment.py prepare target/reproduction/AS-one \
-    --spec sse_multivector/examples/hierarchy-v5.3/subjects.spec.json \
+    --spec examples/hierarchy-v5.3/subjects.spec.json \
     --history-root target/reproduction/history --only "$CASE_ID"
   python sse_multivector/experiment.py show target/reproduction/AS-one \
     --case "$CASE_ID"
@@ -248,7 +248,7 @@ cd "$ORACLE_ROOT"
     --command cargo build --locked --release --jobs 1 \
     --bin fine-segmentation-candidate --bin sse-subject-navigation
   python sse_multivector/experiment.py prepare-hierarchy target/reproduction/HR36 \
-    --spec sse_multivector/examples/hierarchy-v5.3/hierarchy.spec.json \
+    --spec examples/hierarchy-v5.3/hierarchy.spec.json \
     --history-root target/reproduction/history
 )
 ```
@@ -347,166 +347,13 @@ separate viewer files. The local backfill includes all 37 official outputs and
 203 supported historical branch outputs. Unsupported older formats and testing
 the eventual public downloads remain open.
 
-### Export other compact results
+### Verify and restore the dataset
 
-These are publisher commands for selected saved experiments. The paths below
-illustrate each input type; use the corresponding original source from the
-experiment index. They perform no inference and leave that evidence intact.
-Download locations still need to be assigned.
+The dataset's `dataset.json` identifies the physical files, shared values and
+exact compact results recoverable by restoration. [Publications](publications.csv)
+connects each bundle ID to its study and recorded outcome.
 
-For a native prompt experiment containing `experiment.json` and `report.json`:
-
-```bash
-cd "$ORACLE_ROOT"
-python sse_multivector/experiment.py export-results \
-  target/prompt-study-v1 --output target/prompt-study-results
-```
-
-The three files are `experiment.json`, `inputs.jsonl` and `results.jsonl`.
-Inputs store exact template variables once per hash; results retain final
-answers, case outcomes, reuse and attributed reviews. The metadata binds the
-saved report and input order. This exports that report snapshot, including its
-recorded judgments; it does not merge newer sidecar edits or reverify receipts.
-Missing reports and known internal construction jobs are refused. New standalone
-preparation, execution and review refresh the same export automatically. Native
-hierarchy children, coordinator-created grading jobs and cache warmups are
-excluded from separate prompt exports; final evaluations retain their judgments.
-
-For an older subject-prompt study saved with `calls.json`, `input.json`,
-`plan.json`, final outputs and review records:
-
-```bash
-cd "$ORACLE_ROOT"
-python sse_multivector/experiment.py export-evaluation-results \
-  target/saved-prompt-study --kind prompt-study \
-  --output target/saved-prompt-study-results
-```
-
-This publisher command requires the original saved study directory. A report
-copied into Git or a compact download alone does not provide that working layout.
-It exports exact used posts in `inputs.jsonl`, final responses in `answers.jsonl`,
-recorded assessments in `judgments.jsonl`, final measurements in `results.jsonl`
-and parameters/source hashes in `experiment.json`. Reviews retain their recorded
-attribution and caveats; they do not establish user approval. Preparation and
-output bindings are checked without running models. Authentication settings,
-rendered requests and transport logs are excluded, and original files remain
-unchanged. Known pre-ASv6.100 results are labeled as historical deprecated data.
-
-The ASv6.100 generalization assessment also has five original Markdown documents
-under `evaluations/asv6.100-generalization-v1/`: its final quality summary and
-four frozen agent rubrics. These are selected verbatim, without a conversion
-command or `experiment.json` wrapper. The [study record](../../sse_multivector/subject-prompt-goal-v1/asv6.100-generalization-v1/README.md#publication-files)
-lists their paths. Their original source hashes are the publication-file
-checksums; the six existing native bundles contain the answers and reviews.
-
-For the six additional subject/mask collections, the same command accepts an
-explicit selection and study ID. `SOURCE_ROOT` is the original repository root,
-rather than an individual study directory. The
-[subject/mask checks](#historical-subject-and-mask-study-checks) describe the
-three selections, source requirements and five-file output.
-
-For the selected legacy title/description studies, a publisher with the exact
-original saved files can use the maintained
-[selection specification](../../sse_multivector/experiment_specs/title-study-publication-v1.json):
-
-```bash
-cd "$ORACLE_ROOT"
-python sse_multivector/experiment.py export-evaluation-results \
-  sse_multivector/hdbv2-node-description-probe-v21 \
-  --kind title-study \
-  --spec sse_multivector/experiment_specs/title-study-publication-v1.json \
-  --output target/title-study-results
-```
-
-The source directory's parent must contain the exact declared study files and
-shared inputs; a clean checkout or compact download alone does not have that
-original layout. The command makes no model calls. Its five files are
-`experiment.json`, `inputs.jsonl`, `answers.jsonl`, `judgments.jsonl` and
-`results.jsonl`. They retain final answers, scientific findings, recorded reviews,
-failure outcomes and necessary inputs/settings. Source hashes, UTF-8 mask spans,
-prompt substitution and receipt bindings are checked; unknown scientific fields
-or ambiguous joins stop the export. Rendered requests, account settings and
-transport logs are excluded. See the [checks](#historical-title-study-checks).
-
-For fine-tune validation answers, final grading reports and final comparisons:
-
-```bash
-cd "$ORACLE_ROOT"
-python sse_multivector/experiment.py export-evaluation-results \
-  target/fine-tune-run --kind validation
-python sse_multivector/experiment.py export-evaluation-results \
-  target/grading/grades.json --kind grades
-python sse_multivector/experiment.py export-evaluation-results \
-  target/review-method/report.json --kind review
-python sse_multivector/experiment.py export-evaluation-results \
-  target/l1-comparison/analysis.json --kind comparison
-```
-
-`validation` accepts a training-run directory or one complete/partial saved
-validation stage. It scans baseline, legacy trained and checkpoint evaluation
-stages, excluding `test/`. Outputs live outside sealed stages under
-`publication/evaluations/`. Grading exports include the exact selected raw
-answers, scores/proofs and deduplicated supporting judgments; missing bindings
-remain explicit. These selections do not include sealed Qwen pass-two answers.
-L1, paired-grade and effort reports retain their distinct measurement schemas.
-Use `--output` to choose a separate destination.
-
-Numerical studies require a supported result profile:
-
-```bash
-cd "$ORACLE_ROOT"
-python sse_multivector/experiment.py export-numerical-results \
-  target/geometric-study --family geometric
-```
-
-The profiles are `geometric`, `fuzzy`, `hidef`, `merge-rule`, `comparison`,
-`performance`, `fine-region` and `pair-scores`. Use `fuzzy` for the native fuzzy
-memberships and final interpolation; a hard projection is a distinct result.
-Directory inputs default to their `publication/` directory; individual result
-files default to `publication/STEM/` alongside the source. An explicit profile
-is required when the old format is ambiguous. Unsupported schemas fail.
-
-Geometric/fuzzy, HiDeF, merge-rule and benchmark final writers also call this
-exporter automatically. Older Rust/diagnostic command implementations remain
-unchanged and need the offline command. The exports retain native results and
-canonical source mappings, omitting working coordinates and distance tables.
-Historical AS provenance must still be checked before any current-pipeline reuse.
-
-The [format reference](downloads.md#automated-outputs) explains the payloads and
-their limits. Managed exports refuse unrelated destinations, bind payload
-checksums and preserve unchanged file bytes/mtimes. The supported historical
-selection has been converted locally. Review of the selected public contents
-and testing eventual downloads remain open.
-
-### Check the converted local selection
-
-[Publications](publications.csv) records 2,989 output/input bundles plus one
-shared-content row. [dataset manifest](downloads.md#dataset-manifest) and
-[dataset hashes](downloads.md#dataset-manifest) describe 9,686 physical files beneath
-`target/publication-dataset/`. Original compact exports stay unchanged in
-`target/publication-exports/`.
-
-Publishers prepare both historical and future exports with the same command.
-Preparation and restoration both require a new output directory; an existing
-output is refused. Use a fresh directory for another revision.
-This historical selection uses a private, bound execution audit:
-
-```bash
-cd "$ORACLE_ROOT"
-python sse_multivector/experiment.py prepare-publication-dataset \
-  target/publication-exports \
-  --output target/publication-dataset \
-  --selection target/publication-audit/shared-dataset-7bee4993/unrun-selection.json
-```
-
-The audit and its private source locations are not reader dependencies. For
-all-unrun snapshots, preparation requires execution evidence bound to the saved
-exports and rechecks originals under their read locks. Unclassified or changed
-evidence stops preparation. The audited selection excludes 196 preparations
-proven never executed and retains three ambiguous snapshots. Native exporters
-remain unchanged; a saved all-unrun report alone does not establish nonexecution.
-
-To verify a complete prepared or downloaded dataset:
+Verify the complete downloaded collection:
 
 ```bash
 cd "$ORACLE_ROOT"
@@ -514,40 +361,27 @@ python sse_multivector/experiment.py verify-publication-dataset \
   target/publication-dataset
 ```
 
-This checks physical hashes, shared records and references, and each restored
-original file's hash. Shared rows contain numeric IDs, full SHA-256 hashes and
-values; JSON files may contain references such as `{"$ref":123}`.
-`dataset.json` records both physical and original compact-file identities.
-
-To recover one bundle for ordinary JSON inspection or consumers of the original
-compact format:
+To restore one selected bundle into a new directory:
 
 ```bash
 cd "$ORACLE_ROOT"
 python sse_multivector/experiment.py restore-publication-dataset \
   target/publication-dataset \
-  --output target/restored-publication \
-  --publication historical-studies/crec-119-500-note-vector-v1
+  --publication historical-studies/crec-119-500-note-vector-v1 \
+  --output target/reproduction/crec-119-vector-v1
 ```
 
-Omit `--publication` to restore all included bundles. A single-bundle restore
+Omit `--publication` to restore every included bundle. A single-bundle restore
 needs `dataset.json`, that bundle's files and its referenced shared files; it
-verifies those inputs without requiring unrelated downloads. Whole-dataset
-verification requires all files. Restored compact exports match their original
-bytes and `experiment.json` payload hashes. They do not provide the native plans,
-receipts and run directories required by `show`, `review` or native `verify`.
+checks their hashes without requiring unrelated bundles. Whole-dataset
+verification requires every physical file. Output directories must be new.
 
-The complete preparation verified every reconstructed original hash, finished
-in 54.06 seconds and used 108,516 KiB peak resident memory under a 512 MiB
-address-space limit. All 34 relevant runner/project tests passed. This verifies
-file integrity, not scientific correctness or privacy. The
-[measured selection](downloads.md#measured-local-exports) describes sizes and
-exclusions. The
-[conversion-gap table](publication-gaps.csv) now has no open rows. TRUE10's
-export uses its saved run configuration and plan. All 33 formerly unsupported entries
-now have selected evidence or an explicit intermediate/duplicate disposition. The
-[historical collection review](open-items.md#historical-collection-review)
-resolved its 109 groups through retained material or selected final evidence.
+Restoration recovers compact inputs and results. It does not reconstruct native
+plans, execution logs or receipt directories for the original `show`, `review`
+and native `verify` commands. The [format reference](downloads.md#automated-outputs)
+describes the retained fields. The exporters' maintained selection specifications
+remain beside the publication code; preparing the collection from private
+originals is separate from reading it.
 
 Four old output-note counts include notes present only in the old top container:
 
@@ -610,11 +444,28 @@ from history or establish a complete historical environment. At code commit
 example were checked in a fresh ordinary clone without replacement refs, private
 audit files or saved research inputs.
 
+### Source removed from the current tree
+
+The cleanup preserves earlier source at commit
+`03bd9e4595fbbf6be18cd08e7d273e69ff563a9b`. Original paths include `gte/`,
+`topic_map/`, `sse_multivector/hierarchy-runs/` and the study-specific launchers.
+For example, inspect a former configuration with:
+
+```bash
+cd "$ORACLE_ROOT"
+git show 03bd9e4595fbbf6be18cd08e7d273e69ff563a9b:sse_multivector/hierarchy-runs/hr39/hierarchy.spec.json
+```
+
+This is the later source copy preserved before tip cleanup, not proof that its
+bytes produced an original experiment. Use the recorded producer revision and
+hashes where available. Some records have only a path/hash or an unresolved
+revision; the [source limits](open-items.md#source-versions) remain explicit.
+
 ## Inspect the fine-tune comparison
 
 The current comparison evaluates the roots of each post's subject hierarchy
 (L1) on the same 200 test notes, across seven model/checkpoint combinations.
-The [research record](../planning/fine-tuning-pilot-process.md#l1-only-test-results-october-15)
+The [research record](subject-extraction/fine-tuning.md#l1-only-test-results-october-15)
 defines correctness and both completeness measures.
 
 Use the runner's Python environment from above to restore this two-file bundle
@@ -670,7 +521,7 @@ The sections below provide training-input checks and local GPU commands.
 For evaluation, `compare-distillation-grades` compares automated and audited
 full-hierarchy grades, and `run-distillation-automatic-grading` can make new model
 calls. Neither command computes this saved L1 table. The historical
-[training runbook](../planning/fine-tuning-pilot-process.md) records the original
+[training runbook](subject-extraction/fine-tuning.md) records the original
 hardware, qualification and results.
 
 ## Prepare the fine-tuning inputs
@@ -899,63 +750,13 @@ It records saved plan identities and prompt/model settings.
 Structured exports record their versions and bindings in `experiment.json`;
 the original Markdown documents use direct source hashes.
 
-The complete original index and workspace discovery tables are preserved in the
-local audit described in [open items](open-items.md). They cover internal jobs,
-warmups and original receipt dependencies as well as selected studies. Historical
-input-version limitations remain documented there. The compact exports do not
-contain complete original native receipt packages.
+The index covers selected studies, rather than internal jobs, cache warmups or
+whole original workspaces. [Evidence limits](open-items.md) distinguish available
+results from missing historical inputs and native receipt packages.
 
 Outputs derived from subjects older than **ASv6.100** are historical evidence,
 including their downstream hierarchies and evaluations. They are not current
 pipeline inputs or validation. Original source posts remain usable.
-
-### Verify a saved prompt experiment after extraction
-
-This workflow requires a complete original native experiment package. It does
-not apply to the intended compact publication exports or require publishing
-internal hierarchy-generation responses. For a complete local package, check its
-checksums and extract it with its original structure, bound inputs, responses
-and location metadata. Verification then works without recreating the research
-machine's paths.
-
-Verification requires the Python runtime above, but no credentials or model
-worker. For HR39's saved `HR39-resumed-1/batch-00025` prompt experiment:
-
-```bash
-cd "$ORACLE_ROOT"
-source target/hierarchy-env/bin/activate
-export HR39_EVIDENCE="$RELEASE_ROOT/evidence/hierarchy-run-store/hr39-v53-auto-5000-note-v1"
-python sse_multivector/experiment.py verify \
-  "$HR39_EVIDENCE/HR39-resumed-1/batch-00025/experiment"
-```
-
-The command finds the bundled `experiment-locations.json` automatically. These
-are additional evidence files beyond the compact publications above. The package
-has been tested locally; publishing it is not part of the compact-output plan.
-The [native verification instructions](open-items.md#prepare-verification-metadata)
-describe how such complete local packages are prepared.
-
-This checks the plan and bound source hashes, the manifest, ledger sequence and
-provenance, and successful response receipts. Reused responses are checked
-against their original producer receipts. The summary distinguishes successful,
-failed, unrun and mechanical cases. A successful command means its integrity
-checks passed; it does not mean the experiment completed or its answers are
-correct. Add `--json` for the measured counts and plan hash.
-
-The command does not reconstruct hierarchy or training outputs, reevaluate
-mechanical decisions, verify every transitive adapter input, or recover the
-original code from its recorded hashes. Failed attempts receive ledger checks,
-not successful-response verification. Archive checksums remain necessary to
-check collection completeness. Source hashing and ledger reads are streamed;
-the selected plan, configuration and manifests are loaded as JSON. For large
-builds, select an individual child prompt experiment.
-
-Preserve the original frozen files. For a new run, use an editable specification
-pointing at the verified extracted input files, then `prepare` into a new output
-directory. Keep an explicit record of changed paths and settings. Location
-mappings apply only to `verify`; they do not make `show`, `collect`, `run` or
-`prepare --from` portable. Replay of whole historical collections remains
-unfinished.
 
 ## What has been tested
 
@@ -986,540 +787,9 @@ large-corpus scalability or reproduction of a historical model draw.
 
 Hosted download testing and fresh GPU training/adapter-inference runs remain
 unverified. Some historical entry points require original files outside the
-compact selection; see [replay limits](open-items.md#original-file-links-and-replay).
-
-### Hierarchy publication checks
-
-A local HR39 export was checked against its saved 250.61 MiB state: 200 nodes,
-six roots, 2,693 represented notes and the full ordered selection of 5,000 input
-IDs. Its three output files total **804,511 bytes (about 786 KiB)**; post text
-remains separate. The streaming export used **47,380 KiB peak resident memory**
-and passed under a **512 MiB process address-space limit**. These measurements
-describe exporting this saved graph, not memory needed to generate it or proof
-of million-note scalability. Nothing was uploaded.
-
-### Other compact export checks
-
-Local fixture tests cover standalone prompt lifecycle/review exports, explicit
-historical snapshots, internal-job exclusion, partial validation and grading,
-selected-answer/judgment bindings, guest packaging, and supported numerical
-profiles. They also check source preservation, destination ownership, unchanged
-refreshes, bounded streaming and omission of private configuration and raw
-execution diagnostics. Scientific findings and attributed review comments remain
-part of the results; these checks do not replace review of the selected contents.
-
-Representative historical sources were exported locally with a 512 MiB process
-address-space limit. A 1,200-answer grading preview, including scores/proofs and
-38,017 distinct supporting judgments, totaled about 91.5 MiB with about 48 MiB
-peak resident memory. Numerical previews ranged from about 14 KiB for a small
-comparison to 7.81 MiB for native fuzzy memberships. These samples do not measure
-the final collection or establish conversion of the entire inventory. Originals
-were preserved, and nothing was uploaded.
-
-### Historical backfill checks
-
-The selected dataset excludes 196 preparations proven never executed and
-retains three execution-unknown snapshots. Internal jobs and 203 saved branch
-outputs are not counted as independent trials.
-
-All 67 selected evaluation sources passed their answer and judgment joins:
-zero missing selected answers, zero missing judgments and zero conflicting
-judgment hashes. **1,966** older judgments have `receipt_only` bindings; this
-does not invent an absent separate output hash. Source-assessment actor fields
-remain `not_recorded` wherever the originals did not identify an actor.
-
-This verifies the selected saved formats, not exhaustive all-history coverage.
-Hosted reader testing remains open.
-
-### Saved hierarchy, navigation and performance checks
-
-Three maintained selections cover the final 33 formerly unsupported entries.
-They produce 28 bundles; duplicate and intermediate records do not become
-separate studies:
-
-| Selection under `sse_multivector/experiment_specs/` | Contents |
-| --- | --- |
-| [saved-hierarchy-publication-v1.json](../../sse_multivector/experiment_specs/saved-hierarchy-publication-v1.json) | 14 final hierarchies/partitions and two manual reference fixtures |
-| [navigation-study-publication-v1.json](../../sse_multivector/experiment_specs/navigation-study-publication-v1.json) | Eight navigation studies |
-| [performance-study-publication-v1.json](../../sse_multivector/experiment_specs/performance-study-publication-v1.json) | Four units containing seven final reports and their summary |
-
-With the original saved files arranged under the source repository root:
-
-```bash
-cd "$ORACLE_ROOT"
-python sse_multivector/experiment.py export-evaluation-results \
-  ../oracle-mvp-original \
-  --kind prompt-study \
-  --spec sse_multivector/experiment_specs/saved-hierarchy-publication-v1.json \
-  --study saved-hierarchy-GDC09 \
-  --output target/saved-hierarchy-results
-```
-
-For another entry, use its specification and exact key from that file's
-`studies` object. Each selection checks its original source hashes; compact
-downloads alone do not recreate the required source layout. The command performs
-no model calls. The five-file historical-study format keeps results, inputs,
-judgments and parameters separate.
-
-Categorized hierarchies use unsigned `kind`/`tags`/`content` records in
-`results.jsonl`; original assignments remain bound in their input records.
-Infomap partitions retain their native numerical meaning. The two manual
-fixtures remain reference inputs, not generated trial outcomes. HR02 retains
-its final view rather than its preparation state. CPC01's run and complementary
-analysis form one unit; the redundant HR35 source-hash comparison is excluded.
-
-The batch totals **140 files, 10,973,854 bytes**, or **2,078,449 bytes** with
-gzip level 6. All **219 relevant tests** pass. The exact admitted 180-case
-training selection and frozen fitter/runtime version remain unlocated for the
-learning benchmark; saved measurements do not establish full replay. Unknown
-AS provenance stays unknown. Original evidence remains unchanged; nothing was
-uploaded. Final privacy review and hosted reader tests remain open.
-
-For TRUE10, use the [true-graph selection](../../sse_multivector/experiment_specs/true-graph-publication-v1.json)
-and study ID `navigation-TRUE10` in the same command. The source root must also
-contain the six selected score bundles at the `target/publication-exports/`
-paths declared by the specification, so their referenced payloads can be verified.
-It binds the existing
-`TRUE10/run/config.json` and `TRUE10/plan.json`; assembly never wrote
-`TRUE10/graph/config.json`. The raw 60-node/95-edge graph and canonical
-58-node/88-edge graph retain their four and two cycles respectively, alongside
-58 note memberships, 77 source posts and two saved agent assessments. Its
-3,540 raw direction references use exact score bodies in six existing bundles;
-3,306 canonical directions are verified separately. All 25 focused/common/unsigned
-tests pass. This closes the conversion gap without claiming full reproduction.
-
-### Archived baseline checks
-
-The [baseline selection](../../sse_multivector/experiment_specs/baseline-study-publication-v1.json)
-binds four compact historical bundles to exact archive members and their saved,
-extracted counterparts:
-
-| Study ID | Selected final evidence |
-| --- | --- |
-| `crec-119-500-note-vector-v1` | 500 posts, 1,311 takeaways and 150 segments |
-| `crec-119-500-note-vector-v2` | 500 posts, 1,268 takeaways and 147 segments |
-| `communicated-meaning-tev4-1` | 194 subjects and 18,721 unique pairwise cosine measurements |
-| `narrowest-subject-v1` | 187 subjects and 17,391 unique pairwise cosine measurements |
-
-A publisher with the original saved repository layout can use:
-
-```bash
-cd "$ORACLE_ROOT"
-python sse_multivector/experiment.py export-evaluation-results \
-  ../oracle-mvp-original \
-  --kind prompt-study \
-  --spec sse_multivector/experiment_specs/baseline-study-publication-v1.json \
-  --study crec-119-500-note-vector-v1 \
-  --output target/baseline-results
-```
-
-Use another exact study ID from the table to export that selection. The command
-checks the frozen hashes against the extracted counterparts without decoding
-archives or making model calls. It needs the original saved layout; compact
-downloads alone do not recreate it. No additional dependency is required.
-Each bundle contains `experiment.json`, `inputs.jsonl`, `answers.jsonl`,
-`judgments.jsonl` and `results.jsonl`. Full archives and working vectors remain
-outside the selected downloads.
-
-The CREC answers preserve **parsed assembled note results**, not raw per-call
-response strings. V2 retains reuse of 492 notes and 3,004 final jobs; its eight
-new notes account for 32 new final jobs. The two geometry bundles retain exact
-cosine values, analysis headers and subject diagnostics. TEv4.1's 194 answer
-inputs already appear in `numerical/fine-region-00d974f22ed8935f/inputs.jsonl`;
-the new bundle references them and intentionally has an empty `answers.jsonl`.
-AS lineage remains unknown. Recorded TP versions do not establish AS provenance,
-and these historical results do not validate the current pipeline.
-
-The four bundles total **20 files, 6,196,469 bytes**, or **1,218,841 bytes** with
-gzip level 6. All **178 relevant tests** pass; all four actual-file exports pass
-under a 512 MiB worker address-space limit. Independent checks verified the four
-archive/member/counterpart mappings. The 50 selected originals (69,121,674 bytes),
-all 98 independently audited originals and all 9,850 previously selected files
-retain their original bytes, modes and modification times. Nothing has been uploaded; final
-publication privacy review and hosted reader tests remain open.
-
-### Fine-region title and real-note segmentation checks
-
-These three local bundles retain final evidence from two title collections and
-nine real-note segmentations. Their maintained selections name exact original
-files and SHA-256 hashes:
-
-| Selection under `sse_multivector/experiment_specs/` | Study ID |
-| --- | --- |
-| `title-audit-publication-v1.json` | `fine-region-hierarchy-title-candidates-v1` |
-| `title-audit-publication-v1.json` | `fine-region-title-cutoff-audit-v1` |
-| `segmentation-study-publication-v1.json` | `real-note-fine-segmentation-v1` |
-
-A publisher with the original saved layout can prepare the same data without
-model calls. This example uses a sibling directory for those originals:
-
-```bash
-cd "$ORACLE_ROOT"
-python sse_multivector/experiment.py export-evaluation-results \
-  ../oracle-mvp-original \
-  --kind prompt-study \
-  --spec sse_multivector/experiment_specs/title-audit-publication-v1.json \
-  --study fine-region-title-cutoff-audit-v1 \
-  --output target/title-cutoff-results
-```
-
-For another selection, substitute its specification and exact study ID from the
-table. The source argument identifies the complete original repository layout;
-a clean checkout or compact download alone does not contain it. Each bundle has
-`experiment.json`, `inputs.jsonl`, `answers.jsonl`, `judgments.jsonl` and
-`results.jsonl`. Unchanged refreshes preserve their bytes and modification times.
-
-The title bundles retain all **50 raw answers and 49 recorded user decisions**.
-H000019 remains unreviewed. Generated wording and the wording actually reviewed
-are separate fields: ten cutoff labels still differ after ignoring letter case
-and outer bold markers.
-The inputs preserve both original post/mask context and the exact supplied
-fragment or descendant-title order. Frozen prompt templates reconstruct every
-request; model settings and isolation controls remain recorded. The historical
-prompt-registry hash differs from the located registry; that mismatch is explicit,
-and its selected template reproduces all frozen requests.
-
-The segmentation bundle retains **nine final selections, complete hierarchy
-outputs for two tested runs, and 248 distinct curated posts** across five datasets.
-Dataset-specific vector identities and token/index mappings remain, while
-duplicated subject and mask fields reference the curated input records. No
-embedding values or working distance arrays are published. Its empty
-`answers.jsonl` is intentional: these curated inputs are not additional model
-answers. Frozen generation packages, encoder identities, numerical parameters
-and input normalization remain recorded.
-
-The **132 structured user decisions** are the original saved states, alongside
-215 baseline packets without a recorded decision. They are not a latest aggregate
-verdict: the [cross-note findings](../../sse_multivector/real-note-fine-segmentation-v1/cross-note-density-v1/README.md)
-separately record the later garden/allotment retraction. Music-review status and
-the authorized encoding omission remain explicit. ASv6.23-derived subjects and
-masks remain deprecated historical evidence; raw posts are not deprecated.
-
-The three exports total **15 files, 15,222,404 bytes**, or **3,006,062 bytes** with
-gzip level 6. Actual-file exports and independent source/payload comparisons
-pass under a 512 MiB worker address-space limit. Original sources remain
-unchanged. Nothing has been uploaded; release-content review remains open.
-
-### Frontier comparison checks
-
-The follow-up privacy review rebuilt 76 subject, frontier, title-audit,
-prominence, mask and standalone exports. Their source bindings, saved answers
-and scientific measurements were checked against the private originals. Frontier metadata uses reviewed,
-hash-bound field selections in the maintained specification. Each selected
-record lists its retained paths in `source.fields`; omitted array positions stay
-`null` so original indices remain stable. This distinguishes selection from an
-original recorded null. Transport failures retain codes and classified failure
-details, without raw account-policy diagnostics. Per-experiment costs and usage
-remain; cumulative account bookkeeping and provider activity IDs are excluded.
-The corrected exporters pass 110 relevant regression and integration tests.
-
-The [frontier selection](../../sse_multivector/experiment_specs/frontier-study-publication-v1.json)
-names 13 entries from one historical collection: compatibility tests, subject
-comparisons, recorded completion variants, a mask-cost study and the interim
-teacher comparison. With the same original source layout used above:
-
-```bash
-cd "$ORACLE_ROOT"
-python sse_multivector/experiment.py export-evaluation-results \
-  ../oracle-mvp-original \
-  --kind prompt-study \
-  --spec sse_multivector/experiment_specs/frontier-study-publication-v1.json \
-  --study frontier-asv6.23-diagnostic-v2 \
-  --output target/frontier-as23-results
-```
-
-Other study IDs are exact keys in the selection's `studies` object. This command
-performs no model calls.
-
-The **65 files total 4,178,196 bytes**, or **624,335 bytes** with gzip level 6.
-They retain **233 completed raw answers**, three partial strings from failed
-attempts, 73 recorded failed attempts and 17 outcomes absent from their individual
-frozen runs. Later continuations remain separate; an absent result in an initial
-run does not imply the collection never obtained that answer. Transport completion,
-format validation, failure details, usage, settings and nullable token limits are
-preserved separately.
-
-Sixty Muse mask answers and 22 Astra baselines link their already-selected
-publications with exact answer hashes. The N031 answer reused by the later
-high-reasoning comparison remains linked to the earlier variant. These references
-are not additional answers or trials. Full source posts and the shortened text
-actually supplied in two ASv6.23 cases remain distinct.
-
-All **437 review cells** preserve their comments and exact source-answer/display
-bindings, or explicit finding/outcome text. The **258 blinded-packet membership
-rows** preserve case/arm mappings and rubrics; overlapping slots are intentional.
-These counts are not user judgments. The original score-A file contains 129
-recorded scores. The teacher summary remains interim: its aggregate counts eight
-subject answers while native receipts retain ten, including later retries; it
-records no final parity verdict.
-
-All **172 relevant regressions** pass, including the focused offline checks:
-
-```bash
-cd "$ORACLE_ROOT"
-PYTHONPATH=.:sse_multivector python -m unittest \
-  sse_multivector.test_historical_study_streams \
-  sse_multivector.test_title_audit_publication \
-  sse_multivector.test_segmentation_study_publication \
-  sse_multivector.test_frontier_study_publication \
-  sse_multivector.test_historical_study_cli
-```
-
-All 16 title/segmentation/frontier original-file exports also pass under a
-512 MiB worker address-space limit. Their 366 selected sources retain their
-SHA-256 hashes, bytes, modes and modification times; all 9,770 previously selected
-files are unchanged. The [dataset manifest](downloads.md#dataset-manifest) and
-[dataset hashes](downloads.md#dataset-manifest) cover the exact local selection. ASv6.23/ASv6.48
-derivatives remain deprecated historical evidence. No inference or uploads
-occurred; final release-content review remains open.
-
-### Early prompt and manual prominence study checks
-
-The 22 additional collections contain early TP/MP development batches, standalone
-mask studies and three manual prominence studies. The selections retain their
-514 saved final answers, used inputs, scientific settings, recorded assessments
-and user reviews. Prominence scores remain paired with their exact raw answers,
-source posts and masks. The 93 already-selected native prominence bundles retain
-their existing files and links.
-
-| Selection | Entries | Example study ID |
-| --- | ---: | --- |
-| [Early and standalone prompt studies](../../sse_multivector/experiment_specs/standalone-prompt-publication-v1.json) | 21 | `mask-prompt-astra-ten-note-v1` |
-| [Manual prominence studies](../../sse_multivector/experiment_specs/prominence-study-publication-v1.json) | 3 | `prominence-prompt-goal-v1/ppv10-ranking-v1` |
-
-A publisher with the exact original files can export a selected study using the
-same offline command. This example places those originals in a sibling directory
-named `oracle-mvp-original`:
-
-```bash
-cd "$ORACLE_ROOT"
-python sse_multivector/experiment.py export-evaluation-results \
-  ../oracle-mvp-original \
-  --kind prompt-study \
-  --spec sse_multivector/experiment_specs/standalone-prompt-publication-v1.json \
-  --study mask-prompt-astra-ten-note-v1 \
-  --output target/early-mask-results
-```
-
-For a prominence study, use its selection file and exact study ID from the table.
-The source argument names the original repository root. A clean checkout or
-compact download alone does not contain that complete saved layout. The five
-output files use the same names as the [subject/mask exports](#historical-subject-and-mask-study-checks).
-Their source and payload hashes identify the exact evidence; no model runs.
-
-Reused comparison baselines remain references to their original studies. Setup
-subject-generation outputs validate the used inputs without becoming additional
-standalone results. The transfer study retains one recorded failure alongside
-71 saved answers. `tpv3.82-redundancy-iteration-1` retains two receipt-only answers
-and three unknown outcomes among its five configured cases. Missing canonical
-post IDs stay missing; native case IDs and exact text identify those inputs.
-
-Original review states and later rereviews remain distinct; identical embedded
-snapshots reference those states. Undecided items acquire no decision, and
-assistant applications of user feedback remain separate from the user's own
-decisions. The probe-v3 M05 review displayed fragments in a different order:
-that display transformation and the original raw answer are both preserved.
-Recorded subject provenance determines deprecation; unknown lineage stays unknown.
-All 12 standalone mask studies derive from ASv6.8 and remain deprecated historical
-evidence. The nine early TP/MP studies have unknown AS lineage. Raw posts are not
-deprecated by this rule.
-
-The prominence exports retain frozen score expectations, comparisons and agent
-assessments. Missing execution/reuse fields remain unknown. One historical mask
-helper has moved; its pinned earlier bytes are located in retained Git history.
-The export checks the saved masks and requests without claiming to have rerun
-that historical helper.
-
-All 113 relevant historical-study, prompt/title, evaluation and publication-workflow
-tests pass. The focused new regressions can be run without model calls:
-
-```bash
-cd "$ORACLE_ROOT"
-PYTHONPATH=.:sse_multivector python -m unittest \
-  sse_multivector.test_standalone_prompt_publication \
-  sse_multivector.test_prominence_study_publication \
-  sse_multivector.test_historical_study_publication \
-  sse_multivector.test_historical_study_cli
-```
-
-All 24 original-file exports pass under a 512 MiB worker address-space limit.
-Their 120 files total 2,440,074 bytes (370,563 bytes with gzip level 6). Every
-payload/source binding matches, and all 302 selected source files retain their
-bytes, hashes, modes and modification times. A regression verifies identical
-output bytes and native missing-case order across separate Python processes.
-This verifies selected evidence, not semantic quality or publication privacy.
-
-### Historical subject and mask study checks
-
-Six original collections now link 123 additional study/review entries under
-`historical-studies/`. Their 1,965 exact saved responses comprise 114 atomic
-subject answers, 931 subject-goal answers and 920 mask-goal responses. The latter
-include mask answers and the subject, comparison and position responses used by
-those studies. These are saved-response counts, including reuse, rather than
-counts of independent calls.
-
-The maintained selections bind each original source by SHA-256:
-
-| Selection | Entries | Study IDs |
-| --- | ---: | --- |
-| [Atomic subjects](../../sse_multivector/experiment_specs/atomic-study-publication-v1.json) | 4 | `atomic-subject-…` |
-| [Subject goals](../../sse_multivector/experiment_specs/subject-goal-publication-v1.json) | 55 | Exact keys in `studies`, such as `asv6.12` |
-| [Mask goals](../../sse_multivector/experiment_specs/mask-goal-publication-v1.json) | 64 | `mask-prompt-goal-v1/…` |
-
-A publisher with the exact saved files can export one selected entry without
-inference. This example runs the publication code with the original files in
-a sibling directory named `oracle-mvp-original`:
-
-```bash
-cd "$ORACLE_ROOT"
-python sse_multivector/experiment.py export-evaluation-results \
-  ../oracle-mvp-original \
-  --kind prompt-study \
-  --spec sse_multivector/experiment_specs/atomic-study-publication-v1.json \
-  --study atomic-subject-asv6.10-test-v1 \
-  --output target/atomic-subject-results
-```
-
-Pass the original repository root as the source argument. All declared files
-must be present with matching hashes, including any source-bound scientific review
-state. A clean checkout or compact download alone does not provide that original
-layout. Moved files can remain behind links; their complete contents must still
-match the declared hashes. This command neither runs models nor changes sources.
-
-Each entry contains `experiment.json`, `inputs.jsonl`, `answers.jsonl`,
-`judgments.jsonl` and `results.jsonl`. Shared posts and prompt templates are
-referenced within the entry rather than expanding every request. Raw answers
-retain their exact strings and hashes; separately parsed answers keep their
-source binding. Scientific parameters retain recorded ordering, normalization,
-isolation, repeat/reuse policies and execution limits. Export metadata omits
-the reviewed credential fields, account locations, private execution identifiers
-and raw transport logs. Saved answer bodies remain verbatim; final review of
-the selected contents remains open.
-
-The 197 scientific assessment, comparison, measurement and correction records
-remain separate from two explicit user rejections. Undecided subjects acquire
-no decision; missing reviewer identity stays unknown. Later corrections do not
-replace earlier assessments. The failed MPv3.26 attempt retains its outcome
-without a credential diagnostic. ASv6.47's sampler retains three reused-answer
-references and no new answers. Known pre-ASv6.100 subject outputs stay deprecated
-historical evidence; unknown lineage stays unknown. Raw posts are not deprecated.
-
-The four previously selected subject studies, ASv6.100's 180 native answers and
-its five evaluation documents retain their existing publication links. They are
-not duplicated in these 123 entries.
-
-All 85 historical-study, older prompt/title, evaluation and publication-workflow
-tests pass:
-
-```bash
-cd "$ORACLE_ROOT"
-PYTHONPATH=.:sse_multivector python -m unittest \
-  sse_multivector.test_historical_study_publication \
-  sse_multivector.test_atomic_study_publication \
-  sse_multivector.test_historical_study_cli \
-  sse_multivector.test_subject_goal_publication \
-  sse_multivector.test_mask_goal_publication \
-  sse_multivector.test_prompt_study_publication \
-  sse_multivector.test_title_study_publication \
-  sse_multivector.test_evaluation_publication \
-  sse_multivector.test_publication_workflow
-```
-
-All 123 real-file commands also pass under a 512 MiB worker address-space limit.
-Their 615 files total 14,108,029 bytes (2,899,439 bytes with gzip level 6).
-Every declared source and payload hash matches. All 3,266 selected original
-files retain their bytes, hashes, modes and modification times. This verifies
-the selected saved evidence; it does not re-evaluate scientific quality or
-complete the final publication privacy review.
-
-### Historical title study checks
-
-The 33 title/description publication groups contain 506 saved answers and 24
-separate failed attempts, with three final 61-group title sets. All 183 selected
-titles bind to their chosen saved answers, including 32 reused answers from
-other selected studies. Published inputs preserve original order, exact masks
-and the recorded deduplication or hashtag condition. Reconstructing the requests
-from those inputs and exported templates reproduces all 506 request hashes;
-the raw answer strings also reproduce their saved hashes. These are mechanical
-checks, not new assessments or approval of the titles.
-
-The maintained selection contains only paths, hashes and input/template bindings.
-Frozen parameters retain their scientific fields; private execution and billing
-containers are excluded. Unknown fields fail explicitly. A selected-title view
-reuses an input reference only when its exact masks match the chosen call.
-Otherwise its original evidence remains present. Comments without an author or
-decision field remain unattributed comments. Unresolved external file references
-are explicitly identified; they are not guessed from a shared filename.
-
-All 62 title-study, projection, mask-input, older prompt-study, evaluation-export
-and publication-workflow tests pass:
-
-```bash
-cd "$ORACLE_ROOT"
-PYTHONPATH=.:sse_multivector python -m unittest \
-  sse_multivector.test_title_study_publication \
-  sse_multivector.test_title_study_records \
-  sse_multivector.test_category_title_inputs \
-  sse_multivector.test_prompt_study_publication \
-  sse_multivector.test_evaluation_publication \
-  sse_multivector.test_publication_workflow
-```
-
-All 33 real-file exports also pass with a 512 MiB address-space limit and about
-31 MiB maximum resident memory. The 2,262 input/receipt/source files read by
-these exports retain their bytes, modes and modification times. No new model
-answers, user decisions or semantic judgments were created. All output hashes
-and sizes are listed in [dataset manifest](downloads.md#dataset-manifest).
-
-### SSE representation study checks
-
-These 11 historical studies used manually supplied text spans to test SSE
-representations. Their original final comparisons, recorded outcomes, fixed
-inputs and encoder settings are selected under `representations/`. No automatic
-subject or mask generation was involved; AS version classification does not
-apply.
-
-A publisher with the original saved study layout can prepare these files
-without inference:
-
-```bash
-cd "$ORACLE_ROOT"
-python sse_multivector/experiment.py export-numerical-results \
-  sse_multivector/mask-fidelity-location-v1 \
-  --family representation \
-  --output target/representation-results
-```
-
-Use the study directory containing `experiment.json` and `worker-input.json`,
-rather than its `result/` subdirectory. The context-counterfactual study instead
-uses `sse_multivector/context-counterfactual-result-v1` and its original sibling
-fixture and source-note files. A clean checkout or selected download alone does
-not contain the complete original source layout.
-
-The three output files are `experiment.json`, `inputs.jsonl` and `results.jsonl`.
-They retain native result values, including failed scientific comparisons,
-without rerunning the encoder or assessing the results again. The compound
-study's complete cosine table is a required measured result; raw vectors,
-token-index diagnostics and duplicate CSV views are excluded.
-
-The context fixture hash is checked against the saved records. Its worker-request
-hash is checked for agreement across the analysis, manifest and receipt; the
-missing compiled request bytes prevent recomputing that hash. Recorded review
-and authorization fields describe the saved study and grant no new approval.
-
-All 40 representation, numerical-publication and publication-workflow tests pass:
-
-```bash
-cd "$ORACLE_ROOT"
-PYTHONPATH=.:sse_multivector python -m unittest \
-  sse_multivector.test_representation_publication \
-  sse_multivector.test_numerical_publication \
-  sse_multivector.test_publication_workflow
-```
-
-The 11 real-file publication commands also pass under a 512 MiB address-space
-limit, with about 28 MiB peak resident memory. The selected 33 files total
-880,381 bytes (146,702 bytes with gzip level 6). Independent checks match every
-native analysis, proposal/fixture and saved worker input, all 381 encoded row
-identities and all 2,025 compound-matrix cells. All 99 original files retain
-their bytes, hashes, modes and modification times. No encoder or model ran.
+compact selection; see [replay limits](open-items.md#source-versions).
+
+The dataset checks verify file identities and restored bytes. They do not
+reevaluate semantic judgments or prove exact replay of historical model answers.
+See [evidence and reproduction limits](open-items.md) for missing input versions,
+unknown execution or usage, and outcomes that remain scientifically unresolved.

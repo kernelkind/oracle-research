@@ -124,10 +124,7 @@ admission rules; removing the actor word from pooling is insufficient.
 
 ## Evidence and verification
 
-Ignored evidence is retained at
-`target/food-halves-v1/hr38-title-meaning-score-v1/` in the research task worktree,
-through the existing external-storage symlink. Retain the worktree for frozen
-source and artifact paths.
+Local evidence directory: `target/food-halves-v1/hr38-title-meaning-score-v1/`.
 
 - Frozen plan SHA256:
   `4f46ede36dc657637a019fbe5cde42a3a5af9581861d62cbc3b94a5a5eabb468`.

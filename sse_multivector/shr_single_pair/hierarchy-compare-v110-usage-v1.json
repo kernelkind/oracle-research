@@ -1,7 +1,0 @@
-{
-  "schema_version": 1,
-  "groups": {
-    "v110_core": ["../../target/compare-v110-qualification-v1/core-priority-fallback-v1"],
-    "v110_controls": ["../../target/compare-v110-qualification-v1/full-controls-v1"]
-  }
-}

@@ -56,7 +56,7 @@ class PackageTests(unittest.TestCase):
 
     def test_missing_or_corrupt_download_cache_blocks_every_candidate(self):
         import hashlib
-        from gte.full_build_package import write_manifest
+        from vast.full_build_package import write_manifest
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             DistillationDataTests().prepare(root)
@@ -632,7 +632,7 @@ class SharedSSHTests(unittest.TestCase):
     def test_download_models_on_volume_and_retrieve_evidence(self):
         import hashlib
         import socket
-        from gte.full_build_package import write_manifest
+        from vast.full_build_package import write_manifest
         from sse_multivector.test_distillation_cache import fixture_hub
         source = Path(os.environ['DISTILLATION_TEST_OUTPUT'])
         model = Path(read_json(source / 'config.json')['model'])

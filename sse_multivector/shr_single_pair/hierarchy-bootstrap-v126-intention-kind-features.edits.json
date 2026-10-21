@@ -1,8 +1,0 @@
-{
-  "edits": [
-    {
-      "old": "A role, use or component relationship must apply to that kind with its required features; the relationship alone does not establish membership.",
-      "new": "An intention to use something as a kind does not establish the other features required to be that kind, or that the use occurred. A kind may be defined by its intended use; when it also requires other features, state and preserve them. A role, use or component relationship must preserve every required feature of the kind involved."
-    }
-  ]
-}

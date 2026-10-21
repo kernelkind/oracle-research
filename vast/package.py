@@ -6,7 +6,10 @@ from pathlib import Path
 import shutil
 import sys
 
-import runner
+if __package__:
+    from . import runner
+else:
+    import runner
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -92,7 +95,7 @@ def freeze(spec: dict, root: Path, ledger: Path) -> Path:
     control.mkdir(parents=True, mode=0o700)
     shutil.copyfile(ROOT / "vast/runner.py", control / "vast_full_build.py")
     for name in ("calibration_package.py", "full_build_package.py", "vast_private_create.py"):
-        shutil.copyfile(ROOT / "gte" / name, control / name)
+        shutil.copyfile(ROOT / "vast" / name, control / name)
     sums = "".join(f"{runner.sha256_file(path)}  {path.relative_to(root)}\n" for path in sorted(control.iterdir()))
     runner.atomic_bytes(control / "SHA256SUMS", sums.encode())
     payload = root / "transport/workload"

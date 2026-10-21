@@ -3567,7 +3567,7 @@
           "viewer_check_passed": true
         },
         "parameter_ledger": {
-          "path": "docs/recommendation-engine/hierarchy-parameters.csv",
+          "path": "docs/experiments/hierarchy/parameters.csv",
           "row": "HR11"
         },
         "worker_config": {
@@ -3843,7 +3843,7 @@
           "viewer_check_passed": true
         },
         "parameter_ledger": {
-          "path": "docs/recommendation-engine/hierarchy-parameters.csv",
+          "path": "docs/experiments/hierarchy/parameters.csv",
           "row": "HR12"
         },
         "worker_config": {
@@ -4131,7 +4131,7 @@
           "viewer_check_passed": true
         },
         "parameter_ledger": {
-          "path": "docs/recommendation-engine/hierarchy-parameters.csv",
+          "path": "docs/experiments/hierarchy/parameters.csv",
           "row": "HR13"
         },
         "worker_config": {
@@ -4528,7 +4528,7 @@
           "exporter_git_commit": "58b9ceab81b4aac99c827a20221d94f51730f1a6"
         },
         "parameter_ledger": {
-          "path": "docs/recommendation-engine/hierarchy-parameters.csv",
+          "path": "docs/experiments/hierarchy/parameters.csv",
           "row": "HR14"
         },
         "worker_config": {
@@ -4785,7 +4785,7 @@
           }
         },
         "parameter_ledger": {
-          "path": "docs/recommendation-engine/hierarchy-parameters.csv",
+          "path": "docs/experiments/hierarchy/parameters.csv",
           "row": "HR15"
         },
         "worker_config": {
@@ -5143,7 +5143,7 @@
           }
         },
         "parameter_ledger": {
-          "path": "docs/recommendation-engine/hierarchy-parameters.csv",
+          "path": "docs/experiments/hierarchy/parameters.csv",
           "row": "HR16"
         },
         "worker_config": {
@@ -5421,7 +5421,7 @@
           "missing_notes": 5
         },
         "parameter_ledger": {
-          "path": "docs/recommendation-engine/hierarchy-parameters.csv",
+          "path": "docs/experiments/hierarchy/parameters.csv",
           "row": "HR17"
         },
         "worker_config": {
@@ -5740,7 +5740,7 @@
           "missing_notes": 15
         },
         "parameter_ledger": {
-          "path": "docs/recommendation-engine/hierarchy-parameters.csv",
+          "path": "docs/experiments/hierarchy/parameters.csv",
           "row": "HR19"
         },
         "worker_config": {
@@ -6028,7 +6028,7 @@
           "missing_notes": 5
         },
         "parameter_ledger": {
-          "path": "docs/recommendation-engine/hierarchy-parameters.csv",
+          "path": "docs/experiments/hierarchy/parameters.csv",
           "row": "HR18"
         },
         "worker_config": {
@@ -6384,7 +6384,7 @@
           "missing_notes": 20
         },
         "parameter_ledger": {
-          "path": "docs/recommendation-engine/hierarchy-parameters.csv",
+          "path": "docs/experiments/hierarchy/parameters.csv",
           "row": "HR20"
         },
         "worker_config": {
@@ -7060,7 +7060,7 @@
           "missing_notes": 4
         },
         "parameter_ledger": {
-          "path": "docs/recommendation-engine/hierarchy-parameters.csv",
+          "path": "docs/experiments/hierarchy/parameters.csv",
           "row": "HR21"
         },
         "worker_config": {
@@ -7606,7 +7606,7 @@
           "missing_notes": 6
         },
         "parameter_ledger": {
-          "path": "docs/recommendation-engine/hierarchy-parameters.csv",
+          "path": "docs/experiments/hierarchy/parameters.csv",
           "row": "HR22"
         },
         "worker_config": {
@@ -7903,7 +7903,7 @@
           "Kept HR22 frozen shared runner commit e7dd09fa to preserve execution controls; no newer runner changes included."
         ],
         "parameter_ledger": {
-          "path": "docs/recommendation-engine/hierarchy-parameters.csv",
+          "path": "docs/experiments/hierarchy/parameters.csv",
           "row": "HR23"
         },
         "result": {
@@ -8570,7 +8570,7 @@
           "sha256": "e331d55b6b52ca5ae863d1d218a1650fea3b6201029b95ae87266696181cbdac"
         },
         "parameter_ledger": {
-          "path": "docs/recommendation-engine/hierarchy-parameters.csv",
+          "path": "docs/experiments/hierarchy/parameters.csv",
           "row": "HR27"
         },
         "native_usage": {
@@ -8622,7 +8622,7 @@
           "sha256": "87bb8c75b98d432bba3e08c492fb34b6a94630e37a3360951c2948d604d8f7c9"
         },
         "parameter_ledger": {
-          "path": "docs/recommendation-engine/hierarchy-parameters.csv",
+          "path": "docs/experiments/hierarchy/parameters.csv",
           "row": "HR28"
         },
         "native_usage": {
@@ -8686,7 +8686,7 @@
           "sha256": "7f984f2c83df7fefe88afa400b88dca05bb3fcf8cbc22f62f259303f3d35748b"
         },
         "parameter_ledger": {
-          "path": "docs/recommendation-engine/hierarchy-parameters.csv",
+          "path": "docs/experiments/hierarchy/parameters.csv",
           "row": "HR29"
         },
         "native_usage": {
@@ -8750,7 +8750,7 @@
           "sha256": "b54a72149bc38fa5cdb375be7e05808b0deb9a48a9c484ddaaf86e4acb8c5879"
         },
         "parameter_ledger": {
-          "path": "docs/recommendation-engine/hierarchy-parameters.csv",
+          "path": "docs/experiments/hierarchy/parameters.csv",
           "row": "HR31"
         },
         "native_usage": {
@@ -8815,7 +8815,7 @@
           "sha256": "44f87f68d8ca411c66fe8dc9590a021eb075f7337b80e1ff7460f827b12597fb"
         },
         "parameter_ledger": {
-          "path": "docs/recommendation-engine/hierarchy-parameters.csv",
+          "path": "docs/experiments/hierarchy/parameters.csv",
           "row": "HR32"
         },
         "native_usage": {
@@ -8887,7 +8887,7 @@
           "sha256": "43abbdad8d8805d8ce811da1c45cbfa07dfa6a8abe67eaa1c692c1048091f0b7"
         },
         "parameter_ledger": {
-          "path": "docs/recommendation-engine/hierarchy-parameters.csv",
+          "path": "docs/experiments/hierarchy/parameters.csv",
           "row": "HR33"
         },
         "native_usage": {
@@ -8963,7 +8963,7 @@
           "sha256": "758802d8b47828f44cbe313dfee92576098a949798d92a5a4c4434c5360ab3cd"
         },
         "parameter_ledger": {
-          "path": "docs/recommendation-engine/hierarchy-parameters.csv",
+          "path": "docs/experiments/hierarchy/parameters.csv",
           "row": "HR34"
         },
         "native_usage": {
@@ -9081,7 +9081,7 @@
           "sha256": "819384218e7aca575d49821f0b582b04a21d6c9ea795a8e805439038b2bbfa90"
         },
         "parameter_ledger": {
-          "path": "docs/recommendation-engine/hierarchy-parameters.csv",
+          "path": "docs/experiments/hierarchy/parameters.csv",
           "row": "HR35"
         },
         "native_usage": {
@@ -9229,7 +9229,7 @@
           "sha256": "3907d351d16bf8d90065467b9808b73c84eaedaf95ae202993ae99744c286eb1"
         },
         "parameter_ledger": {
-          "path": "docs/recommendation-engine/hierarchy-parameters.csv",
+          "path": "docs/experiments/hierarchy/parameters.csv",
           "row": "HR36"
         },
         "native_usage": {
@@ -9389,7 +9389,7 @@
           "sha256": "9d81e280c7c3aa0679b5f71cada429623a7cffc24bef890c28fce5024da96b4c"
         },
         "parameter_ledger": {
-          "path": "docs/recommendation-engine/hierarchy-parameters.csv",
+          "path": "docs/experiments/hierarchy/parameters.csv",
           "row": "HR37"
         },
         "native_usage": {
@@ -9549,7 +9549,7 @@
           "sha256": "890b87fc3ff7d03fb3c535fbd15053f6a6bf79c9a127a2c9d47728e408467d1e"
         },
         "parameter_ledger": {
-          "path": "docs/recommendation-engine/hierarchy-parameters.csv",
+          "path": "docs/experiments/hierarchy/parameters.csv",
           "row": "HR38"
         },
         "native_usage": {
@@ -9755,7 +9755,7 @@
           "sha256": "f1f3507be0fa95a5618e489b05d8fbf0c6ba33519f8f900f47c3ecde1f2f9b3b"
         },
         "parameter_ledger": {
-          "path": "docs/recommendation-engine/hierarchy-parameters.csv",
+          "path": "docs/experiments/hierarchy/parameters.csv",
           "row": "HR39"
         },
         "native_usage": {

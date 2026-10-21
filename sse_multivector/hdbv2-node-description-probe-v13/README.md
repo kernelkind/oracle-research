@@ -21,10 +21,6 @@ Both v12 trials, both current trials, complete masks, and reasoning are in `comp
 
 Optional inspection in the existing review tool:
 
-```sh
-/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/hdbv2-node-description-probe-v13/run-review.sh
-```
-
 This opens all twelve outputs with masks and separate assistant comments. It is not a request to adjudicate twelve uncertainties. No user decisions were prefilled.
 
 Execution: twelve fresh isolated Sol-low calls, two per group, maximum three concurrent; same CLI, wrapper, inputs, grouping, and ordering as v12. No schema, examples, extra prompt text, expected titles, tools, retries, or prior conversation. Exact raw outputs and token usage are saved per call.

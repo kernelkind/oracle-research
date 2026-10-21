@@ -114,8 +114,62 @@ This test does not identify whether remaining problems principally reflect noun-
 
 ## Reproduction and preserved evidence
 
-[Plan](../RSE01-PLAN.md) · [Execution](EXECUTION.md) · [Every case](CASES.md) · Analysis (`analysis.json`) · Inputs (`inputs.json`) · Raw embeddings and entailment relation (`embeddings.json`) · All 32,400 scores (`scores.json`) · Verification (`verification.json`).
+[Plan](RESULTS.md#rse01-study-design) · [Execution](RESULTS.md#rse01-runtime-and-verification) · [Every case](CASES.md) · Analysis (`analysis.json`) · Inputs (`inputs.json`) · Raw embeddings and entailment relation (`embeddings.json`) · All 32,400 scores (`scores.json`) · Verification (`verification.json`).
 
 Six new tests and 17 existing regression tests pass. The 180 inputs are byte-identical to HRC03's prepared inputs; token counts range from 4 to 16, below the author's 32-token limit. No truncation. The released model has 355,369,984 parameters and 1,024-dimensional vectors. The main run used about 2.99 GiB peak process memory and 13.35 seconds total, including 5.65 seconds of encoding. CPU only, two threads, one bounded model process at a time; no paid resources. Previous artifacts are unchanged.
 
 Independent verification instantiated the pinned author's complete RSE class and reproduced all 180 embeddings and the entailment relation bit-for-bit. It independently recalculated all 32,400 pairs, 60 matched and 240 mixed-wording comparisons. Author float32 cosine differs from saved double-precision scores by at most 2.385e-7; no parent, direction or cosine choice changes. The verifier took 11.68 seconds and peaked at about 3.01 GiB. Its source hashes, compatibility details and enforced resource limits are in `verification.json`.
+
+## RSE01 study design
+
+Authorized September 12, 2026. This plan is recorded before model scoring.
+
+Question: does the released RSE entailment score distinguish plausible broader categories from the fixed alternatives more reliably than HierarCaps did on HRC03?
+
+Use the exact frozen HRC03 fixture: 30 cases, two wordings each, five domains, 180 description occurrences. Preserve its original judgments and later qualifications. Fixture SHA256: `d3efece72ebf6f03e4c0b5fe9b1c588fbece361b00599b34389c242a699c2c35`. No new generated text, masks, notes, labels, or hierarchy changes.
+
+Model: `binwang/RSE-RoBERTa-large-10-relations`, revision `b1da9ad30f7c5f943ea35d3c2685df0862ad3cb5`. Weights SHA256: `76ae8a51d65f60b70b526954ad047bc72398d80681ba5b80a8c8dcfa39b87e39`. Author code revision: `2fc202227bf95bd12ce3b41acbbfefb1a45c983f`.
+
+Encode plain descriptions independently. Use the final first-token representation, trained linear layer and tanh. Score `cosine(z(child) + relation[0], z(parent))`; add before normalization. Relation 0 is entailment. Keep plain same-model cosine as a baseline. Do not use the SentEval helper that maximizes the two directions. No training, relation selection, fitted cutoff, or prompt changes.
+
+Check token counts before inference. Use the author's 32-token limit with truncation forbidden; if an input exceeds it, stop and record the issue rather than silently shorten it.
+
+Compare all 60 matched parent choices and the 30 families' stability across all eight combinations of wording. Report direction separately; preferring forward over reverse does not itself establish parent membership. Compare RSE's native score against its own cosine and saved HRC03 results; record both improvements and regressions. No absolute acceptance threshold or universal accuracy claim follows from this constructed fixture.
+
+Verify scoring and projection with test-first checks. Save complete inputs, raw vectors, the learned relation, all ordered pair scores, derived comparisons, model/input/source hashes, runtime and memory. Independently check the implementation against author code and reproduce saved calculations. Present concrete text and both scores for questionable placements; preserve ambiguous cases without silently changing their expected labels.
+
+Resource scope: local CPU only, batch 4, two CPU threads, 6 GiB process/cgroup memory bound, no swap, one model process at a time. One public 1.42 GB weight download; no paid resources. Prior runs remain unchanged. This is a model-transfer diagnostic, not model adoption or construction of a hierarchy.
+
+## RSE01 runtime and verification
+
+Run on local CPU, September 12, 2026. No training or paid resources.
+
+### Source and input identity
+
+- Checkpoint: `binwang/RSE-RoBERTa-large-10-relations` at `b1da9ad30f7c5f943ea35d3c2685df0862ad3cb5`.
+- Weight file SHA256: `76ae8a51d65f60b70b526954ad047bc72398d80681ba5b80a8c8dcfa39b87e39`.
+- Author source revision: `2fc202227bf95bd12ce3b41acbbfefb1a45c983f`.
+- Fixture SHA256: `d3efece72ebf6f03e4c0b5fe9b1c588fbece361b00599b34389c242a699c2c35`.
+- Input-record SHA256: `886ea3f362d95c02077f2c7b7c7cd45370e29d86b7120f4de29c9d4a7d3ed277`, identical to HRC03.
+
+Package versions and every downloaded-file hash are in `config.json`. The 1.42 GB weight download used one worker, a 2 GiB/no-swap scope, and no authentication token. No GPU or paid provider was used.
+
+### Main invocation
+
+The run recorded 355,369,984 parameters, 1,024 dimensions, 5.64810058567673 seconds encoding, 13.347875773906708 seconds total, and 3,133,396 KiB peak RSS.
+
+### Compatibility and numerical details
+
+The runner reproduces author inference with the standard `RobertaModel` plus the checkpoint's trained linear/tanh projection. All encoder tensors load strictly; exactly the three expected head tensors remain. The old persisted position-ID buffer is validated against the architecture's fixed sequence before omitting it from the modern nonpersistent state. No trained tensor is discarded or replaced by a random initialization.
+
+The model runs in float32, with eager attention and evaluation/inference mode. Raw embeddings are saved before any normalization. Saved pair scores use Python double-precision arithmetic on those float32 values; the author's example uses float32 tensor cosine. Independent verification records the numerical difference rather than claiming bit-identical scores across arithmetic implementations.
+
+No relation or threshold selection is performed. Relation 0 is the released entailment relation, and scoring uses child-to-parent direction. The symmetric SentEval maximum-of-both-directions helper is deliberately not used.
+
+### Independent author-implementation verification
+
+`verify.py` loads pinned, hash-checked author `model.py` and `model_utils.py`. The unused `from turtle import forward` import is removed only in memory to avoid the irrelevant GUI dependency; inference code is otherwise unchanged. It instantiates `RoBERTaForRSE`, loads the full checkpoint strictly, and invokes `sentemb_forward` through the author class. The legacy fixed position buffer receives the same explicit value check as in the primary runner.
+
+All 180 embeddings and the relation are bit-identical. Independent double-precision score replay differs by at most 3.997e-15. Float32 author cosine differs by at most 2.385e-7; every matched and mixed-wording decision retains the same sign. Original artifact hashes are unchanged. The verifier's model process ran only after the primary process exited.
+
+The verifier fetches and hash-checks the small pinned author source files on each run; model weights remain offline. It prints its report without overwriting the saved verification. Full details are in `verification.json`.

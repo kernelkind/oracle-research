@@ -1,6 +1,6 @@
 # Original-coordinate hierarchy experiments
 
-The strongest current candidate is **unit-sphere diffusion, GDC09**, not the earlier slower Euclidean diffusion. Following the coordinate-motion diagnostic produced genuine additional parent–child structure: coffee→tea, sleep→daily routines, cookware→kitchen equipment, and literature→knowledge/writing. This remains a partial candidate, not a validated complete navigation system. Some memberships are weak, many successive nodes add examples without a new descriptive level, and coverage gaps remain.
+**Unit-sphere diffusion, GDC09**, was the strongest candidate in this comparison. Following the coordinate-motion diagnostic produced additional parent–child structure: coffee→tea, sleep→daily routines, cookware→kitchen equipment, and literature→knowledge/writing. Some memberships were weak, many successive nodes added examples without a new descriptive level, and coverage gaps remained. These results did not establish a complete navigation system.
 
 [Continuation findings](./CONTINUATION.md) record the causal investigation, controlled changes, completed trajectory, robustness checks, and remaining counterexamples. The original runs below remain unchanged. The earlier conclusion that motion tracing was merely a future recommendation was premature; that work is now performed.
 
@@ -8,7 +8,7 @@ These are exploratory adaptations, not a benchmark ranking or a finding that the
 
 [Navigation research](../navigation-research-v1/FINDINGS.md) separately tests original-vector membership recovery and selection of browsing steps. Those experiments preserve GDC09. Neither tested membership rule is adopted; the NP01 navigation export is an inspectable comparison, not a validated replacement or a change to the default browser.
 
-## View GDC09
+## GDC09 inspection results
 
 ### Categories and original notes
 
@@ -180,6 +180,6 @@ Every configuration preserves source hashes, canonical order, actual parameters,
 
 The 86 MiB `GDC01S/coordinate-snapshots.npz` observation cache remains saved locally but is excluded from Git; its checksum, exact generating configuration, final coordinates, and complete derived tolerance comparison are tracked. It can be regenerated without changing the experiment. No prior experiment artifacts were overwritten or deleted.
 
-## Current handoff
+## Comparison limits
 
-Inspect GDC09 as the strongest complete saved trajectory and GDC07 as the alternative without density correction. No production hierarchy was replaced. Native structure, note-level repetition, source-mask weaknesses, and semantic acceptance remain separate questions. The continuation includes concrete paths and counterexamples so the next decision can concern those actual results, not another unperformed motion diagnostic.
+GDC09 and GDC07 compare complete saved trajectories with and without density correction. Native structure, note-level repetition, source-mask weaknesses and semantic acceptance remain separate questions. The continuation records concrete paths and counterexamples.

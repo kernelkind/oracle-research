@@ -1,5 +1,3 @@
-use std::collections::BTreeMap;
-use std::path::Path;
 
 use crossterm::event::{Event, KeyCode, KeyEvent, KeyModifiers};
 use oracle_mvp::manual_note_hierarchy::{ManualCategory, ManualNote, ManualNoteHierarchy};
@@ -131,59 +129,4 @@ fn absorbed_categories_are_not_choices_and_all_their_notes_still_open() {
     key(&mut model, KeyCode::Esc);
     key(&mut model, KeyCode::Esc);
     assert_eq!(screen(&mut model), menu);
-}
-
-#[test]
-fn gdc09_preserves_every_retained_note_set_and_combined_mask() {
-    let spec = Path::new("sse_multivector/geometric-hierarchy-v1/GDC09/categories.json");
-    let source = Path::new("sse_multivector/real-note-fine-segmentation-v1/reviewed-input.json");
-    let spec_before = std::fs::read(spec).unwrap();
-    let source_before = std::fs::read(source).unwrap();
-    let (original, masks) = ManualNoteHierarchy::load_with_masks(spec, source).unwrap();
-    let masks = masks.unwrap();
-    let snapshot = original
-        .nodes
-        .keys()
-        .map(|id| {
-            let notes = original.note_ids(id);
-            let ranges = notes
-                .iter()
-                .map(|note| (note.clone(), masks.spans(id, note).to_vec()))
-                .collect::<BTreeMap<_, _>>();
-            (id.clone(), (notes, ranges))
-        })
-        .collect::<BTreeMap<_, _>>();
-    let depth = |hierarchy: &ManualNoteHierarchy| {
-        let mut pending = vec![(&hierarchy.root_node_id, 0)];
-        let mut maximum = 0;
-        while let Some((id, level)) = pending.pop() {
-            maximum = maximum.max(level);
-            pending.extend(
-                hierarchy.nodes[id]
-                    .children
-                    .iter()
-                    .map(|child| (child, level + 1)),
-            );
-        }
-        maximum
-    };
-    assert_eq!(depth(&original), 40);
-    let mut hierarchy = original.clone();
-    assert_eq!(hierarchy.absorb_single_children(), 71);
-    assert_eq!(hierarchy.nodes.len(), 148);
-    assert_eq!(hierarchy.notes.len(), 100);
-    assert_eq!(depth(&hierarchy), 28);
-    for (id, node) in &hierarchy.nodes {
-        assert_ne!(node.children.len(), 1);
-        assert_eq!(node.label, original.nodes[id].label);
-        assert_eq!(node.analysis, original.nodes[id].analysis);
-        let notes = hierarchy.note_ids(id);
-        assert_eq!(notes, snapshot[id].0);
-        for note in notes {
-            assert_eq!(masks.spans(id, &note), snapshot[id].1[&note]);
-        }
-    }
-    assert_eq!(hierarchy.absorb_single_children(), 0);
-    assert_eq!(std::fs::read(spec).unwrap(), spec_before);
-    assert_eq!(std::fs::read(source).unwrap(), source_before);
 }

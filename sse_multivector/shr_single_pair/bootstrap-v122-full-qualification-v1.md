@@ -178,7 +178,7 @@ unnecessary characterization, rather than a demonstrated false requirement.
 
 ## Accounting and next decision
 
-The native [five-experiment accounting source](hierarchy-bootstrap-v122-branch-scope-usage-v1.json)
+The native [five-experiment accounting source] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v122-branch-scope-usage-v1.json` at `03bd9e45`)
 produces `usage-complete-v1.json`: 365 actual attempts, including five warmups
 and five recovered provider failures, with 22 exact reuses. The 377 valid
 case slots include those copies; they are not 377 fresh definitions. Known

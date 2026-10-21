@@ -10,23 +10,12 @@ valid single-integer score.
 
 Prepare (offline, refuses to overwrite evidence):
 
-```bash
-cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
-python3 sse_multivector/prominence-prompt-goal-v1/ppv10-mpv3.43-muse13high-v1/study.py prepare
-```
-
-New experiments use [the shared experiment workflow](../../model-runner.md#prompt-experiments-one-supported-workflow).
 The old saved-batch CLI is retired. Preserve these inputs and receipts as evidence;
 import them with an explicit template/input mapping rather than rerunning the baseline.
 The preparation/collection scripts below describe this saved study, not a second
 supported workflow for new prompt experiments.
 
 Collect (verifies pinned inputs and the actual receipt):
-
-```bash
-cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp && \
-python3 sse_multivector/prominence-prompt-goal-v1/ppv10-mpv3.43-muse13high-v1/study.py collect
-```
 
 `results.json` holds the measured score and provider usage; charges are
 settled in `budget-ledger.json`. A valid score is not a semantic approval.

@@ -35,7 +35,7 @@ revision and attempt-budget checks using production subject validation. C1's
 copy grouping is checked; C8's reviewed branch ordering is preserved verbatim.
 Static validation does not establish model correctness.
 
-Pinned native [source edits](prompt-edits.json) and [template edits](edits.json)
+Pinned native source edits (`03bd9e45:sse_multivector/subject-prompt-goal-v1/asv6.99/prompt-edits.json`) and template edits (`03bd9e45:sse_multivector/subject-prompt-goal-v1/asv6.99/edits.json`)
 produce separate revision receipts. Source SHA256:
 `e87bc404c65bd911b789d9c88d9b8d3e13f10f0ba97805ab6dfc10a55eb7acc0`.
 The change follows [official OpenAI guidance on direct instructions and aligned examples](https://developers.openai.com/api/docs/guides/reasoning-best-practices).
@@ -191,7 +191,7 @@ In particular, this diagnostic explicitly names large pan in the target;
 original N096 supplies it in earlier instructions and has additional ingredients.
 Differences from that original cannot be attributed solely to post length.
 
-The reusable [native spec](../../experiment_specs/asv6.99-condition-source-diagnostic-v1.json)
+The reusable native spec (`03bd9e45:sse_multivector/experiment_specs/asv6.99-condition-source-diagnostic-v1.json`)
 uses the production subjects adapter. Input data remain ignored at
 `target/sp-autonomous-v1/condition-source-diagnostic-v1/posts.json`; native plans
 pin exact bytes and preserve the full POST. The controlled source parts are:
@@ -377,7 +377,7 @@ synthetic development inputs, not a prompt change, new production stage or
 prospective evaluation. The original N096's inherited pan and other ingredients,
 and extra-step-dependent complete referent requirements, remain open.
 
-The [native spec](../../experiment_specs/asv6.99-condition-step-diagnostic-v1.json)
+The native spec (`03bd9e45:sse_multivector/experiment_specs/asv6.99-condition-step-diagnostic-v1.json`)
 uses the production subjects adapter and unchanged medium subscription settings.
 The ignored fixture is
 `target/sp-autonomous-v1/condition-step-diagnostic-v1/posts.json`.
@@ -548,8 +548,8 @@ and five implications retain their mappings. The source/template each grow by
 **3 characters**, not a measured token increase. The same single inference per
 post and same source/heading comparison work remain; no production stage is added.
 
-Pinned [source edits](../asv6.101/prompt-edits.json) and
-[template edits](../asv6.101/edits.json) are applied through native `revise` with
+Pinned source edits (`03bd9e45:sse_multivector/subject-prompt-goal-v1/asv6.101/prompt-edits.json`) and
+template edits (`03bd9e45:sse_multivector/subject-prompt-goal-v1/asv6.101/edits.json`) are applied through native `revise` with
 separate receipts. Source SHA256:
 `7d162e39a8b8c12ba99da3bf973f6ffa38c3fb745d865e4f849799d21b93d7b1`.
 Template SHA256:

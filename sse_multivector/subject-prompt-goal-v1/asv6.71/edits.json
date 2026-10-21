@@ -1,9 +1,0 @@
-{
-  "base_sha256": "99dd52973a2e7bb8180a362732649ccfc632608d5ac31d60c9a144a7f708abbf",
-  "edits": [
-    {
-      "old": "Use the valid relationships to build the hierarchy upward, combining shared headings. Finish these relationships before assigning numbers. Repeating a heading repeats its enumerated descendants too: every copy must retain the same complete source-subject headings beneath it. Then check each enumerated subject against every returned heading: wherever its wording passes the same parent check, retain it beneath that heading, in every copy of that heading. A placement elsewhere does not satisfy a missing branch. Give every heading and subheading its own entry.",
-      "new": "Determine the valid relationships before numbering. For each returned heading, collect every enumerated source subject whose own wording passes the parent check. Use that complete collection beneath every numbered occurrence of the heading, even when its surrounding branch differs. Combine shared headings and give every heading and subheading its own entry. Before returning JSON, check each completed parent-child pair using only its two heading strings; broaden the parent or preserve the supported restriction in the child if needed, while retaining the source subject. Read every source clause again: its specific referents, amounts, modifiers, negation and expressed relationships must still be present in subject headings, not only contexts. Finally, check every numbered parent occurrence for its complete collection of source subjects. A placement elsewhere cannot repair a missing branch."
-    }
-  ]
-}

@@ -1,5 +1,4 @@
 """TRUE03 production-path tests; no model loading or inference."""
-import ast
 import copy
 import hashlib
 import json
@@ -233,44 +232,6 @@ class TRUEGeneratedTitleProbeTests(unittest.TestCase):
             self.assertEqual({path.name: path.read_bytes() for path in output.iterdir()}, before)
 
 
-class TRUE02InferenceExtractionTests(unittest.TestCase):
-    def test_shared_inference_is_exact_frozen_true02_block_except_parameters(self):
-        """Guard the real inference code without loading or replacing the model."""
-        frozen = Path(true_holdout_probe.__file__).parent / 'navigation-research-v1/TRUE02/true_holdout_probe.py'
-        old_module = ast.parse(frozen.read_text())
-        old_main = next(node for node in old_module.body
-                        if isinstance(node, ast.FunctionDef) and node.name == 'main')
-        start = next(index for index, node in enumerate(old_main.body)
-                     if isinstance(node, ast.Expr) and isinstance(node.value, ast.Call)
-                     and isinstance(node.value.func, ast.Name) and node.value.func.id == 'print')
-
-        class Parameters(ast.NodeTransformer):
-            def visit_Attribute(self, node):
-                if isinstance(node.value, ast.Name) and node.value.id == 'args':
-                    if node.attr in ('output', 'batch_size'):
-                        return ast.Name(id=node.attr, ctx=node.ctx)
-                return self.generic_visit(node)
-
-            def visit_Constant(self, node):
-                return ast.Name(id='experiment', ctx=ast.Load()) if node.value == 'TRUE02' else node
-
-            def visit_Call(self, node):
-                node = self.generic_visit(node)
-                if isinstance(node.func, ast.Name) and node.func.id == 'render_decisions':
-                    node.keywords.append(ast.keyword(arg='experiment', value=ast.Name(
-                        id='experiment', ctx=ast.Load())))
-                return node
-
-        expected = Parameters().visit(ast.Module(body=old_main.body[start:], type_ignores=[]))
-        new_module = ast.parse(Path(true_holdout_probe.__file__).read_text())
-        shared = next(node for node in new_module.body
-                      if isinstance(node, ast.FunctionDef) and node.name == 'run_inference')
-        actual = ast.Module(body=shared.body, type_ignores=[])
-        self.assertEqual(ast.dump(actual), ast.dump(expected))
-        old_entrypoint = next(node for node in new_module.body
-                              if isinstance(node, ast.FunctionDef) and node.name == 'main')
-        self.assertTrue(any(isinstance(node, ast.Call) and isinstance(node.func, ast.Name)
-                            and node.func.id == 'run_inference' for node in ast.walk(old_entrypoint)))
 
 
 if __name__ == '__main__':

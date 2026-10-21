@@ -51,6 +51,6 @@ In the sentence format, every positive still scores above every negative: the lo
 
 The bare format has overlapping positive and negative scores; its lowest positive is **0.048672**, below its highest negative at **0.138809**. No single cutoff perfectly separates that observed set.
 
-[Every answer, including successes](DECISIONS.md) · [Summary and interpretation](RESULTS.md) · Exact model inputs and raw recorded answers (`scores.jsonl`).
+Every answer, including successes (`03bd9e45:sse_multivector/navigation-research-v1/TRUE01/DECISIONS.md`) · [Summary and interpretation](RESULTS.md) · Exact model inputs and raw recorded answers (`scores.jsonl`).
 
 **Selected data:** Compact pair-score results, inputs and parameters for `TRUE01` are selected for release as `numerical/pair-scores-44261922841cf8b2` in the [publication catalog](../../../docs/experiments/publications.csv). These compact exports use a different format. Other cited artifacts remain separate originals.

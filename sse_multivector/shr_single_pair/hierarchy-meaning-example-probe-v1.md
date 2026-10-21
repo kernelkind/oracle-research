@@ -120,10 +120,7 @@ boundary or admission policy is introduced.
 
 ## Evidence and verification
 
-Ignored evidence is retained at
-`target/food-halves-v1/hr38-meaning-examples-v1/` in the research task worktree,
-through its existing external-storage symlink. Retain that worktree for frozen
-source and artifact paths.
+Local evidence directory: `target/food-halves-v1/hr38-meaning-examples-v1/`.
 
 - Inputs SHA256:
   `83678a08ac49776bdb99528ace124e44832a91f838039fa389963f65521ba75e`.

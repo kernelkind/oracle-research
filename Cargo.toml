@@ -5,62 +5,6 @@ edition = "2024"
 license = "GPL-3.0-or-later"
 
 [[bin]]
-name = "oracle-mvp"
-path = "src/main.rs"
-
-[[bin]]
-name = "gte-oracle"
-path = "src/bin/gte_oracle.rs"
-
-[[bin]]
-name = "phase3-tui-preview"
-path = "src/bin/phase3_tui_preview.rs"
-
-[[bin]]
-name = "phase3-cost-preflight"
-path = "src/bin/phase3_cost_preflight.rs"
-
-[[bin]]
-name = "phase3-capacity-stress"
-path = "src/bin/phase3_capacity_stress.rs"
-
-[[bin]]
-name = "phase3-learning"
-path = "src/bin/phase3_learning.rs"
-
-[[bin]]
-name = "phase3-seed-selection"
-path = "src/bin/phase3_seed_selection.rs"
-
-[[bin]]
-name = "phase4-final-evaluation"
-path = "src/bin/phase4_final_evaluation.rs"
-
-[[bin]]
-name = "representation-geometry"
-path = "src/bin/representation_geometry.rs"
-
-[[bin]]
-name = "full-pool-escape-probe"
-path = "src/bin/full_pool_escape_probe.rs"
-
-[[bin]]
-name = "semantic-branch-diagnostic"
-path = "src/bin/semantic_branch_diagnostic.rs"
-
-[[bin]]
-name = "topic-map-sample"
-path = "src/bin/topic_map_sample.rs"
-
-[[bin]]
-name = "reference-map"
-path = "src/bin/reference_map.rs"
-
-[[bin]]
-name = "true-review"
-path = "src/bin/true_review.rs"
-
-[[bin]]
 name = "note-sample-review"
 path = "src/bin/note_sample_review.rs"
 
@@ -73,44 +17,12 @@ name = "sse-mask-review"
 path = "src/bin/sse_mask_review.rs"
 
 [[bin]]
-name = "sse-vector-diagnostic"
-path = "src/bin/sse_vector_diagnostic.rs"
-
-[[bin]]
-name = "sse-context-counterfactual"
-path = "src/bin/sse_context_counterfactual.rs"
-
-[[bin]]
-name = "sse-fine-region-pilot"
-path = "src/bin/sse_fine_region_pilot.rs"
-
-[[bin]]
-name = "sse-fine-region-hierarchy-pilot"
-path = "src/bin/sse_fine_region_hierarchy_pilot.rs"
-
-[[bin]]
-name = "sse-fine-region-scc-preflight"
-path = "src/bin/sse_fine_region_scc_preflight.rs"
-
-[[bin]]
 name = "sse-subject-navigation"
 path = "src/bin/sse_subject_navigation.rs"
 
 [[bin]]
-name = "freeze-semantic-map-sample"
-path = "src/bin/freeze_semantic_map_sample.rs"
-
-[[bin]]
-name = "materialize-semantic-map-input"
-path = "src/bin/materialize_semantic_map_input.rs"
-
-[[bin]]
 name = "export-corpus-post-sample"
 path = "src/bin/export_corpus_post_sample.rs"
-
-[[bin]]
-name = "scaled-fine-segments"
-path = "src/bin/scaled_fine_segments.rs"
 
 [[bin]]
 name = "fine-segmentation-candidate"
@@ -120,21 +32,13 @@ path = "src/bin/fine_segmentation_candidate.rs"
 name = "fine-segmentation-review"
 path = "src/bin/fine_segmentation_review.rs"
 
-[[bin]]
-name = "hdbscan-hierarchy"
-path = "src/bin/hdbscan_hierarchy.rs"
-
 [dependencies]
 bech32 = "=0.11.1"
 crossterm = "=0.29.0"
 fasttext = "=0.8.0"
 linkify = "=0.11.0"
-libc = "0.2"
-kodama = "=0.3.0"
 lmdb = "=0.8.0"
-memmap2 = "=0.9.11"
 nostrdb = { git = "https://github.com/kernelkind/nostrdb-rs", rev = "aca2f66e3579dee0c9245e4c66100dd12cd940d6" }
-ort = { version = "=2.0.0-rc.12", default-features = false, features = ["api-24", "cuda", "load-dynamic", "std"] }
 profiling = "1.0"
 rayon = "=1.12.0"
 ratatui = { version = "=0.30.2", default-features = false, features = ["crossterm_0_29", "unstable-rendered-line-info"] }
@@ -143,9 +47,6 @@ serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1.0.89", features = ["float_roundtrip"] }
 sha2 = "0.10.8"
 thiserror = "2.0.7"
-tokenizers = { version = "=0.23.1", default-features = false, features = ["onig"] }
-unicode-normalization = "=0.1.25"
-whatlang = "=0.18.0"
 zstd = "0.13.3"
 
 [dev-dependencies]

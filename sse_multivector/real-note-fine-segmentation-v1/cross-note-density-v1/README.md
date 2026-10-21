@@ -289,8 +289,6 @@ The three user-rejected groups remain unchanged internally but are not proposed 
 
 **Conclusion:** selecting levels reveals useful local structure, but this proposal does not yet provide a good complete discovery hierarchy. It is one inspected selection, not proof that every possible selection fails. There was no rerun, retuning, label generation, or membership change.
 
-To inspect the saved selection in the TUI:
-
 ```sh
 /home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/run-hdbscan-hierarchy.sh --selection
 ```
@@ -316,7 +314,3 @@ The user approved deduplicating such inputs before vector generation in future r
 - `verification.md`: tests, numerical checks, terminal smoke test, and resources.
 
 Recheck preservation without changing anything:
-
-```sh
-python3 sse_multivector/real-note-fine-segmentation-v1/compare_cross_note.py verify-preserved
-```

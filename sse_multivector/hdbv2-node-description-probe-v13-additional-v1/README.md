@@ -40,10 +40,6 @@ Before the user review, the independent audit reached the same six supported / s
 
 Reopen the completed five-card focused review:
 
-```bash
-/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/hdbv2-node-description-probe-v13-additional-v1/run-review.sh
-```
-
 The identical cooking title is shown once, not twice. Both mental and both communication variants remain separate cards. Every card shows all original member masks and separate assistant reasoning. The B comparison shows the other v13 trial, not an earlier prompt baseline. Only your choices record decisions.
 
 The optional `run-review-all.sh` exposes all twelve calls. Its decisions are stored separately. Neither session has been prefilled.

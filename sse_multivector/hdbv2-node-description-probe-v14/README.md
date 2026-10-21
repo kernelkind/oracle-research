@@ -31,10 +31,6 @@ The initial assistant assessment accepted nine outputs, questioned two, and reje
 
 Reopen the completed two-card review:
 
-```bash
-/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/hdbv2-node-description-probe-v14/run-review.sh
-```
-
 The cards show every exact member mask and separate assistant reasoning. The B comparison shows the matching saved v13 trial. It is historical context, not a fresh control or a second decision.
 
 `run-review-all.sh` optionally shows all twelve calls, including the clear phrases problem and the improved mental-state titles. Its session is separate. No new decisions were prefilled.

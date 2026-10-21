@@ -23,7 +23,7 @@ from typing import Any, Iterable
 
 SCHEMA_VERSION = 1
 SUITE_ID = "fine-segmentation-controlled-suite-v1"
-PROTOCOL_DIRECTORY = Path("docs/recommendation-engine/experiments/fine-segmentation")
+PROTOCOL_DIRECTORY = Path("docs/experiments/fine-segmentation")
 PROTOCOL_FILES = (
     "README.md",
     "01-repeated-subject-recovery.md",

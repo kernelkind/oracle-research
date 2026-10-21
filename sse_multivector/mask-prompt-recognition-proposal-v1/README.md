@@ -2,7 +2,7 @@
 
 **Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
 
-The user approved this prompt and test. All 18 planned calls have now run; see the [results](../mask-prompt-recognition-sol-low-v1/README.md) and [full-context judgments](../mask-prompt-recognition-sol-low-v1/judgments.md). The prompt, cases, expected judgments, and original plan in this proposal remain unchanged.
+The user approved this prompt and test. All 18 planned calls have now run; see the [results](../mask-prompt-recognition-sol-low-v1/README.md) and full-context judgments (`03bd9e45:sse_multivector/mask-prompt-recognition-sol-low-v1/judgments.md`). The prompt, cases, expected judgments, and original plan in this proposal remain unchanged.
 
 The proposed test uses **six existing masks**, for **three fixed subjects across two original notes**: understanding life, cryptocurrency insurance, and Bitcoin's value under restrictions. Each subject has an acceptable mask and an incorrect mask. Five selections have direct user review decisions; the clean insurance mask is an existing generated selection checked by the assistant, not a fabricated user approval.
 
@@ -28,5 +28,5 @@ Even correct judgments on all six masks would establish only a small development
 The publication review found no separate result to export from this proposal.
 Its fixed inputs match the executed
 [recognition study](../mask-prompt-recognition-sol-low-v1/README.md), whose final
-answers and judgments remain in [conversion gaps](../../docs/experiments/publication-gaps.csv)
+answers and judgments remain in conversion gaps (`03bd9e45:docs/experiments/publication-gaps.csv`)
 as `collection:tracked-mask-prompt-recognition-sol-low-v1`.

@@ -41,7 +41,7 @@ context at corpus scale is a reason to avoid adoption without demonstrated benef
 The minimal authored check first fails on ASv6.97 for the missing recipe example;
 ASv6.98 passes all 148 focused example, consolidation, revision and attempt-budget
 checks through production validation. Static correctness is not model success.
-Pinned native [source edits](prompt-edits.json) and [template edits](edits.json)
+Pinned native source edits (`03bd9e45:sse_multivector/subject-prompt-goal-v1/asv6.98/prompt-edits.json`) and template edits (`03bd9e45:sse_multivector/subject-prompt-goal-v1/asv6.98/edits.json`)
 produce separate revision receipts. Source SHA256:
 `d16de526a08dc286dba4c28dfbd77bf7185321425e93e904654fc21c99707681`.
 The change follows [official guidance on direct instructions and aligned examples](https://developers.openai.com/api/docs/guides/reasoning-best-practices).

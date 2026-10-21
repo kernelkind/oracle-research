@@ -345,8 +345,8 @@ Each retained group attaches to its nearest retained ancestor. The result is
 root above the 129 EOM groups. Cluster IDs are mapped to raw groups by exact
 canonical membership, not treated as raw-tree IDs.
 
-[hdbscan_nested_groups.py](../hdbscan_nested_groups.py) prepares and exports this
-diagnostic offline. [hdbscan-nested-hr02-v1.json](../hdbscan-nested-hr02-v1.json)
+hdbscan_nested_groups.py (`03bd9e45:sse_multivector/hdbscan_nested_groups.py`) prepares and exports this
+diagnostic offline. hdbscan-nested-hr02-v1.json (`03bd9e45:sse_multivector/hdbscan-nested-hr02-v1.json`)
 identifies its saved inputs and approved result sources. Preparation reproduces
 all 43 previously tested HDBSCAN groups and all 129 original packets, preserving
 mask IDs, vector-sorted instance order and the title adapter's exact same-post
@@ -373,7 +373,7 @@ Before merging, 168 groups have saved titles; the other 319 represent at most
 Generated artifacts are isolated under
 `target/hierarchy-build-v1/hr02-hdbscan-merge-v1/`. Merge and title receipts use
 `sse_multivector/experiments/hr02-hdbscan-{merge,titles}-astra-low-v1/`.
-The dedicated launcher is [run-hdbscan-merge.sh](../run-hdbscan-merge.sh), using
+The dedicated launcher is run-hdbscan-merge.sh (`03bd9e45:sse_multivector/run-hdbscan-merge.sh`), using
 the existing category browser without equal-note or single-child collapsing.
 The links are saved HDBSCAN nesting, **not validated semantic parent placement**.
 The groups cover 629 of 1,674 source masks; the other 1,045 remain accessible at
@@ -439,7 +439,7 @@ python3 sse_multivector/hdbscan_nested_groups.py prepare-pairs \
 ```
 
 That output already exists; preparation refuses to overwrite it. The tracked
-[experiment spec](../experiment_specs/hr02-cross-branch-coffee-astra-low-v1.json)
+experiment spec (`03bd9e45:sse_multivector/experiment_specs/hr02-cross-branch-coffee-astra-low-v1.json`)
 uses unchanged NMP-Jev-v2 / Astra low with the HR02-NMP07 settings. The shared
 runner completed all **15 new calls** with valid answers, no retries or reuse:
 
@@ -469,7 +469,7 @@ The purpose is a useful browsing result with acceptable errors, not perfect
 grouping. Subjects, masks, SSE vectors, HDBSCAN groups and all prompts stay fixed.
 No independent regrouping model, manual answer overrides or repeated rounds.
 
-[cross_branch_merge.py](../cross_branch_merge.py) provides offline preparation,
+cross_branch_merge.py (`03bd9e45:sse_multivector/cross_branch_merge.py`) provides offline preparation,
 consolidation and placement preparation; only the shared experiment runner
 performs inference. It replays the prior in-branch merge from verified receipts,
 validates the saved titles, and freezes inputs in
@@ -535,7 +535,7 @@ The existing Jev cycle-contraction stage leaves **137 nodes, 99 reduced links
 and 57 top-level nodes**. Nine combined titles required nine new unchanged
 v38/Astra-low calls; all validated. No Luna calls, prompt revisions, manual
 relationship repairs or membership expansion were introduced. The separate
-[placement-title spec](../experiment_specs/hr02-cross-branch-placement-titles-astra-low-v1.json)
+placement-title spec (`03bd9e45:sse_multivector/experiment_specs/hr02-cross-branch-placement-titles-astra-low-v1.json`)
 selects Astra explicitly; the older generic naming helper's Luna default was
 not used.
 
@@ -573,9 +573,9 @@ flagged stage conflicts. The user approved the parent–child prompt wording
 below, not another hierarchy run or production adoption.
 
 The reusable specs are
-[merges](../experiment_specs/hr02-cross-branch-merge-astra-low-v1.json),
-[new titles](../experiment_specs/hr02-cross-branch-titles-astra-low-v1.json) and
-[placement](../experiment_specs/hr02-cross-branch-placement-jev-v1.json).
+merges (`03bd9e45:sse_multivector/experiment_specs/hr02-cross-branch-merge-astra-low-v1.json`),
+new titles (`03bd9e45:sse_multivector/experiment_specs/hr02-cross-branch-titles-astra-low-v1.json`) and
+placement (`03bd9e45:sse_multivector/experiment_specs/hr02-cross-branch-placement-jev-v1.json`).
 Receipts are in `sse_multivector/experiments/hr02-cross-branch-merge-astra-low-v1/`.
 
 ## Parent–child prompt — NSP-Astra-Masks-v1
@@ -632,7 +632,7 @@ repetitions. Request reuse remains enabled; preparation found no reusable answer
 The run used 12 attempts; further inference is not authorized by that allowance.
 
 The offline `prepare-parent-child` command in
-[cross_branch_merge.py](../cross_branch_merge.py) replays and verifies the saved
+cross_branch_merge.py (`03bd9e45:sse_multivector/cross_branch_merge.py`) replays and verifies the saved
 merge decisions and title receipts. It maps both endpoints of each saved pair
 onto the 148 surviving groups, removes self-pairs and deduplicates unordered
 pairs. A pair in both sources belongs to the in-branch sample. Within each source,
@@ -645,7 +645,7 @@ not proof of representativeness or candidate coverage. No new pairs are invented
 Each comparison receives the complete deduplicated masks of its current groups,
 including masks added by accepted merges. Human-readable titles, mask IDs,
 full posts and the original pair sources remain review evidence only. The
-[spec](../experiment_specs/hr02-parent-child-astra-masks-v1.json) uses the accepted
+spec (`03bd9e45:sse_multivector/experiment_specs/hr02-parent-child-astra-masks-v1.json`) uses the accepted
 choice envelope, now requiring `parent_child.type = "choice"` and one of
 `a_parent`, `b_parent`, `neither`, `uncertain`. No equivalence or graph rule is
 applied to these answers. Agent assessments are recorded separately through
@@ -689,7 +689,7 @@ unresolved. Model, concurrency and timeout match HR02-NSP-MASKS01. The run used
 `--max-new-attempts 72`; it sent only 36 subscription calls, with no paid fallback.
 The runner's $0.28714 catalog estimate is not a subscription bill.
 
-The [new spec](../experiment_specs/hr02-parent-child-astra-masks-v2.json) changes
+The new spec (`03bd9e45:sse_multivector/experiment_specs/hr02-parent-child-astra-masks-v2.json`) changes
 only the dataset path. The same deterministic selection uses `--per-source 24`,
 adding 18 in-branch and 18 cross-branch pairs. The original 12 inputs are
 identical and reused, not independent new observations. Every input still
@@ -742,7 +742,7 @@ were checked. No model answers, merges, links, titles or masks were changed.
 ### Offline parent–child construction
 
 The approved `package-parent-child` command in
-[cross_branch_merge.py](../cross_branch_merge.py) replays the fixed groups,
+cross_branch_merge.py (`03bd9e45:sse_multivector/cross_branch_merge.py`) replays the fixed groups,
 titles, source hashes and deterministic sample before consuming saved experiment
 receipts. It refuses incomplete, duplicated or changed selected comparisons,
 prompt text or model settings. It makes no model calls and requires a new output
@@ -795,7 +795,7 @@ python3 sse_multivector/cross_branch_merge.py package-parent-child \
 The user approved completing the remaining 518 candidate pairs with unchanged
 NSP-Astra-Masks-v1 / Astra low and exact-request reuse, then checking the graph
 and exporting to the existing browser only if acyclic. The separate
-[spec](../experiment_specs/hr02-parent-child-astra-masks-v3.json) differs from
+spec (`03bd9e45:sse_multivector/experiment_specs/hr02-parent-child-astra-masks-v3.json`) differs from
 the 48-pair spec only in its dataset path. Concurrency remains four, with the
 existing provider-only retry policy and at most two attempts per new case.
 These use the subscription route, without paid API fallback.
@@ -887,8 +887,8 @@ direct posts, and O shows masks outside the children, individually with IDs;
 `[` and `]` switch masks. `?` shows analysis. The UI is read-only: nothing is
 approved, edited or merged by browsing.
 
-The reusable offline exporter is [merge_tree_comparison.py](../merge_tree_comparison.py),
-configured by [merge-comparison-hr02-v3.json](../merge-comparison-hr02-v3.json).
+The reusable offline exporter is merge_tree_comparison.py (`03bd9e45:sse_multivector/merge_tree_comparison.py`),
+configured by merge-comparison-hr02-v3.json (`03bd9e45:sse_multivector/merge-comparison-hr02-v3.json`).
 It validates the saved title/mask experiment receipts through the shared runner,
 reuses existing contraction and mask rendering, and refuses to overwrite an
 export. Generated categories, source hashes and reversible mappings are ignored

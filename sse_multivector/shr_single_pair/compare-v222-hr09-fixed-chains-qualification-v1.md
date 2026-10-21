@@ -93,6 +93,5 @@ cash spending. HR09 original generation is not counted as new execution.
 
 V222 fails complete-chain qualification and remains experimental, unadopted. No
 hierarchy was generated or changed and no additional prompt iteration follows.
-The useful next diagnostic is the single repeated Raves trio: compare its
-interpretation of the temporal node across equivalence and containment arguments.
+
 This recommendation is not prepared or run by this qualification.

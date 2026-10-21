@@ -211,12 +211,6 @@ claim-entailment score must not become the definition of note browsing.
 
 From the repository root, choose a nonexistent output directory:
 
-```sh
-python3 sse_multivector/navigation-research-v1/MDH02/source/mask_description_hierarchy.py \
-  --evidence sse_multivector/geometric-hierarchy-v1/GDC09/evidence.json \
-  --output /tmp/mdh02-reproduction --run-id MDH02 --features words-and-symbols
-```
-
 For MDH01, use its own source directory, run ID and `--features words`.
 Each run has four JSON files and three self-contained source snapshots. Configs
 pin the input hash, all source hashes, Unicode version, feature mode and counts.

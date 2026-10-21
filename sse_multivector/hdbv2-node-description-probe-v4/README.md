@@ -6,10 +6,6 @@ Both fresh prompts titled the weather group as fall despite two masks supplying 
 
 ## Open the review
 
-```bash
-/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/hdbv2-node-description-probe-v4/run-review.sh --start-at Sfd8645f195
-```
-
 The launcher builds the existing `sse-mask-review` binary through Nix with two build jobs, then opens its dedicated `review-titles` mode. No model calls are made by the UI.
 
 - Only uncertain assistant judgments were surfaced: one card, **Sea salt** (Sfd8645f195). Its saved UI decision is Approved; subsequent chat feedback clarified that the description should include the shared food context. The command above preserves the recorded decision and original assessment rather than rewriting review history. The other five results remain saved; they are not assigned user approvals or rejections.
@@ -74,10 +70,6 @@ The weather rejection used the earlier independent-support criterion: V491 suppl
 
 Only the art judgment was queued for user input. The independent reviewer rejected the visual-only restriction; the main reviewer leaned against it but recognized that ordinary use of art can mean visual art. Subsequent discussion established that generic art need not force a broad Art title when the grouped instances support a visual-art interpretation. The saved UI still displays the original judgment and separate My comment; it has not been rewritten or assigned a new user decision. The weather and literature judgments also require reassessment under this same standard.
 
-```bash
-/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/hdbv2-node-description-probe-v6/run-review.sh
-```
-
 The focused batch (`../hdbv2-node-description-probe-v6/review-uncertain.json`) uses a fresh v6 session. The complete six-card batch (`../hdbv2-node-description-probe-v6/review.json`), all assistant comments (`../hdbv2-node-description-probe-v6/review-all-comments.json`), assessments (`../hdbv2-node-description-probe-v6/assistant-assessments.json`), and execution verification (`../hdbv2-node-description-probe-v6/verification.json`) remain available. No assistant judgments are copied into user decisions and no previous review data is changed.
 
 Verification confirmed exact prompt reconstruction, all 25 masks / 54 fragments, twelve distinct fresh threads/workspaces, one successful attempt per call, no tool events, and unchanged raw responses. The existing release TUI loaded both batches and their hash-bound comments; temporary sessions verified the separate comment, scrolling, baseline comparison, and exit without recording approvals. No production Rust code changed. Total usage was 21,616 input and 1,094 output tokens, including 984 reasoning tokens, with no cached input; existing subscription only.
@@ -117,10 +109,6 @@ These judgments use the revised collective-context contract. The generic Literat
 
 Open only the two uncertain titles, with complete flat fragments and separate reasoning:
 
-```bash
-/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/hdbv2-node-description-probe-v9/run-review.sh
-```
-
 The complete six-card batch (`../hdbv2-node-description-probe-v9/review.json`) is also preserved. Numeric row labels identify fragments for review; the model saw no row numbers. The original note/vector/mask associations remain in source packets, not reconstructed in the model input. B displays the earlier V6 output as historical context, not a new paired control. The UI retains its generic “fit every mask” wording: this review concerns collective interpretation, not independent proof by each fragment. User sessions start without decisions, and prior sessions remain unchanged.
 
 Verification (`../hdbv2-node-description-probe-v9/verification.json`) confirmed all 54 fragments, six distinct fresh threads/workspaces, first-attempt success, no tools or schema, unchanged wrapper/model/executable, and exact output/hash agreement. Usage: 10,908 input and 220 output tokens, including 125 reasoning tokens; no cached input. Existing subscription only, no API-key billing or rental. Existing release TUI loaded both batches and comments; temporary-session checks covered scrolling, navigation, historical comparison and safe exit without decisions.
@@ -144,10 +132,6 @@ Six fresh isolated Sol low calls used the same 25 masks / 54 fragments. Each num
 
 An independent reviewer, given only these current exact inputs/outputs and the collective-context contract, also accepts all six. Assessments (`../hdbv2-node-description-probe-v10/assistant-assessments.json`) distinguish semantic judgments from wording imperfections. No user decisions are assigned, and no uncertain-only review is required. The all-six sampler is optional:
 
-```bash
-/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/hdbv2-node-description-probe-v10/run-review.sh
-```
-
 It shows complete grouped masks and a separate reasoning comment. B displays historical V9 output, not a freshly rerun control. The generic UI question about fitting every mask is interpreted collectively, not as independent proof by each mask.
 
 Execution verification (`../hdbv2-node-description-probe-v10/verification.json`) confirmed exact input reconstruction and UTF-8 source spans, six fresh threads/workspaces, first-attempt success, no tools or schema, unchanged wrapper/model/executable, and exact output/provenance hashes. Usage: 10,814 input and 208 output tokens, including 150 reasoning tokens; no cached input. Existing subscription only, no API-key billing or rental. The existing release TUI loaded the batch and separate comments at 100×36; next-card navigation, historical comparison and safe exit were checked using a temporary session with all outcomes still empty. No production code changed.
@@ -170,10 +154,6 @@ The user approved a small diverse new sample, not another prompt revision. We se
 The complete results (`../hdbv2-node-description-probe-v10-additional-v1/comparison.json`) and separate assessments (`../hdbv2-node-description-probe-v10-additional-v1/assistant-assessments.json`) preserve the disagreements. The independent reviewer accepts the rave interpretation, questions the synthesis of the time-related title, and shares the wine uncertainty. Main review treats the time title as a wording weakness, not a clear semantic error. Importantly, not drinking wine does not contradict discussing wine pairings, and the risotto/white-wine mask alone does not establish ingredient versus accompaniment. The disputed issue is how much specific context the group licenses, not a proven contradiction or a return to independent proof by every mask.
 
 Review only the two main uncertainties, with all their masks and separate reasoning:
-
-```bash
-/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/hdbv2-node-description-probe-v10-additional-v1/run-review.sh
-```
 
 The full six-card sampler (`../hdbv2-node-description-probe-v10-additional-v1/review.json`) is retained. No baseline title was generated for these groups; B states that rather than supplying a fabricated comparison. The user subsequently rejected the wine title: “agree, it is not nececessarily pairing.” The rave title remains undecided. These decisions do not establish a general support-count rule or return to the broadest-mask standard. The following controlled deletion trial tests a possible contributor without changing the prior prompt or review records.
 
@@ -199,11 +179,6 @@ Both versions repeat the user-rejected wine relationship. Art remains useful wit
 The complete comparison (`../hdbv2-node-description-probe-v11/comparison.json`), main assessments (`../hdbv2-node-description-probe-v11/assistant-assessments.json`), independent assessment (`../hdbv2-node-description-probe-v11/independent-assessments.json`), and all raw calls are preserved. This trial does not demonstrate improvement from the deletion. One output per variant/group cannot establish reliable behavior or isolate a causal effect; all six are development groups, not an unseen holdout. No further prompt edit or test is implied by these results.
 
 Only the two new uncertainties are surfaced, with all masks, separate reasoning, and B to compare the fresh V10 response:
-
-```bash
-cd ~/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector &&
-./hdbv2-node-description-probe-v11/run-review.sh
-```
 
 The V11 launcher opens the existing executable directly; it does not enter Nix
 or build. Build once initially, and rebuild after changing the review tool's code:

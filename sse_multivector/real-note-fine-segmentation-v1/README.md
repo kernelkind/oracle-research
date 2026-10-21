@@ -1,4 +1,4 @@
-# 100-note fine-segmentation development
+# Real-note fine-segmentation experiments
 
 **Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../docs/experiments/README.md#reading-the-research-records).
 
@@ -20,7 +20,7 @@ This selection stage produced no new subjects, masks, vectors or 300-note hierar
 
 ## Books selection for the 400-note hierarchy
 
-**The current 400-post reference uses software v2 and the unchanged books v2 posts.** The 100 books, reading and literature posts (`books-corpus-selection-v2/notes.json`) remain byte-identical; books v3 (`books-corpus-selection-v3/corpus-400-source.json`) updates only the combined source reference to adopt the two software corrections. It references the existing books file without duplicating it. These are source selections, not prescribed hierarchy branches or user acceptance of a hierarchy.
+**The 400-post reference uses software v2 and the unchanged books v2 posts.** The 100 books, reading and literature posts (`books-corpus-selection-v2/notes.json`) remain byte-identical; books v3 (`books-corpus-selection-v3/corpus-400-source.json`) updates only the combined source reference to adopt the two software corrections. It references the existing books file without duplicating it. These are source selections, not prescribed hierarchy branches or user acceptance of a hierarchy.
 
 The saved sample yielded 381 candidates from 331 authors after excluding the prior 348 selected IDs, including the separate 48-note coverage collection. The initial selection reviewed candidate ranks 1–180 in full and reached its cutoff at candidate 156. In the earlier user-approved topic-fit correction, books v2 replaced position 91, an aphorism accepted mainly on its poetry tag, with candidate 159 discussing reading *Meditations* by Marcus Aurelius. Candidates 157 and 158 were declined as uncertain replacements; the other 99 entries retained every field and position. The original v1 selection (`books-corpus-selection-v1/notes.json`), replacement decisions (`books-corpus-selection-v2/replacement-review.json`) and complete-note review (`books-corpus-selection-v2/complete-note-review.json`) remain unchanged. No minimum word count, fine-topic quotas or generated hierarchy results guided selection.
 
@@ -30,7 +30,7 @@ This selection stage produced no new subjects, masks, vectors or 400-note hierar
 
 ## Exercise selection for the 500-note hierarchy
 
-**The current 500-post source uses software v2, books v2 and exercise v3.** The 100 exercise, fitness and cycling posts (`exercise-corpus-selection-v3/notes.json`) extend the corrected 400-post source to 500: food/drink, music, software/computing, books/reading and exercise/fitness, with 100 source posts added for each area. The 500-post source reference (`exercise-corpus-selection-v3/corpus-500-source.json`) uses the exact current 400-post source first. The areas supply material rather than prescribing hierarchy branches.
+**The 500-post source uses software v2, books v2 and exercise v3.** The 100 exercise, fitness and cycling posts (`exercise-corpus-selection-v3/notes.json`) extend the corrected 400-post source to 500: food/drink, music, software/computing, books/reading and exercise/fitness, with 100 source posts added for each area. The 500-post source reference (`exercise-corpus-selection-v3/corpus-500-source.json`) uses the exact current 400-post source first. The areas supply material rather than prescribing hierarchy branches.
 
 The initial exercise search contained many operating-software and figurative uses of “running.” Removing that bare retrieval term, retaining explicit exercise terms, and excluding all prior 448 selected IDs yielded 189 candidates from 159 authors. The focused audit (`broader-corpus-selection-v1/exercise-focused-audit.json`) preserves the original query and source hash. The initial selection reviewed ranks 1–145 in full and reached its cutoff at candidate 122. The earlier v2 replacement review (`exercise-corpus-selection-v2/replacement-review.json`) continued through candidate 128, replacing positions 77, 94 and 95 with posts about a push-up challenge, a short workout among chores, and exercise alongside parenting. The original v1 (`exercise-corpus-selection-v1/notes.json`) and v2 notes (`exercise-corpus-selection-v2/notes.json`) remain untouched.
 

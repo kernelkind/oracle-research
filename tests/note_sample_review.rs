@@ -172,23 +172,6 @@ fn rejects_bad_selection_or_unknown_start_before_opening_terminal() {
 }
 
 #[test]
-fn all_saved_notes_are_reachable_at_the_minimum_terminal_size() {
-    let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("sse_multivector/frontier-model-comparison-v1/selection.json");
-    let selection: Value = serde_json::from_slice(&fs::read(&path).unwrap()).unwrap();
-    let notes = selection["notes"].as_array().unwrap();
-    let mut model = NoteSampleReview::load(&path, None).unwrap();
-    for (index, note) in notes.iter().enumerate() {
-        let screen = render(&mut model, 72, 24);
-        assert!(screen.contains(note["id"].as_str().unwrap()), "{screen}");
-        assert!(screen.contains(&format!("{} of 26", index + 1)), "{screen}");
-        assert!(screen.contains("Why included"), "{screen}");
-        model.handle_event(key(KeyCode::Right));
-    }
-    assert!(render(&mut model, 72, 24).contains("1 of 26"));
-}
-
-#[test]
 fn cli_validates_before_raw_mode_and_provides_plain_help() {
     let binary = env!("CARGO_BIN_EXE_note-sample-review");
     let help = std::process::Command::new(binary)
@@ -197,8 +180,9 @@ fn cli_validates_before_raw_mode_and_provides_plain_help() {
         .unwrap();
     assert!(help.status.success());
     assert!(String::from_utf8_lossy(&help.stdout).contains("No model calls or saved decisions"));
-    let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("sse_multivector/frontier-model-comparison-v1/selection.json");
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("selection.json");
+    fs::write(&path, serde_json::to_vec(&packet()).unwrap()).unwrap();
     let invalid = std::process::Command::new(binary)
         .arg(&path)
         .args(["--start-at", "absent"])

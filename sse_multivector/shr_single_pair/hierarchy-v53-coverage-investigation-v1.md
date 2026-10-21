@@ -466,7 +466,7 @@ Primary evidence:
 Other panels are retained as rejected hypotheses, not additional independent
 semantic trials. Local numerical work used saved vectors and text only. No prompt,
 constructor, transport, budget, source corpus or historical receipt was changed.
-The task worktree remains necessary for these evidence paths.
+
 
 ## Rejected note-level classifier panel
 
@@ -2697,7 +2697,7 @@ saved meaning vectors and reproduces four earlier query cosine rows within
 absolute scalar error is `7.105427357601002e-15`. Both earlier whole-note-excluded
 reference scores reproduce, and all 28 panel-method count results pass. HR35's
 frozen state is unchanged. No model calls, encodings, training, hierarchy changes
-or applied note gains occur; the worktree remains for the saved evidence.
+or applied note gains occur.
 
 ## Complete omitted-note ranking by within-root mean
 
@@ -2879,7 +2879,7 @@ plus 430 displayed member cosines. Maximum scalar error is
 `6.938893903907228e-18`. All twelve protected source hashes and HR35's frozen
 state pass. No model calls, new encodings, training, threshold activation or
 hierarchy changes occur. Applied note gain remains zero; HR35 still reaches
-718 notes. The worktree remains for these artifacts and frozen source paths.
+718 notes.
 
 ## Original-post context with unchanged full-meaning pooling
 
@@ -3188,7 +3188,7 @@ target/food-halves-v1/residual-member-connections-v1/
   error is `9.992007221626409e-16`; all checks pass.
 
 All source meanings, vector receipts and HR35 state remain unchanged. Applied
-note gain is zero. The worktree remains for source-bound ignored evidence.
+note gain is zero.
 
 ## Scaling group matches by internal member similarity
 
@@ -3357,7 +3357,7 @@ entries, with a largest group of 53 and only 4,068 dense within-group cells.
 The same exact reference subsets are cached; all 180 queries reuse the 29
 group scales. No all-corpus square matrix or arbitrary-scale implementation is
 proposed. The unchanged hierarchy still reaches 718 notes, with zero applied
-additions. The worktree remains for the source-bound ignored evidence.
+additions.
 
 ## Original-group geometry under title and meaning pooling
 
@@ -3493,7 +3493,7 @@ target/food-halves-v1/group-pooling-geometry-v1/
 The arithmetic uses two 204-by-204 cosine matrices. The saved original 6,991-row
 HDBSCAN request is read only to verify provenance; no new all-corpus pairwise
 matrix or clustering is computed. Root membership and HR35 state are unchanged,
-with zero applied additions. The worktree remains for source-bound evidence.
+with zero applied additions.
 
 ## Matched title-versus-meaning reclustering of fixed references
 
@@ -3653,7 +3653,7 @@ target/food-halves-v1/matched-group-reclustering-v1/
 
 This small reference regrouping is not a new corpus hierarchy. The native
 canonical graph still reaches 718 notes, with zero additions or removals.
-The worktree remains for its frozen source paths and ignored evidence.
+
 
 ## Equal-reference control: dropping references versus regrouping
 
@@ -3790,8 +3790,7 @@ target/food-halves-v1/retained-reference-group-control-v1/
   with maximum discrepancy `8.881784197001252e-16`.
 
 The actual hierarchy still reaches 718 notes. No meaning, reference membership,
-graph edge or UI is changed. The worktree remains for source-bound ignored
-evidence; completed maintained findings are integrated into local `main`.
+graph edge or UI is changed.
 
 ## Title/meaning neighborhood fusion
 
@@ -3961,9 +3960,7 @@ The frozen `plan.json` SHA256 is
 outcomes without merging judgments. `graph-verification.json`, `verification.json`,
 `runtime.json`, `development-checks.json` and `timing.json` retain checks and limits.
 
-The native hierarchy still reaches 718 notes. Completed experimental code,
-tests and maintained findings land on local `main`; the task worktree remains
-for frozen source bindings, vectors and ignored evidence. No production policy
+The native hierarchy still reaches 718 notes.  No production policy
 is activated.
 
 ## Fixed fused groups: title versus meaning candidate scoring
@@ -4083,8 +4080,7 @@ target/food-halves-v1/fused-group-title-meaning-scoring-v1/
   titles/meanings/posts, bounded accounting and independent checks.
 
 This probe makes zero LLM calls, encodings, clustering runs, training runs,
-hierarchy changes or UI updates. Completed maintained findings land on local
-`main`. The worktree remains for frozen vector paths and ignored evidence.
+hierarchy changes or UI updates.
 
 ## Combining outside title and meaning against fixed accepted connections
 
@@ -4252,9 +4248,7 @@ an exact copy of the preceding single-view scores. `source-evidence.json`,
 `summary.json` and `verification.json` retain the original evidence, bounded
 accounting and independent checks.
 
-The actual hierarchy still reaches 718 notes. Completed experimental query
-code, tests and maintained findings land on local `main`; the task worktree
-remains for frozen vector paths and ignored evidence. No production policy is
+The actual hierarchy still reaches 718 notes.  No production policy is
 activated.
 
 ## Testing local graph boundaries without a constant acceptance score
@@ -4444,9 +4438,7 @@ entry reviews and the seed-group structure trace are separate artifacts.
 `independent-verification.json` records the arithmetic/source checks.
 
 No LLM calls, encodings, training, paid resources, hierarchy edits or UI updates
-occur. HR35 still reaches 718 notes. Completed experimental code, tests and
-maintained findings land on local `main`; the worktree remains for saved vector
-bindings and ignored evidence. This is neither a new HiGen version nor approval
+occur. HR35 still reaches 718 notes. This is neither a new HiGen version nor approval
 to add the twelve candidate notes.
 
 ## Tracing a clear missed fit: Coffee
@@ -4565,8 +4557,7 @@ weighted path; and recomputes all 6,991 candidate affinities to verify the four
 same-population rank controls. Maximum sparse-cut discrepancy is `1.01e-11`.
 No production source behavior changes, new vectors, graph expansions, LLM calls,
 training, paid resources, hierarchy edits or UI updates occur. HR35 still reaches
-718 notes. Maintained findings land on local `main`; the worktree remains for
-frozen source paths and ignored evidence.
+718 notes.
 
 ## Approved return to fixed fusion references; adaptive-boundary proposal
 
@@ -4772,8 +4763,7 @@ this is not a production scaling qualification. Reference kernels use
 `R*R` storage, query scoring uses `Q*R`, and note-exclusion fits are cached.
 The straightforward all-fold fitting implementation repeats reference-curve
 work and is experimental; it is not installed in hierarchy generation.
-Maintained findings, calculation and tests land on local `main`; the task
-worktree remains for frozen source paths and ignored evidence.
+
 
 ### User review of the displayed selections and omissions
 
@@ -4896,8 +4886,7 @@ maximum discrepancy `3.06e-16`. All unanchored reference models and 11,592
 unanchored root decisions replay exactly. Query reorder/duplicate/isolated
 checks and source hashes pass. Evaluation takes 7.1 seconds for these small
 reference pools, not a production scaling qualification. HR35 remains at 718
-reachable notes; no hierarchy or UI changes. Findings/code/tests land on local
-`main`; retain the task worktree for frozen vector and evidence paths.
+reachable notes; no hierarchy or UI changes.
 
 ## Fixed fusion neighbors as curve context: controlled follow-up
 
@@ -4989,8 +4978,7 @@ group scores, with maximum discrepancy `3.06e-16`. Full-root-context models and
 11,592 root decisions replay exactly; **every outsider score is identical across
 contexts**. Graph array bytes, source hashes and query independence checks pass.
 Evaluation takes 6.6 seconds for these small pools; this is not production-scale
-validation. Findings, reusable code and tests land on local `main`. Keep the
-worktree for frozen vector/evidence paths, including the failed attempt.
+validation.
 
 ## Can any boundaries separate the saved useful and unwanted scores?
 
@@ -5107,8 +5095,7 @@ saved query/group scores from the unchanged meaning vectors and checks 4,235
 capacity cells across 13 overlapping cohorts. Maximum score discrepancy is
 `5.56e-17`. Source hashes and hierarchy state remain unchanged. Work per cohort
 is `O((P+N)*G)`; no extra graph or model work. Actual HR35 coverage remains
-718 notes. Findings/code/tests land on local `main`; retain this worktree for
-frozen vector, score and evidence paths.
+718 notes.
 
 ## Arts, sound and communication: unchanged boundary transfer
 
@@ -5622,8 +5609,7 @@ context membership, source exclusions, anchors and upper fit starts are
 unchanged. Independent scalar replay checks all 1,020 base/fold boundaries with
 zero error. Query reorder/duplicate/isolated checks and source/graph hashes
 pass. Numerical evaluation takes 5.6 seconds; no LLM calls, new vectors,
-training or hierarchy/UI changes. Source, tests and maintained findings land
-on local `main`; preserve the worktree for frozen source/evidence paths.
+training or hierarchy/UI changes.
 
 ## Fixed accepted-reference graph boundary: controlled test
 
@@ -5759,9 +5745,7 @@ Artifacts retain the frozen plan and calculation script, full reference
 curves/folds, all query/group and root predictions, changed proposals, note
 controls, cohort metrics and verification. The two explicitly labeled
 `*-valley-capacity-diagnostic.json` files contain the subsequent capacity
-calculation, not validated admission thresholds. Reusable source, tests and
-maintained findings land on local `main`; retain the task worktree because
-these ignored source-bound evidence paths are needed for continued research.
+calculation, not validated admission thresholds.
 
 ## Weakest cross-note member as the boundary: controlled test
 
@@ -5896,9 +5880,7 @@ hierarchy state remain unchanged. Evaluation takes 1.60 seconds.
 The new rule is **not adopted**: it is substantially better than the graph
 boundary on Arts, but does not improve Food overall against the original score
 bend. Retain it as an experimental comparison, with the concentrated restaurant
-failure and overly strict Coffee route as separate evidence. Reusable source,
-tests and maintained findings land on local `main`; the worktree remains for
-the ignored frozen calculations, full member/fold results and all proposals.
+failure and overly strict Coffee route as separate evidence.
 
 ## Auditing Arts selections outside the earlier controls
 
@@ -6067,8 +6049,6 @@ additional useful selections and exposes previously unseen suspect routes.
 It makes zero model calls, encodings, clustering runs or training runs, and
 changes no hierarchy, prompt, UI or policy. Keep generic AI and hardware scope
 questions unresolved rather than quietly expanding the negative controls.
-Reusable findings land on local `main`; retain the worktree for the frozen
-review packet, assessments, source posts, score routes and capacity evidence.
 
 ## Saved title vectors on the expanded Arts cases
 
@@ -6199,8 +6179,7 @@ local BLAS threads, and retain complete scores and reference bindings. Evaluatio
 takes 1.28 seconds with no paid resources. `review.md` is the compact comparison;
 full group/root scores, focal pairs, changed pair orderings, per-group capacity
 calculations, vector bindings and verification remain in the ignored artifact
-directory. Maintained findings land on local `main`; retain the worktree for
-these frozen vector and evidence paths. No admission policy, hierarchy, prompt
+directory.   No admission policy, hierarchy, prompt
 or UI changes are made.
 
 ## Existing combined query score on the expanded Arts cases
@@ -6329,8 +6308,7 @@ There are zero LLM calls, new encodings, training, clustering, hierarchy/UI
 changes or admission-policy changes. Retain the full group/root scores,
 reference edges, eight focal comparisons, per-group capacity calculations,
 changed pair identities and compact `review.md` under the ignored artifact
-directory. Maintained findings land on local `main`; preserve the worktree
-for those frozen source and evidence paths. Both combined scores remain
+directory.  Both combined scores remain
 experimental and unadopted.
 
 ## HR36 transfer check: source readiness and limited saved-vector control
@@ -6420,8 +6398,6 @@ generalization claim follows from zero proposals.
 
 No production calculation, hierarchy, prompt, membership, UI or official run
 record changes. New encodings, LLM calls, training and paid resources: zero.
-Maintained findings land on local `main`; retain this worktree because the
-saved vector/evidence paths remain required by the continuing investigation.
 
 ## HR36 completed test of the unchanged automatic rules
 
@@ -6603,9 +6579,7 @@ All 62 relevant existing production-path numerical tests pass. Evaluation
 takes 6.32 seconds after encoding. Keep `plan.json`, native request/config,
 `preflight.json`, immutable `worker-result/`, vector bindings, saved full-view
 matrices, all query/group scores and boundary models, panel/audit files and
-`verification.json`. `review.md` is the compact report. Maintained findings
-land on local `main`; retain the worktree for required frozen source/vector
-paths. No hierarchy UI refresh or official hierarchy-run/spreadsheet change.
+`verification.json`. `review.md` is the compact report.   No hierarchy UI refresh or official hierarchy-run/spreadsheet change.
 
 ## Member-only distribution boundary v1: excessive useful-match loss
 
@@ -6733,9 +6707,7 @@ encodings, training, paid resources, hierarchy/prompt/UI changes or activation.
 `evaluation-source.json` pins the data-specific evaluation script. Retain full
 reference curves/models, old/new query predictions, cohort and human-control
 results, complete Food-audit subset results, six-root sample results, numerical
-diagnostics and `verification.json`. `review.md` is the compact report. Land
-the reusable experimental module, tests and maintained findings on local `main`;
-keep the task worktree for these frozen artifact/vector paths. The previous
+diagnostics and `verification.json`. `review.md` is the compact report.  The previous
 minimum remains the comparison control, not an approved universal policy.
 
 ## HR36 title/meaning disagreement: explanatory, not a general boundary rule
@@ -6847,8 +6819,7 @@ compact report. This is a small-reference diagnostic, not qualification of an
 all-pairs production graph at larger corpus sizes.
 
 There are no provider calls, new encodings, training, paid resources, prompt
-changes, hierarchy changes or UI updates. Land these maintained findings on
-local `main`; retain the task worktree for frozen evidence/vector paths.
+changes, hierarchy changes or UI updates.
 
 ## HR36 score capacity: promising bounds, no automatic admission rule
 
@@ -6977,8 +6948,7 @@ blocker; `blocked-useful-cases.json` with the three Arts cases; and complete
 reviewed score matrices, source bindings and gap details. Hypothetical
 boundaries are explicitly diagnostic and never exported as runtime policy or
 applied to the full omitted corpus. `verification.json`, calculation-script
-hashes and `review.md` preserve reproduction. Land these maintained findings;
-keep generated evidence ignored and retain the task worktree for frozen paths.
+hashes and `review.md` preserve reproduction.
 No LLMs, training, new encodings, paid resources, new labels, prompts, official
 hierarchy artifacts, spreadsheet entries or UI changes.
 
@@ -7109,8 +7079,7 @@ and every closest-peer value/identity. `evaluation-sources.json` pins the ignore
 calculation scripts; `verification.json` and `review.md` preserve checks and the
 compact report. No new production code, APIs, tests or runtime components.
 No LLMs, training, encodings, paid resources, hierarchy/prompt/UI changes,
-spreadsheet updates or HR37/38 execution. Land the maintained findings on local
-`main`; retain the task worktree for frozen evidence and vector source paths.
+spreadsheet updates or HR37/38 execution.
 
 ## HR36 meaning-only subgroup diagnostic: reject the reference filter
 
@@ -7222,9 +7191,7 @@ adapter tests pass; no new testing seam or production API is added.
 `base-groups.json`, `duplicate-note-jackknives.json`, `all-native-runs.json`,
 `focal-case-results.json`, `input-permutation-checks.json` and
 `vector-bindings.json` retain complete output and source bindings. Keep the
-script hash, `verification.json` and `review.md`. Generated artifacts stay
-ignored; maintained findings land on local `main`, with the task worktree
-retained for frozen evidence/vector paths. No model calls, training, encodings,
+script hash, `verification.json` and `review.md`.  No model calls, training, encodings,
 paid resources, prompts, hierarchy/UI changes, official hierarchy-run records,
 spreadsheet updates or HR37/38 execution.
 
@@ -7362,10 +7329,7 @@ next calculation before evaluating it; wait for separate user approval.
 Keep `reference-models.json.gz`, complete score matrices, `neighbor-scales.json`,
 cohort/audit/human-note reports, `failure-group-summary.json`, per-reference
 `failure-trace.json`, `verification.json` and the compact `review.md`.
-`evaluation-sources.json` pins numerical scripts and frozen manifests. Generated
-evidence stays ignored; reusable experimental code/tests and maintained
-findings land on local `main`, without activation. Retain the task worktree
-for frozen source vectors and evidence paths. No LLM calls, training, new
+`evaluation-sources.json` pins numerical scripts and frozen manifests.   No LLM calls, training, new
 encodings, paid resources, hierarchy/prompt/UI changes, official-run spreadsheet
 updates or HR37/38 execution.
 
@@ -7502,8 +7466,7 @@ or authorized by these findings.
 Keep the frozen plan/implementation, score matrices, reference models/scales,
 cohort/audit/human reports, `dominance-diagnostic-results.json`,
 `dominance-witness-score-table.json`, `verification.json`, script hashes and
-`review.md` as ignored evidence. Land maintained findings on local `main` and
-retain the worktree for frozen vector/evidence paths. No LLM calls, training,
+`review.md` as ignored evidence. No LLM calls, training,
 new encodings, paid resources, prompt/hierarchy/UI changes, official hierarchy
 run or spreadsheet updates, or HR37/38 execution.
 
@@ -7657,9 +7620,7 @@ adoption or change to existing hierarchy membership is authorized by the result.
 Keep reference models, `root-calibrations.json`, all per-note retained/lost
 reference routes, full query outcomes, panel/audit/human results,
 `two-useful-entry-losses.json`, `five-original-dominance-cases.json`,
-`calibration-route-traces.json`, source hashes, checks and `review.md`. Artifacts
-remain ignored; reusable experimental code/tests and maintained findings land
-on local `main`. Retain the task worktree for frozen vectors/evidence paths.
+`calibration-route-traces.json`, source hashes, checks and `review.md`.
 No LLM calls, training, new encodings, paid resources, hierarchy/prompt/UI
 changes, official-run spreadsheet updates or HR37/38 execution.
 
@@ -7839,8 +7800,7 @@ matrices, baseline/candidate outcomes, root calibrations, exact checks,
 `post-result-japanese-cpi-observation.json`, cross-corpus provenance, source
 hashes and `review.md` in the ignored evidence directory. A preliminary
 Japanese-US diagnostic is explicitly superseded by the checked CPI trace;
-its empty route trace exposed the incorrect heading attribution. Maintained
-findings land on local `main`; retain this worktree for frozen artifact paths.
+its empty route trace exposed the incorrect heading attribution.
 No LLM/provider calls, training, paid resources, hierarchy/prompt/UI changes,
 official-run spreadsheet updates, or HR38 execution occurred. Local frozen
 SSE encoding was the only new model computation.
@@ -7926,8 +7886,7 @@ hashes and frozen judgments stay unchanged. Runtime is 3.52 seconds after
 loading existing vectors. No thresholds are fitted, no admission decisions
 made, no new vectors encoded, and no LLM calls, training, hierarchy/UI changes
 or HR38 use occur. Retain full arrays, individual pair changes, source hashes,
-`results.json` and `verification.json`; the task worktree remains necessary
-for those evidence paths, now backed by external storage through its symlink.
+`results.json` and `verification.json`.
 
 ## Directional admission replay: better ordering did not transfer to better admission
 

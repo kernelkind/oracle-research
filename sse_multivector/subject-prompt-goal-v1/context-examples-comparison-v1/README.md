@@ -60,4 +60,4 @@ ASv6.13 remains the earlier broadly tested reference; ASv6.8 remains the frozen 
 
 Prompt/trial identities were hidden until each review was saved. Those original review files remain unchanged. The later correction is disclosed separately and was made with identities known; it is not a new blinded judgment. These selected difficult notes do not estimate corpus-wide accuracy. The comparison isolates the added example group, not either example separately or the value of examples in general.
 
-See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-subject-prompt-goal-v1`.
+See conversion gaps (`03bd9e45:docs/experiments/publication-gaps.csv`) for `collection:tracked-subject-prompt-goal-v1`.

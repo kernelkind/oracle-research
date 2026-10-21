@@ -140,4 +140,4 @@ Five sequential batches used at most 12 concurrent calls. Generation ran from 19
 
 Plan/config commit: `214764ea5acae42310949fb8649bd0a052eff058`. Goal generation-call total is now 588. No reserved final note was read, no new paid API/rental was used, and no personal notes document was edited. Existing final-data exposure remains a separate unresolved issue before final validation.
 
-See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-subject-prompt-goal-v1`.
+See conversion gaps (`03bd9e45:docs/experiments/publication-gaps.csv`) for `collection:tracked-subject-prompt-goal-v1`.

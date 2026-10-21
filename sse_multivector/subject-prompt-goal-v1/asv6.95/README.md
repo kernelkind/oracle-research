@@ -43,7 +43,7 @@ and copy obligation, tuple preservation and finite ancestry.
 
 ## Provenance and testing
 
-The native [source edits](prompt-edits.json) and [POST-template edits](edits.json)
+The native source edits (`03bd9e45:sse_multivector/subject-prompt-goal-v1/asv6.95/prompt-edits.json`) and POST-template edits (`03bd9e45:sse_multivector/subject-prompt-goal-v1/asv6.95/edits.json`)
 replace only six JSON output bodies. Native revision receipts pin both ASv6.94
 bases and resulting hashes. Source SHA256 is
 `d55afbad98bd4de0a4c9743af252e0c8a006031051a3a7304804a789980c99e9`;

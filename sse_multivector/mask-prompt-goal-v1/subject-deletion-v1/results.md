@@ -216,4 +216,4 @@ Subject: The library app has a button at the end of each chapter that takes read
 
 Accepted. Retains the library app, chapter-end button, Primal and the full Nostr onboarding experience. The complete post supplies the ordinary reader reference; this does not introduce a new missing-reference standard.
 
-See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-mask-prompt-goal-v1`.
+See conversion gaps (`03bd9e45:docs/experiments/publication-gaps.csv`) for `collection:tracked-mask-prompt-goal-v1`.

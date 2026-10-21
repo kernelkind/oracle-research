@@ -1,9 +1,0 @@
-{
-  "base_sha256": "84d31b589140eaef224c7ef2c1f184b6a085d2a7cb57999a4f0f7637757ea6fe",
-  "edits": [
-    {
-      "old": "Boiler repair:\nOne tube.\nCutting it.\n</post>\n\n<output>",
-      "new": "Boiler repair:\nOne tube.\nCutting it.\n</post>\n\n<explanation>\n\"One tube\" does not fit \"Boiler repair\": a tube for another purpose also fits that child heading. \"One tube for boiler repair\" fits both \"One tube\" and \"Boiler repair\", so it appears beneath every copy of both. Likewise, \"Cutting one tube\" does not fit \"Boiler repair\"; \"Cutting one tube for boiler repair\" retains the purpose and appears beneath every copy of \"One tube for boiler repair\", \"Cutting one tube\" and \"Cutting for boiler repair\". The separate general headings keep their general meanings.\n</explanation>\n\n<output>"
-    }
-  ]
-}

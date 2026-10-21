@@ -8,7 +8,7 @@ import re
 import shutil
 import time
 
-from gte.full_build_package import verify_manifest, write_manifest
+from vast.full_build_package import verify_manifest, write_manifest
 from sse_multivector.distillation_run import read_json, sha256, write_json
 
 

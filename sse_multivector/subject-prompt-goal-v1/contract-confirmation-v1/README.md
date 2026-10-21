@@ -88,7 +88,7 @@ All 48 calls succeeded, and every output has a whole-note and subject-by-subject
 
 A consistency check revisited the dashboard and insurance judgments. Broad subjects are still allowed; they are not rejected merely for being broad. Specific statements that depend on “the dashboard,” “those dynamics,” or another unresolved reference are a different issue. No new mandatory attribution prefix or canonical subject list was introduced.
 
-The [verifier](./verify.py) checks exact prompts, inputs, raw hashes, review completeness, 48 unique threads and working directories, one turn and no tool events per call, and no reuse across 395 prior calls checked. The original full-development artifacts, validation plan, final inputs and frozen registry are unchanged. It checks the recorded execution schedule for consistency; it cannot independently prove actual execution order or semantic correctness.
+The verifier (`03bd9e45:sse_multivector/subject-prompt-goal-v1/contract-confirmation-v1/verify.py`) checks exact prompts, inputs, raw hashes, review completeness, 48 unique threads and working directories, one turn and no tool events per call, and no reuse across 395 prior calls checked. The original full-development artifacts, validation plan, final inputs and frozen registry are unchanged. It checks the recorded execution schedule for consistency; it cannot independently prove actual execution order or semantic correctness.
 
 The separate read-only audit also checked the blind mapping and saved judgment hash, reconstructed the 12-note selection rule, and checked stdout message/usage agreement with the result records. Those additional checks are not implemented in the saved verifier.
 
@@ -109,4 +109,4 @@ Each output file contains every original note and every generated subject, witho
 - Reviews (`./review.json`), pre-reveal judgments (`./blind-review.json`), and identity mapping (`./blind-review-key.json`)
 - Verification results (`./verification.json`) and resource/execution observations (`./runtime.json`)
 
-See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-subject-prompt-goal-v1`.
+See conversion gaps (`03bd9e45:docs/experiments/publication-gaps.csv`) for `collection:tracked-subject-prompt-goal-v1`.

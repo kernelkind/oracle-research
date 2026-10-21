@@ -6,7 +6,7 @@ Experimental [Bootstrap-v127](Hierarchy-bootstrap-v127.md) extends one sentence
 in v126's `Resolve category ambiguities` paragraph. After specifying a qualifying
 kind and its role/use/component relationship, it asks whether that relationship
 suffices or requires a particular function or purpose, and whether the required
-role is intended or actual. The [edit source](hierarchy-bootstrap-v127-role-function.edits.json)
+role is intended or actual. The [edit source] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v127-role-function.edits.json` at `03bd9e45`)
 and native revision receipt preserve all other bytes. No Food-specific condition,
 medical example, validation witness, input field or output-schema change occurs.
 
@@ -106,7 +106,7 @@ counterexamples toward an unstated preferred category.
 
 ## Native accounting and verification
 
-The [native usage source](hierarchy-bootstrap-v127-food-role-usage-v1.json)
+The [native usage source] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v127-food-role-usage-v1.json` at `03bd9e45`)
 produces `target/bootstrap-v127-hr04-four-foods-v1/usage-native-v1.json`.
 Six definitions are valid, nonnull and fresh. Eight attempts include two warmups,
 with zero failures, retries or answer reuses. All six definition requests report

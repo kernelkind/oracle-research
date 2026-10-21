@@ -68,11 +68,6 @@ The model could have intended different readings of Coffee chains. We cannot rec
 
 The existing review tool contains only the ambiguous trial-3 title, all seven exact masks and a separate assistant comment. B shows the fresh v21 response from the same trial. The session is new and separate from previous reviews.
 
-```bash
-cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector
-./hdbv2-node-description-probe-v22/comparison-v1/run-review.sh
-```
-
 ## Integrity and limits
 
 - Both prompts remained fixed. All 18 calls succeeded on attempt 1 with distinct threads and empty workspaces. No retries, output selection, tools, web, source notes, prior titles or reviewer hints entered generation.
@@ -81,7 +76,7 @@ cd /home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector
 - Independent read-only integrity audit passed. All 131 snapshotted files, including both prompts and the user’s earlier review session, remain unchanged. Seven existing input-preparation tests passed. No production code changed.
 - This is a small reused diagnostic, not general accuracy. Coffeechain and preparation include different masks from one shared source note. All assistant judgments remain separate from user decisions.
 - Generation usage: **41,334 input tokens** (11,904 cached), **1,183 output tokens** (990 reasoning), **42,517 input plus output tokens**. Cached and reasoning counts are subsets; main-agent work and the independent audit are excluded.
-- No API billing, purchases, rentals or account switch. No saved title replacement, prompt freeze or TRUE run. CREC-127 is the tracking card; Plane tools were unavailable.
+- No API billing, purchases, rentals or account switch. No saved title replacement, prompt freeze or TRUE run.
 
 Exact baseline inputs (`./inputs-v21.json`), exact candidate inputs (`./inputs-v22.json`), all outputs and usage (`./comparison.json`), [run plan](./run-plan.json), verification (`./verification.json`).
 

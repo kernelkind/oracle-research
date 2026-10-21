@@ -1,9 +1,0 @@
-{
-  "base_sha256": "1244ee7b4b2f681d8ad4a9b02f55e813ed9fb2cff63433131d07788b222f7f7e",
-  "edits": [
-    {
-      "old": "The indexed post is the original post with a numbered label at every character boundary. Return only a JSON array of objects with integer \"start\" and \"end\" fields, one per mask fragment, in source order. Use the supplied boundary immediately before each fragment as \"start\" and the supplied boundary immediately after it as \"end\".",
-      "new": "The indexed post labels each whitespace-separated word with its position, starting at 1. Punctuation remains attached to its word. Return only a JSON array of objects, one per mask fragment in source order. Each object has integer \"start\" and \"end\" fields naming the first and last word positions, both inclusive. These select the whole words and the original text between them.\n\nTo select only part of a boundary word, add \"start_marked\" for the first word or \"end_marked\" for the last word: copy that word exactly, inserting ⟦ and ⟧ around its selected part. For a fragment within one word, use \"start_marked\" only. For a fragment spanning multiple words, the first word's selected part must extend to its end, and the last word's selected part must begin at its start. Omit marking fields for whole words."
-    }
-  ]
-}

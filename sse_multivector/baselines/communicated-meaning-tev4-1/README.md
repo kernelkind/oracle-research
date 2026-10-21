@@ -18,7 +18,7 @@ configuration and analysis manifest:
 `ef9d34ca38f04fc30b2879fa365d07cd8264dc2cd3f5c24084533fe18535ad1d`
 
 The measured comparison with TEv3.1 is documented in
-[`../../../docs/recommendation-engine/experiments/sse-communicated-meaning-extraction.md`](../../../docs/recommendation-engine/experiments/sse-communicated-meaning-extraction.md).
+[`../../../docs/recommendation-engine/experiments/sse-communicated-meaning-extraction.md`](../../../docs/experiments/representation/communicated-meaning.md).
 
 Verify and inspect the archive with:
 
@@ -39,7 +39,7 @@ diagnostics. Its 194 answer inputs are already selected in
 `numerical/fine-region-00d974f22ed8935f/inputs.jsonl` and are not duplicated.
 See the [catalog](../../../docs/experiments/publications.csv),
 [dataset manifest](../../../docs/experiments/downloads.md#dataset-manifest) and
-[export commands and checks](../../../docs/experiments/reproduce.md#archived-baseline-checks).
+[export commands and checks](../../../docs/experiments/reproduce.md#verify-and-restore-the-dataset).
 The files are prepared locally for Hugging Face Datasets; nothing is uploaded.
 AS lineage remains unknown. The full archive remains local and unchanged;
 the inspection commands above require those originals.

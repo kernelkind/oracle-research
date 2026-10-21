@@ -1,8 +1,0 @@
-{
-  "schema_version": 1,
-  "groups": {
-    "justifications": [
-      "../../target/canonical-shaping-selection-v1/consolidation-audit-v4-hr05-v1"
-    ]
-  }
-}

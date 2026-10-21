@@ -1,7 +1,0 @@
-{
-  "prepared_experiment": {
-    "path": "../../target/compare-v178-focused-question-v1/controls-01",
-    "sha256": "be6b2969c7bf893ebc9c80481bb8ff483135b078306144b68f1527702f836b28"
-  },
-  "input_view": "symmetric_fixed_meanings"
-}

@@ -25,7 +25,7 @@ The original ASv6.100 provenance and exact HR04 selected-entry mappings were
 checked independently. Other trees for the same raw posts are not substituted.
 Historical Food meanings and review criteria remain outside model input.
 
-The [frozen specification](hierarchy-bootstrap-v122-hr04-four-foods-v1.spec.json)
+The [frozen specification] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v122-hr04-four-foods-v1.spec.json` at `03bd9e45`)
 uses GPT-6.1 Sol medium, subscription SSE and automatic prefix caching through
 main's shared runner. Native `prepare --repeat` makes all four intentional fresh
 draws; there are no answer reuses. The experiment is
@@ -189,7 +189,7 @@ Five attempts comprise four valid fresh definitions and one valid automatic
 warmup. There are zero reuses, failures or retries. Three of four definition
 requests report prefix cache hits. The native API-equivalent total is
 $0.0533864 with complete usage; it is not an additional subscription charge.
-The [native accounting source](hierarchy-bootstrap-v122-hr04-four-foods-usage-v1.json)
+The [native accounting source] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v122-hr04-four-foods-usage-v1.json` at `03bd9e45`)
 binds this draw separately from historical generation.
 
 Exact case inputs, original AS source identity, evidence quotations and native

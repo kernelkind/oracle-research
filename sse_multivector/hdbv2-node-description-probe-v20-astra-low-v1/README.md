@@ -46,13 +46,9 @@ Dogs and wine remained usable. Tea shows a remaining instance-support problem. W
 
 ## Review
 
-[run-review.sh](./run-review.sh) shows all six judged failures: the one new Astra title and all five saved Sol failures. Every item contains the exact masks and a separate assistant comment. Press **B** to see the other model's title from the same trial.
+run-review.sh (`03bd9e45:sse_multivector/hdbv2-node-description-probe-v20-astra-low-v1/run-review.sh`) shows all six judged failures: the one new Astra title and all five saved Sol failures. Every item contains the exact masks and a separate assistant comment. Press **B** to see the other model's title from the same trial.
 
-```bash
-/home/dev/src/notedeck_worktrees/algos/oracle-mvp/sse_multivector/hdbv2-node-description-probe-v20-astra-low-v1/run-review.sh
-```
-
-[run-review-all.sh](./run-review-all.sh) shows all 24 outputs—12 new Astra titles and 12 saved Sol titles—in a separate session. No user decisions are prefilled.
+run-review-all.sh (`03bd9e45:sse_multivector/hdbv2-node-description-probe-v20-astra-low-v1/run-review-all.sh`) shows all 24 outputs—12 new Astra titles and 12 saved Sol titles—in a separate session. No user decisions are prefilled.
 
 `./comparison.json` contains every title, judgment, reason, mask, usage count and raw-result path.
 
@@ -67,7 +63,5 @@ Generation used the unchanged wrapper, pinned Codex 0.153.0 and authorized dedic
 New Astra usage: 26,674 input tokens, including 1,920 cached input tokens; 559 output tokens, including 463 reasoning tokens. Cached input did not mean a reused conversation; thread IDs and runtime workspaces were distinct. Existing subscription only; no purchases, rentals or new API billing. Credentials were not read or changed.
 
 `./verification.json` records checks of inputs, isolation, raw outputs and the production review tool. All earlier artifacts and user review sessions are preserved.
-
-CREC-127 is the existing tracking card. Plane tools were unavailable, so its external status/comment could not be updated.
 
 **Publication status:** `collection:tracked-hdbv2-node-description-probe-v20-astra-low-v1` is selected as `title-studies/hdbv2-node-description-probe-v20-astra-low-v1` in the [publication catalog](../../docs/experiments/publications.csv), with [dataset manifest](../../docs/experiments/downloads.md#dataset-manifest). The local export preserves saved answers and recorded assessments; input AS lineage remains unverified. Nothing has been uploaded.

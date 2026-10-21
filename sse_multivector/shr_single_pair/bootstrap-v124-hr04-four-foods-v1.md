@@ -10,8 +10,8 @@ choices introduced by the proposed definition. The chosen interpretation must
 still be supported by the subject and evidence; a category choice cannot settle
 an unknown fact about a particular example.
 
-The [native edits](hierarchy-bootstrap-v124-proposed-boundaries.edits.json) and
-[revision receipt](Hierarchy-bootstrap-v124.md.revision.json) bind the change.
+The [native edits] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v124-proposed-boundaries.edits.json` at `03bd9e45`) and
+[revision receipt] (`sse_multivector/shr_single_pair/Hierarchy-bootstrap-v124.md.revision.json` at `03bd9e45`) bind the change.
 All other prompt bytes, both examples and the output schema are unchanged.
 V124 SHA256 is `64d6d2d9230e30015388d75a3ea938be4285a6d4f18e6d448f7b4834112b312f`.
 Two independent read-only reviewers found the source-only framing in tension
@@ -40,7 +40,7 @@ or UI refresh is used.
 
 All six definitions are valid, nonnull and fresh. Native accounting reports
 eight attempts including two warmups, no retries, failures or answer reuses,
-and complete usage. The [native usage source](hierarchy-bootstrap-v124-hr04-four-foods-usage-v1.json)
+and complete usage. The [native usage source] (`sse_multivector/shr_single_pair/hierarchy-bootstrap-v124-hr04-four-foods-usage-v1.json` at `03bd9e45`)
 produces `target/bootstrap-v124-hr04-four-foods-v1/usage-native-v1.json`:
 incremental API-equivalent cost is **$0.0979948**. This is not a reported
 subscription cash charge. Caching was enabled throughout, but only the two

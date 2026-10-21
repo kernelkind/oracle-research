@@ -79,7 +79,7 @@ impl FineSegmentationReviewUi for PausingUi {
 }
 
 #[test]
-fn full_note_review_accepts_one_segment_and_highlights_the_chosen_utf8_occurrence() {
+fn mask_review_accepts_one_segment_and_preserves_the_chosen_utf8_occurrence() {
     let root = tempfile::tempdir_in("/dev/shm").expect("temporary directory");
     let input = root.path().join("review.json");
     let session = root.path().join("session.json");
@@ -93,11 +93,11 @@ fn full_note_review_accepts_one_segment_and_highlights_the_chosen_utf8_occurrenc
         rendered: String::new(),
     };
     let outcome = run_fine_segmentation_review(&input, &session, &response, &mut ui)
-        .expect("open one complete-note segment with exact UTF-8 mask");
+        .expect("open one segment with exact UTF-8 mask");
     assert_eq!(outcome, FineSegmentationReviewRunOutcome::Paused);
     assert!(ui.rendered.contains("Segment 1 of 1"), "{}", ui.rendered);
     assert!(
-        ui.rendered.contains("café    first ⟦café⟧ end"),
+        ui.rendered.contains("V001  ⟦café⟧"),
         "{}",
         ui.rendered
     );
@@ -220,7 +220,7 @@ fn read_json(path: impl AsRef<std::path::Path>) -> Value {
 }
 
 #[test]
-fn decisions_comments_skips_and_note_position_survive_partial_review_and_resumption() {
+fn decisions_comments_and_skips_survive_partial_review_and_resumption() {
     let root = tempfile::tempdir_in("/dev/shm").unwrap();
     let input = root.path().join("review.json");
     let session = root.path().join("session.json");
@@ -237,7 +237,6 @@ fn decisions_comments_skips_and_note_position_survive_partial_review_and_resumpt
         key(KeyCode::Char('v')),
         key(KeyCode::Enter),
         key(KeyCode::Char('s')),
-        key(KeyCode::Tab),
         pause(),
     ]);
     assert_eq!(
@@ -246,7 +245,6 @@ fn decisions_comments_skips_and_note_position_survive_partial_review_and_resumpt
     );
     let saved = read_json(&session);
     assert_eq!(saved["session"]["current_packet_index"], 1);
-    assert_eq!(saved["session"]["current_instance_index"], 1);
     assert_eq!(saved["session"]["packets"][1]["state"]["status"], "skipped");
     assert_eq!(
         read_json(&response)["judgments"],
@@ -258,7 +256,7 @@ fn decisions_comments_skips_and_note_position_survive_partial_review_and_resumpt
         first
             .frames
             .iter()
-            .any(|frame| frame.contains("⟦Other⟧ complete original note."))
+            .any(|frame| frame.contains("⟦Other⟧"))
     );
 
     let mut resumed = EventUi::new([
@@ -274,7 +272,7 @@ fn decisions_comments_skips_and_note_position_survive_partial_review_and_resumpt
     ]);
     run_fine_segmentation_review(&input, &session, &response, &mut resumed).unwrap();
     assert!(resumed.frames[0].contains("Segment 2 of 2"));
-    assert!(resumed.frames[0].contains("⟦Other⟧ complete original note."));
+    assert!(resumed.frames[0].contains("⟦Other⟧"));
     assert!(resumed.frames[0].contains("skipped"));
     assert_eq!(
         read_json(&response)["judgments"],
@@ -283,40 +281,6 @@ fn decisions_comments_skips_and_note_position_survive_partial_review_and_resumpt
             {"packet": "S002", "verdict": "uncertain", "comment": ""}
         ])
     );
-}
-
-#[test]
-fn full_notes_scroll_cycle_and_keep_instructions_outside_source_text() {
-    let root = tempfile::tempdir_in("/dev/shm").unwrap();
-    let input = root.path().join("review.json");
-    let mut artifact = reviewer();
-    artifact["packets"][0]["instances"][0]["text"] = json!(
-        (0..70)
-            .map(|line| format!("Original note line {line:02}"))
-            .collect::<Vec<_>>()
-            .join("\n")
-    );
-    artifact["packets"][0]["instances"][0]["byte_spans"] = json!([[0, 8]]);
-    fs::write(&input, serde_json::to_vec(&artifact).unwrap()).unwrap();
-    let mut ui = EventUi::new([
-        key(KeyCode::PageDown),
-        key(KeyCode::Home),
-        key(KeyCode::Tab),
-        key(KeyCode::BackTab),
-        pause(),
-    ]);
-    run_fine_segmentation_review(
-        &input,
-        root.path().join("session.json"),
-        root.path().join("response.json"),
-        &mut ui,
-    )
-    .unwrap();
-    assert!(ui.frames[0].contains("⟦Original⟧ note line 00"));
-    assert!(!ui.frames[1].contains("note line 00"));
-    assert!(ui.frames[2].contains("⟦Original⟧ note line 00"));
-    assert!(ui.frames[3].contains("⟦Other⟧ complete original note."));
-    assert!(ui.frames[4].contains("⟦Original⟧ note line 00"));
 }
 
 #[test]

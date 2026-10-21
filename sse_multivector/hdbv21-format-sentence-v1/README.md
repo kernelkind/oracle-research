@@ -82,7 +82,7 @@ Recommendation: leave v21 unchanged. The Coffeechain issue remains unresolved; t
 - All earlier generation artifacts are unchanged. Of 257 snapshotted files, 256 remain byte-identical; only the prior analysis file’s current-status fields were updated to link this diagnostic. Its raw results and user decisions are unchanged. Seven existing input-preparation tests passed. No production code changed.
 - These are selected development groups, not an unseen holdout. The food control’s original wording failure came from an older prompt/model. Coffeechain and coffee preparation share one source note, through different masks.
 - Generation usage: 41,046 input tokens (12,288 cached), 1,385 output tokens (1,189 reasoning); **42,431 input plus output tokens**. Cached and reasoning counts are subsets, not extra tokens. Main-agent work and independent reviews are not included.
-- Existing authorized subscription only; no API billing, purchases, rental or account switch. Tracking card: CREC-127; Plane tools were unavailable, so no external card update is claimed.
+- Existing authorized subscription only; no API billing, purchases, rental or account switch.
 
 The [official evaluation guidance](https://developers.openai.com/api/docs/guides/evaluation-best-practices#what-are-evals) informed scoped comparisons, saved evidence and calibration to human judgment—not the semantic verdicts.
 

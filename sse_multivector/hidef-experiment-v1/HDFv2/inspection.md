@@ -2,7 +2,7 @@
 
 **Evidence:** Unlinked data file references below identify local originals outside this checkout. See [publication availability](../../../docs/experiments/README.md#reading-the-research-records).
 
-This records the twelve additional groups and ten relationships frozen in [PLAN.md](./PLAN.md). The main [results](./README.md) cover the seven known anchors separately. These are analyst judgments, not user approvals or automatically scored failures.
+This records the twelve additional groups and ten relationships frozen in [PLAN.md](README.md#hdfv2-study-design). The main [results](./README.md) cover the seven known anchors separately. These are analyst judgments, not user approvals or automatically scored failures.
 
 All IDs below use seed 123. **O** means HDFv1, **M** means HDFv2 `mutual_best_per_note`, and **C** means HDFv2 `strongest_edges_matched`. The number is the actual group ID in that run. Descriptions explain masks; they are not generated or stored titles.
 

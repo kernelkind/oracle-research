@@ -3,10 +3,6 @@ use std::fs;
 
 use bech32::{Bech32, Hrp};
 use oracle_mvp::english_filter::{classifier_input, select_sampled_event_ids};
-use oracle_mvp::english_filter_pilot::{
-    BlindRecord, ClassifierDecision, JudgmentRecord, LanguagePrediction, ManualJudgment,
-    PredictionRecord, calculate_report,
-};
 
 #[test]
 fn removes_web_urls_without_merging_surrounding_words() {
@@ -146,46 +142,6 @@ fn uniformly_samples_the_complete_ordered_id_file_deterministically() {
     assert_ne!(first, source[..1_000]);
 }
 
-#[test]
-fn reports_retained_precision_recall_accuracy_and_ambiguous_rows_separately() {
-    let blind = [
-        blind_record(1, "a", "English text"),
-        blind_record(2, "b", "More English"),
-        blind_record(3, "c", "Texto en español"),
-        blind_record(4, "d", "Mixed"),
-    ];
-    let predictions = [
-        prediction_record(1, "a", ClassifierDecision::KeepEnglish, 0.99),
-        prediction_record(2, "b", ClassifierDecision::Exclude, 0.55),
-        prediction_record(3, "c", ClassifierDecision::KeepEnglish, 0.60),
-        prediction_record(4, "d", ClassifierDecision::Exclude, 0.40),
-    ];
-    let judgments = [
-        judgment("a", ManualJudgment::English),
-        judgment("b", ManualJudgment::English),
-        judgment("c", ManualJudgment::PrimarilyNonEnglish),
-        judgment("d", ManualJudgment::Ambiguous),
-    ];
-
-    let report = calculate_report("manifest", "judgments", &blind, &predictions, &judgments)
-        .expect("report");
-
-    assert_eq!(report.sample_size, 4);
-    assert_eq!(report.evaluated_rows, 3);
-    assert_eq!(report.confusion.true_positive, 1);
-    assert_eq!(report.confusion.false_positive, 1);
-    assert_eq!(report.confusion.false_negative, 1);
-    assert_eq!(report.confusion.true_negative, 0);
-    assert_eq!(report.confusion.ambiguous, 1);
-    assert_eq!(report.retained_precision.successes, 1);
-    assert_eq!(report.retained_precision.total, 2);
-    assert_eq!(report.eligible_recall.successes, 1);
-    assert_eq!(report.eligible_recall.total, 2);
-    assert_eq!(report.overall_accuracy.successes, 1);
-    assert_eq!(report.overall_accuracy.total, 3);
-    assert_eq!(report.disagreement_event_ids, ["b", "c"]);
-}
-
 fn encode(hrp: &str, payload: &[u8]) -> String {
     bech32::encode::<Bech32>(Hrp::parse(hrp).expect("HRP"), payload).expect("bech32")
 }
@@ -204,37 +160,4 @@ fn event_id(index: u64) -> [u8; 32] {
     let mut id = [0_u8; 32];
     id[24..].copy_from_slice(&index.to_be_bytes());
     id
-}
-
-fn blind_record(ordinal: u32, id: &str, input: &str) -> BlindRecord {
-    BlindRecord {
-        sample_ordinal: ordinal,
-        event_id: id.to_owned(),
-        original_content: input.to_owned(),
-        classifier_input: input.to_owned(),
-    }
-}
-
-fn prediction_record(
-    ordinal: u32,
-    id: &str,
-    decision: ClassifierDecision,
-    confidence: f32,
-) -> PredictionRecord {
-    PredictionRecord {
-        sample_ordinal: ordinal,
-        event_id: id.to_owned(),
-        predictions: vec![LanguagePrediction {
-            label: "__label__eng_Latn".to_owned(),
-            confidence,
-        }],
-        decision,
-    }
-}
-
-fn judgment(id: &str, judgment: ManualJudgment) -> JudgmentRecord {
-    JudgmentRecord {
-        event_id: id.to_owned(),
-        judgment,
-    }
 }

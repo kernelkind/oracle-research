@@ -178,6 +178,6 @@ The original parent and Steak are existing v21 nodes; the other descriptions are
 - Local offline inference took 112.7 seconds including verification/loading, with 43.29 GiB peak process RSS. One model process, 60 GiB scope memory cap, no scope swap; resources (`./resources.json`). No new paid resource or API call.
 - All 42 relevant regression tests passed before and after. Shared production code, model settings, frozen earlier results, category titles and cutoff remain unchanged.
 - The legacy fixture schema tag is TRUE03 and the raw shared decisions heading says “holdout.” Runtime identity is TRUE09; this is a selected diagnostic, not a holdout.
-- No hierarchy or UI was generated. Existing tracking card is CREC-127; no Plane tool was available, so no external card update is claimed.
+- No hierarchy or UI was generated.
 
 **Selected data:** Compact pair-score results, inputs and parameters for `TRUE09/run` are selected for release as `numerical/pair-scores-5e07db0afb5b7b6e` in the [publication catalog](../../../docs/experiments/publications.csv). These compact exports use a different format. Other cited artifacts remain separate originals.

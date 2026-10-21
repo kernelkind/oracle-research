@@ -36,7 +36,7 @@ predetermined, and no old model label is used as semantic gold.
 
 ## Execution and assessment
 
-The [native spec](pair-consolidation-owl-v5-pilot-v1.spec.json) selects the exact
+The [native spec] (`sse_multivector/shr_single_pair/pair-consolidation-owl-v5-pilot-v1.spec.json` at `03bd9e45`) selects the exact
 approved v5 prompt, the existing generic adapter, `openai-codex`,
 `gpt-6.1-sol`, medium reasoning and SSE through the shared stable launcher.
 The existing pair adapter requires a natural-language parent, so it is not used
@@ -83,7 +83,7 @@ All twelve initial cases completed and passed the targeted agent screen, so the
 four authorized follow-ups were run. Two intentionally repeated cases 04 and
 08; two reversed only the node order in cases 02 and 11, using the
 [reversal source](pair-consolidation-owl-reversal-source-v1.json) and
-[native spec](pair-consolidation-owl-v5-reversal-v1.spec.json). Exact repeats were
+[native spec] (`sse_multivector/shr_single_pair/pair-consolidation-owl-v5-reversal-v1.spec.json` at `03bd9e45`). Exact repeats were
 prepared with native `prepare --from ... --repeat`, bypassing answer reuse.
 Their prompt, inputs and settings match the first draw, and their upstream
 response identities differ. Each request has one user message and no
@@ -155,9 +155,7 @@ a threading hole while its exact repeat uses an unexpanded bead category; Garden
 and the supplied Material definition also need interpretation. They are recorded
 as qualifications, not new human gold or automatically counted failures.
 
-The recommended next step is to settle which explicit input conditions must
-appear as formal structure, then test a new prompt version on these matched
-controls. No prompt revision, further inference or hierarchy activation was
+ No prompt revision, further inference or hierarchy activation was
 performed as part of this trial. V5 and every original receipt remain unchanged.
 
 ### Native accounting and retained evidence

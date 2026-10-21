@@ -37,11 +37,11 @@ documentation and the final local commit. Authoring makes no teacher requests.
 
 Native `experiment.py revise` applies the two exact replacements to the pinned
 ASv6.92 source and template bases. The versioned
-[source edits](prompt-edits.json) and [template edits](edits.json) preserve those
+source edits (`03bd9e45:sse_multivector/subject-prompt-goal-v1/asv6.93/prompt-edits.json`) and template edits (`03bd9e45:sse_multivector/subject-prompt-goal-v1/asv6.93/edits.json`) preserve those
 base hashes; automatic receipts record the revised
-[source](ASv6.93.md.revision.json) and
-[template](../../experiment_specs/asv6.93-hr01-post-template.txt.revision.json).
-The [POST template](../../experiment_specs/asv6.93-hr01-post-template.txt) remains
+source (`03bd9e45:sse_multivector/subject-prompt-goal-v1/asv6.93/ASv6.93.md.revision.json`) and
+template (`03bd9e45:sse_multivector/experiment_specs/asv6.93-hr01-post-template.txt.revision.json`).
+The POST template (`03bd9e45:sse_multivector/experiment_specs/asv6.93-hr01-post-template.txt`) remains
 exactly the prompt followed by `\n<post>\n{POST}\n</post>`.
 
 The [matched screen](../isolation-v1/finite-collection-v1.md) freezes 33 new

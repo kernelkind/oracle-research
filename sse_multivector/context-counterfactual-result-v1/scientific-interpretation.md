@@ -53,4 +53,4 @@ region labeling, or hierarchy construction.
 A later pilot tested whether these vectors could be hard-partitioned into
 coherent fine semantic regions. It found real recurring semantic cores but did
 not validate one global hard partition; its result is recorded in
-[`../../docs/recommendation-engine/experiments/sse-fine-region-partition-pilot.md`](../../docs/recommendation-engine/experiments/sse-fine-region-partition-pilot.md).
+[`../../docs/recommendation-engine/experiments/sse-fine-region-partition-pilot.md`](../../docs/experiments/representation/partition-pilot.md).

@@ -12,7 +12,7 @@ Sol low recognized some added meaning, but did not reliably recognize the mask e
 
 The three acceptable masks produced **no false alarms in nine calls**. Two of those masks were previously approved by you; the clean insurance mask was checked by me. There were no invented reasons among the reported issues.
 
-The full notes, inline masks, all returned judgments, and my analysis are in [judgments.md](./judgments.md).
+The full notes, inline masks, all returned judgments, and my analysis are in judgments.md (`03bd9e45:sse_multivector/mask-prompt-recognition-sol-low-v1/judgments.md`).
 
 ## What we tested
 

@@ -12,7 +12,7 @@ Each choice lets the person direct their own discovery. The goal is to put that 
 
 [Watch the walkthrough in Notedeck (19 seconds)](docs/media/hierarchy-walkthrough.mp4): use the **Hierarchy** column to choose a topic, narrow it down, and view its posts.
 
-The interface uses a [toy hierarchy snapshot protocol](docs/recommendation-engine/design/hierarchy-serving-protocol-decisions.md) developed for this prototype. The format is intended for local or private testing, so please avoid publishing its experimental events to public Nostr relays.
+The interface uses a [toy hierarchy snapshot protocol](docs/design/nostr-hierarchy-snapshot.md) developed for this prototype. The format is intended for local or private testing, so please avoid publishing its experimental events to public Nostr relays.
 
 **Notedeck interface source code:** link pending publication.
 <!-- Add the public source-code URL for the Notedeck hierarchy interface before publication. -->
@@ -35,7 +35,7 @@ The [generation guide](docs/generate-hierarchy.md) covers terminal browsing and 
 
 ## Start here
 
-**Current implementation:** This is a research prototype. The documented generator, [HiGen V5.3](docs/recommendation-engine/hierarchy-generation-v5.md), uses external AI services for subject identification and definition writing; embedding and numerical construction run locally. Fully local hierarchy generation and million-note scalability have not yet been demonstrated.
+**Current implementation:** This is a research prototype. The documented generator, [HiGen V5.3](docs/design/hierarchy-generation.md), uses external AI services for subject identification and definition writing; embedding and numerical construction run locally. Fully local hierarchy generation and million-note scalability have not yet been demonstrated.
 
 | What you want to do | Guide | Main requirements |
 | --- | --- | --- |
@@ -62,7 +62,7 @@ The generation workflow uses the separate `experiment-runner` to execute languag
 
 ### Hierarchy generation
 
-The [largest completed HiGen V5.3 run (HR39)](docs/recommendation-engine/hierarchy-runs.md#hr39--automatically-sampled-5000-note-higen-v53) processed 5,000 notes and produced six root choices representing 2,693 of them. Review of the hierarchy's semantic quality remained pending.
+The [largest completed HiGen V5.3 run (HR39)](docs/experiments/hierarchy/runs.md#hr39--automatically-sampled-5000-note-higen-v53) processed 5,000 notes and produced six root choices representing 2,693 of them. Review of the hierarchy's semantic quality remained pending.
 
 ### Subject fine-tuning
 
@@ -76,7 +76,7 @@ The saved evaluation on the same **200 test notes** found these changes after on
 | Gemma 4 31B | 93.7% → 96.6% | 46.2% → 55.0% |
 | Gemma 4 26B-A4B | 88.0% → 89.8% | 42.9% → 55.8% |
 
-Two additional Qwen passes increased correctness to **97.5%**, while coverage fell to **57.1%**. These results assess subject extraction; they do not establish the quality of the resulting global hierarchy. See the [full results and scoring definitions](docs/planning/fine-tuning-pilot-process.md#l1-only-test-results-october-15) and [instructions for inspecting the saved comparison](docs/experiments/reproduce.md#inspect-the-fine-tune-comparison).
+Two additional Qwen passes increased correctness to **97.5%**, while coverage fell to **57.1%**. These results assess subject extraction; they do not establish the quality of the resulting global hierarchy. See the [full results and scoring definitions](docs/experiments/subject-extraction/fine-tuning.md#l1-only-test-results-october-15) and [instructions for inspecting the saved comparison](docs/experiments/reproduce.md#inspect-the-fine-tune-comparison).
 
 ## Experiments and data
 

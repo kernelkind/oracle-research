@@ -80,7 +80,7 @@ The [completed confirmation](../contract-confirmation-v1/README.md) found 18/36 
 - ASv6.13 full source notes and generated subjects (`./asv6.13/output.json`)
 - ASv6.19 full source notes and generated subjects (`./asv6.19/output.json`)
 - Subject-by-subject and whole-note reviews (`./review.json`)
-- Provenance verification (`./verification.json`) and [read-only verifier](./verify.py)
+- Provenance verification (`./verification.json`) and read-only verifier (`03bd9e45:sse_multivector/subject-prompt-goal-v1/contract-comparison-v1/verify.py`)
 - Sequential execution and host-pressure observations (`./runtime.json`)
 
 Verification found 56 unique threads and working directories, one turn and no tool events per call, no reuse across 339 earlier calls checked, exact prompts and inputs, unedited raw outputs, and a review for every generated subject. This verifies execution and preservation, not the semantic truth of the judgments.
@@ -89,4 +89,4 @@ Across the 56 calls: 121,416 input tokens and 17,707 output tokens. The output t
 
 Minimum observed available memory was 105.21 GiB; the maximum observed memory and I/O PSI averages were both zero. All generation units finished. No final-validation input, criterion, frozen prompt, model, mask, embedding or downstream artifact was changed.
 
-See [conversion gaps](../../../docs/experiments/publication-gaps.csv) for `collection:tracked-subject-prompt-goal-v1`.
+See conversion gaps (`03bd9e45:docs/experiments/publication-gaps.csv`) for `collection:tracked-subject-prompt-goal-v1`.
