@@ -24,9 +24,8 @@ Offline export and browsing also passed after the VM login was revoked.
 This validates the small workflow; semantic quality and larger-corpus resource
 requirements remain separate questions.
 
-Source publication is planned for [Oracle Research](https://github.com/kernelkind/oracle-research)
-and [Experiment Runner](https://github.com/kernelkind/experiment-runner). The clone
-instructions below apply after those repositories are published.
+Source code is available in [Oracle Research](https://github.com/kernelkind/oracle-research)
+and [Experiment Runner](https://github.com/kernelkind/experiment-runner).
 
 ## 1. Install the runtime
 

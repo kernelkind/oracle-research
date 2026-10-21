@@ -14,17 +14,10 @@ Inputs and final results from research into content discovery on Nostr through
 a subject hierarchy. The hierarchy offers progressively narrower choices so
 people can direct their own discovery.
 
-This collection accompanies the [Oracle Research code](https://github.com/kernelkind/oracle-research) and experiment index. It
+This collection accompanies the [Oracle Research code](https://github.com/kernelkind/oracle-research) and [experiment index](https://github.com/kernelkind/oracle-research/blob/main/docs/experiments/README.md). It
 contains the posts actually used, experiment parameters, generated hierarchies,
 prompt answers and evaluation evidence, including unsuccessful and superseded
 work.
-
-**Private dataset:** the snapshot is uploaded to
-[KernelKind/oracle-research](https://huggingface.co/datasets/KernelKind/oracle-research).
-Access currently requires an authorized Hugging Face account; public dataset
-release remains pending. Every payload file's remote content identity and size
-matches the reviewed local snapshot. A selected six-file download passed native
-HR39/post restoration, viewer export and the viewer's `--check` validation.
 
 ## Contents
 
@@ -52,6 +45,8 @@ Full source corpora, intermediate vectors, transport logs, expanded requests,
 optimizer state and whole original run directories are outside this selection.
 Weights for all 17 evaluated adapters are in the separate
 [subject-adapter repository](https://huggingface.co/KernelKind/oracle-subject-adapters).
+The adapter download instructions pin
+[revision `76dcdbe684a1c79c0f6b33049f9395d28be2f730`](https://huggingface.co/KernelKind/oracle-subject-adapters/tree/76dcdbe684a1c79c0f6b33049f9395d28be2f730).
 Upstream base-model weights are additional downloads.
 
 ## Download and inspect

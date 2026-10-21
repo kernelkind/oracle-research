@@ -138,6 +138,9 @@ The [subject-adapter repository](https://huggingface.co/KernelKind/oracle-subjec
 contains **all 17 evaluated subject fine-tune adapters**. Each includes
 `adapter_model.safetensors` and `adapter_config.json`. The shared model card
 records base-model revisions, results and loading instructions.
+The [adapter download instructions](reproduce.md#use-a-subject-adapter) pin
+[revision `76dcdbe684a1c79c0f6b33049f9395d28be2f730`](https://huggingface.co/KernelKind/oracle-subject-adapters/tree/76dcdbe684a1c79c0f6b33049f9395d28be2f730)
+for the published weight/configuration pairs.
 
 | Adapter family | Checkpoints | Count | Weights and configuration per checkpoint |
 | --- | --- | ---: | ---: |

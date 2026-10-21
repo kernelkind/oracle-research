@@ -662,10 +662,24 @@ For inference, you need the selected adapter's `adapter_model.safetensors` and
 You do not need the prepared training dataset or optimizer state.
 
 The [subject-adapter repository](https://huggingface.co/KernelKind/oracle-subject-adapters)
-contains all 17 evaluated checkpoints. Download one checkpoint's two files into
-a local directory; the example uses
-`target/reproduction/adapters/qwen-checkpoint-3000/`. Match its identity and hashes
-to [models.csv](models.csv) and the published
+contains all 17 evaluated checkpoints. This command downloads Qwen checkpoint
+3000 from the published revision, retaining the repository's directory layout:
+
+```bash
+cd "$ORACLE_ROOT"
+source target/publication-env/bin/activate
+ADAPTER_REPO='KernelKind/oracle-subject-adapters'
+ADAPTER_REVISION='76dcdbe684a1c79c0f6b33049f9395d28be2f730'
+hf download "$ADAPTER_REPO" \
+  qwen3.8-27b/checkpoint-3000/adapter_config.json \
+  qwen3.8-27b/checkpoint-3000/adapter_model.safetensors \
+  --revision "$ADAPTER_REVISION" \
+  --local-dir target/reproduction/adapters --max-workers 2
+```
+
+The two files are saved in
+`target/reproduction/adapters/qwen3.8-27b/checkpoint-3000/`.
+Match their identity and hashes to [models.csv](models.csv) and the published
 `inputs/adapter-hashes/adapters.jsonl`. Use the matching configuration below;
 each pins the original base-model and tokenizer revision.
 
@@ -695,7 +709,7 @@ from sse_multivector.distillation_run import (
 )
 
 config = read_json("sse_multivector/distillation/subject-pilot-qwen-v1.json")
-adapter = Path("target/reproduction/adapters/qwen-checkpoint-3000")
+adapter = Path("target/reproduction/adapters/qwen3.8-27b/checkpoint-3000")
 instruction = Path("sse_multivector/subject-prompt-goal-v1/asv6.100/ASv6.100.md").read_text().rstrip()
 post = Path("target/reproduction/post.txt").read_text(encoding="utf-8")
 messages = [{"role": "user", "content": instruction + "\n\n<post>\n" + post + "\n</post>"}]
