@@ -361,6 +361,10 @@ for detailed preparation, receipt and recovery behavior.
 local JSONL file
 using the [toy hierarchy snapshot protocol](design/nostr-hierarchy-snapshot.md).
 
+The [Notedeck hierarchy interface](https://github.com/kernelkind/notedeck/tree/hierarchies)
+implements this format and provides the **Hierarchy** column shown in the
+[walkthrough](media/hierarchy-walkthrough.mp4).
+
 The format is intended for local or private testing. Please avoid publishing
 its experimental events to public Nostr relays. Exporting makes no model calls
 and sends nothing to relays.

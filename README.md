@@ -14,8 +14,7 @@ Each choice lets the person direct their own discovery. The goal is to put that 
 
 The interface uses a [toy hierarchy snapshot protocol](docs/design/nostr-hierarchy-snapshot.md) developed for this prototype. The format is intended for local or private testing, so please avoid publishing its experimental events to public Nostr relays.
 
-**Notedeck interface source code:** link pending publication.
-<!-- Add the public source-code URL for the Notedeck hierarchy interface before publication. -->
+The [Notedeck hierarchy interface](https://github.com/kernelkind/notedeck/tree/hierarchies) provides the **Hierarchy** column shown in the walkthrough.
 
 The [generation guide](docs/generate-hierarchy.md) covers terminal browsing and [exporting a completed hierarchy in the toy Nostr format](docs/generate-hierarchy.md#8-export-as-nostr-notes) for local testing.
 
@@ -46,7 +45,7 @@ The [generation guide](docs/generate-hierarchy.md) covers terminal browsing and 
 | Inspect the fine-tuning measurements | [Read the saved comparison](docs/experiments/reproduce.md#inspect-the-fine-tune-comparison) | Saved comparison files; no model inference |
 | Repeat the subject fine-tuning | [Training inputs and instructions](docs/experiments/reproduce.md#prepare-the-fine-tuning-inputs) | CUDA GPU, base-model weights and prepared training data |
 
-The linked guides cover setup, hardware requirements and validation limits. Model and data downloads are still being prepared.
+The linked guides cover setup, hardware requirements and validation limits. The [subject adapters](https://huggingface.co/KernelKind/oracle-subject-adapters) are hosted separately; the [research dataset](https://huggingface.co/datasets/KernelKind/oracle-research) is being uploaded privately.
 
 ## How it works
 
@@ -82,7 +81,7 @@ Two additional Qwen passes increased correctness to **97.5%**, while coverage fe
 
 The [experiment index](docs/experiments/README.md) connects the experiments to their inputs, prompts, settings and saved results, including unsuccessful trials and superseded approaches. The [reproduction guide](docs/experiments/reproduce.md) explains how to inspect and repeat recorded work, with its tested paths and remaining limitations.
 
-The publication includes posts actually used in experiments, prepared training inputs, final hierarchies, prompt answers and evaluation results. These inputs and results will be available on **Hugging Face Datasets**; all **17 evaluated subject-model adapters** will be available on **Hugging Face Models**. Download links are pending publication.
+The [research dataset](https://huggingface.co/datasets/KernelKind/oracle-research) includes posts actually used in experiments, prepared training inputs, final hierarchies, prompt answers and evaluation results. Its private upload is in progress; public access remains pending. All **17 evaluated subject-model adapters** are hosted in the separate [subject-adapter repository](https://huggingface.co/KernelKind/oracle-subject-adapters).
 
 ## License
 

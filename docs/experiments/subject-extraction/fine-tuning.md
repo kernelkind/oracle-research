@@ -14,6 +14,12 @@ For commands, use the [training guide](../reproduce.md#run-subject-fine-tuning)
 and [saved comparison guide](../reproduce.md#inspect-the-fine-tune-comparison).
 This document records the experiments' methods and measured outcomes.
 
+All 17 evaluated adapters are in the
+[subject-adapter repository](https://huggingface.co/KernelKind/oracle-subject-adapters).
+Prepared training inputs and saved evaluation results are part of the
+[research dataset](https://huggingface.co/datasets/KernelKind/oracle-research),
+whose private upload is in progress.
+
 ## L1-only test results (October 15)
 
 This is an offline slice of the saved

@@ -2,9 +2,9 @@
 
 Code and history belong on GitHub; used inputs and final results belong on
 Hugging Face Datasets; all evaluated adapters belong on Hugging Face Models.
-The selected dataset remains local; its planned Hugging Face repository is
-`KernelKind/oracle-research`. The published revision and download tests remain
-open.
+The selected dataset is being uploaded privately to
+[KernelKind/oracle-research](https://huggingface.co/datasets/KernelKind/oracle-research).
+The complete revision and download tests remain open.
 
 See the [draft dataset card](dataset-card.md) for the Hugging Face landing page
 and the [download instructions](reproduce.md#download-the-dataset) for the planned
@@ -14,8 +14,8 @@ revision explicitly.
 | Where | What | Prepared size |
 | --- | --- | ---: |
 | GitHub | Code/history, tests, prompts, reusable specifications, authored findings, reader guides and experiment index | Download size unmeasured |
-| Hugging Face Models | All 17 evaluated adapters, configurations and pinned base-model references | 6.78 GiB |
-| Hugging Face Datasets | Used posts, prepared training inputs, selected subjects, unsigned hierarchies, prompt answers, evaluations, numerical results and parameters | 844.00 MiB (0.82 GiB) |
+| [Hugging Face Models](https://huggingface.co/KernelKind/oracle-subject-adapters) | All 17 evaluated adapters, configurations and pinned base-model references | 6.78 GiB |
+| [Hugging Face Datasets](https://huggingface.co/datasets/KernelKind/oracle-research) | Used posts, prepared training inputs, selected subjects, unsigned hierarchies, prompt answers, evaluations, numerical results and parameters; private upload in progress | 844.00 MiB (0.82 GiB) |
 
 ## Public Git contents
 
@@ -130,9 +130,10 @@ well as posts. The selected downloads contain the used inputs and final results 
 their roles above. Results derived from subject prompts older than **ASv6.100**
 remain labeled as historical evidence.
 
-Publish **all 17 evaluated subject fine-tune adapters on Hugging Face**. Each includes
-`adapter_model.safetensors` and `adapter_config.json`, with its pinned base-model
-revision and a model card linking its training data, results and loading instructions.
+The [subject-adapter repository](https://huggingface.co/KernelKind/oracle-subject-adapters)
+contains **all 17 evaluated subject fine-tune adapters**. Each includes
+`adapter_model.safetensors` and `adapter_config.json`. The shared model card
+records base-model revisions, results and loading instructions.
 
 | Adapter family | Checkpoints | Count | Weights and configuration per checkpoint |
 | --- | --- | ---: | ---: |
@@ -148,8 +149,8 @@ revisions. The selected `inputs/adapter-hashes/adapters.jsonl`, bound by the
 to its hashes and sizes. Publication does not designate any checkpoint as
 production-approved.
 The [final L1 comparison](subject-extraction/fine-tuning.md#l1-only-test-results-october-15)
-uses Qwen checkpoints 1000 and 3000 and each Gemma model's checkpoint 1000;
-the other evaluated checkpoints will also be published.
+uses Qwen checkpoints 1000 and 3000 and each Gemma model's checkpoint 1000.
+The model repository also includes the other evaluated checkpoints.
 
 Retain saved validation answers and available evaluations for **all 17** training
 checkpoints. Qwen's pass-two test answers remain sealed/unreviewed and are outside
@@ -386,7 +387,8 @@ verification. This is a directory layout, not an additional archive format.
 
 ## Availability
 
-The dataset has not been uploaded to `KernelKind/oracle-research`. Its pinned
-Hugging Face revision and hosted reader tests remain pending. See
+The private upload to
+[KernelKind/oracle-research](https://huggingface.co/datasets/KernelKind/oracle-research)
+is in progress. Its complete revision and hosted reader tests remain pending. See
 [evidence limits](open-items.md) for the tested scope and unresolved historical
 bindings.

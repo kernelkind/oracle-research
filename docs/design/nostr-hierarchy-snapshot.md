@@ -6,6 +6,11 @@ This is a toy protocol for experimenting with hierarchy browsing in local or
 private test environments. Please avoid publishing its experimental events to
 public Nostr relays. Efficient hierarchy updates are out of scope.
 
+The [Notedeck hierarchy interface](https://github.com/kernelkind/notedeck/tree/hierarchies)
+implements this experimental format. See the
+[local export guide](../generate-hierarchy.md#8-export-as-nostr-notes) for producing
+events from a completed hierarchy.
+
 The client starts with a hierarchy author's public key and a relay URL.
 One author publishes one hierarchy. The author and relay operator are separate.
 All hierarchy events come from that author and have empty `content`.

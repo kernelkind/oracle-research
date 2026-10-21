@@ -5,8 +5,9 @@ recorded post before attempting a whole corpus. The examples below use the
 current publication code and the recorded inputs; they keep new outputs separate
 from the original results.
 
-**Downloads are not available yet.** The [download instructions](#download-the-dataset)
-name the selected repository; its published revision is still a placeholder. The
+**The [dataset](https://huggingface.co/datasets/KernelKind/oracle-research) is being
+uploaded privately.** The [download instructions](#download-the-dataset) will pin
+the complete revision after upload. The
 [dataset commands](#verify-and-restore-the-dataset) verify
 and restore the selected files listed in [dataset manifest](downloads.md#dataset-manifest).
 Restoration recovers original compact exports, not complete native experiment
@@ -66,8 +67,9 @@ dependencies are additional.
 
 ### Download the dataset
 
-**Publication pending:** the selected dataset repository is
-`KernelKind/oracle-research`. The full Hugging Face commit ID below remains a
+**Private upload in progress:** the dataset repository is
+[KernelKind/oracle-research](https://huggingface.co/datasets/KernelKind/oracle-research).
+The full Hugging Face commit ID below remains a
 placeholder until upload; the command is not ready to run. The
 [dataset card](dataset-card.md) describes the selection and its limitations.
 
@@ -572,7 +574,8 @@ The [publication plan](downloads.md#corpora-and-fine-tunes) includes all 17
 evaluated adapters on Hugging Face, with prepared training data and settings.
 Optimizer state remains outside that plan; resuming an exact training state
 requires additional local artifacts.
-The inventory still lists all candidates; these are not available downloads.
+Weights and configurations are in the
+[subject-adapter repository](https://huggingface.co/KernelKind/oracle-subject-adapters).
 
 The sections below provide training-input checks and local GPU commands.
 For evaluation, `compare-distillation-grades` compares automated and audited
@@ -656,8 +659,9 @@ For inference, you need the selected adapter's `adapter_model.safetensors` and
 `adapter_config.json`, its matching base model, and the **ASv6.100** instruction.
 You do not need the prepared training dataset or optimizer state.
 
-**Adapter download links are pending.** Once available, download one checkpoint's
-two files into a local directory; the example uses
+The [subject-adapter repository](https://huggingface.co/KernelKind/oracle-subject-adapters)
+contains all 17 evaluated checkpoints. Download one checkpoint's two files into
+a local directory; the example uses
 `target/reproduction/adapters/qwen-checkpoint-3000/`. Match its identity and hashes
 to [models.csv](models.csv) and the published
 `inputs/adapter-hashes/adapters.jsonl`. Use the matching configuration below;

@@ -2,8 +2,10 @@
 
 This index connects the experiments to their inputs, settings and final saved
 results, including failed trials and superseded approaches. Code and source
-history belong in Git; selected data and all 17 evaluated adapters will be on
-Hugging Face. Downloads are not available yet. See [contents and formats](downloads.md).
+history belong in Git. All 17 evaluated adapters are in the
+[model repository](https://huggingface.co/KernelKind/oracle-subject-adapters);
+the [research dataset](https://huggingface.co/datasets/KernelKind/oracle-research)
+is being uploaded privately. See [contents and formats](downloads.md).
 
 ## Where to start
 
@@ -66,9 +68,11 @@ producer. See [source lookup](reproduce.md#which-code-is-being-repeated) and its
 
 ## Availability and tested scope
 
-Hugging Face Models will contain all 17 evaluated adapters (6.78 GiB). Hugging Face
-Datasets will contain used inputs, parameters and final results: 844.00 MiB prepared
-locally, with repeated content stored once. Full upstream models, optimizer
+The [model repository](https://huggingface.co/KernelKind/oracle-subject-adapters)
+contains all 17 evaluated adapters (6.78 GiB). The private upload to the
+[dataset repository](https://huggingface.co/datasets/KernelKind/oracle-research)
+contains used inputs, parameters and final results: 844.00 MiB,
+with repeated content stored once. Full upstream models, optimizer
 state, unused corpora, intermediate vectors and whole native run directories are
 outside this selection. The [format reference](downloads.md) explains each output.
 

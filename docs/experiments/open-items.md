@@ -2,7 +2,8 @@
 
 The selected inputs, parameters and final results are prepared locally.
 [Contents and hosting](downloads.md) describe the selection. The dataset
-repository name is `KernelKind/oracle-research`; public code repository names,
+repository is [KernelKind/oracle-research](https://huggingface.co/datasets/KernelKind/oracle-research),
+whose private upload is in progress; public code repository names,
 pinned Hugging Face revisions, hosted reader tests and publication approval
 remain open. Complete original working files remain private.
 
